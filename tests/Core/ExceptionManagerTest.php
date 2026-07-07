@@ -14,6 +14,9 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
             'default_exception_handler'=>[ExceptionManagerObject::class,'CallException'],
             'dev_error_handler'=>[ExceptionManagerObject::class,'OnDevErrorHandler'],
             //'system_exception_handler'=>[ExceptionManager::_(),'on_exception'],
+            
+            //'exception_reporter' =>  ExceptionManagerExceptionReporter::class,
+            //'exception_reporter_for_class' =>  \Exception::class,
         ];
         ExceptionManager::_()->init($exception_options);
         ExceptionManager::_()->init($exception_options);
@@ -65,6 +68,18 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
 
 
         ExceptionManager::_(new ExceptionManager())->reset();
+        
+        
+        $exception_options['exception_reporter'] = ExceptionManagerExceptionReporter::class;
+        $exception_options['exception_reporter_for_class'] = \Exception::class;
+        
+        ExceptionManager::_(new ExceptionManager())->init($exception_options)->run();
+        $ex=new \Exception("ABCss",123);
+        ExceptionManager::CallException($ex);
+                    //'exception_reporter' =>  ExceptionManagerExceptionReporter::class,
+            //'exception_reporter_for_class' =>  \Exception::class,
+        
+        
         $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',ExceptionAutoLoaderObject::class.'::CreateObject');
         \LibCoverage\LibCoverage::G($t);
@@ -82,6 +97,15 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
 
     }
 }
+class ExceptionManagerExceptionReporter
+{
+    use \DuckPhp\Foundation\ExceptionReporterTrait;
+    public function defaultException($ex)
+    {
+        var_dump("exception!");
+    }
+}
+
 class ExceptionManagerException extends \Exception
 {
 

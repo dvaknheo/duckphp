@@ -150,6 +150,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         );
+        DuckPhp::_()->options['lang_handler']=function($str, $args = []){ return $str;};
+        __l("xx");
         //////////////////////
         
 

@@ -18,6 +18,8 @@ class ExceptionManager extends ComponentBase
         'default_exception_handler' => null,
         'dev_error_handler' => null,
         
+        'exception_reporter' => null,
+        'exception_for_project' => null,
     ];
     
     protected $exceptionHandlers = [];
@@ -33,6 +35,10 @@ class ExceptionManager extends ComponentBase
         parent::init($options, $context);
         if ($this->options['handle_exception_on_init']) {
             $this->run();
+        }
+        if ($this->options['exception_reporter'] ?? null) {
+            $exception_class = $this->options['exception_for_project'] ?? \Exception::class;
+            $this->assignExceptionHandler($exception_class, [$this->options['exception_reporter'], 'OnException']);
         }
         return $this;
     }

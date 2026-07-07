@@ -14,7 +14,7 @@ class MyContainer extends PhaseContainer
 }
 //////////////////////
 // 自动化文档脚本
-
+return; // 暂停
 //DataProvider::G()->getAviableExtClasses();return;
 DocFixer::G()->init([])->run(); //填充缺失的
 var_dump(DocFixer::G()->options_descs);

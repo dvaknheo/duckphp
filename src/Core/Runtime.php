@@ -11,7 +11,6 @@ class Runtime extends ComponentBase
 {
     public $options = [
         'use_output_buffer' => false,
-        'path_runtime' => 'runtime',
     ];
     public $context_class;
     

@@ -10,7 +10,6 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\Console;
-use DuckPhp\Core\EventManager;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
@@ -40,9 +39,6 @@ trait KernelTrait
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
         'use_env_file' => false,
-        
-        'exception_reporter' => null,
-        'exception_for_project' => null,
         
         'cli_command_classes' => [],
         'cli_command_prefix' => null,
@@ -212,10 +208,6 @@ trait KernelTrait
             $exception_option['handle_all_exception'] = false;
         }
         ExceptionManager::_()->init($exception_options, $this);
-        if ($this->options['exception_reporter'] ?? null) {
-            $exception_class = $this->options['exception_for_project'] ?? \Exception::class;
-            ExceptionManager::_()->assignExceptionHandler($exception_class, [$this->options['exception_reporter'], 'OnException']);
-        }
     }
     //init
     public function init(array $options, object $context = null)
@@ -369,9 +361,6 @@ trait KernelTrait
                 if (!$ret) {
                     $ret = $this->runExtentions();
                     $this->_Phase($this->overriding_class);
-                    if (!$ret) {
-                        EventManager::FireEvent([$this->overriding_class, 'On404']);
-                    }
                     if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
                         $this->_On404();
                     }
@@ -443,34 +432,26 @@ trait KernelTrait
     }
     protected function onBeforeCreatePhases()
     {
-        //EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onAfterCreatePhases()
     {
-        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onPrepare()
     {
-        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onBeforeChildrenInit()
     {
-        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onInit()
     {
-        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onInited()
     {
-        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onBeforeRun()
     {
-        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onAfterRun()
     {
-        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
 }

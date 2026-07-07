@@ -150,8 +150,8 @@ class DuckPhp extends App
         if ($flag) {
             return true;
         }
-        //database_list_reload_by_setting  = false和 local_database 整合
-        // 这里要判断一下根应用里的 dbmanager 的和自己的是不是不一样。
+        //database_list_reload_by_setting  = false和 local_database
+        // judge  dbmanager and self
         $driver = DbManager::_()->options['database_driver'] ?? '';
         if ($this->options['database_driver'] && ($driver != $this->options['database_driver'])) {
             return true;
@@ -164,6 +164,10 @@ class DuckPhp extends App
     }
     public function lang($str, $args = [])
     {
+        $handler = $this->options['lang_handler'] ?? null;
+        if ($handler) {
+            return $handler($str, $args);
+        }
         return Lang::_()->lang($str, $args);
     }
 }
