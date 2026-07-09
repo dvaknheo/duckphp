@@ -1,3 +1,5 @@
 <?php
 require_once("./vendor/autoload.php");
-\YourProjectName\System\App::RunQuickly();
+\YourProjectName\System\App::RunQuickly([
+    'cli_enable' => true,
+]);
