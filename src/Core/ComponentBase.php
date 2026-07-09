@@ -65,17 +65,11 @@ class ComponentBase // implements ComponentInterface
     protected static function IsAbsPath($path)
     {
         if (DIRECTORY_SEPARATOR === '/') {
-            //Linux
-            if (substr($path, 0, 1) === '/') {
-                return true;
-            }
-        } else { // @codeCoverageIgnoreStart
-            // Windows
-            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path)) {
-                return true;
-            }
-        }   // @codeCoverageIgnoreEnd
-        return false;
+            // Linux
+            return substr($path, 0, 1) === '/';
+        }
+        // Windows
+        return (bool) preg_match('/^([a-zA-Z]:[\\\\\/]?|\\\\\\\\)/', $path);
     }
     protected static function SlashDir($path)
     {
