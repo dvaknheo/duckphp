@@ -74,7 +74,7 @@ class SqlDumper extends ComponentBase
         }
     }
     
-    protected function getSchemes()
+    protected function getSchemes(): string
     {
         $prefix = App::Current()->options['table_prefix'];
         $ret = '';
@@ -110,7 +110,7 @@ class SqlDumper extends ComponentBase
         }
         return $ret;
     }
-    protected function getInsertTableSql()
+    protected function getInsertTableSql(): string
     {
         $ret = '';
         $tables = $this->options['sql_dump_data_tables'];
@@ -121,7 +121,7 @@ class SqlDumper extends ComponentBase
         }
         return $ret;
     }
-    protected function getDataSql($table)
+    protected function getDataSql(string $table): string
     {
         $ret = '';
         $sql = "SELECT * FROM ".DbManager::DbForRead()->qouteScheme($table);
@@ -139,7 +139,7 @@ class SqlDumper extends ComponentBase
     }
 
     /////////////////////
-    protected function getModelPath()
+    protected function getModelPath(): string
     {
         $namespace = App::Current()->options['namespace'];
         $class = $namespace. '\\Model\\Base';
@@ -148,7 +148,7 @@ class SqlDumper extends ComponentBase
 
         return $path;
     }
-    protected function searchTables()
+    protected function searchTables(): array
     {
         $path = $this->getModelPath();
         $namespace = App::Current()->options['namespace'];
@@ -165,7 +165,7 @@ class SqlDumper extends ComponentBase
         $ret = array_values(array_unique(array_filter($ret)));
         return $ret;
     }
-    protected function searchModelClasses($path)
+    protected function searchModelClasses(string $path): array
     {
         $ret = [];
         $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;

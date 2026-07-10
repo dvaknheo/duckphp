@@ -95,7 +95,7 @@ class FastInstaller extends ComponentBase
         App::Phase($app);
         return FastInstaller::_()->doCommandInstall();
     }
-    protected function getDefaultUrlPrefix($ns)
+    protected function getDefaultUrlPrefix(string $ns): string
     {
         $ns = ''.str_replace('\\', '/', $ns);
         $ns = strtolower(trim((string)preg_replace('/([A-Z])/', '-$1', $ns), '-')).'/';
@@ -127,7 +127,7 @@ class FastInstaller extends ComponentBase
     }
     
     //////////////////
-    protected function initComponents()
+    protected function initComponents(): void
     {
         $this->args = Console::_()->getCliParameters();
         $classes = [
@@ -142,7 +142,7 @@ class FastInstaller extends ComponentBase
             }
         }
     }
-    protected function showHelp($app_options = [], $input_options = [])
+    protected function showHelp(array $app_options = [], array $input_options = []): void
     {
         echo "
 --help              show this help.
@@ -185,7 +185,7 @@ and more ...\n";
         return $this->current_input_options;
     }
 
-    protected function changeResource()
+    protected function changeResource(): array
     {
         ////[[[[
         $res_options = RouteHookResource::_()->options;
@@ -284,7 +284,7 @@ and more ...\n";
         echo "\e[32;3mInstalled App (".get_class(App::Current()).");\033[0m\n";
         return;
     }
-    protected function installChildren()
+    protected function installChildren(): void
     {
         $current_phase = App::Phase();
         
@@ -316,7 +316,7 @@ and more ...\n";
         }
         App::Phase($current_phase);
     }
-    protected function doInstallAction($input_options)
+    protected function doInstallAction(array $input_options): void
     {
         if (!($this->args['skip_sql'] ?? false)) {
             SqlDumper::_()->install($this->args['force'] ?? false);
@@ -339,7 +339,7 @@ and more ...\n";
             ($this->options['install_callback'])($input_options);
         }
     }
-    protected function cloneResource($dest)
+    protected function cloneResource(string $dest): string
     {
         $info = '';
         RouteHookResource::_()->options['controller_resource_prefix'] = $dest;

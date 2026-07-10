@@ -100,11 +100,11 @@ class HttpServer
     {
         return $this->is_inited;
     }
-    protected function getopt($options, $longopts, &$optind)
+    protected function getopt(string $options, array $longopts, &$optind)
     {
         return getopt($options, $longopts, $optind); // @codeCoverageIgnore
     }
-    protected function parseCaptures($cli_options)
+    protected function parseCaptures(array $cli_options): array
     {
         $shorts_map = [];
         $shorts = [];
@@ -152,11 +152,11 @@ class HttpServer
         }
         posix_kill($this->pid, 9);
     }
-    protected function showWelcome()
+    protected function showWelcome(): void
     {
         echo "DuckPhp: Wellcome, for more info , use --help \n";
     }
-    protected function showHelp()
+    protected function showHelp(): void
     {
         $doc = "Usage :\n\n";
         echo $doc;

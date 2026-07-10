@@ -36,15 +36,15 @@ class DatabaseInstaller extends ComponentBase
     }
 
 
-    protected function callResetDatabase($force = false)
+    protected function callResetDatabase(bool $force = false): bool
     {
         $ref = DbManager::_()->getDatabaseConfigList();
         
-        $data = $this->configDatabase($ref);
+        $data = $this->configDatabase($ref ?? []);
         $this->changeDatabase($data);
         return true;
     }
-    protected function changeDatabase($data)
+    protected function changeDatabase(array $data): void
     {
         $is_local = (App::Current()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::Current()->options['database_driver'];
         
@@ -58,7 +58,7 @@ class DatabaseInstaller extends ComponentBase
         DbManager::_()->reInit($options, App::Current());
     }
     
-    protected function configDatabase($ref_database_list = [])
+    protected function configDatabase(array $ref_database_list = []): array
     {
         $driver = App::Current()->options['database_driver'] ?? '';
         $ret = [];
@@ -93,7 +93,7 @@ class DatabaseInstaller extends ComponentBase
         }
         return $ret;
     }
-    protected function checkDb($database)
+    protected function checkDb(array $database): array
     {
         try {
             $dbm = new DbManager();

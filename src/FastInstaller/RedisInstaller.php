@@ -25,18 +25,18 @@ class RedisInstaller extends ComponentBase
         }
         return $this->callResetRedis($force);
     }
-    protected function callResetRedis($force = false)
+    protected function callResetRedis(bool $force = false): bool
     {
         $ref = RedisManager::_()->getRedisConfigList();
         if (!$force && $ref) {
             return false;
         }
         echo "config redis now \n";
-        $data = $this->configRedis($ref);
+        $data = $this->configRedis($ref ?? []);
         $this->changeRedis($data);
         return true;
     }
-    protected function changeRedis($data)
+    protected function changeRedis(array $data): void
     {
         $is_local = App::Current()->options['local_redis'] ?? false;
         
@@ -50,7 +50,7 @@ class RedisInstaller extends ComponentBase
         RedisManager::_()->reInit($options, $app);
     }
     
-    protected function configRedis($ref_database_list = [])
+    protected function configRedis(array $ref_database_list = []): array
     {
         $ret = [];
         
@@ -89,7 +89,7 @@ EOT;
         }
         return $ret;
     }
-    protected function checkRedis($config)
+    protected function checkRedis(array $config): array
     {
         try {
             $redis = new \Redis();
