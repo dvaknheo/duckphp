@@ -34,7 +34,7 @@ trait SimpleModelTrait
         return App::Current()->options['table_prefix'] ?? '';
     }
     
-    public function table()
+    public function table(): string
     {
         if (!isset($this->table_prefix)) {
             $this->table_prefix = $this->getTablePrefixByClass(static::class);
@@ -45,7 +45,7 @@ trait SimpleModelTrait
         return $this->table_prefix .  $this->table_name;
     }
     
-    public function prepare($sql)
+    public function prepare(string $sql): string
     {
         return empty($this->table()) ? $sql : str_replace("`'TABLE'`", '`'.$this->table().'`', $sql);
     }

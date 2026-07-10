@@ -31,8 +31,8 @@ trait ExceptionReporterTrait
     {
         App::Current()->_OnDefaultException($ex);
     }
-    public function defaultException($ex)
+    public function defaultException(\Throwable $ex): void
     {
-        return $this->defaultSystemException($ex);
+        $this->defaultSystemException($ex);
     }
 }
