@@ -69,7 +69,7 @@ class ComponentBase // implements ComponentInterface
             return substr($path, 0, 1) === '/';
         }
         // Windows
-        return (bool) preg_match('/^([a-zA-Z]:[\\\\\/]?|\\\\\\\\)/', $path);
+        return (bool) preg_match('/^([a-zA-Z]:[\\\\\/]?|\\\\\\\\)/', $path); // @codeCoverageIgnore
     }
     protected static function SlashDir($path)
     {
