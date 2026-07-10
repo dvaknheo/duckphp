@@ -36,8 +36,7 @@ project/
 │   │   └── SomeService.php           # Service 示例
 │   ├── Model/                        # 模型层：数据访问
 │   │   ├── Base.php
-│   │   ├── DemoModel.php             # Model 示例
-│   │   └── Helper.php
+│   │   └── DemoModel.php             # Model 示例
 │   └── System/                       # 系统层：应用配置与异常
 │       ├── App.php                   # 应用核心配置
 │       ├── BusinessException.php     # Business 异常（默认未启用）
@@ -138,7 +137,7 @@ System 层
 1. 模型层请勿直接调用 `DuckPhp` 命名空间下的类。
 2. 模型层保持**纯无状态**，仅负责数据持久化访问
 3. Model 一般按数据库表名对应。
-4. 工程规范中，Model 层的 `Helper` 类可以并入 `Base` 类。
+4. 工程规范中，Model 层的 `Helper` 类并入了 `Base` 类。
 5. Model 类禁止抛异常，由调用者处理异常。
 
 #### 视图层（View）
