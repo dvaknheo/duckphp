@@ -19,6 +19,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         $options['app'] = [
             DuckPhpEOLChild::class =>[
                 'data_file_enable' => true,
+                'data_file_bump_prefix_keys'=>['noenable_'=>false],
             ],
         ];
         DuckPhpEOL::_()->init($options);

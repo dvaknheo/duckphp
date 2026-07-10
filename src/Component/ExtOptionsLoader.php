@@ -16,8 +16,8 @@ class ExtOptionsLoader extends ComponentBase
         'data_file_enable' => true,
         'data_file_json_file' => 'DuckPhpData.config.json',
         'data_file_bump_allowed' => true,
-        'data_file_bump_keys' => ['installed', 'redis', 'database', 'local_redis', 'local_database'],
-        'data_file_bump_prefix_keys' => ['redis_', 'database_'],
+        'data_file_bump_keys' => ['installed' => true, 'redis' => true, 'database' => true, 'local_redis' => true, 'local_database' => true],
+        'data_file_bump_prefix_keys' => ['redis_' => true, 'database_' => true],
     ];
     public static $all_ext_options = null;
     public function init(array $options, ?object $context = null)
@@ -46,12 +46,15 @@ class ExtOptionsLoader extends ComponentBase
         }
         $app = App::Current();
         $app->options['data'] = $ext_options;
-        foreach ($this->options['data_file_bump_keys'] as $key) {
-            if (isset($ext_options[$key])) {
+        foreach ($this->options['data_file_bump_keys'] as $key => $enabled) {
+            if ($enabled) {
                 $app->options[$key] = $ext_options[$key];
             }
         }
-        foreach ($this->options['data_file_bump_prefix_keys'] as $prefix) {
+        foreach ($this->options['data_file_bump_prefix_keys'] as $prefix => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
             foreach ($ext_options as $key => $value) {
                 if (substr($key, 0, strlen($prefix)) === $prefix) {
                     $app->options[$key] = $value;
