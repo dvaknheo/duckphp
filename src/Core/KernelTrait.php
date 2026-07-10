@@ -268,6 +268,7 @@ trait KernelTrait
             $phase = $this->overriding_class;
             $classes = $this->options['cli_command_classes'] ?? [];
             $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
+            $classes = array_keys(array_filter($classes));
             Console::_()->regCommandClass($cli_namespace, $phase, $classes, $method_prefix);
         }
         $this->doInitComponents();

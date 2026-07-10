@@ -47,9 +47,7 @@ class DuckPhp extends App
         'class_user' => '',
         'database_driver' => '',
 
-        'cli_command_with_app' => true,
-        'cli_command_with_common' => true,
-        'cli_command_with_fast_installer' => true,
+        'cli_command_with_app' => false,
 
         'lang_default' => null,
         'lang_final' => null,
@@ -94,13 +92,7 @@ class DuckPhp extends App
         parent::prepareComponents();
 
         if ($this->options['cli_command_with_app']) {
-            array_unshift($this->options['cli_command_classes'], static::class);
-        }
-        if ($this->options['cli_command_with_common']) {
-            array_push($this->options['cli_command_classes'], Command::class);
-        }
-        if ($this->options['cli_command_with_fast_installer']) {
-            array_push($this->options['cli_command_classes'], FastInstaller::class);
+            $this->options['cli_command_classes'] = array_merge([static::class => true], $this->options['cli_command_classes']);
         }
     }
     protected function initComponents(array $options, object $context = null): void
