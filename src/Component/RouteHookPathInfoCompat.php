@@ -55,9 +55,9 @@ class RouteHookPathInfoCompat extends ComponentBase
         ////////////////////////////////////
         $flag = false;
         $url = $this->filteRewrite($url, $flag);
-        $input_path = (string) parse_url($url, PHP_URL_PATH);
+        $input_path = (string) parse_url((string)$url, PHP_URL_PATH);
         $input_get = [];
-        parse_str((string) parse_url($url, PHP_URL_QUERY), $input_get);
+        parse_str((string) parse_url((string)$url, PHP_URL_QUERY), $input_get);
         
         $blocks = explode('/', $input_path);
         if (isset($blocks[0])) {

@@ -128,6 +128,7 @@ class FinderForController extends ComponentBase
     protected function getControllerMethods(string $full_class, ?callable $adjuster = null): array
     {
         try {
+            // @phpstan-ignore-next-line
             $ref = new \ReflectionClass($full_class);
             $methods = $ref->getMethods(\ReflectionMethod::IS_PUBLIC);
         } catch (\ReflectionException $ex) {

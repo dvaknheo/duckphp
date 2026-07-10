@@ -151,7 +151,7 @@ EOT;
         
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
-            $data = file_get_contents(''.$file);
+            $data = (string)file_get_contents(''.$file);
             $data = $this->filteText($data, $is_in_full, $short_file_name);
             $flag = file_put_contents($dest_file, $data);
             
@@ -210,7 +210,7 @@ EOT;
     }
     protected function filteMacro(string $data): string
     {
-        $data = preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
+        $data = (string)preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
         return $data;
     }
 
@@ -220,7 +220,7 @@ EOT;
         //    return $data;
         //}
         $str_header = "\$namespace = '$namespace';";
-        $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
+        $data = (string)preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
         $data = str_replace("YourProjectName\\", "{$namespace}\\", $data);
         
         return $data;
@@ -230,7 +230,7 @@ EOT;
         $level = substr_count($short_file_name, DIRECTORY_SEPARATOR);
         $subdir = str_repeat('../', $level);
         $str_header = "require_once(__DIR__.'/{$subdir}{$autoload_file}');";
-        $data = preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
+        $data = (string)preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
         return $data;
     }
     

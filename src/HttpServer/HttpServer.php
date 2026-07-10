@@ -156,7 +156,7 @@ class HttpServer
     {
         echo "DuckPhp: Wellcome, for more info , use --help \n";
     }
-    protected function showHelp(): void
+    protected function showHelp()
     {
         $doc = "Usage :\n\n";
         echo $doc;

@@ -149,6 +149,7 @@ EOT;
     }
     protected function getCommandsByClass(string $class, string $method_prefix, string $phase): array
     {
+        // @phpstan-ignore-next-line
         $ref = new \ReflectionClass($class);
         if ($ref->hasMethod('getCommandsOfThis')) {
             return (new $class)->getCommandsOfThis($method_prefix, $phase);

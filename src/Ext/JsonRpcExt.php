@@ -109,7 +109,7 @@ class JsonRpcExt extends ComponentBase
         $method = array_pop($a);
         $service = implode("\\", $a);
         try {
-            $service = $this->adjustService($service);
+            $service = $this->adjustService($service) ?? "";
             $args = $input['params'] ?? [];
             $ret['result'] = $service::_()->$method(...$args);
         } catch (\Throwable $ex) {
@@ -160,7 +160,7 @@ class JsonRpcExt extends ComponentBase
         
         $data = curl_exec($ch);
         curl_close($ch);
-        return $data !== false?$data:'';
+        return (string)($data !== false?$data:'');
     }
     protected function prepare_token($ch)
     {

@@ -316,7 +316,7 @@ and more ...\n";
         }
         App::Phase($current_phase);
     }
-    protected function doInstallAction(array $input_options): void
+    protected function doInstallAction(array $input_options)
     {
         if (!($this->args['skip_sql'] ?? false)) {
             SqlDumper::_()->install($this->args['force'] ?? false);
