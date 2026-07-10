@@ -25,7 +25,7 @@ class Cache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
     {
         return false;
     }
-    public function clear()
+    public function clear(): void
     {
         return;
     }

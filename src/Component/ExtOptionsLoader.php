@@ -39,7 +39,7 @@ class ExtOptionsLoader extends ComponentBase
         }
         $this->bumpOptions($ext_options);
     }
-    public function bumpOptions($ext_options)
+    public function bumpOptions(array $ext_options): void
     {
         if (!$this->options['data_file_bump_allowed']) {
             return;
@@ -76,7 +76,7 @@ class ExtOptionsLoader extends ComponentBase
         $all_ext_options = json_decode(''.file_get_contents($full_file), true);
         self::$all_ext_options = $all_ext_options;
     }
-    public function saveData($options)
+    public function saveData(array $options): void
     {
         $full_file = $this->get_ext_options_file();
         $class = App::Current()->getOverridingClass(); // todo phasename

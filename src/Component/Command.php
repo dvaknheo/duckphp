@@ -15,7 +15,7 @@ class Command extends ComponentBase
     /**
      * show version
      */
-    public function command_version()
+    public function command_version(): void
     {
         echo App::Current()->version();
         echo "\n";
@@ -23,7 +23,7 @@ class Command extends ComponentBase
     /**
      * show this help.
      */
-    public function command_help()
+    public function command_help(): void
     {
         echo "Welcome to Use DuckPhp ,version: ";
         echo App::Current()->version();
@@ -98,7 +98,7 @@ EOT;
     /**
      * switch debug mode
      */
-    public function command_debug($off = false)
+    public function command_debug(bool $off = false): void
     {
         $options = ExtOptionsLoader::_()->options;
         

@@ -65,11 +65,11 @@ class DbManager extends ComponentBase
             $this->database_config_list = $database_list ?? $this->database_config_list;
         }
     }
-    public function getDatabaseConfigList()
+    public function getDatabaseConfigList(): array
     {
         return $this->database_config_list;
     }
-    public function getDatabaseDriver()
+    public function getDatabaseDriver(): string
     {
         if ($this->options['database_driver']) {
             return $this->options['database_driver'];
@@ -179,7 +179,7 @@ class DbManager extends ComponentBase
         return $this->_Db(static::TAG_READ);
     }
     
-    public function _DbCloseAll()
+    public function _DbCloseAll(): void
     {
         foreach ($this->databases as $tag => $db) {
             $db->close();

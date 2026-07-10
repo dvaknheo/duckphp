@@ -75,18 +75,18 @@ class Pager extends ComponentBase implements PagerInterface
         $this->options['page_size'] = $new_value;
         return $this->options['page_size'];
     }
-    public function getPageCount($total): int
+    public function getPageCount(int $total): int
     {
         return (int)ceil($total / $this->options['page_size']);
     }
-    public function getUrl($page)
+    public function getUrl($page): string
     {
         if ($this->options['rewrite']) {
             return ($this->options['rewrite'])($page);
         }
         return $this->defaultGetUrl($page);
     }
-    public function defaultGetUrl($page)
+    public function defaultGetUrl(int $page): string
     {
         $page_key = $this->options['page_key'];
         $current_url = $this->options['url'] ?? $this->getDefaultUrl();
@@ -94,7 +94,7 @@ class Pager extends ComponentBase implements PagerInterface
         $flag = strpos($url, '{'.$page_key.'}');
         if ($flag !== false) {
             $page = $page != 1?$page:'';
-            return str_replace('{'.$page_key.'}', $page, $url);
+            return str_replace('{'.$page_key.'}', (string)$page, $url);
         }
         $path = (string) parse_url($url, PHP_URL_PATH);
         $query = (string) parse_url($url, PHP_URL_QUERY);

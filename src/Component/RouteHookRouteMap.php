@@ -35,7 +35,7 @@ class RouteHookRouteMap extends ComponentBase
         Route::_()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
         Route::_()->addRouteHook([static::class,'AppendHook'], 'append-outter');
     }
-    public function compile($pattern_url, $rules = [])
+    public function compile(string $pattern_url, array $rules = []): string
     {
         $pattern_url = substr($pattern_url, 1);
         $ret = preg_replace_callback('/\{(\w+)(:([^\}]+))?(\??)\}/', function ($matches) use ($rules) {

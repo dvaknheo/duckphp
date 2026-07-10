@@ -37,7 +37,7 @@ class PhaseProxy
         App::Phase($phase);
         return $ret;
     }
-    public function self()
+    public function self(): object
     {
         return $this->getObjectForPhaseProxy();
     }

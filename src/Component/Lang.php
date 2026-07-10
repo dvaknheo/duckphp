@@ -67,7 +67,7 @@ class Lang extends ComponentBase
         }
         return $configs[$str];
     }
-    public function lang($str, $args = [])
+    public function lang(string $str, array $args = []): string
     {
         $newstr = $this->loadLanguage($str);
         return $this->format($newstr ?? $str, $args);

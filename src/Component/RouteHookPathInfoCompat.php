@@ -29,8 +29,9 @@ class RouteHookPathInfoCompat extends ComponentBase
     {
         return static::_()->onURL($url);
     }
-    public function onUrl($url = null)
+    public function onUrl(?string $url = null): string
     {
+        if ($url === null) { return ''; }
         if (strlen($url) > 0 && '/' == substr($url, 0, 1)) {
             return $url;
         };
@@ -49,7 +50,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         //if (strlen($path_info)) {
         //    $path = substr($path, 0, 0 - strlen($path_info));
         //}
-        if ($url === null || $url === '') {
+        if ($url === '') {
             return $path;
         }
         ////////////////////////////////////

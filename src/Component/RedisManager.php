@@ -64,7 +64,7 @@ class RedisManager extends ComponentBase
     {
         return static::_()->getServer($tag);
     }
-    public function getRedisConfigList()
+    public function getRedisConfigList(): array
     {
         return $this->redis_config_list;
     }
@@ -75,7 +75,7 @@ class RedisManager extends ComponentBase
         }
         return $this->pool[$tag];
     }
-    public function createServer($config)
+    public function createServer(array $config): object
     {
         $redis = new Redis();
         $redis->connect($config['host'], (int)$config['port']);
