@@ -59,7 +59,7 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
         'path_test'=>'test',
         'namespace_test'=>'zef',
     ];
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         parent::initOptions($options);
 
