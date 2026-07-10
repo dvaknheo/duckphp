@@ -349,14 +349,19 @@ trait Route_Helper
     protected function getPathInfo(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        
+        $path = $my_server['PATH_INFO'] ?? null;
         if ($this->options['controller_fix_mistake_path_info']) {
             if (empty($my_server['PATH_INFO']) && isset($my_server['SCRIPT_NAME']) && $my_server['SCRIPT_NAME'] === '/index.php') {
                 $path = parse_url($my_server['REQUEST_URI'], PHP_URL_PATH);
-                $my_server['PATH_INFO'] = $path;
+                $path = ($path === '/index.php') ? '':$path;
+                if (defined('__SUPERGLOBAL_CONTEXT')) {
+                    $sg = (__SUPERGLOBAL_CONTEXT)();
+                    $sg->_SERVER['PATH_INFO'] = $path;
+                } else {
+                    $_SERVER['PATH_INFO'] = $path;
+                }
             }
         }
-        
         return $my_server['PATH_INFO'] ?? '';
     }
     protected function setPathInfo(string $path_info): void
@@ -449,6 +454,11 @@ trait Route_UrlManager
         $controller_resource_prefix = $this->options['controller_resource_prefix'];
         $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
         if (!$controller_resource_prefix) {
+            if (isset($url) && '/' !== substr($url, 0, 1)) {
+                $base = dirname($this->_Url(''));
+                $base = ($base === '/' | $base === '\\')?'':$base;
+                $url = $base.'/'.$url;
+            }
             return $this->_Url($url);
         }
         //
