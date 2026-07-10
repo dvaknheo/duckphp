@@ -12,6 +12,7 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
+        'is_debug'=>true,
         'path' => __DIR__ . '/../../',
         //'path_info_compact_enable' => false,
         
@@ -25,7 +26,7 @@ class App extends DuckPhp
         //...
     ];
     //@override
-    public function onPrepare()
+    public function onPrepare(): void
     {
         parent::onPrepare();
         // your code here
