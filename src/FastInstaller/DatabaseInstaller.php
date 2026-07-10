@@ -16,7 +16,7 @@ class DatabaseInstaller extends ComponentBase
     public $options = [
         //
     ];
-    public function install($force = false)
+    public function install(bool $force = false): bool
     {
         //这里判断驱动
         $my_driver = App::Current()->options['database_driver'] ?? '';

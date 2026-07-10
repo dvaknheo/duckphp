@@ -141,7 +141,7 @@ class HttpServer
         }
         return $this->runHttpServer();
     }
-    public function getPid()
+    public function getPid(): int
     {
         return $this->pid;
     }

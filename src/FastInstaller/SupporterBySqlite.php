@@ -11,7 +11,7 @@ use DuckPhp\Core\App;
 class SupporterBySqlite extends Supporter
 {
     /////////////////////////////////
-    public function getRuntimePath()
+    public function getRuntimePath(): string
     {
         //TODO to helper ,PathOfRuntime
         $path = static::SlashDir(App::Root()->options['path']);
@@ -51,7 +51,7 @@ class SupporterBySqlite extends Supporter
         return $options;
     }
     //////////////////
-    public function getAllTable()
+    public function getAllTable(): array
     {
         $tables = [];
         $data = DbManager::Db()->fetchAll('SELECT tbl_name from sqlite_master where type ="table"');
@@ -63,7 +63,7 @@ class SupporterBySqlite extends Supporter
         }
         return $tables;
     }
-    public function getSchemeByTable($table)
+    public function getSchemeByTable(string $table): string
     {
         $sql = '';
         //try {
@@ -75,7 +75,7 @@ class SupporterBySqlite extends Supporter
         
         return $sql;
     }
-    public function getInstallDesc()
+    public function getInstallDesc(): string
     {
         $path = $this->getRuntimePath();
         $desc = <<<EOT

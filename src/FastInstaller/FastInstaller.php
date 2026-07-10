@@ -176,11 +176,11 @@ and more ...\n";
     {
         EventManager::FireEvent([App::Phase(), 'OnInstallRemove']);
     }
-    public function forceFail()
+    public function forceFail(): void
     {
         $this->is_failed = true;
     }
-    public function getCurrentInput()
+    public function getCurrentInput(): array
     {
         return $this->current_input_options;
     }

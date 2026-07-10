@@ -33,7 +33,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         throw new \Exception("No Impelment");
     }
-    public function logout()
+    public function logout(): void
     {
         throw new \Exception("No Impelment");
     }

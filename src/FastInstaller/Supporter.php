@@ -23,7 +23,7 @@ class Supporter extends ComponentBase
     {
         return static::_()->getSupporter();
     }
-    public function getSupporter()
+    public function getSupporter(): self
     {
         $driver = DbManager::_()->getDatabaseDriver();
         if (!isset($this->options['database_driver_supporter_map'][$driver])) {
@@ -34,7 +34,7 @@ class Supporter extends ComponentBase
     }
     
     ///////////////
-    public function getInstallDesc()
+    public function getInstallDesc(): string
     {
         throw new \Exception('No Impelement');
     }
@@ -63,11 +63,11 @@ class Supporter extends ComponentBase
         throw new \Exception('No Impelement');
     }
     
-    public function getAllTable()
+    public function getAllTable(): array
     {
         throw new \Exception('No Impelement');
     }
-    public function getSchemeByTable($table)
+    public function getSchemeByTable(string $table): string
     {
         throw new \Exception('No Impelement');
     }

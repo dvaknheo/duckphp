@@ -23,7 +23,7 @@ use DuckPhp\Core\View;
 trait AppHelperTrait
 {
     use SingletonTrait;
-    public static function CallException($ex)
+    public static function CallException(\Throwable $ex)
     {
         return ExceptionManager::CallException($ex);
     }
@@ -31,11 +31,11 @@ trait AppHelperTrait
     {
         return EventManager::RemoveEvent($event, $callback);
     }
-    public static function isRunning()
+    public static function isRunning(): bool
     {
         return Runtime::_()->isRunning();
     }
-    public static function isInException()
+    public static function isInException(): bool
     {
         return Runtime::_()->isInException();
     }
@@ -43,11 +43,11 @@ trait AppHelperTrait
     {
         return Route::_()->addRouteHook($callback, $position, $once);
     }
-    public static function replaceController($old_class, $new_class)
+    public static function replaceController(string $old_class, string $new_class)
     {
         return Route::_()->replaceController($old_class, $new_class);
     }
-    public static function getViewData()
+    public static function getViewData(): array
     {
         return View::_()->getViewData();
     }

@@ -38,7 +38,7 @@ class Db implements DbInterface
         [$driver,$_] = explode(":", $config['dsn']);
         $this->driver = $driver;
     }
-    public function close()
+    public function close(): void
     {
         $this->rowCount = 0;
         $this->pdo = null;
@@ -162,7 +162,7 @@ class Db implements DbInterface
         $this->rowCount = $this->success ? 0 : $sth->rowCount();
         return $this->success;
     }
-    public function rowCount()
+    public function rowCount(): int
     {
         return $this->rowCount;
     }

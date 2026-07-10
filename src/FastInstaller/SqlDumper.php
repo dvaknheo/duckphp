@@ -46,7 +46,7 @@ class SqlDumper extends ComponentBase
         
         return true;
     }
-    public function install($force = false)
+    public function install(bool $force = false): void
     {
         $file = DbManager::_()->getDatabaseDriver().'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);

@@ -36,15 +36,15 @@ trait ControllerHelperTrait
         return Configer::_()->_Config($file_basename, $key, $default);
     }
     ///////////
-    public static function getRouteCallingClass()
+    public static function getRouteCallingClass(): ?string
     {
         return Route::_()->getRouteCallingClass();
     }
-    public static function getRouteCallingMethod()
+    public static function getRouteCallingMethod(): ?string
     {
         return Route::_()->getRouteCallingMethod();
     }
-    public static function PathInfo()
+    public static function PathInfo(): ?string
     {
         return Route::PathInfo();
     }
@@ -52,7 +52,7 @@ trait ControllerHelperTrait
     {
         return Route::_()->_Url($url);
     }
-    public static function Domain($use_scheme = false)
+    public static function Domain(bool $use_scheme = false): string
     {
         return Route::_()->_Domain($use_scheme);
     }

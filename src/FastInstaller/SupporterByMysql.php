@@ -30,7 +30,7 @@ class SupporterByMysql extends Supporter
         return $options;
     }
     //////////////////
-    public function getAllTable()
+    public function getAllTable(): array
     {
         $tables = [];
         $data = DbManager::Db()->fetchAll('SHOW TABLES');
@@ -39,7 +39,7 @@ class SupporterByMysql extends Supporter
         }
         return $tables;
     }
-    public function getSchemeByTable($table)
+    public function getSchemeByTable(string $table): string
     {
         //try {
         $record = DbManager::Db()->fetch("SHOW CREATE TABLE `$table`");
@@ -52,7 +52,7 @@ class SupporterByMysql extends Supporter
     }
     
 
-    public function getInstallDesc()
+    public function getInstallDesc(): string
     {
         $desc = <<<EOT
 ----

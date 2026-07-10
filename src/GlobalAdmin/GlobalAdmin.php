@@ -35,7 +35,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     {
         throw new \Exception("No Impelment");
     }
-    public function logout()
+    public function logout(): void
     {
         throw new \Exception("No Impelment");
     }
@@ -56,7 +56,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     {
         return $this->service()->doIsSuper($this->id(), $class, $method, $url);
     }
-    public function isSuper()
+    public function isSuper(): bool
     {
         return $this->service()->doIsSuper($this->id());
     }

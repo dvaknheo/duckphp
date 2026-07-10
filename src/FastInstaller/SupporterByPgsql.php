@@ -30,7 +30,7 @@ class SupporterByPgsql extends Supporter
         return $options;
     }
     //////////////////
-    public function getAllTable()
+    public function getAllTable(): array
     {
         // 这里要改动过
         $tables = [];
@@ -40,7 +40,7 @@ class SupporterByPgsql extends Supporter
         }
         return $tables;
     }
-    public function getSchemeByTable($table)
+    public function getSchemeByTable(string $table): string
     {
         //这里要改动过
         //try {
@@ -54,7 +54,7 @@ class SupporterByPgsql extends Supporter
     }
     
 
-    public function getInstallDesc()
+    public function getInstallDesc(): string
     {
         $desc = <<<EOT
 ----

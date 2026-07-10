@@ -16,7 +16,7 @@ class RedisInstaller extends ComponentBase
     public $options = [
         //
     ];
-    public function install($force = false)
+    public function install(bool $force = false)
     {
         $use_redis = App::Current()->options['use_redis'] ?? false;
         $use_redis = $use_redis || (App::Current()->options['local_redis'] ?? false);

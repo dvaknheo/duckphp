@@ -7,7 +7,7 @@ namespace DuckPhp\Db;
 
 trait DbAdvanceTrait
 {
-    public function quoteIn($array)
+    public function quoteIn(array $array): string
     {
         if (empty($array)) {
             return 'NULL';
@@ -20,7 +20,7 @@ trait DbAdvanceTrait
         );
         return implode(',', $array);
     }
-    public function quoteSetArray($array)
+    public function quoteSetArray(array $array): string
     {
         $a = array();
         foreach ($array as $k => $v) {
@@ -28,7 +28,7 @@ trait DbAdvanceTrait
         }
         return implode(',', $a);
     }
-    public function quoteAndArray($array)
+    public function quoteAndArray(array $array): string
     {
         $a = array();
         foreach ($array as $k => $v) {
@@ -36,7 +36,7 @@ trait DbAdvanceTrait
         }
         return implode('and ', $a);
     }
-    public function qouteInsertArray($array)
+    public function qouteInsertArray(array $array): string
     {
         if (empty($array)) {
             return '';
