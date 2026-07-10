@@ -46,7 +46,7 @@ class MiniRoute extends ComponentBase
         ($callback)();
         return true;
     }
-    protected function pathToClassAndMethod($path_info)
+    protected function pathToClassAndMethod(string $path_info): ?array
     {
         if ($this->options['controller_url_prefix'] ?? false) {
             $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
@@ -150,12 +150,12 @@ class MiniRoute extends ComponentBase
     {
         return isset($path_info)?static::_()->setPathInfo($path_info):static::_()->getPathInfo();
     }
-    protected function getPathInfo()
+    protected function getPathInfo(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         return $my_server['PATH_INFO'] ?? '';
     }
-    protected function setPathInfo($path_info)
+    protected function setPathInfo(string $path_info): void
     {
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             $sg = (__SUPERGLOBAL_CONTEXT)();
@@ -255,7 +255,7 @@ class MiniRoute extends ComponentBase
         }
         return $ret;
     }
-    protected function getUrlBasePath()
+    protected function getUrlBasePath(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.

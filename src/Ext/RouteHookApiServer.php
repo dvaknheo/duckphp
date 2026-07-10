@@ -53,7 +53,7 @@ class RouteHookApiServer extends ComponentBase
         
         return true;
     }
-    protected function onMissing()
+    protected function onMissing(): bool
     {
         if ($this->options['api_server_404_as_exception']) {
             throw new \ReflectionException("404", -1);
@@ -71,7 +71,7 @@ class RouteHookApiServer extends ComponentBase
             'error_message' => $e->getMessage(),
         ]);
     }
-    protected function getComponenetNamespace($namespace_key)
+    protected function getComponenetNamespace(string $namespace_key): string
     {
         $namespace = $this->options['namespace'];
         $namespace_componenet = $this->options[$namespace_key];
@@ -82,7 +82,7 @@ class RouteHookApiServer extends ComponentBase
         
         return $namespace_componenet;
     }
-    protected function getObjectAndMethod($path_info)
+    protected function getObjectAndMethod(string $path_info): ?array
     {
         $path_info = trim($path_info, '/');
         $class_array = explode('.', $path_info);
@@ -112,7 +112,7 @@ class RouteHookApiServer extends ComponentBase
         return [$object,$method];
     }
     
-    protected function getInputs($path_info)
+    protected function getInputs(string $path_info): array
     {
         if ($this->context()->_IsDebug()) {
             $my_request = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_REQUEST : $_REQUEST;
@@ -123,7 +123,7 @@ class RouteHookApiServer extends ComponentBase
         }
         return $inputs;
     }
-    protected function exitJson($ret, $exit = true)
+    protected function exitJson($ret, bool $exit = true): void
     {
         foreach ($this->headers as $k => $v) {
             SystemWrapper::header("$k: $v");
@@ -137,7 +137,7 @@ class RouteHookApiServer extends ComponentBase
         }
         echo json_encode($ret, $flag);
     }
-    protected function callAPI($object, $method, $input)
+    protected function callAPI(object $object, string $method, array $input)
     {
         $f = [
             'bool' => FILTER_VALIDATE_BOOLEAN  ,

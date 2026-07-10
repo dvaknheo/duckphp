@@ -29,7 +29,7 @@ class RouteHookDirectoryMode extends ComponentBase
         Route::_()->setUrlHandler([static::class,'Url']);
     }
     
-    protected function adjustPathinfo($basepath, $path_info)
+    protected function adjustPathinfo(string $basepath, string $path_info): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $input_path = parse_url($my_server['REQUEST_URI'], PHP_URL_PATH);

@@ -62,15 +62,15 @@ class MyMiddlewareManager extends ComponentBase
         $this->onPostMiddleware();
         return $this->defaultResult;
     }
-    protected function runSelfMiddleware()
+    protected function runSelfMiddleware(): string
     {
         $this->defaultResult = Route::_()->defaultRunRouteCallback();
         return $this->getResponse();
     }
-    protected function onPostMiddleware()
+    protected function onPostMiddleware(): void
     {
     }
-    protected function getResponse()
+    protected function getResponse(): string
     {
         return '';
     }

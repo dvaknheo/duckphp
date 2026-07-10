@@ -64,7 +64,7 @@ Well Come to use DuckPhp Installer ;
 
 EOT;
     }
-    protected function getNameSpaceByComposer($path)
+    protected function getNameSpaceByComposer(string $path): string
     {
         $path = rtrim(''.realpath($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $file = $path.'composer.json';
@@ -78,7 +78,7 @@ EOT;
         $namespace = $psr['src/'] ?? $psr['src'] ?? '';
         return $namespace;
     }
-    protected function getNamespaceByConsole()
+    protected function getNamespaceByConsole(): string
     {
         $default = ['namespace' => 'Demo'];
         $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
@@ -120,7 +120,7 @@ EOT;
         }
         HttpServer::RunQuickly($options);
     }
-    protected function dumpDir($source, $dest, $force = false)
+    protected function dumpDir(string $source, string $dest, bool $force = false): void
     {
         @mkdir($dest);
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
@@ -164,7 +164,7 @@ EOT;
         //copy($source.'config/setting.sample.php', $dest.'config/setting.php');
         echo  "\nDone.\n";
     }
-    protected function checkFilesExist($source, $dest, $files)
+    protected function checkFilesExist(string $source, string $dest, array $files): bool
     {
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
@@ -176,7 +176,7 @@ EOT;
         }
         return true;
     }
-    protected function createDirectories($dest, $files)
+    protected function createDirectories(string $dest, array $files): bool
     {
         foreach ($files as $file => $short_file_name) {
             // mkdir.
@@ -197,7 +197,7 @@ EOT;
         return true;
     }
     
-    protected function filteText($data, $is_in_full, $short_file_name)
+    protected function filteText(string $data, bool $is_in_full, string $short_file_name): string
     {
         $autoload_file = $this->options['autoloader'];
         $data = $this->changeHeadFile($data, $short_file_name, $autoload_file);
@@ -208,13 +208,13 @@ EOT;
         }
         return $data;
     }
-    protected function filteMacro($data)
+    protected function filteMacro(string $data): string
     {
         $data = preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
         return $data;
     }
 
-    protected function filteNamespace($data, $namespace)
+    protected function filteNamespace(string $data, string $namespace): string
     {
         //if ($namespace === 'ProjectNameTemplate' || $namespace === '') {
         //    return $data;
@@ -225,7 +225,7 @@ EOT;
         
         return $data;
     }
-    protected function changeHeadFile($data, $short_file_name, $autoload_file)
+    protected function changeHeadFile(string $data, string $short_file_name, string $autoload_file): string
     {
         $level = substr_count($short_file_name, DIRECTORY_SEPARATOR);
         $subdir = str_repeat('../', $level);

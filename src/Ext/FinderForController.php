@@ -60,7 +60,7 @@ class FinderForController extends ComponentBase
         return $controller_url_prefix.$first. '/' .$last.$controller_path_ext;
     }
     
-    protected function doControllerClassAdjust($first, $method)
+    protected function doControllerClassAdjust(string $first, string $method): array
     {
         $adj = is_array(Route::_()->options['controller_class_adjust']) ? Route::_()->options['controller_class_adjust'] : explode(';', Route::_()->options['controller_class_adjust']);
         if (!$adj) {
@@ -83,7 +83,7 @@ class FinderForController extends ComponentBase
         }
         return [$first,$method];
     }
-    protected function getAllControllerClasses()
+    protected function getAllControllerClasses(): array
     {
         $prefix = Route::_()->getControllerNamespacePrefix();
         $classToTest[] = Route::_()->options['controller_welcome_class'].Route::_()->options['controller_class_postfix'];
@@ -125,7 +125,7 @@ class FinderForController extends ComponentBase
         }
         return $ret;
     }
-    protected function getControllerMethods($full_class, $adjuster = null)
+    protected function getControllerMethods(string $full_class, ?callable $adjuster = null): array
     {
         try {
             $ref = new \ReflectionClass($full_class);

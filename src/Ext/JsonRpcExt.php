@@ -123,7 +123,7 @@ class JsonRpcExt extends ComponentBase
         return $ret;
     }
     /////////////////////
-    protected function adjustService($service)
+    protected function adjustService(string $service): ?string
     {
         $namespace = trim($this->options['jsonrpc_service_namespace'], '\\');
         //$namespace=$namespace?$namespace."\\":'';
@@ -137,7 +137,7 @@ class JsonRpcExt extends ComponentBase
         }
         return $service;
     }
-    protected function curl_file_get_contents($url, $post)
+    protected function curl_file_get_contents($url, $post): string
     {
         $ch = curl_init();
         

@@ -42,7 +42,7 @@ class CallableView extends View
      * @param  string $func
      * @return ?callable
      */
-    protected function viewToCallback($func)
+    protected function viewToCallback(?string $func)
     {
         $ret = null;
         $func = str_replace('/', '_', $this->options['callable_view_prefix'].$func);
