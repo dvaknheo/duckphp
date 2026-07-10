@@ -8,7 +8,7 @@ use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
 {
-    public function testA()
+    public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(Route::class);
         
@@ -241,6 +241,17 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_()->bind('/date')->run();
         Route::_()->bind('/child/date')->run();
         
+        ////////////////
+        $__SERVER = $_SERVER;
+        echo"===========xxxxxxxxxxxxxx=====================";
+        Route::_(new Route())->init($options);
+        Route::_()->options['controller_fix_mistake_path_info']=true;
+        SuperGlobal::_()->reInit(['superglobal_auto_define'=>true],null);
+        SuperGlobal::_()->_SERVER['REQUEST_URI']='/index.php';
+        SuperGlobal::_()->_SERVER['PATH_INFO'];
+        SuperGlobal::_()->_SERVER['SCRIPT_NAME'] = '/index.php';
+        echo Route::_()->_PathInfo();
+        $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End();
         return;
     }

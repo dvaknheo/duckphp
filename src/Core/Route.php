@@ -362,7 +362,7 @@ trait Route_Helper
                 }
             }
         }
-        return $my_server['PATH_INFO'] ?? '';
+        return $path ?? '';
     }
     protected function setPathInfo(string $path_info): void
     {
