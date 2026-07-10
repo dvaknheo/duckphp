@@ -120,7 +120,7 @@ class RouteHookRewrite extends ComponentBase
         }
         return null;
     }
-    protected function changeRouteUrl($url)
+    protected function changeRouteUrl(string $url): void
     {
         $url = (string)$url;
         $path = parse_url($url, PHP_URL_PATH);
@@ -135,7 +135,7 @@ class RouteHookRewrite extends ComponentBase
             $_GET = $input_get;
         }
     }
-    protected function doHook($path_info)
+    protected function doHook(string $path_info): ?bool
     {
         // $path_info = Route::_()::PathInfo();
         $path_info = ltrim($path_info, '/');

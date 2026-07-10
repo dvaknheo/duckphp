@@ -168,7 +168,7 @@ class Route extends ComponentBase
     }
     public function defaultRunRouteCallback($path_info = null)
     {
-        $callback = $this->defaultGetRouteCallback($path_info);
+        $callback = $this->defaultGetRouteCallback((string)$path_info);
         if (null === $callback) {
             return false;
         }
@@ -179,7 +179,7 @@ class Route extends ComponentBase
     {
         $this->route_error = '';
         
-        list($full_class, $method) = $this->pathToClassAndMethod($path_info);
+        list($full_class, $method) = $this->pathToClassAndMethod((string)$path_info);
         if ($full_class === null) {
             return null;
         }

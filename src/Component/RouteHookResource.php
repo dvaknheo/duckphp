@@ -106,7 +106,7 @@ class RouteHookResource extends ComponentBase
         
         $this->copy_dir($source, $dest, $force, $info);
     }
-    protected function get_dest_dir($path_parent, $path)
+    protected function get_dest_dir(string $path_parent, string $path): string
     {
         $new_dir = rtrim($path_parent, '/');
         $b = explode('/', trim($path, '/'));
@@ -159,7 +159,7 @@ class RouteHookResource extends ComponentBase
         }
         //echo  "\nDone.\n";
     }
-    protected function check_files_exist($source, $dest, $files, &$info)
+    protected function check_files_exist(string $source, string $dest, array $files, string &$info): bool
     {
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
@@ -170,7 +170,7 @@ class RouteHookResource extends ComponentBase
         }
         return false;
     }
-    protected function create_directories($dest, $files, &$info)
+    protected function create_directories(string $dest, array $files, string &$info): bool
     {
         foreach ($files as $file => $short_file_name) {
             // mkdir.

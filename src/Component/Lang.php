@@ -41,7 +41,7 @@ class Lang extends ComponentBase
         }
         App::Current()->options['lang_final'] = $this->options['lang_final'];
     }
-    protected function getSentenceFromConfig($language)
+    protected function getSentenceFromConfig(string $language): ?array
     {
         if (!empty($this->options['lang_simple_mode_only_sentences'])) {
             return $this->options['lang_simple_mode_only_sentences'][$language] ?? null;
@@ -49,7 +49,7 @@ class Lang extends ComponentBase
         $configs = Configer::_()->_Config($this->options['lang_file_path'].basename($language), null, null);
         return $configs;
     }
-    protected function loadLanguage($str)
+    protected function loadLanguage(string $str): ?string
     {
         $language = $this->options['lang_final'];
         if (!isset($language)) {
@@ -72,7 +72,7 @@ class Lang extends ComponentBase
         $newstr = $this->loadLanguage($str);
         return $this->format($newstr ?? $str, $args);
     }
-    protected function format($str, $args)
+    protected function format(string $str, array $args): string
     {
         $a = [];
         foreach ($args as $k => $v) {

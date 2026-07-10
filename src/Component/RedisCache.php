@@ -21,7 +21,7 @@ class RedisCache extends ComponentBase //implements Psr\SimpleCache\CacheInterfa
         }
     }
     //////////////////////////////
-    protected function redis()
+    protected function redis(): \Redis
     {
         return RedisManager::Redis();
     }

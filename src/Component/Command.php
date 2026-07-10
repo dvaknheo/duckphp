@@ -115,7 +115,7 @@ EOT;
         }
     }
     //////////////////
-    protected function getCommandListInfo()
+    protected function getCommandListInfo(): string
     {
         $str = '';
         $group = Console::_()->options['cli_command_group'];
@@ -135,7 +135,7 @@ EOT;
         }
         return $str;
     }
-    protected function getCommandsByClasses($classes, $method_prefix, $phase)
+    protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
     {
         $ret = [];
         foreach ($classes as $class) {
@@ -147,7 +147,7 @@ EOT;
         }
         return $ret;
     }
-    protected function getCommandsByClass($class, $method_prefix, $phase)
+    protected function getCommandsByClass(string $class, string $method_prefix, string $phase): array
     {
         $ref = new \ReflectionClass($class);
         if ($ref->hasMethod('getCommandsOfThis')) {
@@ -166,7 +166,7 @@ EOT;
         }
         return $ret;
     }
-    protected function getCommandsByClassReflection($ref, $method_prefix)
+    protected function getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix): array
     {
         $methods = $ref->getMethods();
         $ret = [];

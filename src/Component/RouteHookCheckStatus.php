@@ -60,14 +60,14 @@ class RouteHookCheckStatus extends ComponentBase
             return true;
         }
     }
-    protected function showMaintain()
+    protected function showMaintain(): void
     {
         $str = <<<EOT
 (Todo: a beautiful page ) Maintaining. <!-- set options['error_maintain'] to override -->
 EOT;
         echo $str;
     }
-    protected function showNeedInstall()
+    protected function showNeedInstall(): void
     {
         $str = <<<EOT
 <pre>

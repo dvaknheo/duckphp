@@ -119,7 +119,7 @@ class DbManager extends ComponentBase
         }
         return $this->getDatabase($tag);
     }
-    protected function getDatabase($tag)
+    protected function getDatabase($tag): object
     {
         if (isset($this->db_before_get_object_handler)) {
             ($this->db_before_get_object_handler)($this, $tag);
@@ -135,14 +135,14 @@ class DbManager extends ComponentBase
         }
         return $this->databases[$tag];
     }
-    protected function getRuntimePath()
+    protected function getRuntimePath(): string
     {
         //TODO to helper ,PathOfRuntime
         $path = static::SlashDir(App::Root()->options['path']);
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
-    protected function createDatabaseObject($db_config)
+    protected function createDatabaseObject(array $db_config): object
     {
         $last_cwd = null;
         

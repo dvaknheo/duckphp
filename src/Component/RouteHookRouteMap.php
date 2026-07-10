@@ -46,7 +46,7 @@ class RouteHookRouteMap extends ComponentBase
         $ret = '~^'.$ret.'$ # '.$pattern_url.'~x';
         return $ret;
     }
-    protected function compileMap($map, $namespace_controller)
+    protected function compileMap(array $map, string $namespace_controller): array
     {
         $ret = [];
         foreach ($map as $pattern_url => $callback) {
@@ -86,7 +86,7 @@ class RouteHookRouteMap extends ComponentBase
         ];
         return $ret;
     }
-    protected function matchRoute($pattern_url, $path_info, &$parameters)
+    protected function matchRoute(string $pattern_url, string $path_info, &$parameters): bool
     {
         $firstWord = substr($pattern_url, 0, 1);
         if ($firstWord === '^') {
@@ -115,7 +115,7 @@ class RouteHookRouteMap extends ComponentBase
         }
         return ($pattern_url === $path_info) ? true:false;
     }
-    protected function getRouteHandelByMap($routeMap, $path_info)
+    protected function getRouteHandelByMap(array $routeMap, string $path_info)
     {
         $parameters = [];
         $path_info = ltrim($path_info, '/');
@@ -132,7 +132,7 @@ class RouteHookRouteMap extends ComponentBase
         }
         return null;
     }
-    protected function adjustCallback($callback, $parameters)
+    protected function adjustCallback($callback, array $parameters)
     {
         Route::_()->setParameters($parameters);
         if (is_string($callback) && !\is_callable($callback)) {
@@ -175,7 +175,7 @@ class RouteHookRouteMap extends ComponentBase
         
         return $this->doHookByMap($path_info, $map);
     }
-    protected function doHookByMap($path_info, $route_map)
+    protected function doHookByMap(string $path_info, array $route_map): bool
     {
         $callback = $this->getRouteHandelByMap($route_map, $path_info);
         if (!$callback) {

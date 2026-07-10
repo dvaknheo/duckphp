@@ -21,7 +21,7 @@ class PhaseProxy
         $container_class = $container_class ?? App::Phase();
         return new static($container_class, $overriding);
     }
-    protected function getObjectForPhaseProxy()
+    protected function getObjectForPhaseProxy(): object
     {
         return is_object($this->overriding) ? $this->overriding : $this->overriding::_();
     }

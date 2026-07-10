@@ -31,12 +31,12 @@ class Pager extends ComponentBase implements PagerInterface
         return static::_()->render($total, $options);
     }
     
-    protected function getDefaultUrl()
+    protected function getDefaultUrl(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         return $my_server['REQUEST_URI'] ?? '';
     }
-    protected function getDefaultPageNo()
+    protected function getDefaultPageNo(): int
     {
         $my_get = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
         return $my_get[$this->options['page_key']] ?? 1;

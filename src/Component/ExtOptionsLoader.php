@@ -59,7 +59,7 @@ class ExtOptionsLoader extends ComponentBase
             }
         }
     }
-    protected function get_ext_options_file()
+    protected function get_ext_options_file(): string
     {
         $full_file = App::Root()->options['data_file_json_file'] ?? $this->options['data_file_json_file'];
         
@@ -71,7 +71,7 @@ class ExtOptionsLoader extends ComponentBase
         
         return $full_file;
     }
-    protected function fill_all_ext_options($full_file)
+    protected function fill_all_ext_options(string $full_file): void
     {
         $all_ext_options = json_decode(''.file_get_contents($full_file), true);
         self::$all_ext_options = $all_ext_options;

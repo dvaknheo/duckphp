@@ -85,7 +85,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         $url = $path.$query;
         return $url;
     }
-    protected function filteRewrite($url, &$ret = false)
+    protected function filteRewrite(string $url, &$ret = false): ?string
     {
         /* you may turn this on
         $new_url=RouteHookRewrite::_()->filteRewrite($url);
