@@ -36,11 +36,11 @@ class JsonRpcExt extends ComponentBase
         }
     }
     
-    public function clear()
+    public function clear(): void
     {
         spl_autoload_unregister([$this,'_autoload']);
     }
-    public function getRealClass($object)
+    public function getRealClass(object $object): string
     {
         $class = get_class($object);
         if (substr($class, 0, strlen($this->prefix)) !== $this->prefix) {
@@ -71,7 +71,7 @@ class JsonRpcExt extends ComponentBase
         $code = "namespace $namespace{ class $basename extends \\". __NAMESPACE__  ."\\JsonRpcClientBase{} }";
         eval($code);
     }
-    public function callRpc($classname, $method, $arguments)
+    public function callRpc(string $classname, string $method, array $arguments)
     {
         $namespace = trim($this->options['jsonrpc_service_namespace'], '\\');
         $classname = str_replace('.', '\\', $classname);

@@ -18,7 +18,7 @@ class FinderForController extends ComponentBase
     public $options = [
         'classes_to_get_controller_path' => [],
     ];
-    ////[[[[
+    ////[[
     public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
     {
         $class_postfix = Route::_()->options['controller_class_postfix'];
@@ -174,7 +174,7 @@ class FinderForController extends ComponentBase
         return $ret;
     }
     
-    public function getAllAdminController()
+    public function getAllAdminController(): array
     {
         $ret = [];
         Helper::recursiveApps(
@@ -194,7 +194,7 @@ class FinderForController extends ComponentBase
         }, \ARRAY_FILTER_USE_KEY);
         return array_keys($ret2);
     }
-    public function getAllUserController()
+    public function getAllUserController(): array
     {
         $ret = [];
         Helper::recursiveApps(

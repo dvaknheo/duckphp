@@ -26,7 +26,7 @@ class JsonRpcClientBaseTest extends \PHPUnit\Framework\TestCase
 }
 class JsonRpcClientBaseJsonRpcExt extends JsonRpcExt
 {
-    public function getRealClass($object)
+    public function getRealClass(object $object): string
     {
         return "Mocked";
     }

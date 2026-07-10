@@ -24,7 +24,7 @@ class DuckPhpInstaller extends ComponentBase
     /**
      * create new project in current diretory.
      */
-    public function command_new()
+    public function command_new(): void
     {
         $options = Console::_()->getCliParameters();
         if ($options['help'] ?? false) {
@@ -48,7 +48,7 @@ class DuckPhpInstaller extends ComponentBase
         return $this->init([])->runDemo();
     }
     
-    public function showHelp()
+    public function showHelp(): void
     {
         echo <<<EOT
 Well Come to use DuckPhp Installer ;
@@ -102,7 +102,7 @@ EOT;
         $this->dumpDir($source, $dest, $this->options['force']);
     }
 
-    public function runDemo()
+    public function runDemo(): void
     {
         $source = __DIR__ .'/../../template';
         $options = [

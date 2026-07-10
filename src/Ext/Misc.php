@@ -38,7 +38,7 @@ class Misc extends ComponentBase
     {
         return static::_()->_CallAPI($class, $method, $input, $interface);
     }
-    public function _DI($name, $object = null)
+    public function _DI(string $name, $object = null)
     {
         if (null === $object) {
             return $this->_di_container[$name] ?? null;
@@ -46,7 +46,7 @@ class Misc extends ComponentBase
         $this->_di_container[$name] = $object;
         return $object;
     }
-    public function _Import($file)
+    public function _Import(string $file): void
     {
         if (substr($this->options['path_lib'], 0, 1) === '/') {
             $path = rtrim($this->options['path_lib'], '/').'/';

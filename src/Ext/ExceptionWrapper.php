@@ -19,18 +19,18 @@ class ExceptionWrapper extends ComponentBase
     {
         return static::_()->doRelease();
     }
-    public function doWrap($object)
+    public function doWrap($object): self
     {
         $this->object = $object;
         return $this;
     }
-    public function doRelease()
+    public function doRelease(): ?object
     {
         $object = $this->object;
         $this->object = null;
         return $object;
     }
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         try {
             /** @var mixed */

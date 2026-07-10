@@ -134,7 +134,7 @@ class StrictCheck extends ComponentBase
             throw new ErrorException("$component_name Can not Call By Controller");
         }
     }
-    public function check_strict_class($class)
+    public function check_strict_class(string $class): void
     {
         if (!$this->checkEnv()) {
             return;

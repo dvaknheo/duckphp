@@ -48,7 +48,7 @@ class MyFacadesAutoLoader extends ComponentBase
         $code = "namespace $namespace{ class $basename extends \\". MyFacadesBase::class ."{} }";
         eval($code);
     }
-    public function getFacadesCallback($input_class, $name)
+    public function getFacadesCallback(string $input_class, string $name): ?array
     {
         $class = null;
         foreach ($this->facades_map as $k => $v) {
@@ -68,7 +68,7 @@ class MyFacadesAutoLoader extends ComponentBase
         $object = call_user_func([$class,'_']);
         return [$object,$name];
     }
-    public function clear()
+    public function clear(): void
     {
         $this->facades_map = [];
         spl_autoload_unregister([$this,'_autoload']);

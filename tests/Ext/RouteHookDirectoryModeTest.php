@@ -59,8 +59,8 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         echo PHP_EOL;
         echo RouteHookDirectoryMode::_()->onURL("a/b/index");
         echo PHP_EOL;
-
-echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
+        echo RouteHookDirectoryMode::_()->onURL(null);
+echo PHP_EOL;
 
     
         $file='/a/b.php';

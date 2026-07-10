@@ -15,12 +15,12 @@ class JsonRpcClientBase extends ComponentBase
     public function __construct()
     {
     }
-    public function setJsonRpcClientBase($class)
+    public function setJsonRpcClientBase(string $class): self
     {
         $this->_base_class = $class;
         return $this;
     }
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         $this->_base_class = $this->_base_class?$this->_base_class:JsonRpcExt::_()->getRealClass($this);
         $ret = JsonRpcExt::_()->callRPC($this->_base_class, $method, $arguments);

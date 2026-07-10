@@ -13,36 +13,36 @@ class RouteHookManager extends ComponentBase
     public $options = [];
     protected $hook_list;
     
-    public function attachPreRun()
+    public function attachPreRun(): self
     {
         $this->hook_list = & Route::_()->pre_run_hook_list;
         
         return $this;
     }
-    public function attachPostRun()
+    public function attachPostRun(): self
     {
         $this->hook_list = & Route::_()->post_run_hook_list;
         return $this;
     }
-    public function detach()
+    public function detach(): void
     {
         unset($this->hook_list);
     }
-    public function getHookList()
+    public function getHookList(): array
     {
         return $this->hook_list;
     }
-    public function setHookList($hook_list)
+    public function setHookList(array $hook_list): void
     {
         $this->hook_list = $hook_list;
     }
-    public function moveBefore($new, $old)
+    public function moveBefore($new, $old): self
     {
         $this->removeAll($new);
         $this->insertBefore($new, $old);
         return $this;
     }
-    public function insertBefore($new, $old)
+    public function insertBefore($new, $old): self
     {
         $ret = [];
         foreach ($this->hook_list as $hook) {
@@ -54,7 +54,7 @@ class RouteHookManager extends ComponentBase
         $this->hook_list = $ret;
         return $this;
     }
-    public function removeAll($name)
+    public function removeAll($name): self
     {
         $ret = [];
         foreach ($this->hook_list as $hook) {
@@ -66,11 +66,11 @@ class RouteHookManager extends ComponentBase
         $this->hook_list = $ret;
         return $this;
     }
-    public function append($name)
+    public function append($name): void
     {
         $this->hook_list[] = $name;
     }
-    public function dump()
+    public function dump(): string
     {
         $ret = Route::_()->dumpAllRouteHooksAsString();
         return $ret;

@@ -14,7 +14,7 @@ class HookChain implements ArrayAccess
     public function __construct()
     {
     }
-    public function __invoke()
+    public function __invoke(): void
     {
         foreach ($this->chain as $v) {
             if (($v)()) {
@@ -38,7 +38,7 @@ class HookChain implements ArrayAccess
         }
     }
 
-    public function add($callable, $append, $once)
+    public function add(callable $callable, bool $append, bool $once)
     {
         if ($once && in_array($callable, $this->chain)) {
             return false;
@@ -50,19 +50,19 @@ class HookChain implements ArrayAccess
         }
     }
 
-    public function remove($callable)
+    public function remove(callable $callable): void
     {
         $this->chain = array_filter($this->chain, function ($v, $k) use ($callable) {
             return $callable !== $v ? true : false;
         }, ARRAY_FILTER_USE_BOTH);
     }
 
-    public function has($callable)
+    public function has(callable $callable): bool
     {
         return in_array($callable, $this->chain) ? true : false;
     }
 
-    public function all()
+    public function all(): array
     {
         return $this->chain;
     }

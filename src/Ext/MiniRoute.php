@@ -36,13 +36,14 @@ class MiniRoute extends ComponentBase
     {
         return static::_();
     }
-    public function run()
+    public function run(): bool
     {
         $path_info = $this->getPathInfo();
         $callback = $this->defaultGetRouteCallback($path_info);
         if (null === $callback) {
             return false;
         }
+        /** @var callable $callback */
         ($callback)();
         return true;
     }
@@ -89,7 +90,7 @@ class MiniRoute extends ComponentBase
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
-    public function defaultGetRouteCallback($path_info)
+    public function defaultGetRouteCallback(string $path_info): ?array
     {
         $this->route_error = '';
         
@@ -128,7 +129,7 @@ class MiniRoute extends ComponentBase
         }
         return [$object,$method];
     }
-    public function getControllerNamespacePrefix()
+    public function getControllerNamespacePrefix(): string
     {
         $namespace_controller = $this->options['namespace_controller'];
         if (substr($namespace_controller, 0, 1) !== '\\') {
@@ -164,23 +165,23 @@ class MiniRoute extends ComponentBase
             $_SERVER['PATH_INFO'] = $path_info;
         }
     }
-    public function getRouteError()
+    public function getRouteError(): ?string
     {
         return $this->route_error;
     }
-    public function getRouteCallingPath()
+    public function getRouteCallingPath(): string
     {
         return $this->calling_path;
     }
-    public function getRouteCallingClass()
+    public function getRouteCallingClass(): ?string
     {
         return $this->calling_class;
     }
-    public function getRouteCallingMethod()
+    public function getRouteCallingMethod(): ?string
     {
         return $this->calling_method;
     }
-    public function setRouteCallingMethod($calling_method)
+    public function setRouteCallingMethod(string $calling_method): void
     {
         $this->calling_method = $calling_method;
     }
@@ -196,7 +197,7 @@ class MiniRoute extends ComponentBase
     {
         return static::_()->_Domain($use_scheme);
     }
-    public function _Url($url = null)
+    public function _Url(?string $url = null): string
     {
         if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
             return $url;
@@ -216,7 +217,7 @@ class MiniRoute extends ComponentBase
         
         return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
     }
-    public function _Res($url = null)
+    public function _Res(?string $url = null)
     {
         if (!$this->options['controller_resource_prefix']) {
             return $this->_Url($url);
@@ -234,7 +235,7 @@ class MiniRoute extends ComponentBase
         }
         return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url;
     }
-    public function _Domain($use_scheme = false)
+    public function _Domain(bool $use_scheme = false): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $scheme = $my_server['REQUEST_SCHEME'] ?? '';

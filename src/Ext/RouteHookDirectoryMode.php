@@ -62,8 +62,11 @@ class RouteHookDirectoryMode extends ComponentBase
     {
         return static::_()->onUrl($url);
     }
-    public function onUrl($url = null)
+    public function onUrl(?string $url = null): ?string
     {
+        if ($url === null) {
+            return null;
+        }
         if (strlen($url) > 0 && '/' === substr($url, 0, 1)) {
             return $url;
         };
@@ -107,7 +110,7 @@ class RouteHookDirectoryMode extends ComponentBase
     {
         return static::_()->_Hook($path_info);
     }
-    public function _Hook($path_info)
+    public function _Hook(string $path_info): bool
     {
         // $path_info = Route::_()::PathInfo();
         $path_info = $this->adjustPathinfo($this->basepath, $path_info);

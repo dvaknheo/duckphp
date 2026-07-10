@@ -14,14 +14,14 @@ class StaticReplacer extends ComponentBase
     public $CLASS_STATICS = [];
     ///////////////////////////////
     //TODO 添加 Replace
-    public function &_GLOBALS($k, $v = null)
+    public function &_GLOBALS(string $k, $v = null)
     {
         if (!isset($this->GLOBALS[$k])) {
             $this->GLOBALS[$k] = $v;
         }
         return $this->GLOBALS[$k];
     }
-    public function &_STATICS($name, $value = null, $parent = 0)
+    public function &_STATICS(string $name, $value = null, int $parent = 0)
     {
         $t = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS, $parent + 2)[$parent + 1] ?? [];
         $k = '';
@@ -37,10 +37,11 @@ class StaticReplacer extends ComponentBase
         }
         return $this->STATICS[$k];
     }
-    public function &_CLASS_STATICS($class_name, $var_name)
+    public function &_CLASS_STATICS(string $class_name, string $var_name)
     {
         $k = $class_name.'::$'.$var_name;
         if (!isset($this->CLASS_STATICS[$k])) {
+            // @phpstan-ignore-next-line
             $ref = new \ReflectionClass($class_name);
             $reflectedProperty = $ref->getProperty($var_name);
             $reflectedProperty->setAccessible(true);
