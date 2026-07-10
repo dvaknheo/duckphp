@@ -88,7 +88,7 @@ Route::_()->bind('Missed','POST');
         var_dump(RouteHookPathInfoCompat::URL('aa/bb?cc=dd&m=abc'));
         var_dump(RouteHookPathInfoCompat::URL('aa/bb?cc=dd&m='));
         
-        
+        RouteHookPathInfoCompat::_()->onUrl(null);
         \LibCoverage\LibCoverage::End();
         /*
         RouteHookPathInfoCompat::_()->init($options=[], $context=null);

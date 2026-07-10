@@ -31,7 +31,9 @@ class RouteHookPathInfoCompat extends ComponentBase
     }
     public function onUrl(?string $url = null): string
     {
-        if ($url === null) { return ''; }
+        if ($url === null) {
+            return '';
+        }
         if (strlen($url) > 0 && '/' == substr($url, 0, 1)) {
             return $url;
         };

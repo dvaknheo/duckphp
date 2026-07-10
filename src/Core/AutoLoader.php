@@ -207,7 +207,7 @@ class AutoLoader
         }
         return $ret;
     }
-    public function clear()
+    public function clear(): void
     {
         spl_autoload_unregister(static::class.'::AutoLoad');
     }

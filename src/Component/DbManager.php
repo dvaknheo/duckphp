@@ -67,7 +67,7 @@ class DbManager extends ComponentBase
     }
     public function getDatabaseConfigList(): array
     {
-        return $this->database_config_list;
+        return $this->database_config_list ?? [];
     }
     public function getDatabaseDriver(): string
     {
