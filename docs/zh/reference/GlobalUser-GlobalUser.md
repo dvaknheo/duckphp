@@ -73,18 +73,18 @@ use DuckPhp\GlobalUser\UserActionInterface;
 
 class UserService implements UserActionInterface
 {
-    public function id($check_login = true) : int { /* ... */ }
-    public function name($check_login = true) : string { /* ... */ }
-    public function service() { return $this; }
-    public function login(array $post) { /* ... */ }
-    public function logout() { /* ... */ }
-    public function regist(array $post) { /* ... */ }
-    public function urlForLogin($url_back = null, $ext = null) : string { /* ... */ }
-    public function urlForLogout($url_back = null, $ext = null) : string { /* ... */ }
-    public function urlForHome($url_back = null, $ext = null) : string { /* ... */ }
-    public function urlForRegist($url_back = null, $ext = null) : string { /* ... */ }
-    public function batchGetUsernames($ids) { /* ... */ }
-    public function checkAccess($class, string $method, ?string $url = null) { /* ... */ }
+    public function id($check_login = true) : int
+    public function name($check_login = true) : string
+    public function service()
+    public function login(array $post)
+    public function logout(): void
+    public function regist(array $post)
+    public function urlForLogin($url_back = null, $ext = null) : string
+    public function urlForLogout($url_back = null, $ext = null) : string
+    public function urlForHome($url_back = null, $ext = null) : string
+    public function urlForRegist($url_back = null, $ext = null) : string
+    public function batchGetUsernames($ids)
+    public function checkAccess($class, string $method, ?string $url = null)
 }
 ```
 
@@ -120,7 +120,7 @@ public $options = [
     public function login(array $post)
 执行登录逻辑
 
-    public function logout()
+    public function logout(): void
 执行登出逻辑
 
     public function regist(array $post)

@@ -69,10 +69,10 @@ class App extends DuckPhp
 
 ### 公共方法
 
-    public function setJsonRpcClientBase($class)
+    public function setJsonRpcClientBase(string $class): self
 设置代理所代表的真实类名，并返回当前实例。
 
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
 将方法调用转发到 `JsonRpcExt::callRpc()`。
 
     public function init(array $options, ?object $context = null)

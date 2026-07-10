@@ -76,15 +76,15 @@ $object = ExceptionWrapper::Release(); // 或 $wrapper->doRelease()
     public static function Release()
 释放并返回当前包装的对象
 
-    public function doWrap($object)
+    public function doWrap($object): self
 实例方法：设置被包装对象
 
-    public function doRelease()
+    public function doRelease(): ?object
 实例方法：释放被包装对象
 
 ### 魔术方法
 
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
 代理被包装对象的方法调用，捕获 `\Exception` 并返回异常对象
 
 ## 相关链接

@@ -123,7 +123,7 @@ $user = json_decode(Helper::Redis()->get('user:1'), true);
 ```php
 class MyRedisManager extends DuckPhp\Component\RedisManager
 {
-    protected function createServer($config)
+    public function createServer(array $config): object
     {
         // 自定义创建 Redis 连接
         return parent::createServer($config);
@@ -156,21 +156,21 @@ public $options = [
     public static function Redis($tag = 0)
 获取指定 tag 的 Redis 实例，默认返回写库
 
-    public function getRedisConfigList()
+    public function getRedisConfigList(): array
 获取最终解析后的 Redis 配置列表
 
     public function getServer($tag = 0)
 根据 tag 创建或返回缓存的 Redis 实例
 
-    public function createServer($config)
+    public function createServer(array $config): object
 使用配置创建 Redis 连接
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 合并 `redis` 和 `redis_list` 配置
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 根据 `DuckPhpSettings.config.php` 重新加载配置
 
 ## 相关链接

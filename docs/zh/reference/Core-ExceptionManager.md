@@ -154,7 +154,7 @@ class App extends \DuckPhp\DuckPhp
     public function on_error_handler($errno, $errstr, $errfile, $errline)
 PHP 错误处理回调，将非 notice 类错误转为 `ErrorException`
 
-    public function isInited(): bool
+    public function isInited():bool
 返回组件是否已初始化
 
     public function run()
@@ -168,10 +168,10 @@ PHP 错误处理回调，将非 notice 类错误转为 `ErrorException`
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 从选项中初始化默认异常处理器和系统异常处理器
 
-    protected function _CallException($ex)
+    public function _CallException($ex)
 根据注册顺序查找匹配处理器并执行；没有匹配则调用默认处理器
 
 ## 相关链接

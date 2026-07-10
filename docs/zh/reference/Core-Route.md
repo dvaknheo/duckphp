@@ -276,31 +276,31 @@ class App extends \DuckPhp\DuckPhp
 
 ### 受保护方法
 
-    protected function getRunResult()
+    protected function getRunResult(): bool
 返回路由运行结果
 
-    protected function pathToClassAndMethod($path_info)
+    protected function pathToClassAndMethod(string $path_info): ?array
 将 URL 路径转换为控制器类名和方法名
 
-    protected function adjustClassBaseName($path_info)
+    protected function adjustClassBaseName(string $path_info): array
 调整类基础名，处理欢迎控制器和路径块
 
-    protected function doControllerClassAdjust($blocks, $method)
+    protected function doControllerClassAdjust(array $blocks, string $method): array
 根据 `controller_class_adjust` 调整类名和方法名
 
-    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
+    protected function getCallbackFromClassAndMethod(string $full_class, string $method, string $path_info): ?array
 反射获取控制器对象和方法
 
-    protected function adjustMethod($method, $ref)
+    protected function adjustMethod(string $method, \ReflectionClass $ref): string
 根据请求方法调整实际调用的方法名
 
-    protected function getPathInfo()
+    protected function getPathInfo(): string
 获取当前 `PATH_INFO`，支持自动修复
 
-    protected function setPathInfo($path_info)
+    protected function setPathInfo(string $path_info): void
 设置 `PATH_INFO` 并同步到全局上下文
 
-    protected function getUrlBasePath()
+    protected function getUrlBasePath(): string
 获取 URL 基础路径
 
 ## 相关链接

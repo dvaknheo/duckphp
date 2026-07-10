@@ -271,7 +271,7 @@ protected $kernel_options = [
 
 ### 受保护方法
 
-    protected function doInitComponents()
+    protected function doInitComponents(): void
 初始化 `Logger`、`SuperGlobal`、`SystemWrapper`、`View` 核心组件
 
 ## 相关链接

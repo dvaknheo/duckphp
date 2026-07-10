@@ -52,7 +52,8 @@
 ]
 ```
 
-当加载 `App\Controlleroo` 时，会查找 `/path/to/src/Controller/foo.php`。
+当加载 `App\Controller
+oo` 时，会查找 `/path/to/src/Controller/foo.php`。
 
 ## 路径处理
 
@@ -107,7 +108,7 @@ public $options = [
     public function runAutoLoader()
 `run()` 的别名
 
-    public function _Autoload(string $class): void
+    public function _Autoload(string $class):void
 实际执行类文件查找和加载
 
     public function assignPathNamespace($input_path, $namespace = null)
@@ -119,7 +120,7 @@ public $options = [
     public function cacheNamespacePath($path)
 缓存指定路径下的类文件
 
-    public function clear()
+    public function clear(): void
 注销自动加载函数
 
     public static function DuckPhpSystemAutoLoader(string $class): void
@@ -127,7 +128,7 @@ DuckPhp 核心类自加载方法
 
 ### 受保护方法
 
-    protected function getNamespacePath($sub_path, $main_path): string
+    protected function getNamespacePath(string $sub_path, string $main_path): string
 获取完整命名空间路径，处理绝对路径和相对路径
 
 ## 相关链接

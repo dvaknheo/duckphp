@@ -113,7 +113,7 @@ EventManager::RemoveEvent('my.event');
 
 ### 受保护方法
 
-    protected function eventName($event)
+    protected function eventName($event): string
 将事件名统一转换为字符串
 
 ## 相关链接

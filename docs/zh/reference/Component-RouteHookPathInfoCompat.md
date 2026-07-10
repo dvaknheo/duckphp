@@ -115,7 +115,7 @@ public $options = [
     public static function Url($url = null)
 URL 处理器入口，内部调用 `onUrl()`
 
-    public function onUrl($url = null)
+    public function onUrl(?string $url = null): string
 生成兼容模式的 URL
 
     public static function Hook($path_info)
@@ -126,10 +126,10 @@ URL 处理器入口，内部调用 `onUrl()`
 
 ### 受保护方法
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 注册路由钩子和 URL 处理器
 
-    protected function filteRewrite($url, &$ret = false)
+    protected function filteRewrite(string $url, &$ret = false): ?string
 可扩展的 URL 重写过滤接口（当前默认关闭）
 
 ## 相关链接

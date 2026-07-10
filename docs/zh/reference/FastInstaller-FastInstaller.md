@@ -150,39 +150,39 @@ public $options = [
     public function doCommandRemove()
 触发当前应用阶段的 `OnInstallRemove` 事件
 
-    public function forceFail()
+    public function forceFail(): void
 标记本次安装失败，安装流程会中断
 
     public function doInstall()
 执行完整的安装流程，包括数据库、Redis、资源、回调、子应用等
 
-    public function getCurrentInput()
+    public function getCurrentInput(): array
 获取当前安装流程中用户输入的选项
 
 ### 受保护方法
 
-    protected function initComponents()
+    protected function initComponents(): void
 初始化 `FastInstaller`、`DatabaseInstaller`、`RedisInstaller`、`SqlDumper` 等组件
 
-    protected function showHelp($app_options = [], $input_options = [])
+    protected function showHelp(array $app_options = [], array $input_options = []): void
 显示命令行帮助信息
 
-    protected function getDefaultUrlPrefix($ns)
+    protected function getDefaultUrlPrefix(string $ns): string
 根据命名空间生成默认的 URL 前缀
 
-    protected function installChildren()
+    protected function installChildren(): void
 递归安装所有子应用
 
-    protected function doInstallAction($input_options)
+    protected function doInstallAction(array $input_options)
 执行安装动作：导入 SQL、修改资源、执行回调
 
-    protected function cloneResource($dest)
+    protected function cloneResource(string $dest): string
 克隆资源文件到指定目标前缀
 
     protected function saveExtOptions($ext_options)
 合并并保存扩展选项
 
-    protected function changeResource()
+    protected function changeResource(): array
 交互式修改资源 URL 前缀并决定是否克隆资源
 
 ## 相关链接

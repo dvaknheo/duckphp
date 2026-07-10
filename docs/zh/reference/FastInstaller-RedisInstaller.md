@@ -66,21 +66,21 @@ public $options = [
 
 ### 公共方法
 
-    public function install($force = false)
+    public function install(bool $force = false)
 执行 Redis 安装流程。如果当前应用未启用 Redis 或已有配置且非强制，则返回
 
 ### 受保护方法
 
-    protected function callResetRedis($force = false)
+    protected function callResetRedis(bool $force = false): bool
 重置 Redis 配置，调用 `configRedis()` 获取用户输入并写入 Redis 连接
 
-    protected function changeRedis($data)
+    protected function changeRedis(array $data): void
 将配置保存到扩展选项并重新初始化 `RedisManager`。`$data` 为 Redis 连接列表
 
-    protected function configRedis($ref_database_list = [])
+    protected function configRedis(array $ref_database_list = []): array
 循环提示用户输入 Redis 连接信息，直到成功连接并确认不再添加更多 Redis
 
-    protected function checkRedis($config)
+    protected function checkRedis(array $config): array
 使用 `Redis` 扩展尝试连接，验证给定的 Redis 配置是否可用
 
 ## 相关链接

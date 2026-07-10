@@ -83,12 +83,12 @@ class MyApp extends App
         EventManager::FireEvent([static::class, __FUNCTION__]);
     }
 
-    protected function onBeforeRun()
+    protected function onBeforeRun(): void
     {
         // 在 run() 开始处理请求前触发
     }
 
-    protected function onAfterRun()
+    protected function onAfterRun(): void
     {
         // 在 run() 结束后触发
     }
@@ -264,79 +264,79 @@ protected $kernel_options = [
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 合并选项并加载 `options_file`
 
-    protected function getDefaultProjectNameSpace($class)
+    protected function getDefaultProjectNameSpace(?string $class): string
 根据类名推断默认项目命名空间
 
-    protected function getDefaultProjectPath()
+    protected function getDefaultProjectPath(): string
 根据 `SCRIPT_FILENAME` 推断默认项目路径
 
-    protected function _Phase($new = null)
+    public function _Phase($new = null)
 Phase 容器操作内部实现
 
-    protected function _IsRoot()
+    public function _IsRoot()
 返回当前实例是否为根应用
 
-    protected function getOverridingClass()
+    public function getOverridingClass()
 返回当前应用的覆盖类
 
-    protected function initContainer($context)
+    protected function initContainer(object $context = null): bool
 初始化 Phase 容器，注册公共类，管理根/子应用状态
 
-    protected function addPublicClassesInRoot($classes)
+    protected function addPublicClassesInRoot(array $classes): void
 在根应用下注册公共类
 
-    protected function createLocalObject($class, $object = null)
+    protected function createLocalObject(string $class, ?object $object = null): object
 创建局部对象实例
 
-    protected function initException($options)
+    protected function initException(array $options): void
 初始化 `ExceptionManager`
 
     protected function initInstalledOptions()
 加载并合并 `installed_options_file`
 
-    protected function prepareComponents()
+    protected function prepareComponents(): void
 准备核心组件，子类可覆盖
 
-    protected function initComponents(array $options, object $context = null)
+    protected function initComponents(array $options, object $context = null): void
 初始化 `Console`、`Route`、`Runtime` 等核心组件
 
-    protected function doInitComponents()
+    protected function doInitComponents(): void
 子类覆盖以初始化额外核心组件
 
-    protected function loadSetting()
+    protected function loadSetting(): void
 加载 `.env` 和 Setting 文件
 
-    protected function dealWithEnvFile()
+    protected function dealWithEnvFile(): void
 解析 `.env` 文件
 
-    protected function dealWithSettingFile()
+    protected function dealWithSettingFile(): void
 加载 Setting 文件
 
-    protected function _Setting($key = null, $default = null)
+    public function _Setting($key = null, $default = null)
 获取 Setting 值
 
-    protected function initExtentions(array $exts, $use_main_options): void
+    protected function initExtentions(array $exts, bool $use_main_options): void
 初始化扩展或子应用
 
-    protected function runException($ex)
+    protected function runException(\Throwable $ex): void
 处理运行期异常
 
-    protected function runExtentions()
+    protected function runExtentions(): bool
 依次运行子应用，直到有一个返回 `true`
 
-    protected function onBeforeCreatePhases()
+    protected function onBeforeCreatePhases(): void
 生命周期事件：创建 Phase 容器前
 
-    protected function onAfterCreatePhases()
+    protected function onAfterCreatePhases(): void
 生命周期事件：创建 Phase 容器后
 
-    protected function onPrepare()
+    protected function onPrepare(): void
 生命周期事件：选项和容器准备完成后
 
-    protected function onBeforeChildrenInit()
+    protected function onBeforeChildrenInit(): void
 生命周期事件：子应用初始化前
 
     protected function onInit()
@@ -345,10 +345,10 @@ Phase 容器操作内部实现
     protected function onInited()
 生命周期事件：全部初始化完成后
 
-    protected function onBeforeRun()
+    protected function onBeforeRun(): void
 生命周期事件：运行前
 
-    protected function onAfterRun()
+    protected function onAfterRun(): void
 生命周期事件：运行后
 
 ## 相关链接

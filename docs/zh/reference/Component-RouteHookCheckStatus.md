@@ -90,13 +90,13 @@ public $options = [
 
 ### 受保护方法
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 将 `Hook` 方法注册到 `prepend-outter` 路由钩子位置
 
-    protected function showMaintain()
+    protected function showMaintain(): void
 输出默认维护模式提示
 
-    protected function showNeedInstall()
+    protected function showNeedInstall(): void
 输出默认未安装提示
 
 ## 相关链接

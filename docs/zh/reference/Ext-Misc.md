@@ -128,10 +128,10 @@ public $options = [
 
 ### 实例方法
 
-    public function _DI($name, $object = null)
+    public function _DI(string $name, $object = null)
 DI 容器内部实现
 
-    public function _Import($file)
+    public function _Import(string $file): void
 导入文件内部实现
 
     public function _RecordsetUrl($data, $cols_map = [])

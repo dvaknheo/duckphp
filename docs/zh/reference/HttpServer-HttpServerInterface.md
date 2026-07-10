@@ -26,17 +26,17 @@ class MyHttpServer implements HttpServerInterface
         // ...
     }
 
-    public function run()
+    public function run();
     {
         // ...
     }
 
-    public function getPid()
+    public function getPid();
     {
         // ...
     }
 
-    public function close()
+    public function close();
     {
         // ...
     }
@@ -64,13 +64,13 @@ class MyHttpServer implements HttpServerInterface
     public static function RunQuickly($options)
 快速启动服务器。接收配置数组并返回运行结果。
 
-    public function run()
+    public function run();
 运行服务器。启动 HTTP 服务或进入服务循环。
 
-    public function getPid()
+    public function getPid();
 获取服务器进程 ID。
 
-    public function close()
+    public function close();
 关闭服务器。
 
 ## 相关链接

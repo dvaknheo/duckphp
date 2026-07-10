@@ -63,34 +63,34 @@ class App extends DuckPhp
 
 ### 公共方法
 
-    public function attachPreRun()
+    public function attachPreRun(): self
 绑定到 `Route` 的 `pre_run_hook_list`。
 
-    public function attachPostRun()
+    public function attachPostRun(): self
 绑定到 `Route` 的 `post_run_hook_list`。
 
-    public function detach()
+    public function detach(): void
 解除钩子列表引用。
 
-    public function getHookList()
+    public function getHookList(): array
 获取当前钩子列表。
 
-    public function setHookList($hook_list)
+    public function setHookList(array $hook_list): void
 设置当前钩子列表。
 
-    public function moveBefore($new, $old)
+    public function moveBefore($new, $old): self
 将 `new` 钩子移动到 `old` 钩子之前。
 
-    public function insertBefore($new, $old)
+    public function insertBefore($new, $old): self
 在 `old` 钩子之前插入 `new` 钩子。
 
-    public function removeAll($name)
+    public function removeAll($name): self
 移除所有名为 `name` 的钩子。
 
-    public function append($name)
+    public function append($name): void
 在钩子列表末尾追加一个钩子。
 
-    public function dump()
+    public function dump(): string
 返回当前所有路由钩子的字符串描述。
 
 ## 相关链接

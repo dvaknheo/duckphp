@@ -124,7 +124,7 @@ public $options = [
     public static function AppendHook($path_info)
 普通路由钩子入口，处理 `route_map`
 
-    public function compile($pattern_url, $rules = [])
+    public function compile(string $pattern_url, array $rules = []): string
 将占位符模式编译为完整正则表达式
 
     public function assignRoute($key, $value = null)
@@ -141,22 +141,22 @@ public $options = [
 
 ### 受保护方法
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 注册 `prepend-inner` 和 `append-outter` 路由钩子
 
-    protected function compileMap($map, $namespace_controller)
+    protected function compileMap(array $map, string $namespace_controller): array
 编译整个路由映射表，替换控制器命名空间前缀
 
-    protected function matchRoute($pattern_url, $path_info, &$parameters)
+    protected function matchRoute(string $pattern_url, string $path_info, &$parameters): bool
 根据模式匹配 URL，填充参数
 
-    protected function getRouteHandelByMap($routeMap, $path_info)
+    protected function getRouteHandelByMap(array $routeMap, string $path_info)
 在映射表中查找匹配的回调
 
-    protected function adjustCallback($callback, $parameters)
+    protected function adjustCallback($callback, array $parameters)
 调整回调形式，设置调用方法，返回可调用的回调
 
-    protected function doHookByMap($path_info, $route_map)
+    protected function doHookByMap(string $path_info, array $route_map): bool
 执行匹配到的回调
 
 ## 相关链接

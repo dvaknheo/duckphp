@@ -74,7 +74,7 @@ class MyCache extends Cache
         return true;
     }
     
-    public function clear()
+    public function clear(): void
     {
         $this->data = [];
     }
@@ -111,7 +111,7 @@ Cache::_(new MyCache());
     public function has($key)
 检查缓存键是否存在。默认实现始终返回 `false`。
 
-    public function clear()
+    public function clear(): void
 清空所有缓存。默认实现不执行任何操作。
 
     public function getMultiple($keys, $default = null)

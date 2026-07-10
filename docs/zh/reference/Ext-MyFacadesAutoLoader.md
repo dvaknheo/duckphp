@@ -96,15 +96,15 @@ class App extends DuckPhp
     public function _autoload($class): void
 注册的自动加载回调。如果类匹配 facade 命名空间或映射表，则动态生成对应的类定义。
 
-    public function getFacadesCallback($input_class, $name)
+    public function getFacadesCallback(string $input_class, string $name): ?array
 根据 facade 类名获取真实对象及其方法回调。
 
-    public function clear()
+    public function clear(): void
 清空 facade 映射并注销自动加载器。
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 初始化选项，解析命名空间前缀，并在启用自动加载时注册自动加载器。
 
 ## 相关链接

@@ -65,13 +65,13 @@ public $options = [
     public function writeDsnSetting($options)
 根据 `host`、`port`、`dbname` 生成 MySQL DSN 字符串
 
-    public function getAllTable()
+    public function getAllTable(): array
 执行 `SHOW TABLES` 获取所有表名
 
-    public function getSchemeByTable($table)
+    public function getSchemeByTable(string $table): string
 执行 `SHOW CREATE TABLE` 获取表结构，并重置 `AUTO_INCREMENT`
 
-    public function getInstallDesc()
+    public function getInstallDesc(): string
 返回 MySQL 安装时的交互提示文本
 
 ## 相关链接

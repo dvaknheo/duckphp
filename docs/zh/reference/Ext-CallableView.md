@@ -117,7 +117,7 @@ class App extends DuckPhp
 
 ### 受保护方法
 
-    protected function viewToCallback($func)
+    protected function viewToCallback(?string $func)
 将视图名（含前缀、类名等）转换为可调用回调。如果不可调用则返回 `null`。
 
 ## 相关链接

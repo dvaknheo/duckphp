@@ -81,21 +81,21 @@ class App extends DuckPhp
     public function getRoutePathInfoMapWithChildren($adjuster = null)
 递归扫描当前应用及其子应用的控制器，返回合并后的路径映射。
 
-    public function getAllAdminController()
+    public function getAllAdminController(): array
 获取所有实现了 `AdminControllerInterface` 的控制器类名。
 
-    public function getAllUserController()
+    public function getAllUserController(): array
 获取所有实现了 `UserControllerInterface` 的控制器类名。
 
 ### 受保护方法
 
-    protected function doControllerClassAdjust($first, $method)
+    protected function doControllerClassAdjust(string $first, string $method): array
 根据 `controller_class_adjust` 选项对控制器类名和方法名进行调整。
 
-    protected function getAllControllerClasses()
+    protected function getAllControllerClasses(): array
 扫描控制器目录并返回所有控制器类名及其文件路径。
 
-    protected function getControllerMethods($full_class, $adjuster = null)
+    protected function getControllerMethods(string $full_class, ?callable $adjuster = null): array
 获取指定控制器类的所有可路由方法及其 path_info。
 
 ## 相关链接

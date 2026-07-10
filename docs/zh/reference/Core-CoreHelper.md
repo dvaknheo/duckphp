@@ -192,7 +192,7 @@ JSON 编码内部实现
     public function _TraceDump()
 调用栈输出内部实现
 
-    public function _DebugLog($message, array $context = [])
+    public function _DebugLog($message, array $context = array())
 调试日志内部实现
 
     public function _IsDebug()

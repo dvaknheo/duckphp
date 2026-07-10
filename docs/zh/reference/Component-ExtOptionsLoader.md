@@ -21,7 +21,7 @@
 
 ### 内部方法
 
-    protected function get_ext_options_file()
+    protected function get_ext_options_file(): string
 
     protected function get_all_ext_options($force = false)
 

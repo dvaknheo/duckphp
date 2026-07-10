@@ -94,7 +94,7 @@ $installer->command_new();
 
 ### 公共方法
 
-    public function command_new()
+    public function command_new(): void
 创建新项目。初始化组件后调用 `newProject()`。
 
     public function command_help()
@@ -103,36 +103,36 @@ $installer->command_new();
     public function command_show()
 运行示例服务器。
 
-    public function showHelp()
+    public function showHelp(): void
 输出命令行帮助文本。
 
-    public function newProject()
+    public function newProject($options = [])
 根据 CLI 参数复制 skeleton 目录并替换命名空间。
 
-    public function runDemo()
+    public function runDemo(): void
 使用 template 目录运行示例 HTTP 服务器。
 
 ### 受保护方法
 
-    protected function dumpDir($source, $dest, $force = false)
+    protected function dumpDir(string $source, string $dest, bool $force = false): void
 递归复制源目录到目标目录，并处理文件过滤。
 
-    protected function checkFilesExist($source, $dest, $files)
+    protected function checkFilesExist(string $source, string $dest, array $files): bool
 检查目标文件是否已存在。如果存在且未开启 `force`，则返回 `false`。
 
-    protected function createDirectories($dest, $files)
+    protected function createDirectories(string $dest, array $files): bool
 根据文件列表创建目标目录结构。
 
-    protected function filteText($data, $is_in_full, $short_file_name)
+    protected function filteText(string $data, bool $is_in_full, string $short_file_name): string
 对单个文件内容进行过滤：替换头文件、删除标记、替换命名空间。
 
-    protected function filteMacro($data)
+    protected function filteMacro(string $data): string
 删除包含 `@DUCKPHP_DELETE` 的整行。
 
-    protected function filteNamespace($data, $namespace)
+    protected function filteNamespace(string $data, string $namespace): string
 替换 `@DUCKPHP_NAMESPACE` 和 `YourProjectName\` 为指定命名空间。
 
-    protected function changeHeadFile($data, $short_file_name, $autoload_file)
+    protected function changeHeadFile(string $data, string $short_file_name, string $autoload_file): string
 替换 `@DUCKPHP_HEADFILE` 为相对目录的 `require_once` 语句。
 
 ## 相关链接

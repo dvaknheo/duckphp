@@ -126,7 +126,7 @@ PhaseContainer::GetContainer()->dumpAllObject();
 
 ### 受保护方法
 
-    protected function createObject($class)
+    protected function createObject(string $class): object
 实例化指定类
 
 ## 相关链接

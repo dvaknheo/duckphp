@@ -96,7 +96,7 @@ $user = $db->fetchObject("SELECT * FROM users WHERE id = ?", $id);
     public function init($options = [], $context = null)
 初始化数据库连接配置
 
-    public function close()
+    public function close(): void
 关闭 PDO 连接
 
     public function PDO($pdo = null)
@@ -141,7 +141,7 @@ $user = $db->fetchObject("SELECT * FROM users WHERE id = ?", $id);
     public function execute($sql, ...$args)
 执行写操作 SQL
 
-    public function rowCount()
+    public function rowCount(): int
 返回最近一次写操作影响的行数
 
     public function lastInsertId()
@@ -149,10 +149,10 @@ $user = $db->fetchObject("SELECT * FROM users WHERE id = ?", $id);
 
 ### 受保护方法
 
-    protected function check_connect()
+    protected function check_connect(): void
 检查并创建 PDO 连接
 
-    protected function exec($sql, ...$args)
+    protected function exec(string $sql, ...$args): \PDOStatement
 执行 SQL 并返回 PDOStatement
 
 ## 相关链接

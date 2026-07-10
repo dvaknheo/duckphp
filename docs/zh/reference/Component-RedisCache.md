@@ -141,10 +141,10 @@ public $options = [
 
 ### 受保护方法
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 初始化上下文，替换默认 `Cache` 实例
 
-    protected function redis()
+    protected function redis(): \Redis
 获取 Redis 连接实例，来自 `RedisManager::Redis()`
 
 ## 相关链接

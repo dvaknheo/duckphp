@@ -112,19 +112,19 @@ public $options = [
 
 ### 受保护方法
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 如果配置了 `controller_resource_prefix`，则注册 `append-outter` 路由钩子
 
-    protected function get_dest_dir($path_parent, $path)
+    protected function get_dest_dir(string $path_parent, string $path): string
 根据目标路径递归创建目录
 
     protected function copy_dir($source, $dest, $force = false, &$info = '')
 递归复制源目录到目标目录
 
-    protected function check_files_exist($source, $dest, $files, &$info)
+    protected function check_files_exist(string $source, string $dest, array $files, string &$info): bool
 检查目标文件是否已存在
 
-    protected function create_directories($dest, $files, &$info)
+    protected function create_directories(string $dest, array $files, string &$info): bool
 为要复制的文件创建目标目录
 
 ## 相关链接

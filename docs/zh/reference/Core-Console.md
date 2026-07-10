@@ -177,10 +177,10 @@ public $options = [
 
 ### 受保护方法
 
-    protected function parseCliArgs($argv)
+    protected function parseCliArgs(array $argv): array
 解析 `$_SERVER['argv']` 参数
 
-    protected function getObject($class)
+    protected function getObject(string $class): object
 获取命令对象实例，优先使用 `::_()` 可变单例
 
 ## 相关链接

@@ -33,34 +33,34 @@ interface UserActionInterface
 
 ## 方法说明
 
-    public function id($check_login = true) : int
+    public function id($check_login = true) : int;
 获取当前用户 ID。如果 `$check_login` 为 `true` 且未登录，可能会抛出异常
 
-    public function name($check_login = true) : string
+    public function name($check_login = true) : string;
 获取当前用户名称
 
-    public function service()
+    public function service();
 返回实际的用户服务实例
 
-    public function login(array $post)
+    public function login(array $post);
 执行登录操作
 
-    public function logout()
+    public function logout();
 执行登出操作
 
-    public function regist(array $post)
+    public function regist(array $post);
 执行注册操作
 
-    public function urlForLogin($url_back = null, $ext = null) : string
+    public function urlForLogin($url_back = null, $ext = null) : string;
 生成登录 URL
 
-    public function urlForLogout($url_back = null, $ext = null) : string
+    public function urlForLogout($url_back = null, $ext = null) : string;
 生成登出 URL
 
-    public function urlForHome($url_back = null, $ext = null) : string
+    public function urlForHome($url_back = null, $ext = null) : string;
 生成用户首页 URL
 
-    public function urlForRegist($url_back = null, $ext = null) : string
+    public function urlForRegist($url_back = null, $ext = null) : string;
 生成注册页面 URL
 
     public function batchGetUsernames($ids)

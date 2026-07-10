@@ -75,16 +75,16 @@ $countSql = $db->_SqlForCountSimply($sql);
 
 ### 公共方法
 
-    public function quoteIn($array)
+    public function quoteIn(array $array): string
 将数组元素转义并用逗号拼接，用于 IN 条件
 
-    public function quoteSetArray($array)
+    public function quoteSetArray(array $array): string
 生成 UPDATE 的 SET 片段
 
-    public function quoteAndArray($array)
+    public function quoteAndArray(array $array): string
 生成 WHERE 的 AND 条件片段
 
-    public function qouteInsertArray($array)
+    public function qouteInsertArray(array $array): string
 生成 INSERT 的键值片段
 
     public function findData($table_name, $id, $key = 'id')

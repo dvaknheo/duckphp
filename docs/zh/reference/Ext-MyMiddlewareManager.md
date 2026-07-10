@@ -99,16 +99,16 @@ class App extends DuckPhp
 
 ### 受保护方法
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 初始化上下文，将 `Hook` 方法附加到 `RouteHookManager` 的 pre-run 阶段。
 
-    protected function runSelfMiddleware()
+    protected function runSelfMiddleware(): string
 运行核心路由回调，获取默认结果并更新响应。
 
-    protected function onPostMiddleware()
+    protected function onPostMiddleware(): void
 中间件执行后的钩子，默认空实现。
 
-    protected function getResponse()
+    protected function getResponse(): string
 获取响应对象，默认返回空字符串。
 
     protected function getRequest()

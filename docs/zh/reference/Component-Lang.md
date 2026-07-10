@@ -195,18 +195,18 @@ class App extends DuckPhp
     public function init(array $options, ?object $context = null)
 初始化组件，检测并设置最终语言
 
-    public function lang($str, $args = [])
+    public function lang(string $str, array $args = []): string
 翻译指定键，支持参数替换。如果找不到翻译，则返回原字符串
 
 ### 受保护方法
 
-    protected function getSentenceFromConfig($language)
+    protected function getSentenceFromConfig(string $language): ?array
 从配置或语言文件加载指定语言的句子。如果 `lang_simple_mode_only_sentences` 非空，则直接从中读取；否则从 `config/lang/{language}.php` 读取
 
-    protected function loadLanguage($str)
+    protected function loadLanguage(string $str): ?string
 加载指定键的翻译。找不到时返回 `null`，并记录 warning 日志
 
-    protected function format($str, $args)
+    protected function format(string $str, array $args): string
 替换 `{key}` 格式的参数
 
     protected function normalizeLocale(string $locale): string

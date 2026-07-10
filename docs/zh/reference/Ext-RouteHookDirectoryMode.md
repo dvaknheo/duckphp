@@ -71,24 +71,24 @@ class App extends DuckPhp
     public static function Url($url = null)
 目录模式下的 URL 生成器入口。
 
-    public function onUrl($url = null)
+    public function onUrl(?string $url = null): ?string
 根据物理目录结构生成对应的 URL。
 
     public static function Hook($path_info)
 路由钩子入口。
 
-    public function _Hook($path_info)
+    public function _Hook(string $path_info): bool
 调整 `PATH_INFO` 并返回 `false` 以让后续路由继续处理。
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 保存 `mode_dir_basepath` 到实例属性。
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 注册路由钩子和 URL 处理器。
 
-    protected function adjustPathinfo($basepath, $path_info)
+    protected function adjustPathinfo(string $basepath, string $path_info): string
 根据物理目录和 `REQUEST_URI` 重新计算 `PATH_INFO`。
 
 ## 相关链接

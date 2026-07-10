@@ -29,12 +29,12 @@ class MyComponent extends ComponentBase
         'my_option' => 'default',
     ];
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options):void
     {
         // 处理自定义选项
     }
 
-    protected function initContext(object $context)
+    protected function initContext(object $context):void
     {
         // 处理上下文，例如保存当前 App 实例
     }
@@ -110,7 +110,7 @@ public $options = [
     public function context()
 返回当前应用上下文，默认等价于 `App::Current()`
 
-    public function init(array $options, ?object $context = null)
+    public function init(array $options, ?object $context = null) //return $this
 初始化组件：合并选项、调用 `initOptions()` 和 `initContext()`，并标记初始化完成
 
     public function reInit(array $options, ?object $context = null)
@@ -124,10 +124,10 @@ public $options = [
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options):void
 【可重写】处理组件自定义选项，默认空实现
 
-    protected function initContext(object $context)
+    protected function initContext(object $context):void
 【可重写】处理上下文对象，默认空实现
 
     protected static function IsAbsPath($path)

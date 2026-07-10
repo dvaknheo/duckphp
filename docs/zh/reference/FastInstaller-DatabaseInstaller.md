@@ -53,21 +53,21 @@ public $options = [
 
 ### 公共方法
 
-    public function install($force = false)
+    public function install(bool $force = false): bool
 执行数据库安装流程。如果当前应用未配置数据库驱动或已有配置且非强制，则返回 `false`
 
 ### 受保护方法
 
-    protected function callResetDatabase($force = false)
+    protected function callResetDatabase(bool $force = false): bool
 重置数据库配置，调用 `configDatabase()` 获取用户输入并写入数据库连接
 
-    protected function changeDatabase($data)
+    protected function changeDatabase(array $data): void
 将配置保存到扩展选项并重新初始化 `DbManager`。`$data` 为数据库连接列表
 
-    protected function configDatabase($ref_database_list = [])
+    protected function configDatabase(array $ref_database_list = []): array
 循环提示用户输入数据库连接信息，直到成功连接并确认不再添加更多数据库
 
-    protected function checkDb($database)
+    protected function checkDb(array $database): array
 临时初始化一个 `DbManager` 实例来验证给定的数据库连接是否可用
 
 ## 相关链接

@@ -175,13 +175,13 @@ class App extends \DuckPhp\DuckPhp
 
 ### 受保护方法
 
-    protected function system_wrapper_call_check($func)
+    protected function system_wrapper_call_check(string $func): bool
 检查指定函数是否被替换或存在
 
-    protected function system_wrapper_call($func, $input_args)
+    protected function system_wrapper_call(string $func, array $input_args)
 执行替换后的处理器或原生系统函数
 
-    protected function getMimeData()
+    protected function getMimeData(): string
 返回内置的 MIME 类型映射数据
 
 ## 相关链接

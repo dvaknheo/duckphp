@@ -139,10 +139,10 @@ php cli.php hello --name=Duck
 
 ### 公共方法
 
-    public function command_version()
+    public function command_version(): void
 显示当前应用版本。
 
-    public function command_help()
+    public function command_help(): void
 显示帮助信息和命令列表。
 
     public function command_run()
@@ -154,7 +154,7 @@ php cli.php hello --name=Duck
     public function command_call()
 调用指定类的方法。参数格式为 `namespace/class@method`。
 
-    public function command_debug($off = false)
+    public function command_debug(bool $off = false): void
 切换调试模式。`--off` 关闭调试。
 
     public function getCommandsOfThis($method_prefix, $phase)
@@ -162,16 +162,16 @@ php cli.php hello --name=Duck
 
 ### 受保护方法
 
-    protected function getCommandListInfo()
+    protected function getCommandListInfo(): string
 汇总所有命令组的命令列表，生成 help 输出文本。
 
-    protected function getCommandsByClasses($classes, $method_prefix, $phase)
+    protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
 从多个类中提取命令列表。
 
-    protected function getCommandsByClass($class, $method_prefix, $phase)
+    protected function getCommandsByClass(string $class, string $method_prefix, string $phase): array
 从单个类中提取命令列表。如果类有 `getCommandsOfThis` 方法，则调用它。
 
-    protected function getCommandsByClassReflection($ref, $method_prefix)
+    protected function getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix): array
 通过反射提取类中符合 `command_` 前缀的方法及其文档注释第一行。
 
 ## 相关链接

@@ -107,31 +107,31 @@ class App extends \DuckPhp\DuckPhp
 
 ### 公共方法
 
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = array())
 写入一条日志。`$level` 为日志级别，`$message` 支持 `{key}` 上下文替换
 
-    public function emergency($message, array $context = [])
+    public function emergency($message, array $context = array())
 记录 `emergency` 级别日志
 
-    public function alert($message, array $context = [])
+    public function alert($message, array $context = array())
 记录 `alert` 级别日志
 
-    public function critical($message, array $context = [])
+    public function critical($message, array $context = array())
 记录 `critical` 级别日志
 
-    public function error($message, array $context = [])
+    public function error($message, array $context = array())
 记录 `error` 级别日志
 
-    public function warning($message, array $context = [])
+    public function warning($message, array $context = array())
 记录 `warning` 级别日志
 
-    public function notice($message, array $context = [])
+    public function notice($message, array $context = array())
 记录 `notice` 级别日志
 
-    public function info($message, array $context = [])
+    public function info($message, array $context = array())
 记录 `info` 级别日志
 
-    public function debug($message, array $context = [])
+    public function debug($message, array $context = array())
 记录 `debug` 级别日志
 
 ## 相关链接

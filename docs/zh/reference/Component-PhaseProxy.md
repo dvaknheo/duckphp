@@ -95,12 +95,12 @@ $service = $proxy->self();  // 返回 UserService::_()
     public function __call($method, $args)
 代理方法调用。切换相位 → 执行方法 → 恢复相位
 
-    public function self()
+    public function self(): object
 获取被代理的原始对象
 
 ### 受保护方法
 
-    protected function getObjectForPhaseProxy()
+    protected function getObjectForPhaseProxy(): object
 获取被代理对象实例。如果是类名，则通过 `::_()` 获取
 
 ## 相关链接

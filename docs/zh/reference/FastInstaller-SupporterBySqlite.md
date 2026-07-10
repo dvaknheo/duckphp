@@ -57,7 +57,7 @@ public $options = [
 
 ### 公共方法
 
-    public function getRuntimePath()
+    public function getRuntimePath(): string
 获取当前应用的运行时路径，用于安装提示显示
 
     public function readDsnSetting($options)
@@ -66,13 +66,13 @@ public $options = [
     public function writeDsnSetting($options)
 根据 `file` 生成 `sqlite:...` 形式的 DSN，并清空用户名密码
 
-    public function getAllTable()
+    public function getAllTable(): array
 从 `sqlite_master` 查询用户表，排除系统表
 
-    public function getSchemeByTable($table)
+    public function getSchemeByTable(string $table): string
 从 `sqlite_master` 查询指定表的建表 SQL，并转换表名引号风格
 
-    public function getInstallDesc()
+    public function getInstallDesc(): string
 返回 SQLite 安装时的交互提示文本，包含运行时路径和数据库文件
 
 ## 相关链接

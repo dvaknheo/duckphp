@@ -21,13 +21,13 @@ interface AdminServiceInterface
 
 ## 方法说明
 
-    public function doCheckAccess(int $admin_id, string $class, string $method, ?string $url = null)
+    public function doCheckAccess(int $admin_id, string $class, string $method, ?string $url = null);
 检查指定管理员是否有权限访问控制器类 `$class` 的方法 `$method`。`$url` 为可选的访问 URL
 
-    public function doIsSuper(int $admin_id)
+    public function doIsSuper(int $admin_id);
 判断指定管理员 ID 是否为超级管理员
 
-    public function doLog(int $admin_id, string $string, ?string $type = null)
+    public function doLog(int $admin_id, string $string, ?string $type = null);
 记录指定管理员的操作日志。`$type` 为日志类型
 
 ## 相关链接

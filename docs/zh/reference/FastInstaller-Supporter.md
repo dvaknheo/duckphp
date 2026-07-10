@@ -75,7 +75,7 @@ public $options = [
     public static function Current()
 获取当前数据库驱动对应的支持器实例，等价于 `static::_()->getSupporter()`
 
-    public function getSupporter()
+    public function getSupporter(): self
 根据 `database_driver_supporter_map` 返回对应的支持器实例
 
     public function readDsnSetting($options)
@@ -83,16 +83,16 @@ public $options = [
 
 ### 受保护方法（基类占位方法，需子类实现）
 
-    protected function getInstallDesc()
+    public function getInstallDesc(): string
 返回安装时提示用户输入的描述文本
 
-    protected function writeDsnSetting($options)
+    public function writeDsnSetting($options)
 根据用户输入生成新的 `dsn` 字符串
 
-    protected function getAllTable()
+    public function getAllTable(): array
 获取数据库中所有表名
 
-    protected function getSchemeByTable($table)
+    public function getSchemeByTable(string $table): string
 获取指定表的建表 SQL
 
 ## 相关链接

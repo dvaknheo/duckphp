@@ -207,10 +207,10 @@ public $options = [
     public static function OnQuery($db, $sql, ...$args)
 SQL 查询钩子，供 `Db` 对象回调以记录日志
 
-    public function getDatabaseConfigList()
+    public function getDatabaseConfigList(): array
 获取最终解析后的数据库配置列表
 
-    public function getDatabaseDriver()
+    public function getDatabaseDriver(): string
 获取数据库驱动类型，从配置中自动推断
 
     public function setBeforeGetDbHandler($db_before_get_object_handler)
@@ -225,7 +225,7 @@ SQL 查询钩子，供 `Db` 对象回调以记录日志
     public function _DbForRead()
 实例方法版本，获取读库或写库
 
-    public function _DbCloseAll()
+    public function _DbCloseAll(): void
 实例方法版本，关闭所有连接
 
     public function _OnQuery($db, $sql, ...$args)
@@ -239,19 +239,19 @@ SQL 查询钩子，供 `Db` 对象回调以记录日志
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 合并 `database` 和 `database_list` 配置
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 根据 `DuckPhpSettings.config.php` 重新加载配置
 
-    protected function getDatabase($tag)
+    protected function getDatabase($tag): object
 根据 tag 创建或返回缓存的数据库实例
 
-    protected function createDatabaseObject($db_config)
+    protected function createDatabaseObject(array $db_config): object
 使用配置创建数据库对象，处理 SQLite 相对路径
 
-    protected function getRuntimePath()
+    protected function getRuntimePath(): string
 获取 runtime 目录路径
 
 ## 相关链接

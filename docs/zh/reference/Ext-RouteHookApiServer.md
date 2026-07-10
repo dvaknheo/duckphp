@@ -99,36 +99,36 @@ class App extends DuckPhp
     public static function Hook($path_info)
 路由钩子入口。静态调用会转发到实例方法 `_Hook()`。
 
-    public function _Hook($path_info)
+    public function _Hook(string $path_info): bool
 解析路径、注入参数、调用 API 并输出 JSON 响应。
 
     public static function OnJsonError($e)
 全局异常处理器入口。
 
-    public function _OnJsonError($e)
+    public function _OnJsonError($e): void
 输出异常对应的 JSON 错误信息。
 
 ### 受保护方法
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 向 `Route` 注册路由钩子。
 
-    protected function onMissing()
+    protected function onMissing(): bool
 未找到 API 时的处理逻辑。
 
-    protected function getComponenetNamespace($namespace_key)
+    protected function getComponenetNamespace(string $namespace_key): string
 拼接完整命名空间。
 
-    protected function getObjectAndMethod($path_info)
+    protected function getObjectAndMethod(string $path_info): ?array
 根据路径解析 API 类和方法。
 
-    protected function getInputs($path_info)
+    protected function getInputs(string $path_info): array
 获取请求参数。调试模式下读取 `$_REQUEST`，否则读取 `$_POST`。
 
-    protected function exitJson($ret, $exit = true)
+    protected function exitJson($ret, bool $exit = true): void
 输出 JSON 并设置响应头。
 
-    protected function callAPI($object, $method, $input)
+    protected function callAPI(object $object, string $method, array $input)
 通过反射调用方法，并自动注入和校验参数。
 
 ## 相关链接

@@ -67,22 +67,22 @@ unset($chain[0]);
 
 ### 公共方法
 
-    public function __invoke()
+    public function __invoke(): void
 执行钩子链，按顺序调用回调，遇到返回 `true` 时停止。
 
     public static function Hook(&$var, $callable, $append = true, $once = true)
 将回调挂载到变量。如果变量已是 `HookChain`，则添加到该链；如果为 `null`，则创建新链；否则创建新链并包含原变量和新回调。
 
-    public function add($callable, $append, $once)
+    public function add(callable $callable, bool $append, bool $once)
 添加回调到链中。`once` 为 `true` 时，如果回调已存在则跳过。
 
-    public function remove($callable)
+    public function remove(callable $callable): void
 从链中移除指定回调。
 
-    public function has($callable)
+    public function has(callable $callable): bool
 判断链中是否包含指定回调。
 
-    public function all()
+    public function all(): array
 返回链中所有回调。
 
     public function offsetSet($offset, $value)

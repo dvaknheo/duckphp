@@ -144,13 +144,13 @@ public $options = [
     public function pageSize($new_value = null): int
 获取或设置每页条数
 
-    public function getPageCount($total): int
+    public function getPageCount(int $total): int
 根据总数计算总页数
 
-    public function getUrl($page)
+    public function getUrl($page): string
 获取指定页的 URL
 
-    public function defaultGetUrl($page)
+    public function defaultGetUrl(int $page): string
 默认 URL 生成逻辑
 
     public function render($total, $options = []): string
@@ -158,10 +158,10 @@ public $options = [
 
 ### 受保护方法
 
-    protected function getDefaultUrl()
+    protected function getDefaultUrl(): string
 从 `$_SERVER['REQUEST_URI']` 获取默认 URL
 
-    protected function getDefaultPageNo()
+    protected function getDefaultPageNo(): int
 从 `$_GET[$page_key]` 获取默认页码
 
 ## 相关链接

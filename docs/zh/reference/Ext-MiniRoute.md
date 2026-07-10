@@ -111,13 +111,13 @@ class App extends DuckPhp
     public static function Route()
 返回当前路由组件实例。
 
-    public function run()
+    public function run(): bool
 执行路由解析并调用匹配的控制器方法。成功返回 `true`，失败返回 `false`。
 
-    public function defaultGetRouteCallback($path_info)
+    public function defaultGetRouteCallback(string $path_info): ?array
 根据路径解析出类名和方法，返回回调数组 `[对象, 方法名]`。
 
-    public function getControllerNamespacePrefix()
+    public function getControllerNamespacePrefix(): string
 获取控制器命名空间前缀。
 
     public function replaceController($old_class, $new_class)
@@ -129,19 +129,19 @@ class App extends DuckPhp
     public function _PathInfo($path_info = null)
 `PathInfo()` 的内部实现。
 
-    public function getRouteError()
+    public function getRouteError(): ?string
 获取最后一次路由错误信息。
 
-    public function getRouteCallingPath()
+    public function getRouteCallingPath(): string
 获取当前路由调用路径。
 
-    public function getRouteCallingClass()
+    public function getRouteCallingClass(): ?string
 获取当前路由调用的类名。
 
-    public function getRouteCallingMethod()
+    public function getRouteCallingMethod(): ?string
 获取当前路由调用的方法名。
 
-    public function setRouteCallingMethod($calling_method)
+    public function setRouteCallingMethod(string $calling_method): void
 设置当前路由调用的方法名。
 
     public static function Url($url = null)
@@ -153,27 +153,27 @@ class App extends DuckPhp
     public static function Domain($use_scheme = false)
 获取当前域名。
 
-    public function _Url($url = null)
+    public function _Url(?string $url = null): string
 `Url()` 的内部实现。
 
-    public function _Res($url = null)
+    public function _Res(?string $url = null)
 `Res()` 的内部实现。
 
-    public function _Domain($use_scheme = false)
+    public function _Domain(bool $use_scheme = false): string
 `Domain()` 的内部实现。
 
 ### 受保护方法
 
-    protected function pathToClassAndMethod($path_info)
+    protected function pathToClassAndMethod(string $path_info): ?array
 将路径解析为类名和方法名。
 
-    protected function getPathInfo()
+    protected function getPathInfo(): string
 从 `$_SERVER` 或全局环境上下文中读取 `PATH_INFO`。
 
-    protected function setPathInfo($path_info)
+    protected function setPathInfo(string $path_info): void
 设置 `PATH_INFO` 并同步到全局环境上下文。
 
-    protected function getUrlBasePath()
+    protected function getUrlBasePath(): string
 计算 URL 基路径。
 
 ## 相关链接

@@ -90,18 +90,18 @@ throw new \Exception("It's not work , TODO fix me to work in new version.");
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
 检查指定组件是否被允许调用。如果不允许，抛出 `ErrorException`。
 
-    public function check_strict_class($class)
+    public function check_strict_class(string $class): void
 检查指定类的调用是否符合分层规则。如果不符合，抛出 `ErrorException`。
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 初始化选项。当前直接抛出异常，标记组件不可用。
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 初始化上下文，尝试注册数据库严格检查钩子。
 
-    protected function hit_class($caller_class, $parent_classes_to_skip)
+    protected function hit_class(string $caller_class, array $parent_classes_to_skip): bool
 判断调用者类是否属于需要跳过的父类。
 
     protected static function StartWith($str, $prefix)

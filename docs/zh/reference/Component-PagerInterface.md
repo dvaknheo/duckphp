@@ -21,13 +21,13 @@ interface PagerInterface
 
 ## 方法说明
 
-    public function current($new_value = null) : int
+    public function current($new_value = null) : int;
 获取或设置当前页码
 
-    public function pageSize($new_value = null) : int
+    public function pageSize($new_value = null) : int;
 获取或设置每页条数
 
-    public function render($total, $options = []) : string
+    public function render($total, $options = []) : string;
 根据总记录数渲染分页 HTML
 
 ## 自定义分页组件
@@ -41,17 +41,17 @@ use DuckPhp\Component\PagerInterface;
 
 class MyPager implements PagerInterface
 {
-    public function current($new_value = null): int
+    public function current($new_value = null) : int;
     {
         return $new_value ?? 1;
     }
 
-    public function pageSize($new_value = null): int
+    public function pageSize($new_value = null) : int;
     {
         return $new_value ?? 20;
     }
 
-    public function render($total, $options = []): string
+    public function render($total, $options = []) : string;
     {
         // 自定义分页 HTML 渲染
         return '';

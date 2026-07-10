@@ -73,17 +73,17 @@ use DuckPhp\GlobalAdmin\AdminActionInterface;
 
 class AdminService implements AdminActionInterface
 {
-    public function id($check_login = true) { /* ... */ }
-    public function name($check_login = true) { /* ... */ }
-    public function service() { return $this; }
-    public function login(array $post) { /* ... */ }
-    public function logout() { /* ... */ }
-    public function urlForLogin($url_back = null, $ext = null) { /* ... */ }
-    public function urlForLogout($url_back = null, $ext = null) { /* ... */ }
-    public function urlForHome($url_back = null, $ext = null) { /* ... */ }
-    public function checkAccess($class, string $method, ?string $url = null) { /* ... */ }
-    public function isSuper() { /* ... */ }
-    public function log(string $string, ?string $type = null) { /* ... */ }
+    public function id($check_login = true) : int
+    public function name($check_login = true)
+    public function service()
+    public function login(array $post)
+    public function logout(): void
+    public function urlForLogin($url_back = null, $ext = null)
+    public function urlForLogout($url_back = null, $ext = null)
+    public function urlForHome($url_back = null, $ext = null)
+    public function checkAccess($class, string $method, ?string $url = null)
+    public function isSuper(): bool
+    public function log(string $string, ?string $type = null)
 }
 ```
 
@@ -118,7 +118,7 @@ public $options = [
     public function login(array $post)
 执行登录逻辑
 
-    public function logout()
+    public function logout(): void
 执行登出逻辑
 
     public function urlForLogin($url_back = null, $ext = null)
@@ -133,7 +133,7 @@ public $options = [
     public function checkAccess($class, string $method, ?string $url = null)
 检查当前管理员是否有权限访问指定类和方法
 
-    public function isSuper()
+    public function isSuper(): bool
 判断当前管理员是否为超级管理员
 
     public function log(string $string, ?string $type = null)

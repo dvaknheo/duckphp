@@ -19,7 +19,7 @@ interface UserServiceInterface
 
 ## 方法说明
 
-    public function batchGetUsernames(array $ids)
+    public function batchGetUsernames(array $ids);
 根据用户 ID 数组批量获取用户名，返回 ID 到用户名的映射数组
 
 ## 相关链接

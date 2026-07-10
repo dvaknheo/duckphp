@@ -119,7 +119,7 @@ public $options = [
     public function assignRewrite($key, $value = null)
 添加单条或多条重写规则
 
-    public function getRewrites()
+    public function getRewrites(): array
 获取当前所有重写规则
 
     public function replaceRegexUrl($input_url, $template_url, $new_url)
@@ -133,16 +133,16 @@ public $options = [
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 合并 `rewrite_map` 选项
 
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
 将 `Hook` 方法注册到 `prepend-outter` 路由钩子位置
 
-    protected function changeRouteUrl($url)
+    protected function changeRouteUrl(string $url): void
 根据重写后的 URL 更新 `$_GET` 和 `PATH_INFO`
 
-    protected function doHook($path_info)
+    protected function doHook(string $path_info): ?bool
 执行重写逻辑
 
 ## 相关链接

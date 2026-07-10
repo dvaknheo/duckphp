@@ -27,31 +27,31 @@ interface DbInterface
 
 ## 方法说明
 
-    public function close()
+    public function close();
 关闭数据库连接
 
-    public function PDO($object = null)
+    public function PDO($object = null);
 获取或设置 PDO 实例
 
-    public function quote($string)
+    public function quote($string);
 转义字符串或字符串数组
 
-    public function fetchAll($sql, ...$args)
+    public function fetchAll($sql, ...$args);
 执行查询并返回所有结果
 
-    public function fetch($sql, ...$args)
+    public function fetch($sql, ...$args);
 执行查询并返回单行结果
 
-    public function fetchColumn($sql, ...$args)
+    public function fetchColumn($sql, ...$args);
 执行查询并返回单列值
 
-    public function execute($sql, ...$args)
+    public function execute($sql, ...$args);
 执行写操作（INSERT/UPDATE/DELETE）
 
-    public function rowCount()
+    public function rowCount();
 返回最近一次写操作影响的行数
 
-    public function lastInsertId()
+    public function lastInsertId();
 返回最后一次插入的自增 ID
 
 ## 相关链接

@@ -151,7 +151,7 @@ public $options = [
     public function run()
 运行服务器，展示欢迎信息，处理 `--help` 或启动 HTTP 服务。
 
-    public function getPid()
+    public function getPid(): int
 获取当前服务器进程 ID。
 
     public function close()
@@ -159,13 +159,13 @@ public $options = [
 
 ### 受保护方法
 
-    protected function getopt($options, $longopts, &$optind)
+    protected function getopt(string $options, array $longopts, &$optind)
 封装 `getopt()` 调用，便于测试覆盖。
 
-    protected function parseCaptures($cli_options)
+    protected function parseCaptures(array $cli_options): array
 解析命令行选项，返回合并后的参数数组。
 
-    protected function showWelcome()
+    protected function showWelcome(): void
 输出欢迎信息。
 
     protected function showHelp()

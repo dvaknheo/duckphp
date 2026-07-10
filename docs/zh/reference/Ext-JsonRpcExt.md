@@ -100,10 +100,10 @@ class App extends DuckPhp
 
 ### 公共方法
 
-    public function clear()
+    public function clear(): void
 注销自动加载器。
 
-    public function getRealClass($object)
+    public function getRealClass(object $object): string
 获取对象的真实类名，去除 `jsonrpc_namespace` 前缀。
 
     public static function Wrap($class)
@@ -115,7 +115,7 @@ class App extends DuckPhp
     public function _autoload($class): void
 自动加载 `jsonrpc_namespace` 下的代理类。
 
-    public function callRpc($classname, $method, $arguments)
+    public function callRpc(string $classname, string $method, array $arguments)
 向后端发送 JSON-RPC 请求，并返回 `result` 字段。
 
     public function onRpcCall(array $input)
@@ -123,13 +123,13 @@ class App extends DuckPhp
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 初始化选项，注册自动加载器。
 
-    protected function adjustService($service)
+    protected function adjustService(string $service): ?string
 校验服务类并返回完整类名。如果配置了接口约束但未实现，则返回 `null`。
 
-    protected function curl_file_get_contents($url, $post)
+    protected function curl_file_get_contents($url, $post): string
 使用 cURL 发送 JSON-RPC 请求。
 
     protected function prepare_token($ch)

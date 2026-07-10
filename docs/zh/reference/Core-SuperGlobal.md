@@ -161,10 +161,10 @@ class App extends \DuckPhp\DuckPhp
 
 ### 受保护方法
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
 初始化选项，若开启 `superglobal_auto_define` 则定义上下文并加载全局变量
 
-    protected function getSuperGlobalData($superglobal_key, $key, $default)
+    protected function getSuperGlobalData(string $superglobal_key, ?string $key, $default)
 从上下文或全局变量读取指定键的数据
 
 ## 相关链接

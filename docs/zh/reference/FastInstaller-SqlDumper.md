@@ -105,27 +105,27 @@ public $options = [
     public function dump()
 导出当前数据库的表结构（与数据）到 `config/{driver}.sql`
 
-    public function install($force = false)
+    public function install(bool $force = false): void
 从 SQL 文件读取并执行导入，`$force` 为 `true` 时会先执行 `DROP TABLE IF EXISTS`
 
 ### 受保护方法
 
-    protected function getSchemes()
+    protected function getSchemes(): string
 获取所有需要导出的表结构 SQL，支持通过模型发现或导出所有表
 
-    protected function getInsertTableSql()
+    protected function getInsertTableSql(): string
 获取 `sql_dump_data_tables` 中指定表的数据插入 SQL
 
-    protected function getDataSql($table)
+    protected function getDataSql(string $table): string
 获取指定表的数据插入 SQL
 
-    protected function getModelPath()
+    protected function getModelPath(): string
 获取当前应用 `Model` 目录的绝对路径
 
-    protected function searchTables()
+    protected function searchTables(): array
 扫描 `Model` 目录，获取所有模型对应的表名
 
-    protected function searchModelClasses($path)
+    protected function searchModelClasses(string $path): array
 递归扫描指定目录下的 PHP 文件
 
 ## 相关链接

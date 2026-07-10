@@ -122,10 +122,10 @@ return [
 
 ### 受保护方法
 
-    protected function _LoadConfig($file_basename)
+    protected function _LoadConfig(string $file_basename): array
 加载指定基名的配置文件，并缓存到 `$all_config`。
 
-    protected function loadFile($file)
+    protected function loadFile(string $file): array
 使用 `require` 加载文件并返回配置数组。
 
 ## 相关链接
