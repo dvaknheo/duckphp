@@ -48,6 +48,7 @@ class DuckPhp extends App
         'database_driver' => '',
 
         'cli_command_with_app' => false,
+        'cli_command_with_common' => true,
 
         'lang_default' => null,
         'lang_final' => null,
@@ -93,6 +94,9 @@ class DuckPhp extends App
 
         if ($this->options['cli_command_with_app']) {
             $this->options['cli_command_classes'] = array_merge([static::class => true], $this->options['cli_command_classes']);
+        }
+        if ($this->options['cli_command_with_common']) {
+            array_push($this->options['cli_command_classes'], Command::class);
         }
     }
     protected function initComponents(array $options, object $context = null): void
