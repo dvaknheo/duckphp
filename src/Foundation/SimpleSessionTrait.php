@@ -15,7 +15,7 @@ trait SimpleSessionTrait
     use SingletonTrait;
 
     protected $session_started = false;
-    protected function checkSessionStart()
+    protected function checkSessionStart(): void
     {
         if ($this->session_started) {
             return;
@@ -24,17 +24,17 @@ trait SimpleSessionTrait
         //$this->options['session_prefix'] = App::Current()->options['session_prefix'] ?? '';
         $this->session_started = true;
     }
-    protected function get($key, $default = null)
+    protected function get(string $key, $default = null)
     {
         $this->checkSessionStart();
         return SuperGlobal::_()->_SessionGet((App::Current()->options['session_prefix'] ?? '') . $key, $default);
     }
-    protected function set($key, $value)
+    protected function set(string $key, $value)
     {
         $this->checkSessionStart();
         return SuperGlobal::_()->_SessionSet((App::Current()->options['session_prefix'] ?? '') . $key, $value);
     }
-    protected function unset($key)
+    protected function unset(string $key)
     {
         $this->checkSessionStart();
         return SuperGlobal::_()->_SessionUnset((App::Current()->options['session_prefix'] ?? '') . $key);

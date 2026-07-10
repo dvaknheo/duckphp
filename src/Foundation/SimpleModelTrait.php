@@ -20,7 +20,7 @@ trait SimpleModelTrait
     protected $table_prefix = null;
     protected $table_pk = 'id';
     
-    protected function getTableNameByClass($class)
+    protected function getTableNameByClass(string $class): string
     {
         $t = explode('\\', $class);
         $class = array_pop($t);
@@ -29,7 +29,7 @@ trait SimpleModelTrait
         return $table_name;
     }
     
-    protected function getTablePrefixByClass($class)
+    protected function getTablePrefixByClass(string $class): string
     {
         return App::Current()->options['table_prefix'] ?? '';
     }
@@ -49,7 +49,7 @@ trait SimpleModelTrait
     {
         return empty($this->table()) ? $sql : str_replace("`'TABLE'`", '`'.$this->table().'`', $sql);
     }
-    protected function getList($where = [], int $page = 1, int $page_size = 10)
+    protected function getList(array $where = [], int $page = 1, int $page_size = 10): array
     {
         $sql_where = DbManager::_()->_DbForRead()->quoteAndArray($where);
         $sql_where = $sql_where?:' TRUE ';
@@ -77,12 +77,12 @@ trait SimpleModelTrait
         $ret = DbManager::_()->_DbForRead()->fetch($sql);
         return $ret;
     }
-    protected function add($data)
+    protected function add(array $data)
     {
         $ret = DbManager::_()->_DbForWrite()->insertData($this->table(), $data);
         return $ret;
     }
-    protected function update($id, $data, $key = null)
+    protected function update($id, array $data, ?string $key = null)
     {
         $ret = DbManager::_()->_DbForWrite()->updateData($this->table(), $id, $data, $key ?? $this->table_pk);
         
@@ -91,28 +91,28 @@ trait SimpleModelTrait
     /*
     fetch, fetchAll,fetchClumn,fetchClass
     */
-    protected function execute($sql, ...$args)
+    protected function execute(string $sql, ...$args)
     {
         return DbManager::_()->_DbForWrite()->table($this->table())->execute($sql, ...$args);
     }
     //////////
-    protected function fetchAll($sql, ...$args)
+    protected function fetchAll(string $sql, ...$args): array
     {
         return DbManager::_()->_DbForRead()->table($this->table())->fetchAll($sql, ...$args);
     }
-    protected function fetch($sql, ...$args)
+    protected function fetch(string $sql, ...$args)
     {
         return DbManager::_()->_DbForRead()->table($this->table())->fetch($sql, ...$args);
     }
-    protected function fetchColumn($sql, ...$args)
+    protected function fetchColumn(string $sql, ...$args)
     {
         return DbManager::_()->_DbForRead()->table($this->table())->fetchColumn($sql, ...$args);
     }
-    protected function fetchObject($sql, ...$args)
+    protected function fetchObject(string $sql, ...$args)
     {
         return DbManager::_()->_DbForRead()->setObjectResultClass(static::class)->table($this->table())->fetchObject($sql, ...$args);
     }
-    protected function fetchObjectAll($sql, ...$args)
+    protected function fetchObjectAll(string $sql, ...$args): array
     {
         return DbManager::_()->_DbForRead()->setObjectResultClass(static::class)->table($this->table())->fetchObjectAll($sql, ...$args);
     }

@@ -33,7 +33,7 @@ class DuckPhpAllInOne extends DuckPhp
         ControllerHelperTrait::AdminService  insteadof BusinessHelperTrait;
         ControllerHelperTrait::UserService  insteadof BusinessHelperTrait;
     }
-    protected function embedMe()
+    protected function embedMe(): void
     {
         // embed welcome page to this class
         $path = explode('\\', static::class);

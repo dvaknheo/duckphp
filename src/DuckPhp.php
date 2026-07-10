@@ -141,7 +141,7 @@ class DuckPhp extends App
             GlobalUser::_($class::_Z(static::Phase()));
         }
     }
-    protected function isLocalDatabase()
+    protected function isLocalDatabase(): bool
     {
         $flag = $this->options['local_database'] ?? false;
         if ($flag) {
@@ -155,7 +155,7 @@ class DuckPhp extends App
         }
         return false;
     }
-    protected function isLocalRedis()
+    protected function isLocalRedis(): bool
     {
         return ($this->options['local_redis'] ?? false) ? true : false;
     }

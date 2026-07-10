@@ -26,7 +26,7 @@ class Db implements DbInterface
         $this->config = $options;
         $this->check_connect();
     }
-    protected function check_connect()
+    protected function check_connect(): void
     {
         if ($this->pdo) {
             return;
@@ -116,7 +116,7 @@ class Db implements DbInterface
         return $this;
     }
 
-    protected function exec($sql, ...$args)
+    protected function exec(string $sql, ...$args): \PDOStatement
     {
         if ($this->beforeQueryHandler) {
             ($this->beforeQueryHandler)($this, $sql, ...$args);
