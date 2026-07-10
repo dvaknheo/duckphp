@@ -41,7 +41,6 @@ class DbManager extends ComponentBase
     protected function initOptions(array $options): void
     {
         //TODO $this->is_inited,
-        //TODO 閿涘本瀚鹃崥鍫濈础閻?dsn
         $database_list = $this->options['database_list'];
         if (!isset($database_list) && $this->options['database_list_try_single']) {
             $database = $this->options['database'];
@@ -135,13 +134,6 @@ class DbManager extends ComponentBase
         }
         return $this->databases[$tag];
     }
-    protected function getRuntimePath(): string
-    {
-        //TODO to helper ,PathOfRuntime
-        $path = static::SlashDir(App::Root()->options['path']);
-        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
-        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
-    }
     protected function createDatabaseObject(array $db_config): object
     {
         $last_cwd = null;
@@ -150,7 +142,7 @@ class DbManager extends ComponentBase
         [$driver,$file] = explode(":", $db_config['dsn']);
         if ($driver === 'sqlite') {
             if (!static::IsAbsPath($file)) {
-                $path_runtime = $this->getRuntimePath();
+                $path_runtime = App::Root()->options['path'];
                 $db_config['dsn'] = 'sqlite:'.$path_runtime.$file;
             }
         }
