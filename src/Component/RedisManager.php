@@ -34,7 +34,7 @@ class RedisManager extends ComponentBase
     protected $pool = [];
     protected $redis_config_list = [];
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         //TODO $this->is_inited,
         $redis_list = $this->options['redis_list'];
@@ -45,7 +45,7 @@ class RedisManager extends ComponentBase
         $this->redis_config_list = $redis_list;
     }
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         //$this->context_class = $context
         //$this->context()->_Setting();

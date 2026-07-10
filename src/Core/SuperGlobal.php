@@ -21,7 +21,7 @@ class SuperGlobal extends ComponentBase
     
     protected $init_once = true;
 
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         if ($this->options['superglobal_auto_define']) {
             static::DefineSuperGlobalContext();
@@ -136,7 +136,7 @@ class SuperGlobal extends ComponentBase
     }
     //*/
     ///////////////////////////////////////
-    protected function getSuperGlobalData($superglobal_key, $key, $default)
+    protected function getSuperGlobalData(string $superglobal_key, ?string $key, $default)
     {
         $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : ($GLOBALS[$superglobal_key] ?? []);
         

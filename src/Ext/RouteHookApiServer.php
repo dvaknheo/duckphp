@@ -29,7 +29,7 @@ class RouteHookApiServer extends ComponentBase
         'Access-Control-Allow-Credentials' => 'true',
     ];
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         Route::_()->addRouteHook([static::class,'Hook'], 'prepend-inner');
     }

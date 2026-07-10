@@ -77,7 +77,7 @@ class AutoLoader
         
         return $this;
     }
-    protected function getNamespacePath($sub_path, $main_path): string
+    protected function getNamespacePath(string $sub_path, string $main_path): string
     {
         $is_abs_path = false;
         if (DIRECTORY_SEPARATOR === '/') {

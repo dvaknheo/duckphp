@@ -24,7 +24,7 @@ class RouteHookCheckStatus extends ComponentBase
         return static::_()->doHook($path_info);
     }
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
     }

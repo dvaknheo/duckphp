@@ -154,7 +154,7 @@ class Console extends ComponentBase
         $ret = !empty($validators)? filter_var_array($ret, $validators) :$ret;
         return $ret;
     }
-    protected function parseCliArgs($argv)
+    protected function parseCliArgs(array $argv): array
     {
         $cli = array_shift($argv);
         $ret = [];
@@ -196,7 +196,7 @@ class Console extends ComponentBase
         }
         return $ret;
     }
-    protected function getObject($class)
+    protected function getObject(string $class): object
     {
         return is_callable([$class,'_']) ? $class::_() : new $class;
     }

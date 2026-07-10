@@ -25,7 +25,7 @@ class ComponentBase // implements ComponentInterface
         return App::Current();
         //return ($this->context_class)::_();
     }
-    public function init(array $options, ?object $context = null)
+    public function init(array $options, ?object $context = null) //return $this
     {
         //if ($this->is_inited && ($this->options['init_once'] ?? ($options['init_once'] ?? false))) {
         //    return $this;
@@ -54,11 +54,11 @@ class ComponentBase // implements ComponentInterface
         return $this->is_inited;
     }
     //for override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options):void
     {
     }
     //for override
-    protected function initContext(object $context)
+    protected function initContext(object $context):void
     {
     }
     //helper

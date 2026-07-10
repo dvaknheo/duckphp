@@ -79,7 +79,7 @@ class Route extends ComponentBase
     public function bind($path_info, $request_method = 'GET')
     {
         $path_info = parse_url($path_info, PHP_URL_PATH);
-        $this->setPathInfo($path_info);
+        $this->setPathInfo((string)$path_info);
         if (isset($request_method)) {
             if (defined('__SUPERGLOBAL_CONTEXT')) {
                 $sg = (__SUPERGLOBAL_CONTEXT)();
@@ -121,7 +121,7 @@ class Route extends ComponentBase
         }
         return false;
     }
-    protected function getRunResult()
+    protected function getRunResult(): bool
     {
         if ($this->is_failed) {
             return false;
@@ -186,7 +186,7 @@ class Route extends ComponentBase
         $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
         return $callback;
     }
-    protected function pathToClassAndMethod($path_info)
+    protected function pathToClassAndMethod(string $path_info): ?array
     {
         if ($this->options['controller_url_prefix'] ?? false) {
             $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
@@ -221,7 +221,7 @@ class Route extends ComponentBase
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
-    protected function adjustClassBaseName($path_info)
+    protected function adjustClassBaseName(string $path_info): array
     {
         $welcome_class = $this->options['controller_welcome_class'];
         $blocks = explode('/', $path_info);
@@ -238,12 +238,12 @@ class Route extends ComponentBase
             $blocks[] = $welcome_class;
         }
         if ($this->options['controller_class_adjust']) {
-            [$blocks, $method] = $this->doControllerClassAdjust($blocks, $method);
+            [$blocks, $method] = $this->doControllerClassAdjust($blocks, (string)$method);
         }
         $path_class = implode('\\', $blocks);
         return [$path_class, $method];
     }
-    protected function doControllerClassAdjust($blocks, $method)
+    protected function doControllerClassAdjust(array $blocks, string $method): array
     {
         $adj = is_array($this->options['controller_class_adjust']) ? $this->options['controller_class_adjust'] : explode(';', $this->options['controller_class_adjust']);
         foreach ($adj as $v) {
@@ -259,12 +259,13 @@ class Route extends ComponentBase
         }
         return [$blocks,$method];
     }
-    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
+    protected function getCallbackFromClassAndMethod(string $full_class, string $method, string $path_info): ?array
     {
         $this->calling_class = $full_class;
         $this->calling_method = $method;
         try {
-            $ref = new \ReflectionClass($full_class);
+            // @phpstan-ignore-next-line
+            $ref = new \ReflectionClass((string)$full_class);
             if ($full_class !== $ref->getName()) {
                 $this->route_error = "E002: can't find class($full_class) by $path_info .";
                 return null;
@@ -303,7 +304,7 @@ class Route extends ComponentBase
         }
         return [$object,$method];
     }
-    protected function adjustMethod($method, $ref)
+    protected function adjustMethod(string $method, \ReflectionClass $ref): string
     {
         if ($this->options['controller_prefix_post']) {
             $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
@@ -345,7 +346,7 @@ trait Route_Helper
     {
         return isset($path_info)?static::_()->setPathInfo($path_info):static::_()->getPathInfo();
     }
-    protected function getPathInfo()
+    protected function getPathInfo(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         
@@ -358,7 +359,7 @@ trait Route_Helper
         
         return $my_server['PATH_INFO'] ?? '';
     }
-    protected function setPathInfo($path_info)
+    protected function setPathInfo(string $path_info): void
     {
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             $sg = (__SUPERGLOBAL_CONTEXT)();
@@ -484,7 +485,7 @@ trait Route_UrlManager
         }
         return $ret;
     }
-    protected function getUrlBasePath()
+    protected function getUrlBasePath(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.

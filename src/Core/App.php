@@ -80,7 +80,7 @@ class App extends ComponentBase
         return '('.static::class.')'.static::VERSION;
     }
     //////// override KernelTrait ////////
-    protected function doInitComponents()
+    protected function doInitComponents(): void
     {
         $this->addPublicClassesInRoot([
             Logger::class,

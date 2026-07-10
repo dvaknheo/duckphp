@@ -5,7 +5,7 @@
  */
 // MAIN FILE
 //dvaknheo@github.com
-//OK，Lazy
+//OK, Lazy
 
 namespace DuckPhp\Core;
 
@@ -102,11 +102,11 @@ trait KernelTrait
     {
         return static::Current()->_IsRoot();
     }
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         $this->options = array_replace_recursive($this->options, $options);
     }
-    protected function getDefaultProjectNameSpace($class)
+    protected function getDefaultProjectNameSpace(?string $class): string
     {
         $a = explode('\\', $class ?? static::class);
         array_pop($a);
@@ -114,7 +114,7 @@ trait KernelTrait
         $namespace = implode('\\', $a);
         return $namespace;
     }
-    protected function getDefaultProjectPath()
+    protected function getDefaultProjectPath(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $path = realpath(dirname($my_server['SCRIPT_FILENAME']).'/../');
@@ -141,8 +141,9 @@ trait KernelTrait
     {
         return $this->overriding_class;
     }
-    protected function initContainer($context)
+    protected function initContainer(object $context = null): bool
     {
+        $context = $context ?? '';
         $this->is_root = !(\is_a($context, self::class) || (static::class === self::class));
         //////////////////////////////
         
@@ -183,7 +184,7 @@ trait KernelTrait
         $container->addPublicClasses(array_keys($this->options['app'] ?? []));
         return false;
     }
-    protected function addPublicClassesInRoot($classes)
+    protected function addPublicClassesInRoot(array $classes): void
     {
         if (!$this->is_root) {
             return;
@@ -193,11 +194,11 @@ trait KernelTrait
             $class::_();
         }
     }
-    protected function createLocalObject($class, $object = null)
+    protected function createLocalObject(string $class, ?object $object = null): object
     {
         return PhaseContainer::GetContainer()->createLocalObject($class, $object);
     }
-    protected function initException($options)
+    protected function initException(array $options): void
     {
         //initException();
         $exception_options = $options;
@@ -245,11 +246,11 @@ trait KernelTrait
         $this->onInited();
         return $this;
     }
-    protected function prepareComponents()
+    protected function prepareComponents(): void
     {
         //return; // for override
     }
-    protected function initComponents(array $options, object $context = null)
+    protected function initComponents(array $options, object $context = null): void
     {
         $this->addPublicClassesInRoot([
             Console::class,
@@ -271,11 +272,11 @@ trait KernelTrait
         }
         $this->doInitComponents();
     }
-    protected function doInitComponents()
+    protected function doInitComponents(): void
     {
         //for override
     }
-    protected function loadSetting()
+    protected function loadSetting(): void
     {
         $this->setting = $this->options['setting'] ?? [];
         if ($this->options['use_env_file']) {
@@ -286,13 +287,13 @@ trait KernelTrait
         }
         return;
     }
-    protected function dealWithEnvFile()
+    protected function dealWithEnvFile(): void
     {
         $env_setting = parse_ini_file(realpath($this->options['path']).'/.env');
         $env_setting = $env_setting?:[];
         $this->setting = array_merge($this->setting, $env_setting);
     }
-    protected function dealWithSettingFile()
+    protected function dealWithSettingFile(): void
     {
         $path = $this->options['setting_file'];
         $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($path, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path);
@@ -316,7 +317,7 @@ trait KernelTrait
     {
         return $key ? (static::Root()->setting[$key] ?? $default) : static::Root()->setting;
     }
-    protected function initExtentions(array $exts, $use_main_options): void
+    protected function initExtentions(array $exts, bool $use_main_options): void
     {
         foreach ($exts as $class => $options) {
             //try {
@@ -377,7 +378,7 @@ trait KernelTrait
         $this->onAfterRun();
         return $ret;
     }
-    protected function runException($ex)
+    protected function runException(\Throwable $ex): void
     {
         $phase = $this->_Phase();
         Runtime::_()->onException($this->options['skip_exception_check']);
@@ -392,7 +393,7 @@ trait KernelTrait
         Runtime::_()->last_phase = $phase;
         Runtime::_()->clear();
     }
-    protected function runExtentions()
+    protected function runExtentions(): bool
     {
         $flag = false;
         foreach ($this->options['app'] as $class => $options) {
@@ -430,16 +431,16 @@ trait KernelTrait
     {
         echo "_OnDevErrorHandler";
     }
-    protected function onBeforeCreatePhases()
+    protected function onBeforeCreatePhases(): void
     {
     }
-    protected function onAfterCreatePhases()
+    protected function onAfterCreatePhases(): void
     {
     }
-    protected function onPrepare()
+    protected function onPrepare(): void
     {
     }
-    protected function onBeforeChildrenInit()
+    protected function onBeforeChildrenInit(): void
     {
     }
     protected function onInit()
@@ -448,10 +449,10 @@ trait KernelTrait
     protected function onInited()
     {
     }
-    protected function onBeforeRun()
+    protected function onBeforeRun(): void
     {
     }
-    protected function onAfterRun()
+    protected function onAfterRun(): void
     {
     }
 }

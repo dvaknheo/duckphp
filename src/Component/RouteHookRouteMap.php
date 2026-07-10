@@ -30,7 +30,7 @@ class RouteHookRouteMap extends ComponentBase
         return static::_()->doHook($path_info, true);
     }
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         Route::_()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
         Route::_()->addRouteHook([static::class,'AppendHook'], 'append-outter');

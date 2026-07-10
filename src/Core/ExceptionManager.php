@@ -101,7 +101,7 @@ class ExceptionManager extends ComponentBase
     }
     
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         $this->default_exception_handler = $this->options['default_exception_handler'];
         $this->system_exception_handler = $this->options['system_exception_handler'];

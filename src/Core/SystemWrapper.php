@@ -46,7 +46,7 @@ class SystemWrapper extends ComponentBase
         unset($v);
         return $ret;
     }
-    protected function system_wrapper_call_check($func)
+    protected function system_wrapper_call_check(string $func): bool
     {
         $func = ltrim($func, '_');
         if (defined('__SYSTEM_WRAPPER_REPLACER')) {
@@ -54,7 +54,7 @@ class SystemWrapper extends ComponentBase
         }
         return isset($this->system_handlers[$func])?true:false;
     }
-    protected function system_wrapper_call($func, $input_args)
+    protected function system_wrapper_call(string $func, array $input_args)
     {
         $func = ltrim($func, '_');
         if (defined('__SYSTEM_WRAPPER_REPLACER')) {
@@ -224,7 +224,7 @@ class SystemWrapper extends ComponentBase
         }
         return $mimes[pathinfo($file, PATHINFO_EXTENSION)] ?? 'text/plain';
     }
-    protected function getMimeData()
+    protected function getMimeData(): string
     {
         return <<<EOT
 types {

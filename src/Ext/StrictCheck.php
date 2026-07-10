@@ -32,7 +32,7 @@ class StrictCheck extends ComponentBase
 
     ];
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         throw new \Exception("It's not work , TODO fix me to work in new version.");
         /*
@@ -43,7 +43,7 @@ class StrictCheck extends ComponentBase
         //*/
     }
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         try {
             DbManager::_()->setBeforeGetDbHandler([static::class, 'CheckStrictDb']);

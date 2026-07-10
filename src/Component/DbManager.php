@@ -38,10 +38,10 @@ class DbManager extends ComponentBase
     protected $init_once = true;
     protected $db_before_get_object_handler = null;
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         //TODO $this->is_inited,
-        //TODO ，拼合式的 dsn
+        //TODO 閿涘本瀚鹃崥鍫濈础閻?dsn
         $database_list = $this->options['database_list'];
         if (!isset($database_list) && $this->options['database_list_try_single']) {
             $database = $this->options['database'];
@@ -50,7 +50,7 @@ class DbManager extends ComponentBase
         $this->database_config_list = $database_list;
     }
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         $setting = $context->_Setting(); /** @phpstan-ignore-line */
         

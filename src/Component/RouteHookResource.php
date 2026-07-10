@@ -23,12 +23,11 @@ class RouteHookResource extends ComponentBase
     {
         return static::_()->_Hook($path_info);
     }
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         if ($this->options['controller_resource_prefix']) {
             Route::_()->addRouteHook([static::class,'Hook'], 'append-outter');
         }
-        return $this;
     }
     public function _Hook($path_info)
     {

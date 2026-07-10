@@ -26,7 +26,7 @@ class JsonRpcExt extends ComponentBase
     protected $is_debug;
     
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         $this->is_debug = $this->options['jsonrpc_is_debug'];
         $this->prefix = trim($this->options['jsonrpc_namespace'], '\\').'\\';

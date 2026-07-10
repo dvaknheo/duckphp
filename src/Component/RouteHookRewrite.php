@@ -21,12 +21,12 @@ class RouteHookRewrite extends ComponentBase
         return static::_()->doHook($path_info);
     }
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         $this->rewrite_map = array_merge($this->rewrite_map, $this->options['rewrite_map'] ?? []);
     }
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
     }

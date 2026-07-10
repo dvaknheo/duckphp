@@ -21,7 +21,7 @@ class MyFacadesAutoLoader extends ComponentBase
     protected $is_loaded = false;
     
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         $this->facades_map = $this->options['facades_map'] ?? [];
         $namespace_facades = $this->options['facades_namespace'] ?? 'Facades';

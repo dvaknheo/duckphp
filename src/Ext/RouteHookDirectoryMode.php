@@ -18,12 +18,12 @@ class RouteHookDirectoryMode extends ComponentBase
     ];
     protected $basepath;
     
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         $this->basepath = $this->options['mode_dir_basepath'];
     }
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
         Route::_()->setUrlHandler([static::class,'Url']);

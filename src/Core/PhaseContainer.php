@@ -77,7 +77,7 @@ class PhaseContainer
         $this->containers[$this->current][$class] = $result;
         return $result;
     }
-    protected function createObject($class)
+    protected function createObject(string $class): object
     {
         return new $class;
     }

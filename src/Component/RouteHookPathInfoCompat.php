@@ -16,7 +16,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         'path_info_compact_class_key' => '',
     ];
     //@override
-    protected function initContext(object $context)
+    protected function initContext(object $context): void
     {
         if (!$this->options['path_info_compact_enable']) {
             return;

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 /**
  * DuckPhp
@@ -90,7 +89,7 @@ class DuckPhp extends App
         
         //*/
     ];
-    protected function prepareComponents()
+    protected function prepareComponents(): void
     {
         parent::prepareComponents();
 
@@ -104,7 +103,7 @@ class DuckPhp extends App
             array_push($this->options['cli_command_classes'], FastInstaller::class);
         }
     }
-    protected function initComponents(array $options, object $context = null)
+    protected function initComponents(array $options, object $context = null): void
     {
         parent::initComponents($options, $context);
         
@@ -141,8 +140,6 @@ class DuckPhp extends App
             $class = $this->options['class_user'];
             GlobalUser::_($class::_Z(static::Phase()));
         }
-        
-        return $this;
     }
     protected function isLocalDatabase()
     {
