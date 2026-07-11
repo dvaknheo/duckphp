@@ -1,6 +1,4 @@
-# DuckPHP Framework Documentation
-
-> Reorganized based on source code v1.3.5, ignoring outdated legacy documentation.
+# DuckPHP Framework Guilde
 
 ## Table of Contents
 
