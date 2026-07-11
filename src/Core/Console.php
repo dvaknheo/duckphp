@@ -55,7 +55,7 @@ class Console extends ComponentBase
         $this->options['cli_command_group'][$command_namespace] = [
             'phase' => $phase,
             'classes' => $classes,
-            'method_prefix' => $method_prefix,
+            'default_method_prefix' => $method_prefix,
         ];
     }
     public static function DoRun($path_info = '')
@@ -204,16 +204,18 @@ class Console extends ComponentBase
     public function getCallback($group, $cmd_method)
     {
         //$method = $group['method_prefix'].$method;
+        $cmd_method = str_replace('-', '_', $method);
         $classes = $group['classes'];
+        $default_method_prefix = $group['default_method_prefix'];
         $classes = array_reverse($classes);
-        foreach ($classes as $class) {
-            if (is_array($class)) {
-                list($class, $method_prefix) = $class;
-                $method = $method_prefix.$cmd_method;
-            } else {
-                $method = $group['method_prefix'].$cmd_method;
+        foreach ($classes as $class => $method_prefix) {
+            if(!isset($method_prefix) || $method_prefix===false ){
+                continue;
             }
-            $method = str_replace('-', '_', $method);
+            if($method_prefix === true){
+                $method_prefix = $default_method_prefix;
+            }
+            $method = $method_prefix.$cmd_method;
             if (method_exists($class, $method)) {
                 return [$class,$method];
             }
