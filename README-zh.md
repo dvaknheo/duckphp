@@ -15,9 +15,7 @@ DuckPhp 的名字来源：
 
 > 鸭子类型（Duck Typing）：如果它看起来像鸭子、游起来像鸭子、叫起来像鸭子，那它就是鸭子。
 
-`鸭子类型`：这东西看起来像鸭子，叫起来像鸭子，所以就是鸭子。
-
-## 二、优点详细说明
+## 二、特点
 
 ### Composer 安装
 
@@ -40,64 +38,118 @@ composer require dvaknheo/duckphp # 用 require
 
 ### 样例一
 
-最简单的例子：你只是想做一个不需要验证的 API，那就写一个 `api.php` 文件。
+#### 创建样例
+
+我们通过一个简单样例快速理解 Duckphp
+
+在工程目录下面写个文件 `sample1.php`
 
 ```php
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use DuckPhp\DuckPhpAllInOne as DuckPhpAllInOne;
 use DuckPhp\DuckPhpAllInOne as Helper;
+use MyHello as MyBusiness;
+use MyHello as MyModel;
 
 class MyHello extends DuckPhpAllInOne
 {
     public function action_index()
     {
-        $words = __h("<b>Hello, this is all in one</b>");
-        Helper::Show(['words' => $words], 'main');
+        $words = MyBusiness::_()->getTime();
+        $url = __url('');
+        $data = [
+            'words' => $words,
+            'url' => $url,
+        ];
+        Helper::Show($data,'main');
     }
 
     public function view_main($data)
     {
-        echo $data['words'];
+        echo <<<EOT
+        You are visit: {$data['url']}<br>
+        {$data['words']}
+EOT;
+        
+    }
+    public function getTime()
+    {
+        return "Hello,now is <".MyModel::_()->getData().'>';
+    }
+    public function getData()
+    {
+        return DATE(DATE_ATOM);
     }
 }
-
 $options = [
-    // 'is_debug' => true,
+    'path' => __DIR__ ,
+    // ...
 ];
 MyHello::RunQuickly($options);
 ```
 
-说明：
+使用 go.php 作为服务器
 
-这里入口用的是 `DuckPhp\DuckPhpAllInOne` 类。你可以看到 `use DuckPhp\DuckPhpAllInOne as Helper;`，Helper 把后面的类都封装在一起了。这个例子还演示了 `__h()` 函数。
+```
+php go.php run --host 127.0.0.1 --port 9628 --path-document .
+```
+本质上是调用 php 的内置服务器， 你也可以直接用 php 的内置服务器
+```
+php -S 127.0.0.1:9628 -t .
+```
 
-流程是：`action_index()` → `Show()` → `view_main()`。
+访问 http://127.0.0.1:9628/sample1.php 你就能看到  `TODO`
+
+#### 说明
+
+这里入口用的是 `DuckPhp\DuckPhpAllInOne` 类。同时可以看到 `use DuckPhp\DuckPhpAllInOne as Helper;`
+流程是： `RunQuickly()` → `action_index()` → `Show()` → `view_main()`。
+
++   `MyHello::RunQuickly()` 扮演应用入口 角色， 演示可以有很多选项
++   `MyHello::action_index()` 扮演 控制器 角色 调用
++  调用助手类的 `Helper::Show()`  调用 view 层的 `view_main()`。
++  ...
+
+#### DuckPhp 的部分特点
 
 由这个例子，我们引申出 DuckPhp 的特点：
+
+**DuckPhp 支持web模式 也支持命令行**
+*不建议使用 PHP 内置命令行 Web 服务器；推荐把 nginx 或 Apache 的 `document_root` 指向 `public` 目录，按常规方式部署。*
+
+**DuckPhp 不限制你的目录  支持全站路由、局部路径路由和无 PATH_INFO 路由**
+
+> 现在许多 PHP 框架一个域名只能放一个应用。DuckPhp 回归 PHP 快速开发的本源。
+> DuckPhp 不需要修改服务器配置也能使用，也支持放在子目录里。`DuckPhpAllInOne` 类相比 `DuckPhp` 类默认启用了无 PATH_INFO 路由。
+
+DuckPhp 通过 composer 包 `dvaknheo/workermanhttpd` 扩展支持 Workerman，不需要修改工程代码即可运行，未来还会支持更多平台。
 
 **DuckPhp 不限制你的工程的命名空间**
 
 > 示例代码使用 `MyHello` 作为命名空间。
 
-**DuckPhp 不限制你的目录**
+**DuckPhp 不需要一大堆配置文件**
 
-> 现在许多 PHP 框架一个域名只能放一个应用。DuckPhp 回归 PHP 快速开发的本源。
+> 它的配置大多使用默认值，通过调整选项可以得到不同行为。
+> 这里的 `$options` 就是应用选项，你可以打开调试模式。有很多应用选项可用。具体请查看文档。
 
-DuckPhp 支持全站路由、局部路径路由和无 PATH_INFO 路由，不需要修改服务器配置也能使用，也支持放在子目录里。`DuckPhpAllInOne` 类相比 `DuckPhp` 类默认启用了无 PATH_INFO 路由。
+**DuckPhp 不需要手动写路由**
 
-**DuckPhp 不需要一大堆配置文件**。它的配置大多使用默认值，通过调整选项可以得到不同行为。
-
-> 这里的 `$options` 就是应用选项，你可以打开调试模式。具体请查看文档。
+自动路由可以满足需求，如果不满足需求，你也可以自己写路由
 
 **DuckPhp 无侵入，防止全局函数冲突引发的问题**
 
 > 只有少数几个 `__` 开头的全局函数，你也可以覆盖它们。
 
-### 样例二：嵌入其他工程
+### 样例二：嵌入工程
 
-**DuckPhp 可以把其他 DuckPhp 工程嵌入当前工程**。你不需要在现有 DuckPhp 应用上做二次开发，直接把它当作插件使用即可。
+**DuckPhp 可以把其他 DuckPhp 工程当成插件嵌入当前工程**
+这是 DuckPhp 的重要特色
+
+你不需要在现有 DuckPhp 应用上做二次开发，直接把它当作插件使用即可。
+写
 
 ```php
 <?php
@@ -129,19 +181,21 @@ class MyApi extends DuckPhpAllInOne
         echo "I'm Parent. Goto <a href='{$url_child}'>child</a>";
     }
 }
+$options = [
+    'path' => __DIR__ ,
+    // ...
+];
+MyApi::RunQuickly($options);
 
-MyApi::RunQuickly();
 ```
+访问  '/' 可以看到 可跳转到 '/child/index'
 
 在这里，`MyApi2` 和 `MyApi` 都是独立的 DuckPhp 应用，`MyApi` 把 `MyApi2` 作为子应用。
 
-如果你不想为某个 API 写用户系统，可以把 DuckAdmin 工程的用户系统嵌入进来，然后用 `Helper::UserId()` 获取用户 ID。
+如果你不想为某个 API 写用户系统，可以把 composer 包的 `dvaknheo/duckadmin`的用户系统嵌入进来，然后用 `Helper::UserId()` 获取用户 ID，用 `Helper::AdminId()` 获取管理员 ID。
 
-*子应用涉及静态资源、应用间通信、组件共享等复杂问题，需要谨慎使用。*
 
-DuckPhp 通过 [dvaknheo/workermanhttpd](https://packagist.org/packages/dvaknheo/workermanhttpd) 扩展支持 Workerman，不需要修改工程代码即可运行，未来还会支持更多平台。
-
-*不建议使用 PHP 内置命令行 Web 服务器；推荐把 nginx 或 Apache 的 `document_root` 指向 `public` 目录，按常规方式部署。*
+*子应用涉及静态资源、应用间通信、组件共享等复杂问题。*
 
 ### 样例三：组件替换
 
@@ -220,6 +274,8 @@ DuckPhp 的使用者角色分为 `业务工程师` 和 `核心工程师`。
 > 看完助手类教程后，`业务工程师` 就可以开始写业务代码了。不懂的地方可以问 `核心工程师`。
 
 ### 简单教程
+
+// 写一个增删改查
 
 ## 四、其他特性
 
