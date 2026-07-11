@@ -1,5 +1,7 @@
 # DuckPhp
 
+[English](README.md) | [中文](README-zh.md)
+
 - 版本：v1.3.4 / 为 v1.3.5 准备
 - 作者 QQ：85811616
 - 官方 QQ 群：714610448
@@ -17,32 +19,32 @@ DuckPhp 的名字来源：
 
 ## 二、特点
 
-### Composer 安装
+### 使用 Composer 安装
 
 ```
-composer require dvaknheo/duckphp # 用 require
+composer require dvaknheo/duckphp # 使用 require
 ./vendor/bin/duckphp new
 ```
 
-第一句命令说明 duckphp 是库模式的框架，而不是由一堆库拼装起来的。
+第一句命令说明 DuckPhp 是库模式的框架，而不是由一堆库拼装起来的。
 
 **DuckPhp 以库方式引入**，所以工程骨架不像其他框架那样包含一大堆不可删除的文件。
 
-**DuckPhp 零依赖**。你不必担心第三方依赖改动带来的麻烦；不需要引入 101 个第三方包就能工作，稳定性完全可控。
+**DuckPhp 零依赖。** 你不需要担心第三方包的变更。它无需引入 101 个包就能工作，稳定性完全可控。
 
 `./vendor/bin/duckphp new` 命令会复制骨架文件，并根据你在 `composer.json` 中设置的 `src` 命名空间替换工程命名空间。
 
-**DuckPhp 不限制你的工程的命名空间**
+**DuckPhp 不限制你的项目命名空间。**
 
-你也可以不用骨架文件，自己写代码。
+你也可以不依赖骨架文件来编写代码。
 
-### 样例一
+### 示例 1
 
-#### 创建样例
+#### 创建示例
 
-我们通过一个简单样例快速理解 Duckphp
+我们用一个简单的例子来快速了解 DuckPhp。
 
-在工程目录下面写个文件 `sample1.php`
+在项目目录中创建文件 `sample1.php`：
 
 ```php
 <?php
@@ -67,7 +69,7 @@ use MyApp as MyView;
 class MyApp extends DuckPhpAllInOne
 {
     public $options = [
-        'path' => __DIR__ ,
+        'path' => __DIR__,
         'controller_welcome_class' => MyWelcomeController::class,
         'callable_view_class' => MyView::class,
         // ...
@@ -80,7 +82,7 @@ class MyApp extends DuckPhpAllInOne
     public function action_index()
     {
         $words = MyBusiness::_()->getTime();
-        Helper::Show(['words'=>$words], 'main');
+        Helper::Show(['words' => $words], 'main');
     }
 
     public function view_main($data)
@@ -90,7 +92,7 @@ class MyApp extends DuckPhpAllInOne
     }
     public function getTime()
     {
-        return "Hello,now is <".MyModel::_()->getData().'>';
+        return "Hello, now is <" . MyModel::_()->getData() . '>';
     }
     public function getData()
     {
@@ -99,75 +101,85 @@ class MyApp extends DuckPhpAllInOne
 }
 MyApp::RunQuickly([]);
 ```
-使用 `sample1.php` 作为服务器
+
+将 `sample1.php` 作为服务器运行：
 
 ```bash
 php sample1.php run --host 127.0.0.1 --port 9628 --path-document .
 ```
-本质上是调用 php 的内置服务器， 你也可以直接用 php 的内置服务器
+
+这使用了 PHP 内置服务器。你也可以直接运行 PHP 内置服务器：
+
 ```bash
 php -S 127.0.0.1:9628 -t .
 ```
 
-访问 http://127.0.0.1:9628/sample1.php 结果是
+访问 `http://127.0.0.1:9628/sample1.php`，结果如下：
+
 ```
-You are visit: /sample1.php; Hello,now is <2026-07-11T07:08:05+00:00>
+You are visit: /sample1.php; Hello, now is <2026-07-11T07:08:05+00:00>
 ```
+
 #### 说明
 
-这里入口用的是 `DuckPhp\DuckPhpAllInOne` 类。 
-流程是： 
+这里的入口类是 `DuckPhp\DuckPhpAllInOne`。
 
-    `MyApp::RunQuickly()` → `MyWelcomeController::action_index()` → `MyBusiness::getTime()` → `MyModel::getData()` 
-    `MyApp::RunQuickly()` → `MyWelcomeController::action_index()` → `Helper::Show()` → `MyView::view_main()`。
+流程如下：
 
-+   应用入口 `MyApp::RunQuickly()` 演示可以有很多应用选项 `MyApp->$options`
-+   应用入口路由到 `MyWelcomeController::action_index()` 
-+   控制器层 `MyWelcomeController::action_index()`  调用业务层的 `MyBusiness::getTime()` 业务
-+   业务层的 `MyBusiness::getTime()` 调用 Model 层的 `MyModel::getData()` 
-+   Model 层的 `MyModel::getData()` 获取 当前时间
-+   控制器层 `MyApp::action_index()`  调用助手类的 `Helper::Show()` 用于显示输出
-+   `Helper::Show()` 调用 View 层的 `MyApp::view_main()` 最终显示输出
-+   View 层用 `__url()` 全局函数获得当前URL
+- `MyApp::RunQuickly()` → `MyWelcomeController::action_index()` → `MyBusiness::getTime()` → `MyModel::getData()`
+- `MyApp::RunQuickly()` → `MyWelcomeController::action_index()` → `Helper::Show()` → `MyView::view_main()`
 
-### 样例一所演示的 DuckPhp 的部分特点
+详细说明：
 
-由上一节例子，我们引申出 DuckPhp 的特点：
+- 应用入口 `MyApp::RunQuickly()` 演示了应用选项 `MyApp->$options`。
+- 应用入口路由到 `MyWelcomeController::action_index()`。
+- 控制器层 `MyWelcomeController::action_index()` 调用业务层的 `MyBusiness::getTime()`。
+- 业务层的 `MyBusiness::getTime()` 调用 Model 层的 `MyModel::getData()`。
+- Model 层的 `MyModel::getData()` 获取当前时间。
+- 控制器层 `MyApp::action_index()` 调用助手类的 `Helper::Show()` 用于显示输出。
+- `Helper::Show()` 调用 View 层的 `MyApp::view_main()` 最终显示输出。
+- View 层用 `__url()` 全局函数获得当前 URL。
 
-**DuckPhp 支持web模式 也支持命令行**
+### 示例 1 展示的 DuckPhp 部分特点
+
+从这个例子中，我们可以看到 DuckPhp 的特点：
+
+**DuckPhp 同时支持 Web 模式和命令行模式**
+
 *不建议使用 PHP 内置命令行 Web 服务器；推荐把 nginx 或 Apache 的 `document_root` 指向 `public` 目录，按常规方式部署。*
 
-**DuckPhp 不限制你的目录  支持全站路由、局部路径路由和无 PATH_INFO 路由**
+**DuckPhp 不限制你的目录，支持全站路由、局部路径路由和无 PATH_INFO 路由**
 
 > 现在许多 PHP 框架一个域名只能放一个应用。DuckPhp 回归 PHP 快速开发的本源。
 > DuckPhp 不需要修改服务器配置也能使用，也支持放在子目录里。`DuckPhpAllInOne` 类相比 `DuckPhp` 类默认启用了无 PATH_INFO 路由。
 
-DuckPhp 通过 composer 包 `dvaknheo/workermanhttpd` 扩展支持 Workerman，不需要修改工程代码即可运行，未来还会支持更多平台。
+DuckPhp 通过 Composer 包 `dvaknheo/workermanhttpd` 扩展支持 Workerman，不需要修改工程代码即可运行，未来还会支持更多平台。
 
 **DuckPhp 不限制你的工程的命名空间**
 
 > 示例代码使用 `MyApp` 作为命名空间。
 
-**DuckPhp 不需要一大堆配置文件**
+**DuckPhp 不需要大量配置文件**
 
 > 它的配置大多使用默认值，通过调整选项可以得到不同行为。
-> 这里的 `$options` 就是应用选项，你可以打开调试模式。有很多应用选项可用。具体请查看文档。
+> 这里的 `$options` 就是应用选项，你可以打开调试模式。有很多应用选项可用，具体请查看文档。
 
-**DuckPhp 不需要手动写路由**
+**DuckPhp 不需要手动路由**
 
-自动路由可以满足需求，如果不满足需求，你也可以自己写路由
+自动路由在大多数情况下已经足够。如果不够，你也可以编写自己的路由。
 
-**DuckPhp 无侵入，防止全局函数冲突引发的问题**
+**DuckPhp 非侵入式，避免全局函数冲突**
 
-> 只有少数几个 `__` 开头的全局函数，你也可以覆盖它们。
+> 只有少数以 `__` 开头的全局函数。你也可以重写它们。
 
-### 样例二：嵌入工程
+### 示例 2：嵌入另一个项目
 
-**DuckPhp 应用可以把其他 DuckPhp 应用当成子应用嵌入当前工程**
+**DuckPhp 应用可以将其他 DuckPhp 应用作为子应用嵌入**
 
-这是 DuckPhp 的重要特色，你不需要在现有 DuckPhp 应用上做二次开发，直接把它当作插件使用即可。
+这是 DuckPhp 的一个重要特性。你无需对现有的 DuckPhp 应用进行二次开发。你可以直接将其作为插件使用。
 
-示例文件 `sample2.php`
+示例文件 `sample2.php`：
+
 ```php
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -181,6 +193,7 @@ class ChildApp extends DuckPhpAllInOne
         echo "I'm child.";
     }
 }
+
 class ParentApp extends DuckPhpAllInOne
 {
     public $options = [
@@ -190,27 +203,30 @@ class ParentApp extends DuckPhpAllInOne
             ],
         ]
     ];
+
     public function action_index()
     {
         $url_child = __url('child/index');
         echo "I'm Parent. Goto <a href='{$url_child}'>child</a>";
     }
 }
+
 ParentApp::RunQuickly([]);
 ```
-同样在上面的服务器下。
 
-访问 http://127.0.0.1:9628/sample1.php 结果是 
+在上述同一服务器下运行。
 
-`I'm Parent. Goto child`  点击链接，将跳转,内容是 `I'm child.`
+访问 `http://127.0.0.1:9628/sample2.php`，结果如下：
 
-在这里，`ParentApp` 和 `ChildApp` 都是独立的 DuckPhp 应用，`ParentApp` 把 `ChildApp` 作为子应用。
+`I'm Parent. Goto child`。点击链接跳转到子应用，内容为 `I'm child.`。
 
-如果你不想为某个 API 写用户系统，可以把 composer 包的 `dvaknheo/duckadmin`的用户系统嵌入进来，然后用 `Helper::UserId()` 获取用户 ID，用 `Helper::AdminId()` 获取管理员 ID。
+这里，`ParentApp` 和 `ChildApp` 都是独立的 DuckPhp 应用。`ParentApp` 将 `ChildApp` 作为子应用使用。
 
-这里只是简单的演示插入，子应用涉及静态资源、应用间通信、组件共享等复杂问题。具体你需要查看文档
+如果你不想为 API 编写用户系统，可以嵌入 Composer 包 `dvaknheo/duckadmin` 的用户系统。然后通过 `Helper::UserId()` 获取用户 ID，通过 `Helper::AdminId()` 获取管理员 ID。
 
-### 样例三：组件替换
+这只是一个简单的嵌入演示。子应用涉及静态资源、应用间通信、组件共享等复杂问题，详情请参阅文档。
+
+### 示例 3：替换组件
 
 ```php
 <?php
@@ -223,14 +239,16 @@ function __h($str)
 {
     return CoreHelper::H($str);
 }
+
 class MyCoreHelper extends CoreHelper
 {
     //@override
     public function _H(&$str)
     {
-        return '<b>'.CoreHelper::_H($str).'</b>';
+        return '<b>' . CoreHelper::_H($str) . '</b>';
     }
 }
+
 class ExtApp extends DuckPhpAllInOne
 {
     //@override
@@ -239,37 +257,41 @@ class ExtApp extends DuckPhpAllInOne
         CoreHelper::_(MyCoreHelper::_());
         ExtApp::setViewHeadFoot('', '');
     }
+
     public function action_index()
     {
-        ExtApp::Show([],'main');
+        ExtApp::Show([], 'main');
     }
+
     public function view_main($data)
     {
         echo __h('<h!>');
     }
 }
+
 $options = [
-    'path' => __DIR__ ,
+    'path' => __DIR__,
 ];
 ExtApp::RunQuickly($options);
 ```
 
-同样在上面的服务器下。
+在上述同一服务器下运行。
 
-访问 http://127.0.0.1:9628/sample3.php 输出是 
+访问 `http://127.0.0.1:9628/sample3.php`，输出如下：
 
 ```html
 <b>&lt;h!&gt;</b>
 ```
-这个例子替换了 `__h()` 的实现。体现了 DuckPhp 的灵活性。
 
-**DuckPhp 作为现代 PHP 库，全组件可替换是基本要求。** 如果对默认实现不满意，可以很容易地换成其他实现（即使需要第三方依赖）。DuckPhp 用可变单例方式保持调用接口不变，实现却可以替换；这样不需要魔改框架就能修复问题或切换组件。
+这个例子替换了 `__h()` 的实现，展示了 DuckPhp 的灵活性。
 
-**DuckPhp 应用 堆栈清晰 ，调试非常方便** ，。调用 `debug_print_backtrace(2)` 很容易发现问题。那些使用大量中间件的框架堆栈通常不够清晰。
+**作为现代 PHP 库，DuckPhp 使所有组件都可替换。** 如果你对默认实现不满意，可以轻松切换到另一个实现，即使它需要第三方依赖。DuckPhp 使用可变单例，因此调用接口不变，而实现可以更改。这意味着你可以在不修改框架的情况下修复问题或切换组件。
 
-## 三、常规工程
+**DuckPhp 应用拥有清晰的堆栈跟踪，便于调试。** 你可以通过 `debug_print_backtrace(2)` 快速定位问题。使用大量中间件的框架通常堆栈跟踪不够清晰。
 
-当你用 `./vendor/bin/duckphp new` 创建工程后，会得到如下骨架文件。更详细的说明请见 `RULES.md`。
+## 3. 常规项目
+
+当你使用 `./vendor/bin/duckphp new` 创建项目时，会得到以下骨架文件。更多详情请参见 `RULES.md`。
 
 ```
 project/
@@ -313,18 +335,18 @@ project/
 ```
 
 > **注意**：
-> - `SomeAction.php`、`testController.php`、`DemoBusiness.php`、`SomeService.php`、`DemoModel.php` 是示例文件，实际项目中应删除并根据业务需求编写类似的类。
-> - `ConsoleCommand.php`、`ExceptionReporter.php`、`BusinessException.php`、`ControllerException.php`、`ProjectException.php` 默认未启用。你可以：
->   - 精简工程：直接删除这些不用的文件。
->   - 启用功能：在 `src/System/App.php` 中取消对应的选项注释（`cli_command_classes`、`exception_reporter`、`exception_for_project` / `exception_for_business` / `exception_for_controller`）。
+> - `SomeAction.php`、`testController.php`、`DemoBusiness.php`、`SomeService.php` 和 `DemoModel.php` 是示例文件。在实际项目中，删除它们并编写适合业务的类似类。
+> - `ConsoleCommand.php`、`ExceptionReporter.php`、`BusinessException.php`、`ControllerException.php` 和 `ProjectException.php` 默认禁用。你可以：
+>   - 删除不需要的文件以简化项目。
+>   - 在 `src/System/App.php` 中取消注释对应的选项（`cli_command_classes`、`exception_reporter`、`exception_for_project` / `exception_for_business` / `exception_for_controller`）来启用功能。
 >
-> `runtime/` 目录需要可写权限。
+> `runtime/` 目录需要写入权限。
 
-**DuckPhp 工程层级分明，不交叉引用。**
+**DuckPhp 项目层次清晰，没有跨层调用。**
 
 System → Controller → Business → Model
 
-DuckPhp 的使用者角色分为 `业务工程师` 和 `核心工程师`。
+DuckPhp 用户分为两个角色：`业务开发者` 和 `核心开发者`。
 
 - `业务工程师` 只需要研究业务代码。
 - `核心工程师` 负责研究系统核心代码。
@@ -333,41 +355,41 @@ DuckPhp 的使用者角色分为 `业务工程师` 和 `核心工程师`。
 
 ### 简单教程
 
-// 写一个增删改查
+// 后续补充：写一个增删改查示例
 
-## 四、其他特性
+## 4. 其他特性
 
-DuckPhp 支持 Composer，无 Composer 环境也可运行。DuckPhp 是 Composer 库，不需要单独的脚手架工程。
+DuckPhp 支持 Composer，但也可以在没有 Composer 的情况下运行。DuckPhp 是一个 Composer 库，因此不需要独立的脚手架项目。
 
-> 拥有自己 loader 但工程上意义不大。
+> 拥有自己的 loader 是可能的，但工程上意义不大。
 
-`DuckPhp\Core\App` 是 `DuckPhp` 的子框架。某些情况下，你也可以直接使用 `DuckPhp\Core\App`。
+`DuckPhp\Core\App` 是 `DuckPhp` 的子框架。某些情况下，你可以直接使用 `DuckPhp\Core\App`。
 
-DuckPhp 的 Controller 切换容易，独立，和其他类无关，简单明了。
+DuckPhp 的控制器易于切换。它们独立于其他类，简单易懂。
 
-DuckPhp 的路由也可以单独抽出使用。
+DuckPhp 的路由也可以单独使用。
 
-> 实际工程中这三项单独拆出来使用的情况较少。
+> 在实际项目中，这三个很少分开使用。
 
-DuckPhp 支持扩展。这些扩展可独立，不一定只能用于 DuckPhp。
+DuckPhp 支持扩展。这些扩展可以是独立的，不一定要和 DuckPhp 一起使用。
 
-> 只要类支持 `init([], $context)` 都可以作为扩展。
+> 任何支持 `init([], $context)` 的类都可以作为扩展使用。
 
 DuckPhp 可以做到你的应用和 DuckPhp 系统代码只有一行关联。你的业务代码基本和 DuckPhp 系统代码无关。你只需要研究业务代码，不需要研究框架代码。
 
-> 通过修改选项实现。
+> 这是通过更改选项实现的。
 
-DuckPhp 有扩展能禁止你在 Controller 里直接写 SQL。有些框架为了防止开发者犯错而牺牲性能，但 DuckPhp 这种方式几乎不影响性能。
+DuckPhp 有一个扩展可以阻止你在控制器中直接编写 SQL。有些框架通过牺牲性能来防止开发者犯错。DuckPhp 以几乎无性能损失的方式做到这一点。
 
 > 只是目前作用不大。
 
-DuckPhp 耦合松散，扩展灵活方便，魔改容易。
+DuckPhp 松散耦合，扩展灵活，易于修改。
 
-> DuckPhp 的数据库类很简洁，你可以轻易方便地替换。
+> DuckPhp 的数据库类很简单，你可以轻松替换它。
 
-DuckPhp 的类尽量无状态。
+DuckPhp 类尽量保持无状态。
 
-DuckPhp 各组件没有直接引用，所以 `var_dump(AnyComponent::_())` 能看出来。
+DuckPhp 组件之间不直接相互引用，因此你可以通过 `var_dump(AnyComponent::_())` 来查看。
 
 ### 开发理念
 
@@ -396,6 +418,6 @@ DuckPhp 不写 Widget，因为这和 MVC 分离原则相违背。
 
 1.3.4 增加了 Docker 支持，修复了多语言支持，为 1.3.5 准备。
 
-## 六、DuckPhp 还要做什么
+## 6. DuckPhp 下一步计划
 
 ![logo](duckphp.jpg)

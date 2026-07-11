@@ -1,5 +1,7 @@
 # DuckPhp
 
+[English](README.md) | [中文](README-zh.md)
+
 - Version: v1.3.4 / preparing for v1.3.5
 - Author QQ: 85811616
 - QQ Group: 714610448
@@ -15,7 +17,7 @@ The name comes from **duck typing**:
 
 > Duck Typing: if it looks like a duck, swims like a duck, and quacks like a duck, then it is probably a duck.
 
-## 2. Advantages in Detail
+## 2. Features
 
 ### Install with Composer
 
@@ -38,56 +40,133 @@ You can also write code without the skeleton files.
 
 ### Example 1
 
-The simplest example: you want to make an API without authentication. Just write an `api.php` file.
+#### Create the Example
+
+We use a simple example to quickly understand DuckPhp.
+
+Create a file `sample1.php` in the project directory:
 
 ```php
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
-use DuckPhp\DuckPhpAllInOne as DuckPhpAllInOne;
-use DuckPhp\DuckPhpAllInOne as Helper;
+use DuckPhp\DuckPhpAllInOne;
+use DuckPhp\Foundation\Controller\Helper;
 
-class MyHello extends DuckPhpAllInOne
+use MyApp as MyWelcomeController;
+use MyApp as MyBusiness;
+use MyApp as MyModel;
+use MyApp as MyView;
+
+use DuckPhp\DuckPhpAllInOne;
+use DuckPhp\Foundation\Controller\Helper;
+
+use MyApp as MyWelcomeController;
+use MyApp as MyBusiness;
+use MyApp as MyModel;
+use MyApp as MyView;
+
+class MyApp extends DuckPhpAllInOne
 {
+    public $options = [
+        'path' => __DIR__,
+        'controller_welcome_class' => MyWelcomeController::class,
+        'callable_view_class' => MyView::class,
+        // ...
+    ];
+    //@override
+    public function onInited()
+    {
+        Helper::setViewHeadFoot('', '');
+    }
     public function action_index()
     {
-        $words = __h("<b>Hello, this is all in one</b>");
+        $words = MyBusiness::_()->getTime();
         Helper::Show(['words' => $words], 'main');
     }
 
     public function view_main($data)
     {
-        echo $data['words'];
+        $url = __url('');
+        echo "You are visit: $url; {$data['words']}";
+    }
+    public function getTime()
+    {
+        return "Hello, now is <" . MyModel::_()->getData() . '>';
+    }
+    public function getData()
+    {
+        return DATE(DATE_ATOM);
     }
 }
-
-$options = [
-    // 'is_debug' => true,
-];
-MyHello::RunQuickly($options);
+MyApp::RunQuickly([]);
 ```
 
-Explanation:
+Run `sample1.php` as a server:
 
-The entry point here is the `DuckPhp\DuckPhpAllInOne` class. You can see `use DuckPhp\DuckPhpAllInOne as Helper;`. The Helper class wraps all the other classes together. This example also shows the `__h()` function.
+```bash
+php sample1.php run --host 127.0.0.1 --port 9628 --path-document .
+```
 
-The flow is: `action_index()` → `Show()` → `view_main()`.
+This uses the PHP built-in server. You can also run the PHP built-in server directly:
+
+```bash
+php -S 127.0.0.1:9628 -t .
+```
+
+Visit `http://127.0.0.1:9628/sample1.php`. The result is:
+
+```
+You are visit: /sample1.php; Hello, now is <2026-07-11T07:08:05+00:00>
+```
+
+#### Explanation
+
+The entry point here is the `DuckPhp\DuckPhpAllInOne` class.
+
+The flow is:
+
+- `MyApp::RunQuickly()` → `MyWelcomeController::action_index()` → `MyBusiness::getTime()` → `MyModel::getData()`
+- `MyApp::RunQuickly()` → `MyWelcomeController::action_index()` → `Helper::Show()` → `MyView::view_main()`
+
+Details:
+
+- The application entry `MyApp::RunQuickly()` shows the application options in `MyApp->$options`.
+- The entry routes to `MyWelcomeController::action_index()`.
+- The controller layer `MyWelcomeController::action_index()` calls the business layer `MyBusiness::getTime()`.
+- The business layer `MyBusiness::getTime()` calls the model layer `MyModel::getData()`.
+- The model layer `MyModel::getData()` gets the current time.
+- The controller layer `MyApp::action_index()` calls the helper class `Helper::Show()` to display output.
+- `Helper::Show()` calls the view layer `MyApp::view_main()` to show the final output.
+- The view layer uses the global function `__url()` to get the current URL.
+
+### Some Features Shown in Example 1
 
 From this example, we can see DuckPhp's features:
 
-**DuckPhp does not limit your project namespace**
+**DuckPhp supports both web mode and command line mode**
 
-> The sample code uses `MyHello` as its namespace.
+*We do not recommend using PHP's built-in command-line web server. Set nginx or Apache `document_root` to the `public` directory and deploy in the usual way.*
 
-**DuckPhp does not limit your directory**
+**DuckPhp does not limit your directory and supports full-site routing, partial-path routing, and no-PATH_INFO routing**
 
 > Many PHP frameworks today only allow one application per domain. DuckPhp returns to the fast PHP development style.
+> DuckPhp can be used without changing server settings, and you can also put it in a subdirectory. The `DuckPhpAllInOne` class enables no-PATH_INFO routing by default, unlike the `DuckPhp` class.
 
-DuckPhp supports full-site routing, partial-path routing, and no-PATH_INFO routing. You can use it without changing server settings, and you can also put it in a subdirectory. The `DuckPhpAllInOne` class enables no-PATH_INFO routing by default, unlike the `DuckPhp` class.
+DuckPhp supports Workerman through the Composer package `dvaknheo/workermanhttpd`. You can run it without changing project code. More platforms will be supported in the future.
 
-**DuckPhp does not need a lot of config files.** Most of its settings use default values. You can get different behavior by changing options.
+**DuckPhp does not limit your project namespace**
 
-> `$options` here are the application options. You can turn on debug mode. See the docs for details.
+> The sample code uses `MyApp` as its namespace.
+
+**DuckPhp does not need a lot of config files**
+
+> Most of its settings use default values. You can get different behavior by changing options.
+> `$options` here are the application options. You can turn on debug mode. There are many application options available. See the docs for details.
+
+**DuckPhp does not need manual routing**
+
+Auto-routing is enough for most cases. If not, you can also write your own routes.
 
 **DuckPhp is non-invasive and avoids global function conflicts**
 
@@ -95,7 +174,11 @@ DuckPhp supports full-site routing, partial-path routing, and no-PATH_INFO routi
 
 ### Example 2: Embed Another Project
 
-**DuckPhp can embed other DuckPhp projects into the current project.** You do not need to do secondary development on the existing DuckPhp application. You can use it directly as a plugin.
+**A DuckPhp application can embed other DuckPhp applications as child applications**
+
+This is an important feature of DuckPhp. You do not need to do secondary development on the existing DuckPhp application. You can use it directly as a plugin.
+
+Sample file `sample2.php`:
 
 ```php
 <?php
@@ -103,7 +186,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use DuckPhp\DuckPhpAllInOne;
 
-class MyApi2 extends DuckPhpAllInOne
+class ChildApp extends DuckPhpAllInOne
 {
     public function action_index()
     {
@@ -111,11 +194,11 @@ class MyApi2 extends DuckPhpAllInOne
     }
 }
 
-class MyApi extends DuckPhpAllInOne
+class ParentApp extends DuckPhpAllInOne
 {
     public $options = [
         'app' => [
-            MyApi2::class => [
+            ChildApp::class => [
                 'controller_url_prefix' => 'child/',
             ],
         ]
@@ -128,30 +211,83 @@ class MyApi extends DuckPhpAllInOne
     }
 }
 
-MyApi::RunQuickly();
+ParentApp::RunQuickly([]);
 ```
 
-Here, `MyApi2` and `MyApi` are both independent DuckPhp applications. `MyApi` uses `MyApi2` as a child application.
+Run it under the same server as above.
 
-If you do not want to write a user system for an API, you can embed the DuckAdmin user system and get the user ID with `Helper::UserId()`.
+Visit `http://127.0.0.1:9628/sample2.php`. The result is:
 
-*Child applications are complex. They involve static resources, inter-app communication, and component sharing. Use them carefully.*
+`I'm Parent. Goto child`. Click the link to jump to the child application. The content is `I'm child.`.
 
-DuckPhp supports Workerman through the [dvaknheo/workermanhttpd](https://packagist.org/packages/dvaknheo/workermanhttpd) extension. You can run it without changing project code. More platforms will be supported in the future.
+Here, `ParentApp` and `ChildApp` are both independent DuckPhp applications. `ParentApp` uses `ChildApp` as a child application.
 
-*We do not recommend using PHP's built-in command-line web server. Set nginx or Apache `document_root` to the `public` directory and deploy in the usual way.*
+If you do not want to write a user system for an API, you can embed the user system from the Composer package `dvaknheo/duckadmin`. Then get the user ID with `Helper::UserId()` and the admin ID with `Helper::AdminId()`.
+
+This is just a simple embedding demo. Child applications involve complex issues such as static resources, inter-app communication, and component sharing. See the docs for details.
 
 ### Example 3: Replace Components
 
-//TODO code
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
 
-This example is not as visual as the first two, but it shows DuckPhp's flexibility.
+use DuckPhp\DuckPhpAllInOne as DuckPhpAllInOne;
+use DuckPhp\Core\CoreHelper;
+
+function __h($str)
+{
+    return CoreHelper::H($str);
+}
+
+class MyCoreHelper extends CoreHelper
+{
+    //@override
+    public function _H(&$str)
+    {
+        return '<b>' . CoreHelper::_H($str) . '</b>';
+    }
+}
+
+class ExtApp extends DuckPhpAllInOne
+{
+    //@override
+    public function onInited()
+    {
+        CoreHelper::_(MyCoreHelper::_());
+        ExtApp::setViewHeadFoot('', '');
+    }
+
+    public function action_index()
+    {
+        ExtApp::Show([], 'main');
+    }
+
+    public function view_main($data)
+    {
+        echo __h('<h!>');
+    }
+}
+
+$options = [
+    'path' => __DIR__,
+];
+ExtApp::RunQuickly($options);
+```
+
+Run it under the same server as above.
+
+Visit `http://127.0.0.1:9628/sample3.php`. The output is:
+
+```html
+<b>&lt;h!&gt;</b>
+```
+
+This example replaces the implementation of `__h()` and shows DuckPhp's flexibility.
 
 **As a modern PHP library, DuckPhp makes all components replaceable.** If you are not happy with the default implementation, you can easily switch to another one, even if it needs a third-party dependency. DuckPhp uses mutable singletons so the calling interface stays the same while the implementation can change. This means you can fix problems or switch components without hacking the framework.
 
-DuckPhp makes debugging easy. The stack trace is clear. You can quickly find problems with `debug_print_backtrace(2)`. Frameworks that use a lot of middleware usually have less clear stack traces.
-
-> For debugging, use `__trace_dump()`.
+**DuckPhp applications have clear stack traces, which makes debugging easy.** You can quickly find problems with `debug_print_backtrace(2)`. Frameworks that use a lot of middleware usually have less clear stack traces.
 
 ## 3. Regular Project
 
@@ -218,6 +354,8 @@ DuckPhp users are divided into two roles: `business developers` and `core develo
 > After reading the helper class tutorial, a `business developer` can start writing business code. Ask a `core developer` when you do not understand something.
 
 ### Simple Tutorial
+
+// To be added: a CRUD example
 
 ## 4. Other Features
 
