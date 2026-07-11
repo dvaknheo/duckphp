@@ -12,6 +12,7 @@ namespace DuckPhp;
 use DuckPhp\Component\Command;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\Lang;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookCheckStatus;
@@ -112,6 +113,7 @@ class DuckPhp extends App
             RedisManager::class,
             GlobalAdmin::class,
             GlobalUser::class,
+            GlobalEvent::class,
         ]);
         if ($this->options['data_file_enable']) {
             ExtOptionsLoader::_()->init($this->options, $this);
