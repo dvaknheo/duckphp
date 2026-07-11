@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <!-- 身体渐变 -->
+    <radialGradient id="bodyGrad" cx="42%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#90CAF9"/>
+      <stop offset="30%" stop-color="#64B5F6"/>
+      <stop offset="70%" stop-color="#42A5F5"/>
+      <stop offset="100%" stop-color="#1E88E5"/>
+    </radialGradient>
+    <!-- 头部渐变 -->
+    <radialGradient id="headGrad" cx="38%" cy="28%" r="68%">
+      <stop offset="0%" stop-color="#BBDEFB"/>
+      <stop offset="25%" stop-color="#90CAF9"/>
+      <stop offset="70%" stop-color="#64B5F6"/>
+      <stop offset="100%" stop-color="#1E88E5"/>
+    </radialGradient>
+    <!-- 鼻子渐变 -->
+    <linearGradient id="noseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#64B5F6"/>
+      <stop offset="100%" stop-color="#1565C0"/>
+    </linearGradient>
+    <!-- 耳朵渐变 -->
+    <radialGradient id="earGrad" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#90CAF9"/>
+      <stop offset="60%" stop-color="#64B5F6"/>
+      <stop offset="100%" stop-color="#1E88E5"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 底部阴影 -->
+  <ellipse cx="130" cy="218" rx="85" ry="16" fill="#000000" opacity="0.12"/>
+
+  <!-- === 尾巴（左后方） === -->
+  <path d="M190 140 Q220 130 225 110 Q215 120 200 125
+           Q210 105 205 88 Q195 108 190 135 Z"
+        fill="#1E88E5" stroke="#1565C0" stroke-width="0.8"/>
+
+  <!-- === 左后腿（远处） === -->
+  <ellipse cx="158" cy="200" rx="22" ry="18" fill="#1E88E5"/>
+  <ellipse cx="158" cy="202" rx="16" ry="10" fill="#1565C0"/>
+
+  <!-- === 右后腿（近处） === -->
+  <ellipse cx="182" cy="195" rx="25" ry="20" fill="#2196F3"/>
+  <ellipse cx="182" cy="198" rx="18" ry="12" fill="#1565C0"/>
+
+  <!-- === 身体 === -->
+  <ellipse cx="130" cy="155" rx="80" ry="65" fill="url(#bodyGrad)"/>
+
+  <!-- 身体暗部 -->
+  <path d="M100 200 Q165 225 205 185 Q185 215 150 220 Q115 223 100 200 Z"
+        fill="#1565C0" opacity="0.25"/>
+
+  <!-- 肚皮 -->
+  <ellipse cx="130" cy="172" rx="44" ry="30" fill="#BBDEFB" opacity="0.4"/>
+
+  <!-- === 左前腿（远处） === -->
+  <ellipse cx="95" cy="205" rx="22" ry="18" fill="#1E88E5"/>
+  <ellipse cx="95" cy="207" rx="16" ry="10" fill="#1565C0"/>
+
+  <!-- === 右前腿（近处） === -->
+  <ellipse cx="112" cy="200" rx="25" ry="19" fill="#42A5F5"/>
+  <ellipse cx="112" cy="203" rx="18" ry="11" fill="#1565C0"/>
+
+  <!-- === 大耳朵（右侧扇开） === -->
+  <path d="M115 75 Q155 35 170 55 Q175 80 140 100 Q125 95 115 75 Z"
+        fill="url(#earGrad)" stroke="#1E88E5" stroke-width="1.2"/>
+  <!-- 耳朵内耳 -->
+  <path d="M122 78 Q150 48 158 60 Q162 75 138 92 Q128 88 122 78 Z"
+        fill="#E3F2FD" opacity="0.5"/>
+
+  <!-- === 头部 === -->
+  <ellipse cx="95" cy="88" rx="54" ry="52" fill="url(#headGrad)"/>
+
+  <!-- 头部与身体连接 -->
+  <path d="M72 125 Q90 160 115 162 Q80 158 65 135 Z"
+        fill="#42A5F5" opacity="0.5"/>
+
+  <!-- === 鼻子（象鼻弯下） === -->
+  <path d="M60 95 Q75 108 85 102
+           Q90 115 82 125
+           Q72 132 65 128
+           Q58 120 60 95 Z"
+        fill="url(#noseGrad)"/>
+  <!-- 鼻头 -->
+  <ellipse cx="65" cy="128" rx="10" ry="6" fill="#1565C0"/>
+
+  <!-- === 左眼（远处，较小） === -->
+  <ellipse cx="72" cy="78" rx="9" ry="12" fill="#FFFFFF"/>
+  <circle cx="74" cy="80" r="5" fill="#1A1A1A"/>
+  <circle cx="75.5" cy="78" r="2" fill="#FFFFFF"/>
+
+  <!-- === 右眼（近处，较大） === -->
+  <ellipse cx="108" cy="72" rx="12" ry="15" fill="#FFFFFF"/>
+  <circle cx="111" cy="74" r="6.5" fill="#1A1A1A"/>
+  <circle cx="113" cy="71" r="2.8" fill="#FFFFFF"/>
+
+  <!-- 眉毛 -->
+  <path d="M60 60 Q72 50 82 58" fill="none" stroke="#0D47A1" stroke-width="1.8" opacity="0.4"/>
+  <path d="M96 52 Q110 42 122 52" fill="none" stroke="#0D47A1" stroke-width="1.8" opacity="0.4"/>
+
+  <!-- === 腮红 === -->
+  <ellipse cx="65" cy="100" rx="7" ry="4.5" fill="#E91E63" opacity="0.2"
+           transform="rotate(-15 65 100)"/>
+  <ellipse cx="120" cy="90" rx="8" ry="5" fill="#E91E63" opacity="0.25"
+           transform="rotate(-15 120 90)"/>
+
+  <!-- === 头顶绒毛 === -->
+  <path d="M90 38 Q84 18 72 26 Q82 18 90 38" fill="#90CAF9" stroke="#42A5F5" stroke-width="0.8"/>
+  <path d="M90 38 Q98 14 110 24 Q96 18 90 38" fill="#90CAF9" stroke="#42A5F5" stroke-width="0.8"/>
+  <path d="M90 38 Q92 24 90 22 Q88 26 90 38" fill="#64B5F6"/>
+
+  <!-- === 象牙（小） === -->
+  <path d="M56 116 Q48 118 44 112 Q50 110 56 112 Z" fill="#FFFFFF" opacity="0.7"/>
+  <path d="M106 108 Q112 112 108 118 Q102 114 106 108 Z" fill="#FFFFFF" opacity="0.7"/>
+</svg>

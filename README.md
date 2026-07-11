@@ -11,7 +11,7 @@ Github repository: https://github.com/dvaknheo/duckphp
 
 ## 1. What is DuckPhp
 
-DuckPhp is a library-style PHP framework. It has zero dependencies, every component can be replaced, and it is flexible for deployment and teamwork.
+DuckPhp is a library-style PHP framework. It has no dependencies, every component can be replaced, and it is flexible for deployment and teamwork.
 
 The name comes from **duck typing**:
 
