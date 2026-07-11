@@ -18,6 +18,8 @@
 | `handle_exception_on_init` | `true` | 初始化完成后是否立即启用异常处理。 |
 | `default_exception_handler` | `null` | 默认异常处理回调，当没有任何具体处理器匹配时调用。 |
 | `dev_error_handler` | `null` | 开发期错误的处理回调，仅在 `handle_all_dev_error` 为 `true` 时生效。 |
+| `exception_reporter` | `null` | 自定义异常报告器类名。设置后，将 `exception_for_project` 指定的异常类交给该报告器处理。 |
+| `exception_for_project` | `null` | 异常报告器捕获的异常类。 |
 
 ## 使用方式
 
@@ -113,6 +115,20 @@ class App extends \DuckPhp\DuckPhp
 }
 ```
 
+### 使用异常报告器
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'exception_reporter' => \MyApp\Controller\ExceptionReporter::class,
+        'exception_for_project' => \MyApp\System\ProjectException::class,
+    ];
+}
+```
+
+`ExceptionReporter` 类需要实现 `OnException($ex)` 方法。
+
 ## 注意事项
 
 1. 异常处理器按后进先出的顺序匹配，最后注册的处理器会优先检查。
@@ -130,6 +146,8 @@ class App extends \DuckPhp\DuckPhp
 
     'default_exception_handler' => null,
     'dev_error_handler' => null,
+    'exception_reporter' => null,
+    'exception_for_project' => null,
 ```
 
 ## 方法列表

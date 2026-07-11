@@ -34,8 +34,6 @@
 | `setting_file_ignore_exists` | `true` | Setting 文件不存在时是否忽略。 |
 | `setting_file_enable` | `true` | 是否加载 Setting 文件。 |
 | `use_env_file` | `false` | 是否加载 `.env` 文件。 |
-| `exception_reporter` | `null` | 自定义异常报告器。 |
-| `exception_for_project` | `null` | 自定义异常报告器捕获的异常类。 |
 | `options_file` | `'config/DuckPhpOptions.config.php'` | 额外选项文件路径。 |
 | `options_file_enable` | `false` | 是否加载额外选项文件。 |
 | `path_installed_options` | `'config'` | 已安装选项文件所在目录。 |
@@ -203,8 +201,6 @@ protected $kernel_options = [
     'setting_file_ignore_exists' => true,
     'setting_file_enable' => true,
     'use_env_file' => false,
-    'exception_reporter' => null,
-    'exception_for_project' => null,
     'options_file' => 'config/DuckPhpOptions.config.php',
     'options_file_enable' => false,
     'path_installed_options' => 'config',
