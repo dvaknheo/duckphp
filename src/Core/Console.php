@@ -174,6 +174,7 @@ class Console extends ComponentBase
                     $lastkey = str_replace('-', '_', $lastkey);
                     $ret[$lastkey] = $b;
                 }
+                $lastkey = str_replace('-', '_', $lastkey);
             } elseif (!isset($ret[$lastkey])) {
                 $ret[$lastkey] = $v;
             } elseif (is_array($ret[$lastkey])) {
