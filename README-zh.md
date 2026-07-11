@@ -289,7 +289,7 @@ ExtApp::RunQuickly($options);
 
 **DuckPhp 应用拥有清晰的堆栈跟踪，便于调试。** 你可以通过 `debug_print_backtrace(2)` 快速定位问题。使用大量中间件的框架通常堆栈跟踪不够清晰。
 
-## 3. 常规项目
+## 三、常规项目
 
 当你使用 `./vendor/bin/duckphp new` 创建项目时，会得到以下骨架文件。更多详情请参见 `RULES.md`。
 
@@ -353,11 +353,11 @@ DuckPhp 用户分为两个角色：`业务开发者` 和 `核心开发者`。
 
 > 看完助手类教程后，`业务开发者` 就可以开始写业务代码了。不懂的地方可以问 `核心开发者`。
 
-### 简单教程
+## 四、简单教程
 
 // 后续补充：写一个增删改查示例
 
-## 4. 其他特点
+## 五、其他特点
 
 DuckPhp 支持 Composer，但也可以在没有 Composer 的情况下运行。DuckPhp 是一个 Composer 库，因此不需要独立的脚手架项目。
 
@@ -405,7 +405,7 @@ DuckPhp 不带模板引擎，PHP 本身就是模板引擎。
 
 DuckPhp 不写 Widget，因为这和 MVC 分离原则相违背。
 
-## 五、DuckPhp 的版本历程
+## 六、DuckPhp 的版本历程
 
 起初，这是想搞个简单的 PHP Web 框架。现在使用方式简单，但内部设计并不简单。
 
@@ -418,6 +418,6 @@ DuckPhp 不写 Widget，因为这和 MVC 分离原则相违背。
 
 1.3.4 增加了 Docker 支持，修复了多语言支持，为 1.3.5 准备。
 
-## 6. DuckPhp 下一步计划
+## 七、 DuckPhp 下一步计划
 
 ![logo](duckphp.svg)
