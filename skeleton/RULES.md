@@ -12,6 +12,7 @@ php vendor/bin/duckphp new
 
 工程根目录结构：
 
+
 ```
 project/
 ├── composer.json
@@ -22,33 +23,33 @@ project/
 ├── src/
 │   ├── Controller/                   # 控制器层：HTTP/CLI 请求入口
 │   │   ├── Base.php
-│   │   ├── ConsoleCommand.php        # CLI 命令示例（默认未启用）
-│   │   ├── ExceptionReporter.php     # 异常报告器（默认未启用）
+│   │   ├── * ConsoleCommand.php     # CLI 子命令示例（默认未启用）
+│   │   ├── * ExceptionReporter.php  # 异常报告器（默认未启用）
 │   │   ├── Helper.php
 │   │   ├── MainController.php
-│   │   ├── Session.php               # Session 管理
-│   │   ├── SomeAction.php            # Action 示例
-│   │   └── testController.php        # 测试控制器
+│   │   ├── Session.php              # Session 管理
+│   │   ├── * SomeAction.php            # Action 示例
+│   │   └── * testController.php        # 测试控制器
 │   ├── Business/                     # 业务层：业务逻辑
 │   │   ├── Base.php
-│   │   ├── DemoBusiness.php          # Business 示例
+│   │   ├── * DemoBusiness.php       # Business 示例
 │   │   ├── Helper.php
-│   │   └── SomeService.php           # Service 示例
+│   │   └── * SomeService.php        # Service 示例
 │   ├── Model/                        # 模型层：数据访问
 │   │   ├── Base.php
-│   │   └── DemoModel.php             # Model 示例
+│   │   └── DemoModel.php            # Model 示例
 │   └── System/                       # 系统层：应用配置与异常
 │       ├── App.php                   # 应用核心配置
-│       ├── BusinessException.php     # Business 异常（默认未启用）
-│       ├── ControllerException.php   # Controller 异常（默认未启用）
-│       └── ProjectException.php      # 项目异常基类（默认未启用）
-├── view/                             # 视图目录
+│       ├── * BusinessException.php   # Business 异常（默认未启用）
+│       ├── * ControllerException.php # Controller 异常（默认未启用）
+│       └── * ProjectException.php    # 项目异常基类（默认未启用）
+├── view/                              # 视图目录
 │   ├── _sys/                         # 系统视图
 │   │   ├── error_404.php
 │   │   └── error_500.php
 │   └── main.php                      # 默认视图示例
-├── runtime/                          # 运行时目录（日志等）
-├── cli.php                           # CLI 入口
+├── runtime/                           # 运行时目录（日志等）
+├── cli.php                            # CLI 入口
 └── vendor/
 ```
 
