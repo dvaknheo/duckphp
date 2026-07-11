@@ -43,14 +43,16 @@ class DuckPhpAllInOne extends DuckPhp
             'namespace_controller' => "\\".$namespace,
             'controller_welcome_class' => $short_class ,
             'controller_class_postfix' => '',
-            
+            'controller_method_prefix' => 'action_',
+            'cli_enable' => true,
+            'cli_command_with_app' => true,
             'path_info_compact_enable' => true,
         ];
         
         // embed view to this class
-        $this->options['ext'][CallableView::class] = true;
-        $this->options['callable_view_class'] = static::class;
-        $this->options['callable_view_prefix'] = 'view_';
+        $ext_options['ext'][CallableView::class] = true;
+        $ext_options['callable_view_class'] = static::class;
+        $ext_options['callable_view_prefix'] = 'view_';
         
         $this->options = array_merge($this->options, $ext_options);
     }
