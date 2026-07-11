@@ -30,7 +30,7 @@ The first command shows that DuckPhp is a library-style framework, not a bundle 
 
 **DuckPhp is added as a library.** So the project skeleton does not contain a lot of files that you cannot delete.
 
-**DuckPhp has zero dependencies.** You do not need to worry about changes in third-party packages. It works without importing 101 packages, so stability is fully under control.
+**DuckPhp has no dependencies.** You do not need to worry about changes in third-party packages. It works without importing 101 packages, so stability is fully under control.
 
 The command `./vendor/bin/duckphp new` copies the skeleton files and replaces the project namespace with the `src` namespace you set in `composer.json`.
 
@@ -353,11 +353,11 @@ DuckPhp users are divided into two roles: `business developers` and `core develo
 
 > After reading the helper class tutorial, a `business developer` can start writing business code. Ask a `core developer` when you do not understand something.
 
-### Simple Tutorial
+## 4. Simple Tutorial
 
 // To be added: a CRUD example
 
-## 4. Other Features
+## 5. Other Features
 
 DuckPhp supports Composer, but it can also run without Composer. DuckPhp is a Composer library, so it does not need a separate scaffolding project.
 
@@ -405,7 +405,7 @@ DuckPhp does not include a template engine, because PHP itself is a template eng
 
 DuckPhp does not write widgets, because that goes against MVC separation.
 
-## 5. Version History
+## 6. Version History
 
 At first, this was meant to be a simple PHP web framework. Now it is simple to use, but the inside is not simple.
 
@@ -418,6 +418,6 @@ The biggest change in version 1.3 is the phase concept, which makes different ap
 
 Version 1.3.4 added Docker support, fixed multi-language support, and prepares for 1.3.5.
 
-## 6. What DuckPhp Will Do Next
+## 7. What DuckPhp Will Do Next
 
 ![logo](duckphp.jpg)
