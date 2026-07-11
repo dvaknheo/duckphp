@@ -289,6 +289,10 @@ This example replaces the implementation of `__h()` and shows DuckPhp's flexibil
 
 **DuckPhp applications have clear stack traces, which makes debugging easy.** You can quickly find problems with `debug_print_backtrace(2)`. Frameworks that use a lot of middleware usually have less clear stack traces.
 
+### Documentation
+
+[DuckPHP Framework Documentation](docs/en/index.md): installation, routing, database, deployment, and more.
+
 ## 3. Regular Project
 
 When you create a project with `./vendor/bin/duckphp new`, you get the following skeleton files. See `RULES.md` for more details.
@@ -399,7 +403,7 @@ DuckPhp design principle: does this thing really need to be built into the frame
 
 Every DuckPhp release passes full-code-coverage tests, so it is very robust.
 
-DuckPhp has no ORM and does not hide SQL, so checking SQL through logs is easy. It wraps PDO in a simple way. You can also use your own DB class or a third-party ORM (the tutorial has an example using ThinkPHP-DB. [link](docs/tutorial-db.db)).
+DuckPhp has no ORM and does not hide SQL, so checking SQL through logs is easy. It wraps PDO in a simple way. You can also use your own DB class or a third-party ORM (the tutorial has an example using ThinkPHP-DB.
 
 DuckPhp does not include a template engine, because PHP itself is a template engine.
 

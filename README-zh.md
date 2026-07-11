@@ -289,6 +289,10 @@ ExtApp::RunQuickly($options);
 
 **DuckPhp 应用拥有清晰的堆栈跟踪，便于调试。** 你可以通过 `debug_print_backtrace(2)` 快速定位问题。使用大量中间件的框架通常堆栈跟踪不够清晰。
 
+### 文档
+
+[DuckPHP 框架文档](docs/zh/index.md)：安装、路由、数据库、部署等完整指南。
+
 ## 三、常规项目
 
 当你使用 `./vendor/bin/duckphp new` 创建项目时，会得到以下骨架文件。更多详情请参见 `RULES.md`。
@@ -399,7 +403,7 @@ DuckPhp 框架的设计原则：这个东西必须框架自带吗？不自带可
 
 DuckPhp 每次发布都通过全代码覆盖的测试，因此具有很强的健壮性。
 
-DuckPhp 没有 ORM，也不屏蔽 SQL，根据日志查 SQL 方便多了。它自己简单封装了 PDO。你也可以使用自己的 DB 类，或用第三方 ORM（教程里有使用 ThinkPHP-DB 的例子。[链接](docs/tutorial-db.db)）。
+DuckPhp 没有 ORM，也不屏蔽 SQL，根据日志查 SQL 方便多了。它自己简单封装了 PDO。你也可以使用自己的 DB 类，或用第三方 ORM（教程里有使用 ThinkPHP-DB 的例子。
 
 DuckPhp 不带模板引擎，PHP 本身就是模板引擎。
 
