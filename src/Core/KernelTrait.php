@@ -133,7 +133,7 @@ trait KernelTrait
     {
         return $this->options['namespace'];
     }
-    public function getDefaultPhaseName(?object $context = null): string
+    protected function getDefaultPhaseName(?object $context = null): string
     {
         if ($context) {
             $name = $this->options['name'] ? $this->options['name'] : static::class;
@@ -141,6 +141,16 @@ trait KernelTrait
         } else {
             return $this->options['name'];
         }
+    }
+    protected function getDefaultConsoleNamespace(): string
+    {
+         if ($this->is_root) {
+            return '';
+        }
+        $root_name = self::$root_instance->options['phase_name'];
+        $ret = substr($this->options['phase_name'],strlen($root_name)+1);
+        $ret = str_replace(['\\', '/'], '-', $ret);
+        return $ret;
     }
     ////////
     public function _Phase(?string $new = null): string
@@ -274,10 +284,7 @@ trait KernelTrait
             Console::_()->init($this->options, $this);
         }
 
-        $cli_namespace = $this->options['cli_namespace'] ?? str_replace(['\\', '/'], '-', $this->options['phase_name']);
-        if ($this->is_root) {
-            $cli_namespace ='';
-        }
+        $cli_namespace = $this->getDefaultConsoleNamespace();
         Console::_()->regCommandClass($cli_namespace, $this->options['phase_name'], $this->options['command'], $this->options['cli_command_method_prefix']);
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
