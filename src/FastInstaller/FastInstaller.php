@@ -71,7 +71,10 @@ class FastInstaller extends ComponentBase
                 return;
             }
             $app = (string)$app;
+            
+            $old_phase = App::Phase();
             $app::_($object)->init([], App::Root());
+            App::Phase($old_phase);
             
             $desc = "Install to Url prefix: [{controller_url_prefix}]\n";
             $default_options = [];
@@ -91,8 +94,10 @@ class FastInstaller extends ComponentBase
             App::_()->options = array_replace_recursive(App::_()->options, $data);
             
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
+            App::Phase($object->getThisPhaseName());
+        }else{
+            App::Phase($app::_()->getThisPhaseName());
         }
-        App::Phase($app);
         return FastInstaller::_()->doCommandInstall();
     }
     protected function getDefaultUrlPrefix(string $ns): string
@@ -287,7 +292,6 @@ and more ...\n";
     protected function installChildren(): void
     {
         $current_phase = App::Phase();
-        
         $app_options = App::Current()->options;
         if (!empty($app_options['app'])) {
             $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
@@ -296,20 +300,24 @@ and more ...\n";
         } else {
             return;
         }
+        $root_name = App::_()->options['phase_name'];
         foreach ($app_options['app'] as $app => $options) {
-            $last_phase = App::Phase($app::_()->getOverridingClass());
-            $cli_namespace = App::Current()->options['cli_command_prefix'] ?? App::Current()->options['namespace'];
+            $last_phase = App::Phase($app::_()->getThisPhaseName());
+            $cli_namespace = App::_()->options['cli_command_prefix'] ?? App::Current()->options['namespace'];
+            
+            $cli_namespace = substr(App::_()->options['phase_name'], strlen($root_name) + 1);
+            $cli_namespace = str_replace(['\\', '/'], '-', $cli_namespace);
             $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
             list($class, $method) = Console::_()->getCallback($group, 'install');
             try {
-                if (is_callable([$class::_(),$method])) {
-                    $ret = call_user_func([$class::_(),$method]); /** @phpstan-ignore-line */
+                if (isset($class) && is_callable([$class::_(),$method])) {
+                    $ret = call_user_func([$class::_(),$method]);
                 }
             } catch (\Exception $ex) {
                 $msg = $ex->getMessage();
                 echo "\Install failed: $msg \n";
             }
-            App::Phase($last_phase);
+            App::Phase($current_phase);
         }
         if (!empty($app_options['app'])) {
             echo "\n]]]]]]]] Installed child apps\n";
