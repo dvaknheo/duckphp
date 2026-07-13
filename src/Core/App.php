@@ -82,18 +82,17 @@ class App extends ComponentBase
     //////// override KernelTrait ////////
     protected function doInitComponents(): void
     {
-        $this->addPublicClassesInRoot([
-            Logger::class,
-            SuperGlobal::class,
-            SystemWrapper::class,
+        if ($this->is_root) {
+            $this->addPublicClassesInRoot([
+                Logger::class,
+                SystemWrapper::class,
             ]);
-        
-        Logger::_()->init($this->options, $this);
+            Logger::_()->init($this->options, $this);
+        }
+
         SuperGlobal::_()->init($this->options, $this);
         View::_()->init($this->options, $this);
-        
-        //
-    }
+   }
     //@override
     public function _On404(): void
     {
@@ -257,10 +256,11 @@ EOT;
     }
     
     //////// features for view
-
+    protected function onBeforeRun(): void
+    {
+    }
     public function onBeforeOutput()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     public function adjustViewFile($view)
     {

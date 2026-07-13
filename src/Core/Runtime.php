@@ -52,15 +52,11 @@ class Runtime extends ComponentBase
                 ob_end_flush();
             }
         }
-        $this->is_in_exception = false;
         $this->is_running = false;
         $this->is_outputed = true;
     }
-    public function onException($skip_exception_check)
+    public function onException()
     {
-        if ($skip_exception_check) {
-            $this->clear();
-        }
         $this->is_in_exception = true;
     }
 }

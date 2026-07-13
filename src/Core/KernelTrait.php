@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * DuckPhp
  * From this time, you never be alone~
@@ -21,58 +23,64 @@ trait KernelTrait
 
     protected $kernel_options = [
         'path' => null,
+
+        'name' => null,
+        'phase_name' => null,
+        'namespace' => null,
+
         'override_class' => null,
-        'override_class_from' => null,
         'cli_enable' => true,
         'is_debug' => false,
+        'init_components' => true,
         'ext' => [],
         'app' => [],
         'data' => [],
-        
+        'command' => [],
+
         'skip_404' => false,
         'skip_exception_check' => false,
-        
+
         'on_init' => null,
-        'namespace' => null,
-        
+        //'on_before_run' => null,
+        //'on_after_run' => null,
+
         'setting_file' => 'config/DuckPhpSettings.config.php',
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
         'use_env_file' => false,
-        
+
         'cli_command_classes' => [],
         'cli_command_prefix' => null,
         'cli_command_method_prefix' => 'command_',
         //*/
         // 'namespace' => '',
         // 'namespace_controller' => 'Controller',
-        
+
         // 'controller_path_ext' => '',
         // 'controller_welcome_class' => 'Main',
         // 'controller_welcome_class_visible' => false,
         // 'controller_welcome_method' => 'index',
-        
+
         // 'controller_class_base' => '',
         // 'controller_class_postfix' => 'Controller',
         // 'controller_method_prefix' => 'action_',
         // 'controller_prefix_post' => 'do_', //TODO remove it
-        
+
         // 'controller_class_map' => [],
-        
+
         // 'controller_resource_prefix' => '',
         // 'controller_url_prefix' => '',
-        
+
         // 'use_output_buffer' => false,
         // 'path_runtime' => 'runtime',
-        
-        // 'cli_command_method_prefix' => 'command_',
-         //*/
+
+        //*/
     ];
     public $setting = [];
-    public $overriding_class = null;
     protected $is_root = true;
-    
-    public static function RunQuickly(array $options = [], callable $after_init = null): bool
+    protected static $root_instance = null;
+
+    public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
         $instance = static::_()->init($options);
         if ($after_init) {
@@ -82,13 +90,11 @@ trait KernelTrait
     }
     public static function Current()
     {
-        $phase = static::Phase();
-        $class = $phase ? $phase : static::class;
-        return $class::_();
+        return self::_();
     }
     public static function Root()
     {
-        return (self::class)::_(); // remark ,don't use self::_()!
+        return self::$root_instance;
     }
     public static function Phase($new = null)
     {
@@ -117,14 +123,27 @@ trait KernelTrait
     protected function getDefaultProjectPath(): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $path = realpath(dirname($my_server['SCRIPT_FILENAME']).'/../');
+        $path = realpath(dirname($my_server['SCRIPT_FILENAME']) . '/../');
         $path = (string)$path;
-        $path = ($path !== '') ? rtrim($path, '/').'/' : '';
-        
+        $path = ($path !== '') ? rtrim($path, '/') . '/' : '';
+
         return $path;
     }
+    protected function getDefaultName(): string
+    {
+        return $this->options['namespace'];
+    }
+    public function getDefaultPhaseName(?object $context = null): string
+    {
+        if ($context) {
+            $name = $this->options['name'] ? $this->options['name'] : static::class;
+            return $context->options['phase_name'] ? $context->options['phase_name'] . ':' . $name : $name;
+        } else {
+            return $this->options['name'];
+        }
+    }
     ////////
-    public function _Phase($new = null)
+    public function _Phase(?string $new = null): string
     {
         $container = PhaseContainer::GetContainer();
         $old = $container->getCurrentContainer();
@@ -141,47 +160,39 @@ trait KernelTrait
     {
         return $this->overriding_class;
     }
-    protected function initContainer(object $context = null): bool
+
+    public function getThisClassName()
+    {
+        return $this->overriding_class ?? static::class;
+    }
+    public function getThisPhaseName()
+    {
+        return $this->options['phase_name'];
+    }
+    protected function initContainer(?object $context = null): bool
     {
         $context = $context ?? '';
         $this->is_root = !(\is_a($context, self::class) || (static::class === self::class));
         //////////////////////////////
-        
+
         if ($this->is_root) {
+            self::$root_instance = $this;
+
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = PhaseContainer::GetContainer();
-            $container->setDefaultContainer($this->overriding_class);
-            $container->setCurrentContainer($this->overriding_class);
+            $container->setDefaultContainer($this->getThisPhaseName());
+            $container->setCurrentContainer($this->getThisPhaseName());
             //TODO Move public containers to this;
             $this->onAfterCreatePhases();
         } else {
             $container = PhaseContainer::GetContainer();
-            $container->setCurrentContainer($this->overriding_class);
+            $container->setCurrentContainer($this->getThisPhaseName());
         }
+        (self::class)::_($this);
+        (static::class)::_($this);
+
         /////////////
-        // something nest
-        $apps = [];
-        $apps[static::class] = $this;
-        $apps[$this->overriding_class] = $this;
-        if ($this->is_root) {
-            $apps[self::class] = $this;
-        }
-        
-        $container->addPublicClasses(array_keys($apps));
-        /////////////
-        $overriding_class = $this->overriding_class;
-        
-        foreach ($apps as $class => $object) {
-            $class = $class ? (string)$class: static::class;
-            $class::_($object);
-        }
-        $this->overriding_class = $overriding_class;
-        if ($this->is_root) {
-            (self::class)::_()->overriding_class = $overriding_class;
-        }
-        
-        $container->addPublicClasses(array_keys($this->options['app'] ?? []));
         return false;
     }
     protected function addPublicClassesInRoot(array $classes): void
@@ -200,10 +211,9 @@ trait KernelTrait
     }
     protected function initException(array $options): void
     {
-        //initException();
         $exception_options = $options;
-        $exception_options ['default_exception_handler' ] = [self::class,'OnDefaultException']; // must be self,be root
-        $exception_options ['dev_error_handler'] = [self::class,'OnDevErrorHandler'];        //be self, be root
+        $exception_options['default_exception_handler'] = [self::class, 'OnDefaultException']; // must be self,be root
+        $exception_options['dev_error_handler'] = [self::class, 'OnDevErrorHandler'];        //be self, be root
         if (!$this->is_root) {
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
@@ -213,63 +223,62 @@ trait KernelTrait
     //init
     public function init(array $options, object $context = null)
     {
-        $options['path'] = $options['path'] ?? ($this->options['path'] ?? $this->getDefaultProjectPath());
+
         $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->overriding_class ?? null)));
-        
-        require_once __DIR__.'/Functions.php';
+        require_once __DIR__ . '/Functions.php';
         $this->initOptions($options);
-        
         if ($options['override_class'] ?? false) {
+
             $class = $options['override_class'];
             unset($options['override_class']);
-            $options['override_class_from'] = $this->overriding_class;
-            $this->overriding_class = $options['override_class_from'];
-            
-            return $class::_(new $class)->init($options);
+
+            //$options['override_class_from'] = $this->overriding_class;
+            //$this->overriding_class = $options['override_class_from'];
+
+            return $class::_(new $class)->init($options, $context);
         }
-        
+        $this->initOptions($options);
+
+        $this->options['path'] = $this->options['path'] ?? $this->getDefaultProjectPath();
+        $this->options['name'] = $this->options['name'] ?? $this->getDefaultName();
+        $this->options['phase_name'] = $this->getDefaultPhaseName($context);
+        ////[[[[
+        ////]]]]
+
         $this->initContainer($context);
-        $this->initException($options);
+        $this->initException($this->options);
+
         $this->onPrepare();
-        
-        $this->prepareComponents();
-        $this->initComponents($this->options, $context);
-        $this->initExtentions($this->options['ext'] ?? [], true);
+        $this->initComponents();
+        $this->initExtensions($this->options['ext']);
         $this->onInit();
         if ($this->options['on_init']) {
             ($this->options['on_init'])();
         }
         $this->onBeforeChildrenInit();
-        $this->initExtentions($this->options['app'] ?? [], false);
-        
-        $this->is_inited = true;
+        $this->initChildren($this->options['app']);
+
+        $this->is_inited = true; // from ComponentTrait
         $this->onInited();
         return $this;
     }
-    protected function prepareComponents(): void
+    protected function initComponents(): void
     {
-        //return; // for override
-    }
-    protected function initComponents(array $options, object $context = null): void
-    {
-        $this->addPublicClassesInRoot([
-            Console::class,
-        ]);
+        $is_cli = PHP_SAPI === 'cli' || $this->options['cli_enable'];
+
         if ($this->is_root) {
-            $this->loadSetting();
+            $this->loadSetting(); // todo move to "App"
+            $this->addPublicClassesInRoot([
+                Console::class,
+            ]);
             Console::_()->init($this->options, $this);
         }
+
+        $cli_namespace = $this->options['cli_namespace'] ?? str_replace(['\\', '/'], '-', $this->options['phase_name']);
+        Console::_()->regCommandClass($cli_namespace, $this->options['phase_name'], $this->options['command'], $this->options['cli_command_method_prefix']);
+
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
-        
-        if (PHP_SAPI === 'cli') {
-            $cli_namespace = $this->options['cli_command_prefix'] ?? $this->options['namespace'];
-            $cli_namespace = $this->is_root ? '' : ($cli_namespace ? $cli_namespace : $this->overriding_class);
-            $phase = $this->overriding_class;
-            $classes = $this->options['cli_command_classes'] ?? [];
-            $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
-            Console::_()->regCommandClass($cli_namespace, $phase, $classes, $method_prefix);
-        }
         $this->doInitComponents();
     }
     protected function doInitComponents(): void
@@ -289,8 +298,8 @@ trait KernelTrait
     }
     protected function dealWithEnvFile(): void
     {
-        $env_setting = parse_ini_file(realpath($this->options['path']).'/.env');
-        $env_setting = $env_setting?:[];
+        $env_setting = parse_ini_file(realpath($this->options['path']) . '/.env');
+        $env_setting = $env_setting ?: [];
         $this->setting = array_merge($this->setting, $env_setting);
     }
     protected function dealWithSettingFile(): void
@@ -300,7 +309,7 @@ trait KernelTrait
         if ($is_abs) {
             $full_file = $this->options['setting_file'];
         } else {
-            $full_file = realpath($this->options['path']).'/'.$this->options['setting_file'];
+            $full_file = realpath($this->options['path']) . '/' . $this->options['setting_file'];
         }
         if (!is_file($full_file)) {
             if (!$this->options['setting_file_ignore_exists']) {
@@ -317,62 +326,65 @@ trait KernelTrait
     {
         return $key ? (static::Root()->setting[$key] ?? $default) : static::Root()->setting;
     }
-    protected function initExtentions(array $exts, bool $use_main_options): void
+    protected function initExtensions(array $exts): void
     {
         foreach ($exts as $class => $options) {
-            //try {
             if ($options === false) {
                 continue;
             }
             if ($options === true) {
-                $options = ($use_main_options) ? $this->options : [];
+                $options = $this->options;
             }
-            $class = (string)$class;
             if (!class_exists($class)) {
-                continue;
+                throw new \Exception("ext [$class] not exists");
             }
             $class::_()->init($options, $this);
-            if (!$use_main_options) {
-                $this->_Phase($this->overriding_class);
-            }
-            //} catch (\Throwable $ex) {
-            //    $phase = $this->_Phase($class);
-            //    throw $ex;
-            //}
         }
-
-        return;
     }
+    protected function initChildren(array $apps): void
+    {
+        foreach ($apps as $class => $options) {
+            if ($options === false) {
+                continue;
+            }
+            if (!is_array($options)) {
+                continue;
+            }
+            if (!class_exists($class)) {
+                throw new \Exception("Child [$class] not exists");
+            }
+            $class::_()->init($options, $this);
+
+            $this->phaseToCurrent();
+        }
+    }
+
+
     public function run(): bool
     {
-        $ret = false;
-        $is_exceptioned = false;
-        $this->_Phase($this->overriding_class);
-        if ($this->is_root) {
-            (self::class)::_($this); // remark ,don't use self::_()!
+        if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {
+            return $this->execute();
         }
-        
+        $ret = false;
+        $this->phaseToCurrent();
+
         $this->onBeforeRun();
         try {
             Runtime::_()->run();
-            if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {
-                $ret = Console::_()->run();
-            } else {
-                $ret = Route::_()->run();
-                if (!$ret) {
-                    $ret = $this->runExtentions();
-                    $this->_Phase($this->overriding_class);
-                    if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
-                        $this->_On404();
-                    }
-                }
+            $ret = Route::_()->run();
+            //\DuckPhp\Core\PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
+            //$t = get_included_files();sort($t); var_export($t);
+            if (!$ret) {
+                $ret = $this->runChildren();
+            }
+            $this->phaseToCurrent();
+            if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
+                $this->_On404();
             }
         } catch (\Throwable $ex) {
             $this->runException($ex);
             $ret = true;
-            $is_exceptioned = true;
-        }
-        if (!$is_exceptioned) {
+        } finally {
             Runtime::_()->clear();
         }
         $this->onAfterRun();
@@ -380,20 +392,17 @@ trait KernelTrait
     }
     protected function runException(\Throwable $ex): void
     {
-        $phase = $this->_Phase();
-        Runtime::_()->onException($this->options['skip_exception_check']);
+        $last_phase = $this->_Phase();
+
         if ($this->options['skip_exception_check']) {
             throw $ex;
         }
+        $this->phaseToCurrent();
+        Runtime::_()->last_phase = $last_phase;
         ExceptionManager::CallException($ex);
-        if ($phase !== $this->overriding_class) {
-            Runtime::_()->clear();
-            $this->_Phase($this->overriding_class);
-        }
-        Runtime::_()->last_phase = $phase;
-        Runtime::_()->clear();
+        Runtime::_()->onException($ex);
     }
-    protected function runExtentions(): bool
+    protected function runChildren(): bool
     {
         $flag = false;
         foreach ($this->options['app'] as $class => $options) {
@@ -403,6 +412,26 @@ trait KernelTrait
             }
         }
         return $flag;
+    }
+    public function execute(): bool
+    {
+        $ret = false;
+        $this->phaseToCurrent();
+
+        try {
+            Runtime::_()->run();
+            $ret = Console::_()->run();
+        } catch (\Throwable $ex) {
+            $this->runException($ex);
+            $ret = true;
+        } finally {
+            Runtime::_()->clear();
+        }
+        return $ret;
+    }
+    protected function phaseToCurrent(): void
+    {
+        $this->_Phase($this->options['phase_name']);
     }
     //main produce end
     ////////////////////////
@@ -431,28 +460,12 @@ trait KernelTrait
     {
         echo "_OnDevErrorHandler";
     }
-    protected function onBeforeCreatePhases(): void
-    {
-    }
-    protected function onAfterCreatePhases(): void
-    {
-    }
-    protected function onPrepare(): void
-    {
-    }
-    protected function onBeforeChildrenInit(): void
-    {
-    }
-    protected function onInit()
-    {
-    }
-    protected function onInited()
-    {
-    }
-    protected function onBeforeRun(): void
-    {
-    }
-    protected function onAfterRun(): void
-    {
-    }
+    protected function onBeforeCreatePhases(): void {}
+    protected function onAfterCreatePhases(): void {}
+    protected function onPrepare(): void {}
+    protected function onBeforeChildrenInit(): void {}
+    protected function onInit() {}
+    protected function onInited() {}
+    protected function onBeforeRun(): void {}
+    protected function onAfterRun(): void {}
 }

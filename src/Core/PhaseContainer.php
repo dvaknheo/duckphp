@@ -30,11 +30,11 @@ class PhaseContainer
         //}
         //return false;
     }
-    public static function GetObject($class, $object = null)
+    public static function GetObject(string $class, ?object $object = null): object
     {
         return static::GetContainerInstanceEx()->_GetObject($class, $object);
     }
-    public static function GetContainerInstanceEx($object = null)
+    public static function GetContainerInstanceEx(?object $object = null): self
     {
         if ($object) {
             static::$instance = $object;
@@ -45,7 +45,7 @@ class PhaseContainer
         }
         return static::$instance;
     }
-    public static function GetContainer()
+    public static function GetContainer(): self
     {
         //if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
         //return null;
@@ -54,7 +54,7 @@ class PhaseContainer
         return static::GetContainerInstanceEx();
     }
     ////////////////////////////////
-    public function _GetObject(string $class, $object = null)
+    public function _GetObject(string $class, ?object $object = null): object
     {
         if (isset($this->containers[$this->current][$class])) {
             if ($object) {
