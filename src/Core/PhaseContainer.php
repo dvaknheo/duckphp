@@ -30,11 +30,11 @@ class PhaseContainer
         //}
         //return false;
     }
-    public static function GetObject(string $class, ?object $object = null): object
+    public static function GetObject(string $class, ?object $object = null)
     {
         return static::GetContainerInstanceEx()->_GetObject($class, $object);
     }
-    public static function GetContainerInstanceEx(?object $object = null): self
+    public static function GetContainerInstanceEx(?object $object = null)
     {
         if ($object) {
             static::$instance = $object;
@@ -145,5 +145,12 @@ class PhaseContainer
         }
         echo "\n        * is public";
         echo "\n--end--- </pre> \n";
+    }
+    public function resetAllObject()
+    {
+        $this->containers = [];
+        $this->current = null;
+        $this->default = null;
+        $this->publics = [];
     }
 }

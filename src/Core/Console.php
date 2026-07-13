@@ -209,10 +209,10 @@ class Console extends ComponentBase
         $default_method_prefix = $group['default_method_prefix'];
         $classes = array_reverse($classes);
         foreach ($classes as $class => $method_prefix) {
-            if(!isset($method_prefix) || $method_prefix===false ){
+            if (!isset($method_prefix) || $method_prefix === false) {
                 continue;
             }
-            if($method_prefix === true){
+            if ($method_prefix === true) {
                 $method_prefix = $default_method_prefix;
             }
             $method = $method_prefix.$cmd_method;

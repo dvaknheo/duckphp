@@ -135,7 +135,8 @@ trait KernelTrait
     }
     protected function getDefaultPhaseName(?object $context = null): string
     {
-        if ($context) {
+        // @phpstan-ignore-next-line
+        if (isset($context) && isset($context->options['phase_name'])) {
             $name = $this->options['name'] ? $this->options['name'] : static::class;
             return $context->options['phase_name'] ? $context->options['phase_name'] . ':' . $name : $name;
         } else {
@@ -144,20 +145,20 @@ trait KernelTrait
     }
     protected function getDefaultConsoleNamespace(): string
     {
-         if ($this->is_root) {
+        if ($this->is_root || self::$root_instance === null) {
             return '';
         }
         $root_name = self::$root_instance->options['phase_name'];
-        $ret = substr($this->options['phase_name'],strlen($root_name)+1);
+        $ret = substr($this->options['phase_name'], strlen($root_name) + 1);
         $ret = str_replace(['\\', '/'], '-', $ret);
         return $ret;
     }
     ////////
     public function _Phase(?string $new = null): string
     {
-        $container = PhaseContainer::GetContainer();
+        $container = PhaseContainer::GetContainerInstanceEx();
         $old = $container->getCurrentContainer();
-        if ($new) {
+        if (isset($new)) {
             $container->setCurrentContainer($new);
         }
         return $old;
@@ -233,12 +234,10 @@ trait KernelTrait
     //init
     public function init(array $options, object $context = null)
     {
-
         $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->overriding_class ?? null)));
         require_once __DIR__ . '/Functions.php';
         $this->initOptions($options);
         if ($options['override_class'] ?? false) {
-
             $class = $options['override_class'];
             unset($options['override_class']);
 
@@ -469,12 +468,28 @@ trait KernelTrait
     {
         echo "_OnDevErrorHandler";
     }
-    protected function onBeforeCreatePhases(): void {}
-    protected function onAfterCreatePhases(): void {}
-    protected function onPrepare(): void {}
-    protected function onBeforeChildrenInit(): void {}
-    protected function onInit() {}
-    protected function onInited() {}
-    protected function onBeforeRun(): void {}
-    protected function onAfterRun(): void {}
+    protected function onBeforeCreatePhases(): void
+    {
+    }
+    protected function onAfterCreatePhases(): void
+    {
+    }
+    protected function onPrepare(): void
+    {
+    }
+    protected function onBeforeChildrenInit(): void
+    {
+    }
+    protected function onInit()
+    {
+    }
+    protected function onInited()
+    {
+    }
+    protected function onBeforeRun(): void
+    {
+    }
+    protected function onAfterRun(): void
+    {
+    }
 }

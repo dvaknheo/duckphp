@@ -58,7 +58,7 @@ class App extends ComponentBase
         //*/
     ];
     protected $common_options = [];
-    
+    protected $overriding_class = null;
     public function __construct()
     {
         parent::__construct();
@@ -92,7 +92,7 @@ class App extends ComponentBase
 
         SuperGlobal::_()->init($this->options, $this);
         View::_()->init($this->options, $this);
-   }
+    }
     //@override
     public function _On404(): void
     {

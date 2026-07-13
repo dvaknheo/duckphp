@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
 
 class GlobalEvent extends ComponentBase
 {
@@ -27,7 +27,7 @@ class GlobalEvent extends ComponentBase
         }
         $a = $this->events[$event];
         foreach ($a as $v) {
-            [$phase, $callback]= $v;
+            [$phase, $callback] = $v;
             $old_phase = App::Phase($phase);
             ($callback)(...$args);
             App::Phase($old_phase);
@@ -37,12 +37,12 @@ class GlobalEvent extends ComponentBase
     {
         return $this->events;
     }
-    public function remove($event, ?string $phase = null, $callback = null )
+    public function remove($event, ?string $phase = null, $callback = null)
     {
         if (!isset($this->events[$event])) {
             return;
         }
-        if (empty($phase) && !isset($callback) ) {
+        if (empty($phase) && !isset($callback)) {
             unset($this->events[$event]);
             return;
         }

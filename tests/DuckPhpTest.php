@@ -32,6 +32,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'path_info_compact_enable'=>true,
             'controller_resource_prefix'=>'',
             'cli_command_with_fast_installer' => true,
+            'cli_command_with_app' => true,
 
         ];
         DuckPhp::_()->init($options);
