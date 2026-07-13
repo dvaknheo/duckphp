@@ -204,7 +204,7 @@ class Console extends ComponentBase
     public function getCallback($group, $cmd_method)
     {
         //$method = $group['method_prefix'].$method;
-        $cmd_method = str_replace('-', '_', $method);
+        $cmd_method = str_replace('-', '_', $cmd_method); //???
         $classes = $group['classes'];
         $default_method_prefix = $group['default_method_prefix'];
         $classes = array_reverse($classes);

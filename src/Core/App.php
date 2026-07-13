@@ -122,7 +122,7 @@ class App extends ComponentBase
     public function _OnDefaultException($ex): void
     {
         // exception to root;
-        $this->_Phase(App::Root()->getOverridingClass()); //Important
+        $this->phaseToCurrent(); //Important
         
         if ($this->options['default_exception_do_log']) {
             try {

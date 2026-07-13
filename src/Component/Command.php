@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -62,18 +65,18 @@ EOT;
         $args = Console::_()->getCliParameters();
         $real_uri = $args['--'][1] ?? null;
         $uri = $url ?? $real_uri;
-        
+
         $uri = !empty($uri) ? $uri : '/';
         // TODO no need uri ,  directrer
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             $sg = (__SUPERGLOBAL_CONTEXT)();
             $sg->_SERVER['REQUEST_URI'] = $uri;
             $sg->_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
-            $sg->_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
+            $sg->_SERVER['HTTP_METHOD'] = $post ? $post : 'GET';
         } else {
             $_SERVER['REQUEST_URI'] = $uri;
             $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
-            $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
+            $_SERVER['HTTP_METHOD'] = $post ? $post : 'GET';
         }
         App::Current()->options['cli_enable'] = false;
         App::Current()->run();
@@ -101,7 +104,7 @@ EOT;
     public function command_debug(bool $off = false): void
     {
         $options = ExtOptionsLoader::_()->options;
-        
+
         if (App::Current()->options['data_file_enable'] && $options['data_file_bump_allowed'] && in_array('is_debug', $options['data_file_bump_keys'])) {
             $is_debug = !$off;
             ExtOptionsLoader::_()->saveData(['is_debug' => $is_debug]);
@@ -119,17 +122,18 @@ EOT;
     {
         $str = '';
         $group = Console::_()->options['cli_command_group'];
-        
+
         foreach ($group as $namespace => $v) {
-            $tip = ($namespace === '')? '*Default commands*':$namespace;
-            $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}\n";//::{$v['class']}
-            
+            $tip = ($namespace === '') ? '*Default commands*' : $namespace;
+            $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}\n"; //::{$v['class']}
+
             /////////////////
-            $descs = $this->getCommandsByClasses($v['classes'], $v['method_prefix'], $v['phase']);
+            $descs = $this->getCommandsByClasses($v['classes'], $v['default_method_prefix'], $v['phase']);
             ksort($descs);
+
             foreach ($descs as $method => $desc) {
-                $cmd = !$namespace ? $method : $namespace.':'.$method;
-                $cmd = "\e[32;1m".str_pad($cmd, 20)."\033[0m";
+                $cmd = !$namespace ? $method : $namespace . ':' . $method;
+                $cmd = "\e[32;1m" . str_pad($cmd, 20) . "\033[0m";
                 $str .= "  $cmd\t$desc\n";
             }
         }
@@ -138,10 +142,11 @@ EOT;
     protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
     {
         $ret = [];
-        foreach ($classes as $class) {
-            if (is_array($class)) {
-                list($class, $method_prefix) = $class;
+        foreach ($classes as $class => $v) {
+            if ($v === false) {
+                continue;
             }
+            $method_prefix = ($v === true) ? $method_prefix : $v;
             $desc = $this->getCommandsByClass($class, $method_prefix, $phase);
             $ret = array_merge($desc, $ret);
         }
@@ -178,11 +183,11 @@ EOT;
             }
             $command = substr($name, strlen($method_prefix));
             $doc = $v->getDocComment();
-            
+
             // first line;
-            $desc = ltrim(''.substr(''.$doc, 3));
+            $desc = ltrim('' . substr('' . $doc, 3));
             $pos = strpos($desc, "\n");
-            $pos = ($pos !== false)?$pos:255;
+            $pos = ($pos !== false) ? $pos : 255;
             $desc = trim(substr($desc, 0, $pos), "* \t\n");
             $ret[$command] = $desc;
         }
