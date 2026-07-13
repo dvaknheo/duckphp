@@ -79,7 +79,8 @@ class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
         Route::_()->run();
         
         MyAction::_(MyAction2::_())->foo();
-        MyAction::_Z(DuckPhpAllInOne::class)->foo();
+        DuckPhpAllInOne::_()->init([]);
+        MyAction::_Z(DuckPhpAllInOne::_Phase())->foo();
         
         My2Controller::OverrideParent();
 

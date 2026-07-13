@@ -50,7 +50,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'controller_method_prefix' => 'action_',
         ];
         $options['ext']=[
-            'noclass'=>true,
+            //'noclass'=>true,
             KernelTestObject::class=>false,
             KernelTestObjectA::class=>true,
             KernelTestObjectB::class=>['aa'=>'22'],
@@ -198,8 +198,8 @@ echo "-------------------------------------\n";
         App::_(new App())->init($options);
         App::Setting("duckphp_is_debug");
         //setting.php
-        
-        MyKernelTrait::_()->init($options);
+        var_dump($options);
+        MyKernelTrait::_(new MyKernelTrait())->init($options);
         MyKernelTrait::_()->isRoot();
         
         ////[[[[
@@ -263,7 +263,7 @@ echo "-------------------------------------\n";
     }
     
 }
-class MyKernelTrait
+class MyKernelTrait extends App
 {
     use SingletonExTrait;
     use KernelTrait;

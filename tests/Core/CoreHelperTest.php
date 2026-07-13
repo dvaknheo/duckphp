@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Core;
 
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\CoreHelper;
 
 class CoreHelperTest extends \PHPUnit\Framework\TestCase

@@ -86,9 +86,9 @@ class RouteHookResource extends ComponentBase
         
         //for console.
         
-        $phase = App::Phase(App::Root()->getOverridingClass());
+        $lasst_phase = App::Phase(App::Root()->getThisPhaseName());
         $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'] ?? 'public', '', false);
-        App::Phase($phase);
+        App::Phase($lasst_phase);
         
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             $sg = (__SUPERGLOBAL_CONTEXT)();

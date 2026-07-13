@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\AppHelperTrait;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
@@ -112,7 +112,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
             'is_debug' => true,
             'namespace'=> __NAMESPACE__,
         ];
-        App::_()->init($options);
+        DuckPhp::_()->init($options);
         //AppHelper::addBeforeShowHandler(function(){});
         
 

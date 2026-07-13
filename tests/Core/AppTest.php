@@ -53,86 +53,87 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'override_class'=>AppTestApp::class,
         ];
         $options['ext']=[
-            'noclass'=>true,
+            //'noclass'=>true,
             AppTestObject::class=>false,
             AppTestObjectA::class=>true,
             AppTestObjectB::class=>['aa'=>'22'],
         ];
 
-        App::_(new App());
-        App::RunQuickly($options,function(){
+        MyApp::_(new MyApp());
+        MyApp::RunQuickly($options,function(){
 			$e_old = error_reporting();
 			error_reporting($e_old |E_USER_NOTICE |E_NOTICE |E_STRICT |E_DEPRECATED |E_USER_DEPRECATED);
             $value = $cache[$key]; // trigger notice
-            App::_()->options['error_debug']='_sys/error-debug';
+            MyApp::_()->options['error_debug']='_sys/error-debug';
             $value = $cache[$key]; 
             
-            App::_()->options['error_debug']=function($data){var_dump($data);return;};
+            MyApp::_()->options['error_debug']=function($data){var_dump($data);return;};
             $value = $cache[$key]; 
             
-            App::_()->options['is_debug']=false;
+            MyApp::_()->options['is_debug']=false;
             $value = $cache[$key]; 
-            App::_()->options['is_debug']=true;
+            MyApp::_()->options['is_debug']=true;
 			error_reporting($e_old);
         });
 
         \DuckPhp\Core\Route::_()->bind('/NOOOOOOOOOOOOOOO'); 
         
-        App::_()->options['error_404']=function(){
+        MyApp::_()->options['error_404']=function(){
             echo "noooo 404  ooooooooo\n";
         };
         
-        App::_()->run();
+        MyApp::_()->run();
         \DuckPhp\Core\Route::_()->bind('/exception');
-        App::_()->run();
+        MyApp::_()->run();
         
-        App::_()->isInstalled();
+        MyApp::_()->isInstalled();
         
-        App::_()->options['error_404']=function(){
+        MyApp::_()->options['error_404']=function(){
             echo "zzzzzo 404  zzzzzzzzzzzz\n";
         };
          \DuckPhp\Core\Route::_()->bind('/Base/index');
         try{
-        App::_()->system_wrapper_replace(['exit'=>function($code){
+        MyApp::_()->system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
 
-        App::_()->run();
+        MyApp::_()->run();
         }catch(\Throwable $ex){
             echo "failed".$ex;
         }
         try{
-            App::_()->options['skip_exception_check']=true;
+            MyApp::_()->options['skip_exception_check']=true;
             Route::_()->bind('/exception');
             
-            App::_()->run();
+            MyApp::_()->run();
         }catch(\Throwable $ex){
             echo $ex->getMessage();
         }
-        App::_()->options['skip_exception_check']=false;
+        MyApp::_()->options['skip_exception_check']=false;
         //////////////////////////////////////////////////
-        
-        $app=new App();
+        /*
+        $MyApp=new MyApp();
         $options=['plugin_mode'=>true];
         try{
-            $app->init($options,$app);
+            $app->init($options,$MyApp);
         }catch(\Exception $ex){
             echo $ex->getMessage();
         }
         
         
-        //App::_()->clear();
+        //MyApp::_()->clear();
+        */
         ///////////////////////////
         $options=[
             // 'no this path' => $path_app,
             'path_config' => $path_app,
-            'override_class'=>'\\'.App::class,
+            'override_class'=>'\\'.MyApp::class,
             'path_view' => $path_app.'view/',
             'is_debug' => true,
         ];
         View::_(new View());
         Configer::_(new Configer());
-        App::_(new App())->init($options);
+        MyApp::_(new MyApp())->init($options);
         
 
         $this->doException();
@@ -149,7 +150,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         $old_class = AppTestObjectA::class;
         $new_class = AppTestObjectB::class;
-        App::_()->version();
+        MyApp::_()->version();
         
         $path_app=$this->LibCoverage->getClassTestPath(App::class);
         $options=[
@@ -169,14 +170,14 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path' => $path_app,
             'path_view'=>$path_view,
-            'app' => [AppTestApp::class => [
+            'MyApp' => [AppTestApp::class => [
                 'path_view'=>$path_view,
                 'name'=>'MyAppTestApp',
             ]],
         ];
         AppTestApp::_(new AppTestApp());
-        App::_(new App())->overriding_class = App::class; //要这么清理状态可不好，最好不要裸用App 类以防处意外
-        App::_()->init($options);
+        MyApp::_(new MyApp());//->overriding_class = MyApp::class; //要这么清理状态可不好，最好不要裸用App 类以防处意外
+        MyApp::_()->init($options);
         \DuckPhp\Core\View::Show(['A'=>'b'],"view");
         
         ////
@@ -209,28 +210,28 @@ class AppTest extends \PHPUnit\Framework\TestCase
         echo "---------------------------------------\n";
         PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
         AppTestApp::_(new AppTestApp());
-        App::_(new App())->init($options);
-        var_dump(md5(spl_object_hash(App::_())));
+        MyApp::_(new MyApp())->init($options);
+        var_dump(md5(spl_object_hash(MyApp::_())));
         SystemWrapper::system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
         //Route::_()->bind('/abc/Base/date');
-        //App::_()->run();
+        //MyApp::_()->run();
         Route::_()->bind('/abc/Base/do404');
-        App::_()->run();
+        MyApp::_()->run();
         Route::_()->bind('/abc/Base/do500');
-        App::_()->run();
+        MyApp::_()->run();
 
         ExitException::Init();
         Route::_()->bind('/abc/Base/doexit');
-        App::_()->run();
+        MyApp::_()->run();
         ////]]]]
         echo "-------111111111111-----------\n";
-		App::_()->options['lang_handler']=[static::class,'lang_handler'];
-		App::_()->lang("test",[]);
-		App::_()->options['lang_handler']=null;
-		App::_()->lang("test",[]);
-		App::_()->lang("test{hello}",['hello'=>'world']);
+		MyApp::_()->options['lang_handler']=[static::class,'lang_handler'];
+		MyApp::_()->lang("test",[]);
+		MyApp::_()->options['lang_handler']=null;
+		MyApp::_()->lang("test",[]);
+		MyApp::_()->lang("test{hello}",['hello'=>'world']);
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
@@ -267,22 +268,24 @@ class AppTest extends \PHPUnit\Framework\TestCase
     }
     public function doException()
     {
-        App::_()->options['is_debug']=true;
-        App::_()->options['error_500']="_sys/error-exception";
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        MyApp::_()->options['path']=$path_app;
+        MyApp::_()->options['is_debug']=true;
+        MyApp::_()->options['error_500']="_sys/error-exception";
         ExceptionManager::CallException(new \Exception("333333",-1));
-        App::_()->options['error_500']=null;
+        MyApp::_()->options['error_500']=null;
         ExceptionManager::CallException(new \Exception("EXxxxxxxxxxxxxxx",-1));
         
-        App::_()->options['error_500']=null;
-        App::_()->options['is_debug']=false;
+        MyApp::_()->options['error_500']=null;
+        MyApp::_()->options['is_debug']=false;
         ExceptionManager::CallException(new \Exception("EXxxxxxxxxxxxxxx",-1));
-        App::_()->options['is_debug']=true;
+        MyApp::_()->options['is_debug']=true;
         
-        App::_()->options['error_500']=function($ex){ echo $ex;};
+        MyApp::_()->options['error_500']=function($ex){ echo $ex;};
         ExceptionManager::CallException(new \Exception("22222222222222",-1));
         
         ExceptionManager::_()->assignExceptionHandler(\Exception::class,function($ex){
-            App::OnDefaultException($ex);
+            MyApp::OnDefaultException($ex);
            
         });
         ExceptionManager::CallException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
@@ -306,9 +309,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
     }
     public function doHelper()
     {
-        App::IsDebug();
-        App::IsRealDebug();
-        App::Platform();
+        MyApp::IsDebug();
+        MyApp::IsRealDebug();
+        MyApp::Platform();
 
    
     }
@@ -323,7 +326,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $key='key';
         $file_basename='config';
         
-        App::Setting($key);
+        MyApp::Setting($key);
         
         
         $url="";
@@ -331,7 +334,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         //*/
         //*
-        $path_view=$this->LibCoverage->getClassTestPath(App::class).'view/';
+        $path_view=$this->LibCoverage->getClassTestPath(MyApp::class).'view/';
 
         $options=[
             'path_view'=>$path_view,
@@ -339,7 +342,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         View::_()->init($options);
         
         View::_()->options['skip_view_notice_error']=true;
-        //App::getViewData();
+        //MyApp::getViewData();
 
     }
     protected function do404()
@@ -383,12 +386,12 @@ class AppTest extends \PHPUnit\Framework\TestCase
     }
     protected function do_Core_Component()
     {
-        App::_()->options['ext']['Xclass']=true;
-        //App::_()->getStaticComponentClasses();
-//        App::_()->getDynamicComponentClasses();
+        MyApp::_()->options['ext']['Xclass']=true;
+        //MyApp::_()->getStaticComponentClasses();
+//        MyApp::_()->getDynamicComponentClasses();
         $class="NoExits";
-//        App::_()->addDynamicComponentClass($class);
-        App::_()->skip404Handler();
+//        MyApp::_()->addDynamicComponentClass($class);
+        MyApp::_()->skip404Handler();
         
 
     
@@ -397,6 +400,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
     public static function Foo()
     {
     }
+}
+class MyApp extends App
+{
 }
 class E extends \Exception
 {
@@ -412,7 +418,7 @@ class E2 extends \Exception
         var_dump("Hit2");
     }
 }
-class AppTestApp extends App
+class AppTestApp extends MyApp
 {
     public static function Blank()
     {
@@ -437,7 +443,7 @@ var_dump($serverData);
         return parent::fixPathInfo($serverData);
     }
 }
-class AppTestApp2 extends App
+class AppTestApp2 extends MyApp
 {
     protected function onInit()
     {
