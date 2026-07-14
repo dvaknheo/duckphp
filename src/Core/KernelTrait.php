@@ -361,13 +361,26 @@ trait KernelTrait
             if (!class_exists($class)) {
                 throw new \Exception("Child [$class] not exists");
             }
-            $class::_()->init($options, $this);
-
+            $object = $class::_()->init($options, $this);
             $this->phaseToCurrent();
+            $this->children_phase_map = $this->children_phase_map ?? [];
+            $this->children_phase_map[$class] = $object->options['phase_name'];
         }
     }
-
-
+    public function toChildPhase(string $class)
+    {
+        if(!isset($this->children_phase_map[$class])){
+            return false;
+        }
+        $this->_Phase($this->children_phase_map[$class]);
+        return true;
+    }
+    public static function FromCurrentParent()
+    {
+        $APP = self::class;
+        $flag = $APP::_()->toChildPhase(static::class);
+        return $flag ? $APP::_() : null;
+    }
     public function run(): bool
     {
         if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {

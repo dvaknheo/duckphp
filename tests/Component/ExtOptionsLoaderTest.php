@@ -1,6 +1,7 @@
 <?php
 namespace tests\DuckPhp\Component;
 
+use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\DuckPhp;
 class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
@@ -23,7 +24,9 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         DuckPhpEOL::_()->init($options);
-        $old_phase = DuckPhpEOL::Phase(DuckPhpEOLChild::class);
+        $old_phase = DuckPhpEOL::Phase();
+        
+        DuckPhpEOL::_()->toChildPhase(DuckPhpEOLChild::class);
         ExtOptionsLoader::_()->saveData(['xdata'=>DATE(DATE_ATOM),"installed"=>"a","redis_x"=>"b"]);
             DuckPhpEOLChild::_(new DuckPhpEOLChild());
             ExtOptionsLoader::_(new ExtOptionsLoader());       
@@ -36,6 +39,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         DuckPhpEOL::_()->init($options);
         ////[[[[
         
+PhaseContainer::ResetContainer();
         $options['app'] = [
             DuckPhpEOLChild2::class =>[
                 'data_file_enable' => true,
@@ -61,10 +65,19 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
 }
 class DuckPhpEOL extends DuckPhp
 {
+    public $options =[
+        'name' => 'X',
+    ];
 }
 class DuckPhpEOLChild extends DuckPhp
 {
+    public $options =[
+        'name' => 'DuckPhpEOLChild',
+    ];
 }
 class DuckPhpEOLChild2 extends DuckPhp
 {
+    public $options =[
+        'name' => 'DuckPhpEOLChild2',
+    ];
 }

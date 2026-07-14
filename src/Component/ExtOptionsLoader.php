@@ -23,7 +23,7 @@ class ExtOptionsLoader extends ComponentBase
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        
+
         if (!isset(self::$all_ext_options)) {
             $full_file = $this->get_ext_options_file();
             if (!is_file($full_file)) {
@@ -32,8 +32,8 @@ class ExtOptionsLoader extends ComponentBase
             }
             $this->fill_all_ext_options($full_file);
         }
-        $class = App::Current()->getOverridingClass();
-        $ext_options = self::$all_ext_options[$class] ?? null;
+        $phase = App::_()->getThisPhaseName();
+        $ext_options = self::$all_ext_options[$phase] ?? [];
         if (empty($ext_options)) {
             return;
         }
@@ -44,7 +44,7 @@ class ExtOptionsLoader extends ComponentBase
         if (!$this->options['data_file_bump_allowed']) {
             return;
         }
-        $app = App::Current();
+        $app = App::_();
         $app->options['data'] = $ext_options;
         foreach ($this->options['data_file_bump_keys'] as $key => $enabled) {
             if ($enabled) {
@@ -64,6 +64,7 @@ class ExtOptionsLoader extends ComponentBase
     }
     protected function get_ext_options_file(): string
     {
+        // App::Root()->getPathRuntime;
         $full_file = App::Root()->options['data_file_json_file'] ?? $this->options['data_file_json_file'];
         
         $path = static::SlashDir(App::Root()->options['path']);
@@ -82,11 +83,12 @@ class ExtOptionsLoader extends ComponentBase
     public function saveData(array $options): void
     {
         $full_file = $this->get_ext_options_file();
-        $class = App::Current()->getOverridingClass(); // todo phasename
-        $ext_options = array_replace_recursive(self::$all_ext_options[$class] ?? [], $options);
-        self::$all_ext_options[$class] = $ext_options;
+        $phase = App::_()->getThisPhaseName();
+        $ext_options = array_replace_recursive(self::$all_ext_options[$phase] ?? [], $options);
+        self::$all_ext_options[$phase] = $ext_options;
         $all_ext_options = self::$all_ext_options;
-        $all_ext_options['__date'] = date('Y-m-d H:i:s');
+        $all_ext_options['__date__'] = date('Y-m-d H:i:s');
+        $all_ext_options['__class__'] = get_class(App::_());
         
         $string = json_encode($all_ext_options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
         file_put_contents($full_file, $string);
