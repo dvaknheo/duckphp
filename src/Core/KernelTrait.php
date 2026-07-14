@@ -110,10 +110,9 @@ trait KernelTrait
     }
     public static function FromCurrentParent()
     {
-        $APP = get_class(self::Root());
-
-        
+        $APP = self::class;
         $flag = $APP::_()->toChildPhase(static::class);
+        
         return $flag ? $APP::_() : null;
     }
     protected function initOptions(array $options): void
@@ -139,13 +138,14 @@ trait KernelTrait
     }
     protected function getDefaultName(): string
     {
-        return $this->options['namespace'];
+        return $this->options['namespace']; // if has this ,so change a nanme
     }
     protected function getDefaultPhaseName(?object $context = null): string
     {
         // @phpstan-ignore-next-line
         if (isset($context) && isset($context->options['phase_name'])) {
             $name = $this->options['name'] ? $this->options['name'] : static::class;
+            //TODO if phase_name has used , is default_name , and phasename used change name
             return $context->options['phase_name'] ? $context->options['phase_name'] . ':' . $name : $name;
         } else {
             return $this->options['name'];
@@ -185,8 +185,7 @@ trait KernelTrait
     }
     protected function initContainer(?object $context = null): bool
     {
-        $context = $context ?? '';
-        $this->is_root = !(\is_a($context, self::class) || (static::class === self::class));
+        $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
         //////////////////////////////
 
         if ($this->is_root) {

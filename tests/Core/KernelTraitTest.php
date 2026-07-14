@@ -246,7 +246,6 @@ echo "-------------------------------------\n";
             ],
         ]);
         }catch(\Exception $ex){}
-        echo "zzzzzzzzzzzzzzzzz";define('_X_',true);
         try{
         KernelTestApp::_(new KernelTestApp())->init([
             'skip_exception_check'=>true,
@@ -261,20 +260,38 @@ echo "-------------------------------------\n";
         KernelTestApp::_(new KernelTestApp())->init([
             'skip_exception_check'=>true,
             'app' => [
-                MyKernelTrait::class =>[
+                KernelTestApp3::class =>[
                     'name'=>'not_empty',
                 ],
             ],
         ]);
-        var_dump(OldApp::Phase(),get_class(OldApp::_()));
+        //$old_phase = KernelTestApp::Phase();
         KernelTestApp::FromCurrentParent();
-        MyKernelTrait::FromCurrentParent();
+        KernelTestApp3::FromCurrentParent();
+        
+    PhaseContainer::ResetContainer();
+        KernelTestApp::_(new KernelTestApp())->init([
+            'cli_enable'=>true,
+            'command'=>[
+                KernelTestApp::class => true,
+            ],
+        ]);
+        $__SERVER = $_SERVER;
+        
+        $_SERVER['argv']=[
+                '-','test',
+        ];
+
+        KernelTestApp::_()->run();
+            
+        $_SERVER = $__SERVER;
+        
     }
     protected function do404()
     {
         
         
-        echo "-----------------------\n";
+        echo "------------xxxxxxxxxxxxxx-----------\n";
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class);
         $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         $options=[
@@ -326,6 +343,10 @@ class KernelTestApp extends App
     {
         return $this->createLocalObject($class);
     }
+    public function command_hello()
+    {
+        var_dump("wwwwwwwwwwwwwworld");
+    }
 }
 class KernelTestApp2 extends App
 {
@@ -334,6 +355,10 @@ class KernelTestApp2 extends App
         return null;
         //throw new \Exception("zzzzzzzzzzzz");
     }
+}
+class KernelTestApp3 extends App
+{
+
 }
 class KernelTestObject
 {

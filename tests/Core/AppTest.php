@@ -42,7 +42,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path_view' => $path_app.'view/',
             'namespace' => __NAMESPACE__,
             'platform' => 'ForTests',
-            'is_debug' => true,
+            'is_debug' => false,
             'use_flag_by_setting' => false,
             'error_exception' => NULL,
             'error_500' => NULL,
@@ -226,13 +226,43 @@ class AppTest extends \PHPUnit\Framework\TestCase
         Route::_()->bind('/abc/Base/doexit');
         MyApp::_()->run();
         ////]]]]
-        echo "-------111111111111-----------\n";
 		MyApp::_()->options['lang_handler']=[static::class,'lang_handler'];
 		MyApp::_()->lang("test",[]);
 		MyApp::_()->options['lang_handler']=null;
 		MyApp::_()->lang("test",[]);
 		MyApp::_()->lang("test{hello}",['hello'=>'world']);
+
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+        $options =[
+            'path' => $path_app,
+            'is_debug'=>true,
+            'error_debug'=>function($data){
+                return;
+            },
+        ];
+        MyApp::_(new MyApp())->init($options);
+
+        MyApp::_()->_OnDevErrorHandler(0, '', '', 0);
+        MyApp::_()->options['error_debug'] = '_sys/error-debug';
+        MyApp::_()->_OnDevErrorHandler(0, '', '', 0);
+        ///////////////////////////////////////////
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+define('_X_',true);
+        $options =[
+            'path' => $path_app,
+            'name' =>'zz',
+            'app'=>[
+                AppTestApp2::class =>[
+                    'name'=>'abc',
+                ],
+            ],
+        ];
         
+        MyApp::_(new MyApp())->init($options);
+        $x = AppTestApp2::FromCurrentParent()->getOverrideableFile("view",'abc');
+        var_dump($x);
+
+
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
         return;

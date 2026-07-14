@@ -237,7 +237,7 @@ EOT;
         }
         if (!$this->is_root && $use_override) {
             $path_main = static::Root()->options['path'];
-            $name = $this->options['alias'] ?? str_replace("\\", '/', $this->options['namespace']);
+            $name = str_replace("\\", '/', $this->options['name']);
             
             $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub). static::SlashDir($name) . $file;
             if (!file_exists($full_file)) {
