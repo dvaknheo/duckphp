@@ -18,7 +18,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         Console::DoRun();
         Console::_()->app();
         Console::_()->getCliParameters();
-        Console::_()->regCommandClass('test',DuckPhp::class,[Console_Command::class]);
+        Console::_()->regCommandClass('test',DuckPhp::class,[Console_Command::class=>true]);
         //var_dump(Console::_()->options);exit;
         $_SERVER['argv']=[
             '-','test:foo',
@@ -79,7 +79,11 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','help',  // ------>changed
         ];
-        Console::_()->regCommandClass('', Console_App::class,[Console_Command2::class,[Console_Command4::class,'prefix_']]);
+        Console::_()->regCommandClass('', Console_App::class,[
+            Console_Command2::class => true ,
+            Console_Command::class=>false,
+            Console_Command4::class=>'prefix_',
+            ]);
         Console_App::_()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'
@@ -95,6 +99,15 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
                 '-','test',
             ];
            Console::_(new Console())->init(['cli_default_command_class'=>''])->run();
+        }catch(\Exception $ex){
+            var_dump("Hit!");
+        }
+        
+        try{
+            $_SERVER['argv']=[
+                '-','test',
+            ];
+        Console::_(new Console())->init(['cli_command_group'=>[]])->getCallback([],'xx');
         }catch(\Exception $ex){
             var_dump("Hit!");
         }

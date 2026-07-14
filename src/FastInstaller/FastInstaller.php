@@ -96,8 +96,6 @@ class FastInstaller extends ComponentBase
             
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
             App::Phase($object->getThisPhaseName());
-        } else {
-            App::Phase($app::_()->getThisPhaseName());
         }
         return FastInstaller::_()->doCommandInstall();
     }
@@ -304,7 +302,7 @@ and more ...\n";
         }
         $root_name = App::_()->options['phase_name'];
         foreach ($app_options['app'] as $app => $options) {
-            if($options === false){
+            if ($options === false) {
                 continue;
             }
             $last_phase = App::Phase($app::_()->getThisPhaseName());
@@ -316,7 +314,7 @@ and more ...\n";
             list($class, $method) = Console::_()->getCallback($group, 'install');
             try {
                 if (isset($class) && is_callable([$class::_(),$method])) {
-                    $ret = call_user_func([$class::_(),$method]);
+                    $ret = call_user_func([$class::_(),$method]);/** @phpstan-ignore-line */
                 }
             } catch (\Exception $ex) {
                 $msg = $ex->getMessage();

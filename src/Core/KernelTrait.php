@@ -108,6 +108,12 @@ trait KernelTrait
     {
         return static::Current()->_IsRoot();
     }
+    public static function FromCurrentParent()
+    {
+        $APP = self::class;
+        $flag = $APP::_()->toChildPhase(static::class);
+        return $flag ? $APP::_() : null;
+    }
     protected function initOptions(array $options): void
     {
         $this->options = array_replace_recursive($this->options, $options);
@@ -168,11 +174,6 @@ trait KernelTrait
         return $this->is_root;
     }
     public function getOverridingClass()
-    {
-        return $this->overriding_class;
-    }
-
-    public function getThisClassName()
     {
         return $this->overriding_class ?? static::class;
     }
@@ -369,18 +370,13 @@ trait KernelTrait
     }
     public function toChildPhase(string $class)
     {
-        if(!isset($this->children_phase_map[$class])){
+        if (!isset($this->children_phase_map[$class])) {
             return false;
         }
         $this->_Phase($this->children_phase_map[$class]);
         return true;
     }
-    public static function FromCurrentParent()
-    {
-        $APP = self::class;
-        $flag = $APP::_()->toChildPhase(static::class);
-        return $flag ? $APP::_() : null;
-    }
+
     public function run(): bool
     {
         if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {

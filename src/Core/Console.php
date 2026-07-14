@@ -205,7 +205,7 @@ class Console extends ComponentBase
     }
     public function getCallback($group, $cmd_method)
     {
-        if(empty($group)){
+        if (empty($group)) {
             return [null,null];
         }
         //$method = $group['method_prefix'].$method;

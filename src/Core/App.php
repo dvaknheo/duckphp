@@ -59,6 +59,7 @@ class App extends ComponentBase
     ];
     protected $common_options = [];
     protected $overriding_class = null;
+    protected $children_phase_map = [];
     public function __construct()
     {
         parent::__construct();
@@ -256,9 +257,7 @@ EOT;
     }
     
     //////// features for view
-    protected function onBeforeRun(): void
-    {
-    }
+
     public function onBeforeOutput()
     {
     }
