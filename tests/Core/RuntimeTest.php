@@ -22,10 +22,12 @@ class RuntimeTest extends \PHPUnit\Framework\TestCase
 
         Runtime::_()->onException(true);
         Runtime::_()->onException(false);
-    $options = ['is_debug'=>false];
-    Runtime::_()->init(['use_output_buffer'=>true],App::_(new App())->init($options));
-Runtime::_()->run();
+        $options = ['is_debug'=>false];
+        Runtime::_()->init(['use_output_buffer'=>true],App::_(new App())->init($options));
+        Runtime::_()->run();
         Runtime::_()->clear();
+        Runtime::_()->clear();
+        
         \LibCoverage\LibCoverage::End();
 
     }

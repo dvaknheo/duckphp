@@ -60,6 +60,9 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             'data_file_enable' => true,
             'data_file_bump_allow'=>true,
             'data_file_bump_keys' => ['is_debug'],
+            'command' =>[
+                
+            ],
         ])->run();
         
         $_SERVER['argv']=[
@@ -78,12 +81,12 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         tAutoReadLineConsole::_()->setFileContents([$str]);
         DuckPhp::_()->run();
         */
-        
         $_SERVER['argv']=[
             '-','run', '--http-server=tests/DuckPhp/Component/Console_HttpServer',
         ];
         DuckPhp::_()->run();
-
+       
+       
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command::class).'@command_foo4','A1'
         ];
@@ -116,6 +119,8 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','fetch', '--uri=/'
         ];
         DuckPhp::_()->run();
+        
+        
         DuckPhp::_()->options['cli_enable']=true;
         
         $_SERVER = $__SERVER;
@@ -148,11 +153,23 @@ class Console_Command2
 {
     public function prefix_new2(){}
 }
+class Console_Command3
+{
+    public function command_hello()
+    {
+        echo 'word';
+    }
+}
+
 class CommandApp extends DuckPhp
 {
     public $options=[
         'cli_command_prefix' =>'aa',
-        'cli_command_classes'=>[Console_Command::class,[Console_Command2::class,'prefix_']],
+        'command'=>[
+            Console_Command::class=>true,
+            CommandApp2::class=>false,
+            Console_Command2::class =>'prefix_',
+        ],
     ];
 }
 class CommandApp2 extends DuckPhp
