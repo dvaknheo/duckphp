@@ -12,6 +12,7 @@ use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\Pager;
+use DuckPhp\Core\PhaseContainer;
 
 class KernelTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -223,10 +224,51 @@ echo "-------------------------------------\n";
         KernelTestApp::_(new KernelTestApp())->override_class = KernelTestApp::class;
         KernelTestApp::_()->createLocalObject2(Logger::class);
         App::Root()->getOverridingClass();
+        
+        ////////////////////////
+        $this->doMoreTest();
+        ////////////////////////
+        
+        
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;
 
+    }
+    protected function doMoreTest()
+    {
+        PhaseContainer::ResetContainer();
+        try{
+        KernelTestApp::_()->init([
+            'skip_exception_check'=>true,
+            'ext' => [
+                'noExsits'=>true,
+            ],
+        ]);
+        }catch(\Exception $ex){}
+        echo "zzzzzzzzzzzzzzzzz";define('_X_',true);
+        try{
+        KernelTestApp::_(new KernelTestApp())->init([
+            'skip_exception_check'=>true,
+            'app' => [
+                MyKernelTrait::class =>false,
+                'noExsitsxxxx'=>['not empty'],
+            ],
+        ]);
+        }catch(\Exception $ex){
+        }
+        PhaseContainer::ResetContainer();
+        KernelTestApp::_(new KernelTestApp())->init([
+            'skip_exception_check'=>true,
+            'app' => [
+                MyKernelTrait::class =>[
+                    'name'=>'not_empty',
+                ],
+            ],
+        ]);
+        var_dump(OldApp::Phase(),get_class(OldApp::_()));
+        KernelTestApp::FromCurrentParent();
+        MyKernelTrait::FromCurrentParent();
     }
     protected function do404()
     {

@@ -110,7 +110,9 @@ trait KernelTrait
     }
     public static function FromCurrentParent()
     {
-        $APP = self::class;
+        $APP = get_class(self::Root());
+
+        
         $flag = $APP::_()->toChildPhase(static::class);
         return $flag ? $APP::_() : null;
     }
@@ -353,10 +355,7 @@ trait KernelTrait
     protected function initChildren(array $apps): void
     {
         foreach ($apps as $class => $options) {
-            if ($options === false) {
-                continue;
-            }
-            if (!is_array($options)) {
+            if (empty($options) || !is_array($options)) {
                 continue;
             }
             if (!class_exists($class)) {
