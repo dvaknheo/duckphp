@@ -7,6 +7,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\FastInstaller\FastInstaller;
 use DuckPhp\Foundation\FastInstallerTrait;
 use DuckPhp\Db\Db;
+use DuckPhp\Core\PhaseContainer;
 
 class InstallerConsole extends Console
 {
@@ -63,7 +64,7 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $rdb =  $setting['redis_list'][0];
 
         FiParentApp::_()->init([]);
-
+$old_phase = FiParentApp::Phase();
         $_SERVER['argv']=['-','install', "--help", ];
         FiParentApp::_()->run();
         
@@ -83,8 +84,20 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $FastInstallerTest = str_replace('\\','/',FastInstallerTest::class);
         $_SERVER['argv']=['-','require',$FastInstallerTest];
 
-        FiParentApp::_()->options['ext_options_file_enable']=true;
+        FiParentApp::_()->options['ext_options_file_enable']=false;
         FiParentApp::_()->run();
+
+        FiParentApp::_()->options['ext_options_file_enable']=true;
+        
+        $old_phase = FiParentApp::Phase();
+        $_SERVER['argv']=['-','child1:require', 'noexists'];
+        FiParentApp::_()->run();
+        
+
+        FiParentApp::Phase($old_phase);
+        
+echo "--------------------------\n";
+
         $FiChildApp = str_replace('\\','/',FiChildApp::class);
         $_SERVER['argv']=['-','require',$FiChildApp , '--dry'];
         
@@ -107,7 +120,7 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         $FiChildApp2 = str_replace('\\','/',FiChildApp2::class);
         $_SERVER['argv']=['-','require',$FiChildApp2,'--dry'];
-        FiParentApp::_()->options['ext_options_file_enable']=false;
+        FiParentApp::_()->options['ext_options_file_enable'] = false;
         FiParentApp::_()->run();
         FiParentApp::_()->options['ext_options_file_enable']=true;
         FiParentApp::_()->run();
@@ -128,7 +141,6 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=['-','require',$FiChildAppRes, '--force', '--verbose'];
         FiParentApp::_()->options['ext_options_file_enable']=true;
 echo "->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
-var_dump(FiParentApp::_()->options['app']);
         FiParentApp::_()->run();
 
         Console::_()->readLinesCleanFill();
@@ -138,17 +150,39 @@ var_dump(FiParentApp::_()->options['app']);
         $_SERVER['argv']=['-','require',$FiChildAppRes, '--dry'];
         FiParentApp::_()->run();
         echo "--------------------------------\n";
-        FiParentApp::_()->options['app']=[
+        
+        ///////////////
+        $console_options = Console::_()->options;
+        
+        
+    PhaseContainer::ResetContainer(); //!!!
+    //\DuckPhp\Core\App::$root_instance =null;
+        
+        
+        FiParentApp::_()->init(['app'=>[
+            FiChildApp::class => false,
             FiChildAppFailed::class => [
+                    'cli_command_with_fast_installer'=>true,
+
                 'no_empty'=>true,
                 'controller_url_prefix'=>'ax',
                 'install_input_desc'=>'install_input_desc_FiChildAppFailed',
             ],
-        ];
-        $_SERVER['argv']=['-','install'];
+            
+        ]]);
+                $console_options = Console::_()->options;
+
+define("_X_",true);
+echo "->>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>>\n";
+        $_SERVER['argv']=['-','install'];     
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
+        
         FiParentApp::_()->run();
+        Console::_()->readLinesCleanFill();
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
         $_SERVER['argv']=['-','install','--force'];
         FiParentApp::_()->run();
+        Console::_()->readLinesCleanFill();
         
         
         FastInstaller::_()->getCurrentInput();
@@ -190,7 +224,7 @@ class FiParentApp extends DuckPhp
     public $options = [
         'is_debug'=>true,
         'ext_options_file_enable'=> true,
-        
+        'name'=>'theFiParentApp',
        
         'app' => [
             FiChildApp::class => [
@@ -199,7 +233,6 @@ class FiParentApp extends DuckPhp
                 'name'=>'child1',
             ]
         ],
-        'cli_command_with_fast_installer'=>true,
         'command' => [FastInstaller::class =>true,],
         
         'install_callback' => [__CLASS__, 'OnInstall'],
@@ -223,6 +256,7 @@ class FiParentApp extends DuckPhp
 class FiChildApp extends DuckPhp
 {
     public $options = [
+        'name'=>'name_FiChildApp',
         'im child' => true,
         'cli_command_with_fast_installer'=>true,
         'command' => [FastInstaller::class =>true,],
@@ -236,10 +270,14 @@ class FiChildApp extends DuckPhp
 }
 class FiChildApp2 extends FiChildApp
 {
+    public $options = [
+        'name'=>'theFiChildApp2',
+    ];
 }
 class FiChildAppRes extends FiChildApp
 {
     public $options = [
+        'name'=>'appres',
         'path_resource' => 'res2',
     ];
 }
@@ -248,8 +286,10 @@ class FiChildAppRes extends FiChildApp
 class FiChildAppFailed extends FiChildApp
 {
     public $options = [
+        'name'=>'myfailed',
         'im child' => true,
         'install_callback' => [__CLASS__, 'OnInstallX'],
+        'command' => [FastInstaller::class =>true,],
     ];
     
     public $force_fail = true;
@@ -259,7 +299,6 @@ class FiChildAppFailed extends FiChildApp
     }
     public function _OnInstall()
     {
-        
         if ($this->force_fail){
             FastInstaller::_()->forceFail();
             throw new \Exception('force_fail');

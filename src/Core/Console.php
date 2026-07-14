@@ -81,14 +81,16 @@ class Console extends ComponentBase
         
         //$method = $group['method_prefix'].$method;
         //$class = $group['class'];
-        App::Phase($group['phase']);
+        $old_phase = App::Phase($group['phase']);
+
         // get class ,and method, then call
         list($class, $method) = $this->getCallback($group, $method);
         if (!isset($class) && !isset($method)) {
             throw new \ReflectionException("Command Not Found In All\n", -4);
         }
-        
         $this->callObject($class, $method, $func_args, $this->parameters);
+
+        App::Phase($old_phase);
         return true;
     }
     public function readLinesFill($data)
@@ -203,11 +205,14 @@ class Console extends ComponentBase
     }
     public function getCallback($group, $cmd_method)
     {
+        if(empty($group)){
+            return [null,null];
+        }
         //$method = $group['method_prefix'].$method;
         $cmd_method = str_replace('-', '_', $cmd_method); //???
         $classes = $group['classes'];
         $default_method_prefix = $group['default_method_prefix'];
-        $classes = array_reverse($classes);
+        //$classes = array_reverse($classes); //TODO
         foreach ($classes as $class => $method_prefix) {
             if (!isset($method_prefix) || $method_prefix === false) {
                 continue;

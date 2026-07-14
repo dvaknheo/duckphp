@@ -44,6 +44,7 @@ class FastInstaller extends ComponentBase
         $this->initComponents();
         SqlDumper::_()->dump();
         $driver = DbManager::_()->getDatabaseDriver();
+        $driver = $driver?:'database';
         echo "dumpsql done. see the file `config/{$driver}.sql` .\n";
         return;
     }
@@ -95,7 +96,7 @@ class FastInstaller extends ComponentBase
             
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
             App::Phase($object->getThisPhaseName());
-        }else{
+        } else {
             App::Phase($app::_()->getThisPhaseName());
         }
         return FastInstaller::_()->doCommandInstall();
@@ -271,7 +272,8 @@ and more ...\n";
         
         ////]]]]
         if ($this->is_failed) {
-            echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
+            $class = get_class(App::_());
+            echo "\e[32;3m $class Installed App  FAILED!;\033[0m\n";
             return;
         }
         EventManager::FireEvent([App::Phase(), 'onInstall'], $input_options);
@@ -292,7 +294,7 @@ and more ...\n";
     protected function installChildren(): void
     {
         $current_phase = App::Phase();
-        $app_options = App::Current()->options;
+        $app_options = App::_()->options;
         if (!empty($app_options['app'])) {
             $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
             App::Root()->options['installing_data']['install_level'] = $install_level + 1;
@@ -302,6 +304,9 @@ and more ...\n";
         }
         $root_name = App::_()->options['phase_name'];
         foreach ($app_options['app'] as $app => $options) {
+            if($options === false){
+                continue;
+            }
             $last_phase = App::Phase($app::_()->getThisPhaseName());
             $cli_namespace = App::_()->options['cli_command_prefix'] ?? App::Current()->options['namespace'];
             

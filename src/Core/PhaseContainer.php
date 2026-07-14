@@ -146,11 +146,4 @@ class PhaseContainer
         echo "\n        * is public";
         echo "\n--end--- </pre> \n";
     }
-    public function resetAllObject()
-    {
-        $this->containers = [];
-        $this->current = null;
-        $this->default = null;
-        $this->publics = [];
-    }
 }
