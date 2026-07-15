@@ -228,9 +228,9 @@ class CoreHelper extends ComponentBase
     }
     public function _PhaseCall($phase, $callback, ...$args)
     {
-        App::Phase($phase);
+        $old_phase = App::Phase($phase);
         $ret = ($callback)(...$args);
-        App::Phase($current);
+        App::Phase($old_phase);
         return $ret;
     }
     public function _BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)

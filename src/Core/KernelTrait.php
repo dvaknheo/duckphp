@@ -22,28 +22,24 @@ trait KernelTrait
     public $options = [];
 
     protected $kernel_options = [
+        'is_debug' => false,
         'path' => null,
-
-        'name' => null,
-        'phase_name' => null,
         'namespace' => null,
-        
         'override_class' => null,
+        'app' => [],
+        'cmd' => [],
+        'data' => [],
+        'ext' => [],
         
         'cli_enable' => true,
-        'init_components' => true,
-        'ext' => [],
-        'app' => [],
-        'data' => [],
-        'cmd' => [],
-
         'skip_404' => false,
         'skip_exception_check' => false,
+        'init_components' => true,
 
         'on_init' => null,
+        // 'on_inited' => null,
         'on_before_run' => null,
         //'on_after_run' => null,
-        'is_debug' => false,
 
         'setting_file' => 'config/DuckPhpSettings.config.php',
         'setting_file_ignore_exists' => true,
@@ -70,12 +66,11 @@ trait KernelTrait
         // 'controller_url_prefix' => '',
 
         // 'use_output_buffer' => false,
-        // 'path_runtime' => 'runtime',
-
         //*/
     ];
     public $setting = [];
     protected $is_root = true;
+    protected $phase_name = '';
     protected static $root_instance = null;
 
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
@@ -115,6 +110,7 @@ trait KernelTrait
     }
     protected function getDefaultProjectNameSpace(?string $class): string
     {
+        // MyProject\System\App => MyProject
         $a = explode('\\', $class ?? static::class);
         array_pop($a);
         array_pop($a);
@@ -130,32 +126,6 @@ trait KernelTrait
 
         return $path;
     }
-    protected function getDefaultName(): string
-    {
-        return $this->options['namespace']; // if has this ,so change a nanme
-    }
-    protected function getDefaultPhaseName(?object $context = null): string
-    {
-        // @phpstan-ignore-next-line
-        if (isset($context) && isset($context->options['phase_name'])) {
-            $name = $this->options['name'] ? $this->options['name'] : static::class;
-            //TODO if phase_name has used , is default_name , and phasename used change name
-            return $context->options['phase_name'] ? $context->options['phase_name'] . ':' . $name : $name;
-        } else {
-            return $this->options['name'];
-        }
-    }
-    protected function getDefaultConsoleNamespace(): string
-    {
-        if ($this->is_root || self::$root_instance === null) {
-            return '';
-        }
-        $root_name = self::$root_instance->options['phase_name'];
-        $ret = substr($this->options['phase_name'], strlen($root_name) + 1);
-        $ret = str_replace(['\\', '/'], '-', $ret);
-        return $ret;
-    }
-    ////////
     public function _Phase(?string $new = null): string
     {
         $container = PhaseContainer::GetContainerInstanceEx();
@@ -169,13 +139,34 @@ trait KernelTrait
     {
         return $this->is_root;
     }
-    public function getOverridingClass()
+    public function getThisClass()
     {
-        return $this->overriding_class ?? static::class;
+        return $this->this_class;
+    }
+    public function getThisParent()
+    {
+        $a = explode(':', $this->phase_name);
+        $phase_name = implode('\\', $a);
+        $this->_Phase($phase_name);
+
+        return self::_();
+    }
+    public function getThisChild($class)
+    {
+        $phase = $this->options['app'][$class]['__phase__'] ?? '';
+        if (!$phase) {
+            return null;
+        }
+        $this->_Phase($phase);
+        return self::_();
     }
     public function getThisPhaseName()
     {
-        return $this->options['phase_name'];
+        return $this->phase_name;
+    }
+    public function getThisCommandPrefix()
+    {
+        return str_replace('/', '-', $this->phase_name);
     }
     protected function initContainer(?object $context = null): bool
     {
@@ -183,23 +174,38 @@ trait KernelTrait
 
         if ($this->is_root) {
             self::$root_instance = $this;
-
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = PhaseContainer::GetContainer();
-            $container->setDefaultContainer($this->getThisPhaseName());
-            $container->setCurrentContainer($this->getThisPhaseName());
-            //TODO Move public containers to this;
+            $container->setDefaultContainer($this->phase_name);
+            $container->setCurrentContainer($this->phase_name);
+            
             $this->onAfterCreatePhases();
         } else {
+            // @phpstan-ignore-next-line
+            $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $this->options['namespace']), ':');
             $container = PhaseContainer::GetContainer();
-            $container->setCurrentContainer($this->getThisPhaseName());
+            $is_same_name = $container->issetContainer($this->phase_name);
+            if ($is_same_name) {
+                $phase_name_ref = $this->phase_name;
+                for ($i = 2;$i <= 10;$i++) {
+                    $this->phase_name = $phase_name_ref.'@'.$i;
+                    $is_same_name = $container->issetContainer($this->phase_name);
+                    if (!$is_same_name) {
+                        break;
+                    }
+                }
+            }
+            if ($is_same_name) {
+                throw new DuckPhpSystemException("samename too much");
+            }
+            $container->setCurrentContainer($this->phase_name);
         }
         (self::class)::_($this);
         (static::class)::_($this);
 
         /////////////
-        return false;
+        return true;
     }
     protected function addPublicClassesInRoot(array $classes): void
     {
@@ -226,37 +232,25 @@ trait KernelTrait
         }
         ExceptionManager::_()->init($exception_options, $this);
     }
+
     //init
     public function init(array $options, object $context = null)
     {
-        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->overriding_class ?? null)));
+        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
         $this->initOptions($options);
         if ($options['override_class'] ?? false) {
-            //init override
             $class = $options['override_class'];
             unset($options['override_class']);
-
-            //$options['override_class_from'] = $this->overriding_class;
-            //$this->overriding_class = $options['override_class_from'];
-
             return $class::_(new $class)->init($options, $context);
         }
         $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
         if ($this->is_root) {
             require_once __DIR__ . '/Functions.php';
         }
-        
         $this->initOptions($options);
-
-        $this->options['path'] = $this->options['path'] ?? $this->getDefaultProjectPath();
-        $this->options['name'] = $this->options['name'] ?? $this->getDefaultName();
-        $this->options['phase_name'] = $this->getDefaultPhaseName($context);
-        ////[[[[
-        ////]]]]
-
         $this->initContainer($context);
         $this->initException($this->options);
-
+        
         $this->onPrepare();
         $this->initComponents();
         $this->initExtensions($this->options['ext']);
@@ -283,15 +277,16 @@ trait KernelTrait
             Console::_()->init($this->options, $this);
         }
 
-        $cli_namespace = $this->getDefaultConsoleNamespace();
-        Console::_()->regCommandClass($cli_namespace, $this->options['phase_name'], $this->options['cmd'], 'command_');
+        Console::_()->regPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
+        Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
+        
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
         $this->doInitComponents();
     }
     protected function doInitComponents(): void
     {
-        //for override
+        //for DuckPhp\Core\App override initComponents
     }
     protected function loadSetting(): void
     {
@@ -361,7 +356,7 @@ trait KernelTrait
             $object = $class::_()->init($options, $this);
             $this->phaseToCurrent();
             $this->children_phase_map = $this->children_phase_map ?? [];
-            $this->children_phase_map[$class] = $object->options['phase_name'];
+            $this->children_phase_map[$class] = $object->options['name_phase'];
         }
     }
     public function toChildPhase(string $class)
@@ -444,7 +439,7 @@ trait KernelTrait
     }
     protected function phaseToCurrent(): void
     {
-        $this->_Phase($this->options['phase_name']);
+        $this->_Phase($this->phase_name);
     }
     //main produce end
     ////////////////////////

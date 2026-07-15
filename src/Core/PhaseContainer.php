@@ -105,6 +105,10 @@ class PhaseContainer
     {
         return $this->current;
     }
+    public function issetContainer($phase)
+    {
+        return isset($this->containers[$phase]);
+    }
     public function createLocalObject($class, $object = null)
     {
         $result = $object ?? $this->createObject($class);

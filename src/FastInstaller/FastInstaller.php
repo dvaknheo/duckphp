@@ -300,7 +300,6 @@ and more ...\n";
         } else {
             return;
         }
-        $root_name = App::_()->options['phase_name'];
         foreach ($app_options['app'] as $app => $options) {
             if ($options === false) {
                 continue;
@@ -308,10 +307,10 @@ and more ...\n";
             $last_phase = App::Phase($app::_()->getThisPhaseName());
             $cli_namespace = App::_()->options['cli_command_prefix'] ?? App::_()->options['namespace'];
             
-            $cli_namespace = substr(App::_()->options['phase_name'], strlen($root_name) + 1);
-            $cli_namespace = str_replace(['\\', '/'], '-', $cli_namespace);
+            $cli_namespace = $app::_()->getThisPhaseName();
             $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
             list($class, $method) = Console::_()->getCallback($group, 'install');
+            //Console::_()->callPhaseCommand(App::Phase()?''.'install');
             try {
                 if (isset($class) && is_callable([$class::_(),$method])) {
                     $ret = call_user_func([$class::_(),$method]);/** @phpstan-ignore-line */

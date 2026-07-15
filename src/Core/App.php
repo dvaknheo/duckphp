@@ -53,7 +53,7 @@ class App extends ComponentBase
         //*/
     ];
     protected $common_options = [];
-    protected $overriding_class = null;
+    protected $this_class = '';
     protected $children_phase_map = [];
     public function __construct()
     {
@@ -62,14 +62,7 @@ class App extends ComponentBase
         unset($this->kernel_options); // not use again;
         unset($this->core_options); // not use again;
         unset($this->common_options); // not use again;
-        $this->overriding_class = static::class;
-    }
-    public static function _($object = null)
-    {
-        if ($object) {
-            $object->overriding_class = static::_()->overriding_class;
-        }
-        return PhaseContainer::GetObject(static::class, $object);
+        $this->this_class = static::class;
     }
     public function version()
     {
@@ -223,7 +216,7 @@ EOT;
     }
     protected function onPrepare(): void
     {
-        throw new Exception("DO NOT INIT class DuckPhp\Core\App!");
+        throw new \Exception("DO NOT INIT class DuckPhp\Core\App!");
     }
     
     public function getOverrideableFile($path_sub, $file, $use_override = true)
@@ -234,20 +227,24 @@ EOT;
         if (static::IsAbsPath($path_sub)) {
             return static::SlashDir($path_sub) . $file;
         }
-        if (!$this->is_root && $use_override) {
-            $path_main = static::Root()->options['path'];
-            $name = str_replace("\\", '/', $this->options['name']);
-            
-            $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub). static::SlashDir($name) . $file;
-            if (!file_exists($full_file)) {
-                $path_main = $this->options['path'];
-                $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub).$file;
-            }
-        } else {
-            $path_main = $this->options['path'] ?? '';
-            $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub) . $file;
-        }
+        $path_sub = static::SlashDir($path_sub);
+        $phase_name = $this->getThisPhaseName();
+        $phase_block = explode(':', $phase_name);
         
+        $base_phase = '';
+        $full_file = self::_()->options['path'].$path_sub;
+        self::Phase($base_phase);
+        
+        foreach ($phase_block as $i => $v) {
+            $path_dir = self::_()->options['path'].$path_sub.implode('/', array_slice($phase_block, $i));
+            $full_file = $path_dir.$file;
+            if (file_exists($full_file)) {
+                break;
+            }
+            $base_phase = !$base_phase? $v: $base_phase.':'.$v;
+            self::Phase($base_phase);
+        }
+        self::Phase($phase_name);
         return $full_file;
     }
     public function skip404Handler()
