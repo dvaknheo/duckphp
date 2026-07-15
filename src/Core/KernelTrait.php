@@ -28,30 +28,30 @@ trait KernelTrait
         'phase_name' => null,
         'namespace' => null,
 
+        'name' => null,
+
         'override_class' => null,
+        
         'cli_enable' => true,
-        'is_debug' => false,
         'init_components' => true,
         'ext' => [],
         'app' => [],
         'data' => [],
-        'command' => [],
+        'cmd' => [],
 
         'skip_404' => false,
         'skip_exception_check' => false,
 
         'on_init' => null,
-        //'on_before_run' => null,
+        'on_before_run' => null,
         //'on_after_run' => null,
+        'is_debug' => false,
 
         'setting_file' => 'config/DuckPhpSettings.config.php',
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
         'use_env_file' => false,
 
-        'cli_command_classes' => [],
-        'cli_command_prefix' => null,
-        'cli_command_method_prefix' => 'command_',
         //*/
         // 'namespace' => '',
         // 'namespace_controller' => 'Controller',
@@ -185,7 +185,6 @@ trait KernelTrait
     }
     protected function initContainer(?object $context = null): bool
     {
-        $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
         //////////////////////////////
 
         if ($this->is_root) {
@@ -237,9 +236,9 @@ trait KernelTrait
     public function init(array $options, object $context = null)
     {
         $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->overriding_class ?? null)));
-        require_once __DIR__ . '/Functions.php';
         $this->initOptions($options);
         if ($options['override_class'] ?? false) {
+            //init override
             $class = $options['override_class'];
             unset($options['override_class']);
 
@@ -248,6 +247,11 @@ trait KernelTrait
 
             return $class::_(new $class)->init($options, $context);
         }
+        $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
+        if($this->is_root){
+            require_once __DIR__ . '/Functions.php';
+        }
+        
         $this->initOptions($options);
 
         $this->options['path'] = $this->options['path'] ?? $this->getDefaultProjectPath();
