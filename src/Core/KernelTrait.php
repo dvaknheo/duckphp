@@ -86,10 +86,6 @@ trait KernelTrait
         }
         return $instance->run();
     }
-    public static function Current()
-    {
-        return self::_();
-    }
     public static function Root()
     {
         return self::$root_instance;
@@ -288,7 +284,7 @@ trait KernelTrait
         }
 
         $cli_namespace = $this->getDefaultConsoleNamespace();
-        Console::_()->regCommandClass($cli_namespace, $this->options['phase_name'], $this->options['command'], $this->options['cli_command_method_prefix']);
+        Console::_()->regCommandClass($cli_namespace, $this->options['phase_name'], $this->options['cmd'], 'command_');
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
         $this->doInitComponents();

@@ -60,7 +60,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             'data_file_enable' => true,
             'data_file_bump_allow'=>true,
             'data_file_bump_keys' => ['is_debug'],
-            'command' =>[
+            'cmd' =>[
                 
             ],
         ])->run();
@@ -165,7 +165,7 @@ class CommandApp extends DuckPhp
 {
     public $options=[
         'cli_command_prefix' =>'aa',
-        'command'=>[
+        'cmd'=>[
             Console_Command::class=>true,
             CommandApp2::class=>false,
             Console_Command2::class =>'prefix_',

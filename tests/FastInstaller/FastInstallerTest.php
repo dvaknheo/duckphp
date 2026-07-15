@@ -233,7 +233,7 @@ class FiParentApp extends DuckPhp
                 'name'=>'child1',
             ]
         ],
-        'command' => [FastInstaller::class =>true,],
+        'cmd' => [FastInstaller::class =>true,],
         
         'install_callback' => [__CLASS__, 'OnInstall'],
     ];
@@ -259,7 +259,7 @@ class FiChildApp extends DuckPhp
         'name'=>'name_FiChildApp',
         'im child' => true,
         'cli_command_with_fast_installer'=>true,
-        'command' => [FastInstaller::class =>true,],
+        'cmd' => [FastInstaller::class =>true,],
     ];
     public function __construct()
     {
@@ -289,7 +289,7 @@ class FiChildAppFailed extends FiChildApp
         'name'=>'myfailed',
         'im child' => true,
         'install_callback' => [__CLASS__, 'OnInstallX'],
-        'command' => [FastInstaller::class =>true,],
+        'cmd' => [FastInstaller::class =>true,],
     ];
     
     public $force_fail = true;

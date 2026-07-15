@@ -92,10 +92,10 @@ class DuckPhp extends App
     protected function initComponents(): void
     {
         if ($this->options['cli_command_with_app']) {
-            $this->options['command'] = array_merge([static::class => true], $this->options['command']);
+            $this->options['cmd'] = array_merge([static::class => true], $this->options['cmd']);
         }
         if ($this->options['cli_command_with_common']) {
-            $this->options['command'][Command::class] = true;
+            $this->options['cmd'][Command::class] = true;
         }
         
         // Main

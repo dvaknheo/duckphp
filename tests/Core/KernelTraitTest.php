@@ -270,7 +270,7 @@ echo "-------------------------------------\n";
     PhaseContainer::ResetContainer();
         KernelTestApp::_(new KernelTestApp())->init([
             'cli_enable'=>true,
-            'command'=>[
+            'cmd'=>[
                 KernelTestApp::class => true,
             ],
         ]);
