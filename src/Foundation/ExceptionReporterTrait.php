@@ -14,7 +14,7 @@ trait ExceptionReporterTrait
     public static function OnException($ex)
     {
         $class = get_class($ex);
-        $namespace_prefix = App::Current()->options['namespace'] ."\\";
+        $namespace_prefix = App::_()->options['namespace'] ."\\";
         if ($namespace_prefix !== substr($class, 0, strlen($namespace_prefix))) {
             return static::_()->defaultException($ex);
         }
@@ -29,7 +29,7 @@ trait ExceptionReporterTrait
     }
     protected function defaultSystemException(\Throwable $ex): void
     {
-        App::Current()->_OnDefaultException($ex);
+        App::_()->_OnDefaultException($ex);
     }
     public function defaultException(\Throwable $ex): void
     {

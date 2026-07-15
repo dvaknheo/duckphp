@@ -18,8 +18,8 @@ class RedisInstaller extends ComponentBase
     ];
     public function install(bool $force = false)
     {
-        $use_redis = App::Current()->options['use_redis'] ?? false;
-        $use_redis = $use_redis || (App::Current()->options['local_redis'] ?? false);
+        $use_redis = App::_()->options['use_redis'] ?? false;
+        $use_redis = $use_redis || (App::_()->options['local_redis'] ?? false);
         if (!$use_redis) {
             return;
         }
@@ -38,9 +38,9 @@ class RedisInstaller extends ComponentBase
     }
     protected function changeRedis(array $data): void
     {
-        $is_local = App::Current()->options['local_redis'] ?? false;
+        $is_local = App::_()->options['local_redis'] ?? false;
         
-        $app = App::Current();
+        $app = App::_();
         if ($is_local) {
             ExtOptionsLoader::_()->saveData(['redis_list' => $data]);
         }

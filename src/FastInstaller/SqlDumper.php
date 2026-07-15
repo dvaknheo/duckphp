@@ -58,7 +58,7 @@ class SqlDumper extends ComponentBase
         }
 
         if ($this->options['sql_dump_install_replace_prefix']) {
-            $prefix = App::Current()->options['table_prefix'];
+            $prefix = App::_()->options['table_prefix'];
             $sql = str_replace(' `'.$this->options['sql_dump_prefix'], ' `'.$prefix, ''.$sql);
         }
         $sqls = explode(";\n", ''.$sql);
@@ -76,7 +76,7 @@ class SqlDumper extends ComponentBase
     
     protected function getSchemes(): string
     {
-        $prefix = App::Current()->options['table_prefix'];
+        $prefix = App::_()->options['table_prefix'];
         $ret = '';
         $tables = [];
         if ($this->options['sql_dump_include_tables_all']) {
@@ -100,7 +100,7 @@ class SqlDumper extends ComponentBase
         foreach ($tables as $table) {
             //try{
             $sql = Supporter::Current()->getSchemeByTable($table);
-            $prefix = App::Current()->options['table_prefix'];
+            $prefix = App::_()->options['table_prefix'];
             $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
             
             //}catch(\Exception $ex){
@@ -131,7 +131,7 @@ class SqlDumper extends ComponentBase
         //}
         foreach ($data as $line) {
             $sql = "INSERT INTO ".DbManager::DbForRead()->qouteScheme($table)." ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
-            $prefix = App::Current()->options['table_prefix'];
+            $prefix = App::_()->options['table_prefix'];
             $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
             $ret .= $sql;
         }
@@ -141,7 +141,7 @@ class SqlDumper extends ComponentBase
     /////////////////////
     protected function getModelPath(): string
     {
-        $namespace = App::Current()->options['namespace'];
+        $namespace = App::_()->options['namespace'];
         $class = $namespace. '\\Model\\Base';
         $ref = new \ReflectionClass($class); /** @phpstan-ignore-line */
         $path = dirname((string)$ref->getFileName());
@@ -151,7 +151,7 @@ class SqlDumper extends ComponentBase
     protected function searchTables(): array
     {
         $path = $this->getModelPath();
-        $namespace = App::Current()->options['namespace'];
+        $namespace = App::_()->options['namespace'];
         $models = $this->searchModelClasses($path);
         
         $ret = [];

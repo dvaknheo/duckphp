@@ -25,9 +25,9 @@ class SupporterBySqlite extends Supporter
         $file = substr($dsn, strlen('sqlite:'));
         
         if (!$file) {
-            $flag = App::Current()->options['local_database'] ?? false;
+            $flag = App::_()->options['local_database'] ?? false;
             if ($flag) {
-                $file = str_replace("\\", '-', App::Current()->options['namespace']) . '.db';
+                $file = str_replace("\\", '-', App::_()->options['namespace']) . '.db';
             } else {
                 $file = 'database.db';
             }

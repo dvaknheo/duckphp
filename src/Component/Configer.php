@@ -19,7 +19,7 @@ class Configer extends ComponentBase
     {
         //TODO $filename_basename = '';
         if (!$this->is_inited) {
-            $this->init(App::Current()->options, App::Current());
+            $this->init($this->context()->options, $this->context());
         }
         $config = $this->_LoadConfig($file_basename);
         if (!isset($key)) {

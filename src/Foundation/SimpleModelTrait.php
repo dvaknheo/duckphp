@@ -31,7 +31,7 @@ trait SimpleModelTrait
     
     protected function getTablePrefixByClass(string $class): string
     {
-        return App::Current()->options['table_prefix'] ?? '';
+        return App::_()->options['table_prefix'] ?? '';
     }
     
     public function table(): string

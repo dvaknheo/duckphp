@@ -19,7 +19,7 @@ class Command extends ComponentBase
      */
     public function command_version(): void
     {
-        echo App::Current()->version();
+        echo $this->context()->version();
         echo "\n";
     }
     /**
@@ -28,7 +28,7 @@ class Command extends ComponentBase
     public function command_help(): void
     {
         echo "Welcome to Use DuckPhp ,version: ";
-        echo App::Current()->version();
+        echo $this->context()->version();
         echo "\n";
         echo  <<<EOT
 Usage:
@@ -52,9 +52,9 @@ EOT;
             $class = str_replace('/', '\\', $options['http_server']);
             HttpServer::_($class::_());
         }
-        App::Current()->options['cli_enable'] = false;
+        $this->context()->options['cli_enable'] = false;
         HttpServer::RunQuickly($options);
-        App::Current()->options['cli_enable'] = true;
+        $this->context()->options['cli_enable'] = true;
     }
     /**
      * fetch a url. --uri=[???] ,--post=[postdata]
@@ -77,8 +77,8 @@ EOT;
             $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
             $_SERVER['HTTP_METHOD'] = $post ? $post : 'GET';
         }
-        App::Current()->options['cli_enable'] = false;
-        App::Current()->run();
+        $this->context()->options['cli_enable'] = false;
+        $this->context()->run();
     }
     /**
      * call a function. e.g. namespace/class@method arg1 --parameter arg2
@@ -104,7 +104,7 @@ EOT;
     {
         $options = ExtOptionsLoader::_()->options;
 
-        if (App::Current()->options['data_file_enable'] && $options['data_file_bump_allowed'] && in_array('is_debug', $options['data_file_bump_keys'])) {
+        if ($this->context()->options['data_file_enable'] && $options['data_file_bump_allowed'] && in_array('is_debug', $options['data_file_bump_keys'])) {
             $is_debug = !$off;
             ExtOptionsLoader::_()->saveData(['is_debug' => $is_debug]);
             if ($is_debug) {

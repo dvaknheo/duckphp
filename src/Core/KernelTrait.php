@@ -27,9 +27,7 @@ trait KernelTrait
         'name' => null,
         'phase_name' => null,
         'namespace' => null,
-
-        'name' => null,
-
+        
         'override_class' => null,
         
         'cli_enable' => true,
@@ -106,7 +104,7 @@ trait KernelTrait
     }
     public static function IsRoot()
     {
-        return static::Current()->_IsRoot();
+        return static::_()->_IsRoot();
     }
     public static function FromCurrentParent()
     {
@@ -248,7 +246,7 @@ trait KernelTrait
             return $class::_(new $class)->init($options, $context);
         }
         $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
-        if($this->is_root){
+        if ($this->is_root) {
             require_once __DIR__ . '/Functions.php';
         }
         

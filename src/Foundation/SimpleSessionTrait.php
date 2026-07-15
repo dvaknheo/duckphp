@@ -21,23 +21,23 @@ trait SimpleSessionTrait
             return;
         }
         SystemWrapper::_()->_session_start();
-        //$this->options['session_prefix'] = App::Current()->options['session_prefix'] ?? '';
+        //$this->options['session_prefix'] = App::_()->options['session_prefix'] ?? '';
         $this->session_started = true;
     }
     protected function get(string $key, $default = null)
     {
         $this->checkSessionStart();
-        return SuperGlobal::_()->_SessionGet((App::Current()->options['session_prefix'] ?? '') . $key, $default);
+        return SuperGlobal::_()->_SessionGet((App::_()->options['session_prefix'] ?? '') . $key, $default);
     }
     protected function set(string $key, $value)
     {
         $this->checkSessionStart();
-        return SuperGlobal::_()->_SessionSet((App::Current()->options['session_prefix'] ?? '') . $key, $value);
+        return SuperGlobal::_()->_SessionSet((App::_()->options['session_prefix'] ?? '') . $key, $value);
     }
     protected function unset(string $key)
     {
         $this->checkSessionStart();
-        return SuperGlobal::_()->_SessionUnset((App::Current()->options['session_prefix'] ?? '') . $key);
+        return SuperGlobal::_()->_SessionUnset((App::_()->options['session_prefix'] ?? '') . $key);
     }
     /////////////////////////////////////
 }

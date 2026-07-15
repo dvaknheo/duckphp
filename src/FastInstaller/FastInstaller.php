@@ -122,10 +122,10 @@ class FastInstaller extends ComponentBase
     }
     public function command_dump_res()
     {
-        $default = ['new_controller_resource_prefix' => App::Current()->options['controller_resource_prefix'] ?? ''];
+        $default = ['new_controller_resource_prefix' => App::_()->options['controller_resource_prefix'] ?? ''];
         $desc = "clone res to [{new_controller_resource_prefix}]?\n";
         $input_options = Console::_()->readLines($default, $desc);
-        App::Current()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
+        App::_()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
         $info = $this->cloneResource($input_options['new_controller_resource_prefix']);
         echo $info;
     }
@@ -142,7 +142,7 @@ class FastInstaller extends ComponentBase
         ];
         foreach ($classes as $class) {
             if (!$class::_()->isInited()) {
-                $class::_()->init(App::Current()->options, App::Current());
+                $class::_()->init(App::_()->options, App::_());
             }
         }
     }
@@ -200,7 +200,7 @@ and more ...\n";
         }
         ////]]]]
         
-        $controller_resource_prefix = App::Current()->options['controller_resource_prefix'] ?? '';
+        $controller_resource_prefix = App::_()->options['controller_resource_prefix'] ?? '';
         
         $desc = "Current resource url to visit is [$controller_resource_prefix]\n";
         $desc .= "Change resource url (Y/N)[{sure}]?";
@@ -210,7 +210,7 @@ and more ...\n";
         }
         
         $ret = ['is_change_res' => true,];
-        $default = ['new_controller_resource_prefix' => App::Current()->options['controller_resource_prefix'] ?? ''];
+        $default = ['new_controller_resource_prefix' => App::_()->options['controller_resource_prefix'] ?? ''];
         $desc = "New resource url [{new_controller_resource_prefix}]\n";
         $input = Console::_()->readLines($default, $desc);
         $ret['new_controller_resource_prefix'] = $input['new_controller_resource_prefix'];
@@ -223,12 +223,12 @@ and more ...\n";
         
         return $ret;
         /*
-        App::Current()->options['controller_resource_prefix'] = $input['controller_resource_prefix'];
+        App::_()->options['controller_resource_prefix'] = $input['controller_resource_prefix'];
 
         if (strtoupper($sure['is_clone_resource']) === 'Y') {
             $info = '';
 
-            RouteHookResource::_()->options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
+            RouteHookResource::_()->options['controller_resource_prefix'] = App::_()->options['controller_resource_prefix'];
             RouteHookResource::_()->cloneResource(false, $info);
         }
         */
@@ -240,11 +240,11 @@ and more ...\n";
         $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
         //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
         ////[[[[
-        $url_prefix = App::Current()->options['controller_url_prefix'] ?? '';
-        echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current()).") to :\033[0m [$url_prefix]\n";
+        $url_prefix = App::_()->options['controller_url_prefix'] ?? '';
+        echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::_()).") to :\033[0m [$url_prefix]\n";
         
-        if (!$force && App::Current()->isInstalled()) {
-            echo "App has been installed. use --force to force " .get_class(App::Current()) . "\n";
+        if (!$force && App::_()->isInstalled()) {
+            echo "App has been installed. use --force to force " .get_class(App::_()) . "\n";
             return;
         }
         if (!($this->args['skip_sql'] ?? false)) {
@@ -283,10 +283,10 @@ and more ...\n";
         }
         ExtOptionsLoader::_()->saveData(['installed' => DATE(DATE_ATOM)]);
         EventManager::FireEvent([App::Phase(), 'onInstalled']);
-        if (method_exists(App::Current(), 'onInstalled')) {
-            App::Current()->onInstalled();
+        if (method_exists(App::_(), 'onInstalled')) {
+            App::_()->onInstalled();
         }
-        echo "\e[32;3mInstalled App (".get_class(App::Current()).");\033[0m\n";
+        echo "\e[32;3mInstalled App (".get_class(App::_()).");\033[0m\n";
         return;
     }
     protected function installChildren(): void
@@ -306,7 +306,7 @@ and more ...\n";
                 continue;
             }
             $last_phase = App::Phase($app::_()->getThisPhaseName());
-            $cli_namespace = App::_()->options['cli_command_prefix'] ?? App::Current()->options['namespace'];
+            $cli_namespace = App::_()->options['cli_command_prefix'] ?? App::_()->options['namespace'];
             
             $cli_namespace = substr(App::_()->options['phase_name'], strlen($root_name) + 1);
             $cli_namespace = str_replace(['\\', '/'], '-', $cli_namespace);
@@ -333,10 +333,10 @@ and more ...\n";
             SqlDumper::_()->install($this->args['force'] ?? false);
         }
         if ($input_options['is_change_res'] ?? false) {
-            App::Current()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
+            App::_()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
             
             $ext_options = [];
-            $ext_options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
+            $ext_options['controller_resource_prefix'] = App::_()->options['controller_resource_prefix'];
             ExtOptionsLoader::_()->saveData($ext_options);
             
             if ($input_options['is_clone_resource']) {

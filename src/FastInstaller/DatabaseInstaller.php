@@ -19,7 +19,7 @@ class DatabaseInstaller extends ComponentBase
     public function install(bool $force = false): bool
     {
         //这里判断驱动
-        $my_driver = App::Current()->options['database_driver'] ?? '';
+        $my_driver = App::_()->options['database_driver'] ?? '';
         if (!$my_driver) {
             return false;
         }
@@ -46,7 +46,7 @@ class DatabaseInstaller extends ComponentBase
     }
     protected function changeDatabase(array $data): void
     {
-        $is_local = (App::Current()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::Current()->options['database_driver'];
+        $is_local = (App::_()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::_()->options['database_driver'];
         
         if ($is_local) {
             ExtOptionsLoader::_()->saveData(['database_list' => $data]);
@@ -55,12 +55,12 @@ class DatabaseInstaller extends ComponentBase
         
         $options = DbManager::_()->options;
         $options['database_list'] = $data;
-        DbManager::_()->reInit($options, App::Current());
+        DbManager::_()->reInit($options, App::_());
     }
     
     protected function configDatabase(array $ref_database_list = []): array
     {
-        $driver = App::Current()->options['database_driver'] ?? '';
+        $driver = App::_()->options['database_driver'] ?? '';
         $ret = [];
         
         $options = [];
@@ -104,7 +104,7 @@ class DatabaseInstaller extends ComponentBase
                     'username' => $database['username'],
                     'password' => $database['password'],
                 ]],
-            ], App::Current());
+            ], App::_());
             $dbm->_DbForRead();
         } catch (\Exception $ex) {
             return [false, "!".$ex->getMessage()];

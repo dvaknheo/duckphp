@@ -31,7 +31,7 @@ class RouteHookCheckStatus extends ComponentBase
 
     public function doHook($path_info)
     {
-        if (App::Setting('duckphp_is_maintain', false) || (App::Current()->options['is_maintain'] ?? false)) {
+        if (App::Setting('duckphp_is_maintain', false) || ($this->context()->options['is_maintain'] ?? false)) {
             $error_maintain = $this->options['error_maintain'] ?? null;
             if (!is_string($error_maintain) && is_callable($error_maintain)) {
                 ($error_maintain)();
@@ -41,11 +41,11 @@ class RouteHookCheckStatus extends ComponentBase
                 $this->showMaintain();
                 return true;
             }
-            View::_(new View())->init(App::Current()->options, App::Current());
+            View::_(new View())->init($this->context()->options, $this->context());
             View::Show([], $error_maintain);
             return true;
         }
-        if ((App::Current()->options['need_install'] ?? false) && !App::Current()->isInstalled()) {
+        if (($this->context()->options['need_install'] ?? false) && !$this->context()->isInstalled()) {
             $error_need_install = $this->options['error_need_install'] ?? null;
             if (!is_string($error_need_install) && is_callable($error_need_install)) {
                 ($error_need_install)();
@@ -55,7 +55,7 @@ class RouteHookCheckStatus extends ComponentBase
                 $this->showNeedInstall();
                 return true;
             }
-            View::_(new View())->init(App::Current()->options, App::Current());
+            View::_(new View())->init($this->context()->options, $this->context());
             View::Show([], $error_need_install);
             return true;
         }

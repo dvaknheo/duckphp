@@ -149,12 +149,10 @@ echo "-------------------------------------\n";
             'controller_url_prefix'=>'/child/',
         ];
         App::Root();
-        App::Current();
         
         App::_(new App())->init($options)->run();
         
         App::Root();
-        App::Current();
         
         $_SERVER['PATH_INFO'] = '/child/date';
         //Route::_()->bind();
@@ -316,7 +314,6 @@ echo "-------------------------------------\n";
         
         
         //*/
-        //var_dump(KernelTestApp::Current());
         KernelTestApp::_()->options['error_404']='_sys/error-404';
         KernelTestApp::On404();
     }

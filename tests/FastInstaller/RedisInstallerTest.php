@@ -72,8 +72,8 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
         
         RInstallerConsole::_()->setFileContents([$bstr, $str, 'Y',$str,'N']);
         RedisInstaller::_()->install(true);
-        DuckPhp::Current()->options['use_redis']=false;
-        DuckPhp::Current()->options['local_redis']=false;
+        DuckPhp::_()->options['use_redis']=false;
+        DuckPhp::_()->options['local_redis']=false;
         RedisInstaller::_()->install(false);
         ////]]]]
         @unlink($path_app."runtime/DuckPhpData.config.json");

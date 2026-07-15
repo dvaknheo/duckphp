@@ -244,7 +244,7 @@ class CoreHelper extends ComponentBase
         if (!$flag) {
             return;
         }
-        $exception_class = $exception_class ?? (App::Current()->options['exception_for_business'] ?? (App::Current()->options['exception_for_project'] ?? \Exception::class));
+        $exception_class = $exception_class ?? (App::_()->options['exception_for_business'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
         
         throw new $exception_class($message, $code);
     }
@@ -253,7 +253,7 @@ class CoreHelper extends ComponentBase
         if (!$flag) {
             return;
         }
-        $exception_class = $exception_class ?? (App::Current()->options['exception_for_controller'] ?? (App::Current()->options['exception_for_project'] ?? \Exception::class));
+        $exception_class = $exception_class ?? (App::_()->options['exception_for_controller'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
         
         throw new $exception_class($message, $code);
     }
@@ -309,9 +309,9 @@ class CoreHelper extends ComponentBase
     }
     public function regExtCommandClass(string $class)
     {
-        $prefix = App::Current()->options['cli_command_prefix'] ?? App::Phase();
+        $prefix = App::_()->options['cli_command_prefix'] ?? App::Phase();
         $prefix = App::IsRoot()?'':$prefix;
-        $classes = App::Current()->options['cli_command_classes'];
+        $classes = App::_()->options['cli_command_classes'];
         $classes[] = $class;
         Console::_()->regCommandClass($prefix, App::Phase(), $classes);
     }
