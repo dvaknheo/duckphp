@@ -31,7 +31,6 @@ class App extends ComponentBase
     
     protected $core_options = [
         'path_runtime' => 'runtime',
-        'alias' => null,
         
         'default_exception_do_log' => true,
         'close_resource_at_output' => false,
@@ -41,10 +40,6 @@ class App extends ComponentBase
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
-        
-        //'path_language' => 'config/lang',
-        //'language_default' => 'zh-cn',
-        //'language_auto_search'=>true,
         
         //*
         // 'path_log' => 'runtime',
