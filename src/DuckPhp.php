@@ -136,6 +136,11 @@ class DuckPhp extends App
             GlobalUser::_($class::_Z(static::Phase()));
         }
     }
+    public function regConsoleCommand($class,$method = true, $default_method ='command')
+    {
+        $this->options['cmd'][$class] = $default_method;
+        //Console::_()->regCommandClass($command_namespace, $phase, $classes)
+    }
     protected function isLocalDatabase(): bool
     {
         $flag = $this->options['local_database'] ?? false;

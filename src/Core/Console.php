@@ -50,12 +50,11 @@ class Console extends ComponentBase
     {
         return $this->context();
     }
-    public function regCommandClass($command_namespace, $phase, $classes, $method_prefix = 'command_')
+    public function regCommandClass(string $command_namespace, string $phase, array $classes)
     {
         $this->options['cli_command_group'][$command_namespace] = [
             'phase' => $phase,
             'classes' => $classes,
-            'default_method_prefix' => $method_prefix,
         ];
     }
     public static function DoRun($path_info = '')
@@ -78,9 +77,7 @@ class Console extends ComponentBase
         if (empty($group)) {
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
-        
-        //$method = $group['method_prefix'].$method;
-        //$class = $group['class'];
+
         $old_phase = App::Phase($group['phase']);
 
         // get class ,and method, then call
@@ -211,14 +208,10 @@ class Console extends ComponentBase
         //$method = $group['method_prefix'].$method;
         $cmd_method = str_replace('-', '_', $cmd_method); //???
         $classes = $group['classes'];
-        $default_method_prefix = $group['default_method_prefix'];
         //$classes = array_reverse($classes); //TODO
         foreach ($classes as $class => $method_prefix) {
             if (!isset($method_prefix) || $method_prefix === false) {
                 continue;
-            }
-            if ($method_prefix === true) {
-                $method_prefix = $default_method_prefix;
             }
             $method = $method_prefix.$cmd_method;
             if (method_exists($class, $method)) {
