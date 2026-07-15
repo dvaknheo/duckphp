@@ -228,12 +228,6 @@ class CoreHelper extends ComponentBase
     }
     public function _PhaseCall($phase, $callback, ...$args)
     {
-        //$phase = is_object($phase) ? $phase->getOverridingClass() : $phase;
-        $current = App::Phase();
-        if (!$phase || !$current) {
-            return ($callback)(...$args);
-        }
-        
         App::Phase($phase);
         $ret = ($callback)(...$args);
         App::Phase($current);

@@ -221,6 +221,10 @@ EOT;
         }
         View::_()->_Display($error_view, $data);
     }
+    protected function onPrepare(): void
+    {
+        throw new Exception("DO NOT INIT class DuckPhp\Core\App!");
+    }
     
     public function getOverrideableFile($path_sub, $file, $use_override = true)
     {

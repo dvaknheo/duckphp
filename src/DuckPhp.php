@@ -136,6 +136,10 @@ class DuckPhp extends App
             GlobalUser::_($class::_Z(static::Phase()));
         }
     }
+    protected function onPrepare(): void
+    {
+        //just for skip self::_()->Init;
+    }
     public function regConsoleCommand($class,$method = true, $default_method ='command')
     {
         $this->options['cmd'][$class] = $default_method;
