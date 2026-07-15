@@ -221,7 +221,7 @@ echo "-------------------------------------\n";
         
         KernelTestApp::_(new KernelTestApp())->override_class = KernelTestApp::class;
         KernelTestApp::_()->createLocalObject2(Logger::class);
-        App::Root()->getOverridingClass();
+        App::Root()->getThisClass();
         
         ////////////////////////
         $this->doMoreTest();

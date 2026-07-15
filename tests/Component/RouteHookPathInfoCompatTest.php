@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\RouteHookPathInfoCompat;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
 

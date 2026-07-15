@@ -10,7 +10,7 @@ class PhaseContainer
     public static $instance;
     
     public $containers = [];
-    public $current;
+    public $current ='';
     public $default;
     public $publics;
     

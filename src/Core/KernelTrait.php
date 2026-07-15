@@ -237,6 +237,7 @@ trait KernelTrait
     public function init(array $options, object $context = null)
     {
         $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
+        $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
         $this->initOptions($options);
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
@@ -277,8 +278,8 @@ trait KernelTrait
             Console::_()->init($this->options, $this);
         }
 
-        Console::_()->regPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
-        Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
+        //Console::_()->regPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
+        //Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
         
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
