@@ -449,14 +449,14 @@ trait Route_UrlManager
         
         return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
     }
-    public function _Res($url = null)
+    public function _Res(?string $url = null)
     {
         $controller_resource_prefix = $this->options['controller_resource_prefix'];
         $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
         if (!$controller_resource_prefix) {
             if (isset($url) && '/' !== substr($url, 0, 1)) {
                 $base = dirname($this->_Url(''));
-                $base = ($base === '/' | $base === '\\')?'':$base;
+                $base = ($base === '/' || $base === '\\')?'':$base;
                 $url = $base.'/'.$url;
             }
             return $this->_Url($url);

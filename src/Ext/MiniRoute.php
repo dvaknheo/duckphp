@@ -219,7 +219,14 @@ class MiniRoute extends ComponentBase
     }
     public function _Res(?string $url = null)
     {
-        if (!$this->options['controller_resource_prefix']) {
+        $controller_resource_prefix = $this->options['controller_resource_prefix'];
+        $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
+        if (!$controller_resource_prefix) {
+            if (isset($url) && '/' !== substr($url, 0, 1)) {
+                $base = dirname($this->_Url(''));
+                $base = ($base === '/' || $base === '\\')?'':$base;
+                $url = $base.'/'.$url;
+            }
             return $this->_Url($url);
         }
         //
@@ -229,11 +236,11 @@ class MiniRoute extends ComponentBase
         if ($flag) {
             return $url;
         }
-        $flag = preg_match('/^(https?:\/)?\//', $this->options['controller_resource_prefix'] ?? '');
+        $flag = preg_match('/^(https?:\/)?\//', $controller_resource_prefix ?? '');
         if ($flag) {
-            return $this->options['controller_resource_prefix'].$url;
+            return $controller_resource_prefix.$url;
         }
-        return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url;
+        return rtrim($this->_Url(''), '/').'/'.$controller_resource_prefix.$url;
     }
     public function _Domain(bool $use_scheme = false): string
     {
