@@ -7,6 +7,7 @@ use DuckPhp\Ext\Misc;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\View;
+use DuckPhp\Core\PhaseContainer;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,11 +52,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         @unlink($path.'config/DuckPhpApps.config.php');
         DuckPhp_Sub::_(new DuckPhp_Sub())->init($options);
-        echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        //DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
-        //DuckPhp_Sub::_()->options['data_file_enable'] = false;
-        //DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
-        //die("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+
         DuckPhp_Sub::_()->isInstalled();
         
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
@@ -124,14 +121,14 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
         $flag =DuckPhp_Sub::InitAsContainer($options,false,function(){echo "welcome";})->run();
         //*/
-        echo ">>>>>>>>>>>>>>>>>>>>>>>";
         $options = [
             'data_file_enable'=>true,
             'ext_options_file'=>'NoExits.php',
             'cli_enable'=>true,
         ];
         DuckPhp::_(new DuckPhp())->init($options);
-        
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+
         DuckPhp_Sub::_(new DuckPhp_Sub());
         DuckPhp::_(new DuckPhp())->init([
                 'app' => [ 
@@ -141,11 +138,16 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         );
-        DuckPhp_Sub::_(new DuckPhp_Sub());
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+        $data = include(__DIR__.'/data_for_tests/setting.php');
+        $database_list=$data['database_list'];
+//var_dump($database_list);exit;
+define('X',true);
         DuckPhp::_(new DuckPhp())->init([
+                'database_list'=> $database_list,//['a'=>'b'],
                 'app' => [ 
                     DuckPhp_Sub::class => [
-                        'database_driver'=>'x','local_redis'=>true,
+                        'database_driver'=>'sqlite','local_redis'=>true,
                         
                     ]
                 ]

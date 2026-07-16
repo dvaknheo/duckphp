@@ -151,9 +151,8 @@ class DuckPhp extends App
         if ($flag) {
             return true;
         }
-        //database_list_reload_by_setting  = false和 local_database
-        // judge  dbmanager and self
-        $driver = DbManager::_()->options['database_driver'] ?? '';
+        $driver = DbManager::_()->getDatabaseDriver();
+        
         if ($this->options['database_driver'] && ($driver != $this->options['database_driver'])) {
             return true;
         }

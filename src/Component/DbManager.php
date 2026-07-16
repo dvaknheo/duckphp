@@ -76,6 +76,7 @@ class DbManager extends ComponentBase
         $configs = $this->database_config_list ? $this->database_config_list : [];
         foreach ($configs as $v) {
             [$driver, $_] = explode(':', $v['dsn']);
+            $this->options['database_driver'] = $driver;
             return $driver;
         }
         return '';
