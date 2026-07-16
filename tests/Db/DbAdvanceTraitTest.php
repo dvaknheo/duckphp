@@ -62,7 +62,7 @@ $db->execute($sql);
         $sql="Select * from users";
         $db->_SqlForPager($sql,1,5);
         $db->_SqlForCountSimply($sql);
-        
+        \LibCoverage\LibCoverage::G()->cleanTestDb();
         \LibCoverage\LibCoverage::End();
         /*
         $db->quoteIn($array);

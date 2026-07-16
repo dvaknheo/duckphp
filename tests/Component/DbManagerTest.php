@@ -163,8 +163,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         ])->getDatabaseDriver();
         
         //////////////]]]]
-        
-        @unlink($path_runtime.'database.db');
+        \LibCoverage\LibCoverage::G()->cleanTestDb();
         \LibCoverage\LibCoverage::End();
 
     }

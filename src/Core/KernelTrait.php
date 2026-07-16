@@ -425,7 +425,7 @@ trait KernelTrait
     {
         $flag = false;
         foreach ($this->options['app'] as $class => $options) {
-            $flag = $class::_()->run();
+            $flag = $class::_()->serve();
             if ($flag) {
                 break;
             }

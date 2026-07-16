@@ -11,14 +11,24 @@ class MyLibCoverage extends \LibCoverage\LibCoverage
     // 我们接下来修一下，一个函数只能 assert一次的问题。
     // 思路是开始的时候 没设置文件的时候 设置为0. 第一次跑完，填充全为0 的数组，报告达到100% 的时候，更新次数
     //
+    protected $this_class;
     public function doBegin($class)
     {
+        $this->this_class=$class;
         echo "\n\033[42;30m".$class."\033[0m Test Start\n";
         parent::doBegin($class);
+    }
+    public function cleanTestDb()
+    {
+        @unlink(__DIR__.'/data_for_tests/dbtest.sqlite');
     }
     public function doEnd()
     {
         // echo "]]]]]]]]]]]\n";
+        if(is_file(__DIR__.'/data_for_tests/dbtest.sqlite')){
+            file_put_contents(__DIR__.'/data_for_tests/dbtest.log',$this->this_class."\n", FILE_APPEND);
+            @unlink(__DIR__.'/data_for_tests/dbtest.sqlite');
+        }
         parent::doEnd();
     }
 }

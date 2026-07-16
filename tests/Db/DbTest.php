@@ -86,7 +86,7 @@ $db->execute($sql);
         
         //code here
         $db->close($db);
-        
+        \LibCoverage\LibCoverage::G()->cleanTestDb();
         \LibCoverage\LibCoverage::End();
         /*
   `username` varchar(32) COLLATE utf8_bin NOT NULL,

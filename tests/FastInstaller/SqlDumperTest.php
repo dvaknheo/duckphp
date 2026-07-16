@@ -92,7 +92,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         //SqlDumper::_()->install();
         
         ////]]]]
-        ////]]]]
+        \LibCoverage\LibCoverage::G()->cleanTestDb();
         \LibCoverage\LibCoverage::End();
     }
 }

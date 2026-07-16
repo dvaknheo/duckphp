@@ -101,6 +101,7 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
         DatabaseInstaller::_()->install(true);
         
         ////]]]]
+        \LibCoverage\LibCoverage::G()->cleanTestDb();
         \LibCoverage\LibCoverage::End(); return;
     }
 }
