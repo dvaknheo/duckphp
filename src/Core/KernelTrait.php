@@ -22,14 +22,17 @@ trait KernelTrait
     public $options = [];
 
     protected $kernel_options = [
-        'is_debug' => false,
+        'is_debug' => false, // no use in ,just align
         'path' => null,
         'namespace' => null,
-        'override_class' => null,
+        'name' => '',
+        
         'app' => [],
         'cmd' => [],
         'data' => [],
         'ext' => [],
+        
+        'override_class' => null,
         
         'cli_enable' => true,
         'skip_404' => false,
@@ -154,7 +157,7 @@ trait KernelTrait
     }
     public function getThisChild($class)
     {
-        $phase = $this->children_phase_map[$class] ?? '';
+        $phase = $this->options[$class]['__phase__'] ?? '';
         if (!$phase) {
             return null;
         }
@@ -172,7 +175,8 @@ trait KernelTrait
     protected function initContainer(?object $context = null): bool
     {
         //////////////////////////////
-
+        $this->options['__class__'] = $this->getThisClass();
+        
         if ($this->is_root) {
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
@@ -197,7 +201,7 @@ trait KernelTrait
         }
         (self::class)::_($this);
         (static::class)::_($this);
-        $this->options['__class__'] = $this->getThisClass();
+       
         $this->options['__phase__'] = $this->getThisPhaseName();
         /////////////
         return true;
@@ -233,7 +237,7 @@ trait KernelTrait
     {
         $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
         $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
-        $this->initOptions($options);
+        
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
@@ -244,6 +248,8 @@ trait KernelTrait
             require_once __DIR__ . '/Functions.php';
         }
         $this->initOptions($options);
+        
+         
         $this->initContainer($context);
         $this->initException($this->options);
         
@@ -349,9 +355,11 @@ trait KernelTrait
             if (!class_exists($class)) {
                 throw new \Exception("Child [$class] not exists");
             }
+            
+            $options['controller_url_prefix']= ltrim(Route::_()->$options['controller_url_prefix'].'/'.$options['controller_url_prefix'],'/');
             $object = $class::_()->init($options, $this);
             $this->phaseToCurrent();
-            $this->children_phase_map[$class] = $object->getThisPhaseName();
+            $this->options[$class]['__phase__']=$object->options['__phase__'] ?? '';
         }
     }
     public function toChildPhase(string $class)

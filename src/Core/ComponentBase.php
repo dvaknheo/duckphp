@@ -13,7 +13,7 @@ class ComponentBase // implements ComponentInterface
     
     public $options = [];
     protected $is_inited = false;
-    protected $context_class = '';
+    protected $context_class = null;
     protected $init_once = false;
     public function __construct()
     {
@@ -22,15 +22,10 @@ class ComponentBase // implements ComponentInterface
 
     public function context()
     {
-        return App::_();
-        //return ($this->context_class)::_();
+        return isset($this->context_class) ?($this->context_class)::_() : App::_();
     }
     public function init(array $options, ?object $context = null) //return $this
     {
-        //if ($this->is_inited && ($this->options['init_once'] ?? ($options['init_once'] ?? false))) {
-        //    return $this;
-        //}
-
         if ($this->init_once && $this->is_inited && !($options['force_new_init'] ?? false)) {
             return $this;
         }

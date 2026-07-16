@@ -41,6 +41,7 @@ class DuckPhpAllInOne extends DuckPhp
         $namespace = implode("\\", $path);
         $ext_options = [
             'namespace_controller' => "\\".$namespace,
+            'name' => '@',
             'controller_welcome_class' => $short_class ,
             'controller_class_postfix' => '',
             'controller_method_prefix' => 'action_',
