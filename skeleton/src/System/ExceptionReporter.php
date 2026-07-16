@@ -17,7 +17,7 @@
  * Helper::ControllerThrowOn() calls onControllerException().
  * Any other exception is shown by the error_500 view.
  */
-namespace YourProjectName\Controller;
+namespace YourProjectName\System;
 
 use DuckPhp\Foundation\ExceptionReporterTrait;
 

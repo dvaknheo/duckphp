@@ -15,7 +15,6 @@ namespace YourProjectName\System;
 
 use DuckPhp\DuckPhp;
 use YourProjectName\Controller\ConsoleCommand;
-use YourProjectName\Controller\ExceptionReporter;
 
 class App extends DuckPhp
 {

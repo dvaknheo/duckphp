@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 /**
  * DuckPhp
- * Demo for action. you should delete me.
+ * You System Call Business Collection; Her
  */
 namespace YourProjectName\Controller;
 
-class SomeAction extends Base
+class AppAction extends Base
 {
 	public function __construct()
 	{
-		// Must override parent
+		// Must override parent to stop init;
 	}
     
     public function foo()
