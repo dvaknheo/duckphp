@@ -197,7 +197,6 @@ echo "-------------------------------------\n";
         App::_(new App())->init($options);
         App::Setting("duckphp_is_debug");
         //setting.php
-        var_dump($options);
         MyKernelTrait::_(new MyKernelTrait())->init($options);
         MyKernelTrait::_()->isRoot();
         
@@ -263,6 +262,7 @@ PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
                 ],
             ],
         ]);
+        var_dump(KernelTestApp::_());
         //$old_phase = KernelTestApp::Phase();
         KernelTestApp::FromCurrentParent();
         KernelTestApp3::FromCurrentParent();

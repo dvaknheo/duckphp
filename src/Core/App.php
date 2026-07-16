@@ -54,7 +54,6 @@ class App extends ComponentBase
     ];
     protected $common_options = [];
     protected $this_class = '';
-    protected $children_phase_map = [];
     public function __construct()
     {
         parent::__construct();

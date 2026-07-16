@@ -72,6 +72,8 @@ trait KernelTrait
     protected $is_root = true;
     protected $phase_name = '';
     protected static $ROOT_PHASE = '';
+    protected $children_phase_map =[];
+    
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
         $instance = static::_()->init($options);
@@ -356,8 +358,7 @@ trait KernelTrait
             }
             $object = $class::_()->init($options, $this);
             $this->phaseToCurrent();
-            $this->children_phase_map = $this->children_phase_map ?? [];
-            $this->children_phase_map[$class] = $object->options['name_phase'];
+            $this->children_phase_map[$class] = $object->getThisPhaseName();
         }
     }
     public function toChildPhase(string $class)
