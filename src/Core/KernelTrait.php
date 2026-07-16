@@ -275,7 +275,6 @@ trait KernelTrait
         $is_cli = PHP_SAPI === 'cli' || $this->options['cli_enable'];
 
         if ($this->is_root) {
-            $this->loadSetting(); // todo move to "App"
             $this->addPublicClassesInRoot([
                 Console::class,
             ]);
@@ -292,43 +291,6 @@ trait KernelTrait
     protected function doInitComponents(): void
     {
         //for DuckPhp\Core\App override initComponents
-    }
-    protected function loadSetting(): void
-    {
-        $this->setting = $this->options['setting'] ?? [];
-        if ($this->options['use_env_file']) {
-            $this->dealWithEnvFile();
-        }
-        if ($this->options['setting_file_enable']) {
-            $this->dealWithSettingFile();
-        }
-        return;
-    }
-    protected function dealWithEnvFile(): void
-    {
-        $env_setting = parse_ini_file(realpath($this->options['path']) . '/.env');
-        $env_setting = $env_setting ?: [];
-        $this->setting = array_merge($this->setting, $env_setting);
-    }
-    protected function dealWithSettingFile(): void
-    {
-        $path = $this->options['setting_file'];
-        $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($path, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path);
-        if ($is_abs) {
-            $full_file = $this->options['setting_file'];
-        } else {
-            $full_file = realpath($this->options['path']) . '/' . $this->options['setting_file'];
-        }
-        if (!is_file($full_file)) {
-            if (!$this->options['setting_file_ignore_exists']) {
-                throw new \ErrorException('DuckPhp: no Setting File');
-            }
-            return;
-        }
-        $setting = (function ($file) {
-            return require $file;
-        })($full_file);
-        $this->setting = array_merge($this->setting, $setting);
     }
     public function _Setting($key = null, $default = null)
     {
