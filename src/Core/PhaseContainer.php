@@ -11,13 +11,9 @@ class PhaseContainer
     
     public $containers = [];
     public $current = '';
-    public $default;
-    public $publics;
+    public $default = '';
+    public $publics = [];
     
-    public static function ResetContainer()
-    {
-        static::GetContainerInstanceEx(new static());
-    }
     public static function ReplaceSingletonImplement()
     {
         //if (!defined('__SINGLETONEX_REPALACER')) {
@@ -118,6 +114,10 @@ class PhaseContainer
     public function removeLocalObject($class)
     {
         unset($this->containers[$this->current][$class]);
+    }
+    public function getClassOfContainer($class,$phase='')
+    {
+        return $this->containers[$phase][$class] ?? null;
     }
     public function dumpAllObject()
     {

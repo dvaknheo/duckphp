@@ -155,7 +155,7 @@ echo "->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
         $console_options = Console::_()->options;
         
         
-    PhaseContainer::ResetContainer(); //!!!
+PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
     //\DuckPhp\Core\App::$root_instance =null;
         
         

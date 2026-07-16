@@ -312,10 +312,12 @@ class CoreHelper extends ComponentBase
     }
     public function regExtCommandClass(string $class)
     {
+        /*
         $prefix = App::_()->options['cli_command_prefix'] ?? App::Phase();
         $prefix = App::IsRoot()?'':$prefix;
         $classes = App::_()->options['cli_command_classes'];
         $classes[] = $class;
         Console::_()->regCommandClass($prefix, App::Phase(), $classes);
+        */
     }
 }

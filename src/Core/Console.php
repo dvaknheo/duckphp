@@ -9,15 +9,17 @@ class Console extends ComponentBase
 {
     public $options = [
         'cli_command_group' => [ ],
+        'console_command_phase' => [ ],
         'cli_command_default' => 'help',
+        
         'cli_readlines_logfile' => '',
     ];
+    public $cmd_phase_map =[];
     /*
     cli_command_group=>
-    [   namespace => [
-                'phase'=>'duckphp\duckphp'
-                'class'=>'Command::class',
-                'method_prefix'=>'command_',
+    [
+        $cmd_prefix => [
+            'Command::class'= > 'command_',
         ],
     ]
     //*/
@@ -50,8 +52,18 @@ class Console extends ComponentBase
     {
         return $this->context();
     }
+    public function regCommmandPrefixPhase($prefix, $phase)
+    {
+        $this->cmd_phase_map[$prefix] = $phase;
+    }
+    public function regCommandClasses($prefix, array $classes)
+    {
+        $phase = $this->cmd_phase_map[$phase];
+        $this->regCommandClass($prefix, $phase, $classes);
+    }
     public function regCommandClass(string $command_namespace, string $phase, array $classes)
     {
+        //decrapted
         $this->options['cli_command_group'][$command_namespace] = [
             'phase' => $phase,
             'classes' => $classes,
@@ -67,27 +79,30 @@ class Console extends ComponentBase
         $this->parameters = $this->parseCliArgs($my_server['argv']);
         $func_args = $this->parameters['--'];
         $cmd = array_shift($func_args);
-        
+        $cmd = $cmd ?? '';
+
         $command_namespace = '';
         $method = $cmd;
-        if (strpos($cmd, ':') !== false) {
-            list($command_namespace, $method) = explode(':', $cmd);
-        }
+        $a = explode(':', $cmd);
+        $method = array_pop($a);
+        $command_namespace = implode(':',$a);
+        
         $group = $this->options['cli_command_group'][$command_namespace] ?? null;
         if (empty($group)) {
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
 
-        $old_phase = App::Phase($group['phase']);
-
+        
         // get class ,and method, then call
         list($class, $method) = $this->getCallback($group, $method);
         if (!isset($class) && !isset($method)) {
             throw new \ReflectionException("Command Not Found In All\n", -4);
         }
+        
+        $old_phase = App::Phase($group['phase']);
         $this->callObject($class, $method, $func_args, $this->parameters);
-
         App::Phase($old_phase);
+        
         return true;
     }
     public function readLinesFill($data)
@@ -205,15 +220,18 @@ class Console extends ComponentBase
         if (empty($group)) {
             return [null,null];
         }
-        //$method = $group['method_prefix'].$method;
-        $cmd_method = str_replace('-', '_', $cmd_method); //???
+        $cmd_method = str_replace('-', '_', $cmd_method);
         $classes = $group['classes'];
-        //$classes = array_reverse($classes); //TODO
+        $classes = array_reverse($classes, true);
+
         foreach ($classes as $class => $method_prefix) {
             if (!isset($method_prefix) || $method_prefix === false) {
                 continue;
             }
+            $method_prefix = ($method_prefix===true) ? 'command_' : $method_prefix;
+            
             $method = $method_prefix.$cmd_method;
+            
             if (method_exists($class, $method)) {
                 return [$class,$method];
             }

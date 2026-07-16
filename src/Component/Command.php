@@ -127,7 +127,7 @@ EOT;
             $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}\n"; //::{$v['class']}
 
             /////////////////
-            $descs = $this->getCommandsByClasses($v['classes'], $v['default_method_prefix'], $v['phase']);
+            $descs = $this->getCommandsByClasses($v['classes'], $v['default_method_prefix'] ?? 'command_', $v['phase']);
             ksort($descs);
 
             foreach ($descs as $method => $desc) {
@@ -164,11 +164,6 @@ EOT;
     {
         $class = new \ReflectionClass($this);
         $ret = $this->getCommandsByClassReflection($class, $method_prefix);
-        if ($phase != App::Phase()) {
-            unset($ret['new']);
-            unset($ret['run']);
-            unset($ret['help']);
-        }
         return $ret;
     }
     protected function getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix): array

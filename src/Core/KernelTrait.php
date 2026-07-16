@@ -71,8 +71,7 @@ trait KernelTrait
     public $setting = [];
     protected $is_root = true;
     protected $phase_name = '';
-    protected static $root_instance = null;
-
+    protected static $ROOT_PHASE = '';
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
         $instance = static::_()->init($options);
@@ -83,7 +82,7 @@ trait KernelTrait
     }
     public static function Root()
     {
-        return self::$root_instance;
+        return  PhaseContainer::GetContainer()->getClassOfContainer(self::class, self::$ROOT_PHASE);
     }
     public static function Phase($new = null)
     {
@@ -173,12 +172,13 @@ trait KernelTrait
         //////////////////////////////
 
         if ($this->is_root) {
-            self::$root_instance = $this;
+            
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = PhaseContainer::GetContainer();
             $container->setDefaultContainer($this->phase_name);
             $container->setCurrentContainer($this->phase_name);
+
             
             $this->onAfterCreatePhases();
         } else {
@@ -278,8 +278,8 @@ trait KernelTrait
             Console::_()->init($this->options, $this);
         }
 
-        //Console::_()->regPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
-        //Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
+        Console::_()->regCommmandPrefixPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
+        Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
         
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
@@ -373,10 +373,15 @@ trait KernelTrait
     {
         if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {
             return $this->execute();
+        } else {
+            return $this->serve();
         }
+    }
+    public function serve(): bool
+    {
         $ret = false;
         $this->phaseToCurrent();
-
+        //TODO $this->resetDyminicObject();
         $this->onBeforeRun();
         try {
             Runtime::_()->run();
