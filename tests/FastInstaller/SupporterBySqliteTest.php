@@ -41,9 +41,9 @@ class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
         
         
         
-        DuckPhp::Current()->options['local_database']= true;
+        DuckPhp::_()->options['local_database']= true;
         $t = Supporter::Current()->readDsnSetting([]);
-        DuckPhp::Current()->options['local_database']= false;
+        DuckPhp::_()->options['local_database']= false;
         $t = Supporter::Current()->readDsnSetting([]);
 
         

@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Core;
 
 use DuckPhp\Core\Runtime;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 
 class RuntimeTest extends \PHPUnit\Framework\TestCase
 {

@@ -264,6 +264,7 @@ class CoreHelper extends ComponentBase
     public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase = true)
     {
         return;
+        /*
         if (!isset($app_class)) {
             $app_class = App::Root()->getThisClass();
         }
@@ -278,10 +279,12 @@ class CoreHelper extends ComponentBase
                 $this->recursiveApps($arg, $callback, $app, $auto_switch_phase);
             }
         }
+        */
     }
     public function getAllAppClass()
     {
-        return;
+        return [];
+        /*
         $ret = [];
         $this->recursiveApps(
             $ret,
@@ -290,10 +293,12 @@ class CoreHelper extends ComponentBase
             }
         );
         return $ret;
+        */
     }
     public function getAppClassByComponent(string $class)
     {
         return;
+        /*
         $all_class = $this->getAllAppClass();
         foreach ($all_class as $phase => $app_name) {
             $namespace = $app_name::_()->options['namespace'];
@@ -303,6 +308,7 @@ class CoreHelper extends ComponentBase
             }
         }
         return App::Root()->getThisClass();
+        */
     }
     public function regExtCommandClass(string $class)
     {

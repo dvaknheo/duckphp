@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Foundation\SimpleBusinessTrait;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 class ZCallTraitTest extends \PHPUnit\Framework\TestCase
 {
 

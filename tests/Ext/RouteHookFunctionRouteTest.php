@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext
 {
 
 use DuckPhp\Ext\RouteHookFunctionRoute;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\Route;
 use DuckPhp\Ext\SuperGlobalContext;
 

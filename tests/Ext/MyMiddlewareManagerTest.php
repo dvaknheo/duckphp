@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\MyMiddlewareManager;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase

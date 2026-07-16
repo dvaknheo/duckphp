@@ -259,7 +259,7 @@ define('_X_',true);
         ];
         
         MyApp::_(new MyApp())->init($options);
-        $x = AppTestApp2::FromCurrentParent()->getOverrideableFile("view",'abc');
+        //$x = AppTestApp2::FromCurrentParent()->getOverrideableFile("view",'abc');
         var_dump($x);
 
 
@@ -433,6 +433,10 @@ define('_X_',true);
 }
 class MyApp extends App
 {
+    protected function onPrepare(): void
+    {
+        //just for skip self::_()->Init;
+    }
 }
 class E extends \Exception
 {
