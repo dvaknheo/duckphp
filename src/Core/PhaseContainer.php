@@ -115,7 +115,7 @@ class PhaseContainer
     {
         unset($this->containers[$this->current][$class]);
     }
-    public function getClassOfContainer($class,$phase='')
+    public function getClassOfContainer($class, $phase = '')
     {
         return $this->containers[$phase][$class] ?? null;
     }

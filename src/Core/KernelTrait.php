@@ -72,7 +72,7 @@ trait KernelTrait
     protected $is_root = true;
     protected $phase_name = '';
     protected static $ROOT_PHASE = '';
-    protected $children_phase_map =[];
+    protected $children_phase_map = [];
     
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
@@ -154,7 +154,7 @@ trait KernelTrait
     }
     public function getThisChild($class)
     {
-        $phase = $this->children_phase_map[$class]?? '';
+        $phase = $this->children_phase_map[$class] ?? '';
         if (!$phase) {
             return null;
         }
@@ -174,7 +174,6 @@ trait KernelTrait
         //////////////////////////////
 
         if ($this->is_root) {
-            
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = PhaseContainer::GetContainer();
@@ -185,7 +184,8 @@ trait KernelTrait
             $this->onAfterCreatePhases();
         } else {
             $name = $this->options['name'] ? $this->options['name'] : $this->options['namespace'];
-            $name = ($name ==='@')? basename(str_replace('\\', '/', $name)):$name;
+            $name = ($name === '@')? basename(str_replace('\\', '/', $this->getThisClass())) : $name;
+
             // @phpstan-ignore-next-line
             $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $name), ':');
             $container = PhaseContainer::GetContainer();
@@ -197,8 +197,8 @@ trait KernelTrait
         }
         (self::class)::_($this);
         (static::class)::_($this);
-        $this->options['__class__']= $this->getThisClass();
-        $this->options['__phase__']= $this->getThisPhaseName();
+        $this->options['__class__'] = $this->getThisClass();
+        $this->options['__phase__'] = $this->getThisPhaseName();
         /////////////
         return true;
     }

@@ -305,9 +305,8 @@ and more ...\n";
                 continue;
             }
             $last_phase = App::Phase($app::_()->getThisPhaseName());
-            $cli_namespace = App::_()->options['cli_command_prefix'] ?? App::_()->options['namespace'];
             
-            $cli_namespace = $app::_()->getThisPhaseName();
+            $cli_namespace = $app::_()->getThisCommandPrefix();
             $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
             list($class, $method) = Console::_()->getCallback($group, 'install');
             //Console::_()->callPhaseCommand(App::Phase()?''.'install');

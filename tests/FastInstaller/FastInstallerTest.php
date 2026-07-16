@@ -90,9 +90,9 @@ $old_phase = FiParentApp::Phase();
         FiParentApp::_()->options['ext_options_file_enable']=true;
         
         $old_phase = FiParentApp::Phase();
-        $_SERVER['argv']=['-','child1:require', 'noexists'];
+        $_SERVER['argv']=['-','FiChildApp:require', 'noexists'];
         FiParentApp::_()->run();
-        
+
 
         FiParentApp::Phase($old_phase);
         
@@ -126,6 +126,7 @@ echo "--------------------------\n";
         FiParentApp::_()->run();
 
         //////////////////////////////
+PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
 
         @mkdir($path_app.'/public');
          @mkdir($path_app.'/res');
@@ -140,14 +141,16 @@ echo "--------------------------\n";
         Console::_()->readLinesFill("t1\ny\n");
         $_SERVER['argv']=['-','require',$FiChildAppRes, '--force', '--verbose'];
         FiParentApp::_()->options['ext_options_file_enable']=true;
-echo "->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
         FiParentApp::_()->run();
 
         Console::_()->readLinesCleanFill();
-//{
-
+echo "->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
+        
         //Console::_()->readLinesFill("n\n");
         $_SERVER['argv']=['-','require',$FiChildAppRes, '--dry'];
+        
+        var_dump(FiParentApp::_()->options['app']);
+        
         FiParentApp::_()->run();
         echo "--------------------------------\n";
         
@@ -172,15 +175,13 @@ PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
         ]]);
                 $console_options = Console::_()->options;
 
-define("_X_",true);
-echo "->>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>>\n";
         $_SERVER['argv']=['-','install'];     
         Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
         
         FiParentApp::_()->run();
         Console::_()->readLinesCleanFill();
         Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
-        $_SERVER['argv']=['-','install','--force'];
+        $_SERVER['argv']=['-','install','--force','--verbose'];
         FiParentApp::_()->run();
         Console::_()->readLinesCleanFill();
         
@@ -202,7 +203,9 @@ echo "->>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>>\n";
         Console::_()->readLinesCleanFill();
         Console::_()->readLinesFill("N\n");
         FastInstaller::_()->doInstall();
-        //*/
+
+
+
 
 //}
         $_SERVER = $__SERVER;
@@ -224,13 +227,14 @@ class FiParentApp extends DuckPhp
     public $options = [
         'is_debug'=>true,
         'ext_options_file_enable'=> true,
-        'name'=>'theFiParentApp',
+        'name'=>'@',
        
         'app' => [
             FiChildApp::class => [
+        'name'=>'@',
+
                 'no_empty'=>true,
                 'install_input_desc'=>'install_input_desc_FiChildApp',
-                'name'=>'child1',
             ]
         ],
         'cmd' => [FastInstaller::class =>true,],
@@ -256,7 +260,7 @@ class FiParentApp extends DuckPhp
 class FiChildApp extends DuckPhp
 {
     public $options = [
-        'name'=>'name_FiChildApp',
+        'name'=>'@',
         'im child' => true,
         'cli_command_with_fast_installer'=>true,
         'cmd' => [FastInstaller::class =>true,],
@@ -271,14 +275,14 @@ class FiChildApp extends DuckPhp
 class FiChildApp2 extends FiChildApp
 {
     public $options = [
-        'name'=>'theFiChildApp2',
+    'name'=>'@',
     ];
 }
 class FiChildAppRes extends FiChildApp
 {
     public $options = [
-        'name'=>'appres',
-        'path_resource' => 'res2',
+    'name'=>'@',
+    'path_resource' => 'res2',
     ];
 }
 
@@ -286,7 +290,7 @@ class FiChildAppRes extends FiChildApp
 class FiChildAppFailed extends FiChildApp
 {
     public $options = [
-        'name'=>'myfailed',
+        'name'=>'@',
         'im child' => true,
         'install_callback' => [__CLASS__, 'OnInstallX'],
         'cmd' => [FastInstaller::class =>true,],

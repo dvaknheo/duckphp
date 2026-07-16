@@ -14,7 +14,7 @@ class Console extends ComponentBase
         
         'cli_readlines_logfile' => '',
     ];
-    public $cmd_phase_map =[];
+    public $cmd_phase_map = [];
     /*
     cli_command_group=>
     [
@@ -58,7 +58,7 @@ class Console extends ComponentBase
     }
     public function regCommandClasses($prefix, array $classes)
     {
-        $phase = $this->cmd_phase_map[$phase];
+        $phase = $this->cmd_phase_map[$prefix];
         $this->regCommandClass($prefix, $phase, $classes);
     }
     public function regCommandClass(string $command_namespace, string $phase, array $classes)
@@ -89,7 +89,7 @@ class Console extends ComponentBase
         $method = $cmd;
         $a = explode(':', $cmd);
         $method = array_pop($a);
-        $command_namespace = implode(':',$a);
+        $command_namespace = implode(':', $a);
         
         $group = $this->options['cli_command_group'][$command_namespace] ?? null;
         if (empty($group)) {
@@ -232,7 +232,7 @@ class Console extends ComponentBase
             if (!isset($method_prefix) || $method_prefix === false) {
                 continue;
             }
-            $method_prefix = ($method_prefix===true) ? 'command_' : $method_prefix;
+            $method_prefix = ($method_prefix === true) ? 'command_' : $method_prefix;
             
             $method = $method_prefix.$cmd_method;
             
