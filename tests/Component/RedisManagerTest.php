@@ -1,7 +1,9 @@
 <?php 
 namespace tests\DuckPhp\Component;
 use DuckPhp\Component\RedisManager;
-use DuckPhp\DuckPhp as App;
+use DuckPhp\Core\PhaseContainer;
+use DuckPhp\DuckPhp;
+use DuckPhp\Core\App;
 
 class RedisManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,13 +17,15 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
         
         //code here
         $options=[
-            'redis'=>$redis_list[0],
-            'force' =>true,
+            'path' => __DIR__,
+            //'redis'=>$redis_list[0],
             //'redis_list'=>$redis_list,
         ];
-        RedisManager::_()->init($options,App::_()->init(['redis_list'=>$redis_list,]));
-        $options['redis_force_reinit'] = true; 
-        RedisManager::_()->init($options,App::_()->init(['redis_list'=>$redis_list,]));
+        DuckPhp::_()->init($options);
+PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+
+        $options['redis']=$redis_list[0];
+        DuckPhp::_()->init($options);
         RedisManager::_()->getRedisConfigList();
 
         //*
