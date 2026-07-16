@@ -53,8 +53,8 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>true,
             'path'=>$path_app,
             'app' =>[
-                CommandApp2::class =>['bc'=>'tre'],
-                CommandApp::class =>['a'=>'tre'],
+                CommandApp2::class =>['bc'=>'tre', 'name'=>'@'],
+                CommandApp::class =>['a'=>'tre', 'name'=>'@'],
             ],
             'log_file_template'=> 'CommandTest.log',
             'data_file_enable' => true,

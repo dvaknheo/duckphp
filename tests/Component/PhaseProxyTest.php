@@ -23,9 +23,9 @@ class PhaseProxyTest extends \PHPUnit\Framework\TestCase
         
         $options = [
             'ext' =>[PhaseProxySubApp::class =>[
-                    'notEmpty' => true,
+                    'name' => '@',
                 ],PhaseProxySubApp2::class =>[
-                    'notEmpty' => true,
+                    'name' => '@',
                 ],
             ],
         ];

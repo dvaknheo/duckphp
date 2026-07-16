@@ -189,7 +189,7 @@ trait KernelTrait
         } else {
             $name = $this->options['name'] ? $this->options['name'] : $this->options['namespace'];
             $name = ($name === '@')? basename(str_replace('\\', '/', $this->getThisClass())) : $name;
-            $name = ($name === '' && $this->options['namespace'] === '')? static::class:$name;
+            $name = ($name === '' && $this->options['namespace'] === '') ? static::class : $name;
             
             // @phpstan-ignore-next-line
             $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $name), ':');
@@ -198,7 +198,7 @@ trait KernelTrait
             if ($is_same_name) {
                 $object = $container->getClassOfContainer(self::class, $this->phase_name);
                 $class = get_class($object);
-                throw new DuckPhpSystemException("Phase ({$this->phase_name}) is used by ($class) set ".static::class ." 'name' options.");
+                throw new DuckPhpSystemException("Phase Short name ({$this->phase_name}) is used by ($class) <br/>\nset ".static::class ." 'name' options.");
             }
             $container->setCurrentContainer($this->phase_name);
         }
@@ -367,10 +367,10 @@ trait KernelTrait
     }
     public function toChildPhase(string $class)
     {
-        if (!isset($this->children_phase_map[$class])) {
+        if (!isset($this->options[$class]['__phase__'])) {
             return false;
         }
-        $this->_Phase($this->children_phase_map[$class]);
+        $this->_Phase($this->options[$class]['__phase__']);
         return true;
     }
 

@@ -22,7 +22,7 @@ class ComponentBase // implements ComponentInterface
 
     public function context()
     {
-        return isset($this->context_class) ?($this->context_class)::_() : App::_();
+        return !empty($this->context_class) ? ($this->context_class)::_() : App::_();
     }
     public function init(array $options, ?object $context = null) //return $this
     {

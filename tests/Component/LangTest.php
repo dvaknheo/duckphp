@@ -8,6 +8,7 @@ use DuckPhp\Component\Lang;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Core\SuperGlobal;;
+use DuckPhp\Core\PhaseContainer;
 
 class LangApp extends DuckPhp
 {
@@ -76,7 +77,8 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		MyLang::_(new MyLang())->init([
 			//'lang_detect_mode'=>['NoExists'],
 		]);
-	
+PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+
 		DuckPhp::_()->init([
 			'path'=>$path,
             'is_debug'=>true,
