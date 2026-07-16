@@ -189,13 +189,16 @@ trait KernelTrait
         } else {
             $name = $this->options['name'] ? $this->options['name'] : $this->options['namespace'];
             $name = ($name === '@')? basename(str_replace('\\', '/', $this->getThisClass())) : $name;
-
+            $name = ($name === '' && $this->options['namespace'] === '')? static::class:$name;
+            
             // @phpstan-ignore-next-line
             $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $name), ':');
             $container = PhaseContainer::GetContainer();
             $is_same_name = $container->issetContainer($this->phase_name);
             if ($is_same_name) {
-                throw new DuckPhpSystemException("samename too much: $this->phase_name");
+                $object = $container->getClassOfContainer(self::class, $this->phase_name);
+                $class = get_class($object);
+                throw new DuckPhpSystemException("Phase ({$this->phase_name}) is used by ($class) set ".static::class ." 'name' options.");
             }
             $container->setCurrentContainer($this->phase_name);
         }
@@ -356,10 +359,10 @@ trait KernelTrait
                 throw new \Exception("Child [$class] not exists");
             }
             
-            $options['controller_url_prefix']= ltrim(Route::_()->$options['controller_url_prefix'].'/'.$options['controller_url_prefix'],'/');
+            $options['controller_url_prefix'] = ltrim(Route::_()->options['controller_url_prefix'].'/'.$options['controller_url_prefix'], '/');
             $object = $class::_()->init($options, $this);
             $this->phaseToCurrent();
-            $this->options[$class]['__phase__']=$object->options['__phase__'] ?? '';
+            $this->options[$class]['__phase__'] = $object->options['__phase__'] ?? '';
         }
     }
     public function toChildPhase(string $class)

@@ -39,13 +39,13 @@ class MainController
         $t2 = CalcService::_()->add(3, 4);
         
         $t3 = \JsonRpc\CalcService::_()->add(5, 6);
+        $date = DATE(DATE_ATOM);
         echo <<<EOT
 本地调用 1 + 2 = $t1 <br />
 远程调用 3 + 4 = $t2 <br />
 远程调用 5 + 6 = $t3 <br />
+调用时间 $date
 EOT;
-        
-        var_dump(DATE(DATE_ATOM));
     }
     public function action_json_rpc()
     {

@@ -27,7 +27,7 @@ $options = [
     // 还有百来个选项以上可用，详细请查看参考文档
 ];
 try{
-\DuckPhp\Core\App::RunQuickly($options);
+\DuckPhp\DuckPhp::RunQuickly($options);
 }catch(\Thowable $e){
 
 }
