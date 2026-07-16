@@ -85,6 +85,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
             Console_Command::class=>false,
             Console_Command4::class=>'prefix_',
             ]);
+        Console::_()->regCommandClassSingle(Console_App::_()->getThisCommandPrefix(), Console_Command4::class,'prefix_');
         Console_App::_()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'

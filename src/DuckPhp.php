@@ -140,10 +140,10 @@ class DuckPhp extends App
     {
         //just for skip self::_()->Init;
     }
-    public function regConsoleCommand($class, $method = true, $default_method = 'command')
+    public function regConsoleCommand($class, $default_method = 'command_')
     {
         $this->options['cmd'][$class] = $default_method;
-        //Console::_()->regCommandClass($command_namespace, $phase, $classes)
+        return Console::_()->regCommandClassSingle($this->getThisCommandPrefix(),$class,$default_method);
     }
     protected function isLocalDatabase(): bool
     {

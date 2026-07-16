@@ -142,7 +142,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $data = include(__DIR__.'/data_for_tests/setting.php');
         $database_list=$data['database_list'];
 //var_dump($database_list);exit;
-define('X',true);
         DuckPhp::_(new DuckPhp())->init([
                 'database_list'=> $database_list,//['a'=>'b'],
                 'app' => [ 
@@ -153,6 +152,8 @@ define('X',true);
                 ]
             ]
         );
+        DuckPhp::_()->regConsoleCommand('MyClass','prefix_');
+        
         DuckPhp::_()->options['lang_handler']=function($str, $args = []){ return $str;};
         __l("xx");
         //////////////////////

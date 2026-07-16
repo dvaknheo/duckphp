@@ -69,6 +69,10 @@ class Console extends ComponentBase
             'classes' => $classes,
         ];
     }
+    public function regCommandClassSingle(string $command_namespace, string $class, $method_prefix)
+    {
+        $this->options['cli_command_group'][$command_namespace]['classes'][$class] = $method_prefix;
+    }
     public static function DoRun($path_info = '')
     {
         return static::_()->run();
