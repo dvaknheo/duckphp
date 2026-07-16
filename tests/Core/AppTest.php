@@ -27,6 +27,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $ref = new \ReflectionClass(App::class);
         $path = $ref->getFileName();
         
+        //TODO move function test to CoreHelperTest
         $extFile=dirname($path).'/Functions.php';
         \LibCoverage\LibCoverage::G()->addExtFile($extFile);
         

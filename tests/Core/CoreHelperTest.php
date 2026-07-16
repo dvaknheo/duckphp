@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Core;
 
 use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\CoreHelper;
+use DuckPhp\Core\PhaseContainer;
 
 class CoreHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -88,7 +89,9 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::PathOfProject();
         CoreHelper::PathOfRuntime();
         
-        
+//reset
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+
         $options = ['is_debug'=>true, 
             'html_handler'=>function(&$str){return "<".$str.">";},
             'lang_handler'=> function($str,$args=[]){ return "lang:".$str.";";},
@@ -96,10 +99,14 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
                 SubCoreHelperApp1::class =>[
                     'namespace' => __NAMESPACE__ ,
                 ],
+                SubCoreHelperApp2::class =>false,
             ],
         ];
         
         MaiCoreHelperApp::_(new MaiCoreHelperApp())->init($options);
+        
+        echo "/////////////////////////////////////\n";
+        
         CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;});
         CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;},null,false);
 
@@ -147,9 +154,15 @@ class MaiCoreHelperApp extends App
 }
 class SubCoreHelperApp1 extends App
 {
+    public $options=[
+        'name' =>'@',
+    ];
 }
 class SubCoreHelperApp2 extends App
 {
+    public $options=[
+        'name' =>'@',
+    ];
 }
 class CoreHelperComponent
 {
