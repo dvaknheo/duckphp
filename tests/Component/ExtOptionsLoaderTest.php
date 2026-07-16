@@ -33,7 +33,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         DuckPhpEOL::Phase($old_phase);
         
         DuckPhpEOL::_(new DuckPhpEOL);
-        
+PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
         ExtOptionsLoader::$all_ext_options=null;
         ExtOptionsLoader::_(new ExtOptionsLoader());
         DuckPhpEOL::_()->init($options);

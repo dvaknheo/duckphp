@@ -182,6 +182,10 @@ class MyApp extends App
 
 6. **异常处理**：`run()` 中捕获的所有异常都会交给 `ExceptionManager` 处理；未处理的异常会触发 `OnDefaultException`。
 
+
+
+
+
 ## 全部选项
 
 ```php

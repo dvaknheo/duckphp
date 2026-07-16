@@ -154,7 +154,7 @@ trait KernelTrait
     }
     public function getThisChild($class)
     {
-        $phase = $this->options['app'][$class]['__phase__'] ?? '';
+        $phase = $this->children_phase_map[$class]?? '';
         if (!$phase) {
             return null;
         }
@@ -184,28 +184,21 @@ trait KernelTrait
             
             $this->onAfterCreatePhases();
         } else {
+            $name = $this->options['name'] ? $this->options['name'] : $this->options['namespace'];
+            $name = ($name ==='@')? basename(str_replace('\\', '/', $name)):$name;
             // @phpstan-ignore-next-line
-            $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $this->options['namespace']), ':');
+            $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $name), ':');
             $container = PhaseContainer::GetContainer();
             $is_same_name = $container->issetContainer($this->phase_name);
             if ($is_same_name) {
-                $phase_name_ref = $this->phase_name;
-                for ($i = 2;$i <= 10;$i++) {
-                    $this->phase_name = $phase_name_ref.'@'.$i;
-                    $is_same_name = $container->issetContainer($this->phase_name);
-                    if (!$is_same_name) {
-                        break;
-                    }
-                }
-            }
-            if ($is_same_name) {
-                throw new DuckPhpSystemException("samename too much");
+                throw new DuckPhpSystemException("samename too much: $this->phase_name");
             }
             $container->setCurrentContainer($this->phase_name);
         }
         (self::class)::_($this);
         (static::class)::_($this);
-
+        $this->options['__class__']= $this->getThisClass();
+        $this->options['__phase__']= $this->getThisPhaseName();
         /////////////
         return true;
     }

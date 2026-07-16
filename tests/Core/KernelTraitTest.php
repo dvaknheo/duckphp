@@ -262,10 +262,14 @@ PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
                 ],
             ],
         ]);
-        var_dump(KernelTestApp::_());
         //$old_phase = KernelTestApp::Phase();
         KernelTestApp::FromCurrentParent();
         KernelTestApp3::FromCurrentParent();
+        
+        KernelTestApp::Phase(KernelTestApp::Root()->getThisPhaseName());
+        KernelTestApp::_()->getThisChild('NotExsits');
+        KernelTestApp::_()->getThisChild(KernelTestApp3::class);
+        KernelTestApp3::_()->getThisParent();
         
 PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
         KernelTestApp::_(new KernelTestApp())->init([

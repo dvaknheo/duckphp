@@ -261,8 +261,10 @@ define('_X_',true);
         MyApp::_(new MyApp())->init($options);
         //$x = AppTestApp2::FromCurrentParent()->getOverrideableFile("view",'abc');
         var_dump($x);
-
-
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+        try{
+            \DuckPhp\Core\App::_(new \DuckPhp\Core\App())->init([]);
+        }catch(\Exception $ex){}
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
         return;
