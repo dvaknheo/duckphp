@@ -8,20 +8,16 @@ namespace DuckPhp\Core;
 class Console extends ComponentBase
 {
     public $options = [
-        'cli_command_group' => [ ],
-        'console_command_phase' => [ ],
-        'cli_command_default' => 'help',
+        'console_command_classes' =>[],
+        'console_command_phase' =>[],
         
-        'cli_readlines_logfile' => '',
+        'console_command_default' => 'help',
+        
+        'console_readlines_logfile' => '',
     ];
-    public $cmd_phase_map = [];
     /*
-    cli_command_group=>
-    [
-        $cmd_prefix => [
-            'Command::class'= > 'command_',
-        ],
-    ]
+    console_command_classes=> ['namespace'=>[class => method]];
+    console_command_phase=> ['namespace'=> phase];
     //*/
     protected $context_class = null;
     protected $parameters = [];
@@ -42,7 +38,6 @@ class Console extends ComponentBase
     public function getCliParameters()
     {
         return !empty($this->parameters)?$this->parameters:$this->parseCliArgs($_SERVER['argv']);
-        ;
     }
     public function getArgs()
     {
@@ -54,25 +49,20 @@ class Console extends ComponentBase
     }
     public function regCommmandPrefixPhase($prefix, $phase)
     {
-        $this->cmd_phase_map[$prefix] = $phase;
+        $this->options['console_command_phase'][$prefix] = $phase;
     }
     public function regCommandClasses($prefix, array $classes)
     {
-        $phase = $this->cmd_phase_map[$prefix];
-        $this->regCommandClass($prefix, $phase, $classes);
+        $my_classes = $this->options['console_command_classes'][$prefix] ??[];
+        $my_classes = array_replace_recursive($my_classes, $classes);
+        $this->options['console_command_classes'][$prefix]=$my_classes;
     }
-    public function regCommandClass(string $command_namespace, string $phase, array $classes)
+    public function regCommandClassSingle(string $prefix, string $class, $method_prefix)
     {
-        //decrapted
-        $this->options['cli_command_group'][$command_namespace] = [
-            'phase' => $phase,
-            'classes' => $classes,
-        ];
+        $this->options['console_command_classes'][$prefix][$class] = $method_prefix;
     }
-    public function regCommandClassSingle(string $command_namespace, string $class, $method_prefix)
-    {
-        $this->options['cli_command_group'][$command_namespace]['classes'][$class] = $method_prefix;
-    }
+    
+    ////]]]]
     public static function DoRun($path_info = '')
     {
         return static::_()->run();
@@ -90,24 +80,40 @@ class Console extends ComponentBase
         $a = explode(':', $cmd);
         $method = array_pop($a);
         $command_namespace = implode(':', $a);
-        
-        $group = $this->options['cli_command_group'][$command_namespace] ?? null;
-        if (empty($group)) {
-            throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
-        }
-
-        
-        // get class ,and method, then call
-        list($class, $method) = $this->getCallback($group, $method);
+        [$class, $method] = $this->getCommandCallback($command_namespace,$cmd);
         if (!isset($class) && !isset($method)) {
-            throw new \ReflectionException("Command Not Found In All\n", -4);
+            throw new \ReflectionException(" ($command_namespace, $cmd)Command Not Found In All\n", -4);
         }
+        $phase = $this->options['console_command_phase'][$command_namespace] ?? App::_()->getThisPhaseName();
         
-        $old_phase = App::Phase($group['phase']);
+        $old_phase = App::Phase($phase);
         $this->callObject($class, $method, $func_args, $this->parameters);
         App::Phase($old_phase);
         
         return true;
+    }
+    public function getCommandCallback($command_namespace, $cmd_method)
+    {
+        $classes = $this->options['console_command_classes'][$command_namespace] ?? [];
+        
+        if (empty($classes)) {
+            return [null,null];
+        }
+        $cmd_method = str_replace('-', '_', $cmd_method);
+        $classes = array_reverse($classes, true);
+        foreach ($classes as $class => $method_prefix) {
+            if (!isset($method_prefix) || $method_prefix === false) {
+                continue;
+            }
+            $method_prefix = ($method_prefix === true) ? 'command_' : $method_prefix;
+            
+            $method = $method_prefix.$cmd_method;
+            if (method_exists($class, $method)) {
+                return [$class,$method];
+            }
+        }
+        
+        return [null,null];
     }
     public function readLinesFill($data)
     {
@@ -147,10 +153,10 @@ class Console extends ComponentBase
             fputs($fp_out, $line);
             
             $input = (string)fgets($fp_in);
-            if ($this->options['cli_readlines_logfile']) {
+            if ($this->options['console_readlines_logfile']) {
                 $path = static::SlashDir(App::Root()->options['path']);
                 $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
-                $file = $this->options['cli_readlines_logfile'];
+                $file = $this->options['console_readlines_logfile'];
                 $file = static::IsAbsPath($file)?$file:$path_runtime.$file;
                 
                 file_put_contents($file, $input, FILE_APPEND);
@@ -211,36 +217,13 @@ class Console extends ComponentBase
         $args = $ret['--'];
         if (!is_array($args)) {
             $args = ($args === true)?'':$args;
-            $ret['--'] = [$args?$args:$this->options['cli_command_default']];
+            $ret['--'] = [$args?$args:$this->options['console_command_default']];
         }
         return $ret;
     }
     protected function getObject(string $class): object
     {
         return is_callable([$class,'_']) ? $class::_() : new $class;
-    }
-    public function getCallback($group, $cmd_method)
-    {
-        if (empty($group)) {
-            return [null,null];
-        }
-        $cmd_method = str_replace('-', '_', $cmd_method);
-        $classes = $group['classes'];
-        $classes = array_reverse($classes, true);
-
-        foreach ($classes as $class => $method_prefix) {
-            if (!isset($method_prefix) || $method_prefix === false) {
-                continue;
-            }
-            $method_prefix = ($method_prefix === true) ? 'command_' : $method_prefix;
-            
-            $method = $method_prefix.$cmd_method;
-            
-            if (method_exists($class, $method)) {
-                return [$class,$method];
-            }
-        }
-        return [null,null];
     }
     public function callObject($class, $method, $args, $input)
     {

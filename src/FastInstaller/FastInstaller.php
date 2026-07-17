@@ -307,9 +307,7 @@ and more ...\n";
             $last_phase = App::Phase($app::_()->getThisPhaseName());
             
             $cli_namespace = $app::_()->getThisCommandPrefix();
-            $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
-            list($class, $method) = Console::_()->getCallback($group, 'install');
-            //Console::_()->callPhaseCommand(App::Phase()?''.'install');
+            [$class,$method] = Console::_()->getCommandCallback($cli_namespace.':install');
             try {
                 if (isset($class) && is_callable([$class::_(),$method])) {
                     $ret = call_user_func([$class::_(),$method]);/** @phpstan-ignore-line */

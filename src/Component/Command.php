@@ -120,14 +120,17 @@ EOT;
     protected function getCommandListInfo(): string
     {
         $str = '';
-        $group = Console::_()->options['cli_command_group'];
+        $classes = Console::_()->options['console_command_classes'];
 
-        foreach ($group as $namespace => $v) {
+        foreach ($classes as $namespace => $v) {
+            $phase = Console::_()->options['console_command_phase'][$namespace];
+        
             $tip = ($namespace === '') ? '*Default commands*' : $namespace;
             $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}\n"; //::{$v['class']}
 
             /////////////////
-            $descs = $this->getCommandsByClasses($v['classes'], $v['default_method_prefix'] ?? 'command_', $v['phase']);
+            $descs = $this->getCommandsByClasses($v, 'command_', $phase);
+
             ksort($descs);
 
             foreach ($descs as $method => $desc) {

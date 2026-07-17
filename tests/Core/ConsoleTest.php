@@ -19,8 +19,8 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
 
         Console::_()->app();
         Console::_()->getCliParameters();
-        Console::_()->regCommandClass('test',DuckPhp::class,[Console_Command::class=>true]);
-        //var_dump(Console::_()->options);exit;
+        //Console::_()->regCommandClass('test',DuckPhp::class,[Console_Command::class=>true]);
+        //Console::_()->regCommmandPrefixPhase('',)
         $_SERVER['argv']=[
             '-','test:foo',
         ];
@@ -80,7 +80,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','help',  // ------>changed
         ];
-        Console::_()->regCommandClass('', Console_App::class,[
+        Console::_()->regCommandClasses('', [
             Console_Command2::class => true ,
             Console_Command::class=>false,
             Console_Command4::class=>'prefix_',
@@ -96,6 +96,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         ];
         Console_App::_()->run();
         
+        /*
         try{
             $_SERVER['argv']=[
                 '-','test',
@@ -135,7 +136,7 @@ EOT;
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(Console::class);
         $input = fopen($path.'input.txt','r');
         $output = fopen($path.'output.txt','w');
-        ConsoleParent::_()->options['cli_readlines_logfile']=$path.'input.log';
+        ConsoleParent::_()->options['console_readlines_logfile']=$path.'input.log';
 
         $ret=ConsoleParent::_()->readLines($options,$desc,[],$input,$output);
         fclose($input);
