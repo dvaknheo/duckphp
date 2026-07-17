@@ -266,7 +266,9 @@ define('_X_',true);
         try{
             \DuckPhp\Core\App::_(new \DuckPhp\Core\App())->init([]);
         }catch(\Exception $ex){}
-        \LibCoverage\LibCoverage::G($this->LibCoverage);
+        
+        $this->doLoadSettingCoverage();
+        
         \LibCoverage\LibCoverage::End();
         return;
 
@@ -298,6 +300,55 @@ define('_X_',true);
     public function doSystemWrapper()
     {
 
+    }
+    public function doLoadSettingCoverage()
+    {
+        // 覆盖 App::loadSetting / dealWithEnvFile / dealWithSettingFile 分支
+        $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        
+        // 覆盖 use_env_file 分支
+        $envFile = $path_app . '.env';
+        file_put_contents($envFile, "ENV_TEST_FOO=bar\nENV_TEST_BAZ=42\n");
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+        AppTestApp::_(new AppTestApp());
+        AppTestApp::RunQuickly([
+            'path' => $path_app,
+            'use_env_file' => true,
+            'setting_file_enable' => false,
+            'cli_enable' => false,
+        ]);
+        unlink($envFile);
+        
+        // 覆盖 setting_file 绝对路径分支
+        $settingDir = $path_app . 'config/';
+        if (!is_dir($settingDir)) {
+            mkdir($settingDir, 0777, true);
+        }
+        $absSettingFile = $settingDir . 'AbsSetting.config.php';
+        file_put_contents($absSettingFile, "<?php\nreturn ['abs_key' => 'abs_value'];\n");
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+        AppTestApp::_(new AppTestApp());
+        AppTestApp::RunQuickly([
+            'path' => $path_app,
+            'setting_file' => $absSettingFile,
+            'setting_file_ignore_exists' => false,
+            'cli_enable' => false,
+        ]);
+        unlink($absSettingFile);
+        
+        // 覆盖 setting_file 不存在且 ignore_exists=false 分支
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+        AppTestApp::_(new AppTestApp());
+        try {
+            AppTestApp::RunQuickly([
+                'path' => $path_app,
+                'setting_file' => $path_app . 'config/NotExist.config.php',
+                'setting_file_ignore_exists' => false,
+                'cli_enable' => false,
+            ]);
+        } catch (\ErrorException $ex) {
+            // expected
+        }
     }
     public function doException()
     {
