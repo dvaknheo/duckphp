@@ -82,8 +82,8 @@ class PhaseContainer
     }
     public function addPublicClasses($classes)
     {
-        foreach ($classes as $class) {
-            $this->publics[$class] = true;
+        foreach ($classes as $class => $v) {
+            $this->publics[$class] = $v;
         }
     }
     public function removePublicClasses($classes)

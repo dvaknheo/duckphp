@@ -72,10 +72,13 @@ trait KernelTrait
         // 'use_output_buffer' => false,
         //*/
     ];
+    protected static $ROOT_PHASE = '';
+    protected static $ROOT_PHASE_OF_SHARED = '@public@';
+    
     protected $is_root = true;
     protected $phase_name = '';
-    protected static $ROOT_PHASE = '';
-    protected $children_phase_map = [];
+    // protected $this_class = '';
+    // protected $is_inited = false;
     
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
@@ -185,7 +188,7 @@ trait KernelTrait
             //$flag = PhaseContainer::ReplaceSingletonImplement();
             $this->phase_name = self::$ROOT_PHASE;
             $container = PhaseContainer::_();
-            $container->setDefaultContainer($this->phase_name);
+            $container->setDefaultContainer(self::$ROOT_PHASE_OF_SHARED);
             $container->setCurrentContainer($this->phase_name);
 
             $this->onAfterCreatePhases();
@@ -254,7 +257,12 @@ trait KernelTrait
         $this->initContainer($context);
         
         $this->initException($this->options);
+        
+        if($this->is_root){
+            //$this->initRoot();
+        }
         $this->onPrepare();
+        
         $this->initComponents();
         $this->initExtensions($this->options['ext']);
         $this->onIniting();
@@ -271,7 +279,7 @@ trait KernelTrait
 
         if ($this->is_root) {
             $this->addPublicClassesInRoot([
-                Console::class,
+                Console::class => true,
             ]);
             Console::_()->init($this->options, $this);
         }
@@ -281,11 +289,6 @@ trait KernelTrait
         
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
-        $this->doInitComponents();
-    }
-    protected function doInitComponents(): void
-    {
-        //for DuckPhp\Core\App override initComponents
     }
     protected function initExtensions(array $exts): void
     {
@@ -332,6 +335,15 @@ trait KernelTrait
             $this->options[$class]['__phase__'] = $phase;
         }
     }
+    public function toChildPhase(string $class)
+    {
+        if (!isset($this->options[$class]['__phase__'])) {
+            return false;
+        }
+        $this->_Phase($this->options[$class]['__phase__']);
+        return true;
+    }
+
     public function run(): bool
     {
         if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {

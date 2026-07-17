@@ -22,8 +22,12 @@ require_once __DIR__ . '/Functions.php';
  */
 class App extends ComponentBase
 {
-    use KernelTrait;
     const VERSION = '1.3.5';
+    
+    use KernelTrait {
+        initComponents as initComponentsFromKernel;
+        prepareServe as prepareServeFromKernel;
+    }
 
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
@@ -39,8 +43,11 @@ class App extends ComponentBase
         'lang_handler' => null,
         
         //// error handler ////
-        'error_404' => null,          //'_sys/error-404',
-        'error_500' => null,          //'_sys/error-500',
+        'is_maintain' => false,
+        'error_404' => null,            //'_sys/error-404',
+        'error_500' => null,            //'_sys/error-500',
+        'error_debug' => null,          //'_sys/error-debug',
+        'error_maintain' => null,       //'_sys/error-maintan',
         
         'setting_file' => 'config/DuckPhpSettings.config.php',
         'setting_file_ignore_exists' => true,
@@ -48,10 +55,10 @@ class App extends ComponentBase
         'use_env_file' => false,
         
         'component_shared' => [
-            SystemWrapper::class => true,
+            SystemWrapper::class => 'NotInit',
             Logger::class => true,
         ],
-        'compnoent_dynmic' => [
+        'component_dynmic' => [
             SuperGlobal::class => true,
             View::class => true,
         ],
@@ -83,8 +90,9 @@ class App extends ComponentBase
         return '('.static::class.')'.static::VERSION;
     }
     //////// override KernelTrait ////////
-    protected function doInitComponents(): void
+    protected function initComponents(): void
     {
+        $this->initComponentsFromKernel();
         if ($this->is_root) {
             $this->loadSetting();
             $this->addPublicClassesInRoot([
@@ -97,6 +105,24 @@ class App extends ComponentBase
         SuperGlobal::_()->init($this->options, $this);
         View::_()->init($this->options, $this);
     }
+    protected function prepareServe()
+    {
+        $this->prepareServeFromKernel();
+        if (App::Setting('duckphp_is_maintain', false) || ($this->options['is_maintain'] ?? false)) {
+            $error_maintain = $this->options['error_maintain'] ?? null;
+            if (!is_string($error_maintain) && is_callable($error_maintain)) {
+                ($error_maintain)();
+            }
+            if (!$error_maintain) {
+                $str = <<<EOT
+Maintaining. <!-- set options['error_maintain'] to override -->
+EOT;
+                echo $str;
+            }
+            View::Show([], $error_maintain);
+        }
+    }
+    
     protected function loadSetting(): void
     {
         $this->setting = $this->options['setting'] ?? [];
@@ -134,6 +160,7 @@ class App extends ComponentBase
         })($full_file);
         $this->setting = array_merge($this->setting, $setting);
     }
+    ////////////////
     public static function Setting($key = null, $default = null)
     {
         return static::_()->_Setting($key, $default);
@@ -159,7 +186,7 @@ class App extends ComponentBase
             $path_info = $my_server['PATH_INFO'] ?? '';
             echo "404 File Not Found<!--PATH_INFO: ($path_info) DuckPhp set options ['error_404'] to override me. -->\n";
             if ($this->options['is_debug']) {
-                echo "<!-- (" . static::class .") Route Error Info: ".Route::_()->getRouteError()."-->\n";
+                echo "Debug Info (" . static::class .") Route Error Info: ".Route::_()->getRouteError()." !\n";
             }
             return;
         }

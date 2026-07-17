@@ -33,7 +33,7 @@ class DuckPhp extends App
         'ext' => [
             //ExtOptionsLoader::class => false,
             Lang::class => true,
-            RouteHookCheckStatus::class => true,
+            //RouteHookCheckStatus::class => true,
             RouteHookRewrite::class => true,
             RouteHookRouteMap::class => true,
             RouteHookResource::class => true,
@@ -176,6 +176,7 @@ class DuckPhp extends App
         if ($handler) {
             return $handler($str, $args);
         }
+        //Lang::_()->init($this->options,$this);
         return Lang::_()->lang($str, $args);
     }
 }
