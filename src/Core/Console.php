@@ -67,6 +67,15 @@ class Console extends ComponentBase
     {
         return static::_()->run();
     }
+    protected function splitCommand($cmd)
+    {
+        $command_namespace = '';
+        $method = $cmd;
+        $a = explode(':', $cmd);
+        $cmd_method = array_pop($a);
+        $command_namespace = implode(':', $a);
+        return [$command_namespace,$cmd_method];
+    }
     public function run()
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
@@ -74,14 +83,15 @@ class Console extends ComponentBase
         $func_args = $this->parameters['--'];
         $cmd = array_shift($func_args);
         $cmd = $cmd ?? '';
-
+        
+        [$command_namespace,$cmd_method] = $this->splitCommand($cmd);
 
         [$class, $method] = $this->getCommandCallback($cmd);
         if (!isset($class) && !isset($method)) {
-            throw new \ReflectionException(" ($command_namespace, $cmd)Command Not Found In All\n", -4);
+            throw new \ReflectionException(" ($cmd)Command Not Found In All\n", -4);
         }
         $phase = $this->options['console_command_phase'][$command_namespace] ?? App::_()->getThisPhaseName();
-        
+
         $old_phase = App::Phase($phase);
         $this->callObject($class, $method, $func_args, $this->parameters);
         App::Phase($old_phase);
@@ -90,11 +100,7 @@ class Console extends ComponentBase
     }
     public function getCommandCallback($cmd)
     {
-        $command_namespace = '';
-        $method = $cmd;
-        $a = explode(':', $cmd);
-        $cmd_method = array_pop($a);
-        $command_namespace = implode(':', $a);
+        [$command_namespace,$cmd_method] = $this->splitCommand($cmd);
         
         $classes = $this->options['console_command_classes'][$command_namespace] ?? [];
         
