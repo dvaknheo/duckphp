@@ -82,7 +82,7 @@ DuckPhp\\Component\\Pager
     {
         // 我们override  phasecontainer ,然后把所有 comoont dump 出来
         $container = new MyContainer();
-        PhaseContainer::GetContainerInstanceEx($container);
+PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'is_debug' => true,
             'path_info_compact_enable' => true,

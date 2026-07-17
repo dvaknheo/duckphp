@@ -10,43 +10,39 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(PhaseContainer::class);
         $LibCoverage = \LibCoverage\LibCoverage::G();
-        PhaseContainer::GetContainer();
-        PhaseContainer::ReplaceSingletonImplement();
-        PhaseContainer::ReplaceSingletonImplement();
-        //PhaseContainer::GetObject();
         
-        PhaseContainer::GetContainerInstanceEx();
-        PhaseContainer::GetContainerInstanceEx(new MyPhaseContainer());
-               PhaseContainer::ReplaceSingletonImplement();
-
+        PhaseContainer::_();
+        PhaseContainer::_(new MyPhaseContainer());
        
-        PhaseContainer::GetContainerInstanceEx()->setDefaultContainer('DEFAULT');
-        PhaseContainer::GetContainerInstanceEx()->addPublicClasses([]);
-        PhaseContainer::GetContainerInstanceEx()->removePublicClasses([]);
-        PhaseContainer::GetContainerInstanceEx()->setCurrentContainer('CURRENT');
-        PhaseContainer::GetContainerInstanceEx()->getCurrentContainer();
+        PhaseContainer::_()->setDefaultContainer('DEFAULT');
+        PhaseContainer::_()->addPublicClasses([]);
+        PhaseContainer::_()->removePublicClasses([]);
+        PhaseContainer::_()->setCurrentContainer('CURRENT');
+        PhaseContainer::_()->getCurrentContainer();
         
         MyObject::_()->foo();
         MyObject::_(new MyObject2())->foo();
         
-        PhaseContainer::GetContainerInstanceEx()->setCurrentContainer('NEW');
+        PhaseContainer::_()->setCurrentContainer('NEW');
 
-        PhaseContainer::GetContainerInstanceEx()->addPublicClasses([MyObject::class]);
+        PhaseContainer::_()->addPublicClasses([MyObject::class]);
         MyObject::_()->foo();
         MyObject::_(new MyObject2())->foo();
         MyObject2::_();
-        PhaseContainer::GetContainerInstanceEx()->createLocalObject(MyObject::class);
-        PhaseContainer::GetContainerInstanceEx()->removeLocalObject(MyObject::class);
+        PhaseContainer::_()->createLocalObject(MyObject::class);
+        PhaseContainer::_()->removeLocalObject(MyObject::class);
         
-        PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
+        PhaseContainer::_()->dumpAllObject();
         PhaseContainer::GetObject(MyObject::class);
-        PhaseContainer::GetContainerInstanceEx()->removePublicClasses([MyObject::class]);
+        PhaseContainer::_()->removePublicClasses([MyObject::class]);
         
-        PhaseContainer::GetContainerInstanceEx()->issetContainer("JustPhase");
-        PhaseContainer::GetContainerInstanceEx()->getClassOfContainer(MyObject::class);
+        PhaseContainer::_()->issetContainer("JustPhase");
+        PhaseContainer::_()->getClassOfContainer(MyObject::class);
+        PhaseContainer::Dump();
         
         
-        
+                PhaseContainer::RestAllContainerForTesting();
+
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }

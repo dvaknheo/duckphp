@@ -85,7 +85,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         /*
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
-        \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
 
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $flag = DuckPhp_Sub::InitAsContainer($options)->run();
@@ -93,7 +93,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
-        \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $_SERVER['PATH_INFO'] = '/';
         $flag =DuckPhp_Sub::InitAsContainer($options,function(){echo "welcome";})->run();
@@ -118,7 +118,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
-        \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         $flag =DuckPhp_Sub::InitAsContainer($options,false,function(){echo "welcome";})->run();
         //*/
         $options = [
@@ -127,7 +127,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>true,
         ];
         DuckPhp::_(new DuckPhp())->init($options);
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
 
         DuckPhp_Sub::_(new DuckPhp_Sub());
         DuckPhp::_(new DuckPhp())->init([
@@ -138,7 +138,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         );
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         $data = include(__DIR__.'/data_for_tests/setting.php');
         $database_list=$data['database_list'];
 //var_dump($database_list);exit;

@@ -14,23 +14,11 @@ class PhaseContainer
     public $default = '';
     public $publics = [];
     
-    public static function ReplaceSingletonImplement()
-    {
-        //if (!defined('__SINGLETONEX_REPALACER')) {
-        //define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
-        //define('__SINGLETONEX_REPALACER_CLASS', static::class);
-        //static::GetContainerInstanceEx()->default = static::class;
-        //static::GetContainerInstanceEx()->current = static::class;
-        //static::GetContainerInstanceEx()->publics[static::class] = true;
-        return true;
-        //}
-        //return false;
-    }
     public static function GetObject(string $class, ?object $object = null)
     {
-        return static::GetContainerInstanceEx()->_GetObject($class, $object);
+        return static::_()->_GetObject($class, $object);
     }
-    public static function GetContainerInstanceEx(?object $object = null)
+    public static function _(?object $object = null)
     {
         if ($object) {
             static::$instance = $object;
@@ -41,42 +29,53 @@ class PhaseContainer
         }
         return static::$instance;
     }
-    public static function GetContainer(): self
+    public static function RestAllContainerForTesting()
     {
-        //if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-        //return null;
-        //}
-        //$class = __SINGLETONEX_REPALACER_CLASS;
-        return static::GetContainerInstanceEx();
+        static::_(new static());
+    }
+    public static function Dump()
+    {
+        static::_()->dumpAllObject();
     }
     ////////////////////////////////
     public function _GetObject(string $class, ?object $object = null): object
     {
-        if (isset($this->containers[$this->current][$class])) {
-            if ($object) {
-                $this->containers[$this->current][$class] = $object;
-            }
-            return $this->containers[$this->current][$class];
+        $ret = $this->getObjectInContainer($this->current, $class, $object);
+        if ($ret) {
+            return $ret;
         }
+
+        $container_name = $this->current;
         if (isset($this->publics[$class])) {
-            if (isset($this->containers[$this->default][$class])) {
-                if ($object) {
-                    $this->containers[$this->default][$class] = $object;
-                }
-                return $this->containers[$this->default][$class];
+            $container_name = $this->default;
+            $ret = $this->getObjectInContainer($container_name, $class, $object);
+            if ($ret) {
+                return $ret;
             }
-            $result = $object ?? $this->createObject($class);
-            $this->containers[$this->default][$class] = $result;
-            return $result;
         }
+        return $this->createObjectToContainer($container_name, $class, $object);
+    }
+    protected function getObjectInContainer($container_name, $class, $object)
+    {
+        if (isset($this->containers[$container_name][$class])) {
+            if ($object) {
+                $this->containers[$container_name][$class] = $object;
+            }
+            return $this->containers[$container_name][$class];
+        }
+        return null;
+    }
+    protected function createObjectToContainer($container_name, $class, $object)
+    {
         $result = $object ?? $this->createObject($class);
-        $this->containers[$this->current][$class] = $result;
+        $this->containers[$container_name][$class] = $result;
         return $result;
     }
     protected function createObject(string $class): object
     {
         return new $class;
     }
+    ///////////////
     public function setDefaultContainer($class)
     {
         $this->default = $class;

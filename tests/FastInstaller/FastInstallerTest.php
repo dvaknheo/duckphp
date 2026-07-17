@@ -126,7 +126,7 @@ echo "--------------------------\n";
         FiParentApp::_()->run();
 
         //////////////////////////////
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
 
         @mkdir($path_app.'/public');
          @mkdir($path_app.'/res');
@@ -158,7 +158,7 @@ echo "->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
         $console_options = Console::_()->options;
         
         
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
     //\DuckPhp\Core\App::$root_instance =null;
         
         

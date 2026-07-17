@@ -90,7 +90,7 @@ trait KernelTrait
     }
     public static function Root()
     {
-        return  PhaseContainer::GetContainer()->getClassOfContainer(self::class, self::$ROOT_PHASE);
+        return  PhaseContainer::_()->getClassOfContainer(self::class, self::$ROOT_PHASE);
     }
     public static function Phase($new = null)
     {
@@ -131,7 +131,7 @@ trait KernelTrait
     }
     public function _Phase(?string $new = null): string
     {
-        $container = PhaseContainer::GetContainerInstanceEx();
+        $container = PhaseContainer::_();
         $old = $container->getCurrentContainer();
         if (isset($new)) {
             $container->setCurrentContainer($new);
@@ -178,8 +178,8 @@ trait KernelTrait
         
         if ($this->is_root) {
             $this->onBeforeCreatePhases();
-            $flag = PhaseContainer::ReplaceSingletonImplement();
-            $container = PhaseContainer::GetContainer();
+            //$flag = PhaseContainer::ReplaceSingletonImplement();
+            $container = PhaseContainer::_();
             $container->setDefaultContainer($this->phase_name);
             $container->setCurrentContainer($this->phase_name);
 
@@ -192,7 +192,7 @@ trait KernelTrait
             
             // @phpstan-ignore-next-line
             $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $name), ':');
-            $container = PhaseContainer::GetContainer();
+            $container = PhaseContainer::_();
             $is_same_name = $container->issetContainer($this->phase_name);
             if ($is_same_name) {
                 $object = $container->getClassOfContainer(self::class, $this->phase_name);
@@ -213,14 +213,14 @@ trait KernelTrait
         if (!$this->is_root) {
             return;
         }
-        PhaseContainer::GetContainer()->addPublicClasses($classes);
+        PhaseContainer::_()->addPublicClasses($classes);
         foreach ($classes as $class) {
             $class::_();
         }
     }
     protected function createLocalObject(string $class, ?object $object = null): object
     {
-        return PhaseContainer::GetContainer()->createLocalObject($class, $object);
+        return PhaseContainer::_()->createLocalObject($class, $object);
     }
     protected function initException(array $options): void
     {
@@ -352,8 +352,6 @@ trait KernelTrait
         try {
             Runtime::_()->run();
             $ret = Route::_()->run();
-            //\DuckPhp\Core\PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
-            //$t = get_included_files();sort($t); var_export($t);
             if (!$ret) {
                 $ret = $this->runChildren();
             }

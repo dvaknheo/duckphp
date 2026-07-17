@@ -90,7 +90,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::PathOfRuntime();
         
 //reset
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
 
         $options = ['is_debug'=>true, 
             'html_handler'=>function(&$str){return "<".$str.">";},

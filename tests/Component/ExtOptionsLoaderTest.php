@@ -33,13 +33,13 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         DuckPhpEOL::Phase($old_phase);
         
         DuckPhpEOL::_(new DuckPhpEOL);
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         ExtOptionsLoader::$all_ext_options=null;
         ExtOptionsLoader::_(new ExtOptionsLoader());
         DuckPhpEOL::_()->init($options);
         ////[[[[
         
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
 $options['app'] = [
             DuckPhpEOLChild2::class =>[
                 'data_file_enable' => true,

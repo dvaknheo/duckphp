@@ -201,7 +201,7 @@ echo "-------------------------------------\n";
     }
     protected function doMoreTest()
     {
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         try{
         KernelTestApp::_()->init([
             'skip_exception_check'=>true,
@@ -220,7 +220,7 @@ PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
         ]);
         }catch(\Exception $ex){
         }
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         KernelTestApp::_(new KernelTestApp())->init([
             'skip_exception_check'=>true,
             'app' => [
@@ -238,7 +238,7 @@ PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
         KernelTestApp::_()->getThisChild(KernelTestApp3::class);
         KernelTestApp3::_()->getThisParent();
         
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         KernelTestApp::_(new KernelTestApp())->init([
             'cli_enable'=>true,
             'cmd'=>[

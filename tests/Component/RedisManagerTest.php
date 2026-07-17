@@ -22,7 +22,7 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
             //'redis_list'=>$redis_list,
         ];
         DuckPhp::_()->init($options);
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
 
         $options['redis']=$redis_list[0];
         DuckPhp::_()->init($options);

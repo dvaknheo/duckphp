@@ -77,7 +77,7 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		MyLang::_(new MyLang())->init([
 			//'lang_detect_mode'=>['NoExists'],
 		]);
-PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
 
 		DuckPhp::_()->init([
 			'path'=>$path,

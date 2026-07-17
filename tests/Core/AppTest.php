@@ -209,7 +209,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'error_500'=> function(){ echo "out500\n";},
         ];
         echo "---------------------------------------\n";
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         AppTestApp::_(new AppTestApp());
         MyApp::_(new MyApp())->init($options);
         var_dump(md5(spl_object_hash(MyApp::_())));
@@ -233,7 +233,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 		MyApp::_()->lang("test",[]);
 		MyApp::_()->lang("test{hello}",['hello'=>'world']);
 
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         $options =[
             'path' => $path_app,
             'is_debug'=>true,
@@ -247,8 +247,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         MyApp::_()->options['error_debug'] = '_sys/error-debug';
         MyApp::_()->_OnDevErrorHandler(0, '', '', 0);
         ///////////////////////////////////////////
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
-define('_X_',true);
+PhaseContainer::RestAllContainerForTesting();
         $options =[
             'path' => $path_app,
             'name' =>'zz',
@@ -261,8 +260,7 @@ define('_X_',true);
         
         MyApp::_(new MyApp())->init($options);
         //$x = AppTestApp2::FromCurrentParent()->getOverrideableFile("view",'abc');
-        var_dump($x);
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         try{
             \DuckPhp\Core\App::_(new \DuckPhp\Core\App())->init([]);
         }catch(\Exception $ex){}
@@ -309,7 +307,7 @@ define('_X_',true);
         // 覆盖 use_env_file 分支
         $envFile = $path_app . '.env';
         file_put_contents($envFile, "ENV_TEST_FOO=bar\nENV_TEST_BAZ=42\n");
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         AppTestApp::_(new AppTestApp());
         AppTestApp::RunQuickly([
             'path' => $path_app,
@@ -326,7 +324,7 @@ define('_X_',true);
         }
         $absSettingFile = $settingDir . 'AbsSetting.config.php';
         file_put_contents($absSettingFile, "<?php\nreturn ['abs_key' => 'abs_value'];\n");
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         AppTestApp::_(new AppTestApp());
         AppTestApp::RunQuickly([
             'path' => $path_app,
@@ -337,7 +335,7 @@ define('_X_',true);
         unlink($absSettingFile);
         
         // 覆盖 setting_file 不存在且 ignore_exists=false 分支
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         AppTestApp::_(new AppTestApp());
         try {
             AppTestApp::RunQuickly([
@@ -388,7 +386,7 @@ define('_X_',true);
             },
         ];
         AppTestApp::_(new AppTestApp);
-        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+PhaseContainer::RestAllContainerForTesting();
         AppTestApp::RunQuickly($options);
     }
     public function doHelper()
