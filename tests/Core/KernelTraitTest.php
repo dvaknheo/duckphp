@@ -34,7 +34,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'namespace' => __NAMESPACE__,
             'platform' => 'ForTests',
             'is_debug' => true,
-            'setting_file_enable' => true,
+            'setting_file_enable' => false,
             'use_flag_by_setting' => true,
             'error_exception' => NULL,
             'error_500' => NULL,
@@ -105,7 +105,7 @@ echo "-------------------------------------\n";
             'path_view' => $path_app.'view/',
             'is_debug' => true,
             'use_short_functions' => true,
-            'setting_file_enable' => true,
+            'setting_file_enable' => false,
 
         ];
         View::_(new View());
@@ -175,41 +175,6 @@ echo "-------------------------------------\n";
         $options =[
             'path' => $path_app,
             'use_flag_by_setting' => true,
-            'use_env_file' => true,
-        ];
-        App::_(new App())->init($options);
-        
-        try{
-        $options =[
-            'path' => $path_app,
-            'use_flag_by_setting' => true,
-            'use_env_file' => true,
-            'setting_file' =>$path_app.'no_exists.php',
-            'setting_file_ignore_exists' =>false,
-        ];
-        App::_(new App())->init($options);
-        }catch(\Exception $ex){}
-        $options =[
-            'path' => $path_app,
-            'use_flag_by_setting' => true,
-            'use_env_file' => true,
-            'setting_file' =>$path_app.'DuckPhpSettings.config.php',
-            'setting_file_ignore_exists' =>false,
-        ];
-        App::_(new App())->init($options);
-        App::Setting("duckphp_is_debug");
-        //setting.php
-        MyKernelTrait::_(new MyKernelTrait())->init($options);
-        MyKernelTrait::_()->isRoot();
-        
-        ////[[[[
-        
-        $options =[
-            'path' => $path_app,
-            'use_flag_by_setting' => true,
-            'use_env_file' => true,
-            'setting_file' =>$path_app.'DuckPhpSettings.config.php',
-            'setting_file_ignore_exists' =>false,
             'exception_reporter' =>  ExceptionReporter::class,
             'exception_reporter_for_class' =>  \Exception::class,
         ];
@@ -227,7 +192,7 @@ echo "-------------------------------------\n";
         ////////////////////////
         $this->doMoreTest();
         ////////////////////////
-        
+        MyKernelTrait::_(new MyKernelTrait())->init([]);
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
@@ -304,7 +269,6 @@ PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
             'platform' => 'BJ',
             'is_debug' => true,
             'use_flag_by_setting' => false,
-            'setting_file_enable' => true,
             'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,
