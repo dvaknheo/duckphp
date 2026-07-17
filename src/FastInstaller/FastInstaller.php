@@ -55,7 +55,7 @@ class FastInstaller extends ComponentBase
     {
         $args = Console::_()->getCliParameters();
         $app = $args['--'][1] ?? null;
-        if (!App::IsRoot()) {
+        if (!App::_()->isRoot()) {
             echo "only use by root.\n";
             return;
         }

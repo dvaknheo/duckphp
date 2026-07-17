@@ -71,7 +71,6 @@ trait KernelTrait
         // 'use_output_buffer' => false,
         //*/
     ];
-    public $setting = [];
     protected $is_root = true;
     protected $phase_name = '';
     protected static $ROOT_PHASE = '';
@@ -83,7 +82,11 @@ trait KernelTrait
         if ($after_init) {
             ($after_init)();
         }
-        return $instance->run();
+        if (PHP_SAPI === 'cli' && $instance->isRoot() && $instance->options['cli_enable']) {
+            return $instance->execute();
+        } else {
+            return $instance->serve();
+        }
     }
     public static function Root()
     {
@@ -96,10 +99,6 @@ trait KernelTrait
     public static function Setting($key = null, $default = null)
     {
         return static::_()->_Setting($key, $default);
-    }
-    public static function IsRoot()
-    {
-        return static::_()->_IsRoot();
     }
     public static function FromCurrentParent()
     {
@@ -139,7 +138,7 @@ trait KernelTrait
         }
         return $old;
     }
-    public function _IsRoot()
+    public function isRoot()
     {
         return $this->is_root;
     }

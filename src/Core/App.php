@@ -54,6 +54,7 @@ class App extends ComponentBase
     ];
     protected $common_options = [];
     protected $this_class = '';
+    public $setting = [];
     public function __construct()
     {
         parent::__construct();

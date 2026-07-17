@@ -34,7 +34,7 @@ class Lang extends ComponentBase
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if ($this->options['lang_follow_root'] && !App::IsRoot()) {
+        if ($this->options['lang_follow_root'] && !App::_()->isRoot()) {
             $this->options['lang_final'] = App::Root()->options['lang_final'];
         } else {
             $this->options['lang_final'] = $this->detectLanguage();
