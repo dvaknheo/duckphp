@@ -32,20 +32,22 @@ trait KernelTrait
         'data' => [],
         'ext' => [],
         
-        'override_class' => null,
-        
         'cli_enable' => true,
         'skip_404' => false,
         'skip_exception_check' => false,
-        'init_components' => true,
-
-        'on_init' => null,
+        'override_from'=>true,
+        'app_children_allow_mix_mode' =>true,
+        
+        'on_initing' => null,
         'on_inited' => null,
-        'on_before_run' => null,
+        'on_serve' => null,
+        
+        
         'component_shared' => [
             Console::class => true,
         ],
         'compnoent_dynmic' => [
+            Runtime::class => true,
         ],
         //'on_after_run' => null,
         //*/
@@ -94,10 +96,6 @@ trait KernelTrait
     public static function Phase($new = null)
     {
         return static::_()->_Phase($new);
-    }
-    public static function Setting($key = null, $default = null)
-    {
-        return static::_()->_Setting($key, $default);
     }
     public static function FromCurrentParent()
     {
@@ -170,14 +168,22 @@ trait KernelTrait
     {
         return str_replace('/', '-', $this->phase_name);
     }
+    public function regConsoleCommand($class, $default_method = 'command_')
+    {
+        $this->options['cmd'][$class] = $default_method;
+        return Console::_()->regCommandClassSingle($this->getThisCommandPrefix(), $class, $default_method);
+    }
+    public function getProjectPath()
+    {
+        return self::Root()->options['path'];
+    }
     protected function initContainer(?object $context = null): bool
     {
         //////////////////////////////
-        $this->options['__class__'] = $this->getThisClass();
-        
         if ($this->is_root) {
             $this->onBeforeCreatePhases();
             //$flag = PhaseContainer::ReplaceSingletonImplement();
+            $this->phase_name = self::$ROOT_PHASE;
             $container = PhaseContainer::_();
             $container->setDefaultContainer($this->phase_name);
             $container->setCurrentContainer($this->phase_name);
@@ -199,10 +205,10 @@ trait KernelTrait
             }
             $container->setCurrentContainer($this->phase_name);
         }
+        $this->this_class = $this->options['override_from']??$this->this_class;
         (self::class)::_($this);
         (static::class)::_($this);
-       
-        $this->options['__phase__'] = $this->getThisPhaseName();
+        //($this->this_class)::_($this);
         /////////////
         return true;
     }
@@ -212,9 +218,6 @@ trait KernelTrait
             return;
         }
         PhaseContainer::_()->addPublicClasses($classes);
-        foreach ($classes as $class) {
-            $class::_();
-        }
     }
     protected function createLocalObject(string $class, ?object $object = null): object
     {
@@ -235,31 +238,26 @@ trait KernelTrait
     //init
     public function init(array $options, object $context = null)
     {
-        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
-        $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
-        
+
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
+            $options['override_from'] = $class;
             return $class::_(new $class)->init($options, $context);
         }
+        
+        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
+        $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
+        
         $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
-        if ($this->is_root) {
-            require_once __DIR__ . '/Functions.php';
-        }
         $this->initOptions($options);
-        
-         
         $this->initContainer($context);
-        $this->initException($this->options);
         
+        $this->initException($this->options);
         $this->onPrepare();
         $this->initComponents();
         $this->initExtensions($this->options['ext']);
-        $this->onInit();
-        if ($this->options['on_init']) {
-            ($this->options['on_init'])();
-        }
+        $this->onIniting();
         $this->onBeforeChildrenInit();
         $this->initChildren($this->options['app']);
 
@@ -289,10 +287,6 @@ trait KernelTrait
     {
         //for DuckPhp\Core\App override initComponents
     }
-    public function _Setting($key = null, $default = null)
-    {
-        return $key ? (static::Root()->setting[$key] ?? $default) : static::Root()->setting;
-    }
     protected function initExtensions(array $exts): void
     {
         foreach ($exts as $class => $options) {
@@ -310,6 +304,19 @@ trait KernelTrait
     }
     protected function initChildren(array $apps): void
     {
+        if ($this->options['app_children_allow_mix_mode']) {
+            $new_apps = [];
+            foreach ($apps as $class => $options) {
+                if(isset($options['class'])){
+                    $options['controller_url_prefix'] = $class;
+                    $class = $options['class'];
+                    unset($options['class']);
+                }
+                $new_apps[$class]=$options;
+            }
+            $apps = $new_apps;
+        }
+
         foreach ($apps as $class => $options) {
             if (empty($options) || !is_array($options)) {
                 continue;
@@ -320,19 +327,11 @@ trait KernelTrait
             
             $options['controller_url_prefix'] = ltrim(Route::_()->options['controller_url_prefix'].'/'.$options['controller_url_prefix'], '/');
             $object = $class::_()->init($options, $this);
+            $phase = $object->getThisPhaseName();
             $this->phaseToCurrent();
-            $this->options[$class]['__phase__'] = $object->options['__phase__'] ?? '';
+            $this->options[$class]['__phase__'] = $phase;
         }
     }
-    public function toChildPhase(string $class)
-    {
-        if (!isset($this->options[$class]['__phase__'])) {
-            return false;
-        }
-        $this->_Phase($this->options[$class]['__phase__']);
-        return true;
-    }
-
     public function run(): bool
     {
         if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {
@@ -344,8 +343,10 @@ trait KernelTrait
     public function serve(): bool
     {
         $ret = false;
-        $this->phaseToCurrent();
-        //TODO $this->resetDyminicObject();
+        
+        
+        $this->prepareServe();
+        $this->onServe();
         $this->onBeforeRun();
         try {
             Runtime::_()->run();
@@ -366,6 +367,27 @@ trait KernelTrait
         $this->onAfterRun();
         return $ret;
     }
+    protected function prepareServe()
+    {
+
+        $this->phaseToCurrent();
+        /*
+        if('stopde')
+        foreach($this->options['component_dynmic'] as $class = > $option){
+            if(!$options){
+                continue;
+            }
+            if(is_string($options)){
+                $flag = preg_match('/^(@?)(.*?)(\(\))$/') // @xx()
+                if(!$flag){
+                    continue;
+                }
+            }
+        $class::_(new $class())->init($this->options, $this);
+        */
+        
+    }
+
     protected function runException(\Throwable $ex): void
     {
         $last_phase = $this->_Phase();
@@ -405,9 +427,9 @@ trait KernelTrait
         }
         return $ret;
     }
-    protected function phaseToCurrent(): void
+    public function phaseToCurrent(): void
     {
-        $this->_Phase($this->phase_name);
+        PhaseContainer::_()->setCurrentContainer($this->phase_name);
     }
     //main produce end
     ////////////////////////
@@ -448,18 +470,25 @@ trait KernelTrait
     protected function onBeforeChildrenInit(): void
     {
     }
-    protected function onInit()
+    protected function onIniting()
     {
-        if ($this->options['on_init']) {
-            ($this->options['on_init'])();
+        if ($this->options['on_initing']) {
+            ($this->options['on_initing'])();
         }
     }
-    protected function onInited()
+    protected function onInited(): void
     {
         if ($this->options['on_inited']) {
             ($this->options['on_inited'])();
         }
     }
+    protected function onServe(): void
+    {
+        if ($this->options['on_serve']) {
+            ($this->options['on_serve'])();
+        }
+    }
+    
     protected function onBeforeRun(): void
     {
     }

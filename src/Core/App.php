@@ -13,6 +13,7 @@ use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
+require_once __DIR__ . '/Functions.php';
 /**
  * MAIN FILE
  * dvaknheo@github.com
@@ -47,9 +48,12 @@ class App extends ComponentBase
         'use_env_file' => false,
         
         'component_shared' => [
-            Console::class => true,
+            SystemWrapper::class => true,
+            Logger::class => true,
         ],
         'compnoent_dynmic' => [
+            SuperGlobal::class => true,
+            View::class => true,
         ],
         //*
         // 'path_log' => 'runtime',
@@ -84,8 +88,8 @@ class App extends ComponentBase
         if ($this->is_root) {
             $this->loadSetting();
             $this->addPublicClassesInRoot([
-                Logger::class,
-                SystemWrapper::class,
+                Logger::class => true,
+                SystemWrapper::class =>true,
             ]);
             Logger::_()->init($this->options, $this);
         }
@@ -129,6 +133,14 @@ class App extends ComponentBase
             return require $file;
         })($full_file);
         $this->setting = array_merge($this->setting, $setting);
+    }
+    public static function Setting($key = null, $default = null)
+    {
+        return static::_()->_Setting($key, $default);
+    }
+    public function _Setting($key = null, $default = null)
+    {
+        return $key ? (static::Root()->setting[$key] ?? $default) : static::Root()->setting;
     }
     //@override
     public function _On404(): void

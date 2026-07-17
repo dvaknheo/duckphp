@@ -53,6 +53,8 @@ class DuckPhp extends App
 
         'lang_default' => null,
         'lang_final' => null,
+        'local_database' => false,
+        'local_redis' => false,
 
 
         'component_shared' => [
@@ -112,11 +114,11 @@ class DuckPhp extends App
         parent::initComponents();
         
         $this->addPublicClassesInRoot([
-            DbManager::class,
-            RedisManager::class,
-            GlobalAdmin::class,
-            GlobalUser::class,
-            GlobalEvent::class,
+            DbManager::class => true,
+            RedisManager::class => true,
+            GlobalAdmin::class => true,
+            GlobalUser::class => true,
+            GlobalEvent::class => true,
         ]);
         if ($this->options['data_file_enable']) {
             ExtOptionsLoader::_()->init($this->options, $this);
@@ -124,6 +126,7 @@ class DuckPhp extends App
         if ($this->is_root) {
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
+            $this->options['database_driver'] = DbManager::_()->getDatabaseDriver();
         } else {
             if ($this->isLocalDatabase()) {
                 $this->createLocalObject(DbManager::class);
@@ -139,21 +142,16 @@ class DuckPhp extends App
         }
         if ($this->options['class_admin']) {
             $class = $this->options['class_admin'];
-            GlobalAdmin::_($class::_Z(static::Phase()));
+            GlobalAdmin::_($class::_Z($this->getThisPhaseName()));
         }
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
-            GlobalUser::_($class::_Z(static::Phase()));
+            GlobalUser::_($class::_Z($this->getThisPhaseName()));
         }
     }
     protected function onPrepare(): void
     {
         //just for skip self::_()->Init;
-    }
-    public function regConsoleCommand($class, $default_method = 'command_')
-    {
-        $this->options['cmd'][$class] = $default_method;
-        return Console::_()->regCommandClassSingle($this->getThisCommandPrefix(), $class, $default_method);
     }
     protected function isLocalDatabase(): bool
     {
