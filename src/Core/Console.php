@@ -8,8 +8,8 @@ namespace DuckPhp\Core;
 class Console extends ComponentBase
 {
     public $options = [
-        'console_command_classes' =>[],
-        'console_command_phase' =>[],
+        'console_command_classes' => [],
+        'console_command_phase' => [],
         
         'console_command_default' => 'help',
         
@@ -53,9 +53,9 @@ class Console extends ComponentBase
     }
     public function regCommandClasses($prefix, array $classes)
     {
-        $my_classes = $this->options['console_command_classes'][$prefix] ??[];
+        $my_classes = $this->options['console_command_classes'][$prefix] ?? [];
         $my_classes = array_replace_recursive($my_classes, $classes);
-        $this->options['console_command_classes'][$prefix]=$my_classes;
+        $this->options['console_command_classes'][$prefix] = $my_classes;
     }
     public function regCommandClassSingle(string $prefix, string $class, $method_prefix)
     {
@@ -75,12 +75,8 @@ class Console extends ComponentBase
         $cmd = array_shift($func_args);
         $cmd = $cmd ?? '';
 
-        $command_namespace = '';
-        $method = $cmd;
-        $a = explode(':', $cmd);
-        $method = array_pop($a);
-        $command_namespace = implode(':', $a);
-        [$class, $method] = $this->getCommandCallback($command_namespace,$cmd);
+
+        [$class, $method] = $this->getCommandCallback($cmd);
         if (!isset($class) && !isset($method)) {
             throw new \ReflectionException(" ($command_namespace, $cmd)Command Not Found In All\n", -4);
         }
@@ -92,8 +88,14 @@ class Console extends ComponentBase
         
         return true;
     }
-    public function getCommandCallback($command_namespace, $cmd_method)
+    public function getCommandCallback($cmd)
     {
+        $command_namespace = '';
+        $method = $cmd;
+        $a = explode(':', $cmd);
+        $cmd_method = array_pop($a);
+        $command_namespace = implode(':', $a);
+        
         $classes = $this->options['console_command_classes'][$command_namespace] ?? [];
         
         if (empty($classes)) {
