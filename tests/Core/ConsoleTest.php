@@ -14,10 +14,20 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(Console::class);
         $__SERVER = $_SERVER;
         $_SERVER['argv']=[];
-        DuckPhp::_()->init(['cli_enable'=>true, 'is_debug'=>true])->run();
+        DuckPhp::_()->init(['cli_enable'=>true, 'is_debug'=>true,
+            'app' =>[
+                Console_Command_Empty::class => [
+                    'namespace'=>'',
+                    'name' => 'test',
+                    'cmd' => [Console_Command_Empty::class => true],
+                ],
+            ]
+        ]);
+        DuckPhp::_()->run();
+        
         Console::DoRun();
-
-        Console::_()->app();
+    
+        //Console::_()->app();
         Console::_()->getCliParameters();
         //Console::_()->regCommandClass('test',DuckPhp::class,[Console_Command::class=>true]);
         //Console::_()->regCommmandPrefixPhase('',)
@@ -36,6 +46,8 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','test:foo2','arg1','arg2','--a1',"--a2","a","--a3","a","b"
         ];
+define('X',true);
+//var_dump(spl_object_hash(Console::_()),Console::_()->options['console_command_classes']);exit;
         DuckPhp::_()->run();
 
         $_SERVER['argv']=[
@@ -168,7 +180,6 @@ EOT;
 class Console_App extends DuckPhp
 {
     public $options=[
-        'cli_command_class' => null,
     ];
     /** overrid test*/
     public function command_test()
@@ -177,13 +188,23 @@ class Console_App extends DuckPhp
     }
 }
 
+class Console_Command_Empty extends DuckPhp
+{
 
+    public function command_foo2($a1,$a2,$a3,$a4='aa')
+    {
+        var_dump(func_get_args());
+    }
+}
 class Console_Command extends DuckPhp
 {
     public $options=[
-        'cli_command_namespace' => 'test',
         'cli_command_class' => null,
     ];
+    public function onInited()
+    {
+        parent::onInited();
+    }
     public function command_foo()
     {
         var_dump("foo!");
