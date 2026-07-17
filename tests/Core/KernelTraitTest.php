@@ -57,6 +57,8 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             KernelTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){});
+        $options['cli_enable'] = false;
+        App::RunQuickly($options,function(){});
         App::_()->options['cli_enable'] =false;
         
         //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
