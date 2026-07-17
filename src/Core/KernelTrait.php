@@ -40,7 +40,7 @@ trait KernelTrait
         'init_components' => true,
 
         'on_init' => null,
-        // 'on_inited' => null,
+        'on_inited' => null,
         'on_before_run' => null,
         'component_shared' => [
             Console::class => true,

@@ -54,6 +54,16 @@ class DuckPhp extends App
         'lang_default' => null,
         'lang_final' => null,
 
+
+        'component_shared' => [
+            DbManager::class,
+            RedisManager::class,
+            GlobalAdmin::class,
+            GlobalUser::class,
+            GlobalEvent::class,
+        ],
+        'compnoent_dynmic' => [
+        ],
         //'error_maintain' => null,
         //'error_need_install' => null,
 
