@@ -41,6 +41,11 @@ class App extends ComponentBase
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
         
+        'setting_file' => 'config/DuckPhpSettings.config.php',
+        'setting_file_ignore_exists' => true,
+        'setting_file_enable' => true,
+        'use_env_file' => false,
+
         //*
         // 'path_log' => 'runtime',
         // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',

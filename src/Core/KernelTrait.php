@@ -42,13 +42,12 @@ trait KernelTrait
         'on_init' => null,
         // 'on_inited' => null,
         'on_before_run' => null,
+        'component_shared' => [
+            Console::class => true,
+        ],
+        'compnoent_dynmic' => [
+        ],
         //'on_after_run' => null,
-
-        'setting_file' => 'config/DuckPhpSettings.config.php',
-        'setting_file_ignore_exists' => true,
-        'setting_file_enable' => true,
-        'use_env_file' => false,
-
         //*/
         // 'namespace' => '',
         // 'namespace_controller' => 'Controller',
@@ -183,7 +182,6 @@ trait KernelTrait
             $container->setDefaultContainer($this->phase_name);
             $container->setCurrentContainer($this->phase_name);
 
-            
             $this->onAfterCreatePhases();
         } else {
             $name = $this->options['name'] ? $this->options['name'] : $this->options['namespace'];
@@ -452,9 +450,15 @@ trait KernelTrait
     }
     protected function onInit()
     {
+        if ($this->options['on_init']) {
+            ($this->options['on_init'])();
+        }
     }
     protected function onInited()
     {
+        if ($this->options['on_inited']) {
+            ($this->options['on_inited'])();
+        }
     }
     protected function onBeforeRun(): void
     {
