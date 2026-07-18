@@ -159,9 +159,8 @@ class DuckPhp extends App
         if ($flag) {
             return true;
         }
-        $driver = DbManager::_()->getDatabaseDriver(); // options['database_driver']; :(
-        
-        if ($this->options['database_driver'] && ($driver != $this->options['database_driver'])) {
+        $driver = DbManager::_()->options['database_driver'];
+        if ($this->options['database_driver'] && ($driver !== $this->options['database_driver'])) {
             return true;
         }
         return false;

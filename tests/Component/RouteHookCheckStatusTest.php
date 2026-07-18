@@ -21,37 +21,37 @@ class RouteHookCheckStatusTest extends \PHPUnit\Framework\TestCase
         ];
 
         //Route::_(new Route())->init($route_options);
-        DuckPhp::_()->init($options);
+        DuckPhp_RHCS::_()->init($options);
         
         $options = [
             'error_maintain' => null,
             'error_need_install' => null,
         ];
         //RouteHookCheckStatus::_(new RouteHookCheckStatus())->init($options, App::_());
-        DuckPhp::_()->run();
+        DuckPhp_RHCS::_()->run();
         //RouteHookCheckStatus::_()->options['error_maintain']=true;
-        DuckPhp::_()->options['is_maintain']=true;
-        DuckPhp::_()->run();
+        DuckPhp_RHCS::_()->options['is_maintain']=true;
+        DuckPhp_RHCS::_()->run();
         RouteHookCheckStatus::_()->options['error_maintain'] = 'view_maintain';
-        DuckPhp::_()->options['error_maintain'] = 'view_maintain';
-        DuckPhp::_()->run();
+        DuckPhp_RHCS::_()->options['error_maintain'] = 'view_maintain';
+        DuckPhp_RHCS::_()->run();
         
         RouteHookCheckStatus::_()->options['error_maintain'] = function(){echo 'hit!';};
-        DuckPhp::_()->run();
+        DuckPhp_RHCS::_()->run();
 
         ///////////////
 
-        DuckPhp::_()->options['is_maintain']=false;
+        DuckPhp_RHCS::_()->options['is_maintain']=false;
         echo "111111111111111111111111111111111111111111111111";
-        DuckPhp::_()->options['need_install']=true;
-        DuckPhp::_()->options['install']=false;
+        DuckPhp_RHCS::_()->options['need_install']=true;
+        DuckPhp_RHCS::_()->options['install']=false;
         RouteHookCheckStatus::_()->options['error_need_install']='view_need_install';
-        DuckPhp::_()->run();
+        DuckPhp_RHCS::_()->run();
         echo "2222222222222222222222222222222222222222222222";
         RouteHookCheckStatus::_()->options['error_need_install']=null;
-        DuckPhp::_()->run();
+        DuckPhp_RHCS::_()->run();
         RouteHookCheckStatus::_()->options['error_need_install']=function(){echo 'hit!';};
-        DuckPhp::_()->run();
+        DuckPhp_RHCS::_()->run();
 
         
         \LibCoverage\LibCoverage::End();
@@ -62,5 +62,17 @@ class RouteHookCheckStatusTestMainController
 {    
     function action_index(){
         var_dump(DATE(DATE_ATOM));
+    }
+}
+class DuckPhp_RHCS extends DuckPhp
+{
+    public $options = [
+        'ext' => [
+            RouteHookCheckStatus::class => true,
+        ],    
+    ];
+    protected function prepareServe()
+    {
+        return;
     }
 }

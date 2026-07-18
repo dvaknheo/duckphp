@@ -16,52 +16,27 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(DuckPhp::class);
         $LibCoverage = \LibCoverage\LibCoverage::G();
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
-        //code here
-        //$handler=null;
-        //DuckPhp::_()->addBeforeRunHandler($handler);
-        
-        //$SwooleHttpd=new fakeSwooleHttpd;
-        //DuckPhp::_()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
-        //DuckPhp::_()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
         $path_view= $path.'views/';
-
         $options=[
             'log_sql_query'=>true,
-            'mode_no_path_info'=>true,
             'path_view'=>$path_view,
             'path_info_compact_enable'=>true,
-            'controller_resource_prefix'=>'',
-            'cli_command_with_fast_installer' => true,
             'cli_command_with_app' => true,
 
         ];
         DuckPhp::_()->init($options);
-        \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace([
-            'exit' =>function(){ echo "change!\n";},
-        ]);
-        __l("hello",[]);
-        View::_()->_Show([],'block');
-        DuckPhp::_()->options['close_resource_at_output']=false;
-        View::_()->_Show([],'block');
-		DuckPhp::_()->lang("hello",[]);
 
         $options['path'] = $path;
-        $options['path_test'] = 'abc';
         $options['data_file_enable']=true;
         
         @unlink($path.'config/DuckPhpApps.config.php');
         DuckPhp_Sub::_(new DuckPhp_Sub())->init($options);
 
         DuckPhp_Sub::_()->isInstalled();
-        
+
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
         DuckPhp::_(new DuckPhp())->init($options);
-       
-        //DuckPhp::_()->isInstalled();
-        @unlink($path.'config/DuckPhpApps.config.php');
-        
-        
         
         /////////////
         
@@ -81,47 +56,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        
-        /*
-        DuckPhp::_(new DuckPhp());
-        DuckPhp_Sub::_(new DuckPhp_Sub());
-PhaseContainer::RestAllContainerForTesting();
-
-        $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
-        $flag = DuckPhp_Sub::InitAsContainer($options)->run();
-        
-
-        DuckPhp::_(new DuckPhp());
-        DuckPhp_Sub::_(new DuckPhp_Sub());
-PhaseContainer::RestAllContainerForTesting();
-        $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
-        $_SERVER['PATH_INFO'] = '/';
-        $flag =DuckPhp_Sub::InitAsContainer($options,function(){echo "welcome";})->run();
-        */
-        /*
-        echo "<<<<<<<<<<<<<<<<<";
-        $_SERVER['PATH_INFO'] = '/advance/hitme';
-        $options['ext']=[
-                DuckPhp_Sub::class =>[
-                    'is_debug'=>true,
-                    'cli_enable'=>false,
-                    'cli_mode' => 'hook',
-                    'controller_url_prefix'=>'advance/',
-                    'exception_reporter' => FakeReporter::class,
-                    'controller_class_postfix'=>'Controller',
-                    'controller_method_prefix'=>'action_',
-                    'controller_welcome_class'=>'Fake',
-                    'namespace_controller'=>'\tests\DuckPhp',
-                    
-                ],
-            ];
-
-        DuckPhp::_(new DuckPhp());
-        DuckPhp_Sub::_(new DuckPhp_Sub());
-PhaseContainer::RestAllContainerForTesting();
-        $flag =DuckPhp_Sub::InitAsContainer($options,false,function(){echo "welcome";})->run();
-        //*/
-        $options = [
+$options = [
             'data_file_enable'=>true,
             'ext_options_file'=>'NoExits.php',
             'cli_enable'=>true,
@@ -141,24 +76,35 @@ PhaseContainer::RestAllContainerForTesting();
 PhaseContainer::RestAllContainerForTesting();
         $data = include(__DIR__.'/data_for_tests/setting.php');
         $database_list=$data['database_list'];
-//var_dump($database_list);exit;
         DuckPhp::_(new DuckPhp())->init([
-                'database_list'=> $database_list,//['a'=>'b'],
+                'database_list'=> $database_list,
                 'app' => [ 
                     DuckPhp_Sub::class => [
-                        'database_driver'=>'sqlite','local_redis'=>true,
-                        
+                        'database_driver'=>'sqlite'
                     ]
                 ]
             ]
         );
+PhaseContainer::RestAllContainerForTesting();
+        $data = include(__DIR__.'/data_for_tests/setting.php');
+        $database_list=$data['database_list'];
+        DuckPhp::_(new DuckPhp())->init([
+                'database_list'=> $database_list,
+                'app' => [ 
+                    DuckPhp_Sub::class => [
+                        'database_driver'=>'xx'
+                    ]
+                ]
+            ]
+        );
+        
+        
         DuckPhp::_()->regConsoleCommand('MyClass','prefix_');
         
+        __l("xx");
         DuckPhp::_()->options['lang_handler']=function($str, $args = []){ return $str;};
         __l("xx");
         //////////////////////
-        
-
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
