@@ -30,14 +30,12 @@ class DuckPhp extends App
     protected $common_options = [
         'data_file_enable' => false,
         'ext' => [
-            //ExtOptionsLoader::class => false,
+            ExtOptionsLoader::class => 'data_file_enable',
             Lang::class => true,
-            //RouteHookCheckStatus::class => true,
             RouteHookRewrite::class => true,
             RouteHookRouteMap::class => true,
             RouteHookResource::class => true,
-            
-            //RouteHookPathInfoCompat::class => false,
+            RouteHookPathInfoCompat::class => 'path_info_compact_enable',
         ],
         
         'session_prefix' => null,
@@ -55,16 +53,6 @@ class DuckPhp extends App
         'local_database' => false,
         'local_redis' => false,
 
-
-        'component_shared' => [
-            DbManager::class,
-            RedisManager::class,
-            GlobalAdmin::class,
-            GlobalUser::class,
-            GlobalEvent::class,
-        ],
-        'compnoent_dynmic' => [
-        ],
         //'error_maintain' => null,
         //'error_need_install' => null,
 
@@ -100,44 +88,39 @@ class DuckPhp extends App
         
         //*/
     ];
-    protected function initComponents(): void
+    protected function initComponentOfRoot($components): void
     {
-        if ($this->options['cli_command_with_app']) {
-            $this->options['cmd'] = array_merge([static::class => true], $this->options['cmd']);
-        }
-        if ($this->options['cli_command_with_common']) {
-            $this->options['cmd'][Command::class] = true;
-        }
-        
-        // Main
-        parent::initComponents();
-        
-        $this->addPublicClassesInRoot([
+        $my_components = [
             DbManager::class => true,
             RedisManager::class => true,
             GlobalAdmin::class => true,
             GlobalUser::class => true,
             GlobalEvent::class => true,
-        ]);
-        if ($this->options['data_file_enable']) {
-            ExtOptionsLoader::_()->init($this->options, $this);
-        }
-        if ($this->is_root) {
+        ];
+        $components = array_merge($classes, $my_components);
+        
+        parent::initComponentOfRoot($components);
+         
+        DbManager::_()->init($this->options, $this);
+        RedisManager::_()->init($this->options, $this);
+        $this->options['database_driver'] = DbManager::_()->options['database_driver'];
+    }
+    ////////////////////
+    protected function initComponentOfInner($components): void
+    {
+        //$my_components = [
+
+        //];
+        //$components = array_merge($classes, $my_components);
+        parent::initComponentOfInner($components);
+        
+        if ($this->isLocalDatabase()) {
+            $this->createLocalObject(DbManager::class);
             DbManager::_()->init($this->options, $this);
-            RedisManager::_()->init($this->options, $this);
-            $this->options['database_driver'] = DbManager::_()->options['database_driver'];
-        } else {
-            if ($this->isLocalDatabase()) {
-                $this->createLocalObject(DbManager::class);
-                DbManager::_()->init($this->options, $this);
-            }
-            if ($this->isLocalRedis()) {
-                $this->createLocalObject(RedisManager::class);
-                RedisManager::_()->init($this->options, $this);
-            }
         }
-        if ($this->options['path_info_compact_enable'] ?? false) {
-            RouteHookPathInfoCompat::_()->init($this->options, $this);
+        if ($this->isLocalRedis()) {
+            $this->createLocalObject(RedisManager::class);
+            RedisManager::_()->init($this->options, $this);
         }
         if ($this->options['class_admin']) {
             $class = $this->options['class_admin'];
@@ -145,13 +128,19 @@ class DuckPhp extends App
         }
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
-            GlobalUser::_($class::_Z($this->getThisPhaseName()));
+            GlobalUser::_($class::_Z()->_phase($this->getThisPhaseName()));
         }
     }
     protected function onPrepare(): void
     {
-        //just for skip self::_()->Init;
+        if ($this->options['cli_command_with_app']) {
+            $this->options['cmd'] = array_merge([static::class => true], $this->options['cmd']);
+        }
+        if ($this->options['cli_command_with_common']) {
+            $this->options['cmd'][Command::class] = true;
+        }
     }
+    
     protected function isLocalDatabase(): bool
     {
         $flag = $this->options['local_database'] ?? false;

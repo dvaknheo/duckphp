@@ -25,10 +25,15 @@ class App extends ComponentBase
     const VERSION = '1.3.5';
     
     use KernelTrait {
-        initComponents as initComponentsFromKernel;
-        prepareServe as prepareServeFromKernel;
+        initComponents as Kernel_initComponents;
+        prepareServe as Kernel_prepareServe;
+        initCompnentsOfRoot
     }
-
+    const EXT_DISABLE =0;
+    const EXT_FOLLOW_APP = 1;
+    const EXT_SKIP_INIT = 2;
+    const EXT_RENEW = 3;
+    
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
     const HOOK_APPPEND_INNER = 'append-inner';
@@ -54,14 +59,6 @@ class App extends ComponentBase
         'setting_file_enable' => true,
         'use_env_file' => false,
         
-        'component_shared' => [
-            SystemWrapper::class => 'NotInit',
-            Logger::class => true,
-        ],
-        'component_dynmic' => [
-            SuperGlobal::class => true,
-            View::class => true,
-        ],
         //*
         // 'path_log' => 'runtime',
         // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
@@ -92,22 +89,32 @@ class App extends ComponentBase
     //////// override KernelTrait ////////
     protected function initComponents(): void
     {
-        $this->initComponentsFromKernel();
         if ($this->is_root) {
             $this->loadSetting();
-            $this->addPublicClassesInRoot([
-                Logger::class => true,
-                SystemWrapper::class => true,
-            ]);
-            Logger::_()->init($this->options, $this);
         }
-
-        SuperGlobal::_()->init($this->options, $this);
-        View::_()->init($this->options, $this);
+        $this->Kernel_initComponents();
+    }
+    protected function initCompnentOfRoot($components): void
+    {
+        $my_components = [
+            SystemWrapper::class => self::EXT_SKIP_INIT,
+            Logger::class => self::EXT_SKIP_INIT,
+        ];
+        $components = array_merge($classes, $my_components);
+        $this->Kernel_CompnentOfRoot($components);
+    }
+    protected function initCompnentOfDynmic($classes): void
+    {
+        $components = [
+            SuperGlobal::class => EXT_FOLLOW_APP,
+            View::class => EXT_FOLLOW_APP,
+        ]
+        $components = array_merge($components,$classes);
+        $this->Kernel_initCompnentOfDynmic($components);
     }
     protected function prepareServe()
     {
-        $this->prepareServeFromKernel();
+        $this->Kernel_prepareServe();
         if (App::Setting('duckphp_is_maintain', false) || ($this->options['is_maintain'] ?? false)) {
             $error_maintain = $this->options['error_maintain'] ?? null;
             if (!is_string($error_maintain) && is_callable($error_maintain)) {

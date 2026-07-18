@@ -41,15 +41,7 @@ trait KernelTrait
         'on_initing' => null,
         'on_inited' => null,
         'on_serve' => null,
-        
-        
-        'component_shared' => [
-            Console::class => true,
-        ],
-        'compnoent_dynmic' => [
-            Runtime::class => true,
-        ],
-        //'on_after_run' => null,
+
         //*/
         // 'namespace' => '',
         // 'namespace_controller' => 'Controller',
@@ -74,8 +66,9 @@ trait KernelTrait
     ];
     protected static $ROOT_PHASE = '';
     protected static $ROOT_PHASE_OF_SHARED = '@public@';
-    
+    protected static  $EXT_SKIP_INIT = 2;
     protected $is_root = true;
+    protected $is_cli = false;
     protected $phase_name = '';
     // protected $this_class = '';
     // protected $is_inited = false;
@@ -142,7 +135,7 @@ trait KernelTrait
     {
         return $this->is_root;
     }
-    public function getThisClass()
+    public function getThisClassName()
     {
         return $this->this_class;
     }
@@ -247,61 +240,97 @@ trait KernelTrait
             $options['override_from'] = $class;
             return $class::_(new $class)->init($options, $context);
         }
+        $this->onPrepare();
         
         $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
         $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
         
-        $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
         $this->initOptions($options);
-        $this->initContainer($context);
         
+        $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
+        $this->is_cli = PHP_SAPI === 'cli' || $this->options['cli_enable'];
+        
+        $this->initContainer($context);
         $this->initException($this->options);
         
+        ////[[[[
         if ($this->is_root) {
-            //$this->initRoot();
+            $componets = [
+                Console::class => 1
+            ]
+            $this->initCompnentOfRoot($componets);
         }
-        $this->onPrepare();
         
-        $this->initComponents();
-        $this->initExtensions($this->options['ext']);
+        $componets = [
+            Route::class = > 1,
+        ];
+        $this->initCompnentOfInner($componets);
+        $componets = $this->options['ext']
+        $this->initCompnentOfExt($componets);
+        ////]]]]
         $this->onIniting();
         $this->onBeforeChildrenInit();
         $this->initChildren($this->options['app']);
-
         $this->is_inited = true; // from ComponentTrait
         $this->onInited();
         return $this;
     }
-    protected function initComponents(): void
+    protected function initComponentOfRoot($classes): void
     {
-        $is_cli = PHP_SAPI === 'cli' || $this->options['cli_enable'];
-
-        if ($this->is_root) {
-            $this->addPublicClassesInRoot([
-                Console::class => true,
-            ]);
-            Console::_()->init($this->options, $this);
-        }
-
+        PhaseContainer::_()->addPublicClasses($classes);
+        
+        $this->initComponentsByClasseOptions($classes);
+        
         Console::_()->regCommmandPrefixPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
         Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
-        
-        Route::_()->init($this->options, $this);
-        Runtime::_()->init($this->options, $this);
     }
-    protected function initExtensions(array $exts): void
+    
+    protected function initComponentOfiNNER($classes): void
+    {
+        $this->initComponentsByClasseOptions($classes);
+    }
+    protected function initComponentOfExt($classes): void
+    {
+        $this->initComponentsByClasseOptions($classes);
+    }
+    protected function initComponentOfDynmic($classes): void
+    {
+        $this->initComponentsByClasseOptions($classes);
+    }
+    protected function initComponentsByClasseOptions(array $exts): void
     {
         foreach ($exts as $class => $options) {
-            if ($options === false) {
-                continue;
-            }
-            if ($options === true) {
-                $options = $this->options;
-            }
-            if (!class_exists($class)) {
-                throw new \Exception("ext [$class] not exists");
-            }
+            $this->initExtensionsByOptions($class,$options);
+        }
+    }
+    //
+    protected function initExtensionsByOptions(string $class, $options)
+    {
+        if (!class_exists($class)) {
+            throw new \Exception("ext [$class] not exists");
+        }
+    
+        if ($options === false || $options ===null) {
+            return;
+        }
+        if ($options === true) {
+            $options = $this->options;
             $class::_()->init($options, $this);
+            return;
+        }
+        if ($options === self::$EXT_SKIP_INIT) {
+            $class::_();
+            return;
+        }
+        if (is_string($options)) {
+            if('@' ===substr($options,0,1)){
+                $method = substr($options,1);
+                $options = ($this->$method)();
+                $this->initExtensionsByOptions($class, $options,$force_new);
+            }else{
+                $options = $this->options[$options] ?? false;
+                $this->initExtensionsByOptions($class, $options,$force_new);
+            }
         }
     }
     protected function initChildren(array $apps): void
@@ -326,7 +355,7 @@ trait KernelTrait
             if (!class_exists($class)) {
                 throw new \Exception("Child [$class] not exists");
             }
-            
+
             $options['controller_url_prefix'] = ltrim(Route::_()->options['controller_url_prefix'].'/'.$options['controller_url_prefix'], '/');
             $object = $class::_()->init($options, $this);
             $phase = $object->getThisPhaseName();
@@ -345,7 +374,7 @@ trait KernelTrait
 
     public function run(): bool
     {
-        if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {
+        if ($this->is_cli) {
             return $this->execute();
         } else {
             return $this->serve();
@@ -354,8 +383,6 @@ trait KernelTrait
     public function serve(): bool
     {
         $ret = false;
-        
-        
         $this->prepareServe();
         $this->onServe();
         $this->onBeforeRun();
