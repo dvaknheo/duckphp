@@ -2,6 +2,7 @@
 
 ## 目录
 
+- [框架架构总览](architecture.md)
 - [安装与快速开始](install.md)
 - [项目结构与编码规则](project-structure.md)
 - [Helper 助手类](helper.md)
