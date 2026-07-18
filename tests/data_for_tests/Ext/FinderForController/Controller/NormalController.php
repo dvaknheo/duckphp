@@ -1,6 +1,6 @@
 <?php
 namespace tests_Ext_FinderForController\Controller;
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class NormalController
 {

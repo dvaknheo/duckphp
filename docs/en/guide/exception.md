@@ -22,11 +22,11 @@ Define project exceptions in the `src/System/` directory:
 // src/System/ProjectException.php
 namespace MyProject\System;
 
-use DuckPhp\Foundation\SimpleExceptionTrait;
+use DuckPhp\Foundation\ExceptionTrait;
 
 class ProjectException
 {
-    use SimpleExceptionTrait;  // Provides ThrowOn() method
+    use ExceptionTrait;  // Provides ThrowOn() method
 }
 ```
 
@@ -117,7 +117,7 @@ class UserBusiness
 ### Directly Throwing on Exception Class
 
 ```php
-// Using ThrowOn method (requires SimpleExceptionTrait)
+// Using ThrowOn method (requires ExceptionTrait)
 BusinessException::ThrowOn($balance < $amount, 'Insufficient balance', 2001);
 ```
 

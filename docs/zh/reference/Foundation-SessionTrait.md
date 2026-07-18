@@ -1,10 +1,10 @@
-# DuckPhp\Foundation\SimpleSessionTrait
+# DuckPhp\Foundation\SessionTrait
 
 简单 Session 管理 Trait。
 
 ## 简介
 
-`DuckPhp\Foundation\SimpleSessionTrait` 提供了一套简单的 Session 读写封装。它会自动启动 Session，并支持通过 `session_prefix` 配置实现键前缀隔离。
+`DuckPhp\Foundation\SessionTrait` 提供了一套简单的 Session 读写封装。它会自动启动 Session，并支持通过 `session_prefix` 配置实现键前缀隔离。
 
 ## 选项
 
@@ -19,11 +19,11 @@
 ### 在 Session 管理类中使用
 
 ```php
-use DuckPhp\Foundation\SimpleSessionTrait;
+use DuckPhp\Foundation\SessionTrait;
 
 class MySession
 {
-    use SimpleSessionTrait;
+    use SessionTrait;
 
     public function getUserId()
     {

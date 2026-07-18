@@ -3,11 +3,11 @@ namespace ProjectNameTemplate\Controller;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\CommonCommandTrait;
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class Commands
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
     use CommonCommandTrait;
     /**
      * console command sample

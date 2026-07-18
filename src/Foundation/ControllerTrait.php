@@ -10,7 +10,7 @@ use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 
-trait SimpleControllerTrait
+trait ControllerTrait
 {
     use ZCallTrait;
     public static function _($object = null)

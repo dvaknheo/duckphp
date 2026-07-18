@@ -116,11 +116,11 @@ Session belongs to the Controller layer's responsibility. The recommended `Contr
 <?php
 namespace MyProject\Controller;
 
-use DuckPhp\Foundation\SimpleSessionTrait;
+use DuckPhp\Foundation\SessionTrait;
 
 class Session
 {
-    use SimpleSessionTrait;  // Built-in lazy session_start() + get/set/unset
+    use SessionTrait;  // Built-in lazy session_start() + get/set/unset
     
     const KEY_USER_ID = 'user_id';
     
@@ -355,7 +355,7 @@ use MyProject\Model\LogModel;
 
 class CommonService
 {
-    use \DuckPhp\Foundation\SimpleBusinessTrait;
+    use \DuckPhp\Foundation\BusinessTrait;
     
     public function writeAuditLog(string $action, array $data): void
     {
@@ -427,7 +427,7 @@ class DemoModel extends Base
 
 ### ⚠️ Important Note: Method Visibility
 
-The built-in methods provided by `Foundation\Model\Base` (through `SimpleModelTrait`) are **all `protected`**, and cannot be called directly from outside the Model. The correct approaches are:
+The built-in methods provided by `Foundation\Model\Base` (through `ModelTrait`) are **all `protected`**, and cannot be called directly from outside the Model. The correct approaches are:
 
 1. **Expose public methods in Model subclasses** (recommended)
 2. **Directly use the `Db()` method of the `Helper` class to operate the database**

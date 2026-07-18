@@ -32,7 +32,7 @@ DuckPhp/
 | **Db/** | Db, DbAdvanceTrait, DbInterface | 3 |
 | **Ext/** | CallableView, DuckPhpInstaller, EmptyView, ExceptionWrapper, ExtendableStaticCallTrait, FinderForController, HookChain, JsonRpcClientBase, JsonRpcExt, JsonView, MiniRoute, Misc, MyFacadesAutoLoader, MyFacadesBase, MyMiddlewareManager, RouteHookApiServer, RouteHookDirectoryMode, RouteHookFunctionRoute, RouteHookManager, StaticReplacer, StrictCheck | ~21 |
 | **Helper/** | AppHelperTrait, BusinessHelperTrait, ControllerHelperTrait, ModelHelperTrait | 4 |
-| **Foundation/** | Helper, ExceptionReporterTrait; Controller/Base, Controller/Helper; Model/Base, Model/Helper; Business/Base, Business/Helper; SimpleBusinessTrait, SimpleControllerTrait, SimpleExceptionTrait, SimpleModelTrait, SimpleSessionTrait, SimpleSingletonTrait; System/Helper | ~16 |
+| **Foundation/** | Helper, ExceptionReporterTrait; Controller/Base, Controller/Helper; Model/Base, Model/Helper; Business/Base, Business/Helper; BusinessTrait, ControllerTrait, ExceptionTrait, ModelTrait, SessionTrait, SingletonTrait; System/Helper | ~16 |
 | **GlobalAdmin/** | GlobalAdmin, AdminActionInterface, AdminControllerInterface, AdminException, AdminServiceInterface | 5 |
 | **GlobalUser/** | GlobalUser, UserActionInterface, UserControllerInterface, UserException, UserServiceInterface | 5 |
 | **HttpServer/** | HttpServer, HttpServerInterface | 2 |
@@ -363,11 +363,11 @@ interface DbInterface {
 
 ### 6.3 MVC 基类
 
-- `Foundation\Model\Base` — 使用 `SimpleModelTrait`
-- `Foundation\Controller\Base` — 使用 `SimpleControllerTrait`
-- `Foundation\Business\Base` — 使用 `SimpleBusinessTrait`
+- `Foundation\Model\Base` — 使用 `ModelTrait`
+- `Foundation\Controller\Base` — 使用 `ControllerTrait`
+- `Foundation\Business\Base` — 使用 `BusinessTrait`
 
-### 6.4 SimpleControllerTrait
+### 6.4 ControllerTrait
 
 重写了 `_()` 方法，判断当前类是否符合 Controller 规则（postfix + base_class 检查），如果是则通过反射创建实例（跳过构造函数），否则走容器管理。
 

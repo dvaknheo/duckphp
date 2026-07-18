@@ -6,7 +6,7 @@ use DuckPhp\GlobalUser\UserActionInterface;
 use DuckPhp\GlobalUser\UserServiceInterface;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Helper;
-use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class GlobalUserTest extends \PHPUnit\Framework\TestCase
 {

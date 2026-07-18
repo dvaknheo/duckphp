@@ -57,12 +57,12 @@ namespace MySpace\System
 namespace MySpace\Controller
 {
     use DuckPhp\Foundation\Controller\Helper;
-    use DuckPhp\Foundation\SimpleControllerTrait;
+    use DuckPhp\Foundation\ControllerTrait;
     use MySpace\Business\MyBusiness;
 
     class MainController
     {
-        use SimpleControllerTrait;
+        use ControllerTrait;
         public function __construct()
         {
             // 在构造函数设置页眉页脚。
@@ -91,11 +91,11 @@ namespace MySpace\Business
 {
     use MySpace\Model\MyModel;
     use DuckPhp\Foundation\Business\Helper;
-    use DuckPhp\Foundation\SimpleBusinessTrait; //为了 Business::_() 可变单例。
+    use DuckPhp\Foundation\BusinessTrait; //为了 Business::_() 可变单例。
 
     class MyBusiness
     {
-        use SimpleBusinessTrait;
+        use BusinessTrait;
         
         public function getTimeDesc()
         {
@@ -108,11 +108,11 @@ namespace MySpace\Business
 namespace MySpace\Model
 {
     //use DuckPhp\Foundation\Model\Helper;
-    use DuckPhp\Foundation\SimpleModelTrait;
+    use DuckPhp\Foundation\ModelTrait;
     
     class MyModel
     {
-        use SimpleModelTrait;
+        use ModelTrait;
         
         public static function getTimeDesc()
         {

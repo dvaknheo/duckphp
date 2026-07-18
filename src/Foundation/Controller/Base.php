@@ -5,9 +5,9 @@
  */
 namespace DuckPhp\Foundation\Controller;
 
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class Base
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
 }

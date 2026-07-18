@@ -6,7 +6,7 @@ use DuckPhp\GlobalAdmin\AdminActionInterface;
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Helper;
-use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class GlobalAdminTest extends \PHPUnit\Framework\TestCase
 {

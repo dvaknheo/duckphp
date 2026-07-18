@@ -89,7 +89,7 @@ class App extends DuckPhp
 
 ## Session 管理
 
- 推荐方式：使用 `SimpleSessionTrait`（惰性启动）
+ 推荐方式：使用 `SessionTrait`（惰性启动）
 
 Session 属于 Controller 层，与 Action、MainController 的分工如下：
 
@@ -103,17 +103,17 @@ Business 层                   ▼
   └── UserBusiness      业务逻辑（调 Model，不碰 Session）
 ```
 
-`SimpleSessionTrait` 在首次读写 Session 时自动调用 `session_start()`，无需手动启动：
+`SessionTrait` 在首次读写 Session 时自动调用 `session_start()`，无需手动启动：
 
 ```php
 <?php
 namespace MyProject\Controller;
 
-use DuckPhp\Foundation\SimpleSessionTrait;
+use DuckPhp\Foundation\SessionTrait;
 
 class Session
 {
-    use SimpleSessionTrait;  // 自带惰性 session_start() + get/set/unset
+    use SessionTrait;  // 自带惰性 session_start() + get/set/unset
     
     const KEY_USER_ID = 'user_id';
     
@@ -202,7 +202,7 @@ class MainController
 }
 ```
 
-`SimpleSessionTrait` 提供了三个 protected 方法：
+`SessionTrait` 提供了三个 protected 方法：
 
 | 方法 | 说明 |
 |---|---|
@@ -214,7 +214,7 @@ class MainController
 
 ### 底层 Session 读写
 
-如果需要在 Controller 层直接读写 Session（不使用 `SimpleSessionTrait`）：
+如果需要在 Controller 层直接读写 Session（不使用 `SessionTrait`）：
 
 ```php
 use DuckPhp\Core\SuperGlobal;

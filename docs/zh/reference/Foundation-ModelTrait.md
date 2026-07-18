@@ -1,10 +1,10 @@
-# DuckPhp\Foundation\SimpleModelTrait
+# DuckPhp\Foundation\ModelTrait
 
 简单模型类 Trait。
 
 ## 简介
 
-`DuckPhp\Foundation\SimpleModelTrait` 是模型层类的简化组合 Trait。它提供了基于类名自动推导表名、读写分离数据库访问、常用 CRUD 操作以及 SQL 执行能力，适合快速实现数据模型。
+`DuckPhp\Foundation\ModelTrait` 是模型层类的简化组合 Trait。它提供了基于类名自动推导表名、读写分离数据库访问、常用 CRUD 操作以及 SQL 执行能力，适合快速实现数据模型。
 
 ## 选项
 
@@ -21,11 +21,11 @@
 ### 在模型类中使用
 
 ```php
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Foundation\ModelTrait;
 
 class UserModel
 {
-    use SimpleModelTrait;
+    use ModelTrait;
 }
 ```
 

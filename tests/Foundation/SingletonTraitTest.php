@@ -1,14 +1,14 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
-class SimpleSingletonTraitTest extends \PHPUnit\Framework\TestCase
+class SingletonTraitTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SimpleSingletonTrait::class);
+        \LibCoverage\LibCoverage::Begin(SingletonTrait::class);
         \LibCoverage\LibCoverage::End();
     }
 }

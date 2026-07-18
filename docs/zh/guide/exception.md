@@ -22,11 +22,11 @@ DuckPHP 推荐按以下层级组织异常：
 // src/System/ProjectException.php
 namespace MyProject\System;
 
-use DuckPhp\Foundation\SimpleExceptionTrait;
+use DuckPhp\Foundation\ExceptionTrait;
 
 class ProjectException
 {
-    use SimpleExceptionTrait;  // 提供 ThrowOn() 方法
+    use ExceptionTrait;  // 提供 ThrowOn() 方法
 }
 ```
 
@@ -117,7 +117,7 @@ class UserBusiness
 ### 在异常类上直接抛异常
 
 ```php
-// 使用 ThrowOn 方法（需要 SimpleExceptionTrait）
+// 使用 ThrowOn 方法（需要 ExceptionTrait）
 BusinessException::ThrowOn($balance < $amount, '余额不足', 2001);
 ```
 

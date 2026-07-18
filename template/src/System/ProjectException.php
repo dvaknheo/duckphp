@@ -5,9 +5,9 @@
  */
 namespace ProjectNameTemplate\System;
 
-use DuckPhp\Foundation\SimpleExceptionTrait;
+use DuckPhp\Foundation\ExceptionTrait;
 
 class ProjectException
 {
-    use SimpleExceptionTrait;
+    use ExceptionTrait;
 }

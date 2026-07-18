@@ -70,11 +70,11 @@ class App extends DuckPhp
 // src/Controller/Base.php
 namespace MyBlog\Controller;
 
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class Base
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
 }
 ```
 
@@ -114,12 +114,12 @@ class MainController extends Base
 // src/Business/BlogBusiness.php
 namespace MyBlog\Business;
 
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\BusinessTrait;
 use MyBlog\Model\BlogModel;
 
 class BlogBusiness
 {
-    use SimpleBusinessTrait;
+    use BusinessTrait;
     
     public function getIndexData()
     {
@@ -235,20 +235,20 @@ namespace MySpace\System {
 
 namespace MySpace\Controller {
     class MainController {
-        use \DuckPhp\Foundation\SimpleControllerTrait;
+        use \DuckPhp\Foundation\ControllerTrait;
         public function action_index() { ... }
     }
 }
 
 namespace MySpace\Business {
     class MyBusiness {
-        use \DuckPhp\Foundation\SimpleBusinessTrait;
+        use \DuckPhp\Foundation\BusinessTrait;
     }
 }
 
 namespace MySpace\Model {
     class MyModel {
-        use \DuckPhp\Foundation\SimpleModelTrait;
+        use \DuckPhp\Foundation\ModelTrait;
     }
 }
 

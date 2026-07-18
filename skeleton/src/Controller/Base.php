@@ -4,11 +4,11 @@
  */
 namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 abstract class Base
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
     public function __construct()
     {
     }

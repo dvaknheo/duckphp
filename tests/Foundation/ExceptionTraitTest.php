@@ -1,13 +1,13 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Foundation\SimpleExceptionTrait;
+use DuckPhp\Foundation\ExceptionTrait;
 
-class SimpleExceptionTraitTest extends \PHPUnit\Framework\TestCase
+class ExceptionTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SimpleExceptionTrait::class);
+        \LibCoverage\LibCoverage::Begin(ExceptionTrait::class);
         \LibCoverage\LibCoverage::End();
     }
 }

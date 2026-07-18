@@ -163,12 +163,12 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Foundation\Model\Helper](Foundation-Model-Helper.md) | 模型助手类。 |
 | [DuckPhp\Foundation\System\Helper](Foundation-System-Helper.md) | 系统助手类。 |
 | [DuckPhp\Foundation\ExceptionReporterTrait](Foundation-ExceptionReporterTrait.md) | 错误报告 Trait。 |
-| [DuckPhp\Foundation\SimpleBusinessTrait](Foundation-SimpleBusinessTrait.md) | 简单业务 Trait。 |
-| [DuckPhp\Foundation\SimpleControllerTrait](Foundation-SimpleControllerTrait.md) | 简单控制器 Trait。 |
-| [DuckPhp\Foundation\SimpleExceptionTrait](Foundation-SimpleExceptionTrait.md) | 简单异常 Trait。 |
-| [DuckPhp\Foundation\SimpleModelTrait](Foundation-SimpleModelTrait.md) | 简单模型 Trait。 |
-| [DuckPhp\Foundation\SimpleSessionTrait](Foundation-SimpleSessionTrait.md) | 简单会话 Trait。 |
-| [DuckPhp\Foundation\SimpleSingletonTrait](Foundation-SimpleSingletonTrait.md) | 简单单例 Trait。 |
+| [DuckPhp\Foundation\BusinessTrait](Foundation-BusinessTrait.md) | 简单业务 Trait。 |
+| [DuckPhp\Foundation\ControllerTrait](Foundation-ControllerTrait.md) | 简单控制器 Trait。 |
+| [DuckPhp\Foundation\ExceptionTrait](Foundation-ExceptionTrait.md) | 简单异常 Trait。 |
+| [DuckPhp\Foundation\ModelTrait](Foundation-ModelTrait.md) | 简单模型 Trait。 |
+| [DuckPhp\Foundation\SessionTrait](Foundation-SessionTrait.md) | 简单会话 Trait。 |
+| [DuckPhp\Foundation\SingletonTrait](Foundation-SingletonTrait.md) | 简单单例 Trait。 |
 | [DuckPhp\Foundation\FastInstallerTrait](Foundation-FastInstallerTrait.md) | 快速安装器助手 Trait。 |
 
 ---

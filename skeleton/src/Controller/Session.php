@@ -5,11 +5,11 @@
  */
 namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\SimpleSessionTrait;
+use DuckPhp\Foundation\SessionTrait;
 
 class Session
 {
-    use SimpleSessionTrait;
+    use SessionTrait;
     /*
     public function getCurrentUser()
     {

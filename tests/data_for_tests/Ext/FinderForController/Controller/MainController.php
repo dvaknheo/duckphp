@@ -1,10 +1,10 @@
 <?php
 namespace tests_Ext_FinderForController\Controller;
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class MainController
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
     public function __construct()
     {
     }

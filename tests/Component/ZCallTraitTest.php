@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\ZCallTrait;
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\BusinessTrait;
 use DuckPhp\DuckPhp as App;
 class ZCallTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,7 +18,7 @@ class ZCallTraitTest extends \PHPUnit\Framework\TestCase
 }
 class MyZCallObject
 {
-    use SimpleBusinessTrait;
+    use BusinessTrait;
     public function foo()
     {
         return DATE(DATE_ATOM);

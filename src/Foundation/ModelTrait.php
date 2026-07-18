@@ -11,7 +11,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonTrait;
 
-trait SimpleModelTrait
+trait ModelTrait
 {
     use SingletonTrait;
     use ZCallTrait;

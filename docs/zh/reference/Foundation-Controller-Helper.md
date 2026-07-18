@@ -36,7 +36,7 @@ $pager = Helper::PageHtml($total);
 
 ### 在 Controller 类中使用
 
-控制器类通常使用 `DuckPhp\Foundation\SimpleControllerTrait`，也可以直接通过 `Helper` 类访问这些能力。
+控制器类通常使用 `DuckPhp\Foundation\ControllerTrait`，也可以直接通过 `Helper` 类访问这些能力。
 
 ## 注意事项
 

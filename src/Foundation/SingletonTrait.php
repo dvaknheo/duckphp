@@ -5,9 +5,9 @@
  */
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonTrait as Singleton;
 
-trait SimpleSingletonTrait
+trait SingletonTrait
 {
-    use SingletonTrait;
+    use Singleton;
 }

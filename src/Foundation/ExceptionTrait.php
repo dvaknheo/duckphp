@@ -7,7 +7,7 @@ namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\ThrowOnTrait;
 
-trait SimpleExceptionTrait
+trait ExceptionTrait
 {
     use ThrowOnTrait;
 }

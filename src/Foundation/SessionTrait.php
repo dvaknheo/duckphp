@@ -10,7 +10,7 @@ use DuckPhp\Core\SingletonTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 
-trait SimpleSessionTrait
+trait SessionTrait
 {
     use SingletonTrait;
 

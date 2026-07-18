@@ -1,22 +1,22 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\BusinessTrait;
 use DuckPhp\DuckPhp;
 
-class SimpleBusinessTraitTest extends \PHPUnit\Framework\TestCase
+class BusinessTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         DuckPhp::_()->init([]);
-        \LibCoverage\LibCoverage::Begin(SimpleBusinessTrait::class);
-        SimpleBusinessTraitObject::_Z(DuckPhp::class)->foo();
+        \LibCoverage\LibCoverage::Begin(BusinessTrait::class);
+        BusinessTraitObject::_Z(DuckPhp::class)->foo();
         \LibCoverage\LibCoverage::End();
     }
 }
-class SimpleBusinessTraitObject
+class BusinessTraitObject
 {
-    use SimpleBusinessTrait;
+    use BusinessTrait;
     public function foo()
     {
         var_dump("foo!");

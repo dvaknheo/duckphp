@@ -1,17 +1,17 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Foundation\ModelTrait;
 use DuckPhp\DuckPhpAllInOne;
 
-class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
+class ModelTraitTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SimpleModelTrait::class);
+        \LibCoverage\LibCoverage::Begin(ModelTrait::class);
        
-        $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SimpleModelTrait::class);
+        $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(ModelTrait::class);
 
         $setting = include $path_app . 'setting.php';
 
@@ -43,7 +43,7 @@ DuckPhpAllInOne::Db()->execute($sql);
 class Base
 {
     //use \DuckPhp\SingletonEx\SingletonExTrait;
-    use SimpleModelTrait;
+    use ModelTrait;
     //static $class_var;
 }
 class EmptyModel extends Base

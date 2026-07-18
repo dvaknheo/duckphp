@@ -1,8 +1,8 @@
 <?php
 namespace tests_Data_SqlDumper\Model;
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Foundation\ModelTrait;
 
 class Base
 {
-    use SimpleModelTrait;
+    use ModelTrait;
 }

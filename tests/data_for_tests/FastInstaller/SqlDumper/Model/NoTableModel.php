@@ -1,10 +1,10 @@
 <?php
 namespace tests_Data_SqlDumper\Model;
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Foundation\ModelTrait;
 
 class NoTableModel
 {
-    use SimpleModelTrait;
+    use ModelTrait;
     public function table()
     {
         return '';

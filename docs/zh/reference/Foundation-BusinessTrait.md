@@ -1,10 +1,10 @@
-# DuckPhp\Foundation\SimpleBusinessTrait
+# DuckPhp\Foundation\BusinessTrait
 
 简单业务类 Trait。
 
 ## 简介
 
-`DuckPhp\Foundation\SimpleBusinessTrait` 是业务层类的简化组合 Trait，同时引入了 `DuckPhp\Core\SingletonTrait` 和 `DuckPhp\Component\ZCallTrait`，使业务类具备单例能力和快速调用能力。
+`DuckPhp\Foundation\BusinessTrait` 是业务层类的简化组合 Trait，同时引入了 `DuckPhp\Core\SingletonTrait` 和 `DuckPhp\Component\ZCallTrait`，使业务类具备单例能力和快速调用能力。
 
 ## 选项
 
@@ -15,11 +15,11 @@
 ### 在业务类中使用
 
 ```php
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\BusinessTrait;
 
 class UserBusiness
 {
-    use SimpleBusinessTrait;
+    use BusinessTrait;
 
     public function getUser($id)
     {

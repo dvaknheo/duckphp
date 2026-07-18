@@ -5,11 +5,11 @@
  */
 namespace YourProjectName\Model;
 
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Foundation\ModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 
 abstract class Base
 {
     use ModelHelperTrait;
-    use SimpleModelTrait;
+    use ModelTrait;
 }

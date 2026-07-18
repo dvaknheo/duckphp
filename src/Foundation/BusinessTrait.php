@@ -8,7 +8,7 @@ namespace DuckPhp\Foundation;
 use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\SingletonTrait;
 
-trait SimpleBusinessTrait
+trait BusinessTrait
 {
     use SingletonTrait;
     use ZCallTrait;

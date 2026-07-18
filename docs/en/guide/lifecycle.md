@@ -89,7 +89,7 @@ class App extends DuckPhp
 
 ## Session Management
 
-Recommended approach: Use `SimpleSessionTrait` (lazy startup)
+Recommended approach: Use `SessionTrait` (lazy startup)
 
 Session belongs to the Controller layer. The division of labor with Action and MainController is as follows:
 
@@ -103,17 +103,17 @@ Business Layer                   ▼
   └── UserBusiness      Business logic (calls Model, does not touch Session)
 ```
 
-`SimpleSessionTrait` automatically calls `session_start()` on the first read/write, no need to manually start:
+`SessionTrait` automatically calls `session_start()` on the first read/write, no need to manually start:
 
 ```php
 <?php
 namespace MyProject\Controller;
 
-use DuckPhp\Foundation\SimpleSessionTrait;
+use DuckPhp\Foundation\SessionTrait;
 
 class Session
 {
-    use SimpleSessionTrait;  // Built-in lazy session_start() + get/set/unset
+    use SessionTrait;  // Built-in lazy session_start() + get/set/unset
     
     const KEY_USER_ID = 'user_id';
     
@@ -202,7 +202,7 @@ class MainController
 }
 ```
 
-`SimpleSessionTrait` provides three protected methods:
+`SessionTrait` provides three protected methods:
 
 | Method | Description |
 |---|---|
@@ -214,7 +214,7 @@ This way the Business layer remains purely stateless and can be reused in any en
 
 ### Low-Level Session Read/Write
 
-If you need to directly read/write Session in the Controller layer (without using `SimpleSessionTrait`):
+If you need to directly read/write Session in the Controller layer (without using `SessionTrait`):
 
 ```php
 use DuckPhp\Core\SuperGlobal;

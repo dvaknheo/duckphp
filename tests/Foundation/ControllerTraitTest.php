@@ -1,15 +1,15 @@
 <?php 
 namespace tests\DuckPhp\Foundation;
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 use DuckPhp\DuckPhpAllInOne;
 use DuckPhp\Core\Route;
 
-class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
+class ControllerTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         $LibCoverage = \LibCoverage\LibCoverage::G();
-        \LibCoverage\LibCoverage::Begin(SimpleControllerTrait::class);
+        \LibCoverage\LibCoverage::Begin(ControllerTrait::class);
         //ControllerFakeSingletonTraitObject::_(ControllerFakeSingletonTraitObject2::_());
         $options = [
             'namespace_controller' => __NAMESPACE__,
@@ -90,7 +90,7 @@ class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
 }
 class helloController
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
 
     public function __construct()
     {
@@ -107,7 +107,7 @@ class MyController extends helloController
 }
 class BaseX
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
 }
 class hello2Controller extends BaseX
 {
@@ -118,7 +118,7 @@ class My2Controller extends hello2Controller
 }
 class My3Controller
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
 
 }
 ////////////////

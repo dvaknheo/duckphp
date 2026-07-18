@@ -1,10 +1,10 @@
-# DuckPhp\Foundation\SimpleControllerTrait
+# DuckPhp\Foundation\ControllerTrait
 
 简单控制器类 Trait。
 
 ## 简介
 
-`DuckPhp\Foundation\SimpleControllerTrait` 是控制器层类的简化组合 Trait。它在引入 `ZCallTrait` 的基础上，重写了 `_()` 静态方法，根据 `Route` 配置的控制器类后缀和控制器基类判断当前类是否为控制器，并据此返回实例或阶段容器对象；同时提供了 `_Z()` 阶段代理和 `OverrideParent()` 父类覆盖方法。
+`DuckPhp\Foundation\ControllerTrait` 是控制器层类的简化组合 Trait。它在引入 `ZCallTrait` 的基础上，重写了 `_()` 静态方法，根据 `Route` 配置的控制器类后缀和控制器基类判断当前类是否为控制器，并据此返回实例或阶段容器对象；同时提供了 `_Z()` 阶段代理和 `OverrideParent()` 父类覆盖方法。
 
 ## 选项
 
@@ -15,11 +15,11 @@
 ### 在控制器类中使用
 
 ```php
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class HomeController
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
 
     public function index()
     {

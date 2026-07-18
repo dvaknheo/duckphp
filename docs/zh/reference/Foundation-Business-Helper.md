@@ -36,7 +36,7 @@ $adminService = Helper::AdminService();
 
 ### 在 Business 类中使用
 
-业务类通常使用 `DuckPhp\Foundation\SimpleBusinessTrait`，它组合了单例和快速调用能力，也可以直接通过 `Helper` 类访问这些能力。
+业务类通常使用 `DuckPhp\Foundation\BusinessTrait`，它组合了单例和快速调用能力，也可以直接通过 `Helper` 类访问这些能力。
 
 ## 注意事项
 

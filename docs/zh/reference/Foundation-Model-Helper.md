@@ -31,7 +31,7 @@ $countSql = Helper::SqlForCountSimply($sql);
 
 ### 在 Model 类中使用
 
-模型类通常使用 `DuckPhp\Foundation\SimpleModelTrait`，也可以直接通过 `Helper` 类访问这些数据库能力。
+模型类通常使用 `DuckPhp\Foundation\ModelTrait`，也可以直接通过 `Helper` 类访问这些数据库能力。
 
 ## 注意事项
 

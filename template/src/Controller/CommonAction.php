@@ -5,11 +5,11 @@
  */
 namespace ProjectNameTemplate\Controller;
 
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class CommonAction extends Base
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
     
     public function foo()
     {

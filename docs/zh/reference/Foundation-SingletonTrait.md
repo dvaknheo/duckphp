@@ -1,10 +1,10 @@
-# DuckPhp\Foundation\SimpleSingletonTrait
+# DuckPhp\Foundation\SingletonTrait
 
 简单单例 Trait。
 
 ## 简介
 
-`DuckPhp\Foundation\SimpleSingletonTrait` 是最简单的单例组合 Trait，仅引入了 `DuckPhp\Core\SingletonTrait`，使类具备单例访问能力。
+`DuckPhp\Foundation\SingletonTrait` 是最简单的单例组合 Trait，仅引入了 `DuckPhp\Core\SingletonTrait`，使类具备单例访问能力。
 
 ## 选项
 
@@ -15,11 +15,11 @@
 ### 在类中使用
 
 ```php
-use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class MyService
 {
-    use SimpleSingletonTrait;
+    use SingletonTrait;
 
     public function doSomething()
     {
