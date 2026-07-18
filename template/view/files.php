@@ -13,7 +13,7 @@
 <legend>全部单例</legend>
 <pre>
 <?php 
-\Duckphp\Core\PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
+\Duckphp\Core\PhaseContainer::Dump();
 ?>
 </pre>
 </fieldset>

@@ -97,7 +97,7 @@ class App extends ComponentBase
             $this->loadSetting();
             $this->addPublicClassesInRoot([
                 Logger::class => true,
-                SystemWrapper::class =>true,
+                SystemWrapper::class => true,
             ]);
             Logger::_()->init($this->options, $this);
         }
@@ -118,6 +118,7 @@ class App extends ComponentBase
 Maintaining. <!-- set options['error_maintain'] to override -->
 EOT;
                 echo $str;
+                return;
             }
             View::Show([], $error_maintain);
         }

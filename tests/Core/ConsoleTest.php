@@ -207,7 +207,7 @@ class Console_Command extends DuckPhp
     public $options=[
         'cli_command_class' => null,
     ];
-    public function onInited()
+    public function onInited(): void
     {
         parent::onInited();
     }

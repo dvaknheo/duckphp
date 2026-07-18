@@ -37,6 +37,12 @@ class DbManager extends ComponentBase
     protected $databases = [];
     protected $init_once = true;
     protected $db_before_get_object_handler = null;
+    public function init(array $options, ?object $context = null) //return $this
+    {
+        $ret = parent::init($options, $context);
+        $this->options['database_driver'] = $this->getDatabaseDriver();
+        return $ret;
+    }
     //@override
     protected function initOptions(array $options): void
     {
@@ -75,6 +81,9 @@ class DbManager extends ComponentBase
         }
         $configs = $this->database_config_list ? $this->database_config_list : [];
         foreach ($configs as $v) {
+            if (empty($v['dsn'])) {
+                continue;
+            }
             [$driver, $_] = explode(':', $v['dsn']);
             $this->options['database_driver'] = $driver;
             return $driver;

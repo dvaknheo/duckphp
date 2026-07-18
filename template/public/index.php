@@ -21,7 +21,11 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
     \DuckPhp\Core\AutoLoader::addPsr4("ProjectNameTemplate\\", 'src');
 }
 $options = [
-    //'is_debug' => true,
+    'is_debug' => true,
     // more options ...
 ];
+try{
 \ProjectNameTemplate\System\App::RunQuickly($options);
+}catch(\Throwable $ex){
+var_dump($ex);
+}

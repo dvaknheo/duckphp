@@ -48,6 +48,7 @@ class DuckPhpAllInOne extends DuckPhp
             'cli_enable' => true,
             'cli_command_with_app' => true,
             'path_info_compact_enable' => true,
+            'duckphp_all_in_one_wrap_header_foot' => true,
         ];
         
         // embed view to this class
@@ -62,9 +63,11 @@ class DuckPhpAllInOne extends DuckPhp
         $this->embedMe();
         parent::__construct();
     }
-    public function onInited()
+    public function onInited(): void
     {
-        static::setViewHeadFoot('head', 'foot');
+        if ($this->options['duckphp_all_in_one_wrap_header_foot']) {
+            static::setViewHeadFoot('head', 'foot');
+        }
     }
     /////////////// controller ///////////////
     public function action_index()

@@ -25,7 +25,7 @@ class GlobalEventTest extends \PHPUnit\Framework\TestCase
 }
 class GemApp extends DuckPhp
 {
-    public function onInited()
+    public function onInited(): void
     {
         GlobalEvent::_()->fire('GEMvent1',"abc");
         GlobalEvent::_()->fire('NoExists',"abc");
@@ -48,7 +48,7 @@ class GemAppChild extends DuckPhp
         GlobalEvent::_()->remove('GEMvent2');
         GlobalEvent::_()->all();
     }
-    public function onInited()
+    public function onInited(): void
     {
         GlobalEvent::_()->on('GEMvent1',App::Phase(),[static::class,'Callback']);
         GlobalEvent::_()->on('GEMvent1',App::Phase(),[static::class,'Callback']);

@@ -35,8 +35,8 @@ trait KernelTrait
         'cli_enable' => true,
         'skip_404' => false,
         'skip_exception_check' => false,
-        'override_from'=>true,
-        'app_children_allow_mix_mode' =>true,
+        'override_from' => true,
+        'app_children_allow_mix_mode' => true,
         
         'on_initing' => null,
         'on_inited' => null,
@@ -208,7 +208,7 @@ trait KernelTrait
             }
             $container->setCurrentContainer($this->phase_name);
         }
-        $this->this_class = $this->options['override_from']??$this->this_class;
+        $this->this_class = $this->options['override_from'] ?? $this->this_class;
         (self::class)::_($this);
         (static::class)::_($this);
         //($this->this_class)::_($this);
@@ -241,7 +241,6 @@ trait KernelTrait
     //init
     public function init(array $options, object $context = null)
     {
-
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
@@ -258,7 +257,7 @@ trait KernelTrait
         
         $this->initException($this->options);
         
-        if($this->is_root){
+        if ($this->is_root) {
             //$this->initRoot();
         }
         $this->onPrepare();
@@ -310,12 +309,12 @@ trait KernelTrait
         if ($this->options['app_children_allow_mix_mode']) {
             $new_apps = [];
             foreach ($apps as $class => $options) {
-                if(isset($options['class'])){
+                if (isset($options['class'])) {
                     $options['controller_url_prefix'] = $class;
                     $class = $options['class'];
                     unset($options['class']);
                 }
-                $new_apps[$class]=$options;
+                $new_apps[$class] = $options;
             }
             $apps = $new_apps;
         }
@@ -381,7 +380,6 @@ trait KernelTrait
     }
     protected function prepareServe()
     {
-
         $this->phaseToCurrent();
         /*
         if('stopde')
@@ -397,7 +395,6 @@ trait KernelTrait
             }
         $class::_(new $class())->init($this->options, $this);
         */
-        
     }
 
     protected function runException(\Throwable $ex): void

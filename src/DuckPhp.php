@@ -126,7 +126,7 @@ class DuckPhp extends App
         if ($this->is_root) {
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
-            $this->options['database_driver'] = DbManager::_()->getDatabaseDriver();
+            $this->options['database_driver'] = DbManager::_()->options['database_driver'];
         } else {
             if ($this->isLocalDatabase()) {
                 $this->createLocalObject(DbManager::class);
@@ -159,7 +159,7 @@ class DuckPhp extends App
         if ($flag) {
             return true;
         }
-        $driver = DbManager::_()->getDatabaseDriver();
+        $driver = DbManager::_()->getDatabaseDriver(); // options['database_driver']; :(
         
         if ($this->options['database_driver'] && ($driver != $this->options['database_driver'])) {
             return true;
