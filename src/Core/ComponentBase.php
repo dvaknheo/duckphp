@@ -26,7 +26,7 @@ class ComponentBase // implements ComponentInterface
     }
     public function init(array $options, ?object $context = null) //return $this
     {
-        if ($this->init_once && $this->is_inited && !($options['force_new_init'] ?? false)) {
+        if ($this->init_once && $this->is_inited && !($options['__force__'] ?? false)) {
             return $this;
         }
         
@@ -41,7 +41,7 @@ class ComponentBase // implements ComponentInterface
     }
     public function reInit(array $options, ?object $context = null)
     {
-        $options['force_new_init'] = true;
+        $options['__force__'] = true;
         return $this->init($options, $context);
     }
     public function isInited(): bool
