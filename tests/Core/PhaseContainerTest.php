@@ -19,13 +19,13 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::_()->removePublicClasses([]);
         PhaseContainer::_()->setCurrentContainer('CURRENT');
         PhaseContainer::_()->getCurrentContainer();
-        
+                PhaseContainer::RestAllContainerForTesting();
         MyObject::_()->foo();
         MyObject::_(new MyObject2())->foo();
         
         PhaseContainer::_()->setCurrentContainer('NEW');
 
-        PhaseContainer::_()->addPublicClasses([MyObject::class]);
+        PhaseContainer::_()->addPublicClasses([MyObject::class =>true]);
         MyObject::_()->foo();
         MyObject::_(new MyObject2())->foo();
         MyObject2::_();
