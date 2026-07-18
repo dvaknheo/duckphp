@@ -190,6 +190,8 @@ echo "-------------------------------------\n";
         App::Root()->getThisClass();
         
         ////////////////////////
+        $this->doCoverageGapTest();
+        ////////////////////////
         $this->doMoreTest();
         ////////////////////////
         MyKernelTrait::_(new MyKernelTrait())->init([]);
@@ -199,6 +201,93 @@ echo "-------------------------------------\n";
     return;
 
     }
+    // ======== 新增：覆盖缺口测试 ========
+    protected function doCoverageGapTest()
+    {
+        PhaseContainer::RestAllContainerForTesting();
+        
+        // 1. getThisCommandPrefix — root app returns ""
+        $prefix = KernelTestApp::_()->getThisCommandPrefix();
+        $this->assertSame('', $prefix);
+        
+        // 2. regConsoleCommand — register a command class
+        KernelTestApp::_()->regConsoleCommand(KernelTestCoverageCmd::class, 'command_');
+        // no assertion: regCommandClassSingle has no return value
+        
+        // 3. toChildPhase — false path (non-existent child)
+        $result = KernelTestApp::_()->toChildPhase('NonExistent\\Class');
+        $this->assertFalse($result);
+        
+        // 4. initContainer 非 root 分支: name='@' → 使用类短名
+        PhaseContainer::RestAllContainerForTesting();
+        $options4 = [
+            'path' => \LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class),
+            'skip_exception_check' => true,
+            'name' => '@',  // 应被转为类短名
+        ];
+        // 作为 root 初始化，然后验证 phase_name 为 ""
+        $app4 = KernelTestApp::_(new KernelTestApp())->init($options4);
+        $this->assertEquals('', $app4->getThisPhaseName());
+        
+        // 5. getDefaultProjectNameSpace — 不传 namespace 时自动从类名推导
+        PhaseContainer::RestAllContainerForTesting();
+        $options5 = [
+            'path' => \LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class),
+            'skip_exception_check' => true,
+            // 故意不传 namespace
+        ];
+        $app5 = KernelTestDefaultNsApp::_(new KernelTestDefaultNsApp())->init($options5);
+        // 类 tests\DuckPhp\Core\KernelTestDefaultNsApp → 上两层 = tests\DuckPhp
+        $this->assertEquals('tests\\DuckPhp', $app5->options['namespace']);
+        
+        // 6. 钩子方法验证：onBeforeCreatePhases / onAfterCreatePhases / onBeforeChildrenInit / onBeforeRun / onAfterRun
+        PhaseContainer::RestAllContainerForTesting();
+        ob_start();
+        $options6 = [
+            'path' => \LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class),
+            'skip_exception_check' => true,
+            'namespace' => __NAMESPACE__,
+            'cli_enable' => false,
+        ];
+        $app6 = KernelTestHookApp::_(new KernelTestHookApp())->init($options6);
+        Route::_()->bind('/');
+        $app6->serve();
+        $output6 = ob_get_clean();
+        // onBeforeCreatePhases + onAfterCreatePhases 在 init 中触发
+        $this->assertStringContainsString('beforeCreatePhases', $output6);
+        $this->assertStringContainsString('afterCreatePhases', $output6);
+        $this->assertStringContainsString('beforeChildrenInit', $output6);
+        $this->assertStringContainsString('beforeRun', $output6);
+        $this->assertStringContainsString('afterRun', $output6);
+        
+        // 7. Phase 名冲突异常
+        PhaseContainer::RestAllContainerForTesting();
+        $caught = false;
+        try {
+            $parentApp = KernelTestApp::_(new KernelTestApp())->init([
+                'path' => \LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class),
+                'skip_exception_check' => true,
+                'namespace' => __NAMESPACE__,
+                'app' => [
+                    KernelTestPhaseClone::class => [
+                        'namespace' => __NAMESPACE__,
+                        'name' => 'same',  // 两个子应用同名 → 冲突
+                    ],
+                ],
+            ]);
+            // 再 init 一个同名子 app
+            KernelTestPhaseClone::_(new KernelTestPhaseClone())->init([
+                'namespace' => __NAMESPACE__,
+                'name' => 'same',
+            ], $parentApp);
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            $caught = true;
+            $this->assertStringContainsString('Phase Short name', $ex->getMessage());
+        }
+        $this->assertTrue($caught, 'Phase name collision should throw DuckPhpSystemException');
+    }
+    // ======== 新增结束 ========
+
     protected function doMoreTest()
     {
 PhaseContainer::RestAllContainerForTesting();
@@ -378,6 +467,47 @@ class ExceptionReporter
         var_dump("exception!");
     }
 }
+// ======== 新增：覆盖测试辅助类 ========
+class KernelTestDefaultNsApp extends App
+{
+    // 用于测试自动推导 namespace
+}
+class KernelTestHookApp extends App
+{
+    protected function onBeforeCreatePhases(): void
+    {
+        echo 'beforeCreatePhases' . "\n";
+    }
+    protected function onAfterCreatePhases(): void
+    {
+        echo 'afterCreatePhases' . "\n";
+    }
+    protected function onBeforeChildrenInit(): void
+    {
+        echo 'beforeChildrenInit' . "\n";
+    }
+    protected function onBeforeRun(): void
+    {
+        echo 'beforeRun' . "\n";
+    }
+    protected function onAfterRun(): void
+    {
+        echo 'afterRun' . "\n";
+    }
+}
+class KernelTestPhaseClone extends App
+{
+    // 用于测试 phase 名冲突
+}
+class KernelTestCoverageCmd
+{
+    use SingletonExTrait;
+    public function command_test()
+    {
+        echo 'coverage_cmd_ok';
+    }
+}
+// ======== 新增结束 ========
 }
 
 
