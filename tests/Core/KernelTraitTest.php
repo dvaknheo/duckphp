@@ -4,6 +4,8 @@ namespace tests\DuckPhp\Core{
 use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\App as OldApp;
 use DuckPhp\Core\KernelTrait;
+use DuckPhp\Core\ComponentBase;
+
 use DuckPhp\Core\Runtime;
 use DuckPhp\Core\Logger;
 use DuckPhp\DuckPhp;
@@ -49,6 +51,9 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             
             'controller_class_postfix' => 'Controller',
             'controller_method_prefix' => 'action_',
+            'on_initing' => function(){},
+            'on_inited' => function(){},
+            'on_serve' => function(){},
         ];
         $options['ext']=[
             //'noclass'=>true,
@@ -60,7 +65,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         $options['cli_enable'] = false;
         App::RunQuickly($options,function(){});
         App::_()->options['cli_enable'] =false;
-        
+        App::_()->getProjectPath();
         //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
         Route::_()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
@@ -70,9 +75,9 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         };
         
         App::_()->options['controller_class_postfix']='';
-            App::_()->options['controller_method_prefix']='';
+        App::_()->options['controller_method_prefix']='';
         App::_()->run();
-echo "-------------------------------------\n";
+        echo "-------------------------------------\n";
             
         Route::_()->bind('/exception');
         App::_()->run();
@@ -194,6 +199,7 @@ echo "-------------------------------------\n";
         ////////////////////////
         $this->doMoreTest();
         ////////////////////////
+        PhaseContainer::RestAllContainerForTesting();
         MyKernelTrait::_(new MyKernelTrait())->init([]);
         
         \LibCoverage\LibCoverage::G($LibCoverage);
@@ -285,6 +291,27 @@ echo "-------------------------------------\n";
             $this->assertStringContainsString('Phase Short name', $ex->getMessage());
         }
         $this->assertTrue($caught, 'Phase name collision should throw DuckPhpSystemException');
+        
+        // 8. getProjectPath — 访问根 App 的 path 属性
+        $project_path = KernelTestApp::Root()->getProjectPath();
+        $this->assertNotEmpty($project_path);
+        
+        // 9. initChildren mix mode: 带 class 键的子应用配置（覆盖第 314-316 行）
+        PhaseContainer::RestAllContainerForTesting();
+        $options9 = [
+            'path' => \LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class),
+            'skip_exception_check' => true,
+            'namespace' => __NAMESPACE__,
+            'app_children_allow_mix_mode' => true,
+            'app' => [
+                'my-prefix' => [
+                    'class' => KernelTestMixModeChild::class,
+                    'namespace' => __NAMESPACE__,
+                ],
+            ],
+        ];
+        $app9 = KernelTestApp::_(new KernelTestApp())->init($options9);
+        $this->assertNotEmpty($app9->options[KernelTestMixModeChild::class]['__phase__'] ?? '');
     }
     // ======== 新增结束 ========
 
@@ -378,10 +405,21 @@ PhaseContainer::RestAllContainerForTesting();
     }
     
 }
-class MyKernelTrait extends App
+
+class MyKernelTrait extends ComponentBase
 {
     use SingletonExTrait;
     use KernelTrait;
+    protected $common_options=[];
+    protected $core_options=[];
+    public function __construct()
+    {
+        $this->options = array_replace_recursive($this->kernel_options, $this->core_options, $this->common_options, $this->options);
+        unset($this->kernel_options); // not use again;
+        unset($this->core_options); // not use again;
+        unset($this->common_options); // not use again;
+        $this->this_class = static::class;
+    }
 }
 
 class KernelTestApp extends App
@@ -506,6 +544,10 @@ class KernelTestCoverageCmd
     {
         echo 'coverage_cmd_ok';
     }
+}
+class KernelTestMixModeChild extends App
+{
+    // 用于测试 initChildren class-key mix mode（第 314-316 行）
 }
 // ======== 新增结束 ========
 }

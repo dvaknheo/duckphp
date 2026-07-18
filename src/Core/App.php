@@ -112,6 +112,7 @@ class App extends ComponentBase
             $error_maintain = $this->options['error_maintain'] ?? null;
             if (!is_string($error_maintain) && is_callable($error_maintain)) {
                 ($error_maintain)();
+                return;
             }
             if (!$error_maintain) {
                 $str = <<<EOT

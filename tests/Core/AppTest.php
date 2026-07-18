@@ -266,6 +266,7 @@ PhaseContainer::RestAllContainerForTesting();
         }catch(\Exception $ex){}
         
         $this->doLoadSettingCoverage();
+        $this->doAppCoverageGapTest();
         
         \LibCoverage\LibCoverage::End();
         return;
@@ -481,6 +482,82 @@ PhaseContainer::RestAllContainerForTesting();
     }
     public static function Foo()
     {
+    }
+    // ======== 新增：覆盖缺口测试 ========
+    protected function doAppCoverageGapTest()
+    {
+        $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        
+        // 1. prepareServe maintain: error_maintain=null → 默认 Maintaining 消息
+        PhaseContainer::RestAllContainerForTesting();
+        ob_start();
+        $a1 = new MyApp();
+        MyApp::_($a1)->init([
+            'path' => $path_app,
+            'is_maintain' => true,
+            'cli_enable' => false,
+            'namespace' => __NAMESPACE__,
+            'is_debug' => false,
+        ]);
+        $a1->serve();
+        $out1 = ob_get_clean();
+        $this->assertStringContainsString('Maintaining', $out1);
+        
+        // 2. prepareServe maintain: error_maintain=callable
+        PhaseContainer::RestAllContainerForTesting();
+        ob_start();
+        $a2 = new MyApp();
+        MyApp::_($a2)->init([
+            'path' => $path_app,
+            'is_maintain' => true,
+            'error_maintain' => function () { echo 'cb_maintain'; },
+            'cli_enable' => false,
+            'namespace' => __NAMESPACE__,
+        ]);
+        $a2->serve();
+        $out2 = ob_get_clean();
+        $this->assertStringContainsString('cb_maintain', $out2);
+        
+        // 3. _OnDefaultException 在 is_inited=false (line 236)
+        $a3 = new MyApp();
+        ob_start();
+        $a3->_OnDefaultException(new \Exception('before_init'));
+        $out3 = ob_get_clean();
+        $this->assertStringContainsString('error trigger before inited', $out3);
+        
+        // 4. _OnDevErrorHandler 在 error_debug=null 输出默认 HTML (lines 288-301)
+        PhaseContainer::RestAllContainerForTesting();
+        ob_start();
+        $a4 = new MyApp();
+        MyApp::_($a4)->init([
+            'path' => $path_app,
+            'is_debug' => true,
+            'cli_enable' => false,
+            'namespace' => __NAMESPACE__,
+            // error_debug 未设置 → null
+        ]);
+        $a4->_OnDevErrorHandler(E_USER_NOTICE, 'test_err', '/fake/file', 42);
+        $out4 = ob_get_clean();
+        $this->assertStringContainsString('DuckPhp_DEBUG', $out4);
+        $this->assertStringContainsString('test_err', $out4);
+        $this->assertStringContainsString('/fake/file', $out4);
+        
+        // 5. prepareServe maintain: error_maintain='view' → View::Show (line 124)
+        PhaseContainer::RestAllContainerForTesting();
+        ob_start();
+        $a5 = new MyApp();
+        MyApp::_($a5)->init([
+            'path' => $path_app,
+            'path_view' => $path_app . 'view/',
+            'is_maintain' => true,
+            'error_maintain' => 'view',
+            'cli_enable' => false,
+            'namespace' => __NAMESPACE__,
+            'view_skip_notice_error' => true,
+        ]);
+        $a5->serve();
+        $out5 = ob_get_clean();
+        $this->assertStringContainsString('Hello DuckPhp', $out5);
     }
 }
 class MyApp extends App
