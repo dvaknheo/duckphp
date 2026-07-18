@@ -7,7 +7,7 @@ namespace DuckPhp\Foundation\Business;
 
 use DuckPhp\Foundation\BusinessTrait;
 
-class Base
+abstract class Base
 {
     use BusinessTrait;
 }

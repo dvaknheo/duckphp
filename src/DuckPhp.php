@@ -15,7 +15,6 @@ use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\Lang;
 use DuckPhp\Component\RedisManager;
-use DuckPhp\Component\RouteHookCheckStatus;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Component\RouteHookRewrite;
