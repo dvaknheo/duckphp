@@ -18,9 +18,6 @@ class Configer extends ComponentBase
     public function _Config($file_basename = 'config', $key = null, $default = null)
     {
         //TODO $filename_basename = '';
-        if (!$this->is_inited) {
-            $this->init($this->context()->options, $this->context());
-        }
         $config = $this->_LoadConfig($file_basename);
         if (!isset($key)) {
             return $config ?? $default;

@@ -44,7 +44,6 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'cli_enable' => true,
             
             'controller_class_postfix' => 'Controller',
-            'controller_method_prefix' => 'action_',
             'on_initing' => function(){},
             'on_inited' => function(){},
             'on_serve' => function(){},
@@ -502,19 +501,19 @@ class KernelTestMixModeChild extends App
 namespace tests\DuckPhp\Core\Controller{
 class MainController
 {
-    public function action_index()
+    public function index()
     {
         var_dump("OK");
     }
-    public function action_date()
+    public function date()
     {
         var_dump(DATE(DATE_ATOM));
     }
-    public function action_exception()
+    public function exception()
     {
         throw new \Exception("HAHA");
     }
-    public function action_exception2()
+    public function exception2()
     {
         \DuckPhp\Core\App::Phase("MyPhase");
         throw new \Exception("HAHA");

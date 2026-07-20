@@ -16,7 +16,7 @@ if (is_file($autoload_file)) {
 ////////////////////////////////////////
 class MainController
 {
-    public function action_index()
+    public function index()
     {
         echo "hello world";
     }

@@ -6,7 +6,7 @@
 namespace DuckPhp\GlobalUser;
 
 use DuckPhp\Component\PhaseProxy;
-use DuckPhp\Component\ZCallTrait;
+use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 

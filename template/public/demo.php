@@ -41,7 +41,7 @@ namespace MySpace\System
                 // 替换的 View 类。
         ];
         // @override 重写
-        protected function onInit()
+        protected function onInited(): void
         {
             //初始化之后在这里运行。
             //var_dump($this->options);//查看总共多少选项
@@ -68,7 +68,7 @@ namespace MySpace\Controller
             // 在构造函数设置页眉页脚。
             Helper::setViewHeadFoot('header', 'footer');
         }
-        public function action_index()
+        public function index()
         {
             //获取数据
             $output = "Hello, now time is " . __h(MyBusiness::_()->getTimeDesc()); // html编码
@@ -78,7 +78,7 @@ namespace MySpace\Controller
     }
     class aboutController
     {
-        public function action_me()
+        public function me()
         {
             $url_main = __url(''); //默认URL
             Helper::setViewHeadFoot('header', 'footer');

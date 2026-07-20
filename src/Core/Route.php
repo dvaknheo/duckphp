@@ -29,7 +29,7 @@ class Route extends ComponentBase
         'controller_class_adjust' => '',
         'controller_class_base' => '',
         'controller_class_postfix' => 'Controller',
-        'controller_method_prefix' => 'action_',
+        'controller_method_prefix' => '',
         'controller_prefix_post' => 'do_', //TODO remove it
         
         'controller_class_map' => [],

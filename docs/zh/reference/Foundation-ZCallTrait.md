@@ -1,4 +1,4 @@
-# DuckPhp\Component\ZCallTrait
+# DuckPhp\Foundation\ZCallTrait
 
 跨相位调用 trait。
 
@@ -17,7 +17,7 @@
 ```php
 namespace OtherApp\Service;
 
-use DuckPhp\Component\ZCallTrait;
+use DuckPhp\Foundation\ZCallTrait;
 
 class UserService
 {
@@ -57,7 +57,7 @@ $user = UserService::_Z(OtherApp::class)->getUser(1);
 // src/Admin/Service/AccountService.php
 namespace Admin\Service;
 
-use DuckPhp\Component\ZCallTrait;
+use DuckPhp\Foundation\ZCallTrait;
 
 class AccountService
 {

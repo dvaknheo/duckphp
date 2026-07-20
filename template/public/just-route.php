@@ -19,13 +19,13 @@ use DuckPhp\Core\Route;
 
 class MainController
 {
-    public function action_index()
+    public function index()
     {
         echo("这演示只用路由类，其他类都不要的情况<br>\n");
         echo ("Just route test done<br>\n");
         echo (DATE(DATE_ATOM));
     }
-    public function action_i()
+    public function i()
     {
         phpinfo();
     }
