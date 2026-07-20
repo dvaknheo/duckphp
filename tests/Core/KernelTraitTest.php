@@ -192,7 +192,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         
         KernelTestApp::_(new KernelTestApp())->override_class = KernelTestApp::class;
         KernelTestApp::_()->createLocalObject2(Logger::class);
-        App::Root()->getThisClass();
+        App::Root()->getThisClassName();
         
         ////////////////////////
         $this->doCoverageGapTest();
@@ -262,7 +262,6 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         // onBeforeCreatePhases + onAfterCreatePhases 在 init 中触发
         $this->assertStringContainsString('beforeCreatePhases', $output6);
         $this->assertStringContainsString('afterCreatePhases', $output6);
-        $this->assertStringContainsString('beforeChildrenInit', $output6);
         $this->assertStringContainsString('beforeRun', $output6);
         $this->assertStringContainsString('afterRun', $output6);
         

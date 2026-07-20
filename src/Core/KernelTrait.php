@@ -65,8 +65,15 @@ trait KernelTrait
         //*/
     ];
     protected static $ROOT_PHASE = '';
-    protected static $ROOT_PHASE_OF_SHARED = '@public@';
-    protected static  $EXT_SKIP_INIT = 2;
+    protected static $ROOT_PHASE_OF_SHARED = '#@public@';
+    
+    private static $EXT_SKIP_INIT = -1;
+    private static $EXT_DISABLE = 0;
+    private static $EXT_DEFAULT = 1;
+    private static $EXT_FOLLOW_APP = 2;
+    private static $EXT_RENEW = 3;
+    
+    
     protected $is_root = true;
     protected $is_cli = false;
     protected $phase_name = '';
@@ -100,8 +107,15 @@ trait KernelTrait
         
         return $flag ? $APP::_() : null;
     }
+    public static function SwitchRootPhase($phase)
+    {
+        self::$ROOT_PHASE = $phase;
+        self::$ROOT_PHASE_OF_SHARED = $phase.'public';
+    }
     protected function initOptions(array $options): void
     {
+        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
+        $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
         $this->options = array_replace_recursive($this->options, $options);
     }
     protected function getDefaultProjectNameSpace(?string $class): string
@@ -187,7 +201,7 @@ trait KernelTrait
             $this->onAfterCreatePhases();
         } else {
             $name = $this->options['name'] ? $this->options['name'] : $this->options['namespace'];
-            $name = ($name === '@')? basename(str_replace('\\', '/', $this->getThisClass())) : $name;
+            $name = ($name === '@')? basename(str_replace('\\', '/', $this->getThisClassName())) : $name;
             $name = ($name === '' && $this->options['namespace'] === '') ? static::class : $name;
             
             // @phpstan-ignore-next-line
@@ -240,80 +254,83 @@ trait KernelTrait
             $options['override_from'] = $class;
             return $class::_(new $class)->init($options, $context);
         }
-        $this->onPrepare();
-        
-        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
-        $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
-        
+
         $this->initOptions($options);
-        
+        $this->onPrepare();
+
         $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
         $this->is_cli = PHP_SAPI === 'cli' || $this->options['cli_enable'];
         
         $this->initContainer($context);
         $this->initException($this->options);
-        
-        ////[[[[
-        if ($this->is_root) {
-            $componets = [
-                Console::class => 1
-            ]
-            $this->initCompnentOfRoot($componets);
-        }
-        
-        $componets = [
-            Route::class = > 1,
-        ];
-        $this->initCompnentOfInner($componets);
-        $componets = $this->options['ext']
-        $this->initCompnentOfExt($componets);
-        ////]]]]
+        $this->initComponents();
+
         $this->onIniting();
-        $this->onBeforeChildrenInit();
         $this->initChildren($this->options['app']);
-        $this->is_inited = true; // from ComponentTrait
+
+        $this->is_inited = true; // $this->is_inited come from ComponentTrait
         $this->onInited();
         return $this;
     }
-    protected function initComponentOfRoot($classes): void
+    protected function initComponents()
+    {
+        if ($this->is_root) {
+            $componets = [
+                Console::class => self::$EXT_FOLLOW_APP,
+            ];
+            $this->initComponentsOfRoot($componets, self::$EXT_FOLLOW_APP);
+        }
+        
+        $componets = [
+            Route::class => self::$EXT_FOLLOW_APP,
+        ];
+        $this->initComponentsOfInner($componets, self::$EXT_FOLLOW_APP);
+
+        $componets = $this->options['ext'];
+        $this->initComponentsOfExt($componets, self::$EXT_FOLLOW_APP);
+    }
+    protected function initComponentsOfRoot($classes, $default): void
     {
         PhaseContainer::_()->addPublicClasses($classes);
-        
-        $this->initComponentsByClasseOptions($classes);
-        
+
+        $this->initComponentsByClasseOptions($classes, $default);
+
         Console::_()->regCommmandPrefixPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
         Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
     }
     
-    protected function initComponentOfiNNER($classes): void
+    protected function initComponentsOfInner($classes, $default): void
     {
-        $this->initComponentsByClasseOptions($classes);
+        $this->initComponentsByClasseOptions($classes, $default);
     }
-    protected function initComponentOfExt($classes): void
+    protected function initComponentsOfExt($classes, $default): void
     {
-        $this->initComponentsByClasseOptions($classes);
+        $this->initComponentsByClasseOptions($classes, $default);
     }
-    protected function initComponentOfDynmic($classes): void
+    protected function initComponentsOfDynmic($classes, $default): void
     {
-        $this->initComponentsByClasseOptions($classes);
+        $this->initComponentsByClasseOptions($classes, $default);
     }
-    protected function initComponentsByClasseOptions(array $exts): void
+    protected function initComponentsByClasseOptions(array $exts, $default): void
     {
         foreach ($exts as $class => $options) {
-            $this->initExtensionsByOptions($class,$options);
+            $this->initExtensionsByOptions($class, $options, $default);
         }
     }
     //
-    protected function initExtensionsByOptions(string $class, $options)
+    protected function initExtensionsByOptions(string $class, $options, $default)
     {
         if (!class_exists($class)) {
             throw new \Exception("ext [$class] not exists");
         }
     
-        if ($options === false || $options ===null) {
+        if ($options === false || $options === null || $options === self::$EXT_DISABLE) {
             return;
         }
-        if ($options === true) {
+        if ($options === true || $options === self::$EXT_DEFAULT) {
+            $options = $default;
+        }
+        if ($options === self::$EXT_FOLLOW_APP) {
             $options = $this->options;
             $class::_()->init($options, $this);
             return;
@@ -322,14 +339,19 @@ trait KernelTrait
             $class::_();
             return;
         }
+        if ($options === self::$EXT_RENEW) {
+            $options = $class::_()->options;
+            $class::_(new $class)->init($options, $this->options);
+            return;
+        }
         if (is_string($options)) {
-            if('@' ===substr($options,0,1)){
-                $method = substr($options,1);
+            if ('@' === substr($options, 0, 1)) {
+                $method = substr($options, 1);
                 $options = ($this->$method)();
-                $this->initExtensionsByOptions($class, $options,$force_new);
-            }else{
+                $this->initExtensionsByOptions($class, $options, $default);
+            } else {
                 $options = $this->options[$options] ?? false;
-                $this->initExtensionsByOptions($class, $options,$force_new);
+                $this->initExtensionsByOptions($class, $options, $default);
             }
         }
     }
@@ -408,20 +430,8 @@ trait KernelTrait
     protected function prepareServe()
     {
         $this->phaseToCurrent();
-        /*
-        if('stopde')
-        foreach($this->options['component_dynmic'] as $class = > $option){
-            if(!$options){
-                continue;
-            }
-            if(is_string($options)){
-                $flag = preg_match('/^(@?)(.*?)(\(\))$/') // @xx()
-                if(!$flag){
-                    continue;
-                }
-            }
-        $class::_(new $class())->init($this->options, $this);
-        */
+        $classes = [];
+        $this->initComponentsOfDynmic($classes, self::$EXT_RENEW);
     }
 
     protected function runException(\Throwable $ex): void
@@ -503,10 +513,7 @@ trait KernelTrait
     protected function onPrepare(): void
     {
     }
-    protected function onBeforeChildrenInit(): void
-    {
-    }
-    protected function onIniting()
+    protected function onIniting(): void
     {
         if ($this->options['on_initing']) {
             ($this->options['on_initing'])();

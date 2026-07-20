@@ -88,31 +88,32 @@ class DuckPhp extends App
         
         //*/
     ];
-    protected function initComponentOfRoot($components): void
+    protected function initComponentsOfRoot($components, $default): void
     {
         $my_components = [
             DbManager::class => true,
             RedisManager::class => true,
-            GlobalAdmin::class => true,
-            GlobalUser::class => true,
-            GlobalEvent::class => true,
+            GlobalAdmin::class => self::EXT_SKIP_INIT,
+            GlobalUser::class => self::EXT_SKIP_INIT,
+            GlobalEvent::class => self::EXT_SKIP_INIT,
         ];
-        $components = array_merge($classes, $my_components);
+        $components = array_merge($components, $my_components);
         
-        parent::initComponentOfRoot($components);
+        parent::initComponentsOfRoot($components, $default);
          
         DbManager::_()->init($this->options, $this);
         RedisManager::_()->init($this->options, $this);
         $this->options['database_driver'] = DbManager::_()->options['database_driver'];
     }
     ////////////////////
-    protected function initComponentOfInner($components): void
+    protected function initComponentsOfInner($components, $default): void
     {
         //$my_components = [
 
         //];
         //$components = array_merge($classes, $my_components);
-        parent::initComponentOfInner($components);
+        
+        parent::initComponentsOfInner($components, $default);
         
         if ($this->isLocalDatabase()) {
             $this->createLocalObject(DbManager::class);
@@ -128,7 +129,7 @@ class DuckPhp extends App
         }
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
-            GlobalUser::_($class::_Z()->_phase($this->getThisPhaseName()));
+            GlobalUser::_($class::_Z($this->getThisPhaseName()));
         }
     }
     protected function onPrepare(): void

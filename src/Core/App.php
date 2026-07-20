@@ -27,11 +27,14 @@ class App extends ComponentBase
     use KernelTrait {
         initComponents as Kernel_initComponents;
         prepareServe as Kernel_prepareServe;
-        initCompnentsOfRoot
+        initComponentsOfRoot as Kernel_initComponentsOfRoot;
+        initComponentsOfInner as Kernel_initComponentsOfInner;
+        initComponentsOfDynmic as  Kernel_initComponentsOfDynmic;
     }
-    const EXT_DISABLE =0;
-    const EXT_FOLLOW_APP = 1;
-    const EXT_SKIP_INIT = 2;
+    const EXT_SKIP_INIT = -1;
+    const EXT_DISABLE = 0;
+    const EXT_DEFAULT = 1;
+    const EXT_FOLLOW_APP = 2;
     const EXT_RENEW = 3;
     
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
@@ -94,23 +97,35 @@ class App extends ComponentBase
         }
         $this->Kernel_initComponents();
     }
-    protected function initCompnentOfRoot($components): void
+    protected function initCompnentOfRoot($components, $default): void
     {
+        $this->loadSetting();
+
         $my_components = [
             SystemWrapper::class => self::EXT_SKIP_INIT,
             Logger::class => self::EXT_SKIP_INIT,
         ];
-        $components = array_merge($classes, $my_components);
-        $this->Kernel_CompnentOfRoot($components);
+        $components = array_merge($components, $my_components);
+
+        $this->Kernel_initComponentsOfRoot($components, $default);
     }
-    protected function initCompnentOfDynmic($classes): void
+    protected function initCompnentOfInner($classes, $default): void
+    {
+        $components = [
+            View::class => EXT_FOLLOW_APP,
+        ];
+        $components = array_merge($components, $classes);
+        $this->Kernel_initComponentsOfInner($components, $default);
+    }
+
+    protected function initCompnentOfDynmic($classes, $default): void
     {
         $components = [
             SuperGlobal::class => EXT_FOLLOW_APP,
             View::class => EXT_FOLLOW_APP,
-        ]
-        $components = array_merge($components,$classes);
-        $this->Kernel_initCompnentOfDynmic($components);
+        ];
+        $components = array_merge($components, $classes);
+        $this->Kernel_initComponentsOfDynmic($components, $default);
     }
     protected function prepareServe()
     {
