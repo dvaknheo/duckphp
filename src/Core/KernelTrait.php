@@ -296,13 +296,16 @@ trait KernelTrait
 
         $this->initComponentsByClasseOptions($classes, $default);
 
-        Console::_()->regCommmandPrefixPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
-        Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
     }
     
     protected function initComponentsOfInner($classes, $default): void
     {
+
         $this->initComponentsByClasseOptions($classes, $default);
+
+        Console::_()->regCommmandPrefixPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
+        Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
+
     }
     protected function initComponentsOfExt($classes, $default): void
     {

@@ -78,7 +78,7 @@ EOT;
             $_SERVER['HTTP_METHOD'] = $post ? $post : 'GET';
         }
         $this->context()->options['cli_enable'] = false;
-        $this->context()->run();
+        $this->context()->serve();
     }
     /**
      * call a function. e.g. namespace/class@method arg1 --parameter arg2
