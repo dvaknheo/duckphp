@@ -6,7 +6,7 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\PhaseProxy;
-use DuckPhp\Component\ZCallTrait;
+use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 

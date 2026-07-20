@@ -5,7 +5,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Component\Configer;
-use DuckPhp\Component\ZCallTrait;
+use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\View;
 use DuckPhp\Core\PhaseContainer;
 
