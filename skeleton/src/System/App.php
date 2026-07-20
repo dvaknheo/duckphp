@@ -26,7 +26,7 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',                            // 404 view
         'error_500' => '_sys/error_500',                            // 500 view
 
-        'controller_method_prefix' => 'action_',                    // method prefix for controllers
+        //'controller_method_prefix' => '',                    // method prefix for controllers
         // 'controller_resource_prefix' => '',                         // used by `__res()` helper
 
         // 'cli_command_classes' => [ConsoleCommand::class],          // add to enable `php ./cli.php hello`
