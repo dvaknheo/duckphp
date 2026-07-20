@@ -345,6 +345,9 @@ trait KernelTrait
             $class::_(new $class)->init($options, $this->options);
             return;
         }
+        if (is_array($options)) {
+            $class::_()->init($options, $this);
+        }
         if (is_string($options)) {
             if ('@' === substr($options, 0, 1)) {
                 $method = substr($options, 1);
@@ -354,6 +357,7 @@ trait KernelTrait
                 $options = $this->options[$options] ?? false;
                 $this->initExtensionsByOptions($class, $options, $default);
             }
+            return;
         }
     }
     protected function initChildren(array $apps): void
