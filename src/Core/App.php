@@ -97,7 +97,7 @@ class App extends ComponentBase
         }
         $this->Kernel_initComponents();
     }
-    protected function initCompnentOfRoot($components, $default): void
+    protected function initComponentsOfRoot($components, $default): void
     {
         $this->loadSetting();
 
@@ -109,7 +109,7 @@ class App extends ComponentBase
 
         $this->Kernel_initComponentsOfRoot($components, $default);
     }
-    protected function initCompnentOfInner($classes, $default): void
+    protected function initComponentsOfInner($classes, $default): void
     {
         $components = [
             View::class => self::EXT_FOLLOW_APP,
