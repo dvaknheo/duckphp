@@ -39,7 +39,7 @@ class DbTestApp extends DuckPhp
         
         'local_database' => true,  // 单独数据库
         'database' => [
-            'dsn' => 'sqlite:dbtest.sqlite',
+            'dsn' => 'sqlite:runtime/dbtest.sqlite',
             'username' => null,
             'password' => null,
             'driver_options' => [],
