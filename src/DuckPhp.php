@@ -10,10 +10,12 @@ declare(strict_types=1);
 namespace DuckPhp;
 
 use DuckPhp\Component\Command;
+use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\Lang;
+use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookResource;
@@ -30,7 +32,6 @@ class DuckPhp extends App
     protected $common_options = [
         'data_file_enable' => false,
         'ext' => [
-            ExtOptionsLoader::class => 'data_file_enable',
             Lang::class => true,
             RouteHookRewrite::class => true,
             RouteHookRouteMap::class => true,
@@ -53,15 +54,10 @@ class DuckPhp extends App
         'local_database' => false,
         'local_redis' => false,
 
-        //'error_maintain' => null,
-        //'error_need_install' => null,
 
-        //'install_need_database' => true,
-        //'install_need_redis' => false,
-        //
-        
         //*
         // 'path_config' => 'config',
+        
         // 'database' => null,
         // 'database_driver' => '',
         // 'database_list' => null,
@@ -108,10 +104,12 @@ class DuckPhp extends App
     ////////////////////
     protected function initComponentsOfInner($components, $default): void
     {
-        //$my_components = [
-
-        //];
-        //$components = array_merge($classes, $my_components);
+        $my_components = [
+            ExtOptionsLoader::class => 'data_file_enable',
+            Configer::class => true,
+            
+        ];
+        $components = array_merge($components, $my_components);
         
         parent::initComponentsOfInner($components, $default);
         
@@ -125,11 +123,12 @@ class DuckPhp extends App
         }
         if ($this->options['class_admin']) {
             $class = $this->options['class_admin'];
-            GlobalAdmin::_($class::_Z($this->getThisPhaseName()));
+            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $class));
         }
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
-            GlobalUser::_($class::_Z($this->getThisPhaseName()));
+            GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $class));
+
         }
     }
     protected function onPrepare(): void
