@@ -259,7 +259,7 @@ trait KernelTrait
         
 
         $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
-        $this->is_cli = PHP_SAPI === 'cli' || $this->options['cli_enable'];
+        $this->is_cli = PHP_SAPI === 'cli' && $this->options['cli_enable'];
         $this->initContainer($context);
         $this->onPrepare();
         
