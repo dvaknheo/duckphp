@@ -112,20 +112,21 @@ class App extends ComponentBase
     protected function initCompnentOfInner($classes, $default): void
     {
         $components = [
-            View::class => EXT_FOLLOW_APP,
+            View::class => self::EXT_FOLLOW_APP,
         ];
         $components = array_merge($components, $classes);
         $this->Kernel_initComponentsOfInner($components, $default);
     }
 
-    protected function initCompnentOfDynmic($classes, $default): void
+    protected function initComponentsOfDynmic($classes, $default): void
     {
         $components = [
-            SuperGlobal::class => EXT_FOLLOW_APP,
-            View::class => EXT_FOLLOW_APP,
+            SuperGlobal::class => self::EXT_FOLLOW_APP,
+            View::class => self::EXT_FOLLOW_APP,
         ];
         $components = array_merge($components, $classes);
         $this->Kernel_initComponentsOfDynmic($components, $default);
+        
     }
     protected function prepareServe()
     {

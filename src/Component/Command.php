@@ -124,9 +124,9 @@ EOT;
 
         foreach ($classes as $namespace => $v) {
             $phase = Console::_()->options['console_command_phase'][$namespace];
-        
+
             $tip = ($namespace === '') ? '*Default commands*' : $namespace;
-            $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}\n"; //::{$v['class']}
+            $str .= "\e[32;7m{$tip}\033[0m \n"; //::{$v['class']}
 
             /////////////////
             $descs = $this->getCommandsByClasses($v, 'command_', $phase);
