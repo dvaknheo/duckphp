@@ -127,7 +127,6 @@ class App extends ComponentBase
         ];
         $components = array_merge($components, $classes);
         $this->Kernel_initComponentsOfDynmic($components, $default);
-        
     }
     protected function prepareServe()
     {

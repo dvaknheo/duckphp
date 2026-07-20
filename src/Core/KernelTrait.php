@@ -220,7 +220,7 @@ trait KernelTrait
         $this->this_class = $this->options['override_from'] ?? $this->this_class;
         (self::class)::_($this);
         (static::class)::_($this);
-        if($this->options['override_from']){
+        if ($this->options['override_from']) {
             ($this->options['override_from'])::_($this);
         }
         /////////////
@@ -292,17 +292,14 @@ trait KernelTrait
         PhaseContainer::_()->addPublicClasses($classes);
 
         $this->initComponentsByClasseOptions($classes, $default);
-
     }
     
     protected function initComponentsOfInner($classes, $default): void
     {
-
         $this->initComponentsByClasseOptions($classes, $default);
 
         Console::_()->regCommmandPrefixPhase($this->getThisCommandPrefix(), $this->getThisPhaseName());
         Console::_()->regCommandClasses($this->getThisCommandPrefix(), $this->options['cmd']);
-
     }
     protected function initComponentsOfExt($classes, $default): void
     {
@@ -351,6 +348,7 @@ trait KernelTrait
         if (is_string($options)) {
             if ('@' === substr($options, 0, 1)) {
                 $method = substr($options, 1);
+                // @phpstan-ignore-next-line
                 $options = call_user_func([$this,$method]);
                 $this->initExtensionsByOptions($class, $options, $default);
             } else {
