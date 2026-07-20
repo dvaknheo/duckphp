@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  fulltest:
+    build:
+      context: ../..
+      dockerfile: docker/test-php84/Dockerfile
+    working_dir: /DATA
+    volumes:
+      - ../../:/DATA
+      - ../../composer-test-php84.json:/DATA/composer.json
+      - vendor84:/DATA/vendor
+      - composer-cache84:/tmp/composer
+    entrypoint:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass 123456 --daemonize yes && exec "$$@"
+      - docker-entrypoint
+    environment:
+      - COMPOSER_HOME=/tmp/composer
+    extra_hosts:
+      - "redis:127.0.0.1"
+    command: >
+      sh -c "
+        ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist) &&
+        composer run-script --timeout=0 fulltest
+      "
+
+volumes:
+  composer-cache84:
+  vendor84:
