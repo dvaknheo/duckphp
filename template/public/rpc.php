@@ -57,6 +57,7 @@ EOT;
 $options = [
     'is_debug' => true,
     'namespace_controller' => '\\',
+    'controller_method_prefix' => 'action_',
     'ext' => [
         JsonRpcExt::class => [
             'jsonrpc_namespace' => 'JsonRpc',  //对应  \JsonRpc\ 这个命名空间
