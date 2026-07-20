@@ -32,20 +32,14 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path' => $path_app,
             'path_config' => $path_config,
-            'path_view' => $path_app.'view/',
             'namespace' => __NAMESPACE__,
-            'platform' => 'ForTests',
             'is_debug' => true,
-            'setting_file_enable' => false,
-            'use_flag_by_setting' => true,
             'error_exception' => NULL,
             'error_500' => NULL,
             'error_404' => NULL,
             'error_debug' => [static::class,'Blank'],
-            'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,
-            'skip_fix_path_info'=>true,
             'on_init' =>function (){ echo 'Inited!';},
             'cli_enable' => true,
             
@@ -56,9 +50,6 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'on_serve' => function(){},
         ];
         $options['ext']=[
-            //'noclass'=>true,
-            KernelTestObject::class=>false,
-            KernelTestObjectA::class=>true,
             KernelTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){});
@@ -66,6 +57,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         App::RunQuickly($options,function(){});
         App::_()->options['cli_enable'] =false;
         App::_()->getProjectPath();
+        
         //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
         Route::_()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
@@ -97,38 +89,8 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         Route::_()->bind('/exception2');
         App::_()->run();
         //////////////////////////////////////////////////
-        
-        $app=new App();
-
-        
-        //App::_()->clear();
-        ///////////////////////////
-        $options=[
-            // 'no this path' => $path_app,
-            'path_config' => $path_app,
-            'override_class'=>'\\'.App::class,
-            'path_view' => $path_app.'view/',
-            'is_debug' => true,
-            'use_short_functions' => true,
-            'setting_file_enable' => false,
-
-        ];
-        View::_(new View());
-        Configer::_(new Configer());
-        App::_(new App())->init($options);
-        $this->do404();
-        
-
-        ////
-        //Runtime::_()->toggleOutputed(false);
-        //App::OnOutputBuffering('abc');
-        //Runtime::_()->toggleOutputed(true);
-        //App::OnOutputBuffering('def');
-        ////
-        
-            App::_()->isInited();
-//////////////////
         App::_(new App());
+
         App::_()->init([
             'handle_all_dev_error' => false,
             'handle_all_exception' => false,
@@ -155,50 +117,31 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'namespace' => __NAMESPACE__,
             'controller_url_prefix'=>'/child/',
         ];
-        App::Root();
-        
-        App::_(new App())->init($options)->run();
-        
-        App::Root();
-        
+        PhaseContainer::RestAllContainerForTesting();
+        DuckPhp::_()->init($options);
+
         $_SERVER['PATH_INFO'] = '/child/date';
         //Route::_()->bind();
-        App::_()->run();
+        App::_()->serve();
         $phase=App::Phase();
+        App::_()->getThisChild(KernelTestApp2::class);
+        App::_()->getThisChild(KernelTestApp3::class);
         App::Phase($phase);
-        
+
         /////////////////////
-        $options['ext'][KernelTestApp2::class]=[
-            'path'=>null,
-            'namespace' => __NAMESPACE__,
-            'ext' =>[ KernelTestObjectError::class=>true,]
-        ];
-        try{
-        App::_(new App())->init($options)->run();
-        }catch(\Exception $ex){}
-        /////////////////////
-        $options =[
-            'path' => $path_app,
-            'use_flag_by_setting' => true,
-            'exception_reporter' =>  ExceptionReporter::class,
-            'exception_reporter_for_class' =>  \Exception::class,
-        ];
-        App::_(new App())->init($options);
-        
-        ////]]]]
-        
-        Route::_()->bind('/exception2');
-        App::_()->run();
         
         KernelTestApp::_(new KernelTestApp())->override_class = KernelTestApp::class;
         KernelTestApp::_()->createLocalObject2(Logger::class);
         App::Root()->getThisClassName();
         
+        
         ////////////////////////
         $this->doCoverageGapTest();
         ////////////////////////
         $this->doMoreTest();
-        ////////////////////////
+        
+        App::SwitchRootPhase('X');
+        
         PhaseContainer::RestAllContainerForTesting();
         MyKernelTrait::_(new MyKernelTrait())->init([]);
         
@@ -310,7 +253,6 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         $app9 = KernelTestApp::_(new KernelTestApp())->init($options9);
-        $this->assertNotEmpty($app9->options[KernelTestMixModeChild::class]['__phase__'] ?? '');
     }
     // ======== 新增结束 ========
 
@@ -423,11 +365,12 @@ class MyKernelTrait extends ComponentBase
 
 class KernelTestApp extends App
 {
-    public function __construcct()
-    {
-        parent::__construct();
-        return;
-    }
+    public $options =[
+        'ext'=>[
+            KernelTestObjectA::class =>App::EXT_RENEW,
+            KernelTestObjectB::class =>'@toEnable',
+        ],
+    ];
     protected function onInit()
     {
         return parent::onInit();
@@ -439,6 +382,10 @@ class KernelTestApp extends App
     public function command_hello()
     {
         var_dump("wwwwwwwwwwwwwworld");
+    }
+    public function toEnable()
+    {
+        return true;
     }
 }
 class KernelTestApp2 extends App

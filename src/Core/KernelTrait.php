@@ -35,7 +35,8 @@ trait KernelTrait
         'cli_enable' => true,
         'skip_404' => false,
         'skip_exception_check' => false,
-        'override_from' => true,
+        'override_from' => null,
+        'override_class' => null,
         'app_children_allow_mix_mode' => true,
         
         'on_initing' => null,
@@ -65,7 +66,7 @@ trait KernelTrait
         //*/
     ];
     protected static $ROOT_PHASE = '';
-    protected static $ROOT_PHASE_OF_SHARED = '#@public@';
+    protected static $ROOT_PHASE_OF_SHARED = '#public';
     
     private static $EXT_SKIP_INIT = -1;
     private static $EXT_DISABLE = 0;
@@ -77,8 +78,8 @@ trait KernelTrait
     protected $is_root = true;
     protected $is_cli = false;
     protected $phase_name = '';
-    // protected $this_class = '';
-    // protected $is_inited = false;
+    // protected $this_class = '';      // from self
+    // protected $is_inited = false;    // from ComponentBase::class
     
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
@@ -110,7 +111,7 @@ trait KernelTrait
     public static function SwitchRootPhase($phase)
     {
         self::$ROOT_PHASE = $phase;
-        self::$ROOT_PHASE_OF_SHARED = $phase.'public';
+        self::$ROOT_PHASE_OF_SHARED = $phase.'#public';
     }
     protected function initOptions(array $options): void
     {
@@ -163,8 +164,9 @@ trait KernelTrait
     }
     public function getThisChild($class)
     {
-        $phase = $this->options[$class]['__phase__'] ?? '';
-        if (!$phase) {
+        $phase = $this->options['app'][$class]['__phase__'] ?? null;
+        
+        if (!isset($phase)) {
             return null;
         }
         $this->_Phase($phase);
@@ -218,16 +220,11 @@ trait KernelTrait
         $this->this_class = $this->options['override_from'] ?? $this->this_class;
         (self::class)::_($this);
         (static::class)::_($this);
-        //($this->this_class)::_($this);
+        if($this->options['override_from']){
+            ($this->options['override_from'])::_($this);
+        }
         /////////////
         return true;
-    }
-    protected function addPublicClassesInRoot(array $classes): void
-    {
-        if (!$this->is_root) {
-            return;
-        }
-        PhaseContainer::_()->addPublicClasses($classes);
     }
     protected function createLocalObject(string $class, ?object $object = null): object
     {
@@ -251,7 +248,7 @@ trait KernelTrait
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
-            $options['override_from'] = $class;
+            $options['override_from'] = get_class($this); // importance
             return $class::_(new $class)->init($options, $context);
         }
 
@@ -354,7 +351,7 @@ trait KernelTrait
         if (is_string($options)) {
             if ('@' === substr($options, 0, 1)) {
                 $method = substr($options, 1);
-                $options = ($this->$method)();
+                $options = call_user_func([$this,$method]);
                 $this->initExtensionsByOptions($class, $options, $default);
             } else {
                 $options = $this->options[$options] ?? false;
@@ -376,6 +373,7 @@ trait KernelTrait
                 $new_apps[$class] = $options;
             }
             $apps = $new_apps;
+            $this->options['app'] = $apps;
         }
 
         foreach ($apps as $class => $options) {
@@ -390,21 +388,21 @@ trait KernelTrait
             $object = $class::_()->init($options, $this);
             $phase = $object->getThisPhaseName();
             $this->phaseToCurrent();
-            $this->options[$class]['__phase__'] = $phase;
+            $this->options['app'][$class]['__phase__'] = $phase;
         }
     }
     public function toChildPhase(string $class)
     {
-        if (!isset($this->options[$class]['__phase__'])) {
+        if (!isset($this->options['app'][$class]['__phase__'])) {
             return false;
         }
-        $this->_Phase($this->options[$class]['__phase__']);
+        $this->_Phase($this->options['app'][$class]['__phase__']);
         return true;
     }
 
     public function run(): bool
     {
-        if ($this->is_cli) {
+        if ($this->options['cli_enable']) {
             return $this->execute();
         } else {
             return $this->serve();
