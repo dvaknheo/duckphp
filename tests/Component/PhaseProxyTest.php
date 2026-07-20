@@ -20,8 +20,10 @@ class PhaseProxyTest extends \PHPUnit\Framework\TestCase
         $object = PhaseProxy::CreatePhaseProxy(PhaseProxyMainApp::class, PhaseProxyAdminAction::class);
         $object->id();
         $object->self();
+        $object->phase();
         
         $options = [
+            //'is_debug'=>true,
             'ext' =>[PhaseProxySubApp::class =>[
                     'name' => '@',
                 ],PhaseProxySubApp2::class =>[
@@ -31,6 +33,7 @@ class PhaseProxyTest extends \PHPUnit\Framework\TestCase
         ];
         PhaseProxyMainApp::RunQuickly($options);
         $phase =PhaseProxyMainApp::Root()::Phase();
+        
         //var_dump(PhaseProxyMainApp::Admin()->id());
         //var_dump(PhaseProxyMainApp::User()->id());
         \LibCoverage\LibCoverage::G($LibCoverage);
@@ -61,10 +64,15 @@ class PhaseProxySubApp extends DuckPhp
         return $object;
     }
 
-    public function onInit()
+    public function onInited(): void
     {
         $object = $this->proxySingletonExToRoot(PhaseProxyAdminAction::class);
         PhaseProxy::CreatePhaseProxy(static::class, PhaseProxyUserAction::class);
+    }
+    
+    public function command_help()
+    {
+        var_dump(DATE(DATE_ATOM));
     }
 }
 class PhaseProxySubApp2 extends PhaseProxySubApp

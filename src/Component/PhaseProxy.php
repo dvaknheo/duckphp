@@ -9,17 +9,17 @@ use DuckPhp\Core\App;
 
 class PhaseProxy
 {
-    public $container_class;
+    protected $phase;
     protected $overriding;
-    public function __construct($container_class, $overriding)
+    public function __construct($phase, $overriding)
     {
         $this->overriding = $overriding;
-        $this->container_class = $container_class;
+        $this->phase = $phase;
     }
-    public static function CreatePhaseProxy($container_class, $overriding)
+    public static function CreatePhaseProxy($phase, $overriding)
     {
-        $container_class = $container_class ?? App::Phase();
-        return new static($container_class, $overriding);
+        $phase = $phase ?? App::Phase();
+        return new static($phase, $overriding);
     }
     protected function getObjectForPhaseProxy(): object
     {
@@ -28,7 +28,7 @@ class PhaseProxy
 
     public function __call($method, $args)
     {
-        $phase = App::Phase($this->container_class);
+        $phase = App::Phase($this->phase);
         
         $object = $this->getObjectForPhaseProxy();
 
@@ -41,4 +41,12 @@ class PhaseProxy
     {
         return $this->getObjectForPhaseProxy();
     }
+    public function phase($new = null)
+    {
+        $this->phase = $neww ?? $this->phase;
+        return $this->phase;
+    }
 }
+
+
+
