@@ -509,7 +509,7 @@ class MainController
     {
         var_dump(DATE(DATE_ATOM));
     }
-    public function xception()
+    public function exception()
     {
         throw new \Exception("HAHA");
     }
