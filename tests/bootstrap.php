@@ -6,6 +6,32 @@ foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../autoload.php'] as 
         break;
     }
 }
+function _lc()
+{
+    static $flag;
+    $file ='';
+    $output = '';
+    $t = debug_backtrace();
+    $v = $t[0];
+    $str = basename($v['file']).':' .$v['line'];
+    foreach($t as $v){
+        if('Test.php' === substr($v['file'],-strlen('Test.php'))){
+            $output = basename($v['file']).':' .$v['line'].' => '.$str;
+            $file = substr($v['file'],0,-strlen('.php')).'.debug.log';
+            echo "\n\033[42;30m".$str."\033[0m\n";
+            
+            break;
+        }
+    }
+    if($file){
+        if(!$flag){
+            $output ="==== " . DATE(DATE_ATOM). " ====\n".$output;
+        }
+        $file = __DIR__ . '/_lc.log';
+        file_put_contents($file, $output."\n",FILE_APPEND);
+        $flag = true;
+    }
+}
 class MyLibCoverage extends \LibCoverage\LibCoverage
 {
     // 我们接下来修一下，一个函数只能 assert一次的问题。
