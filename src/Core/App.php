@@ -22,7 +22,7 @@ require_once __DIR__ . '/Functions.php';
  */
 class App extends ComponentBase
 {
-    const VERSION = '1.3.5';
+    const VERSION = '1.3.6';
     
     use KernelTrait {
         initComponents as Kernel_initComponents;
