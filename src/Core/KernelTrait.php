@@ -39,9 +39,9 @@ trait KernelTrait
         'override_class' => null,
         'app_children_allow_mix_mode' => true,
         
-        'on_initing' => null,
+        'on_init' => null,
         'on_inited' => null,
-        'on_serve' => null,
+        'on_request' => null,
 
         //*/
         // 'namespace' => '',
