@@ -44,9 +44,9 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'cli_enable' => true,
             
             'controller_class_postfix' => 'Controller',
-            'on_initing' => function(){},
+            'on_init' => function(){},
             'on_inited' => function(){},
-            'on_serve' => function(){},
+            'on_request' => function(){},
         ];
         $options['ext']=[
             KernelTestObjectB::class=>['aa'=>'22'],
@@ -202,10 +202,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         $app6->serve();
         $output6 = ob_get_clean();
         // onBeforeCreatePhases + onAfterCreatePhases 在 init 中触发
-        $this->assertStringContainsString('beforeCreatePhases', $output6);
         $this->assertStringContainsString('afterCreatePhases', $output6);
-        $this->assertStringContainsString('beforeRun', $output6);
-        $this->assertStringContainsString('afterRun', $output6);
         
         // 7. Phase 名冲突异常
         PhaseContainer::RestAllContainerForTesting();
@@ -370,10 +367,6 @@ class KernelTestApp extends App
             KernelTestObjectB::class =>'@toEnable',
         ],
     ];
-    protected function onInit()
-    {
-        return parent::onInit();
-    }
     public function createLocalObject2($class)
     {
         return $this->createLocalObject($class);
@@ -389,11 +382,7 @@ class KernelTestApp extends App
 }
 class KernelTestApp2 extends App
 {
-    protected function onInit()
-    {
-        return null;
-        //throw new \Exception("zzzzzzzzzzzz");
-    }
+
 }
 class KernelTestApp3 extends App
 {

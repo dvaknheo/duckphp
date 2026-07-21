@@ -147,7 +147,7 @@ class MaiCoreHelperApp extends App
     public $options=[
             'namespace' =>'no_MaiCoreHelperApp',
     ];
-    public function onInit()
+    public function onInit(): void
     {
         SubCoreHelperApp1::_(SubCoreHelperApp2::_());
     }

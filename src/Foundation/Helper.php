@@ -19,10 +19,6 @@ class Helper
         BusinessHelperTrait::Setting insteadof ControllerHelperTrait;
         BusinessHelperTrait::Config insteadof ControllerHelperTrait;
         BusinessHelperTrait::XpCall insteadof ControllerHelperTrait;
-        BusinessHelperTrait::FireEvent insteadof ControllerHelperTrait;
-        BusinessHelperTrait::OnEvent insteadof ControllerHelperTrait;
-        BusinessHelperTrait::OnEvent insteadof AppHelperTrait;
-        BusinessHelperTrait::FireEvent insteadof AppHelperTrait;
         BusinessHelperTrait::PathOfProject insteadof AppHelperTrait;
         BusinessHelperTrait::PathOfRuntime insteadof AppHelperTrait;
         ControllerHelperTrait::header insteadof AppHelperTrait;

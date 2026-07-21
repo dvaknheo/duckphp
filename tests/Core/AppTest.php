@@ -597,10 +597,6 @@ class AppTestApp extends MyApp
         parent::__construct();
         return;
     }
-    protected function onInit()
-    {
-        return parent::onInit();
-    }
     public function fixPathInfo(&$serverData)
     {
 var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n");
@@ -610,11 +606,6 @@ var_dump($serverData);
 }
 class AppTestApp2 extends MyApp
 {
-    protected function onInit()
-    {
-        return null;
-        //throw new \Exception("zzzzzzzzzzzz");
-    }
 }
 class AppTestObject
 {

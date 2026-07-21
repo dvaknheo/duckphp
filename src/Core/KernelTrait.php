@@ -112,6 +112,10 @@ trait KernelTrait
     {
         self::$ROOT_PHASE = $phase;
         self::$ROOT_PHASE_OF_SHARED = $phase.'#public';
+
+        // TODO be a function
+        PhaseContainer::_()->current = self::$ROOT_PHASE;
+        PhaseContainer::_()->default = self::$ROOT_PHASE_OF_SHARED;
     }
     protected function initOptions(array $options): void
     {
@@ -178,7 +182,9 @@ trait KernelTrait
     }
     public function getThisCommandPrefix()
     {
-        return str_replace('/', '-', $this->phase_name);
+        $name = $this->phase_name;
+        $name = self::$ROOT_PHASE ? substr($name, strlen(self::$ROOT_PHASE) + 1) : $name;
+        return str_replace('/', '-', $name);
     }
     public function regConsoleCommand($class, $default_method = 'command_')
     {
@@ -193,7 +199,6 @@ trait KernelTrait
     {
         //////////////////////////////
         if ($this->is_root) {
-            $this->onBeforeCreatePhases();
             //$flag = PhaseContainer::ReplaceSingletonImplement();
             $this->phase_name = self::$ROOT_PHASE;
             $container = PhaseContainer::_();
@@ -263,7 +268,7 @@ trait KernelTrait
         $this->initException($this->options);
         $this->initComponents();
 
-        $this->onIniting();
+        $this->onInit();
         $this->initChildren($this->options['app']);
 
         $this->is_inited = true; // $this->is_inited come from ComponentTrait
@@ -382,7 +387,7 @@ trait KernelTrait
                 throw new \Exception("Child [$class] not exists");
             }
 
-            if ('/' !== substr( $options['controller_url_prefix'] ?? '',0,1)) {
+            if ('/' !== substr($options['controller_url_prefix'] ?? '', 0, 1)) {
                 $options['controller_url_prefix'] = ltrim(Route::_()->options['controller_url_prefix'].'/'.$options['controller_url_prefix'], '/');
             }
             $object = $class::_()->init($options, $this);
@@ -412,8 +417,7 @@ trait KernelTrait
     {
         $ret = false;
         $this->prepareServe();
-        $this->onServe();
-        $this->onBeforeRun();
+        $this->onRequest();
         try {
             Runtime::_()->run();
             $ret = Route::_()->run();
@@ -430,7 +434,6 @@ trait KernelTrait
         } finally {
             Runtime::_()->clear();
         }
-        $this->onAfterRun();
         return $ret;
     }
     protected function prepareServe()
@@ -466,16 +469,12 @@ trait KernelTrait
     public function execute(): bool
     {
         $ret = false;
-        $this->phaseToCurrent();
 
         try {
-            Runtime::_()->run();
             $ret = Console::_()->run();
         } catch (\Throwable $ex) {
             $this->runException($ex);
             $ret = true;
-        } finally {
-            Runtime::_()->clear();
         }
         return $ret;
     }
@@ -510,19 +509,16 @@ trait KernelTrait
     {
         echo "_OnDevErrorHandler";
     }
-    protected function onBeforeCreatePhases(): void
-    {
-    }
     protected function onAfterCreatePhases(): void
     {
     }
     protected function onPrepare(): void
     {
     }
-    protected function onIniting(): void
+    protected function onInit(): void
     {
-        if ($this->options['on_initing']) {
-            ($this->options['on_initing'])();
+        if ($this->options['on_init']) {
+            ($this->options['on_init'])();
         }
     }
     protected function onInited(): void
@@ -531,17 +527,10 @@ trait KernelTrait
             ($this->options['on_inited'])();
         }
     }
-    protected function onServe(): void
+    protected function onRequest(): void
     {
-        if ($this->options['on_serve']) {
-            ($this->options['on_serve'])();
+        if ($this->options['on_request']) {
+            ($this->options['on_request'])();
         }
-    }
-    
-    protected function onBeforeRun(): void
-    {
-    }
-    protected function onAfterRun(): void
-    {
     }
 }
