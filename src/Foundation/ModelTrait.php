@@ -6,10 +6,10 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Foundation\ZCallTrait;
 
 trait ModelTrait
 {

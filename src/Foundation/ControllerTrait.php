@@ -6,9 +6,9 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\PhaseProxy;
-use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
+use DuckPhp\Foundation\ZCallTrait;
 
 trait ControllerTrait
 {

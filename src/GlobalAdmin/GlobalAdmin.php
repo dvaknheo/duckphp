@@ -6,9 +6,9 @@
 namespace DuckPhp\GlobalAdmin;
 
 use DuckPhp\Component\PhaseProxy;
-use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Foundation\ZCallTrait;
 
 class GlobalAdmin extends ComponentBase implements AdminActionInterface
 {

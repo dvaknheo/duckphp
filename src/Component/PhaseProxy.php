@@ -47,6 +47,3 @@ class PhaseProxy
         return $this->phase;
     }
 }
-
-
-
