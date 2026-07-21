@@ -13,6 +13,7 @@
 - [应用配置](guide/configuration.md)
 - [路由系统](guide/routing.md)
 - [四层架构（Controller/Business/Model/View）](guide/layers.md)
+- [Model（模型层）使用指南](guide/model.md)
 - [数据库](guide/database.md)
 - [异常处理](guide/exception.md)
 - [生命周期与事件](guide/lifecycle.md)

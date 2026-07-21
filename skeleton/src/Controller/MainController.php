@@ -9,6 +9,13 @@ use YourProjectName\Business\DemoBusiness;
 
 class MainController extends Base
 {
+    public function __construct()
+    {
+        $this->init();
+    }
+    protected function init()
+    {
+    }
     public function index()
     {
         $var = __h(DemoBusiness::_()->foo());

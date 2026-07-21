@@ -9,6 +9,7 @@
 - [应用配置](configuration.md)
 - [路由系统](routing.md)
 - [四层架构（Controller/Business/Model/View）](layers.md)
+- [Model（模型层）使用指南](model.md)
 - [数据库](database.md)
 - [异常处理](exception.md)
 - [生命周期与事件](lifecycle.md)

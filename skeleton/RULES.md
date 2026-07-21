@@ -91,7 +91,7 @@ System 层
 | 类型 | 命名规则 | 示例 | 说明 |
 |------|---------|------|------|
 | 控制器类 | `{Name}Controller` | `UserController` | 路由入口，处理输入/输出 |
-| 控制器方法 | `action_{method}` | `action_index()` | 路由方法前缀 |
+| 控制器方法 | `{action_prefix}{method}` | `{action_prefix}index()` | 路由方法前缀 |
 | CLI 子方法 | `command_{method}` | `command_hello()` | 命令行方法前缀 |
 | 动作类 | `{Name}Action` | `UserAction` | 控制器通用功能复用 |
 | Session 类 | `Session` | `Session` | 状态容器 |
@@ -99,6 +99,8 @@ System 层
 | Service 类 | `{Name}Service` | `CommonService` | 业务通用功能复用 |
 | Model 类 | `{Name}Model` | `UserModel` | 数据访问 |
 | 异常类 | `{Name}Exception` | `ProjectException` | 异常层级 |
+
+{action_prefix} 在应用选项 `controller_method_prefix` 里设置， DuckPhp 1.3.6 版本起默认值得由 `action_` 改为 ``
 
 ### 核心原则
 
@@ -108,7 +110,7 @@ System 层
 
 1. 框架相关调用集中在 **System 层** 处理。
 2. `System` 命名空间负责处理框架相关调用、异常定义和应用配置。
-3. 系统层一般不能调用 业务层（Business）和 模型层（Model），可由 Controller 层中转
+3. 系统层一般不能调用 业务层（Business）和 模型层（Model），由 Controller 层 `AppAction` 类中转。
 
 #### 控制器层（Controller）
 
@@ -130,7 +132,7 @@ System 层
 5. 业务类和 Service 类调用 **Model 类**。
 6. 业务层和 Service 类使用 `Helper::BusinessThrowOn()` 抛出异常。
 7. 业务层其他独立的类放在这里。 后缀是 Business ， Service 的类是和系统相关的类，反之则不是。
-
+8. 只有 `Controller` 目录下的后缀为 `Controller`,`Action`,`Command`, `Base`的类可以调用 `Business` 目录下后缀为 `Business` 的类
 
 
 #### 模型层（Model）
@@ -140,6 +142,7 @@ System 层
 3. Model 一般按数据库表名对应。
 4. 工程规范中，Model 层的 `Helper` 类并入了 `Base` 类。
 5. Model 类禁止抛异常，由调用者处理异常。
+9. 只有 `Business` 目录下的后缀为 `Service`,`Business`,`Base` 的类可以调用 `Model` 目录下后缀为 `Model` 的类
 
 #### 视图层（View）
 
