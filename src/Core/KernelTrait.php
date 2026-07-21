@@ -164,18 +164,18 @@ trait KernelTrait
         $a = explode(':', $this->phase_name);
         $phase_name = implode('\\', $a);
         $this->_Phase($phase_name);
-
-        return self::_();
+        $class = self::class;
+        return $class::_();
     }
     public function getThisChild($class)
     {
         $phase = $this->options['app'][$class]['__phase__'] ?? null;
-        
         if (!isset($phase)) {
             return null;
         }
         $this->_Phase($phase);
-        return self::_();
+        $class = self::class;
+        return $class::_();
     }
     public function getThisPhaseName()
     {
@@ -459,8 +459,10 @@ trait KernelTrait
     protected function runChildren(): bool
     {
         $flag = false;
+        
         foreach ($this->options['app'] as $class => $options) {
-            $flag = $class::_()->serve();
+            $object = $this->getThisChild($class);
+            $flag = $object->serve();
             if ($flag) {
                 break;
             }
