@@ -45,14 +45,6 @@ trait BusinessHelperTrait
     {
         return CoreHelper::_()->_PathOfRuntime();
     }
-    public static function FireEvent($event, ...$args)
-    {
-        return EventManager::FireEvent($event, ...$args);
-    }
-    public static function OnEvent($event, $callback)
-    {
-        return EventManager::OnEvent($event, $callback);
-    }
     public static function AdminService()
     {
         return GlobalAdmin::_()->service();
