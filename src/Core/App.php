@@ -339,24 +339,29 @@ EOT;
         if (static::IsAbsPath($path_sub)) {
             return static::SlashDir($path_sub) . $file;
         }
-        $path_sub = static::SlashDir($path_sub);
-        $phase_name = $this->getThisPhaseName();
-        $phase_block = explode(':', $phase_name);
+        $current_phase = $this->getThisPhaseName();
         
-        $base_phase = '';
-        $full_file = self::_()->options['path'].$path_sub;
-        self::Phase($base_phase);
-        
+        $phase_block = explode(':', $current_phase);
         foreach ($phase_block as $i => $v) {
-            $path_dir = self::_()->options['path'].$path_sub.implode('/', array_slice($phase_block, $i));
+            $phase = implode(':',array_slice($phase_block, 0,$i+1));
+            self::Phase($phase);
+            $name = substr($current_phase,strlen($phase));
+            
+            $class = (self::class);
+            
+            $path_name = str_replace([':','/','\\'],DIRECTORY_SEPARATOR, $name);
+            $path_dir = $class::_()->options['path'].$path_sub.$path_name.DIRECTORY_SEPARATOR; // importance: not self::_
+            
+            
             $full_file = $path_dir.$file;
             if (file_exists($full_file)) {
                 break;
             }
             $base_phase = !$base_phase? $v: $base_phase.':'.$v;
-            self::Phase($base_phase);
         }
-        self::Phase($phase_name);
+        
+        self::Phase($current_phase);
+        
         return $full_file;
     }
     public function skip404Handler()

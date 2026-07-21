@@ -119,8 +119,9 @@ trait KernelTrait
     }
     protected function initOptions(array $options): void
     {
-        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->this_class ?? null)));
+        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($options['override_from'] ?? null)));
         $options['path'] = $options['path'] ?? ($this->options['path'] ?? ($this->getDefaultProjectPath()));
+        $options['path'] = realpath($options['path']).DIRECTORY_SEPARATOR;
         $this->options = array_replace_recursive($this->options, $options);
     }
     protected function getDefaultProjectNameSpace(?string $class): string
@@ -212,7 +213,7 @@ trait KernelTrait
             $name = ($name === '' && $this->options['namespace'] === '') ? static::class : $name;
             
             // @phpstan-ignore-next-line
-            $this->phase_name = ltrim($context->getThisPhaseName() . ':' . str_replace('\\', '/', $name), ':');
+            $this->phase_name =$context->getThisPhaseName() . ':' . str_replace('\\', '/', $name);
             $container = PhaseContainer::_();
             $is_same_name = $container->issetContainer($this->phase_name);
             if ($is_same_name) {
