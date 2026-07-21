@@ -281,7 +281,7 @@ class Route extends ComponentBase
                 }
             }
             // my_class_action__x ?
-            if (substr($method, 0, 1) === '_') {
+            if (substr($method, 0, 2) === '__') {
                 $this->route_error = 'E005: can not call hidden method';
                 return null;
             }

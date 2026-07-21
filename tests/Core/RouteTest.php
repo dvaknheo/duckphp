@@ -158,7 +158,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_()->replaceController(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
         
         Route::_()->defaultGetRouteCallback('/about/me');
-        Route::_()->defaultGetRouteCallback('/about/_start');
+        Route::_()->defaultGetRouteCallback('/about/__start');
         Route::_()->defaultGetRouteCallback('/about/NoExists');
         Route::_()->defaultGetRouteCallback('/about/static');
         
