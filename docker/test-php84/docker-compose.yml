@@ -9,6 +9,7 @@ services:
     volumes:
       - ../../:/DATA
       - ../../composer-test-php84.json:/DATA/composer.json
+      - ../../composer-test-php84.lock:/DATA/composer.lock
       - vendor84:/DATA/vendor
       - composer-cache84:/tmp/composer
     entrypoint:
