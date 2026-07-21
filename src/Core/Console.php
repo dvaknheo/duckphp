@@ -88,7 +88,7 @@ class Console extends ComponentBase
 
         [$class, $method] = $this->getCommandCallback($cmd);
         if (!isset($class) && !isset($method)) {
-            throw new \ReflectionException(" ($cmd)Command Not Found In All\n", -4);
+            throw new DuckPhpSystemException(" ($cmd)Command Not Found In All\n", -4);
         }
         $phase = $this->options['console_command_phase'][$command_namespace] ?? App::_()->getThisPhaseName();
 
@@ -246,7 +246,7 @@ class Console extends ComponentBase
             } elseif ($param->isDefaultValueAvailable() && !isset($args[$i])) {
                 $args[$i] = $param->getDefaultValue();
             } elseif (!isset($args[$i])) {
-                throw new \ReflectionException("Command Need Parameter: {$name}\n", -2);
+                throw new DuckPhpSystemException("Command Need Parameter: {$name}\n", -2);
             }
         }
         $ret = $reflect->invokeArgs($object, $args);

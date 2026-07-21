@@ -324,7 +324,7 @@ trait KernelTrait
     protected function initExtensionsByOptions(string $class, $options, $default)
     {
         if (!class_exists($class)) {
-            throw new \Exception("ext [$class] not exists");
+            throw new DuckPhpSystemException("ext [$class] not exists");
         }
     
         if ($options === false || $options === null || $options === self::$EXT_DISABLE) {
@@ -384,7 +384,7 @@ trait KernelTrait
                 continue;
             }
             if (!class_exists($class)) {
-                throw new \Exception("Child [$class] not exists");
+                throw new DuckPhpSystemException("Child [$class] not exists");
             }
 
             if ('/' !== substr($options['controller_url_prefix'] ?? '', 0, 1)) {
