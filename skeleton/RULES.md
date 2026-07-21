@@ -22,14 +22,14 @@ project/
 │   └── index.php                     # Web 入口
 ├── src/
 │   ├── Controller/                   # 控制器层：HTTP/CLI 请求入口
-│   │   ├── Base.php
+│   │   ├── * AppAction.php          # 应用的动作
+│   │   ├── Base.php                 # 控制器基类
 │   │   ├── * ConsoleCommand.php     # CLI 子命令示例（默认未启用）
-│   │   ├── * ExceptionReporter.php  # 异常报告器（默认未启用）
 │   │   ├── Helper.php
 │   │   ├── MainController.php
 │   │   ├── Session.php              # Session 管理
-│   │   ├── * SomeAction.php            # Action 示例
-│   │   └── * testController.php        # 测试控制器
+│   │   ├── * SomeAction.php         # Action 示例
+│   │   └── * testController.php     # 测试控制器
 │   ├── Business/                     # 业务层：业务逻辑
 │   │   ├── Base.php
 │   │   ├── * DemoBusiness.php       # Business 示例
@@ -42,6 +42,7 @@ project/
 │       ├── App.php                   # 应用核心配置
 │       ├── * BusinessException.php   # Business 异常（默认未启用）
 │       ├── * ControllerException.php # Controller 异常（默认未启用）
+│       ├── * ExceptionReporter.php  # 异常报告器（默认未启用）
 │       └── * ProjectException.php    # 项目异常基类（默认未启用）
 ├── view/                              # 视图目录
 │   ├── _sys/                         # 系统视图
@@ -66,6 +67,9 @@ project/
 ## 层级调用规范
 
 ```
+System 层
+  └── 处理框架相关调用, 异常定义, 应用配置
+
 Controller 层 (可处理请求上下文)
   ├── 所有 Business 为后缀的类调用者集中在这一层，请勿违反.
   ├── 可调用: Action, Business, Helper, Session
@@ -80,8 +84,6 @@ Model 层 (纯无状态)
   ├── 可调用: 仅数据访问相关
   └── 禁止: 业务逻辑, 抛异常
 
-System 层
-  └── 处理框架相关调用, 异常定义, 应用配置
 ```
 
 ## 编码规则
@@ -155,17 +157,17 @@ System 层
 ### 路由规则
 #### 根路由与欢迎页
 
-DuckPHP 的默认欢迎页控制器是 `MainController`。访问根路径 `/` 时，等价于访问 `/Main/index`，会调用 `MainController::action_index()`。
+DuckPHP 的默认欢迎页控制器是 `MainController`。访问根路径 `/` 时，等价于访问 `/Main/index`，会调用 `MainController::index()`。
 
 ```
-/                  → 命名空间\Controller\MainController::action_index()
-/index             → 命名空间\Controller\MainController::action_index()
+/                  → 命名空间\Controller\MainController::index()
+/index             → 命名空间\Controller\MainController::index()
 ```
 
-同样，访问 `/foo` 时，等价于访问 `/Main/foo`，会调用 `MainController::action_foo()`。
+同样，访问 `/foo` 时，等价于访问 `/Main/foo`，会调用 `MainController::foo()`。
 
 ```
-/foo               → 命名空间\Controller\MainController::action_foo()
+/foo               → 命名空间\Controller\MainController::foo()
 ```
 
 因此，你可以把所有顶层短路由集中放在 `MainController` 中，例如：
@@ -182,10 +184,11 @@ URL 路径格式：
 映射到控制器类的方法：
 
 ```
-/Main/index        → 命名空间\Controller\MainController::action_index()
-/user/profile      → 命名空间\Controller\UserController::action_profile()
-/admin/user/list   → 命名空间\Controller\Admin\UserController::action_list()
+/Main/index        → 命名空间\Controller\MainController::index()
+/user/profile      → 命名空间\Controller\userController::profile()
+/admin/user/list   → 命名空间\Controller\admin\userController::list()
 ```
+>  注意大小写
 
 ### 关键约定
 
