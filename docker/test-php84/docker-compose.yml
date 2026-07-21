@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  fulltest:
+  fulltest84:
     build:
       context: ../..
       dockerfile: docker/test-php84/Dockerfile
