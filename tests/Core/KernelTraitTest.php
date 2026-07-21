@@ -114,7 +114,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         $options['app'][KernelTestApp2::class]=[
             'path'=>null,
             'namespace' => __NAMESPACE__,
-            'controller_url_prefix'=>'/child/',
+            'controller_url_prefix'=>'child/',
         ];
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_()->init($options);
