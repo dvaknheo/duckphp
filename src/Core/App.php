@@ -341,15 +341,16 @@ EOT;
         }
         $current_phase = $this->getThisPhaseName();
         
+        $full_file = '';
         $phase_block = explode(':', $current_phase);
         foreach ($phase_block as $i => $v) {
-            $phase = implode(':',array_slice($phase_block, 0,$i+1));
+            $phase = implode(':', array_slice($phase_block, 0, $i + 1));
             self::Phase($phase);
-            $name = substr($current_phase,strlen($phase));
+            $name = substr($current_phase, strlen($phase));
             
             $class = (self::class);
             
-            $path_name = str_replace([':','/','\\'],DIRECTORY_SEPARATOR, $name);
+            $path_name = str_replace([':','/','\\'], DIRECTORY_SEPARATOR, $name);
             $path_dir = $class::_()->options['path'].$path_sub.$path_name.DIRECTORY_SEPARATOR; // importance: not self::_
             
             

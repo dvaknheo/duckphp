@@ -184,7 +184,7 @@ trait KernelTrait
     public function getThisCommandPrefix()
     {
         $name = $this->phase_name;
-        $name = self::$ROOT_PHASE ? substr($name, strlen(self::$ROOT_PHASE) + 1) : $name;
+        $name = substr($name, strlen(self::$ROOT_PHASE) + 1);
         return str_replace('/', '-', $name);
     }
     public function regConsoleCommand($class, $default_method = 'command_')
@@ -213,7 +213,7 @@ trait KernelTrait
             $name = ($name === '' && $this->options['namespace'] === '') ? static::class : $name;
             
             // @phpstan-ignore-next-line
-            $this->phase_name =$context->getThisPhaseName() . ':' . str_replace('\\', '/', $name);
+            $this->phase_name = $context->getThisPhaseName() . ':' . str_replace('\\', '/', $name);
             $container = PhaseContainer::_();
             $is_same_name = $container->issetContainer($this->phase_name);
             if ($is_same_name) {
