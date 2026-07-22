@@ -74,7 +74,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         Helper::Admin()->self()->flag = true;
 
         Helper::Admin()->getHeaderFooterData($input);
-        Helper::Admin()->mergeView($input,'header','footer');
+        Helper::Admin()->mergeView($input,true,'header','footer');
         
         \LibCoverage\LibCoverage::End();
     }

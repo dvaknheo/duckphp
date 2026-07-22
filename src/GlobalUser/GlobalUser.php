@@ -99,7 +99,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
             ]
         ];
     }
-    public function mergeView($data, ?string $header = null, ?string $footer = null, bool $use_head_foot = true)
+    public function mergeView(array $data, bool $use_head_foot = true, ?string $header = null, ?string $footer = null): array
     {
         $phase = App::Phase();
         $last_phase = App::_()->getLastPhase();

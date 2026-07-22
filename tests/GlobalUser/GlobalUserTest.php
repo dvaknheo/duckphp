@@ -73,7 +73,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         Helper::User()->self()->flag = true;
 
         Helper::User()->getHeaderFooterData($input);
-        Helper::User()->mergeView($input,'header','footer');
+        Helper::User()->mergeView($input,true,'header','footer');
         Helper::User()->log('fsafsa','default');
         \LibCoverage\LibCoverage::End();
     }
