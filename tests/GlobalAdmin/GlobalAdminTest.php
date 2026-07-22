@@ -86,7 +86,7 @@ class MyAdmin extends GlobalAdmin
     {
         return $this->flag ? MyAdminService::_():null;
     }
-    public function id($checkLogin =true):int
+    public function id($checkLogin =true)
     {
         return 1;
     }

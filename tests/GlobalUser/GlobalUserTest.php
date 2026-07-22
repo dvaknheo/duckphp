@@ -85,7 +85,7 @@ class MyUser extends GlobalUser
     {
         return $this->flag ? MyUserService::_():null;
     }
-    public function id($checkLogin =true):int
+    public function id($checkLogin =true)
     {
         return 1;
     }

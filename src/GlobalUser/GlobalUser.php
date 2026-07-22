@@ -31,7 +31,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         }
         return PhaseProxy::CreatePhaseProxy($service, App::Phase());
     }
-    public function id($check_login = true) : int
+    public function id($check_login = true)
     {
         throw new UserException("No Impelment:".__METHOD__);
     }
@@ -99,7 +99,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
             ]
         ];
     }
-    public function mergeView(array $data, bool $use_head_foot = true, ?string $header = null, ?string $footer = null): array
+    public function mergeView(array $data, bool $with_set_head_foot = true, ?string $header = null, ?string $footer = null): array
     {
         $phase = App::Phase();
         $last_phase = App::_()->getLastPhase();
@@ -109,7 +109,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         App::Phase($last_phase);
         $data['user_view'] = $user_view;
 
-        if ($use_head_foot) {
+        if ($with_set_head_foot) {
             View::_()->setViewHeadFoot($header, $footer);
         }
 
