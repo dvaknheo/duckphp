@@ -123,10 +123,11 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         //Route::_()->bind();
         App::_()->serve();
         $phase=App::Phase();
+        
         App::_()->getThisChild(KernelTestApp2::class);
         App::_()->getThisChild(KernelTestApp3::class);
         App::Phase($phase);
-
+        $last_phase = App::_()->getLastPhase();
         /////////////////////
         
         KernelTestApp::_(new KernelTestApp())->override_class = KernelTestApp::class;
