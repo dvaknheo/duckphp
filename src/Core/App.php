@@ -357,7 +357,6 @@ EOT;
             if (file_exists($full_file)) {
                 break;
             }
-            $base_phase = !$base_phase? $v: $base_phase.':'.$v;
         }
         
         self::Phase($current_phase);
