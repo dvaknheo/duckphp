@@ -7,5 +7,6 @@ namespace DuckPhp\GlobalUser;
 
 interface UserServiceInterface
 {
-    public function batchGetUsernames(array $ids);
+    public function doLog(int $user_id, string $string, ?string $type = null);
+    public function doBatchGetUsernames(array $ids);
 }

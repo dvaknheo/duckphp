@@ -78,6 +78,7 @@ trait KernelTrait
     protected $is_root = true;
     protected $is_cli = false;
     protected $phase_name = '';
+    protected $last_phase = '';
     // protected $this_class = '';      // from self
     // protected $is_inited = false;    // from ComponentBase::class
     
@@ -148,12 +149,17 @@ trait KernelTrait
         $old = $container->getCurrentContainer();
         if (isset($new)) {
             $container->setCurrentContainer($new);
+            $this->last_phase = $old;
         }
         return $old;
     }
     public function isRoot()
     {
         return $this->is_root;
+    }
+    public function getLastPhase()
+    {
+        return $this->last_phase ?? self::$ROOT_PHASE;
     }
     public function getThisClassName()
     {

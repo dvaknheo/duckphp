@@ -19,4 +19,7 @@ interface UserActionInterface
     public function urlForLogout($url_back = null, $ext = null) : string;
     public function urlForHome($url_back = null, $ext = null) : string;
     public function urlForRegist($url_back = null, $ext = null) : string;
+    
+    public function getHeaderFooterData(array $input): array;
+    public function log(string $string, ?string $type = null);
 }
