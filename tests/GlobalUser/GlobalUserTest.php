@@ -19,10 +19,10 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         Helper::User();
         }catch(\Exception $ex){}
         try{
-        var_dump(Helper::UserId());
+        (Helper::UserId());
         }catch(\Exception $ex){}
         try{
-        var_dump(Helper::UserName());
+        (Helper::UserName());
         }catch(\Exception $ex){}
         try{
         }catch(\Exception $ex){}

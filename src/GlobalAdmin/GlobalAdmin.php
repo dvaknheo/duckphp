@@ -5,63 +5,108 @@
  */
 namespace DuckPhp\GlobalAdmin;
 
+use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Foundation\ZCallTrait;
+use DuckPhp\Core\View;
+use DuckPhp\GlobalAdmin\AdminActionInterface;
+use DuckPhp\GlobalAdmin\AdminException;
 
 class GlobalAdmin extends ComponentBase implements AdminActionInterface
 {
-    use ZCallTrait;
     const EVENT_LOGINED = 'logined';
     const EVENT_LOGOUTED = 'logouted';
     const EVENT_ACCESSED = 'accessed';
     
-    
+    public function localService()
+    {
+        throw new AdminException("No Impelment:".__METHOD__);
+        // return $object;
+    }
     public function service()
     {
-        //return MyAdminService::_Z();
-        throw new \Exception("No Impelment");
+        $service = $this->localService();
+        if (!$service) {
+            throw new AdminException("No Impelment:".__METHOD__);
+        }
+        return PhaseProxy::CreatePhaseProxy($service, App::Phase());
     }
     public function id($check_login = true) : int
     {
-        throw new \Exception("No Impelment");
+        throw new AdminException("No Impelment:".__METHOD__);
     }
     public function name($check_login = true)
     {
-        throw new \Exception("No Impelment");
+        throw new AdminException("No Impelment:".__METHOD__);
     }
     public function login(array $post)
     {
-        throw new \Exception("No Impelment");
+        throw new AdminException("No Impelment:".__METHOD__);
     }
     public function logout(): void
     {
-        throw new \Exception("No Impelment");
+        throw new AdminException("No Impelment:".__METHOD__);
     }
     public function urlForLogin($url_back = null, $ext = null)
     {
-        throw new \Exception("No Impelment");
+        throw new AdminException("No Impelment:".__METHOD__);
     }
     public function urlForLogout($url_back = null, $ext = null)
     {
-        throw new \Exception("No Impelment");
+        throw new AdminException("No Impelment:".__METHOD__);
     }
     public function urlForHome($url_back = null, $ext = null)
     {
-        throw new \Exception("No Impelment");
+        throw new AdminException("No Impelment:".__METHOD__);
+    }
+    public function on($event, $callback)
+    {
+        $phase = App::_()->getLastPhase();
+        GlobalEvent::_()->on(GlobalAdmin::class . '::' . $event, $phase, $callback);
+    }
+    public function fire($event, ...$args)
+    {
+        GlobalEvent::_()->fire(GlobalAdmin::class . '::' . $event, ...$args);
     }
     ///////////////
     public function checkAccess($class, string $method, ?string $url = null)
     {
-        return $this->service()->doIsSuper($this->id(), $class, $method, $url);
+        return $this->localService()->doCheckAccess($this->id(), $class, $method, $url);
     }
     public function isSuper(): bool
     {
-        return $this->service()->doIsSuper($this->id());
+        return $this->localService()->doIsSuper($this->id());
     }
     public function log(string $string, ?string $type = null)
     {
-        return $this->service()->log($string, $type);
+        return $this->localService()->doLog($this->id(), $string, $type);
+    }
+    ///////////////
+    public function getHeaderFooterData(array $input): array
+    {
+        return [
+            'user_view' => [
+                'header' => '',
+                'footer' => '',
+            ]
+        ];
+    }
+    public function mergeView($data, ?string $header = null, ?string $footer = null, bool $use_head_foot = true)
+    {
+        $phase = App::Phase();
+        $last_phase = App::_()->getLastPhase();
+
+        $admin_view = $this->getHeaderFooterData($data);
+
+        App::Phase($last_phase);
+        $data['admin_view'] = $admin_view;
+
+        if ($use_head_foot) {
+            View::_()->setViewHeadFoot($header, $footer);
+        }
+
+        App::Phase($phase);
+        return $data;
     }
 }

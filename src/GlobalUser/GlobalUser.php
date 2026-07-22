@@ -9,8 +9,9 @@ use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\View;
+use DuckPhp\GlobalUser\UserActionInterface;
+use DuckPhp\GlobalUser\UserException;
 
 class GlobalUser extends ComponentBase implements UserActionInterface
 {
@@ -19,36 +20,36 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     
     public function localService()
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
         // return $object;
     }
     public function service()
     {
         $service = $this->localService();
         if (!$service) {
-            throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+            throw new UserException("No Impelment:".__METHOD__);
         }
         return PhaseProxy::CreatePhaseProxy($service, App::Phase());
     }
     public function id($check_login = true) : int
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function name($check_login = true) : string
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function login(array $post)
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function logout(): void
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function regist(array $post)
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function on($event, $callback)
     {
@@ -62,19 +63,19 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     ///////////////
     public function urlForLogin($url_back = null, $ext = null) : string
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function urlForLogout($url_back = null, $ext = null) : string
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function urlForHome($url_back = null, $ext = null) : string
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     public function urlForRegist($url_back = null, $ext = null) : string
     {
-        throw new DuckPhpSystemException("No Impelment:".__METHOD__);
+        throw new UserException("No Impelment:".__METHOD__);
     }
     ///////////////
     public function log(string $string, ?string $type = null)
