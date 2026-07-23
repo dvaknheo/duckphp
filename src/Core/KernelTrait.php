@@ -149,7 +149,8 @@ trait KernelTrait
         $old = $container->getCurrentContainer();
         if (isset($new)) {
             $container->setCurrentContainer($new);
-            $this->last_phase = $old;
+            $self = self::class;
+            $self::_()->last_phase = $old;
         }
         return $old;
     }
