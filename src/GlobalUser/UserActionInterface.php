@@ -12,14 +12,17 @@ interface UserActionInterface
     public function service();
     public function localService();
 
-    public function login(array $post);
+    public function regist(array $post): array;
+    public function login(array $post): array;
     public function logout();
-    public function regist(array $post);
 
+    public function on($event, $callback);
+    public function fire($event, ...$args);
+
+    public function urlForRegist($url_back = null, $ext = null) : string;
     public function urlForLogin($url_back = null, $ext = null) : string;
     public function urlForLogout($url_back = null, $ext = null) : string;
     public function urlForHome($url_back = null, $ext = null) : string;
-    public function urlForRegist($url_back = null, $ext = null) : string;
     
     public function checkAccess($class, string $method, ?string $url = null);
     public function log(string $string, ?string $type = null);
