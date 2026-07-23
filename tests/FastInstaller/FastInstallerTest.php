@@ -210,7 +210,7 @@ PhaseContainer::RestAllContainerForTesting();
 //}
         $_SERVER = $__SERVER;
         
-        //\LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
         \LibCoverage\LibCoverage::End(); return;
 
     }

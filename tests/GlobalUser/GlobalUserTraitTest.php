@@ -53,7 +53,7 @@ class GlobalUserTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::End();
     }
 }
-class MyUser extends ComponentBase
+class MyUser extends ComponentBase implements UserActionInterface
 {
     use GlobalUserTrait;
     
@@ -65,6 +65,41 @@ class MyUser extends ComponentBase
     public function id($checkLogin =true)
     {
         return 1;
+    }
+    ////////////
+
+    public function name($check_login = true) : string
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    public function regist(array $post): array
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    public function login(array $post): array
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    public function logout(): void
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    ///////////////
+    public function urlForLogin($url_back = null, $ext = null) : string
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    public function urlForLogout($url_back = null, $ext = null) : string
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    public function urlForHome($url_back = null, $ext = null) : string
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    public function urlForRegist($url_back = null, $ext = null) : string
+    {
+        throw new UserException("No Impelment:".__METHOD__);
     }
     
 }
