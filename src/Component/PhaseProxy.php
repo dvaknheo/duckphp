@@ -23,7 +23,8 @@ class PhaseProxy
     }
     protected function getObjectForPhaseProxy(): object
     {
-        return is_object($this->overriding) ? $this->overriding : $this->overriding::_();
+        $this->overriding = is_object($this->overriding) ? $this->overriding : new $this->overriding;
+        return $this->overriding;
     }
 
     public function __call($method, $args)

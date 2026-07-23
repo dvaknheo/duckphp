@@ -13,7 +13,7 @@ use DuckPhp\Core\View;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
 use DuckPhp\GlobalAdmin\AdminException;
 
-class GlobalAdminTrait
+trait GlobalAdminTrait
 {
     public function localService()
     {

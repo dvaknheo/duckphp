@@ -28,15 +28,15 @@ final class GlobalUser extends ComponentBase implements UserActionInterface
     {
         throw new UserException("No Impelment:".__METHOD__);
     }
-    public function login(array $post)
+    public function regist(array $post): array
+    {
+        throw new UserException("No Impelment:".__METHOD__);
+    }
+    public function login(array $post): array
     {
         throw new UserException("No Impelment:".__METHOD__);
     }
     public function logout(): void
-    {
-        throw new UserException("No Impelment:".__METHOD__);
-    }
-    public function regist(array $post)
     {
         throw new UserException("No Impelment:".__METHOD__);
     }
