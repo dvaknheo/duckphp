@@ -6,9 +6,11 @@
  */
 namespace YourProjectName\Controller;
 
+use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 
 class Helper
 {
     use ControllerHelperTrait;
+    use SingletonTrait;
 }
