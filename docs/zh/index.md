@@ -17,6 +17,7 @@
 - [数据库](guide/database.md)
 - [异常处理](guide/exception.md)
 - [生命周期与事件](guide/lifecycle.md)
+- [外部用户与管理员系统](guide/external-auth.md)
 - [组件与扩展](guide/components.md)
 - [命令行工具](guide/cli.md)
 - [部署](guide/deployment.md)
