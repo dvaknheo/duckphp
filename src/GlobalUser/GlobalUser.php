@@ -93,10 +93,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     public function getHeaderFooterData(array $input): array
     {
         return [
-            'user_view' => [
-                'header' => '',
-                'footer' => '',
-            ]
+            'header' => '',
+            'footer' => '',
         ];
     }
     public function mergeView(array $data, bool $with_set_head_foot = true, ?string $header = null, ?string $footer = null): array

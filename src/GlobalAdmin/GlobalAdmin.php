@@ -85,11 +85,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     ///////////////
     public function getHeaderFooterData(array $input): array
     {
+        // merget
         return [
-            'admin_view' => [
-                'header' => '',
-                'footer' => '',
-            ]
+            'header' => '', //View::_()->_Render('admin/header',$inner_data);
+            'footer' => '', //View::_()->_Render('admin/footer',$inner_data);
         ];
     }
     public function mergeView(array $data, bool $with_set_head_foot = true, ?string $header = null, ?string $footer = null): array
