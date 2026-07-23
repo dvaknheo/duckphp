@@ -182,15 +182,19 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | 类 | 说明 |
 |---|---|
 | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 全局管理员组件。 |
+| [DuckPhp\GlobalAdmin\GlobalAdminTrait](GlobalAdmin-GlobalAdminTrait.md) | 管理员 Trait：事件/服务/视图。 |
 | [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) | 管理员操作接口。 |
-| [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) | 管理员控制器接口。 |
+| [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) | 管理员控制器接口（标记）。 |
 | [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | 管理员服务接口。 |
+| [DuckPhp\GlobalAdmin\AdminException](GlobalAdmin-AdminException.md) | 管理员异常。 |
 
 ### GlobalUser
 
 | 类 | 说明 |
 |---|---|
 | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 全局用户组件。 |
+| [DuckPhp\GlobalUser\GlobalUserTrait](GlobalUser-GlobalUserTrait.md) | 用户 Trait：事件/服务/视图。 |
 | [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) | 用户操作接口。 |
-| [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 用户控制器接口。 |
+| [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 用户控制器接口（标记）。 |
 | [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | 用户服务接口。 |
+| [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md) | 用户异常。 |

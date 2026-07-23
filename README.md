@@ -424,4 +424,4 @@ Version 1.3.4 added Docker support, fixed multi-language support, and prepares f
 
 ## 7. What DuckPhp Will Do Next
 
-![logo](duckphp.jpg)
+![logo](duckphp.svg)
