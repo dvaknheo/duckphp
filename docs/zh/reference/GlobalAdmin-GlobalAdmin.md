@@ -22,6 +22,7 @@
 | `admin_callback_for_name` | `name()` | 获取当前管理员名 |
 | `admin_callback_for_data` | `data()` | 获取当前管理员数据数组 |
 | `admin_callback_for_service` | `localService()` | 返回 `AdminServiceInterface` 实例 |
+| `admin_callback_for_merge_view_data` | `mergeViewData()` | 自定义视图融合逻辑 |
 | `admin_callback_for_url_for_home` | `urlForHome()` | 自定义后台首页 URL 生成 |
 | `admin_callback_for_url_for_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
 | `admin_callback_for_url_for_logout` | `urlForLogout()` | 自定义登出页 URL 生成 |
@@ -161,9 +162,9 @@ class AdminApp extends DuckPhp
 > `admin_url_*` 的 URL 一般写成相对路径。
 
 回调说明：
-- `admin_callback_for_id` / `get_name` / `get_data`：指向你的 `AdminAction` 类，从 Session/Token 读取当前管理员信息
+- `admin_callback_for_id` / `for_name` / `for_data`：指向你的 `AdminAction` 类，从 Session/Token 读取当前管理员信息
 - `admin_callback_for_service`：指向 `AdminAction::service()`，返回 `AdminServiceInterface` 实例
-- `admin_callback_url_*`：可选的 URL 生成回调，不设置时走 `admin_url_*` 固定 URL
+- `admin_callback_for_url_for_*`：可选的 URL 生成回调，不设置时走 `admin_url_*` 固定 URL
 
 ### AdminAction 实现示例
 
@@ -236,6 +237,7 @@ $service->log($adminId, '操作', 'audit');
         'admin_callback_for_name' => null, //[AdminAction::class,'name'],
         'admin_callback_for_data' => null, //[AdminAction::class,'data'],
         'admin_callback_for_service' => null, //[AdminAction::class,'service'],
+        'admin_callback_for_merge_view_data' => null, //[AdminAction::class,'mergeViewData'],
 
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,

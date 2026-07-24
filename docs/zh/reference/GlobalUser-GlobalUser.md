@@ -21,6 +21,7 @@
 | `user_callback_for_name` | `name()` | 获取当前用户名 |
 | `user_callback_for_data` | `data()` | 获取当前用户数据数组 |
 | `user_callback_for_service` | `localService()` | 返回 `UserServiceInterface` 实例 |
+| `user_callback_for_merge_view_data` | `mergeViewData()` | 自定义视图融合逻辑 |
 | `user_callback_for_url_for_home` | `urlForHome()` | 自定义首页 URL 生成 |
 | `user_callback_for_url_for_regist` | `urlForRegist()` | 自定义注册页 URL 生成 |
 | `user_callback_for_url_for_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
@@ -171,9 +172,9 @@ class UserApp extends DuckPhp
 
 
 回调说明：
-- `user_callback_for_id`/`get_name`/`get_data`：指向你的 `UserAction` 类，从 Session/Token 读取当前用户信息
+- `user_callback_for_id`/`for_name`/`for_data`：指向你的 `UserAction` 类，从 Session/Token 读取当前用户信息
 - `user_callback_for_service`：指向 `UserAction::service()`，返回 `UserServiceInterface` 实例
-- `user_callback_url_*`：可选的 URL 生成回调，不设置时走 `user_url_*` 固定 URL
+- `user_callback_for_url_for_*`：可选的 URL 生成回调，不设置时走 `user_url_*` 固定 URL
 
 ### UserAction 实现示例
 
@@ -249,6 +250,7 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
         'user_callback_for_name' => null, //[UserAction::class,'name'],
         'user_callback_for_data' => null, //[UserAction::class,'data'],
         'user_callback_for_service' => null, //[UserAction::class,'service'],
+        'user_callback_for_merge_view_data' => null, //[UserAction::class,'mergeViewData'],
 
         'user_callback_for_url_for_home' => null,
         'user_callback_for_url_for_regist' => null,

@@ -38,6 +38,10 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         MyAdmin::_()->options['admin_view_file_header']=$path.'views/block';
         Helper::Admin()->mergeViewData($data);
+        // test admin_callback_for_merge_view_data
+        MyAdmin::_()->options['admin_callback_for_merge_view_data'] = [MyAction::class, 'myMergeViewData'];
+        $data2 = Helper::Admin()->mergeViewData([]);
+        \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
         Helper::Admin()->checkAccess('class','method','url');
         try{
         Helper::Admin()->log('a','b');
@@ -72,6 +76,11 @@ class MyAction {
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
         return 'abc';
+    }
+    public function myMergeViewData(array $data): array
+    {
+        $data['__view_data']['custom'] = true;
+        return $data;
     }
 }
 class MyService {

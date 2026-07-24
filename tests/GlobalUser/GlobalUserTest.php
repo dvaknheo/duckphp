@@ -41,6 +41,10 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         MyUser::_()->options['user_view_file_header']=$path.'views/block';
         Helper::User()->mergeViewData($data);
+        // test user_callback_for_merge_view_data
+        MyUser::_()->options['user_callback_for_merge_view_data'] = [MyUserAction::class, 'myMergeViewData'];
+        $data2 = Helper::User()->mergeViewData([]);
+        \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
         Helper::User()->checkAccess('class','method','url');
         try{
         Helper::User()->log('a','b');
@@ -72,6 +76,11 @@ class MyUserAction {
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
         return 'abc';
+    }
+    public function myMergeViewData(array $data): array
+    {
+        $data['__view_data']['custom'] = true;
+        return $data;
     }
 }
 class MyUserService {

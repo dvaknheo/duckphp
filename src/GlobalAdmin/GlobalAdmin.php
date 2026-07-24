@@ -26,6 +26,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         'admin_callback_for_name' => null, //[AdminAction::class,'name'],
         'admin_callback_for_data' => null, //[AdminAction::class,'data'],
         'admin_callback_for_service' => null, //[AdminAction::class,'service'],
+        'admin_callback_for_merge_view_data' => null, //[AdminAction::class,'mergeViewData'],
 
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,
@@ -92,6 +93,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     public function mergeViewData(array $input): array
     {
+        if (isset($this->options['admin_callback_for_merge_view_data'])) {
+            return $this->run_callback_by_key('admin_callback_for_merge_view_data', $input);
+        }
         $header = !isset($this->options['admin_view_file_header']) ?  '' : View::_()->_Render($this->options['admin_view_file_header'], $input);
         $footer = !isset($this->options['admin_view_file_footer']) ?  '' : View::_()->_Render($this->options['admin_view_file_footer'], $input);
         $input['__view_data']['header'] = $header;

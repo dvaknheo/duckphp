@@ -27,6 +27,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         'user_callback_for_name' => null, //[UserAction::class,'name'],
         'user_callback_for_data' => null, //[UserAction::class,'data'],
         'user_callback_for_service' => null, //[UserAction::class,'service'],
+        'user_callback_for_merge_view_data' => null, //[UserAction::class,'mergeViewData'],
 
         'user_callback_for_url_for_home' => null,
         'user_callback_for_url_for_regist' => null,
@@ -98,6 +99,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function mergeViewData(array $input): array
     {
+        if (isset($this->options['user_callback_for_merge_view_data'])) {
+            return $this->run_callback_by_key('user_callback_for_merge_view_data', $input);
+        }
         $header = !isset($this->options['user_view_file_header']) ?  '' : View::_()->_Render($this->options['user_view_file_header'], $input);
         $footer = !isset($this->options['user_view_file_footer']) ?  '' : View::_()->_Render($this->options['user_view_file_footer'], $input);
         $input['__view_data']['header'] = $header;
