@@ -128,7 +128,7 @@ class DuckPhp extends App
         }
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
-            $class::_()->init($this->options, $this);
+            $object = $class::_()->init($this->options, $this);
             GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }
     }

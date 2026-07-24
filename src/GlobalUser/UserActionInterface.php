@@ -7,26 +7,32 @@ namespace DuckPhp\GlobalUser;
 
 interface UserActionInterface
 {
-    public function id($check_login = true);
-    public function name($check_login = true) : string;
+    /**
+     * @param bool $check_login
+     * @return int|string
+     */
+    public function id(bool $check_login = true);
+    public function name(bool $check_login = true): string;
+    public function data(bool $check_login = true): array;
+
+    /**
+     * @return AdminServiceInterface
+     */
     public function service();
+    /**
+     * @return AdminServiceInterface
+     */
     public function localService();
 
-    public function regist(array $post): array;
-    public function login(array $post): array;
-    public function logout();
+    public function urlForRegist(?string $url_back = null, ?array $ext = null): string;
+    public function urlForLogin(?string $url_back = null, ?array $ext = null): string;
+    public function urlForLogout(?string $url_back = null, ?array $ext = null): string;
+    public function urlForHome(?string $url_back = null, ?array $ext = null): string;
 
-    public function on($event, $callback);
-    public function fire($event, ...$args);
+    public function mergeViewData(array $input): array;
 
-    public function urlForRegist($url_back = null, $ext = null) : string;
-    public function urlForLogin($url_back = null, $ext = null) : string;
-    public function urlForLogout($url_back = null, $ext = null) : string;
-    public function urlForHome($url_back = null, $ext = null) : string;
+    public function checkAccess(string $class, string $method, ?string $url = null);
+    public function log(string $string, ?string $type = null, array $ext =[]);    
     
-    public function checkAccess($class, string $method, ?string $url = null);
-    public function log(string $string, ?string $type = null);
-    
-    public function getHeaderFooterData(array $input): array;
-    public function mergeView(array $data, bool $with_set_head_foot = true, ?string $header = null, ?string $footer = null): array;
+    public function batchGetUsernames(array $ids): array;
 }
