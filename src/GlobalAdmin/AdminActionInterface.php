@@ -4,6 +4,7 @@
  * From this time, you never be alone~
  */
 namespace DuckPhp\GlobalAdmin;
+
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
 
 interface AdminActionInterface
@@ -32,7 +33,7 @@ interface AdminActionInterface
     public function mergeViewData(array $input): array;
 
     public function checkAccess(string $class, string $method, ?string $url = null);
-    public function log(string $string, ?string $type = null, array $ext =[]);
+    public function log(string $string, ?string $type = null, array $ext = []);
     
     
     public function isSuper(): bool;

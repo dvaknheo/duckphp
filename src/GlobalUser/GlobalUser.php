@@ -7,13 +7,13 @@ namespace DuckPhp\GlobalUser;
 
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\View;
 use DuckPhp\Core\DuckPhpSystemException;
+use DuckPhp\Core\View;
 use DuckPhp\GlobalUser\UserActionInterface;
 
 class GlobalUser extends ComponentBase implements UserActionInterface
 {
-    public $options =[
+    public $options = [
         'user_url_home' => null,
         'user_url_regist' => null,
         'user_url_login' => null,
@@ -22,10 +22,10 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         'user_view_file_header' => null, // 'inc-head',
         'user_view_file_footer' => null, // 'inc-foot',
         
-        'user_enable_callback_singleton'     => true,
-        'user_callback_get_id'      => null, //[UserAction::class,'id'],
-        'user_callback_get_name'    => null, //[UserAction::class,'name'],
-        'user_callback_get_data'    => null, //[UserAction::class,'data'],
+        'user_enable_callback_singleton' => true,
+        'user_callback_get_id' => null, //[UserAction::class,'id'],
+        'user_callback_get_name' => null, //[UserAction::class,'name'],
+        'user_callback_get_data' => null, //[UserAction::class,'data'],
         'user_callback_get_service' => null, //[UserAction::class,'service'],
 
         'user_callback_url_home' => null,
@@ -39,7 +39,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
 
         $callback = $this->options[$key];
 
-        if(is_array($callback) && is_string($callback[0])){
+        if (is_array($callback) && is_string($callback[0])) {
             $class = $callback[0];
             $callback[0] = $class::_();
         }
@@ -67,10 +67,10 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
-        if(isset($this->options[$key_callback])){
+        if (isset($this->options[$key_callback])) {
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
-        DuckPhpSystemException::ThrowOn(!isset($this->options[$key_url]),"need app options '$key_url'");
+        DuckPhpSystemException::ThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
         return __url($url_back);
     }
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
@@ -97,8 +97,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function mergeViewData(array $input): array
     {
-        $header = !isset($this->options['user_view_file_header']) ?  '' : View::_()->_Render($this->options['user_view_file_header'],$input);
-        $footer = !isset($this->options['user_view_file_footer']) ?  '' : View::_()->_Render($this->options['user_view_file_footer'],$input);
+        $header = !isset($this->options['user_view_file_header']) ?  '' : View::_()->_Render($this->options['user_view_file_header'], $input);
+        $footer = !isset($this->options['user_view_file_footer']) ?  '' : View::_()->_Render($this->options['user_view_file_footer'], $input);
         $input['__view_data']['header'] = $header;
         $input['__view_data']['footer'] = $footer;
         return $input;
@@ -114,6 +114,6 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function batchGetUsernames(array $ids): array
     {
-         return $this->localService()->batchGetUsernames($ids);
+        return $this->localService()->batchGetUsernames($ids);
     }
 }

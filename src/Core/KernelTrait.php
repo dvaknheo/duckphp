@@ -324,7 +324,7 @@ trait KernelTrait
     }
     protected function initComponentsByClasseOptions(array $exts, $default): void
     {
-        $exts =array_filter($exts);
+        $exts = array_filter($exts);
         foreach ($exts as $class => $options) {
             $this->initExtensionsByOptions($class, $options, $default);
         }
@@ -332,6 +332,9 @@ trait KernelTrait
     //
     protected function initExtensionsByOptions(string $class, $options, $default)
     {
+        if ($options === false || $options === null || $options === self::$EXT_DISABLE) {
+            return;
+        }
         if ($options === true || $options === self::$EXT_DEFAULT) {
             $options = $default;
         }

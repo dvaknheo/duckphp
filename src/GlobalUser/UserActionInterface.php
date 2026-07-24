@@ -16,11 +16,11 @@ interface UserActionInterface
     public function data(bool $check_login = true): array;
 
     /**
-     * @return AdminServiceInterface
+     * @return UserServiceInterface
      */
     public function service();
     /**
-     * @return AdminServiceInterface
+     * @return UserServiceInterface
      */
     public function localService();
 
@@ -32,7 +32,7 @@ interface UserActionInterface
     public function mergeViewData(array $input): array;
 
     public function checkAccess(string $class, string $method, ?string $url = null);
-    public function log(string $string, ?string $type = null, array $ext =[]);    
+    public function log(string $string, ?string $type = null, array $ext = []);
     
     public function batchGetUsernames(array $ids): array;
 }

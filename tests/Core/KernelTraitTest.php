@@ -57,8 +57,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         App::_()->options['cli_enable'] =false;
         App::_()->getProjectPath();
         
-        //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
-        Route::_()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
+        Route::_()->bind('/NOOOOOOOOOOOOOOO'); 
         
         App::_()->options['error_404']=function(){
             echo "noooo 404  ooooooooo\n";
@@ -116,6 +115,24 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'namespace' => __NAMESPACE__,
             'controller_url_prefix'=>'child/',
         ];
+        PhaseContainer::RestAllContainerForTesting();
+        $myoptions = $options;
+        $myoptions['app']=[];
+        
+        try{
+        $myoptions['ext']=[
+            'not_exts1' => DuckPhp::EXT_SKIP_INIT
+        ];
+        DuckPhp::_()->init($myoptions);
+        }catch(\Exception $ex){}
+        try{
+        $myoptions['ext']=[
+            'not_exts1' => ['not_empty'=>true]
+        ];
+        DuckPhp::_()->init($myoptions);
+        }catch(\Exception $ex){}
+        
+        
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_()->init($options);
 

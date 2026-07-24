@@ -7,13 +7,13 @@ namespace DuckPhp\GlobalAdmin;
 
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\View;
 use DuckPhp\Core\DuckPhpSystemException;
+use DuckPhp\Core\View;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
 
 class GlobalAdmin extends ComponentBase implements AdminActionInterface
 {
-    public $options =[
+    public $options = [
         'admin_url_home' => null,
         'admin_url_login' => null,
         'admin_url_logout' => null,
@@ -21,10 +21,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         'admin_view_file_header' => null, // 'inc-head',
         'admin_view_file_footer' => null, // 'inc-foot',
         
-        'admin_enable_callback_singleton'     => true,
-        'admin_callback_get_id'      => null, //[UserAction::class,'id'],
-        'admin_callback_get_name'    => null, //[UserAction::class,'name'],
-        'admin_callback_get_data'    => null, //[UserAction::class,'data'],
+        'admin_enable_callback_singleton' => true,
+        'admin_callback_get_id' => null, //[UserAction::class,'id'],
+        'admin_callback_get_name' => null, //[UserAction::class,'name'],
+        'admin_callback_get_data' => null, //[UserAction::class,'data'],
         'admin_callback_get_service' => null, //[UserAction::class,'service'],
 
         'admin_callback_url_home' => null,
@@ -37,7 +37,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
 
         $callback = $this->options[$key];
 
-        if(is_array($callback) && is_string($callback[0])){
+        if (is_array($callback) && is_string($callback[0])) {
             $class = $callback[0];
             $callback[0] = $class::_();
         }
@@ -65,10 +65,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
-        if(isset($this->options[$key_callback])){
+        if (isset($this->options[$key_callback])) {
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
-        DuckPhpSystemException::ThrowOn(!isset($this->options[$key_url]),"need app options '$key_url'");
+        DuckPhpSystemException::ThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
         return __url($url_back);
     }
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
@@ -91,8 +91,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     public function mergeViewData(array $input): array
     {
-        $header = !isset($this->options['admin_view_file_header']) ?  '' : View::_()->_Render($this->options['admin_view_file_header'],$input);
-        $footer = !isset($this->options['admin_view_file_footer']) ?  '' : View::_()->_Render($this->options['admin_view_file_footer'],$input);
+        $header = !isset($this->options['admin_view_file_header']) ?  '' : View::_()->_Render($this->options['admin_view_file_header'], $input);
+        $footer = !isset($this->options['admin_view_file_footer']) ?  '' : View::_()->_Render($this->options['admin_view_file_footer'], $input);
         $input['__view_data']['header'] = $header;
         $input['__view_data']['footer'] = $footer;
         return $input;

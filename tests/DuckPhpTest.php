@@ -169,7 +169,11 @@ class FakeObject
 class FakeAdmin
 {
     use SingletonExTrait;
-    use ZCallTrait;
+
+    public function init($options = [], $context = null)
+    {
+        return $this;
+    }
     public function id()
     {
         return 1;
@@ -184,6 +188,10 @@ class FakeUser
     use SingletonExTrait;
     use ZCallTrait;
 
+    public function init($options = [], $context = null)
+    {
+        return $this;
+    }
     public function id()
     {
         return 1;
