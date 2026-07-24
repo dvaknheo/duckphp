@@ -7,7 +7,8 @@ namespace DuckPhp\GlobalAdmin;
 
 interface AdminServiceInterface
 {
-    public function doCheckAccess(int $admin_id, string $class, string $method, ?string $url = null): void;
-    public function doIsSuper(int $admin_id): bool;
-    public function doLog(int $admin_id, string $string, ?string $type = null): void;
+    public function checkAccess($admin_id, string $class, string $method, ?string $url = null);
+    public function log($admin_id, string $string, ?string $type = null, array $ext =[]);
+
+    public function isSuper($admin_id): bool;
 }
