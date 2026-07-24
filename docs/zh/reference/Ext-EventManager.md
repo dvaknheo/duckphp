@@ -1,4 +1,4 @@
-# DuckPhp\Core\EventManager
+# DuckPhp\Ext\EventManager
 
 事件管理组件。
 
@@ -13,7 +13,7 @@
 ### 静态方法
 
 ```php
-use DuckPhp\Core\EventManager;
+use DuckPhp\Ext\EventManager;
 
 // 监听事件
 EventManager::OnEvent('user.login', function ($userId) {

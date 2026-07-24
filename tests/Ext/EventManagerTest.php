@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Component;
 
-use DuckPhp\Core\EventManager;
+use DuckPhp\Ext\EventManager;
 
 class EventManagerTest extends \PHPUnit\Framework\TestCase
 {
