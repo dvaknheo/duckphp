@@ -42,7 +42,7 @@ class DuckPhp extends App
         'session_prefix' => null,
         'table_prefix' => null,
         
-        'class_admin' => GlobalAdmin::class,
+        'class_admin' => '',
         'class_user' => '',
         'database_driver' => '',
 
