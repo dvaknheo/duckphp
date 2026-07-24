@@ -255,7 +255,8 @@ $service->log($adminId, '操作', 'audit');
 | `urlForHome(?string $url_back, ?array $ext): string` | 后台首页 URL |
 | `urlForLogin(?string $url_back, ?array $ext): string` | 登录页 URL |
 | `urlForLogout(?string $url_back, ?array $ext): string` | 登出页 URL |
-| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']` |
+| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']`（优先回调，默认走 `mergeViewDataInner()`） |
+| `mergeViewDataInner(array $input): array` | 默认视图融合逻辑：渲染 header/footer 视图文件 |
 | `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->checkAccess()` |
 | `log($string, $type, $ext)` | 记录管理员操作日志，委托给 `localService()->log()` |
 | `isSuper(): bool` | 判断是否超级管理员，委托给 `localService()->isSuper()` |
@@ -288,7 +289,10 @@ $service->log($adminId, '操作', 'audit');
 获取登出页 URL
 
     public function mergeViewData(array $input): array
-融合视图头尾数据到 input['__view_data']
+融合视图头尾数据。优先使用 `admin_callback_for_merge_view_data` 回调，否则调用 `mergeViewDataInner()`
+
+    public function mergeViewDataInner(array $input): array
+默认视图融合逻辑：渲染 `admin_view_file_header` / `admin_view_file_footer` 视图文件，填充到 `input['__view_data']`
 
     public function checkAccess(string $class, string $method, ?string $url = null)
 检查权限，委托给 localService()->checkAccess()

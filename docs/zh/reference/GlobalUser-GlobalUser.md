@@ -270,7 +270,8 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
 | `urlForRegist(?string $url_back, ?array $ext): string` | 注册页 URL |
 | `urlForLogin(?string $url_back, ?array $ext): string` | 登录页 URL |
 | `urlForLogout(?string $url_back, ?array $ext): string` | 登出页 URL |
-| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']` |
+| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']`（优先回调，默认走 `mergeViewDataInner()`） |
+| `mergeViewDataInner(array $input): array` | 默认视图融合逻辑：渲染 header/footer 视图文件 |
 | `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->checkAccess()` |
 | `log($string, $type, $ext)` | 记录操作日志，委托给 `localService()->log()` |
 | `batchGetUsernames(array $ids): array` | 批量获取用户名，委托给 `localService()->batchGetUsernames()` |
@@ -306,7 +307,10 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
 获取登出页 URL
 
     public function mergeViewData(array $input): array
-融合视图头尾数据到 input['__view_data']
+融合视图头尾数据。优先使用 `user_callback_for_merge_view_data` 回调，否则调用 `mergeViewDataInner()`
+
+    public function mergeViewDataInner(array $input): array
+默认视图融合逻辑：渲染 `user_view_file_header` / `user_view_file_footer` 视图文件，填充到 `input['__view_data']`
 
     public function checkAccess(string $class, string $method, ?string $url = null)
 检查权限，委托给 localService()->checkAccess()

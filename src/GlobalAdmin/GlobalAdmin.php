@@ -96,6 +96,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         if (isset($this->options['admin_callback_for_merge_view_data'])) {
             return $this->run_callback_by_key('admin_callback_for_merge_view_data', $input);
         }
+        return $this->mergeViewDataInner($input);
+    }
+    public function mergeViewDataInner(array $input): array
+    {
         $header = !isset($this->options['admin_view_file_header']) ?  '' : View::_()->_Render($this->options['admin_view_file_header'], $input);
         $footer = !isset($this->options['admin_view_file_footer']) ?  '' : View::_()->_Render($this->options['admin_view_file_footer'], $input);
         $input['__view_data']['header'] = $header;

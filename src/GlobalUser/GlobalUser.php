@@ -102,6 +102,10 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         if (isset($this->options['user_callback_for_merge_view_data'])) {
             return $this->run_callback_by_key('user_callback_for_merge_view_data', $input);
         }
+        return $this->mergeViewDataInner($input);
+    }
+    public function mergeViewDataInner(array $input): array
+    {
         $header = !isset($this->options['user_view_file_header']) ?  '' : View::_()->_Render($this->options['user_view_file_header'], $input);
         $footer = !isset($this->options['user_view_file_footer']) ?  '' : View::_()->_Render($this->options['user_view_file_footer'], $input);
         $input['__view_data']['header'] = $header;
