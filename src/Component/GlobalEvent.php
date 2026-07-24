@@ -11,8 +11,11 @@ use DuckPhp\Core\ComponentBase;
 class GlobalEvent extends ComponentBase
 {
     protected $events = [];
-
-    public function on($event, ?string $phase = null, $callback)
+    public function on($event, $callback)
+    {
+        return $this->globalOn($event, App::Phase(), $callback);
+    }
+    public function globalOn($event, ?string $phase = null, $callback)
     {
         $pair = [$phase, $callback];
         if (isset($this->events[$event]) && in_array($pair, $this->events[$event])) {

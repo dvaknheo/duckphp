@@ -50,8 +50,8 @@ class GemAppChild extends DuckPhp
     }
     public function onInited(): void
     {
-        GlobalEvent::_()->on('GEMvent1',App::Phase(),[static::class,'Callback']);
-        GlobalEvent::_()->on('GEMvent1',App::Phase(),[static::class,'Callback']);
-        GlobalEvent::_()->on('GEMvent2',App::Phase(),[static::class,'Callback2']);
+        GlobalEvent::_()->on('GEMvent1',[static::class,'Callback']);
+        GlobalEvent::_()->on('GEMvent1',[static::class,'Callback']);
+        GlobalEvent::_()->on('GEMvent2',[static::class,'Callback2']);
     }
 }

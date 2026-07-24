@@ -7,9 +7,9 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
+use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
-use DuckPhp\Core\EventManager;
 use DuckPhp\Core\SingletonTrait;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalUser\GlobalUser;
@@ -45,13 +45,13 @@ trait BusinessHelperTrait
     {
         return CoreHelper::_()->_PathOfRuntime();
     }
-    public static function FireEvent($event, ...$args)
+    public static function FireGlobalEvent($event, ...$args)
     {
-        return EventManager::FireEvent($event, ...$args);
+        return GlobalEvent::_()->fire($event, ...$args);
     }
-    public static function OnEvent($event, $callback)
+    public static function OnGlobalEvent($event, $callback)
     {
-        return EventManager::OnEvent($event, $callback);
+        return GlobalEvent::_()->on($event, $callback);
     }
     public static function AdminService()
     {

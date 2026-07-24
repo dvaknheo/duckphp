@@ -89,8 +89,8 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         AppHelper::getCliParameters();
         ////]]]]
                 
-        AppHelper::OnEvent('MyEvent',function(){});
-        AppHelper::FireEvent('MyEvent',function(){});
+        AppHelper::OnGlobalEvent('MyEvent',function(){});
+        AppHelper::FireGlobalEvent('MyEvent',function(){});
         AppHelper::PathOfProject();
         AppHelper::PathOfRuntime();
         AppHelper::getAllAppClass();

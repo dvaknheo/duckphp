@@ -7,11 +7,11 @@ namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
-use DuckPhp\Core\EventManager;
 use DuckPhp\FastInstaller\DatabaseInstaller;
 use DuckPhp\FastInstaller\RedisInstaller;
 use DuckPhp\FastInstaller\SqlDumper;
@@ -174,11 +174,11 @@ and more ...\n";
     }
     public function doCommandUpdate()
     {
-        EventManager::FireEvent([App::Phase(), 'OnInstallUpdate']);
+        //GlobalEvent::_()->fire(App::_()->getThisClassName() .'#onInstallUpdate');
     }
     public function doCommandRemove()
     {
-        EventManager::FireEvent([App::Phase(), 'OnInstallRemove']);
+        GlobalEvent::_()->fire(App::_()->getThisClassName() .'#onInstallRemove');
     }
     public function forceFail(): void
     {
@@ -274,15 +274,15 @@ and more ...\n";
             echo "\e[32;3m $class Installed App  FAILED!;\033[0m\n";
             return;
         }
-        EventManager::FireEvent([App::Phase(), 'onInstall'], $input_options);
+        //GlobalEvent::_()->fire(App::_()->getThisClassName() .'#onInstall', $input_options);
         
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
-            EventManager::FireEvent([App::Phase(), 'onBeforeChildrenInstall']);
+            //GlobalEvent::_()->fire(App::_()->getThisClassName() .'#onBeforeChildrenInstall');
             $this->installChildren();
         }
         ExtOptionsLoader::_()->saveData(['installed' => DATE(DATE_ATOM)]);
-        EventManager::FireEvent([App::Phase(), 'onInstalled']);
+        //GlobalEvent::_()->fire(App::_()->getThisClassName() . '#onInstalled');
         if (method_exists(App::_(), 'onInstalled')) {
             App::_()->onInstalled();
         }

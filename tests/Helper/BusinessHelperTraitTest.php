@@ -27,8 +27,8 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         try{
         
-            BusinessHelper::OnEvent("test",function(){});
-            BusinessHelper::FireEvent("test",1,2,3);
+            BusinessHelper::OnGlobalEvent("test",function(){});
+            BusinessHelper::FireGlobalEvent("test",1,2,3);
         }catch(\Exception $ex){
         }
         try{

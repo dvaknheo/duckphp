@@ -98,8 +98,8 @@ ControllerHelper::PageHtml(123);
         ControllerHelper::XpCall(function(){ throw new \Exception('ex'); });
         
         try{
-            ControllerHelper::OnEvent("test",function(){});
-            ControllerHelper::FireEvent("test",1,2,3);
+            ControllerHelper::OnGlobalEvent("test",function(){});
+            ControllerHelper::FireGlobalEvent("test",1,2,3);
         }catch(\Exception $ex){
         }
         ControllerHelper::IsAjax();
