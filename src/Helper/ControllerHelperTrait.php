@@ -168,6 +168,15 @@ trait ControllerHelperTrait
     {
         return Pager::PageHtml($total, $options);
     }
+    ////
+    public static function FireEvent($event, ...$args)
+    {
+        return EventManager::FireEvent($event, ...$args);
+    }
+    public static function OnEvent($event, $callback)
+    {
+        return EventManager::OnEvent($event, $callback);
+    }
     //////////////////////
     public static function Admin()
     {
