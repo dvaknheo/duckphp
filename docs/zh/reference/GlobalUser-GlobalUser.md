@@ -109,7 +109,7 @@ if(isset($data['__view_data']['header'])){
 ?>
 以上是来自 GlobalUser 提供者的页眉 <br>
 
-你好  <span> <?=__h($user_name)?></span> <a href="<?=$url_logout">登出</a>
+你好  <span> <?=__h($user_name)?></span> <a href="<?= $url_logout ?>>登出</a>
 
 以下是来自 GlobalUser 提供者的页脚 <br>
 <?php
@@ -207,7 +207,7 @@ class UserAction
     }
 }
 ```
-对应的，当你设置 `user_callback_get_id' => [UserAction::class, 'id']` 后，主应用或其他应用调用 `Helper::UserId()` 时，实际执行的就是 `UserAction::id()`。
+对应的，当你设置 `'user_callback_get_id' => [UserAction::class, 'id']` 后，主应用或其他应用调用 `Helper::UserId()` 时，实际执行的就是 `UserAction::id()`。
 
 
 ### 所有应用的 Controller 中调用
@@ -275,17 +275,53 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
 
 
 ### 公共方法
+
     public function id(bool $check_login = true)
 获取当前用户 ID。`true` 且未登录时抛异常
 
-//... {待AI补充完整，引用格式都和代码里一致，方便脚本自动化}
+    public function name(bool $check_login = true): string
+获取当前用户名
+
+    public function data(bool $check_login = true): array
+获取当前用户数据
+
+    public function service()
+返回 UserServiceInterface 实例（PhaseProxy）
+
+    public function localService()
+返回本地 UserServiceInterface 实例
+
+    public function urlForHome(?string $url_back = null, ?array $ext = null): string
+获取首页 URL
+
+    public function urlForRegist(?string $url_back = null, ?array $ext = null): string
+获取注册页 URL
+
+    public function urlForLogin(?string $url_back = null, ?array $ext = null): string
+获取登录页 URL
+
+    public function urlForLogout(?string $url_back = null, ?array $ext = null): string
+获取登出页 URL
+
+    public function mergeViewData(array $input): array
+融合视图头尾数据到 input['__view_data']
+
+    public function checkAccess(string $class, string $method, ?string $url = null)
+检查权限，委托给 localService()->checkAccess()
+
+    public function log(string $string, ?string $type = null, array $ext = [])
+记录日志，委托给 localService()->log()
+
+    public function batchGetUsernames(array $ids): array
+批量获取用户名，委托给 localService()->batchGetUsernames()
 
 ### 受保护方法
 
     protected function run_callback_by_key(string $key, ...$args)
 回调 $options[$key]
 
-//... {待AI补充完整，引用格式都和代码里一致，方便脚本自动化}
+    protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
+URL 生成路由：优先回调，回退固定 URL
 
 ## 相关链接
 
