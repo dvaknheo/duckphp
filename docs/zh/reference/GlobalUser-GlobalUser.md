@@ -54,37 +54,52 @@
 
 ## 使用方式
 
-### URL 生成
+### 作为子应用
+
+当你需要把自己的用户系统封装给其他应用使用时：
+比如 
+
+下面的 `MyUserProvider\System\UserApp` 是你自己的用户系统。
+下面的 `MainApp\System\App` 是主系统。
 
 ```php
-$url = GlobalUser::_()->urlForLogin('/back');  // 登录后跳回 /back
-$url = GlobalUser::_()->urlForLogout();
-$url = GlobalUser::_()->urlForHome();
-$url = GlobalUser::_()->urlForRegist();
+namespace MainApp\System;
+use MyUserProvider\System\UserApp;
+class App extends DuckPhp
+{
+    public $options = [
+        'app' =>[
+            UserApp::class => [
+                'controller_url_prefix' =>'user/',
+                'user_url_home' => '/',  // 登录之类的成功后到网站首页
+            ],
+        ]
+    ];
+}
 ```
 
-### 视图融合
+---
+
+
+### 例子
 
 ```php
-$data = GlobalUser::_()->mergeViewData($input);
-// $data['__view_data']['header'] 和 ['footer'] 已填充
-```
-这个方法用在编写用户后台时，主应用通过 `mergeViewData()` 获取提供者的页眉/页脚：
-
-```php
-// 
 namespace MainApp\Controller;
 class managerController
 {
     public function dashboard()
     {
+        
         $data =[];
-        //... 填充视图数据
+        $data['user_name'] = Helper::UserName();
+        $data['url_logout'] = Helper::User()->urlForLogout();
+
         $data = Helper::User()->mergeViewData($data);
         Helper::Show($data,'dashboard');
     }
 }
 ```
+
 ```php
 <?php
 // view/dashboard.php
@@ -92,9 +107,11 @@ if(isset($data['__view_data']['header'])){
     echo $data['__view_data']['header'];
 }
 ?>
-//以上是来自 GlobalUser 提供者的页眉
-<hr />
-//以下是来自 GlobalUser 提供者的页脚
+以上是来自 GlobalUser 提供者的页眉 <br>
+
+你好  <span> <?=__h($user_name)?></span> <a href="<?=$url_logout">登出</a>
+
+以下是来自 GlobalUser 提供者的页脚 <br>
 <?php
 if(isset($data['__view_data']['footer'])){
     echo $data['__view_data']['footer'];
@@ -102,6 +119,31 @@ if(isset($data['__view_data']['footer'])){
 ?>
 
 ```
+这个案例，对应的 url 是
+`/manager/dashboard`
+
+我们通常通过 Controller 层的 Helper::User 来使用 GlobalUser
+
+当没登录的时候；会被子应用处理。通常情况下会跳转到登录页面
+
+当成功登录，会显示当前用户名。和登出链接。
+
+同时会把子应用设定的页眉页脚数据附加到视图里。
+
+### URL 生成
+
+```php
+$url = Helper::User()->urlForLogin('/back');  // 登录后跳回 /back
+$url = Helper::User()->urlForLogout();
+$url = Helper::User()->urlForHome();
+$url = Helper::User()->urlForRegist();
+```
+### 视图融合
+```php
+$data = GlobalUser::_()->mergeViewData($input);
+// $data['__view_data']['header'] 和 ['footer'] 已填充
+```
+这个方法用在编写用户后台时，主应用通过 `mergeViewData()` 获取提供者的页眉/页脚：
 
 
 ### 配置回调
@@ -109,6 +151,7 @@ if(isset($data['__view_data']['footer'])){
 在子 App 中配置 `user_callback_*` 指向自己的实现类。回调数组 `[ClassName::class, 'method']` 在 `user_enable_callback_singleton` 开启时会自动实例化为单例：
 
 ```php
+use MyUserProvider\System;
 class UserApp extends DuckPhp
 {
     public $options = [
@@ -135,6 +178,8 @@ class UserApp extends DuckPhp
 ### UserAction 实现示例
 
 ```php
+use MyUserProvider\Controller;
+use MyUserProvider\Business\UserBusiness;
 class UserAction
 {
     // 会被 user_callback_get_id 调用
@@ -149,6 +194,7 @@ class UserAction
     public function name($check_login = true): string
     {
         return $_SESSION['user_name'] ?? '';
+
     }
     public function data($check_login = true): array
     {
@@ -175,43 +221,39 @@ $user = Helper::User();                     // => GlobalUser 实例
 $userService = Helper::UserService();       // => GlobalUser::_()->service()
 ```
 
-
 ### 服务委托
 
 `GlobalUser::_()->service()` 返回 `UserServiceInterface` 的 PhaseProxy，可在 Business 层安全调用：
 
 ```php
-$service = GlobalUser::_()->service();
+
+$service = Helper::User()->service();
 $service->checkAccess($userId, __CLASS__, __METHOD__);
 $service->log($userId, '操作', 'audit');
 $usernames = $service->batchGetUsernames([1, 2, 3]);
 ```
 
 ---
+## 全部选项
 
-## 提供用户系统给其他应用
+        'user_url_home' => null,
+        'user_url_regist' => null,
+        'user_url_login' => null,
+        'user_url_logout' => null,
+        
+        'user_view_file_header' => null, // 'inc-head',
+        'user_view_file_footer' => null, // 'inc-foot',
+        
+        'user_enable_callback_singleton' => true,
+        'user_callback_get_id' => null, //[UserAction::class,'id'],
+        'user_callback_get_name' => null, //[UserAction::class,'name'],
+        'user_callback_get_data' => null, //[UserAction::class,'data'],
+        'user_callback_get_service' => null, //[UserAction::class,'service'],
 
-当你需要把自己的用户系统封装给其他应用使用时：
-下面的 UserApp 是你自己的用户系统。
-
-
-```php
- 
-class MainApp extends DuckPhp
-{
-    public $options = [
-        'app' =>[
-            UserApp::class => [
-                'controller_url_prefix' =>'user/',
-                'user_url_home' => '/',  // 登录之类的成功后到网站首页
-            ],
-        ]
-    ];
-}
-```
-
-
----
+        'user_callback_url_home' => null,
+        'user_callback_url_regist' => null,
+        'user_callback_url_login' => null,
+        'user_callback_url_logout' => null,
 
 ## 方法列表
 
@@ -230,6 +272,20 @@ class MainApp extends DuckPhp
 | `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->checkAccess()` |
 | `log($string, $type, $ext)` | 记录操作日志，委托给 `localService()->log()` |
 | `batchGetUsernames(array $ids): array` | 批量获取用户名，委托给 `localService()->batchGetUsernames()` |
+
+
+### 公共方法
+    public function id(bool $check_login = true)
+获取当前用户 ID。`true` 且未登录时抛异常
+
+//... {待AI补充完整，引用格式都和代码里一致，方便脚本自动化}
+
+### 受保护方法
+
+    protected function run_callback_by_key(string $key, ...$args)
+回调 $options[$key]
+
+//... {待AI补充完整，引用格式都和代码里一致，方便脚本自动化}
 
 ## 相关链接
 
