@@ -82,6 +82,7 @@ class PhaseContainer
     }
     public function addPublicClasses($classes)
     {
+        $classes =array_filter($classes);
         foreach ($classes as $class => $v) {
             $this->publics[$class] = $v;
         }

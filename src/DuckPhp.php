@@ -42,7 +42,7 @@ class DuckPhp extends App
         'session_prefix' => null,
         'table_prefix' => null,
         
-        'class_admin' => '',
+        'class_admin' => GlobalAdmin::class,
         'class_user' => '',
         'database_driver' => '',
 
@@ -87,11 +87,11 @@ class DuckPhp extends App
     protected function initComponentsOfRoot($components, $default): void
     {
         $my_components = [
-            DbManager::class => true,
-            RedisManager::class => true,
+            DbManager::class => self::EXT_DEFAULT,
+            RedisManager::class => self::EXT_DEFAULT,
             GlobalAdmin::class => self::EXT_SKIP_INIT,
-            GlobalUser::class => self::EXT_SKIP_INIT,
-            GlobalEvent::class => self::EXT_SKIP_INIT,
+            GlobalUser::class => self::EXT_DISABLE,
+            GlobalEvent::class => self::EXT_DISABLE,
         ];
         $components = array_merge($components, $my_components);
         
@@ -123,11 +123,13 @@ class DuckPhp extends App
         }
         if ($this->options['class_admin']) {
             $class = $this->options['class_admin'];
-            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $class));
+            $object = $class::_()->init($this->options, $this);
+            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
-            GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $class));
+            $class::_()->init($this->options, $this);
+            GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }
     }
     protected function onPrepare(): void

@@ -302,7 +302,7 @@ trait KernelTrait
     }
     protected function initComponentsOfRoot($classes, $default): void
     {
-        PhaseContainer::_()->addPublicClasses($classes);
+        PhaseContainer::_()->addPublicClasses(array_fill_keys(array_keys($classes), true));
 
         $this->initComponentsByClasseOptions($classes, $default);
     }
@@ -324,6 +324,7 @@ trait KernelTrait
     }
     protected function initComponentsByClasseOptions(array $exts, $default): void
     {
+        $exts =array_filter($exts);
         foreach ($exts as $class => $options) {
             $this->initExtensionsByOptions($class, $options, $default);
         }
@@ -331,22 +332,21 @@ trait KernelTrait
     //
     protected function initExtensionsByOptions(string $class, $options, $default)
     {
-        if (!class_exists($class)) {
-            throw new DuckPhpSystemException("ext [$class] not exists");
-        }
-    
-        if ($options === false || $options === null || $options === self::$EXT_DISABLE) {
-            return;
-        }
         if ($options === true || $options === self::$EXT_DEFAULT) {
             $options = $default;
         }
         if ($options === self::$EXT_FOLLOW_APP) {
             $options = $this->options;
+            if (!class_exists($class)) {
+                throw new DuckPhpSystemException("ext [$class] not exists");
+            }
             $class::_()->init($options, $this);
             return;
         }
         if ($options === self::$EXT_SKIP_INIT) {
+            if (!class_exists($class)) {
+                throw new DuckPhpSystemException("ext [$class] not exists");
+            }
             $class::_();
             return;
         }
@@ -356,6 +356,9 @@ trait KernelTrait
             return;
         }
         if (is_array($options)) {
+            if (!class_exists($class)) {
+                throw new DuckPhpSystemException("ext [$class] not exists");
+            }
             $class::_()->init($options, $this);
         }
         if (is_string($options)) {
