@@ -57,9 +57,9 @@ class MyUser extends GlobalUser
     public $options =[
         'user_url_home' => 'home',
         
-        'user_callback_get_id' => [MyUserAction::class,'id'],
-        'user_callback_url_login' => [MyUserAction::class,'urlForLogin'],
-        'user_callback_get_service'=>[MyUserService::class,'_'],
+        'user_callback_for_id' => [MyUserAction::class,'id'],
+        'user_callback_for_url_for_login' => [MyUserAction::class,'urlForLogin'],
+        'user_callback_for_service'=>[MyUserService::class,'_'],
         'user_view_file_header'=>'/abc',
     ];
 }

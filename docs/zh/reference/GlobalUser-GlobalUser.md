@@ -17,14 +17,14 @@
 
 | 选项 | 对应方法 | 默认值说明 |
 |---|---|---|
-| `user_callback_get_id` | `id()` | 获取当前用户 ID，参数 `(bool $check_login)` |
-| `user_callback_get_name` | `name()` | 获取当前用户名 |
-| `user_callback_get_data` | `data()` | 获取当前用户数据数组 |
-| `user_callback_get_service` | `localService()` | 返回 `UserServiceInterface` 实例 |
-| `user_callback_url_home` | `urlForHome()` | 自定义首页 URL 生成 |
-| `user_callback_url_regist` | `urlForRegist()` | 自定义注册页 URL 生成 |
-| `user_callback_url_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
-| `user_callback_url_logout` | `urlForLogout()` | 自定义登出页 URL 生成 |
+| `user_callback_for_id` | `id()` | 获取当前用户 ID，参数 `(bool $check_login)` |
+| `user_callback_for_name` | `name()` | 获取当前用户名 |
+| `user_callback_for_data` | `data()` | 获取当前用户数据数组 |
+| `user_callback_for_service` | `localService()` | 返回 `UserServiceInterface` 实例 |
+| `user_callback_for_url_for_home` | `urlForHome()` | 自定义首页 URL 生成 |
+| `user_callback_for_url_for_regist` | `urlForRegist()` | 自定义注册页 URL 生成 |
+| `user_callback_for_url_for_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
+| `user_callback_for_url_for_logout` | `urlForLogout()` | 自定义登出页 URL 生成 |
 
 ### 直接 URL 选项
 
@@ -155,10 +155,10 @@ use MyUserProvider\System;
 class UserApp extends DuckPhp
 {
     public $options = [
-        'user_callback_get_id' => [UserAction::class, 'id'],
-        'user_callback_get_name' => [UserAction::class, 'name'],
-        'user_callback_get_data' => [UserAction::class, 'data'],
-        'user_callback_get_service' => [UserAction::class, 'service'],
+        'user_callback_for_id' => [UserAction::class, 'id'],
+        'user_callback_for_name' => [UserAction::class, 'name'],
+        'user_callback_for_data' => [UserAction::class, 'data'],
+        'user_callback_for_service' => [UserAction::class, 'service'],
         
         'user_url_login' => 'login',
         'user_url_logout' => 'logout',
@@ -171,8 +171,8 @@ class UserApp extends DuckPhp
 
 
 回调说明：
-- `user_callback_get_id`/`get_name`/`get_data`：指向你的 `UserAction` 类，从 Session/Token 读取当前用户信息
-- `user_callback_get_service`：指向 `UserAction::service()`，返回 `UserServiceInterface` 实例
+- `user_callback_for_id`/`get_name`/`get_data`：指向你的 `UserAction` 类，从 Session/Token 读取当前用户信息
+- `user_callback_for_service`：指向 `UserAction::service()`，返回 `UserServiceInterface` 实例
 - `user_callback_url_*`：可选的 URL 生成回调，不设置时走 `user_url_*` 固定 URL
 
 ### UserAction 实现示例
@@ -182,7 +182,7 @@ use MyUserProvider\Controller;
 use MyUserProvider\Business\UserBusiness;
 class UserAction
 {
-    // 会被 user_callback_get_id 调用
+    // 会被 user_callback_for_id 调用
     public function id($check_login = true)
     {
         $id = $_SESSION['user_id'] ?? null;
@@ -200,14 +200,14 @@ class UserAction
     {
         return $_SESSION['user_data'] ?? [];
     }
-    // 会被 user_callback_get_service 调用
+    // 会被 user_callback_for_service 调用
     public function service()
     {
         return UserBusiness::_();  // UserBusiness implements UserServiceInterface
     }
 }
 ```
-对应的，当你设置 `'user_callback_get_id' => [UserAction::class, 'id']` 后，主应用或其他应用调用 `Helper::UserId()` 时，实际执行的就是 `UserAction::id()`。
+对应的，当你设置 `'user_callback_for_id' => [UserAction::class, 'id']` 后，主应用或其他应用调用 `Helper::UserId()` 时，实际执行的就是 `UserAction::id()`。
 
 
 ### 所有应用的 Controller 中调用
@@ -245,15 +245,15 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
         'user_view_file_footer' => null, // 'inc-foot',
         
         'user_enable_callback_singleton' => true,
-        'user_callback_get_id' => null, //[UserAction::class,'id'],
-        'user_callback_get_name' => null, //[UserAction::class,'name'],
-        'user_callback_get_data' => null, //[UserAction::class,'data'],
-        'user_callback_get_service' => null, //[UserAction::class,'service'],
+        'user_callback_for_id' => null, //[UserAction::class,'id'],
+        'user_callback_for_name' => null, //[UserAction::class,'name'],
+        'user_callback_for_data' => null, //[UserAction::class,'data'],
+        'user_callback_for_service' => null, //[UserAction::class,'service'],
 
-        'user_callback_url_home' => null,
-        'user_callback_url_regist' => null,
-        'user_callback_url_login' => null,
-        'user_callback_url_logout' => null,
+        'user_callback_for_url_for_home' => null,
+        'user_callback_for_url_for_regist' => null,
+        'user_callback_for_url_for_login' => null,
+        'user_callback_for_url_for_logout' => null,
 
 ## 方法列表
 

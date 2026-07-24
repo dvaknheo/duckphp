@@ -23,15 +23,15 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         'user_view_file_footer' => null, // 'inc-foot',
         
         'user_enable_callback_singleton' => true,
-        'user_callback_get_id' => null, //[UserAction::class,'id'],
-        'user_callback_get_name' => null, //[UserAction::class,'name'],
-        'user_callback_get_data' => null, //[UserAction::class,'data'],
-        'user_callback_get_service' => null, //[UserAction::class,'service'],
+        'user_callback_for_id' => null, //[UserAction::class,'id'],
+        'user_callback_for_name' => null, //[UserAction::class,'name'],
+        'user_callback_for_data' => null, //[UserAction::class,'data'],
+        'user_callback_for_service' => null, //[UserAction::class,'service'],
 
-        'user_callback_url_home' => null,
-        'user_callback_url_regist' => null,
-        'user_callback_url_login' => null,
-        'user_callback_url_logout' => null,
+        'user_callback_for_url_for_home' => null,
+        'user_callback_for_url_for_regist' => null,
+        'user_callback_for_url_for_login' => null,
+        'user_callback_for_url_for_logout' => null,
     ];
     protected function run_callback_by_key(string $key, ...$args)
     {
@@ -51,19 +51,19 @@ class GlobalUser extends ComponentBase implements UserActionInterface
      */
     public function id(bool $check_login = true)
     {
-        return $this->run_callback_by_key('user_callback_get_id', $check_login);
+        return $this->run_callback_by_key('user_callback_for_id', $check_login);
     }
     public function name(bool $check_login = true): string
     {
-        return $this->run_callback_by_key('user_callback_get_name', $check_login);
+        return $this->run_callback_by_key('user_callback_for_name', $check_login);
     }
     public function data(bool $check_login = true): array
     {
-        return $this->run_callback_by_key('user_callback_get_data', $check_login);
+        return $this->run_callback_by_key('user_callback_for_data', $check_login);
     }
     public function localService()
     {
-        return $this->run_callback_by_key('user_callback_get_service');
+        return $this->run_callback_by_key('user_callback_for_service');
     }
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
@@ -75,19 +75,19 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_url_home', 'user_url_home', $url_back, $ext);
+        return $this->go_url('user_callback_for_url_for_home', 'user_url_home', $url_back, $ext);
     }
     public function urlForRegist(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_url_regist', 'user_url_regist', $url_back, $ext);
+        return $this->go_url('user_callback_for_url_for_regist', 'user_url_regist', $url_back, $ext);
     }
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_url_login', 'user_url_login', $url_back, $ext);
+        return $this->go_url('user_callback_for_url_for_login', 'user_url_login', $url_back, $ext);
     }
     public function urlForLogout(?string $url_back = null, ?array $ext = null):string
     {
-        return $this->go_url('user_callback_url_logout', 'user_url_logout', $url_back, $ext);
+        return $this->go_url('user_callback_for_url_for_logout', 'user_url_logout', $url_back, $ext);
     }
     ///////////////
     public function service()
