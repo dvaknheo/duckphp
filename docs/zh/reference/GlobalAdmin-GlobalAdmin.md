@@ -8,6 +8,10 @@
 
 ## 选项
 
+### 注册为提供者
+
+    'class_admin' => GlobalAdmin::class,  // 或你的 MyAdmin implements AdminActionInterface
+
 ### 回调选项
 
 | 选项 | 对应方法 | 说明 |
@@ -34,6 +38,12 @@
 |---|---|
 | `admin_view_file_header` | 后台界面 header 视图文件 |
 | `admin_view_file_footer` | 后台界面 footer 视图文件 |
+
+### 回调单例模式
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `admin_enable_callback_singleton` | `true` | 启用后，回调数组 `[ClassName::class, 'method']` 自动转为 `ClassName::_()->method()` |
 
 ## 使用方式
 
@@ -74,7 +84,7 @@ $data = GlobalAdmin::_()->mergeViewData($input);
 
 | 方法 | 说明 |
 |---|---|
-| `id(bool $check_login = true)` | 获取当前管理员 ID。`$check_login = true` 且未登录时抛出异常（来自回调实现） |
+| `id(bool $check_login = true)` | 获取当前管理员 ID。`true` 且未登录时抛异常 |
 | `name(bool $check_login = true): string` | 获取当前管理员名 |
 | `data(bool $check_login = true): array` | 获取当前管理员数据 |
 | `service()` | 返回 `AdminServiceInterface` 的 PhaseProxy 实例 |
