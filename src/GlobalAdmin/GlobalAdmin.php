@@ -22,14 +22,14 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         'admin_view_file_footer' => null, // 'inc-foot',
         
         'admin_enable_callback_singleton' => true,
-        'admin_callback_get_id' => null, //[AdminAction::class,'id'],
-        'admin_callback_get_name' => null, //[AdminAction::class,'name'],
-        'admin_callback_get_data' => null, //[AdminAction::class,'data'],
-        'admin_callback_get_service' => null, //[AdminAction::class,'service'],
+        'admin_callback_for_id' => null, //[AdminAction::class,'id'],
+        'admin_callback_for_name' => null, //[AdminAction::class,'name'],
+        'admin_callback_for_data' => null, //[AdminAction::class,'data'],
+        'admin_callback_for_service' => null, //[AdminAction::class,'service'],
 
-        'admin_callback_url_home' => null,
-        'admin_callback_url_login' => null,
-        'admin_callback_url_logout' => null,
+        'admin_callback_for_url_for_home' => null,
+        'admin_callback_for_url_for_login' => null,
+        'admin_callback_for_url_for_logout' => null,
     ];
     protected function run_callback_by_key(string $key, ...$args)
     {
@@ -49,19 +49,19 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
      */
     public function id(bool $check_login = true)
     {
-        return $this->run_callback_by_key('admin_callback_get_id', $check_login);
+        return $this->run_callback_by_key('admin_callback_for_id', $check_login);
     }
     public function name(bool $check_login = true): string
     {
-        return $this->run_callback_by_key('admin_callback_get_name', $check_login);
+        return $this->run_callback_by_key('admin_callback_for_name', $check_login);
     }
     public function data(bool $check_login = true): array
     {
-        return $this->run_callback_by_key('admin_callback_get_data', $check_login);
+        return $this->run_callback_by_key('admin_callback_for_data', $check_login);
     }
     public function localService()
     {
-        return $this->run_callback_by_key('admin_callback_get_service');
+        return $this->run_callback_by_key('admin_callback_for_service');
     }
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
@@ -73,15 +73,15 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('admin_callback_url_home', 'admin_url_home', $url_back, $ext);
+        return $this->go_url('admin_callback_for_url_for_home', 'admin_url_home', $url_back, $ext);
     }
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('admin_callback_url_login', 'admin_url_login', $url_back, $ext);
+        return $this->go_url('admin_callback_for_url_for_login', 'admin_url_login', $url_back, $ext);
     }
     public function urlForLogout(?string $url_back = null, ?array $ext = null):string
     {
-        return $this->go_url('admin_callback_url_logout', 'admin_url_logout', $url_back, $ext);
+        return $this->go_url('admin_callback_for_url_for_logout', 'admin_url_logout', $url_back, $ext);
     }
     ///////////////
     public function service()

@@ -57,9 +57,9 @@ class MyAdmin extends GlobalAdmin
     public $options =[
         'admin_url_home' => 'home',
         
-        'admin_callback_get_id' => [MyAction::class,'id'],
-        'admin_callback_url_login' => [MyAction::class,'urlForLogin'],
-        'admin_callback_get_service'=>[MyService::class,'_'],
+        'admin_callback_for_id' => [MyAction::class,'id'],
+        'admin_callback_for_url_for_login' => [MyAction::class,'urlForLogin'],
+        'admin_callback_for_service'=>[MyService::class,'_'],
         'admin_view_file_header'=>'/abc',
     ];
 }

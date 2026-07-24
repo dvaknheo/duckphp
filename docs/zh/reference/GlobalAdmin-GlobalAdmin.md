@@ -18,13 +18,13 @@
 
 | 选项 | 对应方法 | 说明 |
 |---|---|---|
-| `admin_callback_get_id` | `id()` | 获取当前管理员 ID，参数 `(bool $check_login)` |
-| `admin_callback_get_name` | `name()` | 获取当前管理员名 |
-| `admin_callback_get_data` | `data()` | 获取当前管理员数据数组 |
-| `admin_callback_get_service` | `localService()` | 返回 `AdminServiceInterface` 实例 |
-| `admin_callback_url_home` | `urlForHome()` | 自定义后台首页 URL 生成 |
-| `admin_callback_url_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
-| `admin_callback_url_logout` | `urlForLogout()` | 自定义登出页 URL 生成 |
+| `admin_callback_for_id` | `id()` | 获取当前管理员 ID，参数 `(bool $check_login)` |
+| `admin_callback_for_name` | `name()` | 获取当前管理员名 |
+| `admin_callback_for_data` | `data()` | 获取当前管理员数据数组 |
+| `admin_callback_for_service` | `localService()` | 返回 `AdminServiceInterface` 实例 |
+| `admin_callback_for_url_for_home` | `urlForHome()` | 自定义后台首页 URL 生成 |
+| `admin_callback_for_url_for_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
+| `admin_callback_for_url_for_logout` | `urlForLogout()` | 自定义登出页 URL 生成 |
 
 ### 直接 URL 选项
 
@@ -146,10 +146,10 @@ use MyAdminProvider\System;
 class AdminApp extends DuckPhp
 {
     public $options = [
-        'admin_callback_get_id' => [AdminAction::class, 'id'],
-        'admin_callback_get_name' => [AdminAction::class, 'name'],
-        'admin_callback_get_data' => [AdminAction::class, 'data'],
-        'admin_callback_get_service' => [AdminAction::class, 'service'],
+        'admin_callback_for_id' => [AdminAction::class, 'id'],
+        'admin_callback_for_name' => [AdminAction::class, 'name'],
+        'admin_callback_for_data' => [AdminAction::class, 'data'],
+        'admin_callback_for_service' => [AdminAction::class, 'service'],
 
         'admin_url_login' => 'admin/login',
         'admin_url_logout' => 'admin/logout',
@@ -161,8 +161,8 @@ class AdminApp extends DuckPhp
 > `admin_url_*` 的 URL 一般写成相对路径。
 
 回调说明：
-- `admin_callback_get_id` / `get_name` / `get_data`：指向你的 `AdminAction` 类，从 Session/Token 读取当前管理员信息
-- `admin_callback_get_service`：指向 `AdminAction::service()`，返回 `AdminServiceInterface` 实例
+- `admin_callback_for_id` / `get_name` / `get_data`：指向你的 `AdminAction` 类，从 Session/Token 读取当前管理员信息
+- `admin_callback_for_service`：指向 `AdminAction::service()`，返回 `AdminServiceInterface` 实例
 - `admin_callback_url_*`：可选的 URL 生成回调，不设置时走 `admin_url_*` 固定 URL
 
 ### AdminAction 实现示例
@@ -172,7 +172,7 @@ use MyAdminProvider\Controller;
 use MyAdminProvider\Business\AdminBusiness;
 class AdminAction
 {
-    // 会被 admin_callback_get_id 调用
+    // 会被 admin_callback_for_id 调用
     public function id($check_login = true)
     {
         $id = $_SESSION['admin_id'] ?? null;
@@ -189,7 +189,7 @@ class AdminAction
     {
         return $_SESSION['admin_data'] ?? [];
     }
-    // 会被 admin_callback_get_service 调用
+    // 会被 admin_callback_for_service 调用
     public function service()
     {
         return AdminBusiness::_();  // AdminBusiness implements AdminServiceInterface
@@ -197,7 +197,7 @@ class AdminAction
 }
 ```
 
-对应的，当你设置 `'admin_callback_get_id' => [AdminAction::class, 'id']` 后，主应用调用 `Helper::AdminId()` 时实际执行的就是 `AdminAction::id()`。
+对应的，当你设置 `'admin_callback_for_id' => [AdminAction::class, 'id']` 后，主应用调用 `Helper::AdminId()` 时实际执行的就是 `AdminAction::id()`。
 
 ### 所有应用的 Controller 中调用
 
@@ -232,14 +232,14 @@ $service->log($adminId, '操作', 'audit');
         'admin_view_file_footer' => null, // 'inc-foot',
 
         'admin_enable_callback_singleton' => true,
-        'admin_callback_get_id' => null, //[AdminAction::class,'id'],
-        'admin_callback_get_name' => null, //[AdminAction::class,'name'],
-        'admin_callback_get_data' => null, //[AdminAction::class,'data'],
-        'admin_callback_get_service' => null, //[AdminAction::class,'service'],
+        'admin_callback_for_id' => null, //[AdminAction::class,'id'],
+        'admin_callback_for_name' => null, //[AdminAction::class,'name'],
+        'admin_callback_for_data' => null, //[AdminAction::class,'data'],
+        'admin_callback_for_service' => null, //[AdminAction::class,'service'],
 
-        'admin_callback_url_home' => null,
-        'admin_callback_url_login' => null,
-        'admin_callback_url_logout' => null,
+        'admin_callback_for_url_for_home' => null,
+        'admin_callback_for_url_for_login' => null,
+        'admin_callback_for_url_for_logout' => null,
 
 ## 方法列表
 
