@@ -4,9 +4,7 @@
 
 ## 简介
 
-`AdminServiceInterface` 定义了管理员服务的权限检查、超级管理员判断和日志记录方法。实现此接口的类作为 `GlobalAdminTrait::checkAccess()` / `isSuper()` / `log()` 的委托目标。
-
-自定义管理员服务时，优先实现此接口并通过 `localService()` 返回，而非直接实现 `AdminActionInterface`。
+`AdminServiceInterface` 定义了无状态的管理员服务方法：权限检查、日志记录和超级管理员判断。实现此接口的类作为 `GlobalAdmin::localService()` 的返回值。
 
 ## 接口定义
 
@@ -15,9 +13,10 @@ namespace DuckPhp\GlobalAdmin;
 
 interface AdminServiceInterface
 {
-    public function doCheckAccess(int $admin_id, string $class, string $method, ?string $url = null): void;
-    public function doIsSuper(int $admin_id): bool;
-    public function doLog(int $admin_id, string $string, ?string $type = null): void;
+    public function checkAccess($admin_id, string $class, string $method, ?string $url = null);
+    public function log($admin_id, string $string, ?string $type = null, array $ext = []);
+
+    public function isSuper($admin_id): bool;
 }
 ```
 
@@ -25,9 +24,11 @@ interface AdminServiceInterface
 
 | 方法 | 说明 |
 |---|---|
-| `doCheckAccess(int $admin_id, string $class, string $method, ?string $url = null): void` | 检查指定管理员是否有权限。无权限时抛出异常，通过不抛异常表示允许 |
-| `doIsSuper(int $admin_id): bool` | 判断指定管理员 ID 是否为超级管理员 |
-| `doLog(int $admin_id, string $string, ?string $type = null): void` | 记录指定管理员的操作日志 |
+| `checkAccess($admin_id, $class, $method, $url)` | 检查指定管理员是否有权限。无权限时抛出异常 |
+| `log($admin_id, $string, $type, $ext)` | 记录管理员操作日志。`$type` 为日志分类，`$ext` 为扩展数据 |
+| `isSuper($admin_id): bool` | 判断指定管理员 ID 是否为超级管理员 |
+
+> 与 `UserServiceInterface` 的区别：没有 `batchGetUsernames()`，增加了 `isSuper()`。
 
 ## 相关链接
 

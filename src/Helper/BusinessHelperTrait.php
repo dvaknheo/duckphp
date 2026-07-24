@@ -53,10 +53,16 @@ trait BusinessHelperTrait
     {
         return GlobalEvent::_()->on($event, $callback);
     }
+    /**
+     * @return \DuckPhp\GlobalAdmin\AdminServiceInterface
+     */
     public static function AdminService()
     {
         return GlobalAdmin::_()->service();
     }
+    /**
+     * @return \DuckPhp\GlobalUser\UserServiceInterface
+     */
     public static function UserService()
     {
         return GlobalUser::_()->service();

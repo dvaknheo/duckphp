@@ -30,7 +30,7 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Core\Runtime](Core-Runtime.md) | 运行期数据保存组件，管理输出缓冲与运行状态。 |
 | [DuckPhp\Core\Logger](Core-Logger.md) | 日志组件，按模板写入文件。 |
 | [DuckPhp\Core\View](Core-View.md) | 视图组件，负责模板渲染与视图文件查找。 |
-| [DuckPhp\Core\EventManager](Core-EventManager.md) | 事件管理组件。 |
+| [DuckPhp\Ext\EventManager](Ext-EventManager.md) | 事件管理组件。 |
 | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 异常与错误处理组件。 |
 | [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) | 超全局变量上下文组件，支持隔离与保存。 |
 | [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md) | 系统同名函数替换 Trait，便于测试与拦截。 |

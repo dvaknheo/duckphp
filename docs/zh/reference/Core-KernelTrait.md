@@ -359,5 +359,5 @@ Phase 容器操作内部实现
 - [DuckPhp\Core\Route](Core-Route.md)
 - [DuckPhp\Core\Runtime](Core-Runtime.md)
 - [DuckPhp\Core\Console](Core-Console.md)
-- [DuckPhp\Core\EventManager](Core-EventManager.md)
+
 - [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)

@@ -4,146 +4,112 @@
 
 ## 简介
 
-`GlobalUser` 组件提供了一套前台用户操作的抽象入口。它本身只包含默认的空实现，需要在具体项目中通过子类或 `class_user` 选项注入实际的用户服务。
-
-该组件通过 `DuckPhp\DuckPhp` 的 `ext` 选项加载。
+`GlobalUser` 组件为用户系统提供统一的访问入口。它基于**回调配置**模式，通过选项指定用户相关的回调函数，而非传统的继承/接口实现。
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
+### 回调选项
+
+通过 `user_callback_*` 选项指定回调函数，每个回调对应一个方法：
+
+| 选项 | 对应方法 | 说明 |
 |---|---|---|
-| `class_user` | `''` | 自定义用户服务类。为空时使用默认的 `GlobalUser` 自身。 |
+| `user_callback_get_id` | `id()` | 获取当前用户 ID，参数 `(bool $check_login)` |
+| `user_callback_get_name` | `name()` | 获取当前用户名 |
+| `user_callback_get_data` | `data()` | 获取当前用户数据数组 |
+| `user_callback_get_service` | `localService()` | 返回 `UserServiceInterface` 实例 |
+| `user_callback_url_home` | `urlForHome()` | 生成首页 URL |
+| `user_callback_url_regist` | `urlForRegist()` | 生成注册页 URL |
+| `user_callback_url_login` | `urlForLogin()` | 生成登录页 URL |
+| `user_callback_url_logout` | `urlForLogout()` | 生成登出页 URL |
 
-## 事件常量
+### 直接 URL 选项
 
-```php
-const EVENT_LOGINED = 'logined';    // 登录成功事件
-const EVENT_LOGOUTED = 'logouted';  // 登出事件
-```
+如果未设置对应回调，可用直接 URL：
+
+| 选项 | 说明 |
+|---|---|
+| `user_url_home` | 首页 URL |
+| `user_url_regist` | 注册页 URL |
+| `user_url_login` | 登录页 URL |
+| `user_url_logout` | 登出页 URL |
+
+### 视图选项
+
+| 选项 | 说明 |
+|---|---|
+| `user_view_file_header` | 用户界面 header 视图文件 |
+| `user_view_file_footer` | 用户界面 footer 视图文件 |
 
 ## 使用方式
+
+### 配置回调
+
+在子 App 的 `$options` 中配置回调，回调数组 `[ClassName::class, 'method']` 会被自动实例化：
+
+```php
+$options = [
+    'user_callback_get_id' => [UserAction::class, 'id'],
+    'user_callback_get_name' => [UserAction::class, 'name'],
+    'user_callback_get_service' => [UserAction::class, 'service'],
+    // ...
+];
+```
 
 ### 基础调用
 
 ```php
 use DuckPhp\GlobalUser\GlobalUser;
 
-$userId = GlobalUser::_()->id();           // 当前用户 ID
-$userName = GlobalUser::_()->name();       // 当前用户名称
-
-GlobalUser::_()->login($postData);          // 登录
-GlobalUser::_()->logout();                  // 登出
-GlobalUser::_()->regist($postData);         // 注册
+$userId = GlobalUser::_()->id();              // 当前用户 ID
+$userName = GlobalUser::_()->name();           // 当前用户名
+$userData = GlobalUser::_()->data();           // 当前用户数据
 ```
 
-### 事件监听
+### URL 生成
 
 ```php
-GlobalUser::_()->on('logined', function () {
-    // 用户登录后触发
-});
+$url = GlobalUser::_()->urlForLogin('/back');  // 登录后跳回 /back
+$url = GlobalUser::_()->urlForLogout();
+$url = GlobalUser::_()->urlForHome();
+$url = GlobalUser::_()->urlForRegist();
 ```
 
-### 在 Controller 中使用
+### 服务委托
 
 ```php
-use DuckPhp\Foundation\Controller\Helper;
-
-class UserController
-{
-    public function index()
-    {
-        if (!Helper::UserId()) {
-            return Helper::User()->urlForLogin();
-        }
-        // ...
-    }
-}
+$service = GlobalUser::_()->service();          // UserServiceInterface 的 PhaseProxy
+$service->checkAccess($userId, __CLASS__, __METHOD__);
+$service->log($userId, '操作', 'audit');
+$usernames = $service->batchGetUsernames([1, 2, 3]);
 ```
 
-## 自定义用户服务
-
-### 方法一：实现接口
-
-通过 `class_user` 选项指定自定义用户服务类：
+### 视图融合
 
 ```php
-class App extends DuckPhp
-{
-    public $options = [
-        'class_user' => \App\Service\UserService::class,
-    ];
-}
-```
-
-### 方法二：实现服务接口
-
-实现 `UserServiceInterface`，通过 `localService()` 返回服务实例：
-
-```php
-namespace App\Service;
-
-use DuckPhp\GlobalUser\UserServiceInterface;
-
-class UserService implements UserServiceInterface
-{
-    public function doCheckAccess(int $id, string $class, string $method, ?string $url = null): void
-    {
-        // 权限校验
-    }
-    public function doLog(int $user_id, string $string, ?string $type = null): void
-    {
-        // 写入日志
-    }
-    public function doBatchGetUsernames(array $ids): array
-    {
-        return [];
-    }
-}
+$data = GlobalUser::_()->mergeViewData($input);
+// $data['__view_data']['header'] 和 ['footer'] 已填充
 ```
 
 ## 方法列表
 
-### `GlobalUser`（主类）
-
-`GlobalUser` 实现了 `UserActionInterface`，默认方法都抛出 `UserException("No Impelment")`。
-
 | 方法 | 说明 |
 |---|---|
-| `id($check_login = true)` | 获取当前用户 ID |
-| `name($check_login = true): string` | 获取当前用户名称 |
-| `regist(array $post): array` | 执行注册逻辑 |
-| `login(array $post): array` | 执行登录逻辑 |
-| `logout(): void` | 执行登出逻辑 |
-| `urlForLogin($url_back, $ext): string` | 生成登录页面 URL |
-| `urlForLogout($url_back, $ext): string` | 生成登出 URL |
-| `urlForHome($url_back, $ext): string` | 生成用户首页 URL |
-| `urlForRegist($url_back, $ext): string` | 生成注册页面 URL |
-
-### `GlobalUserTrait`（委托方法）
-
-| 方法 | 说明 |
-|---|---|
-| `service()` | 返回用户服务实例。通过 PhaseProxy 创建跨 Phase 代理 |
-| `localService()` | 返回本地用户服务实例。默认抛出未实现异常 |
-| `on($event, $callback)` | 注册事件监听 |
-| `fire($event, ...$args)` | 触发事件 |
-| `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->doCheckAccess()` |
-| `log($string, $type)` | 记录日志，委托给 `localService()->doLog()` |
-| `batchGetUsernames($ids)` | 批量获取用户名，委托给 `localService()->doBatchGetUsernames()` |
-| `getHeaderFooterData($input): array` | 返回用户界面头尾数据 |
-| `mergeView($data, $with_set_head_foot, $header, $footer): array` | 融合用户视图头尾到数据中 |
-
-### 受保护方法
-
-| 方法 | 说明 |
-|---|---|
-| `initContext($context)` | 如果设置了 `class_user` 选项，替换为指定的用户服务类 |
+| `id(bool $check_login = true)` | 获取当前用户 ID。`$check_login = true` 且未登录时抛出异常（来自回调实现） |
+| `name(bool $check_login = true): string` | 获取当前用户名 |
+| `data(bool $check_login = true): array` | 获取当前用户数据 |
+| `service()` | 返回 `UserServiceInterface` 的 PhaseProxy 实例 |
+| `localService()` | 返回本地 `UserServiceInterface` 实例 |
+| `urlForHome(?string $url_back, ?array $ext): string` | 生成首页 URL |
+| `urlForRegist(?string $url_back, ?array $ext): string` | 生成注册页 URL |
+| `urlForLogin(?string $url_back, ?array $ext): string` | 生成登录页 URL |
+| `urlForLogout(?string $url_back, ?array $ext): string` | 生成登出页 URL |
+| `mergeViewData(array $input): array` | 融合用户视图头尾数据 |
+| `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->checkAccess()` |
+| `log($string, $type, $ext)` | 记录用户操作日志，委托给 `localService()->log()` |
+| `batchGetUsernames(array $ids): array` | 批量获取用户名，委托给 `localService()->batchGetUsernames()` |
 
 ## 相关链接
 
 - [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md)
 - [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md)
-- [DuckPhp\GlobalUser\GlobalUserTrait](GlobalUser-GlobalUserTrait.md)
-- [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md)
-- [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md)

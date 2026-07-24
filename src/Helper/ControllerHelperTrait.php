@@ -178,34 +178,46 @@ trait ControllerHelperTrait
         return GlobalEvent::_()->on($event, $callback);
     }
     //////////////////////
+    /**
+     * @return \DuckPhp\GlobalAdmin\AdminActionInterface
+     */
     public static function Admin()
     {
         return GlobalAdmin::_();
     }
-    public static function AdminId($check_login = true)
+    public static function AdminId(bool $check_login = true)
     {
         return GlobalAdmin::_()->id($check_login);
     }
-    public static function AdminName($check_login = true)
+    public static function AdminName(bool $check_login = true)
     {
         return GlobalAdmin::_()->name($check_login);
     }
+    /**
+     * @return \DuckPhp\GlobalAdmin\AdminServiceInterface
+     */
     public static function AdminService()
     {
         return GlobalAdmin::_()->service();
     }
+    /**
+     * @return \DuckPhp\GlobalUser\UserActionInterface
+     */
     public static function User()
     {
         return GlobalUser::_();
     }
-    public static function UserId($check_login = true)
+    public static function UserId(bool $check_login = true)
     {
         return GlobalUser::_()->id($check_login);
     }
-    public static function UserName($check_login = true)
+    public static function UserName(bool $check_login = true)
     {
         return GlobalUser::_()->name($check_login);
     }
+    /**
+     * @return \DuckPhp\GlobalUser\UserServiceInterface
+     */
     public static function UserService()
     {
         return GlobalUser::_()->service();

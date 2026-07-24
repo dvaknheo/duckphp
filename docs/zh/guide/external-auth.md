@@ -1,188 +1,100 @@
 # 外部用户与管理员系统
 
-当我们拥有外部的用户系统的时候，我们可以通过 Helper 来使用他们。
+DuckPHP 通过 `GlobalUser` 和 `GlobalAdmin` 组件提供用户/管理员系统的抽象入口。它们采用**回调配置**模式，只需在选项中指定回调函数即可接入，无需继承或实现复杂接口。
+
+---
 
 ## Controller Helper 方法
 
-| Controller Helper 方法 | 说明 |
+以下方法适用于 Controller 层，通过 `Foundation\Controller\Helper` 调用：
+
+| Helper 方法 | 说明 |
 |---|---|
-| `Helper::User()` | 获取 `GlobalUser` 实例（PhaseProxy → 子 App 相位） |
-| `Helper::UserId()` | 调用 `GlobalUser::_()->id()`，返回当前用户 ID |
-| `Helper::UserName()` | 调用 `GlobalUser::_()->name()`，返回当前用户名 |
-| `Helper::UserService()` | 调用 `GlobalUser::_()->service()`，返回 `UserServiceInterface`的代理 |
-| `Helper::Admin()` | 获取 `GlobalAdmin` 实例（PhaseProxy） |
-| `Helper::AdminId()` | 获取当前管理员 ID |
-| `Helper::AdminName()` | 获取当前管理员名称 |
-| `Helper::AdminService()` | 获取 `GlobalAdmin::_()->service()` 返回 `AdminServiceInterface`的代理 |
+| `Helper::User()` | 获取 `GlobalUser` 实例 |
+| `Helper::UserId(bool $check_login = true)` | 获取当前用户 ID。`$check_login = true` 且未登录时抛异常 |
+| `Helper::UserName()` | 获取当前用户名 |
+| `Helper::UserService()` | 获取用户服务实例（`UserServiceInterface` 的 PhaseProxy） |
+| `Helper::Admin()` | 获取 `GlobalAdmin` 实例 |
+| `Helper::AdminId(bool $check_login = true)` | 获取当前管理员 ID。`$check_login = true` 且未登录时抛异常 |
+| `Helper::AdminName()` | 获取当前管理员名 |
+| `Helper::AdminService()` | 获取管理员服务实例（`AdminServiceInterface` 的 PhaseProxy） |
 
-### Controller 中使用示例
-
-```php
-// 获得当前用户ID。参数为 true 表示没登录会抛出异常。异常会在外部处理。
-$userId = Helper::UserId(true);
-
-// 权限检查
-Helper::User()->checkAccess(__CLASS__, __FUNCTION__);
-
-```
-
----
-
-## Business Helper 调用 UserService
-
-在 Business 层（无状态）中 通过 `Helper::UserService()` 获取 PhaseProxy 并跨相位执行
-Helper::UserService() 调用的类可以视为拥有 `UserServiceInterface` 的接口的方法
+### 使用示例
 
 ```php
-namespace YourProject\Business;
+// 用户端：检查登录（$check_login=false 不抛异常）
+$userId = Helper::UserId(false);
+if (!$userId) {
+    Helper::Show302(Helper::User()->urlForLogin('/user/profile'));
+    return;
+}
+$userName = Helper::UserName();
 
-use DuckPhp\Foundation\Business\Helper;
+// 用户端：确认已登录（$check_login=true 默认，未登录抛异常）
+$userId = Helper::UserId();  // 未登录时抛出异常
 
-class MyBusiness extends Base
-{
-    // 批量获取用户名字
-    public function getUsernames(array $userIds): array
-    {
-        // Helper::UserService() 返回 PhaseProxy
-        // doBatchGetUsernames() 会在子 App 相位中执行
-        return Helper::UserService()->doBatchGetUsernames($userIds);
-    }
+// 管理员端：权限检查
+Helper::Admin()->checkAccess(__CLASS__, __FUNCTION__);
+if (Helper::Admin()->isSuper()) {
+    // 超级管理员专属功能
 }
 ```
 
-### 配置
+---
 
-当你注册带有 GlobalUser 的子应用的时候会自动注册。
+## 接口速览
+
+用户和管理员系统分为两层：
+
+### UserActionInterface
+
+定义用户操作的 Web 状态相关方法。`GlobalUser` 通过 `user_callback_*` 选项委托回调来实现。
+
+核心方法：`id()` / `name()` / `data()` → Session 读取；`urlForLogin()` / `urlForLogout()` 等 → URL 生成
+
+### UserServiceInterface
+
+定义无状态的用户服务方法：
+
 ```php
-namespace YourProject\System;
-
-use DuckPhp\DuckPhp;
-
-class App extends DuckPhp
+interface UserServiceInterface
 {
-    public $options = [
-        'app' => [
-            UserApp::class => [
-                'controller_url_prefix' => 'myuser/',
-                // 'class_user' => ''  // 如果你不需要这个提供者
-            ],
-        ],
-    ];
+    public function checkAccess($user_id, $class, $method, $url);
+    public function log($user_id, $string, $type, $ext);
+    public function batchGetUsernames($ids): array;
 }
 ```
 
+### AdminActionInterface
 
----
+管理员操作接口，结构与 `UserActionInterface` 类似，区别：
+- 没有 `regist` 相关方法
+- 增加了 `isSuper(): bool`
 
-### 事件系统
+### AdminServiceInterface
 
-支持事件监听，用于与第三方系统集成：
-
-```php
-Helper::User()->on('logined', function ($userId) {
-    // 用户登录后通知第三方
-});
-```
-
-| 组件 | 事件常量 | 触发时机 |
-|------|---------|---------|
-| GlobalUser | `EVENT_LOGINED` | 用户登录成功 |
-| GlobalUser | `EVENT_LOGOUTED` | 用户登出 |
-| GlobalAdmin | `EVENT_LOGINED` | 管理员登录成功 |
-| GlobalAdmin | `EVENT_LOGOUTED` | 管理员登出 |
-| GlobalAdmin | `EVENT_ACCESSED` | 管理员访问后台 |
-
----
-
-### 视图融合
+管理员服务接口：
 
 ```php
-$data = Helper::User()->mergeView($data, true, '_sys/header', '_sys/footer');
-Helper::Show($data, 'user/list');
-```
-
-
-## 架构设计
-
-```
-主 App（你的应用）
-  │
-  ├── options['app'][UserApp::class] = [...]    ← 注册子应用
-  │
-  ▼
-子 App（UserApp，提供用户功能）
-  │
-  ├── options['class_user'] = UserAction::class  ← 指定用户操作类
-  │
-  ▼
-UserAction（实现 UserActionInterface，处理 Web 状态）
-  ├── id() / name()        ← Session / Cookie / Token
-  ├── login() / logout()   ← 认证操作
-  ├── urlForLogin() / ...   ← URL 生成
-  │
-  └── localService()        ← 返回 UserService（无状态业务）
-       │
-       ▼
-UserService（实现 UserServiceInterface，纯业务）
-  ├── doCheckAccess()
-  ├── doLog()
-  └── doBatchGetUsernames()
-```
-
-### 两层接口分工
-
-| 接口 | 职责 | 适用范围 |
-|------|------|---------|
-| `UserActionInterface` | 处理 Web 状态相关操作（Session、Cookie、URL） | `class_user` 指定类 |
-| `UserServiceInterface` | 纯无状态业务逻辑（权限检查、日志、批量查询） | `localService()` 返回 |
-
----
-
-## GlobalUser：搭建用户系统
-
-### 步骤概览
-
-```
-1. 创建 UserApp（子 App）并指定 class_user
-2. 实现 UserAction（UserActionInterface + GlobalUserTrait）
-3. 实现 UserService（UserServiceInterface）
-4. 主 App 注册 UserApp 为子应用
-```
-
-### 第 1 步：创建子 App
-
-```php
-namespace YourProject\UserSystem\System;
-
-use DuckPhp\DuckPhp;
-
-class UserApp extends DuckPhp
+interface AdminServiceInterface
 {
-    public $options = [
-        'class_user' => UserAction::class,  // 指定用户操作类
-        'namespace' => __NAMESPACE__,
-    ];
+    public function checkAccess($admin_id, $class, $method, $url);
+    public function log($admin_id, $string, $type, $ext);
+    public function isSuper($admin_id): bool;
 }
 ```
 
-### 第 2 步：实现你的 GlobalUser
+---
 
-替换 GlobalUser 的实现的类通常放在 Controller 层，命名为 GlobalUserAction
+## 快速开始：搭建用户系统
 
-实现 `UserActionInterface`，搭配 `GlobalUserTrait` 提供事件/服务委托等方法：
-
-通常不处理具体业务。而是调用其他 Action 来实现具体业务。
+### 第 1 步：实现 UserAction 类
 
 ```php
-namespace YourProject\UserSystem\Controller;
+namespace YourProject\UserSystem;
 
-use DuckPhp\GlobalUser\GlobalUserTrait;
-use DuckPhp\GlobalUser\UserActionInterface;
-
-class GlobalUserAction implements UserActionInterface
+class UserAction
 {
-    use GlobalUserTrait;
-
     public function id($check_login = true)
     {
         return $_SESSION['user_id'] ?? null;
@@ -191,190 +103,164 @@ class GlobalUserAction implements UserActionInterface
     {
         return $_SESSION['user_name'] ?? '';
     }
-    public function login(array $post): array
+    public function data($check_login = true): array
     {
-        // 验证用戶名密码
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        return ['success' => true, 'user_id' => $user['id']];
+        return $_SESSION['user_data'] ?? [];
     }
-    public function logout()
+    public function localService()
     {
-        unset($_SESSION['user_id'], $_SESSION['user_name']);
+        return new UserService();
     }
-    public function regist(array $post): array
+    public function service()
     {
-        return ['success' => true, 'user_id' => $newId];
+        // 跨相位代理
+        return \DuckPhp\Component\PhaseProxy::CreatePhaseProxy($phase, $this->localService());
     }
-
-    // 地址和实际相关
-    public function urlForLogin($url_back = null, $ext = null): string { return __url('login'); }
-    public function urlForLogout($url_back = null, $ext = null): string { return __url('logout'; }
+    public function urlForLogin($url_back = null, $ext = null): string { return '/login'; }
+    public function urlForLogout($url_back = null, $ext = null): string { return '/logout'; }
     public function urlForHome($url_back = null, $ext = null): string { return '/'; }
-    public function urlForRegist($url_back = null, $ext = null): string { return 'regist'; }
-
-    // 你要提供页眉页脚片断给切调用者。
-    public function getHeaderFooterData(array $input): array { return ['header' => '', 'footer' => '']; }
-
-    // mergeView 用GlobalUserTrait的默认实现
-    // mergeView 用于
-    // public function mergeView(array $data, bool $with_set_head_foot = true, ?string $header = null, ?string $footer = null): array { return $data; }
-
-    //一般接入 命名为 GlobalUserBusiness 的类
-    protected function localService() { return GlobalUserBusiness::_(); }
-
+    public function urlForRegist($url_back = null, $ext = null): string { return '/regist'; }
+    public function mergeViewData(array $input): array { return $input; }
+    public function checkAccess($class, $method, $url) {}
+    public function log($string, $type = null, $ext = []) {}
+    public function batchGetUsernames($ids): array { return []; }
 }
 ```
 
-### 第 3 步：实现 UserService
-
-`UserServiceInterface` 只包含无状态业务方法，不涉及 Session/Cookie：
-
-同样 GlobalUserBusiness 通常不处理具体业务。而是调用其他 Service 来实现具体业务。
-
+### 第 2 步：实现 UserService
 
 ```php
-namespace YourProject\UserSystem\Business;
+namespace YourProject\UserSystem;
 
-use DuckPhp\GlobalUser\UserServiceInterface;
-
-class GlobalUserBusiness implements UserServiceInterface
+class UserService
 {
-    public function doLog(int $user_id, string $string, ?string $type = null): void
+    public function checkAccess($user_id, $class, $method, $url = null)
     {
-        UserService::_()->log($user_id, $string, $type);
+        // 权限校验
     }
-    public function doBatchGetUsernames(array $ids): array
+    public function log($user_id, $string, $type = null, $ext = [])
     {
-        return UserService::_()->doBatchGetUsernames($ids); // [id => name]
+        // 记录日志
     }
-    public function doCheckAccess(int $id, string $class, string $method, ?string $url = null): void
+    public function batchGetUsernames(array $ids): array
     {
-        UserService::_()->checkLogin($id, $class, $method $url);
+        // SELECT id, name FROM users WHERE id IN (...)
+        return [];
     }
 }
 ```
 
----
-
-## GlobalAdmin：管理员系统
-
-`GlobalAdmin` 与 `GlobalUser` 采用相同的子 App + PhaseProxy 模式。区别在于：
-
-- 通过 `class_admin` 选项指定实现类
-- **没有 `regist`（注册）接口**——管理员由后台创建而非自助注册
-- 提供额外`isSuper()`（超级管理员判断）
-
-### 接口介绍
-
-| 接口 | 说明 |
-|------|------|
-| `AdminActionInterface` | 管理员操作接口（类比 UserActionInterface），无 `regist` 方法 |
-| `AdminServiceInterface` | 管理员服务接口（类比 UserServiceInterface），多一个 `doIsSuper()` |
-| `AdminControllerInterface` | 标记接口，用于标识控制器属于管理员端 |
-
-`AdminActionInterface` 方法：
-
-| 方法 | 说明 |
-|---|---|
-| `id()` / `name()` | 获取当前管理员 ID 和名称 |
-| `login()` / `logout()` | 登录/登出 |
-| `urlForLogin()` / `urlForLogout()` / `urlForHome()` | URL 生成 |
-| `service()` / `localService()` | 服务委托模式 |
-| `on()` / `fire()` | 事件系统 |
-| `checkAccess()` | 权限检查（委托给 AdminService） |
-| `isSuper()` | 超级管理员判断（委托给 AdminService） |
-| `log()` | 记录日志（委托给 AdminService） |
-| `getHeaderFooterData()` / `mergeView()` | 视图融合 |
-
-`AdminServiceInterface` 方法：
-
-| 方法 | 说明 |
-|---|---|
-| `doCheckAccess($admin_id, $class, $method, $url): void` | 检查权限，无权限时抛异常 |
-| `doIsSuper($admin_id): bool` | 判断是否超级管理员 |
-| `doLog($admin_id, $string, $type): void` | 记录操作日志 |
-
----
-
-
-## 完整示例
+### 第 3 步：创建子 App 并配置回调
 
 ```php
-// === UserApp.php — 子 App ===
-namespace SampleUserProvider\System;
+namespace YourProject\UserSystem;
+
 use DuckPhp\DuckPhp;
+
 class UserApp extends DuckPhp
 {
     public $options = [
-        'class_user' => UserAction::class,
+        'user_callback_get_id' => [UserAction::class, 'id'],
+        'user_callback_get_name' => [UserAction::class, 'name'],
+        'user_callback_get_data' => [UserAction::class, 'data'],
+        'user_callback_get_service' => [UserAction::class, 'service'],
+        
+        'user_url_login' => '/login',
+        'user_url_logout' => '/logout',
+        'user_url_home' => '/',
+        'user_url_regist' => '/regist',
+        
         'namespace' => __NAMESPACE__,
         'controller_url_prefix' => '',
     ];
 }
+```
 
-// === GlobalUserAction.php ===
-namespace SampleUserProvider\Controller;
-use DuckPhp\GlobalUser\GlobalUserTrait;
-use DuckPhp\GlobalUser\UserActionInterface;
-class GlobalUserAction implements UserActionInterface
-{
-    use GlobalUserTrait;
-    public function id($check_login = true) { return $_SESSION['user_id'] ?? null; }
-    public function name($check_login = true): string { return $_SESSION['user_name'] ?? ''; }
-    public function login(array $post): array { $_SESSION['user_id'] = 1; return ['success' => true]; }
-    public function logout() { unset($_SESSION['user_id']); }
-    public function regist(array $post): array { return ['success' => true]; }
-    public function urlForLogin($url_back = null, $ext = null): string { return 'login'; }
-    public function urlForLogout($url_back = null, $ext = null): string { return 'logout'; }
-    public function urlForHome($url_back = null, $ext = null): string { return '/'; }
-    public function urlForRegist($url_back = null, $ext = null): string { return 'regist'; }
-    public function getHeaderFooterData(array $input): array { return ['header' => '', 'footer' => '']; }
-    public function mergeView(array $data, $with_set_head_foot = true, $header = null, $footer = null): array { return $data; }
-    protected function localService() { return new UserService(); }
-}
+### 第 4 步：主 App 注册子 App
 
-// === GlobalUserBusiness.php ===
-namespace SampleUserProvider\Business;
-use DuckPhp\GlobalUser\UserServiceInterface;
-class GlobalUserBusiness implements UserServiceInterface
-{
-    public function doLog(int $user_id, string $string, ?string $type = null): void {}
-    public function doBatchGetUsernames(array $ids): array { return []; }
-    public function doCheckAccess(int $id, string $class, string $method, ?string $url = null): void {}
-}
-
-// === App.php ===
-namespace MyProject\System;
-use DuckPhp\DuckPhp;
-use SampleUserProvider\System\
+```php
 class App extends DuckPhp
 {
     public $options = [
         'app' => [
-             UserApp::class => ['not_empty' => true] 
+            UserApp::class => ['not_empty' => true],
         ],
     ];
 }
+```
 
-// === Controller ===
-namespace MyProject\Controller;
-class MainController extends Base
+### 在 Controller/Business 中使用
+
+```php
+// Controller
+public function index()
 {
-    public function index()
-    {
-        $userId = Helper::UserId(true);
-
-        Helper::Show(['userId' => $userId], 'main');
+    $userId = Helper::UserId(false);  // false: 不抛异常，null 表示未登录
+    if (!$userId) {
+        Helper::Show302(Helper::User()->urlForLogin());
+        return;
     }
+    // Business 层
+    $usernames = Helper::UserService()->batchGetUsernames([1, 2, 3]);
+    Helper::Show(get_defined_vars(), 'user/index');
 }
 ```
 
-## 参考链接
+---
 
-- [DuckPhp\GlobalUser\GlobalUser](reference/GlobalUser-GlobalUser.md)
+## 快速开始：搭建管理员系统
+
+流程与用户系统相同，使用 `admin_*` 选项：
+
+### 子 App
+
+```php
+class AdminApp extends DuckPhp
+{
+    public $options = [
+        'admin_callback_get_id' => [AdminAction::class, 'id'],
+        'admin_callback_get_name' => [AdminAction::class, 'name'],
+        'admin_callback_get_service' => [AdminAction::class, 'service'],
+        
+        'admin_url_login' => '/admin/login',
+        'admin_url_logout' => '/admin/logout',
+        'admin_url_home' => '/admin/dashboard',
+        
+        'namespace' => __NAMESPACE__,
+        'controller_url_prefix' => '',
+    ];
+}
+```
+
+### 主 App 注册
+
+```php
+class App extends DuckPhp
+{
+    public $options = [
+        'app' => [
+            AdminApp::class => ['not_empty' => true],
+        ],
+    ];
+}
+```
+
+### Controller 中使用
+
+```php
+Helper::Admin()->checkAccess(__CLASS__, __FUNCTION__);
+if (Helper::Admin()->isSuper()) {
+    // 超级管理员
+}
+```
+
+---
+
+## 完整接口参考
+
+各接口的完整方法列表和详细说明，请参见参考手册：
+
 - [DuckPhp\GlobalUser\UserActionInterface](reference/GlobalUser-UserActionInterface.md)
 - [DuckPhp\GlobalUser\UserServiceInterface](reference/GlobalUser-UserServiceInterface.md)
-- [DuckPhp\GlobalAdmin\GlobalAdmin](reference/GlobalAdmin-GlobalAdmin.md)
 - [DuckPhp\GlobalAdmin\AdminActionInterface](reference/GlobalAdmin-AdminActionInterface.md)
 - [DuckPhp\GlobalAdmin\AdminServiceInterface](reference/GlobalAdmin-AdminServiceInterface.md)
