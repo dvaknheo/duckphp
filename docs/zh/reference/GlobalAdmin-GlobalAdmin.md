@@ -21,8 +21,8 @@
 | `admin_callback_for_id` | `id()` | 获取当前管理员 ID，参数 `(bool $check_login)` |
 | `admin_callback_for_name` | `name()` | 获取当前管理员名 |
 | `admin_callback_for_data` | `data()` | 获取当前管理员数据数组 |
-| `admin_callback_for_service` | `localService()` | 返回 `AdminServiceInterface` 实例 |
-| `admin_callback_for_merge_view_data` | `mergeViewData()` | 自定义视图融合逻辑 |
+| `admin_callback_for_local_service` | `localService()` | 返回 `AdminServiceInterface` 实例 |
+| `admin_callback_for_add_ext_view_data` | `addExtViewData()` | 扩展视图数据 |
 | `admin_callback_for_url_for_home` | `urlForHome()` | 自定义后台首页 URL 生成 |
 | `admin_callback_for_url_for_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
 | `admin_callback_for_url_for_logout` | `urlForLogout()` | 自定义登出页 URL 生成 |
@@ -150,7 +150,7 @@ class AdminApp extends DuckPhp
         'admin_callback_for_id' => [AdminAction::class, 'id'],
         'admin_callback_for_name' => [AdminAction::class, 'name'],
         'admin_callback_for_data' => [AdminAction::class, 'data'],
-        'admin_callback_for_service' => [AdminAction::class, 'service'],
+        'admin_callback_for_local_service' => [AdminAction::class, 'service'],
 
         'admin_url_login' => 'admin/login',
         'admin_url_logout' => 'admin/logout',
@@ -163,7 +163,7 @@ class AdminApp extends DuckPhp
 
 回调说明：
 - `admin_callback_for_id` / `for_name` / `for_data`：指向你的 `AdminAction` 类，从 Session/Token 读取当前管理员信息
-- `admin_callback_for_service`：指向 `AdminAction::service()`，返回 `AdminServiceInterface` 实例
+- `admin_callback_for_local_service`：指向 `AdminAction::service()`，返回 `AdminServiceInterface` 实例
 - `admin_callback_for_url_for_*`：可选的 URL 生成回调，不设置时走 `admin_url_*` 固定 URL
 
 ### AdminAction 实现示例
@@ -190,7 +190,7 @@ class AdminAction
     {
         return $_SESSION['admin_data'] ?? [];
     }
-    // 会被 admin_callback_for_service 调用
+    // 会被 admin_callback_for_local_service 调用
     public function service()
     {
         return AdminBusiness::_();  // AdminBusiness implements AdminServiceInterface
@@ -236,8 +236,8 @@ $service->log($adminId, '操作', 'audit');
         'admin_callback_for_id' => null, //[AdminAction::class,'id'],
         'admin_callback_for_name' => null, //[AdminAction::class,'name'],
         'admin_callback_for_data' => null, //[AdminAction::class,'data'],
-        'admin_callback_for_service' => null, //[AdminAction::class,'service'],
-        'admin_callback_for_merge_view_data' => null, //[AdminAction::class,'mergeViewData'],
+        'admin_callback_for_local_service' => null, //[AdminAction::class,'service'],
+        'admin_callback_for_add_ext_view_data' => null, //[AdminAction::class,'addExtViewData'],
 
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,
@@ -255,8 +255,8 @@ $service->log($adminId, '操作', 'audit');
 | `urlForHome(?string $url_back, ?array $ext): string` | 后台首页 URL |
 | `urlForLogin(?string $url_back, ?array $ext): string` | 登录页 URL |
 | `urlForLogout(?string $url_back, ?array $ext): string` | 登出页 URL |
-| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']`（优先回调，默认走 `mergeViewDataInner()`） |
-| `mergeViewDataInner(array $input): array` | 默认视图融合逻辑：渲染 header/footer 视图文件 |
+| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']` |
+| `addExtViewData(array $input): array` | 扩展视图数据钩子，优先使用 `admin_callback_for_add_ext_view_data` 回调 |
 | `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->checkAccess()` |
 | `log($string, $type, $ext)` | 记录管理员操作日志，委托给 `localService()->log()` |
 | `isSuper(): bool` | 判断是否超级管理员，委托给 `localService()->isSuper()` |
@@ -289,10 +289,10 @@ $service->log($adminId, '操作', 'audit');
 获取登出页 URL
 
     public function mergeViewData(array $input): array
-融合视图头尾数据。优先使用 `admin_callback_for_merge_view_data` 回调，否则调用 `mergeViewDataInner()`
+融合视图头尾数据到 input['__view_data']
 
-    public function mergeViewDataInner(array $input): array
-默认视图融合逻辑：渲染 `admin_view_file_header` / `admin_view_file_footer` 视图文件，填充到 `input['__view_data']`
+    public function addExtViewData(array $input): array
+扩展视图数据。优先使用 `admin_callback_for_add_ext_view_data` 回调，否则直接返回原数据
 
     public function checkAccess(string $class, string $method, ?string $url = null)
 检查权限，委托给 localService()->checkAccess()

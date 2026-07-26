@@ -25,8 +25,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         'admin_callback_for_id' => null, //[AdminAction::class,'id'],
         'admin_callback_for_name' => null, //[AdminAction::class,'name'],
         'admin_callback_for_data' => null, //[AdminAction::class,'data'],
-        'admin_callback_for_service' => null, //[AdminAction::class,'service'],
-        'admin_callback_for_merge_view_data' => null, //[AdminAction::class,'mergeViewData'],
+        'admin_callback_for_local_service' => null, //[AdminAction::class,'service'],
+        'admin_callback_for_add_ext_view_data' => null, //[AdminAction::class,'addExtViewData'],
 
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,
@@ -62,7 +62,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     public function localService()
     {
-        return $this->run_callback_by_key('admin_callback_for_service');
+        return $this->run_callback_by_key('admin_callback_for_local_service');
     }
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
@@ -91,17 +91,24 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $service = $this->localService();
         return PhaseProxy::CreatePhaseProxy($this->context()::Phase(), $service);
     }
+    public function addExtViewData(array $input): array
+    {
+        if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
+            return $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $input);
+        }
+        return $input;
+    }
     public function mergeViewData(array $input): array
     {
-        if (isset($this->options['admin_callback_for_merge_view_data'])) {
-            return $this->run_callback_by_key('admin_callback_for_merge_view_data', $input);
+        $input = $this->addExtViewData($input);
+        $header = '';
+        $footer = '';
+        if (isset($this->options['admin_view_file_header'])) {
+            $header = View::_()->_Render($this->options['admin_view_file_header'], $input);
         }
-        return $this->mergeViewDataInner($input);
-    }
-    public function mergeViewDataInner(array $input): array
-    {
-        $header = !isset($this->options['admin_view_file_header']) ?  '' : View::_()->_Render($this->options['admin_view_file_header'], $input);
-        $footer = !isset($this->options['admin_view_file_footer']) ?  '' : View::_()->_Render($this->options['admin_view_file_footer'], $input);
+        if (isset($this->options['admin_view_file_footer'])) {
+            $footer = View::_()->_Render($this->options['admin_view_file_footer'], $input);
+        }
         $input['__view_data']['header'] = $header;
         $input['__view_data']['footer'] = $footer;
         return $input;

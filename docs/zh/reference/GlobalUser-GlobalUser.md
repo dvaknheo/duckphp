@@ -20,8 +20,8 @@
 | `user_callback_for_id` | `id()` | 获取当前用户 ID，参数 `(bool $check_login)` |
 | `user_callback_for_name` | `name()` | 获取当前用户名 |
 | `user_callback_for_data` | `data()` | 获取当前用户数据数组 |
-| `user_callback_for_service` | `localService()` | 返回 `UserServiceInterface` 实例 |
-| `user_callback_for_merge_view_data` | `mergeViewData()` | 自定义视图融合逻辑 |
+| `user_callback_for_local_service` | `localService()` | 返回 `UserServiceInterface` 实例 |
+| `user_callback_for_add_ext_view_data` | `addExtViewData()` | 扩展视图数据 |
 | `user_callback_for_url_for_home` | `urlForHome()` | 自定义首页 URL 生成 |
 | `user_callback_for_url_for_regist` | `urlForRegist()` | 自定义注册页 URL 生成 |
 | `user_callback_for_url_for_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
@@ -159,7 +159,7 @@ class UserApp extends DuckPhp
         'user_callback_for_id' => [UserAction::class, 'id'],
         'user_callback_for_name' => [UserAction::class, 'name'],
         'user_callback_for_data' => [UserAction::class, 'data'],
-        'user_callback_for_service' => [UserAction::class, 'service'],
+        'user_callback_for_local_service' => [UserAction::class, 'service'],
         
         'user_url_login' => 'login',
         'user_url_logout' => 'logout',
@@ -173,7 +173,7 @@ class UserApp extends DuckPhp
 
 回调说明：
 - `user_callback_for_id`/`for_name`/`for_data`：指向你的 `UserAction` 类，从 Session/Token 读取当前用户信息
-- `user_callback_for_service`：指向 `UserAction::service()`，返回 `UserServiceInterface` 实例
+- `user_callback_for_local_service`：指向 `UserAction::service()`，返回 `UserServiceInterface` 实例
 - `user_callback_for_url_for_*`：可选的 URL 生成回调，不设置时走 `user_url_*` 固定 URL
 
 ### UserAction 实现示例
@@ -201,7 +201,7 @@ class UserAction
     {
         return $_SESSION['user_data'] ?? [];
     }
-    // 会被 user_callback_for_service 调用
+    // 会被 user_callback_for_local_service 调用
     public function service()
     {
         return UserBusiness::_();  // UserBusiness implements UserServiceInterface
@@ -249,8 +249,8 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
         'user_callback_for_id' => null, //[UserAction::class,'id'],
         'user_callback_for_name' => null, //[UserAction::class,'name'],
         'user_callback_for_data' => null, //[UserAction::class,'data'],
-        'user_callback_for_service' => null, //[UserAction::class,'service'],
-        'user_callback_for_merge_view_data' => null, //[UserAction::class,'mergeViewData'],
+        'user_callback_for_local_service' => null, //[UserAction::class,'service'],
+        'user_callback_for_add_ext_view_data' => null, //[UserAction::class,'addExtViewData'],
 
         'user_callback_for_url_for_home' => null,
         'user_callback_for_url_for_regist' => null,
@@ -270,8 +270,8 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
 | `urlForRegist(?string $url_back, ?array $ext): string` | 注册页 URL |
 | `urlForLogin(?string $url_back, ?array $ext): string` | 登录页 URL |
 | `urlForLogout(?string $url_back, ?array $ext): string` | 登出页 URL |
-| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']`（优先回调，默认走 `mergeViewDataInner()`） |
-| `mergeViewDataInner(array $input): array` | 默认视图融合逻辑：渲染 header/footer 视图文件 |
+| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']` |
+| `addExtViewData(array $input): array` | 扩展视图数据钩子，优先使用 `user_callback_for_add_ext_view_data` 回调 |
 | `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->checkAccess()` |
 | `log($string, $type, $ext)` | 记录操作日志，委托给 `localService()->log()` |
 | `batchGetUsernames(array $ids): array` | 批量获取用户名，委托给 `localService()->batchGetUsernames()` |
@@ -307,10 +307,10 @@ $usernames = $service->batchGetUsernames([1, 2, 3]);
 获取登出页 URL
 
     public function mergeViewData(array $input): array
-融合视图头尾数据。优先使用 `user_callback_for_merge_view_data` 回调，否则调用 `mergeViewDataInner()`
+融合视图头尾数据到 input['__view_data']
 
-    public function mergeViewDataInner(array $input): array
-默认视图融合逻辑：渲染 `user_view_file_header` / `user_view_file_footer` 视图文件，填充到 `input['__view_data']`
+    public function addExtViewData(array $input): array
+扩展视图数据。优先使用 `user_callback_for_add_ext_view_data` 回调，否则直接返回原数据
 
     public function checkAccess(string $class, string $method, ?string $url = null)
 检查权限，委托给 localService()->checkAccess()

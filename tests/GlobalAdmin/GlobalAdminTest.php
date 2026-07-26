@@ -36,11 +36,16 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         Helper::Admin()->service();
         $data = [];
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+        // mergeViewData: without header
+        unset(MyAdmin::_()->options['admin_view_file_header']);
+        $res = Helper::Admin()->mergeViewData([]);
+        \PHPUnit\Framework\Assert::assertSame('', $res['__view_data']['header'] ?? '');
+        // mergeViewData: with header
         MyAdmin::_()->options['admin_view_file_header']=$path.'views/block';
         Helper::Admin()->mergeViewData($data);
-        // test admin_callback_for_merge_view_data
-        MyAdmin::_()->options['admin_callback_for_merge_view_data'] = [MyAction::class, 'myMergeViewData'];
-        $data2 = Helper::Admin()->mergeViewData([]);
+        // test admin_callback_for_add_ext_view_data
+        MyAdmin::_()->options['admin_callback_for_add_ext_view_data'] = [MyAction::class, 'myAddExtViewData'];
+        $data2 = Helper::Admin()->addExtViewData([]);
         \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
         Helper::Admin()->checkAccess('class','method','url');
         try{
@@ -63,7 +68,7 @@ class MyAdmin extends GlobalAdmin
         
         'admin_callback_for_id' => [MyAction::class,'id'],
         'admin_callback_for_url_for_login' => [MyAction::class,'urlForLogin'],
-        'admin_callback_for_service'=>[MyService::class,'_'],
+        'admin_callback_for_local_service'=>[MyService::class,'_'],
         'admin_view_file_header'=>'/abc',
     ];
 }
@@ -77,7 +82,7 @@ class MyAction {
     {
         return 'abc';
     }
-    public function myMergeViewData(array $data): array
+    public function myAddExtViewData(array $data): array
     {
         $data['__view_data']['custom'] = true;
         return $data;

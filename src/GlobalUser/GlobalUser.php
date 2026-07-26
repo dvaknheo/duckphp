@@ -26,8 +26,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         'user_callback_for_id' => null, //[UserAction::class,'id'],
         'user_callback_for_name' => null, //[UserAction::class,'name'],
         'user_callback_for_data' => null, //[UserAction::class,'data'],
-        'user_callback_for_service' => null, //[UserAction::class,'service'],
-        'user_callback_for_merge_view_data' => null, //[UserAction::class,'mergeViewData'],
+        'user_callback_for_local_service' => null, //[UserAction::class,'service'],
+        'user_callback_for_add_ext_view_data' => null, //[UserAction::class,'addExtViewData'],
 
         'user_callback_for_url_for_home' => null,
         'user_callback_for_url_for_regist' => null,
@@ -64,7 +64,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function localService()
     {
-        return $this->run_callback_by_key('user_callback_for_service');
+        return $this->run_callback_by_key('user_callback_for_local_service');
     }
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
@@ -99,17 +99,24 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function mergeViewData(array $input): array
     {
-        if (isset($this->options['user_callback_for_merge_view_data'])) {
-            return $this->run_callback_by_key('user_callback_for_merge_view_data', $input);
+        $input = $this->addExtViewData($input);
+        $header = '';
+        $footer = '';
+        if (isset($this->options['user_view_file_header'])) {
+            $header = View::_()->_Render($this->options['user_view_file_header'], $input);
         }
-        return $this->mergeViewDataInner($input);
-    }
-    public function mergeViewDataInner(array $input): array
-    {
-        $header = !isset($this->options['user_view_file_header']) ?  '' : View::_()->_Render($this->options['user_view_file_header'], $input);
-        $footer = !isset($this->options['user_view_file_footer']) ?  '' : View::_()->_Render($this->options['user_view_file_footer'], $input);
+        if (isset($this->options['user_view_file_footer'])) {
+            $footer = View::_()->_Render($this->options['user_view_file_footer'], $input);
+        }
         $input['__view_data']['header'] = $header;
         $input['__view_data']['footer'] = $footer;
+        return $input;
+    }
+    public function addExtViewData(array $input): array
+    {
+        if (isset($this->options['user_callback_for_add_ext_view_data'])) {
+            return $this->run_callback_by_key('user_callback_for_add_ext_view_data', $input);
+        }
         return $input;
     }
     ///////////////

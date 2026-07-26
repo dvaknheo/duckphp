@@ -39,11 +39,16 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         Helper::User()->service();
         $data = [];
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+        // mergeViewData: without header
+        unset(MyUser::_()->options['user_view_file_header']);
+        $res = Helper::User()->mergeViewData([]);
+        \PHPUnit\Framework\Assert::assertSame('', $res['__view_data']['header'] ?? '');
+        // mergeViewData: with header
         MyUser::_()->options['user_view_file_header']=$path.'views/block';
         Helper::User()->mergeViewData($data);
-        // test user_callback_for_merge_view_data
-        MyUser::_()->options['user_callback_for_merge_view_data'] = [MyUserAction::class, 'myMergeViewData'];
-        $data2 = Helper::User()->mergeViewData([]);
+        // test user_callback_for_add_ext_view_data
+        MyUser::_()->options['user_callback_for_add_ext_view_data'] = [MyUserAction::class, 'myAddExtViewData'];
+        $data2 = Helper::User()->addExtViewData([]);
         \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
         Helper::User()->checkAccess('class','method','url');
         try{
@@ -63,7 +68,7 @@ class MyUser extends GlobalUser
         
         'user_callback_for_id' => [MyUserAction::class,'id'],
         'user_callback_for_url_for_login' => [MyUserAction::class,'urlForLogin'],
-        'user_callback_for_service'=>[MyUserService::class,'_'],
+        'user_callback_for_local_service'=>[MyUserService::class,'_'],
         'user_view_file_header'=>'/abc',
     ];
 }
@@ -77,7 +82,7 @@ class MyUserAction {
     {
         return 'abc';
     }
-    public function myMergeViewData(array $data): array
+    public function myAddExtViewData(array $data): array
     {
         $data['__view_data']['custom'] = true;
         return $data;
