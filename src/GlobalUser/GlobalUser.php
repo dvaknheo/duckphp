@@ -52,6 +52,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
      */
     public function id(bool $check_login = true)
     {
+        DuckPhpSystemException::ThrowOn(!isset($this->options['user_callback_for_id']), "No GlobalUser Provider.");
         return $this->run_callback_by_key('user_callback_for_id', $check_login);
     }
     public function name(bool $check_login = true): string

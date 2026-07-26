@@ -50,6 +50,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
      */
     public function id(bool $check_login = true)
     {
+        DuckPhpSystemException::ThrowOn(!isset($this->options['admin_callback_for_id']), "No GlobalAdmin Provider.");
         return $this->run_callback_by_key('admin_callback_for_id', $check_login);
     }
     public function name(bool $check_login = true): string
