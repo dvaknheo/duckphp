@@ -89,7 +89,7 @@ class View extends ComponentBase
     }
     public function _Render(string $view, ?array $data = null): string
     {
-        ob_implicit_flush(false);
+        ob_implicit_flush(PHP_VERSION_ID < 80000 ? 0 : false);
         ob_start();
         $this->_Display($view, $data);
         $ret = ob_get_contents();
