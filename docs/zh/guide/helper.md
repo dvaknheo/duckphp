@@ -14,6 +14,8 @@ DuckPHP 在各层提供了 `Helper` 静态助手类，用于封装对框架组�
 | `DuckPhp\Foundation\System\Helper` | System 层 | 路由钩子、Session、Redis、CLI 参数、系统函数 |
 
 > **注意**：不同层级的 `Helper` 类功能不同，不要混淆使用。例如 Controller 层应使用 `DuckPhp\Foundation\Controller\Helper` Business 层应使用 `DuckPhp\Foundation\Business\Helper`。
+> 通常你会使用工程里的  Helper 类而不是直接使用DuckPhp\Foundation 里的
+> 你自定义的 Helper 用 Helper::_()->foo(); 这样的静态单例模式来使用
 
 > **命名约定**：大写开头的方法名是常用方法；小写开头的方法名是非常用方法。Controller 助手类里还有一些和 PHP 全局函数同名的全小写方法（如 `header()`、`setcookie()`、`exit()`），用于替代同名全局函数以保证兼容性。
 
@@ -41,9 +43,6 @@ $token = Helper::COOKIE('token');        // 获取 $_COOKIE['token']
 // 渲染视图（自动包含页眉页脚）
 Helper::Show(get_defined_vars(), 'user/profile');
 
-// 渲染视图片段（不包含页眉页脚）
-Helper::Display('user/profile', $data);
-
 // 渲染为字符串
 $html = Helper::Render('user/profile', $data);
 
@@ -56,6 +55,7 @@ Helper::assignViewData('site_name', 'MySite');
 
 - `Show()` 用于控制器输出，第二个参数为 `null` 时会自动查找 `{控制器}/{方法}` 对应的视图文件。
 - `Render()` 常用于某个区块的特殊输出处理。
+- 注意 `Render()` 和  `Show()` 参数顺序不一样
 - `assignViewData()` 一般用于基类中，为页眉页脚提供公共数据。
 
 ### URL 与路由
@@ -171,7 +171,7 @@ Model 层的 `Helper` 只提供数据库访问相关功能。 v1.3.6已经整合
 use DuckPhp\Foundation\Model\Helper;
 
 // 获取数据库连接
-$db = Helper::Db(0);                     // 指定 tag
+$db = Helper::Db(0);                     // 指定 第几个数据库连接，默认为0
 $dbRead = Helper::DbForRead();           // 读连接
 $dbWrite = Helper::DbForWrite();         // 写连接
 
@@ -246,7 +246,7 @@ $params = Helper::getCliParameters();
 1. **按层使用**：Controller 用 `Controller\Helper`，Business 用 `Business\Helper`，Model 用 `Model\Helper`
 2. **不跨层调用**：Business 层不应调用 `Controller\Helper`，Model 层不应调用 `Business\Helper`
 3. **保持无状态**：Business 和 Model 层的 Helper 操作不应依赖请求上下文
-4. **优先使用 Foundation Helper**：避免在 Controller/Business/Model 中直接调用 `DuckPhp` 命名空间下的类
+4. **优先使用Helper**：避免在 Controller/Business/Model 中直接调用 `DuckPhp` 命名空间下的类
 
 ## Helper 与全局函数的关系
 
