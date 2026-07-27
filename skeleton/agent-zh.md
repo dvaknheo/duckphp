@@ -549,158 +549,137 @@ Helper::Show404();                    // 直接 404
 Helper::BusinessThrowOn($条件, '错误消息');
 ```
 
+### 异常层级
+
+推荐按层组织异常类：
+
+```
+\Exception
+  └─ {project}\System\ProjectException
+       ├─ BusinessException    # Business 层
+       └─ ControllerException  # Controller 层
+```
+
+在 `src/System/` 下定义：
+
+```php
+<?php
+namespace YourProject\System;
+
+use DuckPhp\Foundation\ExceptionTrait;
+
+class ProjectException
+{
+    use ExceptionTrait;  // 提供 ThrowOn() 静态方法
+}
+class BusinessException extends ProjectException {}
+class ControllerException extends ProjectException {}
+```
+
+在 `App.php` 中配置：
+
+```php
+'exception_for_project'    => ProjectException::class,
+'exception_for_business'   => BusinessException::class,
+'exception_for_controller' => ControllerException::class,
+```
+
+### 使用 `ThrowOn` 条件抛异常
+
+```php
+// 直接在异常类上调用（任何地方可用）
+BusinessException::ThrowOn($balance < $amount, '余额不足', 2001);
+
+// Controller 层快捷方式
+Helper::ControllerThrowOn(!$user, '请先登录', 403);
+
+// Business 层快捷方式
+Helper::BusinessThrowOn(!$user, '用户不存在', 1001);
+```
+
+### 异常报告器
+
+异常报告器按异常类型分发处理：
+
+```php
+<?php
+namespace YourProject\Controller;
+
+use DuckPhp\Foundation\ExceptionReporterTrait;
+
+class ExceptionReporter
+{
+    use ExceptionReporterTrait;
+
+    public function onBusinessException($ex)
+    {
+        // Business 异常 → JSON 错误响应
+        Helper::ShowJson(['error' => $ex->getMessage()]);
+    }
+    public function onControllerException($ex)
+    {
+        // 权限异常 → 重定向登录
+        Helper::Show302('login');
+    }
+    public function defaultException($ex)
+    {
+        // 兜底：调用框架默认处理
+        App::Current()->_OnDefaultException($ex);
+    }
+}
+```
+
+方法命名规则：`on{异常类名}($ex)`。在 `App.php` 中配置：
+
+```php
+'exception_reporter' => ExceptionReporter::class,
+```
+
+### 调试信息
+
+`is_debug = true` 且配置了 `error_debug` 时，框架在错误页面显示详细堆栈：
+
+```php
+// view/_sys/error-debug.php — 框架自带，无需手动创建
+// 显示：异常类、消息、文件位置、完整调用堆栈
+```
+
+生产环境关闭 `is_debug` 后堆栈不再显示，改为渲染 `error_500` / `error_404` 视图。
+
 ---
 
-## 10. 实现自己的 GlobalUser 组件
+## 10. 用户与管理员系统
 
-DuckPHP 的用户/管理员系统通过**回调 + PhaseProxy 代理**机制实现，可作为一个独立组件提供给其他项目或子应用使用。
+框架通过 `GlobalUser` / `GlobalAdmin` 组件提供用户/管理员系统。
 
-### 架构概述
+### 使用
 
-```
-你的项目（主 App）
-  ├── options['class_user'] = MyUserProvider::class   ← 注册
-  │
-  └── 其他代码通过 Helper 调用：
-        Helper::UserId()          → GlobalUser::_()->id()
-        Helper::UserName()        → GlobalUser::_()->name()
-        Helper::UserService()->batchGetUsernames([])  → 批量查询
-```
-
-### 你需要实现的两个接口
-
-#### `UserActionInterface` — 用户操作（处理 Session/Token）
+直接在 Controller/Business 中调用：
 
 ```php
-<?php
-namespace YourProject;
-
-use DuckPhp\GlobalUser\UserActionInterface;
-
-class MyUserAction implements UserActionInterface
-{
-    use \DuckPhp\Foundation\SingletonTrait;
-
-    // 从 Session/Token 获取当前用户 ID
-    public function id(bool $check_login = true): mixed
-    {
-        $id = $_SESSION['user_id'] ?? null;
-        if ($check_login && !$id) {
-            throw new \DuckPhp\Core\DuckPhpSystemException('未登录');
-        }
-        return $id;
-    }
-    // 获取当前用户名
-    public function name(bool $check_login = true): mixed
-    {
-        return $_SESSION['username'] ?? null;
-    }
-    // 获取当前用户完整数据
-    public function data(bool $check_login = true): mixed
-    {
-        if (!$id = $this->id($check_login)) {
-            return null;
-        }
-        return ['id' => $id, 'name' => $this->name()];
-    }
-
-    // —— URL 生成 ——
-    public function urlForLogin(?string $url_back = null, ?array $ext = null): string
-    {
-        return '/login';
-    }
-    public function urlForLogout(?string $url_back = null, ?array $ext = null): string
-    {
-        return '/logout';
-    }
-    public function urlForHome(?string $url_back = null, ?array $ext = null): string
-    {
-        return '/';
-    }
-    public function urlForRegist(?string $url_back = null, ?array $ext = null): string
-    {
-        return '/register';
-    }
-
-    // —— 服务层入口 ——
-    public function service(): object
-    {
-        return MyUserService::_();
-    }
-}
-```
-
-#### `UserServiceInterface` — 用户数据服务（批量查询等）
-
-```php
-<?php
-namespace YourProject;
-
-use DuckPhp\GlobalUser\UserServiceInterface;
-
-class MyUserService implements UserServiceInterface
-{
-    use \DuckPhp\Foundation\SingletonTrait;
-
-    // 批量获取用户名（给其他 Business 用）
-    public function batchGetUsernames(array $ids): array
-    {
-        return MyUserModel::_()->getUsernamesByIds($ids);
-    }
-    // 权限检查
-    public function checkAccess($user_id, string $class, string $method, ?string $url = null): void
-    {
-        // 不需要额外检查，默认放行
-    }
-}
-```
-
-### 注册组件
-
-在项目的 `App.php` 中通过 `class_user` 选项注册：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'class_user' => MyUserAction::class,           // ← 注册用户系统
-        // 'class_admin' => MyAdminAction::class,      // ← 管理员系统同理
-    ];
-}
-```
-
-### 在 Controller / Business 中使用
-
-```php
-// Controller 中获取用户信息
-$userId   = Helper::UserId();                   // 未登录则抛异常
-$userId   = Helper::UserId(false);              // 不抛异常，null 表未登录
+$userId   = Helper::UserId();              // 当前用户 ID（未登录抛异常）
+$userId   = Helper::UserId(false);         // 不抛异常，null 表未登录
 $userName = Helper::UserName();
-$userData = Helper::User()->data();
+Helper::User()->urlForHome();              // 首页 URL
+Helper::User()->urlForLogin();             // 登录 URL
 
-// Business 中批量查询（通过 Service 接口）
-$names = Helper::UserService()->batchGetUsernames([1, 2, 3]);
+$names = Helper::UserService()->batchGetUsernames([1, 2, 3]); // 批量查询
 
-// 获取 User 对象的其他方法
-Helper::User()->urlForHome();                    // 首页 URL
-Helper::User()->urlForLogin();                   // 登录 URL
-Helper::User()->urlForLogout();                  // 登出 URL
+Helper::AdminId();                         // 管理员 ID
+Helper::AdminService()->checkAccess(...);
 ```
 
-### 管理员系统（GlobalAdmin）
+### 配置
 
-与 GlobalUser 完全相同的模式，只是接口名不同：
+在提供用户功能的 App（通常是子 App）的选项中注册实现类：
 
 ```php
-// App.php
-'class_admin' => MyAdminAction::class,
-
-// 使用
-Helper::AdminId();
-Helper::AdminName();
-Helper::AdminService()->checkAccess($adminId, $class, $method);
-Helper::Admin()->urlForHome();
+// 子 App 的 options 中配置
+$options = [
+    'class_user' => MyUserAction::class,
+    // 'class_admin' => MyAdminAction::class,
+];
 ```
 
-区别：管理员系统无注册接口，通常用于后台管理模块。
+实现类需要实现 `UserActionInterface`（用户操作 + URL 生成）和 `UserServiceInterface`（数据查询），完整说明见用户指南 `docs/zh/guide/external-auth.md`。
 
