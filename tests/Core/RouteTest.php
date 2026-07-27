@@ -11,7 +11,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(Route::class);
-        
+        $__SERVER = $_SERVER;
         $_SERVER = [
             'DOCUMENT_ROOT'=> __DIR__,
             'SCRIPT_FILENAME'=>__DIR__.'/aa/index.php',
@@ -242,7 +242,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_()->bind('/child/date')->run();
         
         ////////////////
-        $__SERVER = $_SERVER;
+        
         echo"===========xxxxxxxxxxxxxx=====================";
         Route::_(new Route())->init($options);
         Route::_()->options['controller_fix_mistake_path_info']=true;

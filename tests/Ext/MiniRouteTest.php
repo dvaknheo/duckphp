@@ -31,7 +31,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(MiniRoute::class);
-        
+        $__SERVER  = $_SERVER;
         $_SERVER = [
             'DOCUMENT_ROOT'=> __DIR__,
             'SCRIPT_FILENAME'=>__DIR__.'/aa/index.php',
@@ -220,8 +220,11 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         $this->bind('/child/date');
         MiniRoute::_()->run();
         MiniRoute::PathInfo('/z');
+        
+        
+        $_SERVER  = $__SERVER;
+
         \LibCoverage\LibCoverage::End();
-        return;
     }
     protected function doFixedRouteEx()
     {
