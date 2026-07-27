@@ -3,20 +3,19 @@
  * DuckPhp
  *
  * To enable this command class, uncomment the following application option:
- *   'cli_command_classes' => [ConsoleCommand::class]
+ *   'cmd' => [CommandAction::class => true]
  *
  * Provides a sample CLI command. Run `php ./cli.php hello` to execute
- * ConsoleCommand::_()->command_hello().
+ * CommandAction::_()->command_hello().
  */
 namespace YourProjectName\Controller;
 
-class ConsoleCommand extends Base
+use DuckPhp\Foundation\SingletonTrait;
+
+class CommandAction
 {
-	public function __construct()
-	{
-		// Must override parent
-	}
-    
+    use SingletonTrait;
+
     /**
      * Print a "hello world" message.
      */
