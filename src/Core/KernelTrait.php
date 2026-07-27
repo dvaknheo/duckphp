@@ -256,7 +256,7 @@ trait KernelTrait
     }
 
     //init
-    public function init(array $options, object $context = null)
+    public function init(array $options, ?object $context = null)
     {
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];

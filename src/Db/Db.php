@@ -21,7 +21,7 @@ class Db implements DbInterface
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
         ];
-    public function init($options = [], $context = null)
+    public function init($options = [], ?object $context = null)
     {
         $this->config = $options;
         $this->check_connect();

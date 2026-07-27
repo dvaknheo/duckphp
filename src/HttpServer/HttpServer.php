@@ -81,7 +81,7 @@ class HttpServer
         return static::_()->init($options)->run();
     }
     
-    public function init(array $options, object $context = null)
+    public function init(array $options, ?object $context = null)
     {
         $this->options = array_replace_recursive($this->options, $options);
         $this->host = $this->options['host'];

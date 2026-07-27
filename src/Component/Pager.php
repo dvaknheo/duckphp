@@ -43,7 +43,7 @@ class Pager extends ComponentBase implements PagerInterface
     }
     ////////////////////////
     //@override
-    public function init(array $options, object $context = null)
+    public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
         $this->options['current'] = $this->current();

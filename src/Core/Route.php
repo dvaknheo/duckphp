@@ -52,7 +52,7 @@ class Route extends ComponentBase
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
-    public static function RunQuickly(array $options = [], callable $after_init = null)
+    public static function RunQuickly(array $options = [], ?callable $after_init = null)
     {
         $instance = static::_()->init($options);
         if ($after_init) {

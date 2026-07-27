@@ -27,7 +27,7 @@ class EmptyView extends View
      * @param object $context
      * @return $this
      */
-    public function init(array $options, object $context = null)
+    public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
         if (!$this->options['empty_view_skip_replace']) {

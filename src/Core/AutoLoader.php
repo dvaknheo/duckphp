@@ -53,7 +53,7 @@ class AutoLoader
     public function __construct()
     {
     }
-    public function init(array $options, object $context = null)
+    public function init(array $options, ?object $context = null)
     {
         if ($this->is_inited) {
             return $this;
