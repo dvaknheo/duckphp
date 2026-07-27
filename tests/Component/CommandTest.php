@@ -105,7 +105,12 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','debug', '--off'
         ];
+        DuckPhp::_()->run();
         DuckPhp::_()->options['data_file_enable'] = false;
+        // debug 分支：data_file_enable=false → 进入 else 分支（line 116）
+        $_SERVER['argv']=[
+            '-','debug', '--off'
+        ];
         DuckPhp::_()->run();
         
         $_SERVER['argv']=[

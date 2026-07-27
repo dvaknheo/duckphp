@@ -98,6 +98,7 @@ $old_phase = FiParentApp::Phase();
         
 echo "--------------------------\n";
 
+
         $FiChildApp = str_replace('\\','/',FiChildApp::class);
         $_SERVER['argv']=['-','require',$FiChildApp , '--dry'];
         
@@ -191,6 +192,10 @@ PhaseContainer::RestAllContainerForTesting();
         FastInstaller::_()->forceFail();
         FastInstaller::_()->command_install();
         ////
+        // 覆盖 is_a(!App::class) 分支 line 64-66
+        $_SERVER['argv'] = ['-', 'require', 'tests\\DuckPhp\\FastInstaller\\DealWithStdClass'];
+        FiParentApp::_()->run();
+        ////
         Console::_()->readLinesCleanFill();
         Console::_()->readLinesFill("myres\n");
         FastInstaller::_()->command_dump_res();
@@ -220,6 +225,9 @@ PhaseContainer::RestAllContainerForTesting();
         @unlink($path_app.'FiParent.config.php');
         @rmdir($path_app);
     }
+}
+class DealWithStdClass
+{
 }
 class FiParentApp extends DuckPhp
 {

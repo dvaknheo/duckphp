@@ -61,6 +61,30 @@ class ControllerTraitTest extends \PHPUnit\Framework\TestCase
         
         echo "-6666------------\n";
         
+        // 覆盖 is_subclass_of false 分支 line 57 (with postfix)
+        $options = [
+            'namespace_controller' => __NAMESPACE__,
+            'controller_class_postfix' => 'Controller',
+            'controller_method_prefix' => '',
+            'controller_class_base' => BaseX::class,
+        ];
+        Route::_(new Route())->init($options);
+        Route::_()->bind('/My3/world');
+        My3Controller::_(My3Controller::_());
+        Route::_()->run();
+        
+        // 覆盖 is_subclass_of false 分支 line 70 (without postfix)
+        $options = [
+            'namespace_controller' => __NAMESPACE__,
+            'controller_class_postfix' => '',
+            'controller_method_prefix' => '',
+            'controller_class_base' => BaseX::class,
+        ];
+        Route::_(new Route())->init($options);
+        Route::_()->bind('/My3Controller/world');
+        My3Controller::_(My3Controller::_());
+        Route::_()->run();
+        
         
         
         
@@ -119,7 +143,10 @@ class My2Controller extends hello2Controller
 class My3Controller
 {
     use ControllerTrait;
-
+    public function world()
+    {
+        var_dump('My3:'.static::class);
+    }
 }
 ////////////////
 class MyAction extends BaseX

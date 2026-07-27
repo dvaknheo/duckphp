@@ -7,7 +7,10 @@ class support extends \PHPUnit\Framework\TestCase
     {
 		echo "e.g. composer run-script fulltest\n";
 		echo "e.g. composer run-script singletest tests/Core/AppTest.php\n";
-		ini_set('xdebug.mode','coverage');
+        // XDEBUG_MODE=coverage 应通过环境变量设置，ini_set 在 PHP 8.4+ 对 PHP_INI_SYSTEM 无效
+        if (PHP_VERSION_ID < 80000) {
+            ini_set('xdebug.mode', 'coverage');
+        }
         \LibCoverage\LibCoverage::G()->showAllReport(); // create all report
         $this->assertTrue(true);
     }

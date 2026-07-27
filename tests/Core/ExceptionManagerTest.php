@@ -10,6 +10,9 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ExceptionManager::class);
 
+        $saved_error_reporting = error_reporting();
+        error_reporting(E_ALL);
+
          $exception_options=[
             'default_exception_handler'=>[ExceptionManagerObject::class,'CallException'],
             'dev_error_handler'=>[ExceptionManagerObject::class,'OnDevErrorHandler'],
@@ -85,6 +88,7 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::G($t);
         ExceptionManager::_();
         
+        error_reporting($saved_error_reporting);
         \LibCoverage\LibCoverage::End();
         /*
         

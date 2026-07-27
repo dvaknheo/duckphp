@@ -544,6 +544,20 @@ PhaseContainer::RestAllContainerForTesting();
         $this->assertStringContainsString('test_err', $out4);
         $this->assertStringContainsString('/fake/file', $out4);
         
+        // 4b. _OnDevErrorHandler 在 is_debug=false 时直接 return
+        PhaseContainer::RestAllContainerForTesting();
+        ob_start();
+        $a4b = new MyApp();
+        MyApp::_($a4b)->init([
+            'path' => $path_app,
+            'is_debug' => false,
+            'cli_enable' => false,
+            'namespace' => __NAMESPACE__,
+        ]);
+        $a4b->_OnDevErrorHandler(E_USER_NOTICE, 'test_err', '/fake/file', 42);
+        $out4b = ob_get_clean();
+        $this->assertSame('', $out4b);
+        
         // 5. prepareServe maintain: error_maintain='view' → View::Show (line 124)
         PhaseContainer::RestAllContainerForTesting();
         ob_start();

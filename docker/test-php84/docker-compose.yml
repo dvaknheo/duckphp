@@ -8,9 +8,12 @@ services:
     working_dir: /DATA
     volumes:
       - ../../:/DATA
+      - ./test_reports:/DATA/test_reports
+      - ./test_coveragedumps:/DATA/test_coveragedumps
       - ../../composer-test-php84.json:/DATA/composer.json
       - ../../composer-test-php84.lock:/DATA/composer.lock
       - vendor84:/DATA/vendor
+      - ../../docker/test-php84/libcoverage:/DATA/vendor/dvaknheo/libcoverage
       - composer-cache84:/tmp/composer
     entrypoint:
       - /bin/sh
