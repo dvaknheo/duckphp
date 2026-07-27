@@ -644,25 +644,29 @@ class AppTestObjectB
 
 class FakeSessionHandler implements \SessionHandlerInterface
 {
-    public function open($savePath, $sessionName)
-    {
-    }
-    public function close()
-    {
-    }
-    public function read($id)
-    {
-    }
-    public function write($id, $data)
-    {
-    }
-    public function destroy($id)
+    public function open($savePath, $sessionName): bool
     {
         return true;
     }
-    public function gc($maxlifetime)
+    public function close(): bool
     {
         return true;
+    }
+    public function read($id): string
+    {
+        return '';
+    }
+    public function write($id, $data): bool
+    {
+        return true;
+    }
+    public function destroy($id): bool
+    {
+        return true;
+    }
+    public function gc($maxlifetime): int
+    {
+        return 0;
     }
 }
 
