@@ -80,7 +80,7 @@ class ControllerTraitTest extends \PHPUnit\Framework\TestCase
         
         MyAction::_(MyAction2::_())->foo();
         DuckPhpAllInOne::_()->init([]);
-        MyAction::_Z(DuckPhpAllInOne::_Phase())->foo();
+        MyAction::_Z(DuckPhpAllInOne::_()->_Phase())->foo();
         
         My2Controller::OverrideParent();
 

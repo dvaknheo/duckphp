@@ -55,18 +55,18 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         Misc::DI('a');
         
         try{
-            Misc::CallAPI(FakeService::class,'m1',['id'=>'1'],FakeInterface::class);
+            Misc::_()->CallAPI(FakeService::class,'m1',['id'=>'1'],FakeInterface::class);
         }catch(\Exception $ex){
         }
         try{
-            Misc::CallAPI(FakeService::class,'m2',['id'=>[]],"");
+            Misc::_()->CallAPI(FakeService::class,'m2',['id'=>[]],"");
         }catch(\Exception $ex){
         }
         try{
-            Misc::CallAPI(FakeService::class,'m1',[]);
+            Misc::_()->CallAPI(FakeService::class,'m1',[]);
         }catch(\Exception $ex){
         }
-        Misc::CallAPI(FakeService::class,'m1',['id'=>'1']);
+        Misc::_()->CallAPI(FakeService::class,'m1',['id'=>'1']);
         Misc::_()->isInited();
 
         \LibCoverage\LibCoverage::End();
