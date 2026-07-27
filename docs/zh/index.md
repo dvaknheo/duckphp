@@ -2,7 +2,7 @@
 
 欢迎使用 DuckPHP 框架文档。
 
-[English](../zh/index.md) | 中文
+[English](../en/index.md) | 中文
 
 ## 目录
 
