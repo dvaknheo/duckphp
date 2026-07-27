@@ -178,6 +178,21 @@ project/
 | **Business** | Model, Service, Helper | Session, `$_GET`/`$_POST`/`$_SERVER` |
 | **Model** | 仅数据访问相关 | 业务逻辑, 抛异常 |
 | **View** | 全局函数 `__h()` `__url()` `__l()` | 框架类（尽量不要） |
+| **Helper（自定义）**| System, DuckPhp 框架 | Controller, Action, Business, Service, Model |
+
+### 自定义 Helper 规则
+
+项目中的自定义 Helper 类（`src/*/Helper.php`）只能通过**动态方法**调用：
+
+```php
+// ✓ 正确：实例方法通过 :: _() 调用
+Helper::_()->myHelperMethod($arg);
+
+// ✗ 错误：不要用静态方法
+Helper::myHelperMethod($arg);
+```
+
+Helper 可以与 System 层、DuckPhp 框架以及第三方代码交互，但**不允许**引用任何业务层（Controller / Action / Business / Service / Model）。
 
 ### 违规示例
 
