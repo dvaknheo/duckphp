@@ -317,7 +317,7 @@ project/
 ├── src/
 │   ├── Controller/                 # 控制器层：HTTP/CLI 请求入口
 │   │   ├── Base.php
-│   │   ├── ConsoleCommand.php      # CLI 子命令示例（默认未启用）
+│   │   ├── CommandAction.php      # CLI 子命令示例（默认未启用）
 │   │   ├── ExceptionReporter.php   # 异常报告器（默认未启用）
 │   │   ├── Helper.php
 │   │   ├── MainController.php
@@ -350,7 +350,7 @@ project/
 
 > **注意**：
 > - `SomeAction.php`、`testController.php`、`DemoBusiness.php`、`SomeService.php` 和 `DemoModel.php` 是示例文件。在实际项目中，删除它们并编写适合业务的类似类。
-> - `ConsoleCommand.php`、`ExceptionReporter.php`、`BusinessException.php`、`ControllerException.php` 和 `ProjectException.php` 默认禁用。你可以：
+> - `CommandAction.php`、`ExceptionReporter.php`、`BusinessException.php`、`ControllerException.php` 和 `ProjectException.php` 默认禁用。你可以：
 >   - 删除不需要的文件以简化项目。
 >   - 在 `src/System/App.php` 中取消注释对应的选项（`cli_command_classes`、`exception_reporter`、`exception_for_project` / `exception_for_business` / `exception_for_controller`）来启用功能。
 >

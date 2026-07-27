@@ -307,7 +307,7 @@ project/
 ├── src/
 │   ├── Controller/                   # controller layer: HTTP/CLI entry
 │   │   ├── Base.php
-│   │   ├── ConsoleCommand.php        # CLI command example (disabled by default)
+│   │   ├── CommandAction.php        # CLI command example (disabled by default)
 │   │   ├── ExceptionReporter.php     # exception reporter (disabled by default)
 │   │   ├── Helper.php
 │   │   ├── MainController.php
@@ -340,7 +340,7 @@ project/
 
 > **Note**:
 > - `SomeAction.php`, `testController.php`, `DemoBusiness.php`, `SomeService.php`, and `DemoModel.php` are sample files. In a real project, delete them and write similar classes for your business.
-> - `ConsoleCommand.php`, `ExceptionReporter.php`, `BusinessException.php`, `ControllerException.php`, and `ProjectException.php` are disabled by default. You can:
+> - `CommandAction.php`, `ExceptionReporter.php`, `BusinessException.php`, `ControllerException.php`, and `ProjectException.php` are disabled by default. You can:
 >   - Simplify the project by deleting the files you do not need.
 >   - Enable the feature by uncommenting the matching option in `src/System/App.php` (`cli_command_classes`, `exception_reporter`, `exception_for_project` / `exception_for_business` / `exception_for_controller`).
 >

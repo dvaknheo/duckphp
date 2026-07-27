@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace YourProjectName\System;
 
 use DuckPhp\DuckPhp;
-use YourProjectName\Controller\ConsoleCommand;
+use YourProjectName\Controller\CommandAction;
 
 class App extends DuckPhp
 {
@@ -29,7 +29,7 @@ class App extends DuckPhp
         //'controller_method_prefix' => '',                    // method prefix for controllers
         // 'controller_resource_prefix' => '',                         // used by `__res()` helper
 
-        // 'cli_command_classes' => [ConsoleCommand::class],          // add to enable `php ./cli.php hello`
+        // 'cmd' => [CommandAction::class],          // add to enable `php ./cli.php hello`
         // 'cli_command_with_common' => true,                          // also show built-in CLI commands
 
         // 'exception_reporter' => ExceptionReporter::class,        // turn on to use the custom reporter

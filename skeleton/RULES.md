@@ -24,7 +24,7 @@ project/
 │   ├── Controller/                   # 控制器层：HTTP/CLI 请求入口
 │   │   ├── * AppAction.php          # 应用的动作
 │   │   ├── Base.php                 # 控制器基类
-│   │   ├── * ConsoleCommand.php     # CLI 子命令示例（默认未启用）
+│   │   ├── * CommandAction.php     # CLI 子命令示例（默认未启用）
 │   │   ├── Helper.php
 │   │   ├── MainController.php
 │   │   ├── Session.php              # Session 管理
@@ -56,7 +56,7 @@ project/
 
 > **注意**：
 > - `SomeAction.php`、`testController.php`、`DemoBusiness.php`、`SomeService.php`、`DemoModel.php` 是示例文件，实际项目中应删除并根据业务需求编写类似的类。
-> - `ConsoleCommand.php`、`ExceptionReporter.php`、`BusinessException.php`、`ControllerException.php`、`ProjectException.php` 默认未启用。你可以：
+> - `CommandAction.php`、`ExceptionReporter.php`、`BusinessException.php`、`ControllerException.php`、`ProjectException.php` 默认未启用。你可以：
 >   - 精简工程：直接删除这些不用的文件。
 >   - 启用功能：在 `src/System/App.php` 中取消对应的选项注释（`cli_command_classes`、`exception_reporter`、`exception_for_project` / `exception_for_business` / `exception_for_controller`）。
 >
