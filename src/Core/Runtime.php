@@ -37,7 +37,7 @@ class Runtime extends ComponentBase
     {
         if ($this->options['use_output_buffer']) {
             $this->init_ob_level = ob_get_level();
-            ob_implicit_flush(0);
+            ob_implicit_flush(false);
             ob_start();
         }
         $this->is_running = true;
