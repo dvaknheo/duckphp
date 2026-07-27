@@ -43,6 +43,10 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         // mergeViewData: with header
         MyAdmin::_()->options['admin_view_file_header']=$path.'views/block';
         Helper::Admin()->mergeViewData($data);
+        // mergeViewData: with header + footer
+        MyAdmin::_()->options['admin_view_file_footer']=$path.'views/block';
+        $data3 = Helper::Admin()->mergeViewData($data);
+        \PHPUnit\Framework\Assert::assertStringContainsString('Block', $data3['__view_data']['footer'] ?? '');
         // test admin_callback_for_add_ext_view_data
         MyAdmin::_()->options['admin_callback_for_add_ext_view_data'] = [MyAction::class, 'myAddExtViewData'];
         $data2 = Helper::Admin()->addExtViewData([]);
