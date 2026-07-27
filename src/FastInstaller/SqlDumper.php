@@ -86,7 +86,7 @@ class SqlDumper extends ComponentBase
                 $tables = $this->searchTables();
             }
             $included_tables = $this->options['sql_dump_include_tables'];
-            $included_tables = str_replace('@', $prefix, $included_tables);
+            $included_tables = str_replace('@', $prefix ?? '', $included_tables);
             $tables = array_values(array_unique(array_merge($tables, $included_tables)));
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);

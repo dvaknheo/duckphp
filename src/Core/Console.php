@@ -157,7 +157,7 @@ class Console extends ComponentBase
                 continue;
             }
             $key = $m[1];
-            $line = str_replace('{'.$key.'}', $options[$key] ?? '', $line);
+            $line = str_replace('{'.$key.'}', (string)($options[$key] ?? ''), $line);
             fputs($fp_out, $line);
             
             $input = (string)fgets($fp_in);
