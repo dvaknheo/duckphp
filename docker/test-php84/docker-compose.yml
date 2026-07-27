@@ -19,6 +19,7 @@ services:
       - docker-entrypoint
     environment:
       - COMPOSER_HOME=/tmp/composer
+      - XDEBUG_MODE=coverage
     extra_hosts:
       - "redis:127.0.0.1"
     command: >

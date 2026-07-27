@@ -1,6 +1,7 @@
 FROM php:8.4-cli
 
-RUN apt-get update && apt-get install -y git redis-server \
+RUN apt-get update && apt-get install -y git redis-server unzip zip libzip-dev \
+    && docker-php-ext-install zip \
     && curl -fsSL https://github.com/phpredis/phpredis/archive/6.1.0.tar.gz | tar xz -C /tmp \
     && cd /tmp/phpredis-6.1.0 && phpize && ./configure && make && make install \
     && docker-php-ext-enable redis \
