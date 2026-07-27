@@ -29,7 +29,7 @@ class View extends ComponentBase
     protected $temp_view_file;
     protected $context_class = '';
 
-    public static function Show(array $data = [], string $view = null): void
+    public static function Show(array $data = [], ?string $view = null): void
     {
         static::_()->_Show($data, $view);
     }

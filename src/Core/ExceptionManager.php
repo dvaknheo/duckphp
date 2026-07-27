@@ -71,7 +71,7 @@ class ExceptionManager extends ComponentBase
         switch ($errno) {
         case E_USER_NOTICE:
         case E_NOTICE:
-        case E_STRICT:
+        //case E_STRICT: deprecated in php8.4
         case E_DEPRECATED:
         case E_USER_DEPRECATED:
             ($this->options['dev_error_handler'])($errno, $errstr, $errfile, $errline);

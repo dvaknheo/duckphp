@@ -105,7 +105,7 @@ class Misc extends ComponentBase
             'bool' => FILTER_VALIDATE_BOOLEAN  ,
             'int' => FILTER_VALIDATE_INT,
             'float' => FILTER_VALIDATE_FLOAT,
-            'string' => FILTER_SANITIZE_STRING,
+            'string' => FILTER_UNSAFE_RAW ,
         ];
         if ($interface && !\is_a($class, $interface)) {
             throw new \ReflectionException("Bad interface", -3);

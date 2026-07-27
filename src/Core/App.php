@@ -283,7 +283,7 @@ EOT;
         $descs = array(
             E_USER_NOTICE => 'E_USER_NOTICE',
             E_NOTICE => 'E_NOTICE',
-            E_STRICT => 'E_STRICT',
+            //E_STRICT => 'E_STRICT',
             E_DEPRECATED => 'E_DEPRECATED',
             E_USER_DEPRECATED => 'E_USER_DEPRECATED',
         );
