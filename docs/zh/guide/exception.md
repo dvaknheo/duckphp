@@ -199,6 +199,67 @@ class ExceptionReporter
 - 记录错误日志（如果启用 `default_exception_do_log`）
 - 不暴露敏感信息
 
+## 配置错误视图
+
+框架通过选项控制不同错误场景的显示内容：
+
+| 选项 | 默认值 | 说明 |
+|------|--------|------|
+| `is_debug` | `false` | 是否启用调试模式 |
+| `error_debug` | `null` | 调试错误视图文件路径（`is_debug=true` 时生效） |
+| `error_500` | `'_sys/error_500'` | 500 错误视图 |
+| `error_404` | `'_sys/error_404'` | 404 错误视图 |
+| `error_maintain` | `null` | 维护模式提示信息（字符串、callable 或视图名） |
+
+### 典型配置
+
+```php
+class App extends DuckPhp
+{
+    public $options = [
+        'is_debug' => true,                     // 上线前改为 false
+        
+        // 开发环境：显示详细错误
+        'error_debug' => '_sys/error-debug.php',
+        
+        // 生产环境：显示友好页面（与 error_debug 互斥）
+        //'error_500' => '_sys/error_500.php',
+        //'error_404' => '_sys/error_404.php',
+    ];
+}
+```
+
+### 自定义错误页面
+
+在 `view/_sys/` 下放模板文件，框架会在对应错误发生时自动渲染：
+
+```php
+<!-- view/_sys/error_404.php -->
+<h1>页面不存在</h1>
+<p>您访问的页面未找到，请检查地址是否正确。</p>
+```
+
+```php
+<!-- view/_sys/error_500.php -->
+<h1>服务器内部错误</h1>
+<p>请稍后再试。</p>
+```
+
+### error_maintain 维护模式
+
+`error_maintain` 可以设置为字符串、callable 或视图名：
+
+```php
+// 简单文本
+'error_maintain' => '系统维护中，请稍后再试。',
+
+// 渲染视图
+'error_maintain' => '_sys/maintain',
+
+// 回调函数
+'error_maintain' => function () { echo '维护中...'; },
+```
+
 ## 自定义异常处理
 
 ### 覆盖默认异常处理
