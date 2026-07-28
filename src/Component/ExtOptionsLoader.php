@@ -43,6 +43,7 @@ class ExtOptionsLoader extends ComponentBase
             return;
         }
         $this->bumpOptions($ext_options);
+        return $this;
     }
     public function bumpOptions(array $ext_options): void
     {

@@ -21,8 +21,8 @@ class FinderForController extends ComponentBase
     ////[[
     public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
     {
-        $class_postfix = Route::_()->options['controller_class_postfix'];
-        $method_prefix = Route::_()->options['controller_method_prefix'];
+        $class_postfix = (string) Route::_()->options['controller_class_postfix'];
+        $method_prefix = (string) Route::_()->options['controller_method_prefix'];
         
         $controller_welcome_class = Route::_()->options['controller_welcome_class'];
         $controller_welcome_method = Route::_()->options['controller_welcome_method'];
@@ -72,12 +72,12 @@ class FinderForController extends ComponentBase
             } elseif ($v === 'uc_class') {
                 $blocks = explode('/', $first);
                 $w = array_pop($blocks);
-                $w = lcfirst($w ?? '');
+                $w = lcfirst((string)$w);
                 array_push($blocks, $w);
                 $first = implode('/', $blocks);
             } elseif ($v === 'uc_full_class') {
                 $blocks = explode('/', $first);
-                array_map('lcfirst', $blocks);
+                $blocks = array_map('lcfirst', $blocks);
                 $first = implode('/', $blocks);
             }
         }

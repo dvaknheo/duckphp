@@ -45,6 +45,7 @@ class Lang extends ComponentBase
             $this->options['lang_final'] = $this->detectLanguage();
         }
         $this->context()->options['lang_final'] = $this->options['lang_final'];
+        return $this;
     }
     protected function getSentenceFromConfig(string $language): ?array
     {

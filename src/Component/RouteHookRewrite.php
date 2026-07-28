@@ -143,7 +143,7 @@ class RouteHookRewrite extends ComponentBase
         // $path_info = Route::_()::PathInfo();
         $path_info = ltrim($path_info, '/');
         
-        $prefix = $this->options['controller_url_prefix'];
+        $prefix = (string)$this->options['controller_url_prefix'];
         
         if ($prefix && substr($path_info, 0, strlen($prefix)) !== $prefix) {
             return false;
