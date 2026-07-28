@@ -8,12 +8,12 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__.'/src')
     ->name('*.php')
 ;
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR2' => true,
         'header_comment' => [
-            'commentType' => 'PHPDoc',
+            'comment_type' => 'PHPDoc',
             'header' => $header,
             'separate' => 'none',
             'location' => 'after_declare_strict',
@@ -21,8 +21,9 @@ return PhpCsFixer\Config::create()
         'declare_strict_types' => true,
         'binary_operator_spaces'=>true,
         'ordered_imports'=>true,
-		'no_blank_lines_before_namespace'=>false,
-		'single_blank_line_before_namespace'=>true,
+        'blank_lines_before_namespace'=>false,
+        'no_blank_lines_before_namespace'=>false,
+        'single_blank_line_before_namespace'=>true,
     ])
     ->setFinder($finder)
     ->setUsingCache(false);
