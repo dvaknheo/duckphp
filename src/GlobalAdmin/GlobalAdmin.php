@@ -119,6 +119,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     {
         return $this->localService()->checkAccess($this->id(), $class, $method, $url);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function log(string $string, ?string $type = null, array $ext = [])
     {
         return $this->localService()->log($this->id(), $string, $type, $ext);

@@ -20,6 +20,11 @@ class ExtOptionsLoader extends ComponentBase
         'data_file_bump_prefix_keys' => ['redis_' => true, 'database_' => true],
     ];
     public static $all_ext_options = null;
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
@@ -80,6 +85,9 @@ class ExtOptionsLoader extends ComponentBase
         $all_ext_options = json_decode(''.file_get_contents($full_file), true);
         self::$all_ext_options = $all_ext_options;
     }
+    /**
+     * @param array<string, mixed> $options
+     */
     public function saveData(array $options): void
     {
         $full_file = $this->get_ext_options_file();

@@ -22,7 +22,7 @@ class JsonView extends View
     //@override
     /**
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @param object $context
      * @return $this
      */
@@ -43,6 +43,9 @@ class JsonView extends View
         CoreHelper::ShowJson($data);
     }
     //@override
+    /**
+     * @param array<string, mixed> $data
+     */
     public function _Display(string $view, ?array $data = null): void
     {
         foreach ($this->options['json_view_skip_vars'] as $v) {

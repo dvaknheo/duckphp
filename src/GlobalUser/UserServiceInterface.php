@@ -10,5 +10,8 @@ interface UserServiceInterface
     public function checkAccess($user_id, string $class, string $method, ?string $url = null);
     public function log($user_id, string $string, ?string $type = null, array $ext = []);
 
+    /**
+     * @param array<string, mixed> $ids
+     */
     public function batchGetUsernames(array $ids): array;
 }

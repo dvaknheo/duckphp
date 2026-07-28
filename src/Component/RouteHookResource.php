@@ -170,6 +170,9 @@ class RouteHookResource extends ComponentBase
         }
         return false;
     }
+    /**
+     * @param array<string, mixed> $files
+     */
     protected function create_directories(string $dest, array $files, string &$info): bool
     {
         foreach ($files as $file => $short_file_name) {

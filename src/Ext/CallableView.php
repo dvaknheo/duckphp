@@ -25,7 +25,7 @@ class CallableView extends View
     //@override
     /**
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @param object $context
      * @return $this
      */
@@ -78,6 +78,9 @@ class CallableView extends View
         }
     }
     //@override
+    /**
+     * @param array<string, mixed> $data
+     */
     public function _Display(string $view, ?array $data = null): void
     {
         $func = $this->viewToCallback($view);

@@ -32,6 +32,9 @@ class RouteHookManager extends ComponentBase
     {
         return $this->hook_list;
     }
+    /**
+     * @param array<string, mixed> $hook_list
+     */
     public function setHookList(array $hook_list): void
     {
         $this->hook_list = $hook_list;

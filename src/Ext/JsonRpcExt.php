@@ -98,6 +98,9 @@ class JsonRpcExt extends ComponentBase
         return $data['result'];
     }
     
+    /**
+     * @param array<string, mixed> $input
+     */
     public function onRpcCall(array $input)
     {
         $ret = [

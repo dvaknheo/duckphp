@@ -26,6 +26,11 @@ class Console extends ComponentBase
     public $index = 0;
     public $data = '';
 
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null)
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
@@ -186,6 +191,9 @@ class Console extends ComponentBase
         $ret = !empty($validators)? filter_var_array($ret, $validators) :$ret;
         return $ret;
     }
+    /**
+     * @param array<string, mixed> $argv
+     */
     protected function parseCliArgs(array $argv): array
     {
         $cli = array_shift($argv);

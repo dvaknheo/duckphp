@@ -129,6 +129,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         return $this->localService()->log($this->id(), $string, $type, $ext);
     }
+    /**
+     * @param array<string, mixed> $ids
+     */
     public function batchGetUsernames(array $ids): array
     {
         return $this->localService()->batchGetUsernames($ids);

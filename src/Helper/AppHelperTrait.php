@@ -113,6 +113,9 @@ trait AppHelperTrait
     {
         return SystemWrapper::_()->_register_shutdown_function($callback, ...$args);
     }
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function session_start(array $options = [])
     {
         return SystemWrapper::_()->_session_start($options);

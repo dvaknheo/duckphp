@@ -243,6 +243,9 @@ class Route extends ComponentBase
         $path_class = implode('\\', $blocks);
         return [$path_class, $method];
     }
+    /**
+     * @param array<string, mixed> $blocks
+     */
     protected function doControllerClassAdjust(array $blocks, string $method): array
     {
         $adj = is_array($this->options['controller_class_adjust']) ? $this->options['controller_class_adjust'] : explode(';', $this->options['controller_class_adjust']);

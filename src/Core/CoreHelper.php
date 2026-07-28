@@ -174,6 +174,9 @@ class CoreHelper extends ComponentBase
         echo (new \Exception('', 0))->getTraceAsString();
         echo "</pre>\n";
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function _DebugLog($message, array $context = array())
     {
         if (!App::_()->_IsDebug()) {

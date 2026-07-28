@@ -75,6 +75,9 @@ class RedisManager extends ComponentBase
         }
         return $this->pool[$tag];
     }
+    /**
+     * @param array<string, mixed> $config
+     */
     public function createServer(array $config): object
     {
         $redis = new Redis();

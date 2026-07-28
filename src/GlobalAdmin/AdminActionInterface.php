@@ -33,6 +33,9 @@ interface AdminActionInterface
     public function mergeViewData(array $input): array;
 
     public function checkAccess(string $class, string $method, ?string $url = null);
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function log(string $string, ?string $type = null, array $ext = []);
     
     

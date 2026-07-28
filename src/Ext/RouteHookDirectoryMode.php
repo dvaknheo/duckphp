@@ -18,6 +18,9 @@ class RouteHookDirectoryMode extends ComponentBase
     ];
     protected $basepath;
     
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function initOptions(array $options): void
     {
         $this->basepath = $this->options['mode_dir_basepath'];

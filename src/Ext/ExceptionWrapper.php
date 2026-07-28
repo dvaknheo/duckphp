@@ -30,6 +30,9 @@ class ExceptionWrapper extends ComponentBase
         $this->object = null;
         return $object;
     }
+    /**
+     * @param array<string, mixed> $args
+     */
     public function __call(string $method, array $args)
     {
         try {

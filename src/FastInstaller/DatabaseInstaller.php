@@ -93,6 +93,9 @@ class DatabaseInstaller extends ComponentBase
         }
         return $ret;
     }
+    /**
+     * @param array<string, mixed> $database
+     */
     protected function checkDb(array $database): array
     {
         try {

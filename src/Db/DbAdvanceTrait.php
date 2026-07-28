@@ -36,6 +36,9 @@ trait DbAdvanceTrait
         }
         return implode('and ', $a);
     }
+    /**
+     * @param array<string, mixed> $array
+     */
     public function qouteInsertArray(array $array): string
     {
         if (empty($array)) {

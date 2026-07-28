@@ -37,6 +37,11 @@ class DbManager extends ComponentBase
     protected $databases = [];
     protected $init_once = true;
     protected $db_before_get_object_handler = null;
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null) //return $this
     {
         $ret = parent::init($options, $context);
@@ -144,6 +149,9 @@ class DbManager extends ComponentBase
         }
         return $this->databases[$tag];
     }
+    /**
+     * @param array<string, mixed> $db_config
+     */
     protected function createDatabaseObject(array $db_config): object
     {
         $last_cwd = null;

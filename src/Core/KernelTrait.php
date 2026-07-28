@@ -255,6 +255,11 @@ trait KernelTrait
         ExceptionManager::_()->init($exception_options, $this);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     //init
     public function init(array $options, ?object $context = null)
     {
@@ -377,6 +382,9 @@ trait KernelTrait
             return;
         }
     }
+    /**
+     * @param array<string, mixed> $apps
+     */
     protected function initChildren(array $apps): void
     {
         if ($this->options['app_children_allow_mix_mode']) {

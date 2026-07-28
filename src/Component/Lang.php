@@ -31,6 +31,11 @@ class Lang extends ComponentBase
         'lang_file_path' => 'lang/',
         'lang_simple_mode_only_sentences' => [],
     ];
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
@@ -72,6 +77,9 @@ class Lang extends ComponentBase
         $newstr = $this->loadLanguage($str);
         return $this->format($newstr ?? $str, $args);
     }
+    /**
+     * @param array<string, mixed> $args
+     */
     protected function format(string $str, array $args): string
     {
         $a = [];

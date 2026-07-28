@@ -21,6 +21,9 @@ class MyFacadesAutoLoader extends ComponentBase
     protected $is_loaded = false;
     
     //@override
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function initOptions(array $options): void
     {
         $this->facades_map = $this->options['facades_map'] ?? [];

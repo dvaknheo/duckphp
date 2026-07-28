@@ -24,6 +24,11 @@ class ComponentBase // implements ComponentInterface
     {
         return !empty($this->context_class) ? ($this->context_class)::_() : App::_();
     }
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null) //return $this
     {
         if ($this->init_once && $this->is_inited && !($options['__force__'] ?? false)) {
@@ -49,6 +54,9 @@ class ComponentBase // implements ComponentInterface
         return $this->is_inited;
     }
     //for override
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function initOptions(array $options):void
     {
     }

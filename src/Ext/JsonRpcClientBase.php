@@ -26,6 +26,9 @@ class JsonRpcClientBase extends ComponentBase
         $ret = JsonRpcExt::_()->callRPC($this->_base_class, $method, $arguments);
         return $ret;
     }
+    /**
+     * @param array<string, mixed> $options
+     */
     public function init(array $options, ?object $context = null)
     {
         if ($this->_base_class) {

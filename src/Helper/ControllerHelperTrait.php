@@ -118,6 +118,9 @@ trait ControllerHelperTrait
     {
         return ExceptionManager::_()->assignExceptionHandler($classes, $callback);
     }
+    /**
+     * @param array<string, mixed> $classes
+     */
     public static function setMultiExceptionHandler(array $classes, $callback)
     {
         return ExceptionManager::_()->setMultiExceptionHandler($classes, $callback);

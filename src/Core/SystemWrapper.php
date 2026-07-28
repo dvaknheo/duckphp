@@ -168,6 +168,9 @@ class SystemWrapper extends ComponentBase
         register_shutdown_function($callback, ...$args);
     }
     ////[[[[
+    /**
+     * @param array<string, mixed> $options
+     */
     public function _session_start(array $options = [])
     {
         if ($this->system_wrapper_call_check(__FUNCTION__)) {

@@ -176,6 +176,9 @@ EOT;
         }
         return true;
     }
+    /**
+     * @param array<string, mixed> $files
+     */
     protected function createDirectories(string $dest, array $files): bool
     {
         foreach ($files as $file => $short_file_name) {

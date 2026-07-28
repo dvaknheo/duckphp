@@ -21,6 +21,9 @@ class RouteHookRewrite extends ComponentBase
         return static::_()->doHook($path_info);
     }
     //@override
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function initOptions(array $options): void
     {
         $this->rewrite_map = array_merge($this->rewrite_map, $this->options['rewrite_map'] ?? []);

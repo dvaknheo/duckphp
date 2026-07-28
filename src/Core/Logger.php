@@ -90,6 +90,9 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
     {
         $this->log(static::INFO, $message, $context);
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function debug($message, array $context = array())
     {
         $this->log(static::DEBUG, $message, $context);

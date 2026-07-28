@@ -43,6 +43,9 @@ class Pager extends ComponentBase implements PagerInterface
     }
     ////////////////////////
     //@override
+    /**
+     * @param array<string, mixed> $options
+     */
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);

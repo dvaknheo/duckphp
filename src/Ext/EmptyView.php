@@ -23,7 +23,7 @@ class EmptyView extends View
     //@override
     /**
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @param object $context
      * @return $this
      */
@@ -51,6 +51,9 @@ class EmptyView extends View
         $this->data[$this->options['empty_view_key_view'].'_foot'] = $this->getViewFile($this->foot_file);
     }
     //@override
+    /**
+     * @param array<string, mixed> $data
+     */
     public function _Display(string $view, ?array $data = null): void
     {
         $this->data = isset($data)?$data:$this->data;

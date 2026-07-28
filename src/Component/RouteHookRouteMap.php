@@ -175,6 +175,9 @@ class RouteHookRouteMap extends ComponentBase
         
         return $this->doHookByMap($path_info, $map);
     }
+    /**
+     * @param array<string, mixed> $route_map
+     */
     protected function doHookByMap(string $path_info, array $route_map): bool
     {
         $callback = $this->getRouteHandelByMap($route_map, $path_info);

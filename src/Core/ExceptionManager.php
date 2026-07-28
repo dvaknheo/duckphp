@@ -30,6 +30,11 @@ class ExceptionManager extends ComponentBase
     protected $last_exception_handler = null;
     
     public $is_running = false;
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
@@ -101,6 +106,9 @@ class ExceptionManager extends ComponentBase
     }
     
     //@override
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function initOptions(array $options): void
     {
         $this->default_exception_handler = $this->options['default_exception_handler'];

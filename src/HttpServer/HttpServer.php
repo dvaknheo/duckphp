@@ -81,6 +81,11 @@ class HttpServer
         return static::_()->init($options)->run();
     }
     
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null)
     {
         $this->options = array_replace_recursive($this->options, $options);
@@ -104,6 +109,9 @@ class HttpServer
     {
         return getopt($options, $longopts, $optind); // @codeCoverageIgnore
     }
+    /**
+     * @param array<string, mixed> $cli_options
+     */
     protected function parseCaptures(array $cli_options): array
     {
         $shorts_map = [];

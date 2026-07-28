@@ -21,6 +21,9 @@ class SuperGlobal extends ComponentBase
     
     protected $init_once = true;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function initOptions(array $options): void
     {
         if ($this->options['superglobal_auto_define']) {

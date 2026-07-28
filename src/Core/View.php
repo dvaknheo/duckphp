@@ -87,6 +87,9 @@ class View extends ComponentBase
         
         include $this->temp_view_file;
     }
+    /**
+     * @param array<string, mixed> $data
+     */
     public function _Render(string $view, ?array $data = null): string
     {
         ob_implicit_flush(PHP_VERSION_ID < 80000 ? 0 : false);

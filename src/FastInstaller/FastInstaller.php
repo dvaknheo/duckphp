@@ -324,6 +324,9 @@ and more ...\n";
         }
         App::Phase($current_phase);
     }
+    /**
+     * @param array<string, mixed> $input_options
+     */
     protected function doInstallAction(array $input_options)
     {
         if (!($this->args['skip_sql'] ?? false)) {

@@ -141,6 +141,9 @@ EOT;
         }
         return $str;
     }
+    /**
+     * @param array<string, mixed> $classes
+     */
     protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
     {
         $ret = [];

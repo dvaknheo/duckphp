@@ -82,6 +82,9 @@ trait ModelTrait
         $ret = DbManager::_()->_DbForWrite()->insertData($this->table(), $data);
         return $ret;
     }
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function update($id, array $data, ?string $key = null)
     {
         $ret = DbManager::_()->_DbForWrite()->updateData($this->table(), $id, $data, $key ?? $this->table_pk);

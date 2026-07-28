@@ -89,6 +89,9 @@ EOT;
         }
         return $ret;
     }
+    /**
+     * @param array<string, mixed> $config
+     */
     protected function checkRedis(array $config): array
     {
         try {

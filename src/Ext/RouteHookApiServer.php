@@ -137,6 +137,9 @@ class RouteHookApiServer extends ComponentBase
         }
         echo json_encode($ret, $flag);
     }
+    /**
+     * @param array<string, mixed> $input
+     */
     protected function callAPI(object $object, string $method, array $input)
     {
         $f = [
