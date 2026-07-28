@@ -7,6 +7,7 @@ namespace DuckPhp\Ext;
 
 use ArrayAccess;
 
+/** @implements ArrayAccess<int, callable> */
 class HookChain implements ArrayAccess
 {
     protected $chain = [];

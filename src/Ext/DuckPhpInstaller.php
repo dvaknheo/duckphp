@@ -38,14 +38,14 @@ class DuckPhpInstaller extends ComponentBase
      */
     public function command_help()
     {
-        return $this->init([])->showHelp();
+        $this->init([])->showHelp();
     }
     /**
      * run the demo web server
      */
     public function command_show()
     {
-        return $this->init([])->runDemo();
+        $this->init([])->runDemo();
     }
     
     public function showHelp(): void

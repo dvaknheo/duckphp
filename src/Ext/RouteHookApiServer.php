@@ -42,7 +42,7 @@ class RouteHookApiServer extends ComponentBase
         // $path_info = Route::_()::PathInfo();
         ExceptionManager::_()->setDefaultExceptionHandler([static::class,'OnJsonError']);
         
-        list($object, $method) = $this->getObjectAndMethod($path_info);
+        [$object, $method] = $this->getObjectAndMethod($path_info);
         if ($object === null && $method === null) {
             return $this->onMissing();
         }
@@ -82,7 +82,7 @@ class RouteHookApiServer extends ComponentBase
         
         return $namespace_componenet;
     }
-    protected function getObjectAndMethod(string $path_info): ?array
+    protected function getObjectAndMethod(string $path_info): array
     {
         $path_info = trim($path_info, '/');
         $class_array = explode('.', $path_info);

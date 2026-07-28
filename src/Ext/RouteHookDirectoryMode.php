@@ -91,7 +91,7 @@ class RouteHookDirectoryMode extends ComponentBase
             $full_class_name = implode('/', $class_names);
             $file = $basepath.$full_class_name.'.php';
             if (is_file($file)) {
-                $path_info = isset($blocks[$i])?array_slice($blocks, -$i - 1):[];
+                $path_info = array_key_exists($i, $blocks) ? array_slice($blocks, -$i - 1) : [];
                 $path_info = implode('/', $path_info);
                 $new_path = $base_url.implode('/', $class_names).'.php'.($path_info?'/'.$path_info:'');
                 break;
