@@ -33,7 +33,7 @@ class SystemWrapper extends ComponentBase
     }
     public function _system_wrapper_replace(array $funcs)
     {
-        $this->system_handlers = array_replace($this->system_handlers, $funcs) ?? [];
+        $this->system_handlers = array_replace($this->system_handlers, $funcs);
         return true;
     }
     public function _system_wrapper_get_providers()
@@ -144,9 +144,9 @@ class SystemWrapper extends ComponentBase
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
-        if (defined('__EXIT_EXCEPTION')) {
-            $exit = __EXIT_EXCEPTION;
-            throw new $exit((string)$code, (int)$code);
+        if (defined('__EXIT_EXCEPTION') && is_a(__EXIT_EXCEPTION, \Throwable::class, true)) {
+            $exit_class = __EXIT_EXCEPTION;
+            throw new $exit_class((string)$code, (int)$code);
         }
         exit($code);        // @codeCoverageIgnore
     }
@@ -155,7 +155,7 @@ class SystemWrapper extends ComponentBase
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
-        /** @var mixed */
+        /** @var callable */
         $handler = $exception_handler; //for phpstan
         return set_exception_handler($handler);
     }

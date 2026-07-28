@@ -105,6 +105,9 @@ class HttpServer
     {
         return $this->is_inited;
     }
+    /**
+     * @param string[] $longopts
+     */
     protected function getopt(string $options, array $longopts, &$optind)
     {
         return getopt($options, $longopts, $optind); // @codeCoverageIgnore
