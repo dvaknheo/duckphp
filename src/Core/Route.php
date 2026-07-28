@@ -237,7 +237,6 @@ class Route extends ComponentBase
             $this->calling_path = $welcome_class.'/'.$method;
             $blocks[] = $welcome_class;
         }
-        /** @var array<string, mixed> $blocks */
         if ($this->options['controller_class_adjust']) {
             [$blocks, $method] = $this->doControllerClassAdjust($blocks, (string)$method);
         }
@@ -246,6 +245,10 @@ class Route extends ComponentBase
     }
     /**
      * @param array<string, mixed> $blocks
+     */
+    /**
+     * @param non-empty-list<string> $blocks
+     * @return array
      */
     protected function doControllerClassAdjust(array $blocks, string $method): array
     {

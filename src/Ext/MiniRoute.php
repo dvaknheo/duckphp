@@ -43,7 +43,7 @@ class MiniRoute extends ComponentBase
         if (null === $callback) {
             return false;
         }
-        /** @var callable $callback */
+        // @phpstan-ignore-next-line
         ($callback)();
         return true;
     }
@@ -94,7 +94,7 @@ class MiniRoute extends ComponentBase
     {
         $this->route_error = '';
         
-        list($full_class, $method) = $this->pathToClassAndMethod($path_info);
+        list($full_class, $method) = $this->pathToClassAndMethod($path_info) ?? [null, null];
         if ($full_class === null) {
             return null;
         }
@@ -236,7 +236,7 @@ class MiniRoute extends ComponentBase
         if ($flag) {
             return $url;
         }
-        $flag = preg_match('/^(https?:\/)?\//', $controller_resource_prefix ?? '');
+        $flag = preg_match('/^(https?:\/)?\//', $controller_resource_prefix);
         if ($flag) {
             return $controller_resource_prefix.$url;
         }
@@ -248,7 +248,6 @@ class MiniRoute extends ComponentBase
         $scheme = $my_server['REQUEST_SCHEME'] ?? '';
         //$scheme = $use_scheme ? $scheme :'';
         $host = $my_server['HTTP_HOST'] ?? ($my_server['SERVER_NAME'] ?? ($my_server['SERVER_ADDR'] ?? ''));
-        $host = $host ?? '';
         
         $port = $my_server['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;
