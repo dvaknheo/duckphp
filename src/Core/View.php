@@ -92,6 +92,7 @@ class View extends ComponentBase
      */
     public function _Render(string $view, ?array $data = null): string
     {
+        // @phpstan-ignore-next-line
         ob_implicit_flush(PHP_VERSION_ID < 80000 ? 0 : false);
         ob_start();
         $this->_Display($view, $data);

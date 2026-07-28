@@ -243,6 +243,7 @@ class CoreHelper extends ComponentBase
         }
         $exception_class = $exception_class ?? (App::_()->options['exception_for_business'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
         
+        /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }
     public function _ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
@@ -252,6 +253,7 @@ class CoreHelper extends ComponentBase
         }
         $exception_class = $exception_class ?? (App::_()->options['exception_for_controller'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
         
+        /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }
     public function _PathOfProject()

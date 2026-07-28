@@ -33,7 +33,7 @@ class Console extends ComponentBase
      */
     public function init(array $options, ?object $context = null)
     {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options), $this->options);
         if ($context !== null) {
             $this->context_class = get_class($context);
         }
@@ -221,7 +221,7 @@ class Console extends ComponentBase
                 $ret[$lastkey][] = $v;
             } else {
                 $t = $ret[$lastkey];
-                $t = is_array($ret[$lastkey]) ? $t: [$t];
+                $t = [$t];
                 $t[] = $v;
                 $ret[$lastkey] = $t;
             }

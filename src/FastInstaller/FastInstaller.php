@@ -285,6 +285,7 @@ and more ...\n";
         //GlobalEvent::_()->fire(App::_()->getThisClassName() . '#onInstalled');
         $app_instance = App::_();
         if (method_exists($app_instance, 'onInstalled')) {
+            // @phpstan-ignore-next-line
             \call_user_func([$app_instance, 'onInstalled']);
         }
         echo "\e[32;3mInstalled App (".get_class(App::_()).");\033[0m\n";

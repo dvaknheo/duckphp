@@ -179,7 +179,7 @@ class Route extends ComponentBase
     {
         $this->route_error = '';
         
-        list($full_class, $method) = $this->pathToClassAndMethod((string)$path_info);
+        list($full_class, $method) = $this->pathToClassAndMethod((string)$path_info) ?? [null, null];
         if ($full_class === null) {
             return null;
         }
@@ -237,6 +237,7 @@ class Route extends ComponentBase
             $this->calling_path = $welcome_class.'/'.$method;
             $blocks[] = $welcome_class;
         }
+        /** @var array<string, mixed> $blocks */
         if ($this->options['controller_class_adjust']) {
             [$blocks, $method] = $this->doControllerClassAdjust($blocks, (string)$method);
         }
@@ -257,7 +258,7 @@ class Route extends ComponentBase
                 $w = ucfirst($w);
                 array_push($blocks, $w);
             } elseif ($v === 'uc_full_class') {
-                array_map('ucfirst', $blocks);
+                $blocks = array_map('ucfirst', $blocks);
             }
         }
         return [$blocks,$method];
@@ -471,7 +472,7 @@ trait Route_UrlManager
         if ($flag) {
             return $url;
         }
-        $flag = preg_match('/^(https?:\/)?\//', $controller_resource_prefix ?? '');
+        $flag = preg_match('/^(https?:\/)?\//', $controller_resource_prefix);
         if ($flag) {
             return $controller_resource_prefix.$url;
         }
@@ -483,7 +484,6 @@ trait Route_UrlManager
         $scheme = $my_server['REQUEST_SCHEME'] ?? 'http';
         //$scheme = $use_scheme ? $scheme :'';
         $host = $my_server['HTTP_HOST'] ?? ($my_server['SERVER_NAME'] ?? ($my_server['SERVER_ADDR'] ?? ''));
-        $host = $host ?? '';
         
         $port = $my_server['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;

@@ -78,7 +78,8 @@ trait ControllerTrait
             if ($class !== static::class) {
                 $route->options['controller_class_map'][static::class] = $class;
             }
-            $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
+            /** @var class-string $class */
+        $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
             return $object;
         }
         $ret = PhaseContainer::GetObject(static::class, $object);
