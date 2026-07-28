@@ -33,14 +33,14 @@ class ExtOptionsLoader extends ComponentBase
             $full_file = $this->get_ext_options_file();
             if (!is_file($full_file)) {
                 self::$all_ext_options = [];
-                return;
+                return $this;
             }
             $this->fill_all_ext_options($full_file);
         }
         $phase = App::_()->getThisPhaseName();
         $ext_options = self::$all_ext_options[$phase] ?? [];
         if (empty($ext_options)) {
-            return;
+            return $this;
         }
         $this->bumpOptions($ext_options);
         return $this;

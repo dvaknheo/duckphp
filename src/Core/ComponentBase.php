@@ -35,7 +35,7 @@ class ComponentBase // implements ComponentInterface
             return $this;
         }
         
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options), $this->options);
         $this->initOptions($options);
         if ($context !== null) {
             $this->context_class = get_class($context);
