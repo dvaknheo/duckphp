@@ -99,9 +99,7 @@ class Lang extends ComponentBase
         // 将 zh-cn, zh-CN, zh_cn 统一为 zh_CN
         $locale = str_replace('-', '_', $locale);
         $parts = explode('_', $locale);
-        if (isset($parts[0])) {
-            $parts[0] = strtolower($parts[0]);
-        }
+        $parts[0] = strtolower($parts[0]);
         if (isset($parts[1])) {
             $parts[1] = strtoupper($parts[1]);
         }
@@ -139,7 +137,7 @@ class Lang extends ComponentBase
         $param = $this->options['lang_url_param'];
         $my_get = defined('__SUPERGLOBAL_CONTEXT')
             ? (SuperGlobal::_()->_GET ?? [])
-            : ($_GET ?? []);
+            : $_GET;
         
         return $my_get[$param] ?? null;
     }
@@ -150,7 +148,7 @@ class Lang extends ComponentBase
     protected function detectFromCookie(): ?string
     {
         $name = $this->options['lang_cookie_name'];
-        $my_cookie = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_COOKIE ?? []) : ($_COOKIE ?? []);
+        $my_cookie = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_COOKIE ?? []) : $_COOKIE;
         
         return $my_cookie[$name] ?? null;
     }
@@ -160,7 +158,7 @@ class Lang extends ComponentBase
      */
     protected function detectFromHeader(): ?string
     {
-        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_SERVER ?? []) : ($_SERVER ?? []);
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_SERVER ?? []) : $_SERVER;
         
         $accept = $my_server['HTTP_ACCEPT_LANGUAGE'] ?? null;
         if (!$accept) {

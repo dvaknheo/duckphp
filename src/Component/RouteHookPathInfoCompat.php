@@ -63,11 +63,9 @@ class RouteHookPathInfoCompat extends ComponentBase
         parse_str((string) parse_url((string)$url, PHP_URL_QUERY), $input_get);
         
         $blocks = explode('/', $input_path);
-        if (isset($blocks[0])) {
-            $basefile = basename($script_file);
-            if ($blocks[0] === $basefile) {
-                array_shift($blocks);
-            }
+        $basefile = basename($script_file);
+        if ($blocks[0] === $basefile) {
+            array_shift($blocks);
         }
 
         if ($path_info_compact_class_key) {
@@ -84,7 +82,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         //if ($path_info_compact_class_key && isset($get[$path_info_compact_class_key]) && $get[$path_info_compact_class_key]==='') {
         //    unset($get[$path_info_compact_class_key]);
         //}
-        $query = $get?'?'.http_build_query($get):'';
+        $query = '?' . http_build_query($get);
         $url = $path.$query;
         return $url;
     }

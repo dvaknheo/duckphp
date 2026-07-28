@@ -74,7 +74,7 @@ class RouteHookResource extends ComponentBase
         $controller_resource_prefix = $this->options['controller_resource_prefix'];
         $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
         
-        $flag = preg_match('/^(https?:)?\/\//', $controller_resource_prefix ?? '');
+        $flag = preg_match('/^(https?:)?\/\//', $controller_resource_prefix);
         if ($flag) {
             return;
         }
