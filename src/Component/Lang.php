@@ -184,8 +184,6 @@ class Lang extends ComponentBase
             $normalized = $this->normalizeLocale($lang);
             return $normalized;
         }
-        
-        return null;  // @codeCoverageIgnore
     }
     
     /**

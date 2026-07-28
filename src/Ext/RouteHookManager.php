@@ -11,7 +11,7 @@ use DuckPhp\Core\Route;
 class RouteHookManager extends ComponentBase
 {
     public $options = [];
-    protected $hook_list;
+    protected $hook_list = [];
     
     public function attachPreRun(): self
     {
@@ -26,7 +26,7 @@ class RouteHookManager extends ComponentBase
     }
     public function detach(): void
     {
-        unset($this->hook_list);
+        $this->hook_list =[];
     }
     public function getHookList(): array
     {

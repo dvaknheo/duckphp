@@ -61,7 +61,7 @@ class Pager extends ComponentBase implements PagerInterface
             return $this->options['current'];
         }
         $page_no = $this->getDefaultPageNo();
-        $page_no = intval($page_no) ?? 1;
+        $page_no = intval($page_no) ? intval($page_no) : 1;
         $page_no = $page_no > 1 ? $page_no : 1;
         $this->options['current'] = $page_no;
         
@@ -90,7 +90,7 @@ class Pager extends ComponentBase implements PagerInterface
     {
         $page_key = $this->options['page_key'];
         $current_url = $this->options['url'] ?? $this->getDefaultUrl();
-        $url = $current_url ?? '';
+        $url = empty($current_url) ? '' : $current_url ;
         $flag = strpos($url, '{'.$page_key.'}');
         if ($flag !== false) {
             $page = $page != 1?$page:'';

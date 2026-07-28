@@ -41,6 +41,9 @@ class AutoLoader
         
         return $me;
     }
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function RunQuickly(array $options = [])
     {
         return static::_()->init($options)->run();
@@ -53,6 +56,11 @@ class AutoLoader
     public function __construct()
     {
     }
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
     public function init(array $options, ?object $context = null)
     {
         if ($this->is_inited) {
@@ -111,7 +119,7 @@ class AutoLoader
         if ($this->options['autoload_cache_in_cli']) {
             $this->cacheClasses();
         }
-        spl_autoload_register(static::class.'::AutoLoad'); /** @phpstan-ignore-line */
+        spl_autoload_register([static::class, 'AutoLoad']);
     }
     public function runAutoLoader()
     {
@@ -209,7 +217,7 @@ class AutoLoader
     }
     public function clear(): void
     {
-        spl_autoload_unregister(static::class.'::AutoLoad');
+        spl_autoload_unregister([static::class, 'AutoLoad']);
     }
     public static function DuckPhpSystemAutoLoader(string $class): void //@codeCoverageIgnoreStart
     {

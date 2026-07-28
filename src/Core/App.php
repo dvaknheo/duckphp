@@ -80,9 +80,9 @@ class App extends ComponentBase
     {
         parent::__construct();
         $this->options = array_replace_recursive($this->kernel_options, $this->core_options, $this->common_options, $this->options);
-        unset($this->kernel_options); // not use again;
-        unset($this->core_options); // not use again;
-        unset($this->common_options); // not use again;
+        $this->kernel_options = []; // not use again;
+        $this->core_options = []; // not use again;
+        $this->common_options = []; // not use again;
         $this->this_class = static::class;
     }
     public function version()
@@ -394,7 +394,7 @@ EOT;
     public function _IsDebug()
     {
         $setting_debug = static::_()->_Setting('duckphp_is_debug', false);
-        $root_debug = $setting_debug || static::Root()->options['is_debug'] ?? false;
+        $root_debug = $setting_debug || (static::Root()->options['is_debug'] ?? false);
         $this_debug = $this->options['is_debug'] ?? false;
         return $root_debug || $this_debug;
     }

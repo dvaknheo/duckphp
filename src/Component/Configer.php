@@ -20,7 +20,7 @@ class Configer extends ComponentBase
         //TODO $filename_basename = '';
         $config = $this->_LoadConfig($file_basename);
         if (!isset($key)) {
-            return $config ?? $default;
+            return empty($config) ? $default : $config;
         }
         return isset($config[$key])?$config[$key]:$default;
     }

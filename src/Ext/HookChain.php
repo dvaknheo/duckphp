@@ -68,7 +68,7 @@ class HookChain implements ArrayAccess
     }
 
     //@override ArrayAccess
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (is_null($offset)) {
             $this->chain[] = $value;
@@ -78,17 +78,18 @@ class HookChain implements ArrayAccess
     }
 
     //@override ArrayAccess
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->chain[$offset]);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->chain[$offset]);
     }
 
     //@override ArrayAccess
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->chain[$offset]) ? $this->chain[$offset] : null;

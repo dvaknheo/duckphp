@@ -283,8 +283,9 @@ and more ...\n";
         }
         ExtOptionsLoader::_()->saveData(['installed' => DATE(DATE_ATOM)]);
         //GlobalEvent::_()->fire(App::_()->getThisClassName() . '#onInstalled');
-        if (method_exists(App::_(), 'onInstalled')) {
-            App::_()->onInstalled();
+        $app_instance = App::_();
+        if (method_exists($app_instance, 'onInstalled')) {
+            \call_user_func([$app_instance, 'onInstalled']);
         }
         echo "\e[32;3mInstalled App (".get_class(App::_()).");\033[0m\n";
         return;
@@ -310,7 +311,7 @@ and more ...\n";
             [$class,$method] = Console::_()->getCommandCallback($cli_namespace.':install');
             try {
                 if (isset($class) && is_callable([$class::_(),$method])) {
-                    $ret = call_user_func([$class::_(),$method]);/** @phpstan-ignore-line */
+                    $ret = call_user_func([$class::_(),$method]);
                 }
             } catch (\Exception $ex) {
                 $msg = $ex->getMessage();

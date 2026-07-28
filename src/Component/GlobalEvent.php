@@ -15,7 +15,7 @@ class GlobalEvent extends ComponentBase
     {
         return $this->globalOn($event, App::Phase(), $callback);
     }
-    public function globalOn($event, ?string $phase = null, $callback)
+    public function globalOn($event, ?string $phase, callable $callback)
     {
         $pair = [$phase, $callback];
         if (isset($this->events[$event]) && in_array($pair, $this->events[$event])) {
