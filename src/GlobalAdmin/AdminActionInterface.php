@@ -27,10 +27,22 @@ interface AdminActionInterface
      */
     public function localService();
 
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string;
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForLogout(?string $url_back = null, ?array $ext = null): string;
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForHome(?string $url_back = null, ?array $ext = null): string;
 
+    /**
+     * @param array<string, mixed> $input
+     */
     public function mergeViewData(array $input): array;
 
     public function checkAccess(string $class, string $method, ?string $url = null);

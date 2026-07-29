@@ -30,19 +30,31 @@ class View extends ComponentBase
     protected $temp_view_file;
     protected $context_class = '';
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function Show(array $data = [], ?string $view = null): void
     {
         static::_()->_Show($data, $view);
     }
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function Display(string $view, ?array $data = null): void
     {
         static::_()->_Display($view, $data);
     }
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function Render(string $view, ?array $data = null): string
     {
         return static::_()->_Render($view, $data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function _Show(array $data, string $view): void
     {
         if ($this->context_class) {
@@ -78,6 +90,9 @@ class View extends ComponentBase
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
     }
+    /**
+     * @param array<string, mixed> $data
+     */
     public function _Display(string $view, ?array $data = null): void
     {
         $this->temp_view_file = $this->getViewFile($view);

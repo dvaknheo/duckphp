@@ -68,6 +68,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         return $this->run_callback_by_key('user_callback_for_local_service');
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
         if (isset($this->options[$key_callback])) {
@@ -77,18 +80,30 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         $url = $this->options[$key_url];
         return __url($url);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
     {
         return $this->go_url('user_callback_for_url_for_home', 'user_url_home', $url_back, $ext);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForRegist(?string $url_back = null, ?array $ext = null): string
     {
         return $this->go_url('user_callback_for_url_for_regist', 'user_url_regist', $url_back, $ext);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
         return $this->go_url('user_callback_for_url_for_login', 'user_url_login', $url_back, $ext);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForLogout(?string $url_back = null, ?array $ext = null):string
     {
         return $this->go_url('user_callback_for_url_for_logout', 'user_url_logout', $url_back, $ext);
@@ -99,6 +114,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         $service = $this->localService();
         return PhaseProxy::CreatePhaseProxy($this->context()::Phase(), $service);
     }
+    /**
+     * @param array<string, mixed> $input
+     */
     public function mergeViewData(array $input): array
     {
         $input = $this->addExtViewData($input);
@@ -114,6 +132,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         $input['__view_data']['footer'] = $footer;
         return $input;
     }
+    /**
+     * @param array<string, mixed> $input
+     */
     public function addExtViewData(array $input): array
     {
         if (isset($this->options['user_callback_for_add_ext_view_data'])) {
@@ -126,6 +147,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         return $this->localService()->checkAccess($this->id(), $class, $method, $url);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function log(string $string, ?string $type = null, array $ext = [])
     {
         return $this->localService()->log($this->id(), $string, $type, $ext);

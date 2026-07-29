@@ -26,6 +26,9 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         'log_prefix' => 'DuckPhpLog',
     ];
     protected $init_once = true;
+    /**
+     * @param array<string, mixed> $context
+     */
     public function log($level, $message, array $context = array())
     {
         //if (!$this->is_inited) {
@@ -63,30 +66,51 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
     }
     ////////////////////
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function emergency($message, array $context = array())
     {
         $this->log(static::EMERGENCY, $message, $context);
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function alert($message, array $context = array())
     {
         $this->log(static::ALERT, $message, $context);
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function critical($message, array $context = array())
     {
         $this->log(static::CRITICAL, $message, $context);
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function error($message, array $context = array())
     {
         $this->log(static::ERROR, $message, $context);
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function warning($message, array $context = array())
     {
         $this->log(static::WARNING, $message, $context);
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function notice($message, array $context = array())
     {
         $this->log(static::NOTICE, $message, $context);
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public function info($message, array $context = array())
     {
         $this->log(static::INFO, $message, $context);

@@ -66,6 +66,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     {
         return $this->run_callback_by_key('admin_callback_for_local_service');
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
     {
         if (isset($this->options[$key_callback])) {
@@ -75,14 +78,23 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $url = $this->options[$key_url];
         return __url($url);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
     {
         return $this->go_url('admin_callback_for_url_for_home', 'admin_url_home', $url_back, $ext);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
         return $this->go_url('admin_callback_for_url_for_login', 'admin_url_login', $url_back, $ext);
     }
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function urlForLogout(?string $url_back = null, ?array $ext = null):string
     {
         return $this->go_url('admin_callback_for_url_for_logout', 'admin_url_logout', $url_back, $ext);
@@ -93,6 +105,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $service = $this->localService();
         return PhaseProxy::CreatePhaseProxy($this->context()::Phase(), $service);
     }
+    /**
+     * @param array<string, mixed> $input
+     */
     public function addExtViewData(array $input): array
     {
         if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
@@ -100,6 +115,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         }
         return $input;
     }
+    /**
+     * @param array<string, mixed> $input
+     */
     public function mergeViewData(array $input): array
     {
         $input = $this->addExtViewData($input);

@@ -12,6 +12,9 @@ interface AdminServiceInterface
     /**
      * @param array<string, mixed> $ext
      */
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function log($admin_id, string $string, ?string $type = null, array $ext = []);
 
     public function isSuper($admin_id): bool;

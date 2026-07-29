@@ -9,6 +9,9 @@ namespace DuckPhp\GlobalUser;
 interface UserServiceInterface
 {
     public function checkAccess($user_id, string $class, string $method, ?string $url = null);
+    /**
+     * @param array<string, mixed> $ext
+     */
     public function log($user_id, string $string, ?string $type = null, array $ext = []);
 
     /**
