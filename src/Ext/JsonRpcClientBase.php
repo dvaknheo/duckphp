@@ -2,7 +2,6 @@
 /**
  * DuckPhp
  * From this time, you never be alone~
-     * @param array<string, mixed> $arguments
  */
 
 namespace DuckPhp\Ext;
@@ -22,6 +21,9 @@ class JsonRpcClientBase extends ComponentBase
         $this->_base_class = $class;
         return $this;
     }
+    /**
+     * @param array<string, mixed> $arguments
+     */
     public function __call(string $method, array $arguments)
     {
         $this->_base_class = $this->_base_class?$this->_base_class:JsonRpcExt::_()->getRealClass($this);

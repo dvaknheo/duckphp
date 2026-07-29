@@ -12,6 +12,9 @@ namespace DuckPhp\Db;
 
 trait DbAdvanceTrait
 {
+    /**
+     * @param array<string, mixed> $array
+     */
     public function quoteIn(array $array): string
     {
         if (empty($array)) {
@@ -25,6 +28,9 @@ trait DbAdvanceTrait
         );
         return implode(',', $array);
     }
+    /**
+     * @param array<string, mixed> $array
+     */
     public function quoteSetArray(array $array): string
     {
         $a = array();
@@ -33,6 +39,9 @@ trait DbAdvanceTrait
         }
         return implode(',', $a);
     }
+    /**
+     * @param array<string, mixed> $array
+     */
     public function quoteAndArray(array $array): string
     {
         $a = array();

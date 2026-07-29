@@ -187,11 +187,11 @@ class Route extends ComponentBase
         if ($full_class === null) {
             return null;
         }
-        $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
+        $callback = $this->getCallbackFromClassAndMethod($full_class, $method ?? '', $path_info);
         return $callback;
     }
     /**
-     * @return array{0:string,1:string}|null
+     * @return array{0:?string,1:?string}|null
      */
     protected function pathToClassAndMethod(string $path_info): ?array
     {
@@ -229,7 +229,7 @@ class Route extends ComponentBase
         return [$full_class,$method];
     }
     /**
-     * @return array{0:string,1:string}
+     * @return array{0:?string,1:?string}
      */
     protected function adjustClassBaseName(string $path_info): array
     {
@@ -253,13 +253,6 @@ class Route extends ComponentBase
         $path_class = implode('\\', $blocks);
         return [$path_class, $method];
     }
-    /**
-     * @param array<string, mixed> $blocks
-     */
-    /**
-     * @param non-empty-list<string> $blocks
-     * @return array
-     */
     /**
      * @param non-empty-list<string> $blocks
      * @return array{0:array,1:string}

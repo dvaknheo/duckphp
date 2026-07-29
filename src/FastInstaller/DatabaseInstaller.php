@@ -47,9 +47,6 @@ class DatabaseInstaller extends ComponentBase
     }
     /**
      * @param array<string, mixed> $data
-     * @param array<string, mixed> $data
-     * @param array<string, mixed> $ref_database_list
-     * @param array<string, mixed> $database
      */
     protected function changeDatabase(array $data): void
     {
@@ -65,6 +62,9 @@ class DatabaseInstaller extends ComponentBase
         DbManager::_()->reInit($options, App::_());
     }
 
+    /**
+     * @param array<int, mixed> $ref_database_list
+     */
     protected function configDatabase(array $ref_database_list = []): array
     {
         $driver = App::_()->options['database_driver'] ?? '';

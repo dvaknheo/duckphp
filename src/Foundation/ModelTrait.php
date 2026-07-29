@@ -81,6 +81,9 @@ trait ModelTrait
         $ret = DbManager::_()->_DbForRead()->fetch($sql);
         return $ret;
     }
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function add(array $data)
     {
         $ret = DbManager::_()->_DbForWrite()->insertData($this->table(), $data);

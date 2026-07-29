@@ -39,9 +39,6 @@ class RedisInstaller extends ComponentBase
     }
     /**
      * @param array<string, mixed> $data
-     * @param array<string, mixed> $data
-     * @param array<string, mixed> $ref_database_list
-     * @param array<string, mixed> $config
      */
     protected function changeRedis(array $data): void
     {
@@ -57,6 +54,9 @@ class RedisInstaller extends ComponentBase
         RedisManager::_()->reInit($options, $app);
     }
 
+    /**
+     * @param array<int, mixed> $ref_database_list
+     */
     protected function configRedis(array $ref_database_list = []): array
     {
         $ret = [];
