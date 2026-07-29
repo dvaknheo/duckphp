@@ -7,8 +7,10 @@
 namespace DuckPhp\GlobalAdmin;
 
 use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\DuckPhpSystemException;
+use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
 
@@ -136,9 +138,31 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $input['__view_data']['footer'] = $footer;
         return $input;
     }
-    ///////////////
-    public function checkAccess($class, string $method, ?string $url = null)
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function Show(array $data = [], ?string $view = null): void
     {
+        $data = $this->mergeViewData($data);
+        $last_phase = App::_()->getLastPhase();
+
+        $old_phase = App::Phase($last_phase);
+        App::_()->_Show($data,$view);
+        App::Phase($old_phase);
+    }
+    ///////////////
+    public function checkAccess(?string $class, ?string $method, ?string $url = null)
+    {
+        if(is_null($class) && is_null($method) && is_null($url)){
+            $last_phase = App::_()->getLastPhase();
+            $old_phase = App::Phase($last_phase);
+
+            $class = Route::_()->getRouteCallingClass();
+            $method = Route::_()->getRouteCallingMethod();
+            $url = Route::_()->_PathInfo();
+
+            App::Phase($old_phase);
+        }
         return $this->localService()->checkAccess($this->id(), $class, $method, $url);
     }
     /**
