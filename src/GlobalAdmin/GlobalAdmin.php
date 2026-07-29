@@ -118,6 +118,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
             return $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $input);
         }
+        $input['__logined_id'] ??= $this->id(true);
+        $input['__logined_name'] ??= $this->name(true);
+        $input['__logined_url_logout'] ??= $this->urlForLogout();
+
         return $input;
     }
     /**
@@ -141,13 +145,13 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     /**
      * @param array<string, mixed> $data
      */
-    public function Show(array $data = [], ?string $view = null): void
+    public function show(array $data = [], ?string $view = null): void
     {
         $data = $this->mergeViewData($data);
         $last_phase = App::_()->getLastPhase();
 
         $old_phase = App::Phase($last_phase);
-        App::_()->_Show($data,$view);
+        View::_()->_Show($data,$view);
         App::Phase($old_phase);
     }
     ///////////////
@@ -160,6 +164,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
             $class = Route::_()->getRouteCallingClass();
             $method = Route::_()->getRouteCallingMethod();
             $url = Route::_()->_PathInfo();
+            $url =__url($url);
 
             App::Phase($old_phase);
         }

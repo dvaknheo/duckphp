@@ -16,7 +16,6 @@ interface AdminActionInterface
      */
     public function id(bool $check_login = true);
     public function name(bool $check_login = true): string;
-    public function data(bool $check_login = true): array;
 
     /**
      * @return AdminServiceInterface
@@ -45,8 +44,11 @@ interface AdminActionInterface
      * @param array<string, mixed> $input
      */
     public function mergeViewData(array $input): array;
-
-    public function checkAccess(string $class, string $method, ?string $url = null);
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function show(array $data = [], ?string $view = null): void;
+    public function checkAccess(?string $class, ?string $method, ?string $url = null);
     /**
      * @param array<string, mixed> $ext
      */

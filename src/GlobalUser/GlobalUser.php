@@ -7,8 +7,10 @@
 namespace DuckPhp\GlobalUser;
 
 use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\DuckPhpSystemException;
+use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
 use DuckPhp\GlobalUser\UserActionInterface;
 
@@ -143,18 +145,20 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         if (isset($this->options['user_callback_for_add_ext_view_data'])) {
             return $this->run_callback_by_key('user_callback_for_add_ext_view_data', $input);
         }
+        $input['__logined_id'] ??= $this->id(true);
+        $input['__logined_name'] ??= $this->name(true);
+        $input['__logined_url_logout'] ??= $this->urlForLogout();
         return $input;
     }
     /**
      * @param array<string, mixed> $data
      */
-    public function Show(array $data = [], ?string $view = null): void
+    public function show(array $data = [], ?string $view = null): void
     {
         $data = $this->mergeViewData($data);
         $last_phase = App::_()->getLastPhase();
-
         $old_phase = App::Phase($last_phase);
-        App::_()->_Show($data,$view);
+        View::_()->_Show($data,$view);
         App::Phase($old_phase);
     }
     ///////////////
