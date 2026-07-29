@@ -33,7 +33,6 @@ trait KernelTrait
         'ext' => [],
 
         'cli_enable' => true,
-        'skip_404' => false,
         'skip_exception_check' => false,
         'override_from' => null,
         'override_class' => null,
@@ -456,7 +455,7 @@ trait KernelTrait
                 $ret = $this->runChildren();
             }
             $this->phaseToCurrent();
-            if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
+            if (!$ret) {
                 $this->_On404();
             }
         } catch (\Throwable $ex) {

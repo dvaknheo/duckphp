@@ -198,6 +198,9 @@ EOT;
     //@override
     public function _On404(): void
     {
+        if( !$this->is_root || ($this->options['skip_404'] ?? false)){
+            return;
+        }
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
 
