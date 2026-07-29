@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Foundation\Business;
 
 use DuckPhp\Foundation\BusinessTrait;

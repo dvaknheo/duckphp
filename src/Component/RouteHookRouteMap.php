@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
@@ -18,7 +19,7 @@ class RouteHookRouteMap extends ComponentBase
     protected $route_map = [];
     protected $route_map_important = [];
     protected $is_compiled = false;
-    
+
     public static function PrependHook($path_info)
     {
         // $path_info = Route::_()::PathInfo();
@@ -61,7 +62,7 @@ class RouteHookRouteMap extends ComponentBase
         }
         return $ret;
     }
-    
+
     public function assignRoute($key, $value = null)
     {
         if (is_array($key) && $value === null) {
@@ -123,7 +124,7 @@ class RouteHookRouteMap extends ComponentBase
         if ($prefix && substr($path_info, 0, strlen($prefix)) !== $prefix) {
             return null;
         }
-        
+
         foreach ($routeMap as $pattern => $callback) {
             if (!$this->matchRoute($pattern, $path_info, $parameters)) {
                 continue;
@@ -172,7 +173,7 @@ class RouteHookRouteMap extends ComponentBase
             $this->is_compiled = true;
         }
         $map = $is_append ? $this->route_map : $this->route_map_important;
-        
+
         return $this->doHookByMap($path_info, $map);
     }
     /**

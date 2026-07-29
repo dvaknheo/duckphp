@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 class SuperGlobal extends ComponentBase
@@ -10,7 +11,7 @@ class SuperGlobal extends ComponentBase
     public $options = [
         'superglobal_auto_define' => false,
     ];
-    
+
     public $_GET;
     public $_POST;
     public $_REQUEST;
@@ -18,7 +19,7 @@ class SuperGlobal extends ComponentBase
     public $_COOKIE;
     public $_SESSION;
     public $_FILES;
-    
+
     protected $init_once = true;
 
     /**
@@ -31,7 +32,7 @@ class SuperGlobal extends ComponentBase
             $this->_LoadSuperGlobalAll();
         }
     }
-    
+
     public static function DefineSuperGlobalContext()
     {
         if (!defined('__SUPERGLOBAL_CONTEXT')) {
@@ -142,7 +143,7 @@ class SuperGlobal extends ComponentBase
     protected function getSuperGlobalData(string $superglobal_key, ?string $key, $default)
     {
         $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : ($GLOBALS[$superglobal_key] ?? []);
-        
+
         if (isset($key)) {
             return $data[$key] ?? $default;
         } else {

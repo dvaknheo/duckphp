@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use ArrayAccess;
@@ -11,7 +12,7 @@ use ArrayAccess;
 class HookChain implements ArrayAccess
 {
     protected $chain = [];
-    
+
     public function __construct()
     {
     }

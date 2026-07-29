@@ -21,6 +21,7 @@ return (new PhpCsFixer\Config())
         'declare_strict_types' => true,
         'binary_operator_spaces'=>true,
         'ordered_imports'=>true,
+        'no_whitespace_in_blank_line'=>true,
         'blank_lines_before_namespace'=>false,
         'no_blank_lines_before_namespace'=>false,
         'single_blank_line_before_namespace'=>true,

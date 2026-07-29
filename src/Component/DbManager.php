@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -32,7 +33,7 @@ class DbManager extends ComponentBase
         'database_log_sql_level' => 'debug',
         'database_class' => '',
     ];
-    
+
     protected $database_config_list = [];
     protected $databases = [];
     protected $init_once = true;
@@ -63,7 +64,7 @@ class DbManager extends ComponentBase
     protected function initContext(object $context): void
     {
         $setting = $context->_Setting(); /** @phpstan-ignore-line */
-        
+
         if ($this->options['database_list_reload_by_setting'] &&
             (empty($this->options['database_list']) || !$this->options['database'])) {
             /** @var mixed */
@@ -117,7 +118,7 @@ class DbManager extends ComponentBase
     }
 
     ///////////////////////
-    
+
     public function setBeforeGetDbHandler($db_before_get_object_handler)
     {
         $this->db_before_get_object_handler = $db_before_get_object_handler;
@@ -144,7 +145,7 @@ class DbManager extends ComponentBase
                 throw new \ErrorException('DuckPhp: setting database_list['.$tag.'] missing');
             }
             $db = $this->createDatabaseObject($db_config);
-            
+
             $this->databases[$tag] = $db;
         }
         return $this->databases[$tag];
@@ -155,7 +156,7 @@ class DbManager extends ComponentBase
     protected function createDatabaseObject(array $db_config): object
     {
         $last_cwd = null;
-        
+
         // fix
         [$driver,$file] = explode(":", $db_config['dsn']);
         if ($driver === 'sqlite') {
@@ -164,7 +165,7 @@ class DbManager extends ComponentBase
                 $db_config['dsn'] = 'sqlite:'.$path_runtime.$file;
             }
         }
-        
+
         if (empty($this->options['database_class'])) {
             $db = new Db();
         } else {
@@ -188,7 +189,7 @@ class DbManager extends ComponentBase
         }
         return $this->_Db(static::TAG_READ);
     }
-    
+
     public function _DbCloseAll(): void
     {
         foreach ($this->databases as $tag => $db) {

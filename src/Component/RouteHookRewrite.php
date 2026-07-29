@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
@@ -15,7 +16,7 @@ class RouteHookRewrite extends ComponentBase
         'rewrite_map' => [],
     ];
     protected $rewrite_map = [];
-    
+
     public static function Hook($path_info)
     {
         return static::_()->doHook($path_info);
@@ -45,17 +46,17 @@ class RouteHookRewrite extends ComponentBase
     {
         return $this->rewrite_map;
     }
-    
+
     public function replaceRegexUrl($input_url, $template_url, $new_url)
     {
         if (substr($template_url, 0, 1) !== '~') {
             return null;
         }
-        
+
         $input_path = (string) parse_url($input_url, PHP_URL_PATH);
         $input_get = [];
         parse_str((string) parse_url($input_url, PHP_URL_QUERY), $input_get);
-        
+
         //$template_path=parse_url($template_url,PHP_URL_PATH);
         //$template_get=[];
         parse_str((string) parse_url($template_url, PHP_URL_QUERY), $template_get);
@@ -64,14 +65,14 @@ class RouteHookRewrite extends ComponentBase
             return null;
         }
         //if(array_diff_assoc($input_get,$template_get)){ return null; }
-        
+
         $new_url = str_replace('$', '\\', $new_url);
         $new_url = preg_replace($p, $new_url, $input_path);
-        
+
         $new_path = parse_url($new_url ?? '', PHP_URL_PATH) ?? '';
         $new_get = [];
         parse_str((string) parse_url($new_url ?? '', PHP_URL_QUERY), $new_get);
-        
+
         $get = array_merge($input_get, $new_get);
         $query = $get?'?'.http_build_query($get):'';
         return $new_path.$query;
@@ -81,15 +82,15 @@ class RouteHookRewrite extends ComponentBase
         if (substr($template_url, 0, 1) === '~') {
             return null;
         }
-        
+
         $input_path = parse_url($input_url, PHP_URL_PATH);
         $input_get = [];
         parse_str((string) parse_url($input_url, PHP_URL_QUERY), $input_get);
-        
+
         $template_path = parse_url($template_url, PHP_URL_PATH);
         $template_get = [];
         parse_str((string) parse_url($template_url, PHP_URL_QUERY), $template_get);
-        
+
         $input_path = '/'.$input_path;
 
         if ($input_path !== $template_path) {
@@ -99,11 +100,11 @@ class RouteHookRewrite extends ComponentBase
         //if (array_diff_assoc($template_get,$input_get )) {
         //    return null;
         //}
-        
+
         $new_path = parse_url($new_url, PHP_URL_PATH);
         $new_get = [];
         parse_str((string) parse_url($new_url, PHP_URL_QUERY), $new_get);
-        
+
         $get = array_merge($input_get, $new_get);
         $query = $get?'?'.http_build_query($get):'';
         return $new_path.$query;
@@ -142,19 +143,19 @@ class RouteHookRewrite extends ComponentBase
     {
         // $path_info = Route::_()::PathInfo();
         $path_info = ltrim($path_info, '/');
-        
+
         $prefix = (string)$this->options['controller_url_prefix'];
-        
+
         if ($prefix && substr($path_info, 0, strlen($prefix)) !== $prefix) {
             return false;
         }
         $path_info = substr($path_info, strlen($prefix));
-        
+
         $my_get = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
         $query = $my_get ? '?'.http_build_query($my_get):'';
-        
+
         $input_url = $path_info.$query;
-        
+
         $url = $this->filteRewrite($input_url);
         if ($url !== null) {
             $url = '/'.$prefix.$url;

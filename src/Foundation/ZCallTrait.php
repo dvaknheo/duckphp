@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\PhaseProxy;

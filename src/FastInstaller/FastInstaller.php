@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
@@ -72,18 +73,18 @@ class FastInstaller extends ComponentBase
                 return;
             }
             $app = (string)$app;
-            
+
             $old_phase = App::Phase();
             $app::_($object)->init([], App::Root());
             App::Phase($old_phase);
-            
+
             $desc = "Install to Url prefix: [{controller_url_prefix}]\n";
             $default_options = [];
-            
+
             $default_options['controller_url_prefix'] = $this->getDefaultUrlPrefix($object->options['namespace']);
             $input_options = Console::_()->readLines($default_options, $desc, []);
             $controller_url_prefix = $input_options['controller_url_prefix'];
-            
+
             $data = [
                 'app' => [
                     $app => [
@@ -93,7 +94,7 @@ class FastInstaller extends ComponentBase
             ];
             ExtOptionsLoader::_()->saveData($data);
             App::_()->options = array_replace_recursive(App::_()->options, $data);
-            
+
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
             App::Phase($object->getThisPhaseName());
         }
@@ -129,7 +130,7 @@ class FastInstaller extends ComponentBase
         $info = $this->cloneResource($input_options['new_controller_resource_prefix']);
         echo $info;
     }
-    
+
     //////////////////
     protected function initComponents(): void
     {
@@ -162,12 +163,12 @@ and more ...\n";
     {
         $this->initComponents();
         $args = $this->args;
-        
+
         if ($args['help'] ?? false) {
             $this->showHelp();
             return;
         }
-        
+
         App::Root()->options['installing_data'] = App::Root()->options['installing_data'] ?? [];
 
         $this->doInstall();
@@ -199,28 +200,28 @@ and more ...\n";
             return [];
         }
         ////]]]]
-        
+
         $controller_resource_prefix = App::_()->options['controller_resource_prefix'] ?? '';
-        
+
         $desc = "Current resource url to visit is [$controller_resource_prefix]\n";
         $desc .= "Change resource url (Y/N)[{sure}]?";
         $sure = Console::_()->readLines(['sure' => 'Y'], $desc);
         if (strtoupper($sure['sure']) === 'N') {
             return [];
         }
-        
+
         $ret = ['is_change_res' => true,];
         $default = ['new_controller_resource_prefix' => App::_()->options['controller_resource_prefix'] ?? ''];
         $desc = "New resource url [{new_controller_resource_prefix}]\n";
         $input = Console::_()->readLines($default, $desc);
         $ret['new_controller_resource_prefix'] = $input['new_controller_resource_prefix'];
-        
-        
+
+
         $desc = "Clone Resource File from library to URL file? (Y/N)[{is_clone_resource}]?";
         $sure = Console::_()->readLines(['is_clone_resource' => 'Y'], $desc);
-        
+
         $ret['is_clone_resource'] = (strtoupper($sure['is_clone_resource']) === 'Y') ? true: false;
-        
+
         return $ret;
         /*
         App::_()->options['controller_resource_prefix'] = $input['controller_resource_prefix'];
@@ -242,7 +243,7 @@ and more ...\n";
         ////[[[[
         $url_prefix = App::_()->options['controller_url_prefix'] ?? '';
         echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::_()).") to :\033[0m [$url_prefix]\n";
-        
+
         if (!$force && App::_()->isInstalled()) {
             echo "App has been installed. use --force to force " .get_class(App::_()) . "\n";
             return;
@@ -251,23 +252,23 @@ and more ...\n";
             DatabaseInstaller::_()->install($force);
         }
         RedisInstaller::_()->install($force);
-        
+
         //////
         $validators = $this->options['install_input_validators'] ?? [];
         $default_options = $this->options['install_default_options'] ?? [];
-        
+
         $resource_options = $this->changeResource();
         $default_options = array_merge($default_options, $resource_options);
         $desc = $this->options['install_input_desc'] ?? '--';
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
         $input_options = array_merge($resource_options, $input_options);
-       
+
         if ($this->args['dry'] ?? false) {
             echo "----\nInstall options dump:\n";
             return;
         }
         $flag = $this->doInstallAction($input_options);
-        
+
         ////]]]]
         if ($this->is_failed) {
             $class = get_class(App::_());
@@ -275,7 +276,7 @@ and more ...\n";
             return;
         }
         //GlobalEvent::_()->fire(App::_()->getThisClassName() .'#onInstall', $input_options);
-        
+
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
             //GlobalEvent::_()->fire(App::_()->getThisClassName() .'#onBeforeChildrenInstall');
@@ -307,7 +308,7 @@ and more ...\n";
                 continue;
             }
             $last_phase = App::Phase($app::_()->getThisPhaseName());
-            
+
             $cli_namespace = $app::_()->getThisCommandPrefix();
             [$class,$method] = Console::_()->getCommandCallback($cli_namespace.':install');
             try {
@@ -335,11 +336,11 @@ and more ...\n";
         }
         if ($input_options['is_change_res'] ?? false) {
             App::_()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
-            
+
             $ext_options = [];
             $ext_options['controller_resource_prefix'] = App::_()->options['controller_resource_prefix'];
             ExtOptionsLoader::_()->saveData($ext_options);
-            
+
             if ($input_options['is_clone_resource']) {
                 $info = $this->cloneResource($input_options['new_controller_resource_prefix']);
                 if ($this->args['verbose'] ?? false) {

@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\App;
@@ -23,43 +24,43 @@ class FinderForController extends ComponentBase
     {
         $class_postfix = (string) Route::_()->options['controller_class_postfix'];
         $method_prefix = (string) Route::_()->options['controller_method_prefix'];
-        
+
         $controller_welcome_class = Route::_()->options['controller_welcome_class'];
         $controller_welcome_method = Route::_()->options['controller_welcome_method'];
         $controller_path_ext = Route::_()->options['controller_path_ext'];
         $controller_url_prefix = Route::_()->options['controller_url_prefix'];
-        
-        
+
+
         $namespace_prefix = Route::_()->getControllerNamespacePrefix();
         if (substr($class, 0, strlen($namespace_prefix)) !== $namespace_prefix) {
             return null;
         }
-         
+
         if ($class_postfix && substr($class, -strlen($class_postfix)) !== $class_postfix) {
             return null;
         }
         $first = substr($class, strlen($namespace_prefix), 0 - strlen($class_postfix));
-        
+
         if ($adjuster) {
             $first = call_user_func($adjuster, $first);
         }
-        
+
         if ($method_prefix && substr($method, 0, strlen($method_prefix)) !== $method_prefix) {
             return null; // TODO do_action
         }
         $last = substr($method, strlen($method_prefix));
         [$first, $last] = $this->doControllerClassAdjust($first, $last);
-        
+
         if ($first === $controller_welcome_class && $last === $controller_welcome_method) {
             return $controller_url_prefix? $controller_url_prefix:'';
         }
         if ($first === $controller_welcome_class) {
             return $controller_url_prefix.$last.$controller_path_ext;
         }
-        
+
         return $controller_url_prefix.$first. '/' .$last.$controller_path_ext;
     }
-    
+
     protected function doControllerClassAdjust(string $first, string $method): array
     {
         $adj = is_array(Route::_()->options['controller_class_adjust']) ? Route::_()->options['controller_class_adjust'] : explode(';', Route::_()->options['controller_class_adjust']);
@@ -89,7 +90,7 @@ class FinderForController extends ComponentBase
         $classToTest[] = Route::_()->options['controller_welcome_class'].Route::_()->options['controller_class_postfix'];
         $classToTest[] = 'Helper';
         $classToTest[] = 'Base';
-        
+
         $classToTest = array_merge($classToTest, $this->options['classes_to_get_controller_path']);
         $path = '';
         foreach ($classToTest as $base_class) {
@@ -109,7 +110,7 @@ class FinderForController extends ComponentBase
         $directory = new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
-        
+
         $ret = [];
         $postfix = Route::_()->options['controller_class_postfix'];
         foreach ($files as $file) {
@@ -134,7 +135,7 @@ class FinderForController extends ComponentBase
         } catch (\ReflectionException $ex) {
             return [];
         }
-        
+
         $ret = [];
         foreach ($methods as $method) {
             if ($method->isStatic()) {
@@ -173,7 +174,7 @@ class FinderForController extends ComponentBase
         );
         return $ret;
     }
-    
+
     public function getAllAdminController(): array
     {
         $ret = [];

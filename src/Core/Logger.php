@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
@@ -33,7 +34,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         $file = preg_replace_callback('/%(.)/', function ($m) {
             return date($m[1]);
         }, $this->options['log_file_template']);
-        
+
         //$full_file = $this->extendFullFile($this->options['path'], $this->options['path_log'], $file,
         $full_file = static::SlashDir($this->options['path_log']);
         if (!static::IsAbsPath($full_file)) {
@@ -41,7 +42,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         }
         $full_file .= $file;
         $prefix = $this->options['log_prefix'];
-        
+
         $a = [];
         foreach ($context as $k => $v) {
             $a["{$k}"] = var_export($v, true);
@@ -51,7 +52,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $message = ($my_server['PATH_INFO'] ?? '') .' : '.$message;
         $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
-        
+
         try {
             $type = $full_file ? 3:0;
             $ret = error_log($message, $type, $full_file);
@@ -61,7 +62,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         return $ret; // @codeCoverageIgnore
     }
     ////////////////////
-    
+
     public function emergency($message, array $context = array())
     {
         $this->log(static::EMERGENCY, $message, $context);

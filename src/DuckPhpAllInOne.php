@@ -50,12 +50,12 @@ class DuckPhpAllInOne extends DuckPhp
             'path_info_compact_enable' => true,
             'duckphp_all_in_one_wrap_header_foot' => true,
         ];
-        
+
         // embed view to this class
         $ext_options['ext'][CallableView::class] = true;
         $ext_options['callable_view_class'] = static::class;
         $ext_options['callable_view_prefix'] = 'view_';
-        
+
         $this->options = array_merge($this->options, $ext_options);
     }
     public function __construct()

@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -17,9 +18,9 @@ class MyFacadesAutoLoader extends ComponentBase
     ];
     protected $prefix = '';
     protected $facades_map = [];
-    
+
     protected $is_loaded = false;
-    
+
     //@override
     /**
      * @param array<string, mixed> $options
@@ -29,12 +30,12 @@ class MyFacadesAutoLoader extends ComponentBase
         $this->facades_map = $this->options['facades_map'] ?? [];
         $namespace_facades = $this->options['facades_namespace'] ?? 'Facades';
         $this->prefix = trim($namespace_facades, '\\').'\\';
-        
+
         if ($this->options['facades_enable_autoload']) {
             spl_autoload_register([$this,'_autoload']);
         }
     }
-    
+
     public function _autoload($class): void
     {
         $flag = (substr($class, 0, strlen($this->prefix)) === $this->prefix)?true:false;
@@ -47,7 +48,7 @@ class MyFacadesAutoLoader extends ComponentBase
         $blocks = explode('\\', $class);
         $basename = array_pop($blocks);
         $namespace = implode('\\', $blocks);
-        
+
         $code = "namespace $namespace{ class $basename extends \\". MyFacadesBase::class ."{} }";
         eval($code);
     }

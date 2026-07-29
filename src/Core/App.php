@@ -24,7 +24,7 @@ require_once __DIR__ . '/Functions.php';
 class App extends ComponentBase
 {
     const VERSION = '1.3.6';
-    
+
     use KernelTrait {
         initComponents as Kernel_initComponents;
         prepareServe as Kernel_prepareServe;
@@ -37,40 +37,40 @@ class App extends ComponentBase
     const EXT_DEFAULT = 1;
     const EXT_FOLLOW_APP = 2;
     const EXT_RENEW = 3;
-    
+
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
-    
+
     protected $core_options = [
         'path_runtime' => 'runtime',
-        
+
         'default_exception_do_log' => true,
         'close_resource_at_output' => false,
         'html_handler' => null,
         'lang_handler' => null,
-        
+
         //// error handler ////
         'is_maintain' => false,
         'error_404' => null,            //'_sys/error-404',
         'error_500' => null,            //'_sys/error-500',
         'error_debug' => null,          //'_sys/error-debug',
         'error_maintain' => null,       //'_sys/error-maintan',
-        
+
         'setting_file' => 'config/DuckPhpSettings.config.php',
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
         'use_env_file' => false,
-        
+
         //*
         // 'path_log' => 'runtime',
         // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         // 'log_prefix' => 'DuckPhpLog',
-        
+
         // 'path_view' => 'view',
         // 'view_skip_notice_error' => true,
-        
+
         // 'superglobal_auto_define' => false,
         //*/
     ];
@@ -148,7 +148,7 @@ EOT;
             View::Show([], $error_maintain);
         }
     }
-    
+
     protected function loadSetting(): void
     {
         $this->setting = $this->options['setting'] ?? [];
@@ -200,7 +200,7 @@ EOT;
     {
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
-        
+
         SystemWrapper::_()->_header('HTTP/1.1 404 Not Found', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)();
@@ -216,7 +216,7 @@ EOT;
             }
             return;
         }
-        
+
         View::_(new View())->init($this->options, $this);
         View::_()->_Show([], $error_view);
     }
@@ -225,7 +225,7 @@ EOT;
     {
         // exception to root;
         $this->phaseToCurrent(); //Important
-        
+
         if ($this->options['default_exception_do_log']) {
             try {
                 Logger::_()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage()."\n".$ex->getTraceAsString());
@@ -235,15 +235,15 @@ EOT;
         }
         $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
-        
+
         //SystemWrapper::_()->_header('Server Error', true, 500); //  do not this :c
         SystemWrapper::_()->_header("HTTP/1.1 500 Server Error", true, 500);
-         
+
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
             return;
         }
-        
+
         $data = [];
         $data['is_debug'] = $this->_IsDebug();
         $data['ex'] = $ex;
@@ -253,7 +253,7 @@ EOT;
         $data['trace'] = $ex->getTraceAsString();
         $data['file'] = $ex->getFile();
         $data['line'] = $ex->getLine();
-        
+
         //// no error_500 setting.
         if (!$error_view) {
             echo "Internal Error \n<!--DuckPhp set options['error_500'] to override me  -->\n";
@@ -271,7 +271,7 @@ EOT;
             }
             return;
         }
-        
+
         View::_(new View())->init($this->options, $this);
         View::_()->_Show($data, $error_view);
     }
@@ -331,7 +331,7 @@ EOT;
     {
         throw new \Exception("DO NOT INIT class DuckPhp\Core\App!");
     }
-    
+
     public function getOverrideableFile($path_sub, $file, $use_override = true)
     {
         if (static::IsAbsPath($file)) {
@@ -341,35 +341,35 @@ EOT;
             return static::SlashDir($path_sub) . $file;
         }
         $current_phase = $this->getThisPhaseName();
-        
+
         $full_file = '';
         $phase_block = explode(':', $current_phase);
         foreach ($phase_block as $i => $v) {
             $phase = implode(':', array_slice($phase_block, 0, $i + 1));
             self::Phase($phase);
             $name = substr($current_phase, strlen($phase));
-            
+
             $class = (self::class);
-            
+
             $path_name = str_replace([':','/','\\'], DIRECTORY_SEPARATOR, $name);
             $path_dir = $class::_()->options['path'].$path_sub.$path_name.DIRECTORY_SEPARATOR; // importance: not self::_
-            
-            
+
+
             $full_file = $path_dir.$file;
             if (file_exists($full_file)) {
                 break;
             }
         }
-        
+
         self::Phase($current_phase);
-        
+
         return $full_file;
     }
     public function skip404Handler()
     {
         $this->options['skip_404'] = true;
     }
-    
+
     //////// features for view
 
     public function onBeforeOutput()

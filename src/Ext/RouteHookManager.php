@@ -13,11 +13,11 @@ class RouteHookManager extends ComponentBase
 {
     public $options = [];
     protected $hook_list = [];
-    
+
     public function attachPreRun(): self
     {
         $this->hook_list = & Route::_()->pre_run_hook_list;
-        
+
         return $this;
     }
     public function attachPostRun(): self

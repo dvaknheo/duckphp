@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
@@ -19,14 +20,14 @@ class SupporterByMysql extends Supporter
     {
         $options = array_map('trim', $options);
         $options = array_map('addslashes', $options);
-        
+
         $dsn = "mysql:host={$options['host']};port={$options['port']};dbname={$options['dbname']};charset=utf8mb4;";
-        
+
         $options['dsn'] = $dsn;
         unset($options['host']);
         unset($options['port']);
         unset($options['dbname']);
-        
+
         return $options;
     }
     //////////////////
@@ -50,7 +51,7 @@ class SupporterByMysql extends Supporter
         $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
         return $sql;
     }
-    
+
 
     public function getInstallDesc(): string
     {

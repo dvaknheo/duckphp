@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -12,17 +13,17 @@ class MiniRoute extends ComponentBase
     public $options = [
         'namespace' => '',
         'namespace_controller' => 'Controller',
-        
+
         'controller_path_ext' => '',
         'controller_welcome_class' => 'Main',
         'controller_welcome_class_visible' => false,
         'controller_welcome_method' => 'index',
-        
+
         'controller_class_postfix' => '',
         'controller_method_prefix' => '',
-        
+
         'controller_class_map' => [],
-        
+
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
     ];
@@ -31,7 +32,7 @@ class MiniRoute extends ComponentBase
     protected $calling_path = '';
     protected $calling_class = '';
     protected $calling_method = '';
-    
+
     public static function Route()
     {
         return static::_();
@@ -68,14 +69,14 @@ class MiniRoute extends ComponentBase
             }
             $path_info = substr($path_info, 0, -$l);
         }
-        
+
         $t = explode('/', $path_info);
         $method = array_pop($t);
         $path_class = implode('/', $t);
-        
+
         $welcome_class = $this->options['controller_welcome_class'];
         $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
-        
+
         if (!$this->options['controller_welcome_class_visible'] && $path_class === $welcome_class) {
             $this->route_error = "E009: controller_welcome_class_visible! {$welcome_class}; ";
             return [null, null];
@@ -85,7 +86,7 @@ class MiniRoute extends ComponentBase
         $full_class = $this->getControllerNamespacePrefix().str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
-        
+
         $method = ($method === '') ? $this->options['controller_welcome_method'] : $method;
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
@@ -93,7 +94,7 @@ class MiniRoute extends ComponentBase
     public function defaultGetRouteCallback(string $path_info): ?array
     {
         $this->route_error = '';
-        
+
         list($full_class, $method) = $this->pathToClassAndMethod($path_info) ?? [null, null];
         if ($full_class === null) {
             return null;
@@ -136,7 +137,7 @@ class MiniRoute extends ComponentBase
             $namespace_controller = rtrim($this->options['namespace'], '\\').'\\'.$namespace_controller;
         }
         $namespace_controller = trim($namespace_controller, '\\').'\\';
-        
+
         return $namespace_controller;
     }
     public function replaceController($old_class, $new_class)
@@ -214,7 +215,7 @@ class MiniRoute extends ComponentBase
         if (isset($url) && '#' === substr($url, 0, 1)) {
             return $basepath.$path_info.$url;
         }
-        
+
         return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
     }
     public function _Res(?string $url = null)
@@ -248,14 +249,14 @@ class MiniRoute extends ComponentBase
         $scheme = $my_server['REQUEST_SCHEME'] ?? '';
         //$scheme = $use_scheme ? $scheme :'';
         $host = $my_server['HTTP_HOST'] ?? ($my_server['SERVER_NAME'] ?? ($my_server['SERVER_ADDR'] ?? ''));
-        
+
         $port = $my_server['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;
         $port = ($port == 80 && $scheme == 'http')?'':$port;
         $port = ($port)?(':'.$port):'';
 
         $host = (strpos($host, ':'))? strstr($host, ':', true) : $host;
-        
+
         $ret = $scheme.':/'.'/'.$host.$port;
         if (!$use_scheme) {
             $ret = substr($ret, strlen($scheme) + 1);

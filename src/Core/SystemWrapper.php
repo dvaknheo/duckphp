@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 class SystemWrapper extends ComponentBase
@@ -14,7 +15,7 @@ class SystemWrapper extends ComponentBase
         'exit' => null,
         'set_exception_handler' => null,
         'register_shutdown_function' => null,
-        
+
         'session_start' => null,
         'session_id' => null,
         'session_destroy' => null,

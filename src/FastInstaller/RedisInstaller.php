@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\ExtOptionsLoader;
@@ -39,21 +40,21 @@ class RedisInstaller extends ComponentBase
     protected function changeRedis(array $data): void
     {
         $is_local = App::_()->options['local_redis'] ?? false;
-        
+
         $app = App::_();
         if ($is_local) {
             ExtOptionsLoader::_()->saveData(['redis_list' => $data]);
         }
-        
+
         $options = RedisManager::_()->options;
         $options['redis_list'] = $data;
         RedisManager::_()->reInit($options, $app);
     }
-    
+
     protected function configRedis(array $ref_database_list = []): array
     {
         $ret = [];
-        
+
         $options = [];
         while (true) {
             $j = count($ret);
@@ -66,11 +67,11 @@ class RedisInstaller extends ComponentBase
     select: [{select}]
 
 EOT;
-    
+
             $options = array_merge($ref_database_list[$j] ?? [], $options);
             $options = array_merge(['host' => '127.0.0.1','port' => '6379','select' => 1], $options);
             $options = Console::_()->readLines($options, $desc);
-            
+
             list($flag, $error_string) = $this->checkRedis($options);
             if ($flag) {
                 $ret[] = $options;

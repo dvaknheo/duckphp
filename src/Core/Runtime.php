@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
@@ -13,11 +14,11 @@ class Runtime extends ComponentBase
         'use_output_buffer' => false,
     ];
     public $context_class;
-    
+
     protected $is_running = false;
     protected $is_in_exception = false;
     protected $is_outputed = false;
-    
+
     public $last_phase;
     protected $init_ob_level = 0;
 

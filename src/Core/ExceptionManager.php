@@ -15,21 +15,21 @@ class ExceptionManager extends ComponentBase
         'handle_all_exception' => true,
         'system_exception_handler' => null,
         'handle_exception_on_init' => true,
-        
+
         'default_exception_handler' => null,
         'dev_error_handler' => null,
-        
+
         'exception_reporter' => null,
         'exception_for_project' => null,
     ];
-    
+
     protected $exceptionHandlers = [];
     protected $default_exception_handler = null;
-    
+
     protected $system_exception_handler = null;
     protected $last_error_handler = null;
     protected $last_exception_handler = null;
-    
+
     public $is_running = false;
     /**
      * @param array<string, mixed> $options
@@ -105,7 +105,7 @@ class ExceptionManager extends ComponentBase
             ($this->default_exception_handler)($ex);
         }
     }
-    
+
     //@override
     /**
      * @param array<string, mixed> $options
@@ -128,7 +128,7 @@ class ExceptionManager extends ComponentBase
         if ($this->options['handle_all_dev_error']) {
             $this->last_error_handler = set_error_handler([$this,'on_error_handler']);
         }
-        
+
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
                 $this->last_exception_handler = ($this->system_exception_handler)([$this,'_CallException']);

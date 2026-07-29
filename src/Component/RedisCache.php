@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
@@ -28,7 +29,7 @@ class RedisCache extends ComponentBase //implements Psr\SimpleCache\CacheInterfa
     public function get($key, $default = null)
     {
         $ret = $this->redis()->get($this->options['redis_cache_prefix'].$key);
-        
+
         if ($ret !== false) {
             $ret = json_decode($ret, true);
         }
@@ -47,7 +48,7 @@ class RedisCache extends ComponentBase //implements Psr\SimpleCache\CacheInterfa
             $v = $this->options['redis_cache_prefix'].$v;
         }
         unset($v);
-        
+
         $ret = $this->redis()->del($key);
         return $ret;
     }

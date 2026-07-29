@@ -38,10 +38,10 @@ class DuckPhp extends App
             RouteHookResource::class => true,
             RouteHookPathInfoCompat::class => 'path_info_compact_enable',
         ],
-        
+
         'session_prefix' => null,
         'table_prefix' => null,
-        
+
         'class_admin' => '',
         'class_user' => '',
         'database_driver' => '',
@@ -57,7 +57,7 @@ class DuckPhp extends App
 
         //*
         // 'path_config' => 'config',
-        
+
         // 'database' => null,
         // 'database_driver' => '',
         // 'database_list' => null,
@@ -66,22 +66,22 @@ class DuckPhp extends App
         // 'database_log_sql_query' => false,
         // 'database_log_sql_level' => 'debug',
         // 'database_class' => '',
-        
+
         // 'redis' => null,
         // 'redis_list' => null,
         // 'redis_list_reload_by_setting' => true,
         // 'redis_list_try_single' => true,
-        
+
         // 'controller_url_prefix' => '',
         // 'route_map_important' => [],
         // 'route_map' => [],
-        
+
         // 'rewrite_map' => [],
 
         // 'path_info_compact_enable' => false,
         // 'path_info_compact_action_key' => '_r',
         // 'path_info_compact_class_key' => '',
-        
+
         //*/
     ];
     protected function initComponentsOfRoot($components, $default): void
@@ -94,9 +94,9 @@ class DuckPhp extends App
             GlobalEvent::class => self::EXT_DISABLE,
         ];
         $components = array_merge($components, $my_components);
-        
+
         parent::initComponentsOfRoot($components, $default);
-         
+
         DbManager::_()->init($this->options, $this);
         RedisManager::_()->init($this->options, $this);
         $this->options['database_driver'] = DbManager::_()->options['database_driver'];
@@ -107,12 +107,12 @@ class DuckPhp extends App
         $my_components = [
             ExtOptionsLoader::class => 'data_file_enable',
             Configer::class => true,
-            
+
         ];
         $components = array_merge($components, $my_components);
-        
+
         parent::initComponentsOfInner($components, $default);
-        
+
         if ($this->isLocalDatabase()) {
             $this->createLocalObject(DbManager::class);
             DbManager::_()->init($this->options, $this);
@@ -141,7 +141,7 @@ class DuckPhp extends App
             $this->options['cmd'][Command::class] = true;
         }
     }
-    
+
     protected function isLocalDatabase(): bool
     {
         $flag = $this->options['local_database'] ?? false;

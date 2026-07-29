@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\App;
@@ -242,7 +243,7 @@ class CoreHelper extends ComponentBase
             return;
         }
         $exception_class = $exception_class ?? (App::_()->options['exception_for_business'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
-        
+
         /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }
@@ -252,7 +253,7 @@ class CoreHelper extends ComponentBase
             return;
         }
         $exception_class = $exception_class ?? (App::_()->options['exception_for_controller'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
-        
+
         /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }
@@ -272,16 +273,16 @@ class CoreHelper extends ComponentBase
             $parent_app = App::Root();
         }
         $last_phase = $parent_app->Phase();
-        
+
         $callback($parent_app, $arg);
-        
+
         foreach ($parent_app->options['app'] as $class => $options) {
             if ($options === false) {
                 continue;
             }
             $app = $parent_app->getThisChild($class);
             $this->recursiveApps($arg, $callback, $app, $auto_switch_phase);
-            
+
             App::Phase($last_phase);
         }
     }

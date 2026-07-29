@@ -26,19 +26,19 @@ trait KernelTrait
         'path' => null,
         'namespace' => null,
         'name' => '',
-        
+
         'app' => [],
         'cmd' => [],
         'data' => [],
         'ext' => [],
-        
+
         'cli_enable' => true,
         'skip_404' => false,
         'skip_exception_check' => false,
         'override_from' => null,
         'override_class' => null,
         'app_children_allow_mix_mode' => true,
-        
+
         'on_init' => null,
         'on_inited' => null,
         'on_request' => null,
@@ -67,21 +67,21 @@ trait KernelTrait
     ];
     protected static $ROOT_PHASE = '';
     protected static $ROOT_PHASE_OF_SHARED = '#public';
-    
+
     private static $EXT_SKIP_INIT = -1;
     private static $EXT_DISABLE = 0;
     private static $EXT_DEFAULT = 1;
     private static $EXT_FOLLOW_APP = 2;
     private static $EXT_RENEW = 3;
-    
-    
+
+
     protected $is_root = true;
     protected $is_cli = false;
     protected $phase_name = '';
     protected $last_phase = '';
     // protected $this_class = '';      // from self
     // protected $is_inited = false;    // from ComponentBase::class
-    
+
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
         $instance = static::_()->init($options);
@@ -106,7 +106,7 @@ trait KernelTrait
     {
         $APP = self::class;
         $flag = $APP::_()->toChildPhase(static::class);
-        
+
         return $flag ? $APP::_() : null;
     }
     public static function SwitchRootPhase($phase)
@@ -218,7 +218,7 @@ trait KernelTrait
             $name = $this->options['name'] ? $this->options['name'] : $this->options['namespace'];
             $name = ($name === '@')? basename(str_replace('\\', '/', $this->getThisClassName())) : $name;
             $name = ($name === '' && $this->options['namespace'] === '') ? static::class : $name;
-            
+
             // @phpstan-ignore-next-line
             $this->phase_name = $context->getThisPhaseName() . ':' . str_replace('\\', '/', $name);
             $container = PhaseContainer::_();
@@ -271,13 +271,13 @@ trait KernelTrait
         }
 
         $this->initOptions($options);
-        
+
 
         $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
         $this->is_cli = PHP_SAPI === 'cli' && $this->options['cli_enable'];
         $this->initContainer($context);
         $this->onPrepare();
-        
+
         $this->initException($this->options);
         $this->initComponents();
 
@@ -296,7 +296,7 @@ trait KernelTrait
             ];
             $this->initComponentsOfRoot($componets, self::$EXT_FOLLOW_APP);
         }
-        
+
         $componets = [
             Route::class => self::$EXT_FOLLOW_APP,
         ];
@@ -311,7 +311,7 @@ trait KernelTrait
 
         $this->initComponentsByClasseOptions($classes, $default);
     }
-    
+
     protected function initComponentsOfInner($classes, $default): void
     {
         $this->initComponentsByClasseOptions($classes, $default);
@@ -480,7 +480,7 @@ trait KernelTrait
     protected function runChildren(): bool
     {
         $flag = false;
-        
+
         foreach ($this->options['app'] as $class => $options) {
             $object = $this->getThisChild($class);
             $flag = $object->serve();

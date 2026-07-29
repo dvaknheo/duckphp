@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
@@ -28,7 +29,7 @@ class RedisManager extends ComponentBase
     ];
     const TAG_WRITE = 0;
     const TAG_READ = 1;
-    
+
     protected $init_once = true;
 
     protected $pool = [];

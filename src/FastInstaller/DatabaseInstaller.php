@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
@@ -23,7 +24,7 @@ class DatabaseInstaller extends ComponentBase
         if (!$my_driver) {
             return false;
         }
-        
+
         $system_driver = DbManager::_()->options['database_driver'] ?? '';
         if ($my_driver === $system_driver) {
             $ref = DbManager::_()->getDatabaseConfigList();
@@ -31,7 +32,7 @@ class DatabaseInstaller extends ComponentBase
                 return false;
             }
         }
-        
+
         return DatabaseInstaller::_()->callResetDatabase($force);
     }
 
@@ -39,7 +40,7 @@ class DatabaseInstaller extends ComponentBase
     protected function callResetDatabase(bool $force = false): bool
     {
         $ref = DbManager::_()->getDatabaseConfigList();
-        
+
         $data = $this->configDatabase($ref ?? []);
         $this->changeDatabase($data);
         return true;
@@ -47,31 +48,31 @@ class DatabaseInstaller extends ComponentBase
     protected function changeDatabase(array $data): void
     {
         $is_local = (App::_()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::_()->options['database_driver'];
-        
+
         if ($is_local) {
             ExtOptionsLoader::_()->saveData(['database_list' => $data]);
         }
         /////////////
-        
+
         $options = DbManager::_()->options;
         $options['database_list'] = $data;
         DbManager::_()->reInit($options, App::_());
     }
-    
+
     protected function configDatabase(array $ref_database_list = []): array
     {
         $driver = App::_()->options['database_driver'] ?? '';
         $ret = [];
-        
+
         $options = [];
         while (true) {
             $j = count($ret);
             echo "Setting $driver database[$j]:\n";
             $desc = Supporter::Current()->getInstallDesc();
             $options = array_merge($ref_database_list[$j] ?? [], $options);
-            
+
             $options = Supporter::Current()->readDsnSetting($options);
-            
+
             /////////////////////////////////////////
             $options = Console::_()->readLines($options, $desc);
             $options = Supporter::Current()->writeDsnSetting($options);

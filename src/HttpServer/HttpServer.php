@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\HttpServer;
 
 class HttpServer
@@ -45,15 +46,15 @@ class HttpServer
         ],
     ];
     public $pid = 0;
-    
+
     protected $cli_options_ex = [];
     protected $args = [];
     protected $docroot = '';
-    
+
     protected $host;
     protected $port;
     protected $is_inited = false;
-    
+
     protected static $_instances = [];
     //embed
     public static function _($object = null)
@@ -70,7 +71,7 @@ class HttpServer
             $me = new static();
             self::$_instances[static::class] = $me;
         }
-        
+
         return $me;
     }
     public function __construct()
@@ -80,7 +81,7 @@ class HttpServer
     {
         return static::_()->init($options)->run();
     }
-    
+
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
@@ -92,13 +93,13 @@ class HttpServer
         $this->host = $this->options['host'];
         $this->port = $this->options['port'];
         $this->args = $this->parseCaptures($this->cli_options); // TODO remove
-        
+
         $this->docroot = rtrim($this->options['path'] ?? '', '/').'/'.$this->options['path_document'];
-        
+
         $this->host = $this->args['host'] ?? $this->host;
         $this->port = $this->args['port'] ?? $this->port;
         $this->docroot = $this->args['docroot'] ?? $this->docroot;
-        
+
         return $this;
     }
     public function isInited(): bool
@@ -120,7 +121,7 @@ class HttpServer
         $shorts_map = [];
         $shorts = [];
         $longopts = [];
-        
+
         foreach ($cli_options as $k => $v) {
             $required = $v['required'] ?? false;
             $optional = $v['optional'] ?? false;
@@ -133,9 +134,9 @@ class HttpServer
         $optind = null;
         $args = $this->getopt(implode('', ($shorts)), $longopts, $optind);
         $args = $args?:[];
-        
+
         $pos_args = array_slice($_SERVER['argv'], $optind);
-        
+
         foreach ($shorts_map as $k => $v) {
             if (isset($args[$k]) && !isset($args[$v])) {
                 $args[$v] = $args[$k];
@@ -173,7 +174,7 @@ class HttpServer
         echo $doc;
         foreach ($this->cli_options as $k => $v) {
             $long = $k;
-            
+
             $t = $v['short'] ?? '';
             $t = $t?'-'.$t:'';
             if ($v['optional'] ?? false) {
@@ -196,7 +197,7 @@ class HttpServer
         $host = escapeshellarg((string)$this->host);
         $port = escapeshellarg((string)$this->port);
         $document_root = escapeshellarg($this->docroot);
-       
+
         if (isset($this->args['background'])) {
             $this->options['background'] = true;
         }

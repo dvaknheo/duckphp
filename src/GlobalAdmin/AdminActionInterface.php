@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\GlobalAdmin;
 
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
@@ -37,7 +38,7 @@ interface AdminActionInterface
      * @param array<string, mixed> $ext
      */
     public function log(string $string, ?string $type = null, array $ext = []);
-    
-    
+
+
     public function isSuper(): bool;
 }

@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 class Console extends ComponentBase
@@ -10,9 +11,9 @@ class Console extends ComponentBase
     public $options = [
         'console_command_classes' => [],
         'console_command_phase' => [],
-        
+
         'console_command_default' => 'help',
-        
+
         'console_readlines_logfile' => '',
     ];
     /*
@@ -22,7 +23,7 @@ class Console extends ComponentBase
     protected $context_class = null;
     protected $parameters = [];
     protected $is_inited = false;
-    
+
     public $index = 0;
     public $data = '';
 
@@ -66,7 +67,7 @@ class Console extends ComponentBase
     {
         $this->options['console_command_classes'][$prefix][$class] = $method_prefix;
     }
-    
+
     ////]]]]
     public static function DoRun($path_info = '')
     {
@@ -88,7 +89,7 @@ class Console extends ComponentBase
         $func_args = $this->parameters['--'];
         $cmd = array_shift($func_args);
         $cmd = $cmd ?? '';
-        
+
         [$command_namespace,$cmd_method] = $this->splitCommand($cmd);
 
         [$class, $method] = $this->getCommandCallback($cmd);
@@ -100,15 +101,15 @@ class Console extends ComponentBase
         $old_phase = App::Phase($phase);
         $this->callObject($class, $method, $func_args, $this->parameters);
         App::Phase($old_phase);
-        
+
         return true;
     }
     public function getCommandCallback($cmd)
     {
         [$command_namespace,$cmd_method] = $this->splitCommand($cmd);
-        
+
         $classes = $this->options['console_command_classes'][$command_namespace] ?? [];
-        
+
         if (empty($classes)) {
             return [null,null];
         }
@@ -119,13 +120,13 @@ class Console extends ComponentBase
                 continue;
             }
             $method_prefix = ($method_prefix === true) ? 'command_' : $method_prefix;
-            
+
             $method = $method_prefix.$cmd_method;
             if (method_exists($class, $method)) {
                 return [$class,$method];
             }
         }
-        
+
         return [null,null];
     }
     public function readLinesFill($data)
@@ -152,7 +153,7 @@ class Console extends ComponentBase
         }
         $fp_in = $fp_in ?? fopen('php://stdin', 'r'); //\STDIN;//
         $fp_out = $fp_out ?? fopen('php://stdout', 'w'); //\STDOUT;//
-        
+
         $lines = explode("\n", trim($desc));
         foreach ($lines as $line) {
             $line = rtrim($line).' ';
@@ -164,14 +165,14 @@ class Console extends ComponentBase
             $key = $m[1];
             $line = str_replace('{'.$key.'}', (string)($options[$key] ?? ''), $line);
             fputs($fp_out, $line);
-            
+
             $input = (string)fgets($fp_in);
             if ($this->options['console_readlines_logfile']) {
                 $path = static::SlashDir(App::Root()->options['path']);
                 $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
                 $file = $this->options['console_readlines_logfile'];
                 $file = static::IsAbsPath($file)?$file:$path_runtime.$file;
-                
+
                 file_put_contents($file, $input, FILE_APPEND);
             }
             if ($mode_fill) {
@@ -229,7 +230,7 @@ class Console extends ComponentBase
         if (!isset($ret[$lastkey])) {
             $ret[$lastkey] = true;
         }
-        
+
         $args = $ret['--'];
         if (!is_array($args)) {
             $args = ($args === true)?'':$args;

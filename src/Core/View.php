@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
@@ -17,7 +18,7 @@ class View extends ComponentBase
     ];
     /** @var array */
     public $data = [];
-    
+
     /** @var ?string */
     protected $head_file;
     /** @var ?string */
@@ -41,7 +42,7 @@ class View extends ComponentBase
     {
         return static::_()->_Render($view, $data);
     }
-    
+
     public function _Show(array $data, string $view): void
     {
         if ($this->context_class) {
@@ -51,24 +52,24 @@ class View extends ComponentBase
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
-        
+
         $view = $this->context_class ? $this->context()->adjustViewFile($view) : $view ;
         $this->view_file = $this->getViewFile($view);
         $this->head_file = $this->getViewFile($this->head_file);
         $this->foot_file = $this->getViewFile($this->foot_file);
-        
+
         $this->data = array_merge($this->data, $data);
-        
+
         unset($data);
         unset($view);
         extract($this->data);
-        
+
         if ($this->head_file) {
             include $this->head_file;
         }
-        
+
         include $this->view_file;
-        
+
         if ($this->foot_file) {
             include $this->foot_file;
         }
@@ -84,7 +85,7 @@ class View extends ComponentBase
         unset($data['this']);
         //unset($data['GLOBALS']);
         extract($data);
-        
+
         include $this->temp_view_file;
     }
     /**
@@ -139,7 +140,7 @@ class View extends ComponentBase
         }
         $file = (substr($view, -strlen('.php')) === '.php') ? $view : $view.'.php';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_view'], $file);
-        
+
         return $full_file;
     }
 }

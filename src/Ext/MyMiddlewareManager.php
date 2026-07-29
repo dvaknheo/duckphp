@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -17,9 +18,9 @@ class MyMiddlewareManager extends ComponentBase
     ];
     public $request;
     public $response;
-    
+
     protected $defaultResult = false;
-    
+
     public function __construct()
     {
         $this->request = new \stdClass();
@@ -51,7 +52,7 @@ class MyMiddlewareManager extends ComponentBase
                         /** @var callable */ $pipe = [ new $class(), $method];
                     }
                 }
-            
+
                 $response = $pipe($this->getRequest(), $carry);
                 return $response;
             };

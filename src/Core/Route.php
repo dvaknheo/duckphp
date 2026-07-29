@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
@@ -11,29 +12,29 @@ class Route extends ComponentBase
 {
     use Route_UrlManager;
     use Route_Helper;
-    
+
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
-    
+
     public $options = [
         'namespace' => '',
         'namespace_controller' => 'Controller',
-        
+
         'controller_path_ext' => '',
         'controller_welcome_class' => 'Main',
         'controller_welcome_class_visible' => false,
         'controller_welcome_method' => 'index',
-        
+
         'controller_class_adjust' => '',
         'controller_class_base' => '',
         'controller_class_postfix' => 'Controller',
         'controller_method_prefix' => '',
         'controller_prefix_post' => 'do_', //TODO remove it
-        
+
         'controller_class_map' => [],
-        
+
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
         'controller_fix_mistake_path_info' => true,
@@ -41,14 +42,14 @@ class Route extends ComponentBase
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
-    
+
     //properties
     protected $parameters = [];
     public $route_error = '';
     public $calling_path = '';
     public $calling_class = '';
     public $calling_method = '';
-    
+
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
@@ -95,7 +96,7 @@ class Route extends ComponentBase
         $path_info = $this->getPathInfo();
         $this->is_failed = false;
         $this->enable_default_callback = true;
-        
+
         foreach ($this->pre_run_hook_list as $callback) {
             $flag = ($callback)($path_info);
             if ($flag) {
@@ -112,7 +113,7 @@ class Route extends ComponentBase
         } else {
             $this->enable_default_callback = true;
         }
-        
+
         foreach ($this->post_run_hook_list as $callback) {
             $flag = ($callback)($this->getPathInfo());
             if ($flag) {
@@ -178,7 +179,7 @@ class Route extends ComponentBase
     public function defaultGetRouteCallback($path_info)
     {
         $this->route_error = '';
-        
+
         list($full_class, $method) = $this->pathToClassAndMethod((string)$path_info) ?? [null, null];
         if ($full_class === null) {
             return null;
@@ -208,7 +209,7 @@ class Route extends ComponentBase
             $path_info = substr($path_info, 0, -$l);
         }
         $this->calling_path = $path_info;
-        
+
         list($path_class, $method) = $this->adjustClassBaseName($path_info);
         if (!$path_class) {
             return [null, null];
@@ -216,7 +217,7 @@ class Route extends ComponentBase
         $full_class = $this->getControllerNamespacePrefix().$path_class.$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
-        
+
         $method = ($method === '') ? $this->options['controller_welcome_method'] : $method;
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
@@ -226,13 +227,13 @@ class Route extends ComponentBase
         $welcome_class = $this->options['controller_welcome_class'];
         $blocks = explode('/', $path_info);
         $method = array_pop($blocks);
-        
+
         $this->calling_path = $path_info;
         if (!$this->options['controller_welcome_class_visible'] && !empty($blocks) && $blocks[0] === $welcome_class) {
             $this->route_error = "E009: controller_welcome_class_visible! {$welcome_class}; ";
             return [null, null];
         }
-        
+
         if (empty($blocks)) {
             $this->calling_path = $welcome_class.'/'.$method;
             $blocks[] = $welcome_class;
@@ -316,7 +317,7 @@ class Route extends ComponentBase
         if ($this->options['controller_prefix_post']) {
             $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
             $request_method = $my_server['REQUEST_METHOD'] ?? 'GET';
-            
+
             if ($request_method === 'POST') {
                 // action_$method => action_do_$method
                 $ref_method = $this->options['controller_method_prefix'].$this->options['controller_prefix_post'].substr($method, strlen($this->options['controller_method_prefix']));
@@ -334,7 +335,7 @@ class Route extends ComponentBase
             $namespace_controller = rtrim($this->options['namespace'], '\\').'\\'.$namespace_controller;
         }
         $namespace_controller = trim($namespace_controller, '\\').'\\';
-        
+
         return $namespace_controller;
     }
     public function replaceController($old_class, $new_class)
@@ -453,7 +454,7 @@ trait Route_UrlManager
         if (isset($url) && '#' === substr($url, 0, 1)) {
             return $basepath.$path_info.$url;
         }
-        
+
         return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
     }
     public function _Res(?string $url = null)
@@ -487,14 +488,14 @@ trait Route_UrlManager
         $scheme = $my_server['REQUEST_SCHEME'] ?? 'http';
         //$scheme = $use_scheme ? $scheme :'';
         $host = $my_server['HTTP_HOST'] ?? ($my_server['SERVER_NAME'] ?? ($my_server['SERVER_ADDR'] ?? ''));
-        
+
         $port = $my_server['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;
         $port = ($port == 80 && $scheme == 'http')?'':$port;
         $port = ($port)?(':'.$port):'';
 
         $host = (strpos($host, ':'))? strstr($host, ':', true) : $host;
-        
+
         $ret = $scheme.':/'.'/'.$host.$port;
         if (!$use_scheme) {
             $ret = substr($ret, strlen($scheme) + 1);
@@ -514,14 +515,14 @@ trait Route_UrlManager
 
         $basepath = str_replace('\\', '/', $basepath);
         $basepath = ($basepath === '') ? '/' : $basepath;
-        
+
         if ($basepath === '/index.php') {
             $basepath = '/';
         } else {
             $basepath .= '/';
         }
         $basepath = ($basepath === '//')?'/': $basepath;
-        
+
         $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/').'/' : '';
         $basepath .= $prefix;
         return $basepath;

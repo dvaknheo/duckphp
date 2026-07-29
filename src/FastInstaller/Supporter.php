@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
@@ -18,7 +19,7 @@ class Supporter extends ComponentBase
           ],
           // change.
     ];
-    
+
     public static function Current()
     {
         return static::_()->getSupporter();
@@ -32,7 +33,7 @@ class Supporter extends ComponentBase
         $new_class = $this->options['database_driver_supporter_map'][$driver];
         return $new_class::_();
     }
-    
+
     ///////////////
     public function getInstallDesc(): string
     {
@@ -48,7 +49,7 @@ class Supporter extends ComponentBase
         [$driver,$_] = explode(':', $dsn);
         $data = substr($dsn, strlen($driver.':'));
         $a = explode(';', trim($data, ';'));
-        
+
         $t = array_map(function ($v) {
             return explode("=", $v);
         }, $a);
@@ -62,7 +63,7 @@ class Supporter extends ComponentBase
     {
         throw new \Exception('No Impelement');
     }
-    
+
     public function getAllTable(): array
     {
         throw new \Exception('No Impelement');

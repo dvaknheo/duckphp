@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -17,7 +18,7 @@ class RouteHookDirectoryMode extends ComponentBase
         //'mode_dir_key_for_action'=>true,
     ];
     protected $basepath;
-    
+
     /**
      * @param array<string, mixed> $options
      */
@@ -31,14 +32,14 @@ class RouteHookDirectoryMode extends ComponentBase
         Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
         Route::_()->setUrlHandler([static::class,'Url']);
     }
-    
+
     protected function adjustPathinfo(string $basepath, string $path_info): string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $input_path = parse_url($my_server['REQUEST_URI'], PHP_URL_PATH);
         $script_filename = $my_server['SCRIPT_FILENAME'];
         $document_root = $my_server['DOCUMENT_ROOT'];
-        
+
         $path_info = substr($document_root.$input_path, strlen($basepath));
         $path_info = ltrim((string)$path_info, '/').'/';
         $blocks = explode('/', $path_info);
@@ -58,7 +59,7 @@ class RouteHookDirectoryMode extends ComponentBase
             }
         }
         $path_info = rtrim($path_info, '/');
-        
+
         return $path_info;
     }
     public static function Url($url = null)
@@ -77,9 +78,9 @@ class RouteHookDirectoryMode extends ComponentBase
         $document_root = $my_server['DOCUMENT_ROOT'];
         $base_url = substr($this->basepath, strlen($document_root));
         $input_path = (string) parse_url($url, PHP_URL_PATH);
-        
+
         $blocks = explode('/', $input_path);
-        
+
         $basepath = $this->basepath;
         $new_path = '';
         $l = count($blocks);
@@ -100,10 +101,10 @@ class RouteHookDirectoryMode extends ComponentBase
         if (!$new_path) {
             return $url;
         }
-    
+
         $new_get = [];
         parse_str((string) parse_url($url, PHP_URL_QUERY), $new_get);
-        
+
         $get = array_merge($new_get, $new_get);
         $query = $get?'?'.http_build_query($get):'';
         $ret = $new_path.$query;

@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -10,7 +11,7 @@ use DuckPhp\Core\ComponentBase;
 class ExceptionWrapper extends ComponentBase
 {
     protected $object;
-    
+
     public static function Wrap($object)
     {
         return static::_()->doWrap($object);

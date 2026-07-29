@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -29,7 +30,7 @@ class Configer extends ComponentBase
         if (isset($this->all_config[$file_basename])) {
             return $this->all_config[$file_basename];
         }
-        
+
         $file = $file_basename.'.php';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_config'], $file);
         if (!is_file($full_file)) {
@@ -37,7 +38,7 @@ class Configer extends ComponentBase
             return [];
         }
         $config = $this->loadFile($full_file);
-        
+
         $this->all_config[$file_basename] = $config;
         return $config;
     }

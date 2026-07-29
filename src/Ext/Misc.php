@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -16,7 +17,7 @@ class Misc extends ComponentBase
         'path_lib' => 'lib',
     ];
     protected $_di_container;
-    
+
     public static function Import($file)
     {
         return static::_()->_Import($file);
@@ -25,7 +26,7 @@ class Misc extends ComponentBase
     {
         return static::_()->_RecordsetUrl($data, $cols_map);
     }
-    
+
     public static function RecordsetH($data, $cols = [])
     {
         return static::_()->_RecordsetH($data, $cols);
@@ -56,7 +57,7 @@ class Misc extends ComponentBase
         $file = preg_replace('/\.php$/', '', $file).'.php';
         include_once $path.$file;
     }
-    
+
     public function _RecordsetUrl($data, $cols_map = [])
     {
         //need more quickly;
@@ -111,7 +112,7 @@ class Misc extends ComponentBase
             throw new \ReflectionException("Bad interface", -3);
         }
         $reflect = new \ReflectionMethod($class, $method);
-        
+
         $params = $reflect->getParameters();
         $args = array();
         foreach ($params as $i => $param) {
@@ -135,7 +136,7 @@ class Misc extends ComponentBase
                 throw new \ReflectionException("Need Parameter: {$name}", -2);
             }
         }
-        
+
         $ret = $reflect->invokeArgs(new $class(), $args);
         return $ret;
     }

@@ -3,12 +3,13 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 trait ExtendableStaticCallTrait
 {
     protected static $static_methods = [];
-    
+
     public static function AssignExtendStaticMethod($key, $value = null)
     {
         self::$static_methods[static::class] = self::$static_methods[static::class] ?? [];
@@ -26,9 +27,9 @@ trait ExtendableStaticCallTrait
     protected static function CallExtendStaticMethod($name, $arguments)
     {
         self::$static_methods[static::class] = self::$static_methods[static::class] ?? [];
-        
+
         $callback = (self::$static_methods[static::class][$name]) ?? null;
-        
+
         if (is_string($callback) && !\is_callable($callback)) {
             if (false !== strpos($callback, '@')) {
                 list($class, $method) = explode('@', $callback);
@@ -38,7 +39,7 @@ trait ExtendableStaticCallTrait
                 /** @var callable */ $callback = [ new $class(), $method];
             }
         }
-        
+
         return call_user_func_array($callback, $arguments);
     }
     public static function __callStatic($name, $arguments)

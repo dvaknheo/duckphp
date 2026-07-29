@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Db;
 
 trait DbAdvanceTrait
@@ -46,15 +47,15 @@ trait DbAdvanceTrait
         }
 
         $pdo = $this->pdo;
-        
+
         $keys = array_map(function ($v) {
             return '`'.$v.'`';
         }, array_keys($array));
         $values = array_map(function ($v) use ($pdo) {
             return $pdo->quote(''.$v);
         }, array_values($array));
-        
-        
+
+
         $str_keys = implode(',', $keys);
         $str_values = implode(',', $values);
         $ret = "($str_keys)VALUES($str_values)";
@@ -67,7 +68,7 @@ trait DbAdvanceTrait
         $sql = "select * from ".$this->qouteScheme($table_name)." where {$key}=? limit 1";
         return $this->fetch($sql, $id);
     }
-    
+
     public function insertData($table_name, $data, $return_last_id = true)
     {
         $sql = "insert into ".$this->qouteScheme($table_name)." ".$this->qouteInsertArray($data);
@@ -89,7 +90,7 @@ trait DbAdvanceTrait
             return $this->execute($sql, $id);
         }
     }
-    
+
     public function updateData($table_name, $id, $data, $key = 'id')
     {
         if (isset($data[$key])) {

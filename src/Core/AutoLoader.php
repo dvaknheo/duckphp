@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 class AutoLoader
@@ -12,7 +13,7 @@ class AutoLoader
         'namespace' => '',
         'path_namespace' => 'app',
         'skip_app_autoload' => false,
-        
+
         'autoload_cache_in_cli' => false,
         'autoload_path_namespace_map' => [],
         'psr-4' => [],
@@ -22,9 +23,9 @@ class AutoLoader
 
     public $is_inited = false;
     public $namespace_paths = [];
-    
+
     protected $is_running = false;
-    
+
     protected static $_instances = [];
     //embed
     public static function _($object = null)
@@ -38,7 +39,7 @@ class AutoLoader
             $me = new static();
             self::$_instances[static::class] = $me;
         }
-        
+
         return $me;
     }
     /**
@@ -67,14 +68,14 @@ class AutoLoader
             return $this;
         }
         $this->is_inited = true;
-        
+
         $this->options = array_replace_recursive($this->options, $options);
         if (empty($this->options['path'])) {
             $path = realpath(getcwd().'/../');
             $this->options['path'] = $path;
         }
         $path = rtrim($this->options['path'], '/').'/';
-        
+
         $this->namespace = $this->options['namespace'];
         $this->path_namespace = $this->getNamespacePath($this->options['path_namespace'], $this->options['path']);
         if (!$this->options['skip_app_autoload'] && !empty($this->namespace)) {
@@ -82,7 +83,7 @@ class AutoLoader
         }
         $t = array_flip($this->options['psr-4']);
         $this->assignPathNamespace(array_merge($this->options['autoload_path_namespace_map'], $t));
-        
+
         return $this;
     }
     protected function getNamespacePath(string $sub_path, string $main_path): string
@@ -115,7 +116,7 @@ class AutoLoader
             return;
         }
         $this->is_running = true;
-        
+
         if ($this->options['autoload_cache_in_cli']) {
             $this->cacheClasses();
         }
@@ -136,10 +137,10 @@ class AutoLoader
             if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
                 continue;
             }
-            
+
             $relative_class = substr($class, strlen($prefix));
             $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-            
+
             $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($file, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $file);
             if (!$is_abs) {
                 $file = rtrim($this->options['path'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file;
@@ -222,7 +223,7 @@ class AutoLoader
     public static function DuckPhpSystemAutoLoader(string $class): void //@codeCoverageIgnoreStart
     {
         $prefix = 'DuckPhp\\';
-        
+
         if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
             return;
         }

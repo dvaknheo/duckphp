@@ -3,12 +3,13 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Db;
 
 class Db implements DbInterface
 {
     use DbAdvanceTrait;
-    
+
     public $pdo;
     public $config;
     protected $tableName;
@@ -121,7 +122,7 @@ class Db implements DbInterface
         if ($this->beforeQueryHandler) {
             ($this->beforeQueryHandler)($this, $sql, ...$args);
         }
-        
+
         if (count($args) === 1 && is_array($args[0])) {
             $args = $args[0];
         }

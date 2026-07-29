@@ -3,17 +3,18 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 class PhaseContainer
 {
     public static $instance;
-    
+
     public $containers = [];
     public $current = '';
     public $default = '';
     public $publics = [];
-    
+
     public static function GetObject(string $class, ?object $object = null)
     {
         return static::_()->_GetObject($class, $object);

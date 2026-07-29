@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -30,7 +31,7 @@ class PhaseProxy
     public function __call($method, $args)
     {
         $phase = App::Phase($this->phase);
-        
+
         $object = $this->getObjectForPhaseProxy();
 
         $callback = [$object,$method];

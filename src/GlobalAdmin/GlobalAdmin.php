@@ -18,10 +18,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         'admin_url_home' => null,
         'admin_url_login' => null,
         'admin_url_logout' => null,
-        
+
         'admin_view_file_header' => null, // 'inc-head',
         'admin_view_file_footer' => null, // 'inc-foot',
-        
+
         'admin_enable_callback_singleton' => true,
         'admin_callback_for_id' => null, //[AdminAction::class,'id'],
         'admin_callback_for_name' => null, //[AdminAction::class,'name'],

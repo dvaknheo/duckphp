@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -38,7 +39,7 @@ class RouteHookResource extends ComponentBase
         if (!empty($prefix) && (substr($file, 0, strlen($prefix)) !== $prefix)) {
             return false;
         }
-        
+
         if (!empty($prefix)) {
             $file = substr($file, strlen($prefix));
         }
@@ -48,16 +49,16 @@ class RouteHookResource extends ComponentBase
         if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
             return false;
         }
-        
+
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_resource'], $file);
         if (!is_file($full_file)) {
             return false;
         }
         //$etag = md5(filemtime($full_file));
         SystemWrapper::header('Content-Type: '. SystemWrapper::mime_content_type($full_file));
-        
+
         //SystemWrapper::header('Etag: '. $etag);
-        
+
         //if (($etag ===($_SERVER['HTTP_IF_NONE_MATCH']?? ''))) {
         //    SystemWrapper::header('done',true,304);
         //    return true;
@@ -73,7 +74,7 @@ class RouteHookResource extends ComponentBase
         }
         $controller_resource_prefix = $this->options['controller_resource_prefix'];
         $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
-        
+
         $flag = preg_match('/^(https?:)?\/\//', $controller_resource_prefix);
         if ($flag) {
             return;
@@ -83,13 +84,13 @@ class RouteHookResource extends ComponentBase
         if (!$source) {
             return;
         }
-        
+
         //for console.
-        
+
         $lasst_phase = App::Phase(App::Root()->getThisPhaseName());
         $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'] ?? 'public', '', false);
         App::Phase($lasst_phase);
-        
+
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             $sg = (__SUPERGLOBAL_CONTEXT)();
             $sg->_SERVER['DOCUMENT_ROOT'] = '';
@@ -98,19 +99,19 @@ class RouteHookResource extends ComponentBase
             $_SERVER['DOCUMENT_ROOT'] = '';
             $_SERVER['SCRIPT_FILENAME'] = '/index.php';
         }
-        
+
         Route::_()->options['controller_resource_prefix'] = $this->options['controller_resource_prefix'];
         $path_dest = Route::_()->_Res('');
-        
+
         $dest = $this->get_dest_dir($document_root, $path_dest);
-        
+
         $this->copy_dir($source, $dest, $force, $info);
     }
     protected function get_dest_dir(string $path_parent, string $path): string
     {
         $new_dir = rtrim($path_parent, '/');
         $b = explode('/', trim($path, '/'));
-        
+
         foreach ($b as $v) {
             $new_dir .= '/'.$v;
             if (is_dir($new_dir)) {
@@ -128,12 +129,12 @@ class RouteHookResource extends ComponentBase
         $iterator = new \RecursiveIteratorIterator($directory);
         $t_files = \iterator_to_array($iterator, false);
         $files = [];
-        
+
         foreach ($t_files as $file) {
             $short_file_name = substr($file, strlen($source));
             $files[$file] = $short_file_name;
         }
-        
+
         if (!$force) {
             $flag = $this->check_files_exist($source, $dest, $files, $info);
             if ($flag) {
@@ -142,18 +143,18 @@ class RouteHookResource extends ComponentBase
             }
         }
         $info .= "Copying file...\n";
-        
+
         $flag = $this->create_directories($dest, $files, $info);
         if (!$flag) {
             return; // @codeCoverageIgnore
         }
         $is_in_full = false;
-        
+
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
             $data = file_get_contents(''.$file);
             $flag = file_put_contents($dest_file, $data);
-            
+
             $info .= $dest_file."\n";
             //decoct(fileperms($file) & 0777);
         }

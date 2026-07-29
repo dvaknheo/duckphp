@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
@@ -24,7 +25,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
         Route::_()->setUrlHandler([static::class,'Url']);
     }
-    
+
     public static function Url($url = null)
     {
         return static::_()->onURL($url);
@@ -37,7 +38,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         if (strlen($url) > 0 && '/' == substr($url, 0, 1)) {
             return $url;
         };
-        
+
         $path_info_compact_action_key = $this->options['path_info_compact_action_key'];
         $path_info_compact_class_key = $this->options['path_info_compact_class_key'];
         $get = [];
@@ -46,7 +47,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         $path = $my_server['REQUEST_URI'] ?? '';
         $path_info = $my_server['PATH_INFO'] ?? '';
         $script_file = $my_server['SCRIPT_FILENAME'];
-        
+
         $path = (string) parse_url($path, PHP_URL_PATH);
 
         //if (strlen($path_info)) {
@@ -61,7 +62,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         $input_path = (string) parse_url((string)$url, PHP_URL_PATH);
         $input_get = [];
         parse_str((string) parse_url((string)$url, PHP_URL_QUERY), $input_get);
-        
+
         $blocks = explode('/', $input_path);
         $basefile = basename($script_file);
         if ($blocks[0] === $basefile) {
@@ -107,7 +108,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     {
         $k = $this->options['path_info_compact_action_key'];
         $m = $this->options['path_info_compact_class_key'];
-        
+
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             $sg = (__SUPERGLOBAL_CONTEXT)();
             $sg->_SERVER['PATH_INFO_OLD'] = $sg->_SERVER['PATH_INFO_OLD'] ?? '';
@@ -118,10 +119,10 @@ class RouteHookPathInfoCompat extends ComponentBase
             $module = $_REQUEST[$m] ?? '';
             $path_info = $_REQUEST[$k] ?? '';
         }
-        
+
         $path_info = $module.'/'.$path_info;
         Route::_()::PathInfo($path_info);
-        
+
         return false;
     }
 }

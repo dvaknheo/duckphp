@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -41,16 +42,16 @@ class RouteHookApiServer extends ComponentBase
     {
         // $path_info = Route::_()::PathInfo();
         ExceptionManager::_()->setDefaultExceptionHandler([static::class,'OnJsonError']);
-        
+
         [$object, $method] = $this->getObjectAndMethod($path_info);
         if ($object === null && $method === null) {
             return $this->onMissing();
         }
         $inputs = $this->getInputs($path_info);
-        
+
         $data = $this->callAPI($object, $method, $inputs);
         $this->exitJson($data);
-        
+
         return true;
     }
     protected function onMissing(): bool
@@ -79,7 +80,7 @@ class RouteHookApiServer extends ComponentBase
             $namespace_componenet = rtrim($namespace, '\\').'\\'.$namespace_componenet;
         }
         $namespace_componenet = trim($namespace_componenet, '\\');
-        
+
         return $namespace_componenet;
     }
     protected function getObjectAndMethod(string $path_info): array
@@ -92,10 +93,10 @@ class RouteHookApiServer extends ComponentBase
         if (empty($class)) {
             return [null, null];
         }
-        
+
         $namespace = $this->getComponenetNamespace('api_server_namespace');
         $namespace_prefix = $namespace ? $namespace .'\\':'';
-        
+
         $class = $namespace_prefix . $class . $this->options['api_server_class_postfix'];
         /** @var string */
         $base_class = str_replace('~', $namespace_prefix, $this->options['api_server_base_class']);
@@ -111,7 +112,7 @@ class RouteHookApiServer extends ComponentBase
         $object = new $class;
         return [$object,$method];
     }
-    
+
     protected function getInputs(string $path_info): array
     {
         if ($this->context()->_IsDebug()) {
@@ -129,7 +130,7 @@ class RouteHookApiServer extends ComponentBase
             SystemWrapper::header("$k: $v");
         }
         SystemWrapper::header('Content-Type: text/plain; charset=utf-8');
-        
+
         //这里应该加个强制参数
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
         if ($this->context()->_IsDebug()) {
@@ -150,7 +151,7 @@ class RouteHookApiServer extends ComponentBase
         ];
 
         $reflect = new \ReflectionMethod($object, $method);
-        
+
         $params = $reflect->getParameters();
         $args = array();
         foreach ($params as $i => $param) {
@@ -175,7 +176,7 @@ class RouteHookApiServer extends ComponentBase
             }
             $args[] = $param->getDefaultValue();
         }
-        
+
         $ret = $reflect->invokeArgs($object, $args);
         return $ret;
     }

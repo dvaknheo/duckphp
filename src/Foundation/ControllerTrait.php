@@ -19,7 +19,7 @@ trait ControllerTrait
         $route = Route::_();
         $postfix = $route->options['controller_class_postfix'];
         $class_base = $route->options['controller_class_base'];
-        
+
         /*
         postfix_set,postfix_match  base_set ,base_match , result
         Y Y Y Y => Y
@@ -48,7 +48,7 @@ trait ControllerTrait
         N N N N => Y
         //*/
         $is_controller = false;
-        
+
         if ($postfix) {
             if (substr(static::class, -strlen($postfix)) === $postfix) {
                 if ($class_base) {

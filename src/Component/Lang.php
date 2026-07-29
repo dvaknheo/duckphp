@@ -20,9 +20,9 @@ class Lang extends ComponentBase
         'lang_final' => null,
         // 默认语言
         'lang_default' => null,
-        
+
         'lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
-        
+
         //使用根 app 的语言
         'lang_follow_root' => true,
         // URL 参数名
@@ -106,7 +106,7 @@ class Lang extends ComponentBase
         }
         return implode('_', $parts);
     }
-    
+
     /**
      * 自动检测语言
      */
@@ -119,7 +119,7 @@ class Lang extends ComponentBase
             'cli' => 'detectFromCli',
             'default' => 'detectFromDefault',
         ];
-        
+
         foreach ($this->options['lang_detect_mode'] as $method) {
             if (isset($methods[$method])) {
                 $locale = $this->{$methods[$method]}();
@@ -139,10 +139,10 @@ class Lang extends ComponentBase
         $my_get = defined('__SUPERGLOBAL_CONTEXT')
             ? (SuperGlobal::_()->_GET ?? [])
             : $_GET;
-        
+
         return $my_get[$param] ?? null;
     }
-    
+
     /**
      * 从 Cookie 检测
      */
@@ -150,27 +150,27 @@ class Lang extends ComponentBase
     {
         $name = $this->options['lang_cookie_name'];
         $my_cookie = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_COOKIE ?? []) : $_COOKIE;
-        
+
         return $my_cookie[$name] ?? null;
     }
-    
+
     /**
      * 从 HTTP Header 检测
      */
     protected function detectFromHeader(): ?string
     {
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_SERVER ?? []) : $_SERVER;
-        
+
         $accept = $my_server['HTTP_ACCEPT_LANGUAGE'] ?? null;
         if (!$accept) {
             return null;
         }
-        
+
         // 解析 Accept-Language
         // 格式: zh-CN,zh;q=0.9,en;q=0.8
         $languages = [];
         $parts = explode(',', $accept);
-        
+
         foreach ($parts as $part) {
             $part = trim($part);
             if (strpos($part, ';') !== false) {
@@ -182,10 +182,10 @@ class Lang extends ComponentBase
             }
             $languages[trim($lang)] = $q;
         }
-        
+
         // 按优先级排序
         arsort($languages);
-        
+
         // 查找第一个匹配的语言
         foreach ($languages as $lang => $q) {
             // 标准化语言代码
@@ -193,7 +193,7 @@ class Lang extends ComponentBase
             return $normalized;
         }
     } // @codeCoverageIgnore
-    
+
     /**
      * 从 CLI 环境检测
      */
@@ -202,7 +202,7 @@ class Lang extends ComponentBase
         if (PHP_SAPI !== 'cli') {
             return null; // @codeCoverageIgnore
         }
-        
+
         // 尝试从环境变量获取
         $lang = getenv('LANG') ?: getenv('LC_ALL') ?: getenv('LC_MESSAGES') ?: getenv('LANGUAGE');
         if ($lang) {
@@ -211,10 +211,10 @@ class Lang extends ComponentBase
             $normalized = $this->normalizeLocale($lang);
             return $normalized;
         }
-        
+
         return null; // @codeCoverageIgnore
     }
-    
+
     /**
      * 默认语言
      */

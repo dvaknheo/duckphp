@@ -5,6 +5,7 @@ declare(strict_types=1);
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -72,13 +73,13 @@ class ExtOptionsLoader extends ComponentBase
     {
         // App::Root()->getPathRuntime;
         $full_file = App::Root()->options['data_file_json_file'] ?? $this->options['data_file_json_file'];
-        
+
         $path = static::SlashDir(App::Root()->options['path']);
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         $path_runtime = static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
         $is_abs = (DIRECTORY_SEPARATOR === '/') ?(substr($full_file, 0, 1) === '/'):(preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $full_file));
         $full_file = $is_abs ? $full_file : static::SlashDir($path_runtime).$full_file;
-        
+
         return $full_file;
     }
     protected function fill_all_ext_options(string $full_file): void
@@ -98,7 +99,7 @@ class ExtOptionsLoader extends ComponentBase
         $all_ext_options = self::$all_ext_options;
         $all_ext_options['__date__'] = date('Y-m-d H:i:s');
         $all_ext_options['__class__'] = get_class(App::_());
-        
+
         $string = json_encode($all_ext_options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
         file_put_contents($full_file, $string);
         clearstatcache();

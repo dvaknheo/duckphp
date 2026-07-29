@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\DbManager;
@@ -15,25 +16,25 @@ trait ModelTrait
 {
     use SingletonTrait;
     use ZCallTrait;
-    
+
     protected $table_name = null;
     protected $table_prefix = null;
     protected $table_pk = 'id';
-    
+
     protected function getTableNameByClass(string $class): string
     {
         $t = explode('\\', $class);
         $class = array_pop($t);
-        
+
         $table_name = strtolower(substr(''.$class, 0, -strlen('Model')));
         return $table_name;
     }
-    
+
     protected function getTablePrefixByClass(string $class): string
     {
         return App::_()->options['table_prefix'] ?? '';
     }
-    
+
     public function table(): string
     {
         if (!isset($this->table_prefix)) {
@@ -44,7 +45,7 @@ trait ModelTrait
         }
         return $this->table_prefix .  $this->table_name;
     }
-    
+
     public function prepare(string $sql): string
     {
         return empty($this->table()) ? $sql : str_replace("`'TABLE'`", '`'.$this->table().'`', $sql);
@@ -55,7 +56,7 @@ trait ModelTrait
         $sql_where = $sql_where?:' TRUE ';
         $sql = "SELECT * from `'TABLE'` where $sql_where order by id desc";
         $sql = $this->prepare($sql);
-        
+
         $total = DbManager::_()->_DbForRead()->fetchColumn(DbManager::_()->_SqlForCountSimply($sql));
         $data = DbManager::_()->_DbForRead()->fetchAll(DbManager::_()->_SqlForPager($sql, $page, $page_size));
         return [$total, $data];
@@ -71,7 +72,7 @@ trait ModelTrait
             $f[] = $k . ' = ' . DbManager::_()->_DbForRead()->quote($v);
         }
         $frag = implode('and ', $f);
-        
+
         $sql = "SELECT * FROM `'TABLE'` WHERE ".$frag;
         $sql = $this->prepare($sql);
         $ret = DbManager::_()->_DbForRead()->fetch($sql);
@@ -88,7 +89,7 @@ trait ModelTrait
     protected function update($id, array $data, ?string $key = null)
     {
         $ret = DbManager::_()->_DbForWrite()->updateData($this->table(), $id, $data, $key ?? $this->table_pk);
-        
+
         return $ret;
     }
     /*

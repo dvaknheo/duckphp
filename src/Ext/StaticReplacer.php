@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -31,7 +32,7 @@ class StaticReplacer extends ComponentBase
         $k .= $t['function'] ?? '';
         $k .= $k?'$':'';
         $k .= $name;
-        
+
         if (!isset($this->STATICS[$k])) {
             $this->STATICS[$k] = $value;
         }

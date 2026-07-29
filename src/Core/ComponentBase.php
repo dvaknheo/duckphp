@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonTrait;
@@ -10,7 +11,7 @@ use DuckPhp\Core\SingletonTrait;
 class ComponentBase // implements ComponentInterface
 {
     use SingletonTrait;
-    
+
     public $options = [];
     protected $is_inited = false;
     protected $context_class = null;
@@ -34,7 +35,7 @@ class ComponentBase // implements ComponentInterface
         if ($this->init_once && $this->is_inited && !($options['__force__'] ?? false)) {
             return $this;
         }
-        
+
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options), $this->options);
         $this->initOptions($options);
         if ($context !== null) {
@@ -85,7 +86,7 @@ class ComponentBase // implements ComponentInterface
         if ($context) {
             return $context->getOverrideableFile($path_sub, $file, $use_override);
         }
-        
+
         if (static::IsAbsPath($file)) {
             $full_file = $file;
         } elseif (static::IsAbsPath($path_sub)) {

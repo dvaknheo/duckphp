@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -21,21 +22,21 @@ class JsonRpcExt extends ComponentBase
         'jsonrpc_service_namespace' => '',
         'jsonrpc_timeout' => 5,
     ];
-    
+
     protected $prefix;
     protected $is_debug;
-    
+
     //@override
     protected function initOptions(array $options): void
     {
         $this->is_debug = $this->options['jsonrpc_is_debug'];
         $this->prefix = trim($this->options['jsonrpc_namespace'], '\\').'\\';
-        
+
         if ($this->options['jsonrpc_enable_autoload']) {
             spl_autoload_register([$this,'_autoload']);
         }
     }
-    
+
     public function clear(): void
     {
         spl_autoload_unregister([$this,'_autoload']);
@@ -58,7 +59,7 @@ class JsonRpcExt extends ComponentBase
         $base = (new JsonRpcClientBase())->setJsonRpcClientBase($class);
         return $class::_($base);
     }
-    
+
     public function _autoload($class): void
     {
         if (substr($class, 0, strlen($this->prefix)) !== $this->prefix) {
@@ -67,7 +68,7 @@ class JsonRpcExt extends ComponentBase
         $blocks = explode('\\', $class);
         $basename = array_pop($blocks);
         $namespace = implode('\\', $blocks);
-        
+
         $code = "namespace $namespace{ class $basename extends \\". __NAMESPACE__  ."\\JsonRpcClientBase{} }";
         eval($code);
     }
@@ -75,7 +76,7 @@ class JsonRpcExt extends ComponentBase
     {
         $namespace = trim($this->options['jsonrpc_service_namespace'], '\\');
         $classname = str_replace('.', '\\', $classname);
-        
+
         $classname = $namespace?$namespace."\\".$classname:$classname;
 
 
@@ -84,7 +85,7 @@ class JsonRpcExt extends ComponentBase
         ];
         $post['method'] = str_replace("\\", ".", $classname."\\".$method);
         $post['params'] = $arguments;
-        
+
         $post['id'] = time();
         $str_data = $this->curl_file_get_contents($this->options['jsonrpc_backend'], $post);
         $data = json_decode($str_data, true);
@@ -97,7 +98,7 @@ class JsonRpcExt extends ComponentBase
         }
         return $data['result'];
     }
-    
+
     /**
      * @param array<string, mixed> $input
      */
@@ -122,7 +123,7 @@ class JsonRpcExt extends ComponentBase
             ];
         }
         $ret['id'] = $id;
-        
+
         return $ret;
     }
     /////////////////////
@@ -130,7 +131,7 @@ class JsonRpcExt extends ComponentBase
     {
         $namespace = trim($this->options['jsonrpc_service_namespace'], '\\');
         //$namespace=$namespace?$namespace."\\":'';
-        
+
         $service = $namespace?$namespace."\\".$service:$service;
         if (empty($this->options['jsonrpc_service_interface'])) {
             return $service;
@@ -143,7 +144,7 @@ class JsonRpcExt extends ComponentBase
     protected function curl_file_get_contents($url, $post): string
     {
         $ch = curl_init();
-        
+
         if (is_array($url)) {
             list($base_url, $real_host) = $url;
             $url = $base_url;
@@ -158,9 +159,9 @@ class JsonRpcExt extends ComponentBase
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->options['jsonrpc_timeout']);
-        
+
         $this->prepare_token($ch);
-        
+
         $data = curl_exec($ch);
         curl_close($ch);
         return (string)($data !== false?$data:'');

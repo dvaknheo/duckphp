@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -14,10 +15,10 @@ class DuckPhpInstaller extends ComponentBase
     public $options = [
         'path' => '',
         'namespace' => '',
-        
+
         'force' => false,
         'autoloader' => 'vendor/autoload.php',
-        
+
         'verbose' => false,
         'help' => false,
     ];
@@ -47,7 +48,7 @@ class DuckPhpInstaller extends ComponentBase
     {
         $this->init([])->runDemo();
     }
-    
+
     public function showHelp(): void
     {
         echo <<<EOT
@@ -71,7 +72,7 @@ EOT;
         if (!is_file($file)) {
             return '';
         }
-        
+
         $data = json_decode(''.file_get_contents($file), true);
         $psr = $data['autoload']['psr-4'] ?? [];
         $psr = array_flip($psr);
@@ -93,12 +94,12 @@ EOT;
                 $namespace = $this->getNamespaceByConsole();
             }
         }
-        
+
         $this->options = array_merge($this->options, $options);
         $this->options['namespace'] = $namespace;
         $source = __DIR__ .'/../../skeleton';
         $dest = $this->options['path'];
-        
+
         $this->dumpDir($source, $dest, $this->options['force']);
     }
 
@@ -129,12 +130,12 @@ EOT;
         $iterator = new \RecursiveIteratorIterator($directory);
         $t_files = \iterator_to_array($iterator, false);
         $files = [];
-        
+
         foreach ($t_files as $file) {
             $short_file_name = substr($file, strlen($source));
             $files[$file] = $short_file_name;
         }
-        
+
         if (!$force) {
             $flag = $this->checkFilesExist($source, $dest, $files);
             if (!$flag) {
@@ -142,19 +143,19 @@ EOT;
             }
         }
         echo "Copying file...\n";
-        
+
         $flag = $this->createDirectories($dest, $files);
         if (!$flag) {
             return; // @codeCoverageIgnore
         }
         $is_in_full = false;
-        
+
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
             $data = (string)file_get_contents(''.$file);
             $data = $this->filteText($data, $is_in_full, $short_file_name);
             $flag = file_put_contents($dest_file, $data);
-            
+
             if ($this->options['verbose']) {
                 echo $dest_file;
                 echo "\n";
@@ -199,12 +200,12 @@ EOT;
         }
         return true;
     }
-    
+
     protected function filteText(string $data, bool $is_in_full, string $short_file_name): string
     {
         $autoload_file = $this->options['autoloader'];
         $data = $this->changeHeadFile($data, $short_file_name, $autoload_file);
-        
+
         if (!$is_in_full) {
             $data = $this->filteMacro($data);
             $data = $this->filteNamespace($data, $this->options['namespace']);
@@ -225,7 +226,7 @@ EOT;
         $str_header = "\$namespace = '$namespace';";
         $data = (string)preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
         $data = str_replace("YourProjectName\\", "{$namespace}\\", $data);
-        
+
         return $data;
     }
     protected function changeHeadFile(string $data, string $short_file_name, string $autoload_file): string
@@ -236,7 +237,7 @@ EOT;
         $data = (string)preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
         return $data;
     }
-    
+
 
     /*
     protected function genProjectName()

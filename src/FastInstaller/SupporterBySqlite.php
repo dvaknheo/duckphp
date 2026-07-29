@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
@@ -18,12 +19,12 @@ class SupporterBySqlite extends Supporter
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
-    
+
     public function readDsnSetting($options)
     {
         $dsn = $options['dsn'] ?? '';
         $file = substr($dsn, strlen('sqlite:'));
-        
+
         if (!$file) {
             $flag = App::_()->options['local_database'] ?? false;
             if ($flag) {
@@ -40,14 +41,14 @@ class SupporterBySqlite extends Supporter
         $options = array_map('trim', $options);
         $options = array_map('addslashes', $options);
         $file = $options['file'];
-        
+
         $dsn = "sqlite:$file";
         $options['dsn'] = $dsn;
         unset($options['file']);
-        
+
         $options['username'] = '';
         $options['password'] = '';
-        
+
         return $options;
     }
     //////////////////
@@ -72,7 +73,7 @@ class SupporterBySqlite extends Supporter
         //    return '';
         //}
         $sql = preg_replace('/CREATE TABLE "([^"]+)"/', 'CREATE TABLE `$1`', $sql);
-        
+
         return $sql;
     }
     public function getInstallDesc(): string

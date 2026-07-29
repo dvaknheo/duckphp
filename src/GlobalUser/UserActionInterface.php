@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\GlobalUser;
 
 interface UserActionInterface
@@ -33,7 +34,7 @@ interface UserActionInterface
 
     public function checkAccess(string $class, string $method, ?string $url = null);
     public function log(string $string, ?string $type = null, array $ext = []);
-    
+
     /**
      * @param array<string, mixed> $ids
      */

@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
@@ -15,18 +16,18 @@ class SqlDumper extends ComponentBase
         'path' => '',
         'path_sql_dump' => 'config',
         'sql_dump_file' => 'install.sql',
-        
+
         'sql_dump_include_tables' => [],
         'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
-        
+
         'sql_dump_include_tables_all' => false,
         'sql_dump_include_tables_by_model' => true,
-        
+
         'sql_dump_install_replace_prefix' => true,
         'sql_dump_prefix' => '',
         'sql_dump_debug_show_sql' => false,
-        
+
     ];
     //protected $spliter = "\n#### DATA BEGIN ####\n";
     protected $spliter = "\n";
@@ -38,12 +39,12 @@ class SqlDumper extends ComponentBase
         }
         $scheme = $this->getSchemes();
         $data = $this->getInsertTableSql();
-        
+
         $file = $driver.'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         $string = $scheme.$this->spliter.$data;
         file_put_contents($full_file, $string);
-        
+
         return true;
     }
     public function install(bool $force = false): void
@@ -51,7 +52,7 @@ class SqlDumper extends ComponentBase
         $file = DbManager::_()->getDatabaseDriver().'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         $sql = ''.@file_get_contents($full_file);
-        
+
         if ($force) {
             //$sql = preg_replace('/CREATE TABLE [`"]([^`"]+)[`"]/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
             $sql = preg_replace('/CREATE TABLE (\S+)/', "DROP TABLE IF EXISTS \$1;\nCREATE TABLE \$1", $sql);
@@ -73,7 +74,7 @@ class SqlDumper extends ComponentBase
             $flag = DbManager::Db()->execute($sql);
         }
     }
-    
+
     protected function getSchemes(): string
     {
         $prefix = App::_()->options['table_prefix'];
@@ -102,7 +103,7 @@ class SqlDumper extends ComponentBase
             $sql = Supporter::Current()->getSchemeByTable($table);
             $prefix = App::_()->options['table_prefix'];
             $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
-            
+
             //}catch(\Exception $ex){
             //    continue;
             //}
@@ -114,7 +115,7 @@ class SqlDumper extends ComponentBase
     {
         $ret = '';
         $tables = $this->options['sql_dump_data_tables'];
-        
+
         foreach ($tables as $table) {
             $str = $this->getDataSql($table);
             $ret .= $str;
@@ -153,7 +154,7 @@ class SqlDumper extends ComponentBase
         $path = $this->getModelPath();
         $namespace = App::_()->options['namespace'];
         $models = $this->searchModelClasses($path);
-        
+
         $ret = [];
         foreach ($models as $k) {
             try {

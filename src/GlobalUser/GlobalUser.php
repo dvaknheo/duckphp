@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\GlobalUser;
 
 use DuckPhp\Component\PhaseProxy;
@@ -18,10 +19,10 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         'user_url_regist' => null,
         'user_url_login' => null,
         'user_url_logout' => null,
-        
+
         'user_view_file_header' => null, // 'inc-head',
         'user_view_file_footer' => null, // 'inc-foot',
-        
+
         'user_enable_callback_singleton' => true,
         'user_callback_for_id' => null, //[UserAction::class,'id'],
         'user_callback_for_name' => null, //[UserAction::class,'name'],
