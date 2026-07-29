@@ -142,7 +142,8 @@ class Console extends ComponentBase
         $this->index = 0;
     }
     /**
-     * @param array<string, mixed> $argv
+     * @param array<string, mixed> $options
+     * @param array<string, mixed> $validators
      */
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
@@ -200,6 +201,10 @@ class Console extends ComponentBase
     }
     /**
      * @param array<string, mixed> $argv
+     */
+    /**
+     * @param array<string> $argv
+     * @return array<string, mixed>
      */
     protected function parseCliArgs(array $argv): array
     {

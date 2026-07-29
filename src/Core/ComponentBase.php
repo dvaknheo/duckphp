@@ -46,6 +46,9 @@ class ComponentBase // implements ComponentInterface
         $this->is_inited = true;
         return $this;
     }
+    /**
+     * @param array<string, mixed> $options
+     */
     public function reInit(array $options, ?object $context = null)
     {
         $options['__force__'] = true;

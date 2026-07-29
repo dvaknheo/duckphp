@@ -10,13 +10,13 @@ use DuckPhp\Core\ComponentBase;
 
 class View extends ComponentBase
 {
-    /** @var array */
+    /** @var array<string, mixed> */
     public $options = [
         'path' => '',
         'path_view' => 'view',
         'view_skip_notice_error' => true,
     ];
-    /** @var array */
+    /** @var array<string, mixed> */
     public $data = [];
 
     /** @var ?string */
@@ -125,6 +125,9 @@ class View extends ComponentBase
         $this->temp_view_file = null;
         $this->error_reporting_old = null;
     }
+    /**
+     * @return array<string, mixed>
+     */
     public function getViewData(): array
     {
         return $this->data;

@@ -190,6 +190,9 @@ class Route extends ComponentBase
         $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
         return $callback;
     }
+    /**
+     * @return array{0:string,1:string}|null
+     */
     protected function pathToClassAndMethod(string $path_info): ?array
     {
         if ($this->options['controller_url_prefix'] ?? false) {
@@ -226,7 +229,7 @@ class Route extends ComponentBase
         return [$full_class,$method];
     }
     /**
-     * @param array<string, mixed> $blocks
+     * @return array{0:string,1:string}
      */
     protected function adjustClassBaseName(string $path_info): array
     {
@@ -257,6 +260,10 @@ class Route extends ComponentBase
      * @param non-empty-list<string> $blocks
      * @return array
      */
+    /**
+     * @param non-empty-list<string> $blocks
+     * @return array{0:array,1:string}
+     */
     protected function doControllerClassAdjust(array $blocks, string $method): array
     {
         $adj = is_array($this->options['controller_class_adjust']) ? $this->options['controller_class_adjust'] : explode(';', $this->options['controller_class_adjust']);
@@ -273,6 +280,9 @@ class Route extends ComponentBase
         }
         return [$blocks,$method];
     }
+    /**
+     * @return array{0:?object,1:?string}|null
+     */
     protected function getCallbackFromClassAndMethod(string $full_class, string $method, string $path_info): ?array
     {
         $this->calling_class = $full_class;

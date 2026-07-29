@@ -36,11 +36,20 @@ class SystemWrapper extends ComponentBase
     {
         return static::_()->_system_wrapper_get_providers();
     }
+    /**
+     * @param array<string, mixed> $funcs
+     */
     public function _system_wrapper_replace(array $funcs)
     {
         $this->system_handlers = array_replace($this->system_handlers, $funcs);
         return true;
     }
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public function _system_wrapper_get_providers()
     {
         $class = static::class;
@@ -59,6 +68,9 @@ class SystemWrapper extends ComponentBase
         }
         return isset($this->system_handlers[$func])?true:false;
     }
+    /**
+     * @param array<int, mixed> $input_args
+     */
     protected function system_wrapper_call(string $func, array $input_args)
     {
         $func = ltrim($func, '_');
@@ -96,6 +108,9 @@ class SystemWrapper extends ComponentBase
     {
         return static::_()->_register_shutdown_function($callback, ...$args);
     }
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function session_start(array $options = [])
     {
         return static::_()->_session_start($options);

@@ -246,6 +246,9 @@ trait KernelTrait
     {
         return PhaseContainer::_()->createLocalObject($class, $object);
     }
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function initException(array $options): void
     {
         $exception_options = $options;
@@ -330,6 +333,9 @@ trait KernelTrait
     {
         $this->initComponentsByClasseOptions($classes, $default);
     }
+    /**
+     * @param array<string, mixed> $exts
+     */
     protected function initComponentsByClasseOptions(array $exts, $default): void
     {
         $exts = array_filter($exts);
