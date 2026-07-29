@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -191,7 +192,7 @@ class Lang extends ComponentBase
             $normalized = $this->normalizeLocale($lang);
             return $normalized;
         }
-    }
+    } // @codeCoverageIgnore
     
     /**
      * 从 CLI 环境检测

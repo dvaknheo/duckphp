@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
@@ -29,7 +30,7 @@ class App extends ComponentBase
         prepareServe as Kernel_prepareServe;
         initComponentsOfRoot as Kernel_initComponentsOfRoot;
         initComponentsOfInner as Kernel_initComponentsOfInner;
-        initComponentsOfDynmic as  Kernel_initComponentsOfDynmic;
+        initComponentsOfDynmic as Kernel_initComponentsOfDynmic;
     }
     const EXT_SKIP_INIT = -1;
     const EXT_DISABLE = 0;

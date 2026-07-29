@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\GlobalAdmin;
 
 use DuckPhp\Component\PhaseProxy;
@@ -71,7 +72,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
         DuckPhpSystemException::ThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
-        $url =$this->options[$key_url];
+        $url = $this->options[$key_url];
         return __url($url);
     }
     public function urlForHome(?string $url_back = null, ?array $ext = null): string

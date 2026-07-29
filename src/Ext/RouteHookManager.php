@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -26,7 +27,7 @@ class RouteHookManager extends ComponentBase
     }
     public function detach(): void
     {
-        $this->hook_list =[];
+        $this->hook_list = [];
     }
     public function getHookList(): array
     {

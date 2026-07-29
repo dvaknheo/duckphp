@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\PhaseProxy;
@@ -79,7 +80,7 @@ trait ControllerTrait
                 $route->options['controller_class_map'][static::class] = $class;
             }
             /** @var class-string $class */
-        $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
+            $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
             return $object;
         }
         $ret = PhaseContainer::GetObject(static::class, $object);

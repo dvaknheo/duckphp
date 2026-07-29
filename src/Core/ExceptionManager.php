@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
@@ -74,15 +75,15 @@ class ExceptionManager extends ComponentBase
             return false;
         }
         switch ($errno) {
-        case E_USER_NOTICE:
-        case E_NOTICE:
-        //case E_STRICT: deprecated in php8.4
-        case E_DEPRECATED:
-        case E_USER_DEPRECATED:
-            ($this->options['dev_error_handler'])($errno, $errstr, $errfile, $errline);
-            break;
-        default:
-            throw new \ErrorException($errstr, $errno, $errno, $errfile, $errline);
+            case E_USER_NOTICE:
+            case E_NOTICE:
+                //case E_STRICT: deprecated in php8.4
+            case E_DEPRECATED:
+            case E_USER_DEPRECATED:
+                ($this->options['dev_error_handler'])($errno, $errstr, $errfile, $errline);
+                break;
+            default:
+                throw new \ErrorException($errstr, $errno, $errno, $errfile, $errline);
         }
         /* Don't execute PHP internal error handler */
         return true;
