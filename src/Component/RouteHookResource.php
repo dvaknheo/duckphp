@@ -160,6 +160,9 @@ class RouteHookResource extends ComponentBase
         }
         //echo  "\nDone.\n";
     }
+    /**
+     * @param array<string, mixed> $files
+     */
     protected function check_files_exist(string $source, string $dest, array $files, string &$info): bool
     {
         foreach ($files as $file => $short_file_name) {

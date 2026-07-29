@@ -65,6 +65,9 @@ class RedisManager extends ComponentBase
     {
         return static::_()->getServer($tag);
     }
+    /**
+     * @return array<string, mixed>
+     */
     public function getRedisConfigList(): array
     {
         return $this->redis_config_list ?? [];

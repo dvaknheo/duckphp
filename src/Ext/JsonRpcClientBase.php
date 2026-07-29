@@ -2,6 +2,7 @@
 /**
  * DuckPhp
  * From this time, you never be alone~
+     * @param array<string, mixed> $arguments
  */
 
 namespace DuckPhp\Ext;

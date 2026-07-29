@@ -37,6 +37,12 @@ class RedisInstaller extends ComponentBase
         $this->changeRedis($data);
         return true;
     }
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $ref_database_list
+     * @param array<string, mixed> $config
+     */
     protected function changeRedis(array $data): void
     {
         $is_local = App::_()->options['local_redis'] ?? false;

@@ -42,6 +42,9 @@ class RouteHookRewrite extends ComponentBase
             $this->rewrite_map[$key] = $value;
         }
     }
+    /**
+     * @return array<string, mixed>
+     */
     public function getRewrites(): array
     {
         return $this->rewrite_map;

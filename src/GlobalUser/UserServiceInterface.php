@@ -16,6 +16,7 @@ interface UserServiceInterface
 
     /**
      * @param array<string, mixed> $ids
+     * @param array<string, mixed> $ids
      */
     public function batchGetUsernames(array $ids): array;
 }

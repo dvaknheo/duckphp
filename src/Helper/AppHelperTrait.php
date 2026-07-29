@@ -86,6 +86,10 @@ trait AppHelperTrait
         return SuperGlobal::_()->_CookieGet($key, $default);
     }
     ////////////////////
+    /**
+     * @param array<string, mixed> $funcs
+     * @param array<string, mixed> $funcs
+     */
     public static function system_wrapper_replace(array $funcs)
     {
         return SystemWrapper::_()->_system_wrapper_replace($funcs);

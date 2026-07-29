@@ -29,6 +29,7 @@ class ComponentBase // implements ComponentInterface
      * @param array<string, mixed> $options
      * @param object|null $context
      * @return $this
+     * @param array<string, mixed> $options
      */
     public function init(array $options, ?object $context = null) //return $this
     {

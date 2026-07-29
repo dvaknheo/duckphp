@@ -24,6 +24,10 @@ class SystemWrapper extends ComponentBase
 
     ];
     protected $init_once = true;
+    /**
+     * @param array<string, mixed> $funcs
+     * @param array<string, mixed> $funcs
+     */
     public static function system_wrapper_replace(array $funcs)
     {
         return static::_()->_system_wrapper_replace($funcs);

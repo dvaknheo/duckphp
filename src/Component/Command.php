@@ -144,6 +144,12 @@ EOT;
     }
     /**
      * @param array<string, mixed> $classes
+     * @param array<string, mixed> $classes
+     * @param array<string, mixed> $classes
+     */
+    /**
+     * @param array<string, mixed> $classes
+     * @return array<string, mixed>
      */
     protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
     {
@@ -158,6 +164,9 @@ EOT;
         }
         return $ret;
     }
+    /**
+     * @return array<string, mixed>
+     */
     protected function getCommandsByClass(string $class, string $method_prefix, string $phase): array
     {
         // @phpstan-ignore-next-line
@@ -173,6 +182,9 @@ EOT;
         $ret = $this->getCommandsByClassReflection($class, $method_prefix);
         return $ret;
     }
+    /**
+     * @return array<string, mixed>
+     */
     protected function getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix): array
     {
         $methods = $ref->getMethods();

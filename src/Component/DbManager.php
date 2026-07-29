@@ -76,6 +76,9 @@ class DbManager extends ComponentBase
             $this->database_config_list = $database_list ?? $this->database_config_list;
         }
     }
+    /**
+     * @return array<string, mixed>
+     */
     public function getDatabaseConfigList(): array
     {
         return $this->database_config_list ?? [];

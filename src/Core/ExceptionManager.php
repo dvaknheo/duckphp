@@ -63,6 +63,9 @@ class ExceptionManager extends ComponentBase
             $this->exceptionHandlers[$k] = $v;
         }
     }
+    /**
+     * @param array<string, mixed> $classes
+     */
     public function setMultiExceptionHandler(array $classes, $callback)
     {
         foreach ($classes as $class) {

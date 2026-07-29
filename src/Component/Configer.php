@@ -25,6 +25,9 @@ class Configer extends ComponentBase
         }
         return isset($config[$key])?$config[$key]:$default;
     }
+    /**
+     * @return array<string, mixed>
+     */
     protected function _LoadConfig(string $file_basename): array
     {
         if (isset($this->all_config[$file_basename])) {
@@ -42,6 +45,9 @@ class Configer extends ComponentBase
         $this->all_config[$file_basename] = $config;
         return $config;
     }
+    /**
+     * @return array<string, mixed>
+     */
     protected function loadFile(string $file): array
     {
         return require $file;

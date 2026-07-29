@@ -36,6 +36,10 @@ class RouteHookRouteMap extends ComponentBase
         Route::_()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
         Route::_()->addRouteHook([static::class,'AppendHook'], 'append-outter');
     }
+    /**
+     * @param array<string, mixed> $rules
+     * @param array<string, mixed> $rules
+     */
     public function compile(string $pattern_url, array $rules = []): string
     {
         $pattern_url = substr($pattern_url, 1);
@@ -47,6 +51,10 @@ class RouteHookRouteMap extends ComponentBase
         $ret = '~^'.$ret.'$ # '.$pattern_url.'~x';
         return $ret;
     }
+    /**
+     * @param array<string, mixed> $map
+     * @return array<string, mixed>
+     */
     protected function compileMap(array $map, string $namespace_controller): array
     {
         $ret = [];
@@ -116,6 +124,9 @@ class RouteHookRouteMap extends ComponentBase
         }
         return ($pattern_url === $path_info) ? true:false;
     }
+    /**
+     * @param array<string, mixed> $routeMap
+     */
     protected function getRouteHandelByMap(array $routeMap, string $path_info)
     {
         $parameters = [];
@@ -133,6 +144,9 @@ class RouteHookRouteMap extends ComponentBase
         }
         return null;
     }
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function adjustCallback($callback, array $parameters)
     {
         Route::_()->setParameters($parameters);

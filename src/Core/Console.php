@@ -57,6 +57,9 @@ class Console extends ComponentBase
     {
         $this->options['console_command_phase'][$prefix] = $phase;
     }
+    /**
+     * @param array<string, mixed> $classes
+     */
     public function regCommandClasses($prefix, array $classes)
     {
         $my_classes = $this->options['console_command_classes'][$prefix] ?? [];
@@ -138,6 +141,9 @@ class Console extends ComponentBase
         $this->data = '';
         $this->index = 0;
     }
+    /**
+     * @param array<string, mixed> $argv
+     */
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
         $ret = [];

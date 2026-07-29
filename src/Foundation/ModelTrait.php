@@ -50,6 +50,9 @@ trait ModelTrait
     {
         return empty($this->table()) ? $sql : str_replace("`'TABLE'`", '`'.$this->table().'`', $sql);
     }
+    /**
+     * @param array<string, mixed> $where
+     */
     protected function getList(array $where = [], int $page = 1, int $page_size = 10): array
     {
         $sql_where = DbManager::_()->_DbForRead()->quoteAndArray($where);

@@ -107,6 +107,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     /**
      * @param array<string, mixed> $input
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $input
      */
     public function addExtViewData(array $input): array
     {

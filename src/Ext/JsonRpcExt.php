@@ -72,6 +72,9 @@ class JsonRpcExt extends ComponentBase
         $code = "namespace $namespace{ class $basename extends \\". __NAMESPACE__  ."\\JsonRpcClientBase{} }";
         eval($code);
     }
+    /**
+     * @param array<string, mixed> $arguments
+     */
     public function callRpc(string $classname, string $method, array $arguments)
     {
         $namespace = trim($this->options['jsonrpc_service_namespace'], '\\');

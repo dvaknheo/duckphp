@@ -42,6 +42,7 @@ interface AdminActionInterface
 
     /**
      * @param array<string, mixed> $input
+     * @param array<string, mixed> $input
      */
     public function mergeViewData(array $input): array;
 

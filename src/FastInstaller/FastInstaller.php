@@ -147,6 +147,10 @@ class FastInstaller extends ComponentBase
             }
         }
     }
+    /**
+     * @param array<string, mixed> $app_options
+     * @param array<string, mixed> $input_options
+     */
     protected function showHelp(array $app_options = [], array $input_options = []): void
     {
         echo "

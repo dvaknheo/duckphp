@@ -57,6 +57,9 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_TraceDump();
     }
+    /**
+     * @param array<string, mixed> $context
+     */
     public static function DebugLog($message, array $context = array())
     {
         return static::_()->_DebugLog($message, $context);

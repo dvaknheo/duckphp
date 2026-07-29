@@ -53,6 +53,9 @@ class Route extends ComponentBase
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function RunQuickly(array $options = [], ?callable $after_init = null)
     {
         $instance = static::_()->init($options);
@@ -222,6 +225,9 @@ class Route extends ComponentBase
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
+    /**
+     * @param array<string, mixed> $blocks
+     */
     protected function adjustClassBaseName(string $path_info): array
     {
         $welcome_class = $this->options['controller_welcome_class'];

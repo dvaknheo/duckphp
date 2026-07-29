@@ -45,6 +45,12 @@ class DatabaseInstaller extends ComponentBase
         $this->changeDatabase($data);
         return true;
     }
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $ref_database_list
+     * @param array<string, mixed> $database
+     */
     protected function changeDatabase(array $data): void
     {
         $is_local = (App::_()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::_()->options['database_driver'];

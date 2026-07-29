@@ -46,6 +46,9 @@ class ExtOptionsLoader extends ComponentBase
         $this->bumpOptions($ext_options);
         return $this;
     }
+    /**
+     * @param array<string, mixed> $ext_options
+     */
     public function bumpOptions(array $ext_options): void
     {
         if (!$this->options['data_file_bump_allowed']) {

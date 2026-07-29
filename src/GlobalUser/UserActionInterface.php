@@ -44,12 +44,15 @@ interface UserActionInterface
 
     /**
      * @param array<string, mixed> $input
+     * @param array<string, mixed> $input
      */
     public function mergeViewData(array $input): array;
 
     public function checkAccess(string $class, string $method, ?string $url = null);
     /**
      * @param array<string, mixed> $ext
+     * @param array<string, mixed> $ext
+     * @param array<string, mixed> $ids
      */
     public function log(string $string, ?string $type = null, array $ext = []);
 

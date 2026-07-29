@@ -115,6 +115,7 @@ class HttpServer
     }
     /**
      * @param array<string, mixed> $cli_options
+     * @param array<string, mixed> $cli_options
      */
     protected function parseCaptures(array $cli_options): array
     {

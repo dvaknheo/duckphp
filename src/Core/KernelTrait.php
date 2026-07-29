@@ -82,6 +82,9 @@ trait KernelTrait
     // protected $this_class = '';      // from self
     // protected $is_inited = false;    // from ComponentBase::class
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
     {
         $instance = static::_()->init($options);

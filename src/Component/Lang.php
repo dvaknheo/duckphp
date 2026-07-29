@@ -48,6 +48,9 @@ class Lang extends ComponentBase
         $this->context()->options['lang_final'] = $this->options['lang_final'];
         return $this;
     }
+    /**
+     * @return array<string, mixed>|null
+     */
     protected function getSentenceFromConfig(string $language): ?array
     {
         if (!empty($this->options['lang_simple_mode_only_sentences'])) {
@@ -74,6 +77,9 @@ class Lang extends ComponentBase
         }
         return $configs[$str];
     }
+    /**
+     * @param array<string, mixed> $args
+     */
     public function lang(string $str, array $args = []): string
     {
         $newstr = $this->loadLanguage($str);
