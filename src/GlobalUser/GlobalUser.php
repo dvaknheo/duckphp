@@ -153,7 +153,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     /**
      * @param array<string, mixed> $data
      */
-    public function show(array $data = [], ?string $view = null): void
+    public function show(array $data = [], string $view = ''): void
     {
         $data = $this->mergeViewData($data);
         $last_phase = App::_()->getLastPhase();
@@ -162,7 +162,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         App::Phase($old_phase);
     }
     ///////////////
-    public function checkAccess(?string $class, ?string $method, ?string $url = null)
+    public function checkAccess(?string $class = null, ?string $method = null, ?string $url = null): void
     {
         if(is_null($class) && is_null($method) && is_null($url)){
             $last_phase = App::_()->getLastPhase();
@@ -174,7 +174,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
 
             App::Phase($old_phase);
         }
-        return $this->localService()->checkAccess($this->id(), $class, $method, $url);
+        $this->localService()->checkAccess($this->id(), $class, $method, $url);
     }
     /**
      * @param array<string, mixed> $ext

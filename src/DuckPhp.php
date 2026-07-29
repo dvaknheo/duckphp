@@ -107,7 +107,6 @@ class DuckPhp extends App
         $my_components = [
             ExtOptionsLoader::class => 'data_file_enable',
             Configer::class => true,
-
         ];
         $components = array_merge($components, $my_components);
 
@@ -118,6 +117,7 @@ class DuckPhp extends App
             DbManager::_()->init($this->options, $this);
         }
         if ($this->isLocalRedis()) {
+            $this->options['database_list_reload_by_setting'] = false;
             $this->createLocalObject(RedisManager::class);
             RedisManager::_()->init($this->options, $this);
         }

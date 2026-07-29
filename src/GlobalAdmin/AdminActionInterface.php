@@ -47,8 +47,8 @@ interface AdminActionInterface
     /**
      * @param array<string, mixed> $data
      */
-    public function show(array $data = [], ?string $view = null): void;
-    public function checkAccess(?string $class, ?string $method, ?string $url = null);
+    public function show(array $data = [], string $view = ''): void;
+    public function checkAccess(?string $class = null, ?string $method = null, ?string $url = null): void;
     /**
      * @param array<string, mixed> $ext
      */
