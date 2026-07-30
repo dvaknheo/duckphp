@@ -6,14 +6,11 @@
 
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
-use DuckPhp\Foundation\ZCallTrait;
 
 trait ControllerTrait
 {
-    use ZCallTrait;
     public static function _($object = null)
     {
         $route = Route::_();
@@ -85,17 +82,5 @@ trait ControllerTrait
         }
         $ret = PhaseContainer::GetObject(static::class, $object);
         return $ret;
-    }
-    /**
-     * @return self
-     */
-    public static function _Z($phase = null)
-    {
-        return PhaseProxy::CreatePhaseProxy($phase, static::class);
-    }
-    public static function OverrideParent()
-    {
-        $parent = get_parent_class(static::class);
-        Route::_()->replaceController($parent, static::class);
     }
 }
