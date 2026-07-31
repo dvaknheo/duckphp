@@ -10,12 +10,10 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonTrait;
-use DuckPhp\Foundation\ZCallTrait;
 
 trait ModelTrait
 {
     use SingletonTrait;
-    use ZCallTrait;
 
     protected $table_name = null;
     protected $table_prefix = null;

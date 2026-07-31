@@ -11,7 +11,9 @@ use DuckPhp\Core\Route;
 
 trait ControllerTrait
 {
-    public static function _($object = null)
+    use SingletonTrait;
+
+    public static function _Zbak($object = null)
     {
         $route = Route::_();
         $postfix = $route->options['controller_class_postfix'];
