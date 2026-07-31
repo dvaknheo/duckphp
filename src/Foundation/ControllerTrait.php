@@ -12,7 +12,7 @@ use DuckPhp\Core\Route;
 trait ControllerTrait
 {
     use SingletonTrait;
-
+/*
     public static function _Zbak($object = null)
     {
         $route = Route::_();
@@ -45,7 +45,7 @@ trait ControllerTrait
         N Y N N => Y
         N N N Y => Y
         N N N N => Y
-        //*/
+        //* /
         $is_controller = false;
 
         if ($postfix) {
@@ -53,7 +53,7 @@ trait ControllerTrait
                 if ($class_base) {
                     if (\is_subclass_of(static::class, $class_base)) {
                         $is_controller = true;
-                    } else { /** @phpstan-ignore-line */
+                    } else { /** @phpstan-ignore-line * /
                         $is_controller = false;
                     }
                 } else {
@@ -66,7 +66,7 @@ trait ControllerTrait
             if ($class_base) {
                 if (\is_subclass_of(static::class, $class_base)) {
                     $is_controller = true;
-                } else { /** @phpstan-ignore-line */
+                } else { /** @phpstan-ignore-line * /
                     $is_controller = false;
                 }
             } else {
@@ -78,11 +78,12 @@ trait ControllerTrait
             if ($class !== static::class) {
                 $route->options['controller_class_map'][static::class] = $class;
             }
-            /** @var class-string $class */
+            /** @var class-string $class * /
             $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
             return $object;
         }
         $ret = PhaseContainer::GetObject(static::class, $object);
         return $ret;
     }
+*/
 }

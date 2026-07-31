@@ -16,29 +16,30 @@ trait SessionTrait
     use SingletonTrait;
 
     protected $session_started = false;
+    protected $session_prefix = '';
     protected function checkSessionStart(): void
     {
         if ($this->session_started) {
             return;
         }
         SystemWrapper::_()->_session_start();
-        //$this->options['session_prefix'] = App::_()->options['session_prefix'] ?? '';
         $this->session_started = true;
+        $this->session_prefix = (string)App::_()->options['session_prefix'];
     }
     protected function get(string $key, $default = null)
     {
         $this->checkSessionStart();
-        return SuperGlobal::_()->_SessionGet((App::_()->options['session_prefix'] ?? '') . $key, $default);
+        return SuperGlobal::_()->_SessionGet($this->session_prefix . $key, $default);
     }
     protected function set(string $key, $value)
     {
         $this->checkSessionStart();
-        return SuperGlobal::_()->_SessionSet((App::_()->options['session_prefix'] ?? '') . $key, $value);
+        return SuperGlobal::_()->_SessionSet($this->session_prefix . $key, $value);
     }
     protected function unset(string $key)
     {
         $this->checkSessionStart();
-        return SuperGlobal::_()->_SessionUnset((App::_()->options['session_prefix'] ?? '') . $key);
+        return SuperGlobal::_()->_SessionUnset($this->session_prefix . $key);
     }
     /////////////////////////////////////
 }
