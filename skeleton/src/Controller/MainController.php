@@ -11,9 +11,9 @@ class MainController extends Base
 {
     public function __construct()
     {
-        $this->init();
+        $this->initController();
     }
-    protected function init()
+    protected function initController()
     {
     }
     public function index()
