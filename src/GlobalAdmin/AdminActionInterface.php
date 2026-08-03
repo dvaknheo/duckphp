@@ -16,6 +16,11 @@ interface AdminActionInterface
      */
     public function id(bool $check_login = true);
     public function name(bool $check_login = true): string;
+    /**
+     * @param bool $check_login
+     * @return array<string, mixed>
+     */
+    public function data(bool $check_login = true): array;
 
     /**
      * @return AdminServiceInterface
