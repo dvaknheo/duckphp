@@ -104,6 +104,9 @@ trait KernelTrait
     {
         return static::_()->_Phase($new);
     }
+    /**
+     * @return static|null
+     */
     public static function FromCurrentParent()
     {
         $APP = self::class;

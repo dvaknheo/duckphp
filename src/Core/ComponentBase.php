@@ -28,10 +28,10 @@ class ComponentBase // implements ComponentInterface
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
-     * @return $this
+     * @return static
      * @param array<string, mixed> $options
      */
-    public function init(array $options, ?object $context = null) //return $this
+    public function init(array $options, ?object $context = null)
     {
         if ($this->init_once && $this->is_inited && !($options['__force__'] ?? false)) {
             return $this;

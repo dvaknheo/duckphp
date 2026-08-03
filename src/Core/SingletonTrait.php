@@ -10,6 +10,9 @@ use DuckPhp\Core\PhaseContainer;
 
 trait SingletonTrait
 {
+    /**
+     * @return static
+     */
     public static function _($object = null)
     {
         return PhaseContainer::GetObject(static::class, $object);

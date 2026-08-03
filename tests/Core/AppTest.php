@@ -432,24 +432,23 @@ PhaseContainer::RestAllContainerForTesting();
     }
     protected function do404()
     {
-        
+PhaseContainer::RestAllContainerForTesting();
+
         
         echo "-----------------------\n";
         $path_app=$this->LibCoverage->getClassTestPath(App::class);
-        $path_config=$this->LibCoverage->getClassTestPath(Configer::class);
         $options=[
             'path' => $path_app,
-            'path_config' => $path_config,
-            'platform' => 'BJ',
             'is_debug' => true,
-            'skip_setting_file' => true,
-            'use_flag_by_setting' => true,
-            
-            'skip_view_notice_error' => true,
-            'use_super_global' => true,
-            'override_class'=>AppTestApp::class,
+            'cli_enable' => false,
+            'app' => [
+                AppTestApp2::class => [
+                    'name' => 'xxx',
+                    'controller_url_prefix' => 'abc/',
+                ],
+            ],
         ];
-        DuckPhp::_(new DuckPhp())->init($options);
+        AppTestApp::_(new AppTestApp())->init($options);
 
         
         $options=[
@@ -457,13 +456,23 @@ PhaseContainer::RestAllContainerForTesting();
             'is_debug'=>false,
         ];
         AppTestApp::On404();
+        AppTestApp2::FromCurrentParent()->serve();
+
+PhaseContainer::RestAllContainerForTesting();
+
         AppTestApp::RunQuickly($options);
 
         AppTestApp::_()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
         AppTestApp::_()->options['error_404']=function(){};
-        AppTestApp::On404();                
-        AppTestApp2::RunQuickly([]);
+        AppTestApp::On404(); 
+        
+        //AppTestApp::_()->toChildPhase(AppTestApp2::class)->serve();
+        //AppTestApp2::FromCurrentParent()->serve();// RunQuickly([]);
+PhaseContainer::RestAllContainerForTesting();
+
+
+
     }
     protected function do_Core_Redirect()
     {
