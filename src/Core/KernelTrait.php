@@ -480,7 +480,7 @@ trait KernelTrait
         if ($this->options['skip_exception_check']) {
             throw $ex;
         }
-        $this->phaseToCurrent();
+        // don't change to $this->phaseToCurrent();
         Runtime::_()->last_phase = $last_phase;
         ExceptionManager::CallException($ex);
         Runtime::_()->onException($ex);
