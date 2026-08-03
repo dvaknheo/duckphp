@@ -86,8 +86,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         }catch(\Throwable $ex){}
         
         echo CoreHelper::Json($data);
-        CoreHelper::PathOfProject();
-        CoreHelper::PathOfRuntime();
+
         
 //reset
 PhaseContainer::RestAllContainerForTesting();

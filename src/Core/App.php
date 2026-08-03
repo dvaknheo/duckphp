@@ -382,6 +382,13 @@ EOT;
     {
         return $view === '' ? Route::_()->getRouteCallingPath() : $view;
     }
+    public function getRuntimePath(): string
+    {
+        $path = $this->getProjectPath();
+        $path_runtime = static::SlashDir(static::Root()->options['path_runtime']);
+        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
+
+    }
     ///////
     public static function Platform()
     {

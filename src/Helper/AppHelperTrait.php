@@ -182,14 +182,6 @@ trait AppHelperTrait
     {
         return GlobalEvent::_()->on($event, $callback);
     }
-    public static function PathOfProject()
-    {
-        return CoreHelper::_()->_PathOfProject();
-    }
-    public static function PathOfRuntime()
-    {
-        return CoreHelper::_()->_PathOfRuntime();
-    }
     public static function recursiveApps(&$arg, $callback, ?string $app_class = null)
     {
         return CoreHelper::_()->recursiveApps($arg, $callback, $app_class);

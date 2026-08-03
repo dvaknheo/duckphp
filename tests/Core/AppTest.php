@@ -76,6 +76,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             MyApp::_()->options['is_debug']=true;
 			error_reporting($e_old);
         });
+		MyApp::_()->getRuntimePath();
 
         \DuckPhp\Core\Route::_()->bind('/NOOOOOOOOOOOOOOO'); 
         

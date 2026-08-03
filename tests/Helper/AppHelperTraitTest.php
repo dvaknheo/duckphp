@@ -91,8 +91,6 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
                 
         AppHelper::OnGlobalEvent('MyEvent',function(){});
         AppHelper::FireGlobalEvent('MyEvent',function(){});
-        AppHelper::PathOfProject();
-        AppHelper::PathOfRuntime();
         AppHelper::getAllAppClass();
         AppHelper::getAppClassByComponent(static::class);
         $ret=[];
