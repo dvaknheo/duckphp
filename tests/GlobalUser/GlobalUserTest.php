@@ -71,6 +71,9 @@ class MyUser extends GlobalUser
         'user_url_home' => 'home',
         
         'user_callback_for_id' => [MyUserAction::class,'id'],
+        'user_callback_for_name' => [MyUserAction::class,'name'],
+        'user_url_logout' => 'logout',
+
         'user_callback_for_url_for_login' => [MyUserAction::class,'urlForLogin'],
         'user_callback_for_local_service'=>[MyUserService::class,'_'],
         'user_view_file_header'=>'/abc',
@@ -82,6 +85,11 @@ class MyUserAction {
     {
         return 1;
     }
+    public function name(bool $check_login = true):string
+    {
+        return "test_user";
+    }
+
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
         return 'abc';

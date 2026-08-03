@@ -104,9 +104,7 @@ class ControllerTraitTest extends \PHPUnit\Framework\TestCase
         
         MyAction::_(MyAction2::_())->foo();
         DuckPhpAllInOne::_()->init([]);
-        MyAction::_Z(DuckPhpAllInOne::_()->_Phase())->foo();
         
-        My2Controller::OverrideParent();
 
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();

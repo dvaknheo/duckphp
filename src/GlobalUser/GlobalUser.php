@@ -159,13 +159,13 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         $data = $this->mergeViewData($data);
 
         $old_phase = App::Phase($last_phase);
-        View::_()->_Show($data,$view);
+        View::_()->_Show($data, $view);
         App::Phase($old_phase);
     }
     ///////////////
     public function checkAccess(?string $class = null, ?string $method = null, ?string $url = null): void
     {
-        if(is_null($class) && is_null($method) && is_null($url)){
+        if (is_null($class) && is_null($method) && is_null($url)) {
             $last_phase = App::_()->getLastPhase();
             $old_phase = App::Phase($last_phase);
 

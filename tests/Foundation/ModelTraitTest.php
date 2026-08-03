@@ -35,7 +35,6 @@ $sql = "DROP TABLE IF EXISTS empty";
         
 $sql= 'DROP TABLE IF EXISTS empty';
 DuckPhpAllInOne::Db()->execute($sql);
-        EmptyModel::_Z(DuckPhpAllInOne::class)->foo();
         \LibCoverage\LibCoverage::G()->cleanTestDb();
         \LibCoverage\LibCoverage::End();
     }

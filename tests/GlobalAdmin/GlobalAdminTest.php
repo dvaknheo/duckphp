@@ -71,7 +71,9 @@ class MyAdmin extends GlobalAdmin
         'admin_url_home' => 'home',
         
         'admin_callback_for_id' => [MyAction::class,'id'],
+        'admin_callback_for_name' => [MyAction::class,'name'],
         'admin_callback_for_url_for_login' => [MyAction::class,'urlForLogin'],
+        'admin_url_logout' => 'logout',
         'admin_callback_for_local_service'=>[MyService::class,'_'],
         'admin_view_file_header'=>'/abc',
     ];
@@ -82,6 +84,11 @@ class MyAction {
     {
         return 1;
     }
+    public function name(bool $check_login = true):string
+    {
+        return "test_user";
+    }
+
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
         return 'abc';

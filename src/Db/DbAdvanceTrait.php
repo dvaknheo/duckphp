@@ -2,10 +2,6 @@
 /**
  * DuckPhp
  * From this time, you never be alone~
-     * @param array<string, mixed> $array
-     * @param array<string, mixed> $array
-     * @param array<string, mixed> $array
-     * @param array<string, mixed> $array
  */
 
 namespace DuckPhp\Db;

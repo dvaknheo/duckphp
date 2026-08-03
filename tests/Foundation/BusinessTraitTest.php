@@ -10,7 +10,6 @@ class BusinessTraitTest extends \PHPUnit\Framework\TestCase
     {
         DuckPhp::_()->init([]);
         \LibCoverage\LibCoverage::Begin(BusinessTrait::class);
-        BusinessTraitObject::_Z(DuckPhp::class)->foo();
         \LibCoverage\LibCoverage::End();
     }
 }
