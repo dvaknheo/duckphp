@@ -52,9 +52,16 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         $data2 = Helper::Admin()->addExtViewData([]);
         \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
         Helper::Admin()->checkAccess('class','method','url');
+        // checkAccess() 无参分支：获取路由上下文
+        Helper::Admin()->checkAccess();
         try{
         Helper::Admin()->log('a','b');
         }catch(\Throwable $ex){}
+        
+        // show() 分支：渲染视图
+        ob_start();
+        Helper::Admin()->show([], $path.'views/block');
+        ob_get_clean();
         
         
         $admin = Helper::Admin();
@@ -105,5 +112,8 @@ class MyService {
     {
         return;
     }
-    
+    public function isSuper($admin_id): bool
+    {
+        return true;
+    }
 }

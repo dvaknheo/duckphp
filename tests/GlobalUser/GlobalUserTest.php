@@ -55,9 +55,16 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         $data2 = Helper::User()->addExtViewData([]);
         \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
         Helper::User()->checkAccess('class','method','url');
+        // checkAccess() 无参分支：获取路由上下文
+        Helper::User()->checkAccess();
         try{
         Helper::User()->log('a','b');
         }catch(\Throwable $ex){}
+        
+        // show() 分支：渲染视图
+        ob_start();
+        Helper::User()->show([], $path.'views/block');
+        ob_get_clean();
         
         
         $User = Helper::User()->batchGetUsernames([]);
