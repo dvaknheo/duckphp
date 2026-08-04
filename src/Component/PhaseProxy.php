@@ -45,7 +45,7 @@ class PhaseProxy
     }
     public function phase($new = null)
     {
-        $this->phase = $neww ?? $this->phase;
+        $this->phase = $new ?? $this->phase;
         return $this->phase;
     }
 }

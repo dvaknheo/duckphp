@@ -64,7 +64,7 @@ EOT;
     {
         $args = Console::_()->getCliParameters();
         $real_uri = $args['--'][1] ?? null;
-        $uri = $url ?? $real_uri;
+        $uri = $uri ?? $real_uri;
 
         $uri = !empty($uri) ? $uri : '/';
         // TODO no need uri ,  directrer

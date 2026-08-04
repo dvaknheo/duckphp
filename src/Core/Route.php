@@ -166,7 +166,7 @@ class Route extends ComponentBase
         return true;
     }
 
-    public function defaulToggleRouteCallback($enable = true)
+    public function defaultToggleRouteCallback($enable = true)
     {
         $this->enable_default_callback = $enable;
     }

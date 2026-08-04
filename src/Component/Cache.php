@@ -41,7 +41,7 @@ class Cache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
     public function setMultiple($values, $ttl = null)
     {
         foreach ($values as $k => $v) {
-            $ret[$v] = $this->set($k, $v, $ttl);
+            $this->set($k, $v, $ttl);
         }
         return true;
     }

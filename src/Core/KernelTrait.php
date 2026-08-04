@@ -22,14 +22,14 @@ trait KernelTrait
     public $options = [];
 
     protected $kernel_options = [
-        'is_debug' => false, // no use in ,just align
+        'is_debug' => false, // no use, just align
         'path' => null,
         'namespace' => null,
         'name' => '',
 
         'app' => [],
         'cmd' => [],
-        'data' => [],
+        'data' => [], // no use in, just align
         'ext' => [],
 
         'cli_enable' => true,
