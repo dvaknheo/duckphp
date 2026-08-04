@@ -370,8 +370,9 @@ trait KernelTrait
             return;
         }
         if ($options === self::$EXT_RENEW) {
+            $replaced_class = get_class($class::_());
             $options = $class::_()->options;
-            $class::_(new $class)->init($options, $this->options);
+            $class::_(new $replaced_class)->init($options, $this->options);
             return;
         }
         if (is_array($options)) {
