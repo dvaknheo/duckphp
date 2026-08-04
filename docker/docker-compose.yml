@@ -5,7 +5,7 @@ services:
     #stdin_open: true
     #tty: true 
     working_dir: /DATA
-    command: php /DATA/template/cli.php run --host=0.0.0.0
+    command: php /DATA/demo/cli.php run --host=0.0.0.0
     volumes:
       - ../:/DATA
     ports:
