@@ -23,8 +23,8 @@ use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
-use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\GlobalUser\UserControllerInterface;
 
@@ -152,12 +152,12 @@ class DuckPhp extends App
 
     public function _Show(array $data, string $view = '')
     {
-        if ($this->options['use_user_view'] && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class)) {
+        if ($this->options['use_user_view'] && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
             $view === '' ? Route::_()->getRouteCallingPath() : $view;
             GlobalUser::_()->show($data, $view);
             return;
-        } 
-        if ($this->options['use_admin_view'] && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class)) {
+        }
+        if ($this->options['use_admin_view'] && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
             $view === '' ? Route::_()->getRouteCallingPath() : $view;
             GlobalAdmin::_()->show($data, $view);
             return;

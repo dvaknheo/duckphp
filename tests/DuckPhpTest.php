@@ -7,6 +7,7 @@ use DuckPhp\Ext\Misc;
 use DuckPhp\Component\Configer;
 use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\View;
+use DuckPhp\Core\Route;
 use DuckPhp\Core\PhaseContainer;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase
@@ -105,6 +106,32 @@ PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_()->options['lang_handler']=function($str, $args = []){ return $str;};
         __l("xx");
         //////////////////////
+        // _Show() 三分支测试
+        Route::_()->calling_class = '';
+        ob_start();
+        DuckPhp::_()->_Show(['A'=>'b'], $path.'views/block');
+        $out_show = ob_get_clean();
+        $this->assertStringContainsString('Block', $out_show);
+        
+        // use_user_view 分支：路由调用类实现 UserControllerInterface
+        DuckPhp::_(new DuckPhp())->init([
+            'class_user' => FakeUser::class,
+            'class_admin' => FakeAdmin::class,
+            'path_view' => $path.'views/',
+        ]);
+        Route::_()->calling_class = FakeUserController::class;
+        try {
+            DuckPhp::_()->_Show(['A'=>'b'], $path.'views/block');
+        } catch (\Throwable $ex) {
+        }
+        // use_admin_view 分支：路由调用类实现 AdminControllerInterface
+        Route::_()->calling_class = FakeAdminController::class;
+        try {
+            DuckPhp::_()->_Show(['A'=>'b'], $path.'views/block');
+        } catch (\Throwable $ex) {
+        }
+        Route::_()->calling_class = '';
+        //////////////////////
 
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
@@ -182,6 +209,10 @@ class FakeAdmin
     {
         return 1;
     }
+    public function show(array $data, string $view = '')
+    {
+        return;
+    }
 }
 class FakeUser
 {
@@ -200,9 +231,19 @@ class FakeUser
     {
         return 1;
     }
+    public function show(array $data, string $view = '')
+    {
+        return;
+    }
 }
 class FakeReporter
 {
 
+}
+class FakeUserController implements \DuckPhp\GlobalUser\UserControllerInterface
+{
+}
+class FakeAdminController implements \DuckPhp\GlobalAdmin\AdminControllerInterface
+{
 }
 
