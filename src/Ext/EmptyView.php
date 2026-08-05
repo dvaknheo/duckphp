@@ -40,7 +40,6 @@ class EmptyView extends View
     public function _Show(array $data, string $view): void
     {
         $this->data = array_merge($this->data, $data);
-        $view = $this->context_class ? $this->context()->adjustViewFile($view) : $view;
         if ($this->options['empty_view_trim_view_wellcome'] ?? true) {
             $prefix = $this->options['empty_view_key_wellcome_class'] ?? 'Main/';
             if (substr($view, 0, strlen($prefix)) === $prefix) {

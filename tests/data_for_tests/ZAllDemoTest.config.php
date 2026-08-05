@@ -1,9 +1,9 @@
 <?php
 return [
-    'path_app' => realpath(__DIR__.'/../../template/').'/',
+    'path_app' => realpath(__DIR__.'/../../demo/').'/',
     'port' => 9529,
     'server_options' => [
-        'path' => realpath(__DIR__.'/../../template/').'/',
+        'path' => realpath(__DIR__.'/../../demo/').'/',
         'path_document' => 'public',
         'port' => 9529,
         'background' => true,
