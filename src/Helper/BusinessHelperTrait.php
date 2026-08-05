@@ -9,6 +9,7 @@ namespace DuckPhp\Helper;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\GlobalEvent;
+use DuckPhp\Component\Validator;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonTrait;
@@ -74,5 +75,45 @@ trait BusinessHelperTrait
     public static function UserService()
     {
         return GlobalUser::_()->service();
+    }
+    //////////////////////
+    // Validator 数据验证
+    /**
+     * 获取或设置 Validator 实例。
+     * @param \DuckPhp\Component\Validator|null $new
+     * @return \DuckPhp\Component\Validator
+     */
+    public static function Validator($new = null)
+    {
+        return Validator::_($new);
+    }
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, string> $rules
+     * @param array<string, string> $messages
+     * @return array<string, mixed>
+     */
+    public static function ValidatorFilter($data, $rules, $messages = [])
+    {
+        return Validator::_()->init($rules)->setMessage($messages)->filter($data);
+    }
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, string> $rules
+     * @param array<string, string> $messages
+     */
+    public static function ValidatorCheck($data, $rules, $messages = [])
+    {
+        Validator::_()->init($rules)->setMessage($messages)->check($data);
+    }
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, string> $rules
+     * @param array<string, string> $messages
+     * @return array<string, string>
+     */
+    public static function ValidatorValid($data, $rules, $messages = [])
+    {
+        return Validator::_()->init($rules)->setMessage($messages)->valid($data);
     }
 }
