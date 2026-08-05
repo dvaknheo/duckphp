@@ -38,6 +38,10 @@ trait ControllerHelperTrait
     {
         return App::Setting($key, $default);
     }
+    public static function Options(string $key, $default = null)
+    {
+        return App::_()->options[$key] ?? $default;
+    }
     public static function XpCall($callback, ...$args)
     {
         return CoreHelper::_()->_XpCall($callback, ...$args);

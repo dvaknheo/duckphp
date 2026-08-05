@@ -88,7 +88,10 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::SERVER('SCRIPT_FILENAME');
 /////
 echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
-DuckPhp::_()->init([]);
+DuckPhp::_()->init(['my_test_key' => 'my_value']);
+ControllerHelper::Options('my_test_key');
+ControllerHelper::Options('my_test_key', 'default');
+ControllerHelper::Options('no_such_key', 'default');
 ControllerHelper::Pager(new Pager());
 ControllerHelper::PageNo();
 ControllerHelper::PageWindow();

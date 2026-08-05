@@ -53,7 +53,10 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         $v->setRules(['a' => 'required']);
         BusinessHelper::Validator($v);
 
-        DuckPhp::_()->init([]);
+        DuckPhp::_()->init(['my_test_key' => 'my_value']);
+        BusinessHelper::Options('my_test_key');
+        BusinessHelper::Options('my_test_key', 'default');
+        BusinessHelper::Options('no_such_key', 'default');
         BusinessHelper::PathOfRuntime();
         BusinessHelper::PathOfProject();
 

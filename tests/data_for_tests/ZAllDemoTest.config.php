@@ -1,5 +1,6 @@
 <?php
 return [
+    'echo_failed_content' => false,
     'path_app' => realpath(__DIR__.'/../../demo/').'/',
     'port' => 9529,
     'server_options' => [

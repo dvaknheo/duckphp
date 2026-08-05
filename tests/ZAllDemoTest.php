@@ -31,7 +31,9 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
                     continue;
                 }
                 echo "Failed: $k => $len($l) \n";
-                echo $data; echo "\n";
+                if ($config['echo_failed_content']) {
+                    echo $data; echo "\n";       
+                }
                 
                 $result = false;
             }

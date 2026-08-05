@@ -30,6 +30,10 @@ trait BusinessHelperTrait
     {
         return App::_()->_Setting($key, $default);
     }
+    public static function Options(string $key, $default = null)
+    {
+        return App::_()->options[$key] ?? $default;
+    }
     public static function Config($file_basename, $key = null, $default = null)
     {
         return Configer::_()->_Config($file_basename, $key, $default);
