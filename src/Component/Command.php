@@ -16,7 +16,7 @@ use DuckPhp\HttpServer\HttpServer;
 class Command extends ComponentBase
 {
     /**
-     * show version
+     * @command_desc show version
      */
     public function command_version(): void
     {
@@ -24,7 +24,7 @@ class Command extends ComponentBase
         echo "\n";
     }
     /**
-     * show this help.
+     * @command_desc show this help.
      */
     public function command_help(): void
     {
@@ -41,7 +41,7 @@ EOT;
         echo $this->getCommandListInfo();
     }
     /**
-     * run inner server.
+     * @command_desc run inner server.
      */
     public function command_run()
     {
@@ -58,7 +58,7 @@ EOT;
         $this->context()->options['cli_enable'] = true;
     }
     /**
-     * fetch a url. --uri=[???] ,--post=[postdata]
+     * @command_desc fetch a url. --uri=[???] ,--post=[postdata]
      */
     public function command_fetch($uri = '', $post = false)
     {
@@ -82,7 +82,7 @@ EOT;
         $this->context()->serve();
     }
     /**
-     * call a function. e.g. namespace/class@method arg1 --parameter arg2
+     * @command_desc call a function. e.g. namespace/class@method arg1 --parameter arg2
      */
     public function command_call()
     {
@@ -99,7 +99,7 @@ EOT;
         echo json_encode($ret);
     }
     /**
-     * switch debug mode
+     * @command_desc switch debug mode
      */
     public function command_debug(bool $off = false): void
     {
@@ -197,13 +197,32 @@ EOT;
             $command = substr($name, strlen($method_prefix));
             $doc = $v->getDocComment();
 
-            // first line;
-            $desc = ltrim('' . substr('' . $doc, 3));
-            $pos = strpos($desc, "\n");
-            $pos = ($pos !== false) ? $pos : 255;
-            $desc = trim(substr($desc, 0, $pos), "* \t\n");
-            $ret[$command] = $desc;
+            $desc = '';
+            if ($doc !== false) {
+                if (preg_match('/@command_desc\s+([^\n]+)/', $doc, $m)) {
+                    $desc = trim($m[1]);
+                } else {
+                    // fallback: first line of doc comment
+                    $desc = ltrim(substr($doc, 3));
+                    $pos = strpos($desc, "\n");
+                    $pos = ($pos !== false) ? $pos : 255;
+                    $desc = trim(substr($desc, 0, $pos), "* \t\n");
+                }
+            }
+            $ret[$command] = $this->translateCommandDesc($desc);
         }
         return $ret;
+    }
+    /**
+     * 多语言命令描述：替换所有 $(lang_key|default_fallback) 占位符（部分匹配）。
+     * @param string $desc
+     * @return string
+     */
+    protected function translateCommandDesc(string $desc): string
+    {
+        return preg_replace_callback('/\$\(([^|]+)\|([^)]*)\)/', function ($m) {
+            $translated = App::_()->lang($m[1]);
+            return ($translated !== $m[1]) ? $translated : $m[2];
+        }, $desc);
     }
 }

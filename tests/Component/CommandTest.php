@@ -127,7 +127,41 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         
         
         DuckPhp::_()->options['cli_enable']=true;
+        //////////////////////
+        // getCommandsByClassReflection: @command_desc 注解优先，docComment 第一行回退
+        $rm = new \ReflectionMethod(Command::class, 'getCommandsByClassReflection');
+        if (PHP_VERSION_ID < 80100) {
+            $rm->setAccessible(true);
+        }
+        $descs = $rm->invoke(Command::_(), new \ReflectionClass(Console_Command::class), 'command_');
+        $this->assertSame('create new item', $descs['new']);   // @command_desc 优先
+        $this->assertSame('desc2', $descs['foo4']);            // 无注解回退第一行
+        $this->assertSame('', $descs['help']);                 // 无 doc 注释 → 空字符串
+        $this->assertSame('run the server', $descs['run']);    // $(key|fallback) 无翻译 → fallback
         
+        // 部分匹配：混排文本中的 $(key|fallback) 单独替换
+        $rm2 = new \ReflectionMethod(Command::class, 'translateCommandDesc');
+        if (PHP_VERSION_ID < 80100) {
+            $rm2->setAccessible(true);
+        }
+        $cmd = Command::_();
+        $this->assertSame('Use foo mode', $rm2->invoke($cmd, 'Use $(command.foo|foo) mode'));
+        $this->assertSame('no placeholder', $rm2->invoke($cmd, 'no placeholder'));
+        
+        // 多语言：设置 lang_handler 后 $(key|fallback) 走翻译
+        $old_handler = DuckPhp::_()->options['lang_handler'] ?? null;
+        DuckPhp::_()->options['lang_handler'] = function ($str, $args = []) {
+            return $str === 'command.run_item' ? '运行服务' : $str;
+        };
+        $descs = $rm->invoke(Command::_(), new \ReflectionClass(Console_Command::class), 'command_');
+        $this->assertSame('运行服务', $descs['run']);          // 翻译命中
+        $this->assertSame('Use 运行服务 mode', $rm2->invoke($cmd, 'Use $(command.run_item|foo) mode')); // 部分匹配翻译
+        if ($old_handler === null) {
+            unset(DuckPhp::_()->options['lang_handler']);
+        } else {
+            DuckPhp::_()->options['lang_handler'] = $old_handler;
+        }
+        //////////////////////
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End();return;
     }
@@ -150,8 +184,14 @@ class Console_Command
     {
     
     }
+    /**
+     * @command_desc create new item
+     */
     public function command_new(){}
     public function command_help(){}
+    /**
+     * @command_desc $(command.run_item|run the server)
+     */
     public function command_run(){}
 }
 class Console_Command2
