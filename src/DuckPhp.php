@@ -144,7 +144,13 @@ class DuckPhp extends App
             $this->options['cmd'][Command::class] = true;
         }
     }
-    public function _Show(array $data, string $view): void
+    /**
+     * override
+     * @param array<string, mixed> $data
+     * @return void
+     */
+
+    public function _Show(array $data, string $view = '')
     {
         if ($this->options['use_user_view'] && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class)) {
             $view === '' ? Route::_()->getRouteCallingPath() : $view;

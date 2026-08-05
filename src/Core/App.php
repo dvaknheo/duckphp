@@ -381,8 +381,9 @@ EOT;
     }
     /**
      * @param array<string, mixed> $data
+     * @return void
      */
-    public function _Show(array $data, string $view = ''): void
+    public function _Show(array $data, string $view = '')
     {
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;
         View::_()->_Show($data, $view);

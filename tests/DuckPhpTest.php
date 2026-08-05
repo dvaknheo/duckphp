@@ -105,7 +105,7 @@ PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_()->options['lang_handler']=function($str, $args = []){ return $str;};
         __l("xx");
         //////////////////////
-        
+
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 
