@@ -19,7 +19,7 @@ class DatabaseInstaller extends ComponentBase
     ];
     public function install(bool $force = false): bool
     {
-        //这里判断驱动
+        // detect driver here
         $my_driver = App::_()->options['database_driver'] ?? '';
         if (!$my_driver) {
             return false;

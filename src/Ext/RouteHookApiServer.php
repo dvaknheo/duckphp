@@ -131,7 +131,7 @@ class RouteHookApiServer extends ComponentBase
         }
         SystemWrapper::header('Content-Type: text/plain; charset=utf-8');
 
-        //这里应该加个强制参数
+        //TODO add a required parameter here
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
         if ($this->context()->_IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;

@@ -15,7 +15,7 @@ use DuckPhp\GlobalUser\UserControllerInterface;
 
 class FinderForController extends ComponentBase
 {
-    // 暂时没测试，没文档， 是枚举控制器用的扩展。 // 还是改名 RouteList 的好
+    // Temporarily untested, undocumented; an extension for enumerating controllers. // Better rename to RouteList
     public $options = [
         'classes_to_get_controller_path' => [],
     ];

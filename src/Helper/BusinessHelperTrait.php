@@ -77,9 +77,9 @@ trait BusinessHelperTrait
         return GlobalUser::_()->service();
     }
     //////////////////////
-    // Validator 数据验证
+    // Validator data validation
     /**
-     * 获取或设置 Validator 实例。
+     * Get or set the Validator instance.
      * @param \DuckPhp\Component\Validator|null $new
      * @return \DuckPhp\Component\Validator
      */

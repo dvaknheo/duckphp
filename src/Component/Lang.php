@@ -13,21 +13,21 @@ use DuckPhp\Core\SuperGlobal;
 
 class Lang extends ComponentBase
 {
-    // 配置只在 root 有效。 或者setting 里？
-    // 如果配置无效，那么退回本层默认locale ，如果本层 locale 没有，那么就是空 locale.
+    // Configuration only takes effect at root. Or in setting?
+    // If invalid, fall back to this layer's default locale; if this layer has none, use empty locale.
     public $options = [
-        // 最终语言，不再判断
+        // final language, no more detection
         'lang_final' => null,
-        // 默认语言
+        // default language
         'lang_default' => null,
 
         'lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
 
-        //使用根 app 的语言
+        // use root app's language
         'lang_follow_root' => true,
-        // URL 参数名
+        // URL parameter name
         'lang_url_param' => 'lang',
-        // Cookie 名称
+        // Cookie name
         'lang_cookie_name' => 'lang',
         'lang_file_path' => 'lang/',
         'lang_simple_mode_only_sentences' => [],
@@ -99,11 +99,11 @@ class Lang extends ComponentBase
     }
     ///////////////////////////////////////////////
     /**
-     * 标准化语言代码
+     * Normalize the locale code
      */
     protected function normalizeLocale(string $locale): string
     {
-        // 将 zh-cn, zh-CN, zh_cn 统一为 zh_CN
+        // Unify zh-cn, zh-CN, zh_cn to zh_CN
         $locale = str_replace('-', '_', $locale);
         $parts = explode('_', $locale);
         $parts[0] = strtolower($parts[0]);
@@ -114,7 +114,7 @@ class Lang extends ComponentBase
     }
 
     /**
-     * 自动检测语言
+     * Auto detect language
      */
     protected function detectLanguage(): ?string
     {
@@ -137,7 +137,7 @@ class Lang extends ComponentBase
         return null;
     }
     /**
-     * 从 URL 参数检测
+     * Detect from URL parameter
      */
     protected function detectFromUrl(): ?string
     {
@@ -150,7 +150,7 @@ class Lang extends ComponentBase
     }
 
     /**
-     * 从 Cookie 检测
+     * Detect from Cookie
      */
     protected function detectFromCookie(): ?string
     {
@@ -161,7 +161,7 @@ class Lang extends ComponentBase
     }
 
     /**
-     * 从 HTTP Header 检测
+     * Detect from HTTP Header
      */
     protected function detectFromHeader(): ?string
     {
@@ -172,8 +172,8 @@ class Lang extends ComponentBase
             return null;
         }
 
-        // 解析 Accept-Language
-        // 格式: zh-CN,zh;q=0.9,en;q=0.8
+        // Parse Accept-Language
+        // Format: zh-CN,zh;q=0.9,en;q=0.8
         $languages = [];
         $parts = explode(',', $accept);
 
@@ -189,19 +189,19 @@ class Lang extends ComponentBase
             $languages[trim($lang)] = $q;
         }
 
-        // 按优先级排序
+        // Sort by priority
         arsort($languages);
 
-        // 查找第一个匹配的语言
+        // Find the first matching language
         foreach ($languages as $lang => $q) {
-            // 标准化语言代码
+            // Normalize the locale code
             $normalized = $this->normalizeLocale($lang);
             return $normalized;
         }
     } // @codeCoverageIgnore
 
     /**
-     * 从 CLI 环境检测
+     * Detect from CLI environment
      */
     protected function detectFromCli(): ?string
     {
@@ -209,11 +209,11 @@ class Lang extends ComponentBase
             return null; // @codeCoverageIgnore
         }
 
-        // 尝试从环境变量获取
+        // Try to get from environment variables
         $lang = getenv('LANG') ?: getenv('LC_ALL') ?: getenv('LC_MESSAGES') ?: getenv('LANGUAGE');
         if ($lang) {
-            // 格式通常为: zh_CN.UTF-8 或 en_US
-            $lang = explode('.', $lang)[0]; // 移除 .UTF-8
+            // Format is usually: zh_CN.UTF-8 or en_US
+            $lang = explode('.', $lang)[0]; // strip .UTF-8
             $normalized = $this->normalizeLocale($lang);
             return $normalized;
         }
@@ -222,7 +222,7 @@ class Lang extends ComponentBase
     }
 
     /**
-     * 默认语言
+     * Default language
      */
     protected function detectFromDefault(): ?string
     {

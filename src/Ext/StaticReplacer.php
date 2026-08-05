@@ -14,7 +14,7 @@ class StaticReplacer extends ComponentBase
     public $STATICS = [];
     public $CLASS_STATICS = [];
     ///////////////////////////////
-    //TODO 添加 Replace
+    //TODO add Replace
     public function &_GLOBALS(string $k, $v = null)
     {
         if (!isset($this->GLOBALS[$k])) {

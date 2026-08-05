@@ -88,7 +88,7 @@ EOT;
     {
         //call to service
         // full namespace , service AAService;
-        // TODO ，no fullnamespace
+        // TODO, no fullnamespace
         $args = func_get_args();
         $cmd = array_shift($args);
         list($class, $method) = explode('@', $cmd);
