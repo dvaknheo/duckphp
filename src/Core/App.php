@@ -379,9 +379,13 @@ EOT;
     public function onBeforeOutput()
     {
     }
-    public function adjustViewFile($view)
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function _Show(array $data, string $view): void
     {
-        return $view === '' ? Route::_()->getRouteCallingPath() : $view;
+        $view === '' ? Route::_()->getRouteCallingPath() : $view;
+        View::_()->_Show($data, $view);
     }
     public function getRuntimePath(): string
     {
@@ -421,6 +425,13 @@ EOT;
     public function isInstalled()
     {
         return $this->options['installed'] ?? false;
+    }
+    public function checkInstall($url_install)
+    {
+        if (!$this->options['installed']) {
+            SystemWrapper::_()->_header('location: '.static::Url($url_install), true, 302);
+            SystemWrapper::_()->_exit();
+        }
     }
     public function lang($str, $args = [])
     {

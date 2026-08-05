@@ -65,7 +65,6 @@ class View extends ComponentBase
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
 
-        $view = $this->context_class ? $this->context()->adjustViewFile($view) : $view ;
         $this->view_file = $this->getViewFile($view);
         $this->head_file = $this->getViewFile($this->head_file);
         $this->foot_file = $this->getViewFile($this->foot_file);

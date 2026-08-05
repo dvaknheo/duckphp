@@ -22,10 +22,11 @@ use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
-use DuckPhp\Core\Console;
-use DuckPhp\FastInstaller\FastInstaller;
+use DuckPhp\Core\Route;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
+use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckPhp\GlobalUser\GlobalUser;
+use DuckPhp\GlobalUser\UserControllerInterface;
 
 class DuckPhp extends App
 {
@@ -42,6 +43,8 @@ class DuckPhp extends App
         'session_prefix' => null,
         'table_prefix' => null,
 
+        'use_user_view' => true,
+        'use_admin_view' => true,
         'class_admin' => '',
         'class_user' => '',
         'database_driver' => '',
@@ -140,6 +143,20 @@ class DuckPhp extends App
         if ($this->options['cli_command_with_common']) {
             $this->options['cmd'][Command::class] = true;
         }
+    }
+    public function _Show(array $data, string $view): void
+    {
+        if ($this->options['use_user_view'] && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class)) {
+            $view === '' ? Route::_()->getRouteCallingPath() : $view;
+            GlobalUser::_()->show($data, $view);
+            return;
+        } 
+        if ($this->options['use_admin_view'] && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class)) {
+            $view === '' ? Route::_()->getRouteCallingPath() : $view;
+            GlobalAdmin::_()->show($data, $view);
+            return;
+        }
+        parent::_Show($data, $view);
     }
 
     protected function isLocalDatabase(): bool

@@ -82,7 +82,7 @@ trait ControllerHelperTrait
     }
     public static function Show($data = [], $view = '')
     {
-        return View::_()->_Show($data, $view);
+        return App::_()->_Show($data, $view);
     }
 
     public static function setViewHeadFoot($head_file = null, $foot_file = null)
@@ -208,14 +208,6 @@ trait ControllerHelperTrait
         return GlobalAdmin::_()->name($check_login);
     }
     /**
-     * @param array<string, mixed> $data
-     * @param string $view
-     */
-    public static function AdminShow(array $data, string $view = '')
-    {
-        GlobalAdmin::_()->show($data, $view);
-    }
-    /**
      * @return \DuckPhp\GlobalAdmin\AdminServiceInterface
      */
     public static function AdminService()
@@ -236,14 +228,6 @@ trait ControllerHelperTrait
     public static function UserName(bool $check_login = true)
     {
         return GlobalUser::_()->name($check_login);
-    }
-    /**
-     * @param array<string, mixed> $data
-     * @param string $view
-     */
-    public static function UserShow(array $data = [], string $view = '')
-    {
-        GlobalUser::_()->show($data, $view);
     }
     /**
      * @return \DuckPhp\GlobalUser\UserServiceInterface
