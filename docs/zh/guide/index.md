@@ -12,6 +12,7 @@
 - [Model（模型层）使用指南](model.md)
 - [数据库](database.md)
 - [异常处理](exception.md)
+- [数据验证（Validator）](validator.md)
 - [生命周期与事件](lifecycle.md)
 - [外部用户与管理员系统](external-auth.md)
 - [组件与扩展](components.md)

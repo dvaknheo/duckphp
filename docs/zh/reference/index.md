@@ -58,6 +58,7 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Component\Lang](Component-Lang.md) | 多语言（i18n）组件。 |
 | [DuckPhp\Component\Pager](Component-Pager.md) | 分页组件，渲染 HTML 分页条。 |
 | [DuckPhp\Component\PagerInterface](Component-PagerInterface.md) | 分页接口。 |
+| [DuckPhp\Component\Validator](Component-Validator.md) | 数据验证组件，声明式规则与回调验证。 |
 | [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) | 相位代理组件。 |
 | [DuckPhp\Component\RedisCache](Component-RedisCache.md) | 基于 Redis 的缓存组件。 |
 | [DuckPhp\Component\RedisManager](Component-RedisManager.md) | Redis 管理器，支持多 Redis 实例。 |

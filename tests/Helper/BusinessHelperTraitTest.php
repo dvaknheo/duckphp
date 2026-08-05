@@ -41,7 +41,18 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         try{
             BusinessHelper::UserService();
         }catch(\Throwable $ex){}
-        
+        // Validator 相关方法
+        $rules = ['name' => 'required|minLen:1|maxLen:12'];
+        BusinessHelper::ValidatorValid(['name' => 'ok'], $rules);
+        try {
+            BusinessHelper::ValidatorCheck(['name' => ''], $rules);
+        } catch (\Throwable $ex) {
+        }
+        BusinessHelper::ValidatorFilter(['name' => 'ok', 'x' => 1], $rules);
+        $v = BusinessHelper::Validator();
+        $v->setRules(['a' => 'required']);
+        BusinessHelper::Validator($v);
+
         DuckPhp::_()->init([]);
         BusinessHelper::PathOfRuntime();
         BusinessHelper::PathOfProject();
