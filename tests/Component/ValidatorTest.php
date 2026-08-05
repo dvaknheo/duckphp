@@ -125,7 +125,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             $v->check(['a' => '']);
             $this->fail('expected exception');
         } catch (\Exception $ex) {
-            $this->assertStringContainsString('字段 [a]', $ex->getMessage());
+            $this->assertStringContainsString('Field [a]', $ex->getMessage());
         }
         // check() 通过不抛异常
         $v->check(['a' => 'x']);

@@ -18,9 +18,9 @@ class Validator extends ComponentBase
     protected $messages = [];
 
     //////////////////
-    // 实例 API
+    // instance API
     /**
-     * 初始化规则集。
+     * Initialize the rule set.
      * @param array<string, string> $rules
      * @param object|null $context
      * @return static
@@ -35,7 +35,7 @@ class Validator extends ComponentBase
         return $this;
     }
     /**
-     * 设置规则集。
+     * Set the rule set.
      * @param array<string, string> $rules
      * @return static
      */
@@ -45,7 +45,7 @@ class Validator extends ComponentBase
         return $this;
     }
     /**
-     * 设置自定义错误消息。
+     * Set custom error messages.
      * @param array<string, string> $messages
      * @return static
      */
@@ -55,7 +55,7 @@ class Validator extends ComponentBase
         return $this;
     }
     /**
-     * 设置抛出的异常类。
+     * Set the exception class to throw.
      * @param class-string<\Throwable> $class
      * @return static
      */
@@ -65,7 +65,7 @@ class Validator extends ComponentBase
         return $this;
     }
     /**
-     * 设置非 required 空值是否跳过其余规则。
+     * Set whether to skip empty values for non-required fields.
      * @return static
      */
     public function skipEmpty(bool $flag = true)
@@ -74,7 +74,7 @@ class Validator extends ComponentBase
         return $this;
     }
     /**
-     * 验证数据，返回错误数组。空数组表示全部通过。
+     * Validate data, return error array. Empty array means all passed.
      * @param array<string, mixed> $data
      * @return array<string, string>
      */
@@ -83,7 +83,7 @@ class Validator extends ComponentBase
         return $this->_Valid($data, $this->rules, $this->messages);
     }
     /**
-     * 验证数据，失败抛异常。
+     * Validate data, throw exception on failure.
      * @param array<string, mixed> $data
      */
     public function check(array $data): void
@@ -91,7 +91,7 @@ class Validator extends ComponentBase
         $this->_Check($data, $this->rules, $this->messages);
     }
     /**
-     * 验证数据，失败抛异常；通过则返回规则中出现的字段数据（过滤掉多余字段）。
+     * Validate data, throw exception on failure; on success return only fields declared in rules (filter extra fields).
      * @param array<string, mixed> $data
      * @return array<string, mixed>
      */
@@ -100,7 +100,7 @@ class Validator extends ComponentBase
         return $this->_Filter($data, $this->rules, $this->messages);
     }
     //////////////////
-    // 内部实现
+    // internal implementation
     /**
      * @param array<string, mixed> $data
      * @param array<string, string> $rules
@@ -115,7 +115,7 @@ class Validator extends ComponentBase
             $rule_list = $this->parseRules($rule_str);
             $rule_names = array_column($rule_list, 0);
             $has_required = in_array('required', $rule_names, true);
-            // nullable：空值显式允许，跳过其余规则
+            // nullable: empty value explicitly allowed, skip remaining rules
             if (in_array('nullable', $rule_names, true) && $this->isEmpty($value)) {
                 continue;
             }
@@ -124,7 +124,7 @@ class Validator extends ComponentBase
             }
             foreach ($rule_list as [$rule, $param]) {
                 if (!$this->checkRule($rule, $value, $param, $data, $field)) {
-                    $errors[$field] = $messages[$field.'.'.$rule] ?? sprintf('字段 [%s] 验证失败: %s', $field, $rule);
+                    $errors[$field] = $messages[$field.'.'.$rule] ?? sprintf('Field [%s] validation failed: %s', $field, $rule);
                     break;
                 }
             }
@@ -156,7 +156,7 @@ class Validator extends ComponentBase
         return array_intersect_key($data, array_flip(array_keys($rules)));
     }
     /**
-     * 解析规则字符串为 [规则名, 参数] 列表。
+     * Parse the rule string into a list of [rule name, parameter].
      * @return array<int, array{0:string, 1:?string}>
      */
     protected function parseRules(string $rule_str): array
