@@ -18,6 +18,13 @@ use DuckPhp\GlobalUser\GlobalUser;
 trait BusinessHelperTrait
 {
     use SingletonTrait;
+
+    public static $EVENT_REGISTING = 'registing';
+    public static $EVENT_REGISTED = 'registed';
+
+    public static $EVENT_LOGINING = 'logining';
+    public static $EVENT_LOGINED = 'logined';
+
     public static function Setting($key = null, $default = null)
     {
         return App::_()->_Setting($key, $default);

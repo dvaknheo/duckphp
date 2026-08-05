@@ -24,6 +24,16 @@ use DuckPhp\GlobalUser\GlobalUser;
 trait ControllerHelperTrait
 {
     use SingletonTrait;
+
+    public static $EVENT_ACTION_REGISTING = 'action_registing';
+    public static $EVENT_ACTION_REGISTED = 'action_registed';
+
+    public static $EVENT_ACTION_LOGINING = 'action_logining';
+    public static $EVENT_ACTION_LOGINED = 'action_logined';
+
+    public static $EVENT_ACTION_LOGOUTING = 'action_logouting';
+    public static $EVENT_ACTION_LOGOUTED = 'action_logouted';
+
     public static function Setting($key = null, $default = null)
     {
         return App::Setting($key, $default);
