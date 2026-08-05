@@ -145,12 +145,12 @@ ControllerHelper::PageHtml(123);
         try{
             ControllerHelper::UserService();
         }catch(\Throwable $ex){}
+            
         try{
-            ControllerHelper::AdminShow([], 'view');
+            ControllerHelper::checkInstall("install");
         }catch(\Throwable $ex){}
-        try{
-            ControllerHelper::UserShow([], 'view');
-        }catch(\Throwable $ex){}
+        
+            
         \LibCoverage\LibCoverage::End();
     }
 }

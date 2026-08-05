@@ -63,7 +63,7 @@ class App extends ComponentBase
         'setting_file_enable' => true,
         'use_env_file' => false,
         
-        'installed' => true,
+        'installed' => false,
         //*
         // 'path_log' => 'runtime',
         // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
@@ -382,9 +382,9 @@ EOT;
     /**
      * @param array<string, mixed> $data
      */
-    public function _Show(array $data, string $view): void
+    public function _Show(array $data, string $view = ''): void
     {
-        $view === '' ? Route::_()->getRouteCallingPath() : $view;
+        $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;
         View::_()->_Show($data, $view);
     }
     public function getRuntimePath(): string
@@ -422,14 +422,10 @@ EOT;
     {
         return $this->_IsDebug();
     }
-    public function isInstalled()
-    {
-        return $this->options['installed'] ?? false;
-    }
-    public function checkInstall($url_install)
+    public function checkInstallToPage(string $url_install): void
     {
         if (!$this->options['installed']) {
-            SystemWrapper::_()->_header('location: '.static::Url($url_install), true, 302);
+            SystemWrapper::_()->_header('location: '.Route::Url($url_install), true, 302);
             SystemWrapper::_()->_exit();
         }
     }

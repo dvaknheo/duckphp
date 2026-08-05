@@ -84,6 +84,10 @@ trait ControllerHelperTrait
     {
         return App::_()->_Show($data, $view);
     }
+    public static function checkInstall(string $url_install)
+    {
+        App::_()->checkInstallToPage($url_install);
+    }
 
     public static function setViewHeadFoot($head_file = null, $foot_file = null)
     {

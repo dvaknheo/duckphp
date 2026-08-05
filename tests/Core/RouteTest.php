@@ -355,7 +355,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::RunQuickly([],function(){
             $prepended=function () {
                 var_dump(DATE(DATE_ATOM));
-                Route::_()->defaulToggleRouteCallback(false);
+                Route::_()->defaultToggleRouteCallback(false);
                 return false;
             };
             $prepended2=function () { var_dump('prepended2!');};

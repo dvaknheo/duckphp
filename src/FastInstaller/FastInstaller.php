@@ -248,7 +248,7 @@ and more ...\n";
         $url_prefix = App::_()->options['controller_url_prefix'] ?? '';
         echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::_()).") to :\033[0m [$url_prefix]\n";
 
-        if (!$force && App::_()->isInstalled()) {
+        if (!$force && App::_()->options['installed']) {
             echo "App has been installed. use --force to force " .get_class(App::_()) . "\n";
             return;
         }

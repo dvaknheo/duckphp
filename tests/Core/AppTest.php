@@ -24,6 +24,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
     protected $LibCoverage;
     public function testAll()
     {
+        $__SERVER = $_SERVER;
         $ref = new \ReflectionClass(App::class);
         $path = $ref->getFileName();
         
@@ -87,9 +88,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         MyApp::_()->run();
         \DuckPhp\Core\Route::_()->bind('/exception');
         MyApp::_()->run();
-        
-        MyApp::_()->isInstalled();
-        
+
         MyApp::_()->options['error_404']=function(){
             echo "zzzzzo 404  zzzzzzzzzzzz\n";
         };
@@ -113,19 +112,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         }
         MyApp::_()->options['skip_exception_check']=false;
         //////////////////////////////////////////////////
-        /*
-        $MyApp=new MyApp();
-        $options=['plugin_mode'=>true];
-        try{
-            $app->init($options,$MyApp);
-        }catch(\Exception $ex){
-            echo $ex->getMessage();
-        }
-        
-        
-        //MyApp::_()->clear();
-        */
-        ///////////////////////////
         $options=[
             // 'no this path' => $path_app,
             'path_config' => $path_app,
@@ -270,7 +256,25 @@ PhaseContainer::RestAllContainerForTesting();
         
         $this->doLoadSettingCoverage();
         $this->doAppCoverageGapTest();
-        
+
+
+PhaseContainer::RestAllContainerForTesting();
+        try{
+            MyApp::_(new MyApp())->init(['path'=>__DIR__ , 'cli_enable'=>false]);
+            Route::_()->bind('/a/b');
+            MyApp::_()->run();
+            MyApp::_()->_Show([],'');
+        }catch(\Exception $ex){
+            var_dump($ex->getMessage());
+        }
+        try{
+            MyApp::_()->checkInstallToPage('install');
+        }catch(\Exception $ex){
+            var_dump($ex->getMessage());
+        }
+
+
+        $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End();
         return;
 

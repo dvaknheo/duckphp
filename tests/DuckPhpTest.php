@@ -33,7 +33,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         @unlink($path.'config/DuckPhpApps.config.php');
         DuckPhp_Sub::_(new DuckPhp_Sub())->init($options);
 
-        DuckPhp_Sub::_()->isInstalled();
+        
 
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
         DuckPhp::_(new DuckPhp())->init($options);
