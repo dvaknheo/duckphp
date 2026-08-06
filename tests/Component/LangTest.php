@@ -53,6 +53,14 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		__l("Hello {YOU}", ['YOU'=>'me']);
 		Lang::_()->options['lang_final']='en_US';
 		__l("BBB");
+		// fallback：有 fallback 且翻译未命中 → 用 fallback
+		$this->assertSame('FALLBACK_TEXT', __l("NoExists", [], 'FALLBACK_TEXT'));
+		// __langtext：部分匹配 $(key|fallback)
+		$this->assertSame('Use foo mode', __langtext("Use $(command.foo|foo) mode"));
+		// __langtext：无 fallback $(key) → 未命中返回 key 本身
+		$this->assertSame('command.bar', __langtext("$(command.bar)"));
+		// __langtext：无占位符原样返回
+		$this->assertSame('plain text', __langtext('plain text'));
 		
 		////////////////
 		

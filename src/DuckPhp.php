@@ -181,13 +181,13 @@ class DuckPhp extends App
     {
         return ($this->options['local_redis'] ?? false) ? true : false;
     }
-    public function lang($str, $args = [])
+    public function lang($str, $args = [], $fallback = null)
     {
         $handler = $this->options['lang_handler'] ?? null;
         if ($handler) {
             return $handler($str, $args);
         }
         //Lang::_()->init($this->options,$this);
-        return Lang::_()->lang($str, $args);
+        return Lang::_()->language($str, $args, $fallback);
     }
 }

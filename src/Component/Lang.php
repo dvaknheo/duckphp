@@ -59,30 +59,33 @@ class Lang extends ComponentBase
         $configs = Configer::_()->_Config($this->options['lang_file_path'].basename($language), null, null);
         return $configs;
     }
-    protected function loadLanguage(string $str): ?string
+    protected function loadLanguage(string $str, ?string $fallback = null): ?string
     {
         $language = $this->options['lang_final'];
         if (!isset($language)) {
-            //Logger::_()->warning("No Language Dectected");
-            return null;
+            return $fallback;
         }
         $configs = $this->getSentenceFromConfig($language);
         if (empty($configs)) {
-            Logger::_()->warning("No Language sentences Dectected: $language");
-            return null;
+            if ($fallback === null) {
+                Logger::_()->warning("No Language sentences Dectected: $language");
+            }
+            return $fallback;
         }
         if (!isset($configs[$str])) {
-            Logger::_()->warning("No Language sentence Dectected $str");
-            return null;
+            if ($fallback === null) {
+                Logger::_()->warning("No Language sentence Dectected $str");
+            }
+            return $fallback;
         }
         return $configs[$str];
     }
     /**
      * @param array<string, mixed> $args
      */
-    public function lang(string $str, array $args = []): string
+    public function language(string $str, array $args = [], ?string $fallback = null): string
     {
-        $newstr = $this->loadLanguage($str);
+        $newstr = $this->loadLanguage($str, $fallback);
         return $this->format($newstr ?? $str, $args);
     }
     /**

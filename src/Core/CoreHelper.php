@@ -17,13 +17,17 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_H($str);
     }
-    public static function L($str, $args = [])
+    public static function L($str, $args = [], $fallback = null)
     {
-        return static::_()->_L($str, $args);
+        return static::_()->_L($str, $args, $fallback);
     }
     public static function Hl($str, $args = [])
     {
         return static::_()->_Hl($str, $args);
+    }
+    public static function LangText($desc, $args = [])
+    {
+        return static::_()->_LangText($desc, $args);
     }
     public static function Json($data, $flags = 0)
     {
@@ -128,14 +132,18 @@ class CoreHelper extends ComponentBase
         }
         return $str;
     }
-    public function _L($str, $args = [])
+    public function _L($str, $args = [], $fallback = null)
     {
-        return App::_()->lang($str, $args);
+        return App::_()->lang($str, $args, $fallback);
     }
     public function _Hl($str, $args)
     {
         $t = $this->_L($str, $args);
         return $this->_H($t);
+    }
+    public function _LangText($desc, $args = [])
+    {
+        return App::_()->langText($desc, $args);
     }
     public function _Json($data, $flags = 0)
     {

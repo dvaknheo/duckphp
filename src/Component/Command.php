@@ -214,15 +214,12 @@ EOT;
         return $ret;
     }
     /**
-     * 多语言命令描述：替换所有 $(lang_key|default_fallback) 占位符（部分匹配）。
+     * 多语言命令描述：替换所有 $(lang_key|default_fallback) / $(lang_key) 占位符（部分匹配）。
      * @param string $desc
      * @return string
      */
     protected function translateCommandDesc(string $desc): string
     {
-        return preg_replace_callback('/\$\(([^|]+)\|([^)]*)\)/', function ($m) {
-            $translated = App::_()->lang($m[1]);
-            return ($translated !== $m[1]) ? $translated : $m[2];
-        }, $desc);
+        return App::_()->langText($desc);
     }
 }

@@ -12,9 +12,15 @@ if (! function_exists('__h')) {
     }
 }
 if (! function_exists('__l')) {
-    function __l($str, $args = [])
+    function __l($str, $args = [], $fallback = null)
     {
-        return CoreHelper::L($str, $args);
+        return CoreHelper::L($str, $args, $fallback);
+    }
+}
+if (! function_exists('__langtext')) {
+    function __langtext($desc, $args = [])
+    {
+        return CoreHelper::LangText($desc, $args);
     }
 }
 if (! function_exists('__hl')) {

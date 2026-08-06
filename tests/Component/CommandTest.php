@@ -147,6 +147,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         $cmd = Command::_();
         $this->assertSame('Use foo mode', $rm2->invoke($cmd, 'Use $(command.foo|foo) mode'));
         $this->assertSame('no placeholder', $rm2->invoke($cmd, 'no placeholder'));
+        $this->assertSame('command.foo', $rm2->invoke($cmd, '$(command.foo)'));  // 无 fallback → 返回 key 本身
         
         // 多语言：设置 lang_handler 后 $(key|fallback) 走翻译
         $old_handler = DuckPhp::_()->options['lang_handler'] ?? null;
