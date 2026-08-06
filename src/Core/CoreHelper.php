@@ -284,7 +284,7 @@ class CoreHelper extends ComponentBase
      * @param mixed $class
      * @param mixed $default_method
      */
-    public function regConsoleCommand(string $class, string $default_method = 'command_')
+    public function regCommandClass(string $class, string $default_method = 'command_')
     {
         return App::_()->regConsoleCommand($class, $default_method);
     }

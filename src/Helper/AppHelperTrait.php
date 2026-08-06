@@ -186,8 +186,8 @@ trait AppHelperTrait
     {
         return CoreHelper::_()->recursiveApps($arg, $callback, $app_class);
     }
-    public static function regConsoleCommand(string $class, string $default_method = 'command_')
+    public static function regCommandClass(string $class, string $default_method = 'command_')
     {
-        return CoreHelper::_()->regConsoleCommand($class, $default_method);
+        return CoreHelper::_()->regCommandClass($class, $default_method);
     }
 }

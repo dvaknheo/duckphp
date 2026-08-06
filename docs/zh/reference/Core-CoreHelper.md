@@ -234,7 +234,7 @@ JSON 响应内部实现
     public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase = true)
 递归遍历所有子应用
 
-    public function regConsoleCommand(string $class, string $default_method = 'command_')
+    public function regCommandClass(string $class, string $default_method = 'command_')
 注册命令行命令类
 
 ## 相关链接

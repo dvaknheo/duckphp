@@ -93,7 +93,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         AppHelper::FireGlobalEvent('MyEvent',function(){});
         $ret=[];
         AppHelper::recursiveApps($ret,function($class,&$ret){$ret[]=$class;});
-        AppHelper::regConsoleCommand(static::class);
+        AppHelper::regCommandClass(static::class);
         \LibCoverage\LibCoverage::End();
 
     }

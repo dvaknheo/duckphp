@@ -130,7 +130,7 @@ PhaseContainer::RestAllContainerForTesting();
 
 
         
-        echo CoreHelper::_()->regConsoleCommand(CoreHelperCommand::class);
+        echo CoreHelper::_()->regCommandClass(CoreHelperCommand::class);
 
         //*/
         ////]]]]

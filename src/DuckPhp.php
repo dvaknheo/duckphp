@@ -137,9 +137,6 @@ class DuckPhp extends App
     }
     protected function onPrepare(): void
     {
-        if ($this->options['cli_command_with_app']) {
-            $this->options['cmd'] = array_merge([static::class => true], $this->options['cmd']);
-        }
         if ($this->options['cli_command_with_common']) {
             $this->options['cmd'][Command::class] = true;
         }

@@ -8,7 +8,7 @@
 
 namespace DuckPhp;
 
-use DuckPhp\Ext\CallableView;
+use DuckPhp\Component\Command;
 use DuckPhp\Helper\AppHelperTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
@@ -45,15 +45,9 @@ class DuckPhpAllInOne extends DuckPhp
             'controller_class_postfix' => '',
             'controller_method_prefix' => 'action_',
             'cli_enable' => true,
-            'cli_command_with_app' => true,
             'path_info_compact_enable' => true,
             'duckphp_all_in_one_wrap_header_foot' => true,
         ];
-
-        // embed view to this class
-        $ext_options['ext'][CallableView::class] = true;
-        $ext_options['callable_view_class'] = static::class;
-        $ext_options['callable_view_prefix'] = 'view_';
 
         $this->options = array_merge($this->options, $ext_options);
     }
@@ -61,6 +55,14 @@ class DuckPhpAllInOne extends DuckPhp
     {
         $this->embedMe();
         parent::__construct();
+    }
+    protected function onPrepare(): void
+    {
+        // implements cli_command_with_app=true effect (without depending on the option)
+        $this->options['cmd'] = array_merge([static::class => true], $this->options['cmd']);
+        if ($this->options['cli_command_with_common']) {
+            $this->options['cmd'][Command::class] = true;
+        }
     }
     public function onInited(): void
     {
@@ -72,6 +74,32 @@ class DuckPhpAllInOne extends DuckPhp
     public function action_index()
     {
         static::Show(get_defined_vars(), 'index');
+    }
+    /////////////// callable view (was DuckPhp\Ext\CallableView) ///////////////
+    protected static function viewToCallback(?string $func): ?array
+    {
+        $func = str_replace('/', '_', 'view_' . $func);
+        $ret = [static::_(), $func];
+        if (!is_callable($ret)) {
+            return null;
+        }
+        return $ret;
+    }
+    public static function Show($data = [], $view = '')
+    {
+        $callback = static::viewToCallback($view);
+        if (null === $callback) {
+            return parent::Show($data, $view);
+        }
+        $head = static::viewToCallback(static::_()->head_file ?: 'head');
+        $foot = static::viewToCallback(static::_()->foot_file ?: 'foot');
+        if (null !== $head) {
+            ($head)($data);
+        }
+        ($callback)($data);
+        if (null !== $foot) {
+            ($foot)($data);
+        }
     }
     ///////////////
     public function view_head($data)

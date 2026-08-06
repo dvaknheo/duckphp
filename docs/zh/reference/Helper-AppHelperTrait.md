@@ -42,7 +42,7 @@ $projectPath = Helper::PathOfProject();
 $runtimePath = Helper::PathOfRuntime();
 
 // 注册命令行命令类
-Helper::regConsoleCommand(\MyApp\Command\MyCommand::class);
+Helper::regCommandClass(\MyApp\Command\MyCommand::class);
 ```
 
 ## 注意事项
@@ -97,7 +97,7 @@ Helper::regConsoleCommand(\MyApp\Command\MyCommand::class);
 | `PathOfProject()` | 获取项目根目录 |
 | `PathOfRuntime()` | 获取运行时目录 |
 | `recursiveApps(&$arg, $callback, ?string $app_class = null)` | 递归遍历应用 |
-| `regConsoleCommand(string $class, string $default_method = 'command_')` | 注册命令行命令类 |
+| `regCommandClass(string $class, string $default_method = 'command_')` | 注册命令行命令类 |
 
 ## 相关链接
 
