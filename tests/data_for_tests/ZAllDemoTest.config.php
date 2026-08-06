@@ -14,7 +14,7 @@ return [
         'test/done'          => 95,
         'doc.php'            => 1329,
         ''                   => 1363,
-        'files'              => 11848,
+        'files'              => 7868,
         'demo.php'           => 406,
         'helloworld.php'     => 11,
         'just-route.php'     => 109,
