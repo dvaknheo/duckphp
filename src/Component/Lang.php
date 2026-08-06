@@ -89,6 +89,18 @@ class Lang extends ComponentBase
         return $this->format($newstr ?? $str, $args);
     }
     /**
+     * Replace all $(lang_key|fallback) / $(lang_key) placeholders in text (partial match).
+     * @param array<string, mixed> $args
+     */
+    public function replaceText(string $text, array $args = []): string
+    {
+        return preg_replace_callback('/\$\(([^|)]+)(?:\|([^)]*))?\)/', function ($m) use ($args) {
+            $key = $m[1];
+            $fallback = $m[2] ?? null;
+            return App::_()->lang($key, $args, $fallback);
+        }, $text);
+    }
+    /**
      * @param array<string, mixed> $args
      */
     protected function format(string $str, array $args): string
