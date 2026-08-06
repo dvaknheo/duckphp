@@ -1,4 +1,17 @@
 <?php 
+namespace tests\DuckPhp\Business;
+
+use DuckPhp\Foundation\SingletonTrait;
+
+class CallTargetBusiness
+{
+    use SingletonTrait;
+    public function foo()
+    {
+        echo 'CALLED_BUSINESS';
+    }
+}
+
 namespace tests\DuckPhp\Component;
 use DuckPhp\Component\Command;
 
@@ -91,6 +104,19 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','call',str_replace('\\','/',Console_Command::class).'@command_foo4','A1'
         ];
         DuckPhp::_()->run();
+        // command_call 绝对类名分支：前导 \ → ltrim
+        $_SERVER['argv']=[
+            '-','call','\\'.str_replace('\\','/',Console_Command::class).'@command_foo4','A1'
+        ];
+        DuckPhp::_()->run();
+        // command_call 相对分支成功路径：{namespace}\Business\{Class}::_()->foo()
+        $old_namespace = DuckPhp::_()->options['namespace'];
+        DuckPhp::_()->options['namespace'] = 'tests\\DuckPhp\\';
+        $_SERVER['argv']=[
+            '-','call','CallTargetBusiness@foo'
+        ];
+        DuckPhp::_()->run();
+        DuckPhp::_()->options['namespace'] = $old_namespace;
         
         $_SERVER['argv']=[
             '-','fetch', '--uri=/'

@@ -67,7 +67,6 @@ EOT;
         $uri = $uri ?? $real_uri;
 
         $uri = !empty($uri) ? $uri : '/';
-        // TODO no need uri ,  directrer
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             $sg = (__SUPERGLOBAL_CONTEXT)();
             $sg->_SERVER['REQUEST_URI'] = $uri;
@@ -78,7 +77,7 @@ EOT;
             $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
             $_SERVER['HTTP_METHOD'] = $post ? $post : 'GET';
         }
-        $this->context()->options['cli_enable'] = false;
+        //$this->context()->options['cli_enable'] = false;
         $this->context()->serve();
     }
     /**
@@ -86,13 +85,17 @@ EOT;
      */
     public function command_call()
     {
-        //call to service
-        // full namespace , service AAService;
-        // TODO, no fullnamespace
         $args = func_get_args();
         $cmd = array_shift($args);
         list($class, $method) = explode('@', $cmd);
         $class = str_replace('/', '\\', $class);
+        if ('\\'!==substr($class,0,1)) {
+            $namespace = '' . $this->context()->options['namespace'];
+            $class = $namespace . 'Business\\' . $class;
+        } else {
+            $class = ltrim($class, '\\');
+        }
+
         echo "calling $class::_()->$method\n";
         $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
         echo "--result--\n";
