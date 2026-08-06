@@ -58,7 +58,7 @@ class ExtOptionsLoader extends ComponentBase
         $app->options['data'] = $ext_options;
         foreach ($this->options['data_file_bump_keys'] as $key => $enabled) {
             if ($enabled) {
-                $app->options[$key] = $ext_options[$key];
+                $app->options[$key] = $ext_options[$key] ?? null;
             }
         }
         foreach ($this->options['data_file_bump_prefix_keys'] as $prefix => $enabled) {
