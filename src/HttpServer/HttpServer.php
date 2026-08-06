@@ -13,6 +13,7 @@ class HttpServer
         'port' => '8080',
         'path' => '',
         'path_document' => 'public',
+        'workers' => null,
         // 'docroot'
         // 'dry'
         //'background' =>true,
@@ -206,6 +207,10 @@ class HttpServer
             echo "DuckPhp: RunServer by PHP inner http server {$this->host}:{$this->port}\n";
         }
         $cmd = "$PHP -S $host:$port -t $document_root ";
+        if (!empty($this->options['workers'])) {
+            // PHP 7.4+ 内置服务器多 worker，支持内部回环请求（如 RPC 演示）
+            $cmd = 'PHP_CLI_SERVER_WORKERS=' . (int)$this->options['workers'] . ' ' . $cmd;
+        }
         if (isset($this->args['dry'])) {
             echo $cmd;
             echo "\n";

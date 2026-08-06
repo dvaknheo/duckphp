@@ -22,6 +22,7 @@ HttpServerParent::_()->isInited();
         $options=[
             'path_document'=>__DIR__,
             'background'=>true,
+            'workers'=>4,
         ];
         HttpServerParent::RunQuickly($options);
 
