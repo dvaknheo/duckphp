@@ -17,6 +17,7 @@ class Helper
     use ModelHelperTrait;
     use BusinessHelperTrait, ControllerHelperTrait, AppHelperTrait{
         BusinessHelperTrait::Setting insteadof ControllerHelperTrait;
+        BusinessHelperTrait::Options insteadof ControllerHelperTrait;
         BusinessHelperTrait::Config insteadof ControllerHelperTrait;
         BusinessHelperTrait::XpCall insteadof ControllerHelperTrait;
         BusinessHelperTrait::FireGlobalEvent insteadof ControllerHelperTrait;
