@@ -33,7 +33,7 @@ class View extends ComponentBase
     /**
      * @param array<string, mixed> $data
      */
-    public static function Show(array $data = [], ?string $view = null): void
+    public static function Show(array $data = [], ?string $view = null)
     {
         static::_()->_Show($data, $view);
     }
@@ -55,7 +55,7 @@ class View extends ComponentBase
     /**
      * @param array<string, mixed> $data
      */
-    public function _Show(array $data, string $view): void
+    public function _Show(array $data, string $view)
     {
         if ($this->context_class) {
             $this->context()->onBeforeOutput();

@@ -5,7 +5,6 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Component\Configer;
-use DuckPhp\Foundation\ZCallTrait;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\PhaseContainer;
@@ -217,7 +216,6 @@ class FakeAdmin
 class FakeUser
 {
     use SingletonExTrait;
-    use ZCallTrait;
 
     public function init($options = [], $context = null)
     {

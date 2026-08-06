@@ -36,7 +36,7 @@ class JsonView extends View
         return $this;
     }
     //@override
-    public function _Show(array $data, string $view): void
+    public function _Show(array $data, string $view)
     {
         foreach ($this->options['json_view_skip_vars'] as $v) {
             unset($data[$v]);
