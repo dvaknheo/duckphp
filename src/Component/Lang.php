@@ -97,7 +97,7 @@ class Lang extends ComponentBase
         return preg_replace_callback('/\$\(([^|)]+)(?:\|([^)]*))?\)/', function ($m) use ($args) {
             $key = $m[1];
             $fallback = $m[2] ?? null;
-            return App::_()->lang($key, $args, $fallback);
+            return $this->language($key, $args, $fallback);
         }, $text);
     }
     /**

@@ -67,17 +67,6 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame('command.bar', Lang::_()->replaceText('$(command.bar)'));
 		// replaceText：无占位符原样
 		$this->assertSame('plain text', Lang::_()->replaceText('plain text'));
-		// replaceText：翻译命中（lang_handler 映射）
-		$old_handler = DuckPhp::_()->options['lang_handler'] ?? null;
-		DuckPhp::_()->options['lang_handler'] = function ($str, $args = []) {
-			return $str === 'command.foo' ? '翻译命中' : $str;
-		};
-		$this->assertSame('翻译命中', Lang::_()->replaceText('$(command.foo|foo)'));
-		if ($old_handler === null) {
-			unset(DuckPhp::_()->options['lang_handler']);
-		} else {
-			DuckPhp::_()->options['lang_handler'] = $old_handler;
-		}
 		
 		////////////////
 		
@@ -118,6 +107,10 @@ PhaseContainer::RestAllContainerForTesting();
 		
 		echo __l("AAA");
         echo __l("IMNOEXITSADSF");
+        // replaceText：翻译命中（lang_simple_mode_only_sentences，lang_final=zh_CN）
+        Lang::_()->options['lang_final'] = 'zh_CN';
+        $this->assertSame('zh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CN', Lang::_()->replaceText('$(AAA|fallback)'));
+        $this->assertSame('fallback', Lang::_()->replaceText('$(NOEXIT|fallback)'));
         
         MyLang::_()->manual_detectLanguage();
         
