@@ -199,7 +199,7 @@ trait KernelTrait
         $name = substr($name, strlen(self::$ROOT_PHASE) + 1);
         return str_replace('/', '-', $name);
     }
-    public function regConsoleCommand($class, $default_method = 'command_')
+    public function regConsoleCommand(string $class, string $default_method = 'command_')
     {
         $this->options['cmd'][$class] = $default_method;
         return Console::_()->regCommandClassSingle($this->getThisCommandPrefix(), $class, $default_method);

@@ -46,6 +46,8 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::_()->_VarLog($var);
         CoreHelper::_()->_DebugLog($message, $context);
         CoreHelper::_()->_var_dump($args);
+        CoreHelper::LangText('Use $(command.foo|foo) mode');
+        CoreHelper::_()->_LangText('$(command.bar)');
 
         CoreHelper::IsDebug();
         CoreHelper::IsRealDebug();
@@ -122,18 +124,13 @@ PhaseContainer::RestAllContainerForTesting();
         
         
 
-        $data = CoreHelper::_()->getAllAppClass();
-        //*
+        //* 
         MaiCoreHelperApp::_()->options['html_handler']=null;
         MaiCoreHelperApp::_()->options['lang_handler']=null;
 
 
         
-        echo CoreHelper::_()->getAppClassByComponent(CoreHelperComponent::class);
-        echo "\n";
-        echo CoreHelper::_()->getAppClassByComponent('NoExits');
-        echo "\n";
-            echo CoreHelper::_()->regExtCommandClass(CoreHelperCommand::class);
+        echo CoreHelper::_()->regConsoleCommand(CoreHelperCommand::class);
 
         //*/
         ////]]]]

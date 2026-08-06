@@ -41,8 +41,8 @@ $params = Helper::getCliParameters();
 $projectPath = Helper::PathOfProject();
 $runtimePath = Helper::PathOfRuntime();
 
-// 注册扩展命令类
-Helper::regExtCommandClass(\MyApp\Command\MyCommand::class);
+// 注册命令行命令类
+Helper::regConsoleCommand(\MyApp\Command\MyCommand::class);
 ```
 
 ## 注意事项
@@ -97,9 +97,7 @@ Helper::regExtCommandClass(\MyApp\Command\MyCommand::class);
 | `PathOfProject()` | 获取项目根目录 |
 | `PathOfRuntime()` | 获取运行时目录 |
 | `recursiveApps(&$arg, $callback, ?string $app_class = null)` | 递归遍历应用 |
-| `getAllAppClass()` | 获取所有应用类 |
-| `getAppClassByComponent(string $class)` | 根据组件类获取应用类 |
-| `regExtCommandClass(string $class)` | 注册扩展命令类 |
+| `regConsoleCommand(string $class, string $default_method = 'command_')` | 注册命令行命令类 |
 
 ## 相关链接
 

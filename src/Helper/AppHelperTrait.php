@@ -186,16 +186,8 @@ trait AppHelperTrait
     {
         return CoreHelper::_()->recursiveApps($arg, $callback, $app_class);
     }
-    public static function getAllAppClass()
+    public static function regConsoleCommand(string $class, string $default_method = 'command_')
     {
-        return CoreHelper::_()->getAllAppClass();
-    }
-    public static function getAppClassByComponent(string $class)
-    {
-        return CoreHelper::_()->getAppClassByComponent($class);
-    }
-    public static function regExtCommandClass(string $class)
-    {
-        return CoreHelper::_()->regExtCommandClass($class);
+        return CoreHelper::_()->regConsoleCommand($class, $default_method);
     }
 }

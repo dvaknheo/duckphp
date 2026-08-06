@@ -279,43 +279,13 @@ class CoreHelper extends ComponentBase
             App::Phase($last_phase);
         }
     }
-    public function getAllAppClass()
+
+    /**
+     * @param mixed $class
+     * @param mixed $default_method
+     */
+    public function regConsoleCommand(string $class, string $default_method = 'command_')
     {
-        return [];
-        /*
-        $ret = [];
-        $this->recursiveApps(
-            $ret,
-            function ($app_class, &$ret) {
-                $ret[$app_class::_()->getThisClass()] = $app_class;
-            }
-        );
-        return $ret;
-        */
-    }
-    public function getAppClassByComponent(string $class)
-    {
-        return;
-        /*
-        $all_class = $this->getAllAppClass();
-        foreach ($all_class as $phase => $app_name) {
-            $namespace = $app_name::_()->options['namespace'];
-            $prefix = $namespace .'\\';
-            if (substr($class, 0, strlen($prefix)) === $prefix) {
-                return $app_name;
-            }
-        }
-        return App::Root()->getThisClass();
-        */
-    }
-    public function regExtCommandClass(string $class)
-    {
-        /*
-        $prefix = App::_()->options['cli_command_prefix'] ?? App::Phase();
-        $prefix = App::IsRoot()?'':$prefix;
-        $classes = App::_()->options['cli_command_classes'];
-        $classes[] = $class;
-        Console::_()->regCommandClass($prefix, App::Phase(), $classes);
-        */
+        return App::_()->regConsoleCommand($class, $default_method);
     }
 }

@@ -87,7 +87,7 @@ $id = Helper::GET('id', 0);
 | `Redis($tag = 0)` | Redis 对象 |
 | `getRouteMaps/assignRoute/assignImportantRoute/assignRewrite/getRewrites` | 路由映射与重写 |
 | `getCliParameters()` | 获取 CLI 参数 |
-| `recursiveApps/getAllAppClass/getAppClassByComponent/regExtCommandClass` | 核心辅助方法 |
+| `recursiveApps/regConsoleCommand` | 核心辅助方法 |
 
 ## 相关链接
 
