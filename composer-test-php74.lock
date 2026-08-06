@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f81daab96139d322f1f49f95d37fd71f",
+    "content-hash": "9a608b68c53248f031f95e0e7a27f00d",
     "packages": [],
     "packages-dev": [
         {
@@ -496,23 +496,27 @@
         },
         {
             "name": "dvaknheo/libcoverage",
-            "version": "v1.0.5",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvaknheo/libcoverage.git",
-                "reference": "62039e256252ef32a46f208a3fe502c6196819ad"
+                "reference": "1c6abb764143302c7e3d12f0bc99477c1e25164c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvaknheo/libcoverage/zipball/62039e256252ef32a46f208a3fe502c6196819ad",
-                "reference": "62039e256252ef32a46f208a3fe502c6196819ad",
+                "url": "https://api.github.com/repos/dvaknheo/libcoverage/zipball/1c6abb764143302c7e3d12f0bc99477c1e25164c",
+                "reference": "1c6abb764143302c7e3d12f0bc99477c1e25164c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.0"
+                "php": ">=7.4.0"
+            },
+            "require-dev": {
+                "phpunit/php-code-coverage": "^8.0.2 || ^11.0",
+                "phpunit/phpunit": "^9.6 || ^11.0"
             },
             "suggest": {
-                "phpunit/php-code-coverage": "work with 8.0.2"
+                "phpunit/php-code-coverage": "php-code-coverage 8.x for PHP 7.4, 11.x for PHP 8.4+"
             },
             "bin": [
                 "bin/libcoverage"
@@ -529,8 +533,8 @@
             ],
             "authors": [
                 {
-                    "name": "davknheo",
-                    "email": "85811616@qq.com"
+                    "name": "dvaknheo",
+                    "email": "davknheo@qq.com"
                 }
             ],
             "description": "coverage for library",
@@ -542,9 +546,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dvaknheo/libcoverage/issues",
-                "source": "https://github.com/dvaknheo/libcoverage/tree/v1.0.5"
+                "source": "https://github.com/dvaknheo/libcoverage/tree/v1.0.7"
             },
-            "time": "2021-02-16T03:31:44+00:00"
+            "time": "2026-08-06T09:28:17+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
@@ -4293,12 +4297,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4.0"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.2.0"
 }
