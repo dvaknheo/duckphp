@@ -14,8 +14,12 @@ class CallTargetBusiness
 
 namespace tests\DuckPhp\Component;
 use DuckPhp\Component\Command;
+use DuckPhp\Component\RouteHookRewrite;
+use DuckPhp\Component\RouteHookRouteMap;
+use DuckPhp\Component\RouteLister;
 
 use DuckPhp\Core\Console;
+use DuckPhp\Core\Route;
 use DuckPhp\Ext\AutoReadLineConsole;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\SuperGlobal;
@@ -143,6 +147,38 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','aa:new2',
         ];
         DuckPhp::_()->run();
+        // routes 命令
+        RouteHookRouteMap::_(new RouteHookRouteMap())->init([], DuckPhp::_());
+        RouteHookRouteMap::_()->assignRoute('test/route', 'MainController@action_index');
+        RouteHookRouteMap::_()->assignImportantRoute('test/imp', 'MainController@action_index');
+        RouteHookRewrite::_(new RouteHookRewrite())->init([], DuckPhp::_());
+        RouteHookRewrite::_()->assignRewrite('a/b', 'test/route');
+        $old_ns = DuckPhp::_()->options['namespace'];
+        $old_path = DuckPhp::_()->options['path'];
+        $old_route_ns = Route::_()->options['namespace'];
+        DuckPhp::_()->options['namespace'] = 'tests_Ext_RouteLister';
+        DuckPhp::_()->options['path'] = \LibCoverage\LibCoverage::G()->getClassTestPath(RouteLister::class);
+        $rl_path = \LibCoverage\LibCoverage::G()->getClassTestPath(RouteLister::class);
+        Route::_()->options['namespace'] = 'tests_Ext_RouteLister';
+        spl_autoload_register(function ($class) use ($rl_path) {
+            if (strncmp($class, 'tests_Ext_RouteLister\\', 21) === 0) {
+                $file = $rl_path . str_replace('\\', '/', substr($class, 21)) . '.php';
+                if (is_file($file)) {
+                    require_once $file;
+                }
+            }
+        });
+        $_SERVER['argv']=[
+            '-','routes',
+        ];
+        DuckPhp::_()->run();
+        $_SERVER['argv']=[
+            '-','routes','--only_controller',
+        ];
+        DuckPhp::_()->run();
+        DuckPhp::_()->options['namespace'] = $old_ns;
+        DuckPhp::_()->options['path'] = $old_path;
+        Route::_()->options['namespace'] = $old_route_ns;
         
         echo "------------------------------------\n";
         SuperGlobal::_()->reInit(['superglobal_auto_define'=>true],DuckPhp::_());

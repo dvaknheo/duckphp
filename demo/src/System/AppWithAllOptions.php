@@ -415,7 +415,7 @@ class AppWithAllOptions extends DuckPhp
         $options['ext']['DuckPhp\\Ext\\ExceptionWrapper'] = true;
         //*/
         /*
-        $options['ext']['DuckPhp\\Ext\\FinderForController'] = true;
+        $options['ext']['DuckPhp\\Component\\RouteLister'] = true;
             // 
             $options['classes_to_get_controller_path'] = array ( );
 

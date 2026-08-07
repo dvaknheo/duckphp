@@ -15,7 +15,7 @@ class AdminControllerBaseTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'class_user' => FakeProviderForControllerBase::class,
+            'class_admin' => FakeProviderForControllerBase::class,
         ]);
         $obj = new AdminControllerBase();
         $this->assertInstanceOf(AdminControllerBase::class, $obj);

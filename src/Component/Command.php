@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace DuckPhp\Component;
 
+use DuckPhp\Component\RouteLister;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
@@ -100,6 +101,41 @@ EOT;
         $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
         echo "--result--\n";
         echo json_encode($ret);
+    }
+    /**
+     * @command_desc {{command.routes|show routes}}
+     */
+    public function command_routes(bool $with_children = false, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
+    {
+        $routes = RouteLister::_()->listAll($with_children, $only_controller, $only_admin, $only_user);
+        foreach ($routes as $route) {
+            $extra = '';
+            if (!empty($route['controller'])) {
+                $extra = $route['controller'] . '->' . $route['method'];
+            }
+            $marks = [];
+            if ($route['is_admin']) {
+                $marks[] = 'admin';
+            }
+            if ($route['is_user']) {
+                $marks[] = 'user';
+            }
+            if ($route['route_map']) {
+                $marks[] = 'route_map';
+            }
+            if ($route['route_map_important']) {
+                $marks[] = 'route_map_important';
+            }
+            if ($route['rewrite_map']) {
+                $marks[] = 'rewrite_map';
+            }
+            if ($marks) {
+                $extra = $extra ? $extra . ' ' : '';
+                $extra .= '(' . implode(',', $marks) . ')';
+            }
+            echo $route['url'] . "\n";
+            echo '  ' . $extra . ' (:' . $route['phase'] . ")\n";
+        }
     }
     /**
      * @command_desc switch debug mode

@@ -4,8 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\Ext;
+namespace DuckPhp\Component;
 
+use DuckPhp\Component\RouteHookRouteMap;
+use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
@@ -13,9 +15,9 @@ use DuckPhp\Foundation\Helper;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckPhp\GlobalUser\UserControllerInterface;
 
-class FinderForController extends ComponentBase
+class RouteLister extends ComponentBase
 {
-    // Temporarily untested, undocumented; an extension for enumerating controllers. // Better rename to RouteList
+    // Route listing for admin permission import, route display, etc.
     public $options = [
         'classes_to_get_controller_path' => [],
     ];
@@ -153,66 +155,113 @@ class FinderForController extends ComponentBase
         }
         return $ret;
     }
-    public function getRoutePathInfoMap($adjuster = null)
+    /**
+     * List all routes as recordset.
+     * Order: rewrite_map, route_map_important, controller routes, route_map.
+     * @return array<int, array<string, mixed>>
+     */
+    public function listAll(bool $with_children = false, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): array
     {
-        $controllers = $this->getAllControllerClasses();
+        if ($only_admin && $only_user) {
+            throw new \InvalidArgumentException('only_admin and only_user cannot both be true');
+        }
+        if ($only_admin || $only_user) {
+            $only_controller = true;
+        }
         $ret = [];
-        foreach ($controllers as $class => $file) {
-            $ret = array_merge($ret, $this->getControllerMethods($class, $adjuster));
+        if (!$only_controller) {
+            $phase = App::Phase();
+            // 1. rewrite_map
+            foreach (RouteHookRewrite::_()->getRewrites() as $url => $rewrite) {
+                $ret[] = [
+                    'url' => $url, 'phase' => $phase, 'controller' => '', 'method' => '',
+                    'is_admin' => false, 'is_user' => false,
+                    'route_map' => false, 'route_map_important' => false, 'rewrite_map' => true,
+                ];
+            }
+            // 2. route_map_important
+            $maps = RouteHookRouteMap::_()->getRouteMaps();
+            foreach ($maps['route_map_important'] as $url => $callback) {
+                [$controller, $method] = $this->parseRouteMapCallback($callback);
+                $ret[] = [
+                    'url' => $url, 'phase' => $phase, 'controller' => $controller, 'method' => $method,
+                    'is_admin' => false, 'is_user' => false,
+                    'route_map' => false, 'route_map_important' => true, 'rewrite_map' => false,
+                ];
+            }
+        }
+        // 3. controller routes
+        $controller_rows = $this->listControllerRows($only_admin, $only_user);
+        if ($with_children) {
+            Helper::recursiveApps(
+                $controller_rows,
+                function ($app_class, &$controller_rows) use ($only_admin, $only_user) {
+                    $controller_rows = array_merge($controller_rows, $this->listControllerRows($only_admin, $only_user));
+                }
+            );
+        }
+        $ret = array_merge($ret, $controller_rows);
+        // 4. route_map
+        if (!$only_controller) {
+            $phase = App::Phase();
+            foreach ($maps['route_map'] as $url => $callback) {
+                [$controller, $method] = $this->parseRouteMapCallback($callback);
+                $ret[] = [
+                    'url' => $url, 'phase' => $phase, 'controller' => $controller, 'method' => $method,
+                    'is_admin' => false, 'is_user' => false,
+                    'route_map' => true, 'route_map_important' => false, 'rewrite_map' => false,
+                ];
+            }
         }
         return $ret;
     }
-    public function getRoutePathInfoMapWithChildren($adjuster = null)
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    protected function listControllerRows(bool $only_admin, bool $only_user): array
     {
-        $ret = $this->getRoutePathInfoMap($adjuster);
-        Helper::recursiveApps(
-            $ret,
-            function ($app_class, &$ret) use ($adjuster) {
-                $data = $this->getRoutePathInfoMap($adjuster);
-                $ret = array_merge($ret, $data);
+        $rows = [];
+        $phase = App::Phase();
+        foreach ($this->getAllControllerClasses() as $class => $file) {
+            $is_admin = $this->isSubclassOf($class, AdminControllerInterface::class);
+            $is_user = $this->isSubclassOf($class, UserControllerInterface::class);
+            if ($only_admin && !$is_admin) {
+                continue;
             }
-        );
-        return $ret;
+            if ($only_user && !$is_user) {
+                continue;
+            }
+            foreach ($this->getControllerMethods($class) as $full => $url) {
+                [$controller, $method] = explode('->', $full);
+                $rows[] = [
+                    'url' => $url, 'phase' => $phase, 'controller' => $controller, 'method' => $method,
+                    'is_admin' => $is_admin, 'is_user' => $is_user,
+                    'route_map' => false, 'route_map_important' => false, 'rewrite_map' => false,
+                ];
+            }
+        }
+        return $rows;
     }
-
-    public function getAllAdminController(): array
+    /**
+     * @return array{0: string, 1: string}
+     */
+    protected function parseRouteMapCallback(string $callback): array
     {
-        $ret = [];
-        Helper::recursiveApps(
-            $ret,
-            function ($app_class, &$ret) {
-                $data = $this->getAllControllerClasses();
-                $ret = array_merge($ret, $data);
-            }
-        );
-        $ret2 = array_filter($ret, function ($key) {
-            try {
-                $obj = new \ReflectionClass($key);
-                return $obj->isSubclassOf(AdminControllerInterface::class);
-            } catch (\ReflectionException $ex) {
-                return false;
-            }
-        }, \ARRAY_FILTER_USE_KEY);
-        return array_keys($ret2);
+        if (substr($callback, 0, 1) === '~') {
+            $callback = Route::_()->getControllerNamespacePrefix() . substr($callback, 1);
+        }
+        $pos = strpos($callback, '@');
+        if ($pos === false) {
+            return [$callback, ''];
+        }
+        return [substr($callback, 0, $pos), substr($callback, $pos + 1)];
     }
-    public function getAllUserController(): array
+    protected function isSubclassOf(string $class, string $interface): bool
     {
-        $ret = [];
-        Helper::recursiveApps(
-            $ret,
-            function ($app_class, &$ret) {
-                $data = $this->getAllControllerClasses();
-                $ret = array_merge($ret, $data);
-            }
-        );
-        $ret2 = array_filter($ret, function ($key) {
-            try {
-                $obj = new \ReflectionClass($key);
-                return $obj->isSubclassOf(UserControllerInterface::class);
-            } catch (\ReflectionException $ex) {
-                return false;
-            }
-        }, \ARRAY_FILTER_USE_KEY);
-        return array_keys($ret2);
+        try {
+            return (new \ReflectionClass($class))->isSubclassOf($interface);
+        } catch (\ReflectionException $ex) {
+            return false;
+        }
     }
 }
