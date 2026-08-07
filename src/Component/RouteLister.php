@@ -11,7 +11,6 @@ use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
-use DuckPhp\Foundation\Helper;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckPhp\GlobalUser\UserControllerInterface;
 
@@ -160,7 +159,7 @@ class RouteLister extends ComponentBase
      * Order: rewrite_map, route_map_important, controller routes, route_map.
      * @return array<int, array<string, mixed>>
      */
-    public function listAll(bool $with_children = false, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): array
+    public function listAll(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): array
     {
         if ($only_admin && $only_user) {
             throw new \InvalidArgumentException('only_admin and only_user cannot both be true');
@@ -168,6 +167,7 @@ class RouteLister extends ComponentBase
         if ($only_admin || $only_user) {
             $only_controller = true;
         }
+        $maps = RouteHookRouteMap::_()->getRouteMaps();
         $ret = [];
         if (!$only_controller) {
             $phase = App::Phase();
@@ -180,7 +180,6 @@ class RouteLister extends ComponentBase
                 ];
             }
             // 2. route_map_important
-            $maps = RouteHookRouteMap::_()->getRouteMaps();
             foreach ($maps['route_map_important'] as $url => $callback) {
                 [$controller, $method] = $this->parseRouteMapCallback($callback);
                 $ret[] = [
@@ -192,14 +191,6 @@ class RouteLister extends ComponentBase
         }
         // 3. controller routes
         $controller_rows = $this->listControllerRows($only_admin, $only_user);
-        if ($with_children) {
-            Helper::recursiveApps(
-                $controller_rows,
-                function ($app_class, &$controller_rows) use ($only_admin, $only_user) {
-                    $controller_rows = array_merge($controller_rows, $this->listControllerRows($only_admin, $only_user));
-                }
-            );
-        }
         $ret = array_merge($ret, $controller_rows);
         // 4. route_map
         if (!$only_controller) {
@@ -213,6 +204,21 @@ class RouteLister extends ComponentBase
                 ];
             }
         }
+
+        // with_children: inline recursion over child apps (no callback)
+        if ($with_children) {
+            $parent_app = App::_();
+            $last_phase = App::Phase();
+            foreach ($parent_app->options['app'] as $class => $app_options) {
+                if ($parent_app->getThisChild($class) === null) {
+                    // e.g. app entry is false (disabled)
+                    continue;
+                }
+                $ret = array_merge($ret, $this->listAll($with_children, $only_controller, $only_admin, $only_user));
+                App::Phase($last_phase);
+            }
+        }
+
         return $ret;
     }
     /**

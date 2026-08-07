@@ -31,6 +31,9 @@ class RouteListerTest extends \PHPUnit\Framework\TestCase
             'namespace'=>'tests_Ext_RouteLister',
             'controller_class_postfix'=>'Controller',
             'controller_method_prefix'=>'action_',
+            'app'=>[
+                SubAppForRouteLister::class => ['name' => '@'],
+            ],
             'ext'=>[
                 RouteHookRouteMap::class => true,
                 RouteHookRewrite::class => true,
@@ -95,6 +98,9 @@ class RouteListerTest extends \PHPUnit\Framework\TestCase
 
         // with_children
         RouteLister::_()->listAll(true);
+        // with_children + 子应用（覆盖内嵌递归）
+        DuckPhp::_()->options['app']['DisabledAppForRouteLister'] = false;
+        RouteLister::_()->listAll(true);
 
         // pathInfoFromClassAndMethod 保留
         RouteLister::_()->pathInfoFromClassAndMethod(static::class,'testAll');
@@ -117,4 +123,7 @@ class RouteListerTest extends \PHPUnit\Framework\TestCase
 class MyRouteLister extends RouteLister
 {
     //
+}
+class SubAppForRouteLister extends DuckPhp
+{
 }
