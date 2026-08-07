@@ -447,12 +447,13 @@ EOT;
         return $ret;
     }
     /**
-     * 翻译文本中的 $(lang_key|fallback) / $(lang_key) 占位符（部分匹配）。
+     * Translate {{lang_key|fallback}} / {{lang_key}} placeholders in text (partial match).
+     * fallback may contain {word} blocks, e.g. {{some_key|just {myword}}}.
      * @param array<string, mixed> $args
      */
     public function langText(string $desc, array $args = []): string
     {
-        return preg_replace_callback('/\$\(([^|)]+)(?:\|([^)]*))?\)/', function ($m) use ($args) {
+        return preg_replace_callback('/\{\{([^{}|]+)(?:\|((?:[^{}]|\{[^}]*\})*))?\}\}/', function ($m) use ($args) {
             $key = $m[1];
             $fallback = $m[2] ?? null;
             return $this->lang($key, $args, $fallback);
