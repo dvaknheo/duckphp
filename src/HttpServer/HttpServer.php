@@ -208,7 +208,7 @@ class HttpServer
         }
         $cmd = "$PHP -S $host:$port -t $document_root ";
         if (!empty($this->options['workers'])) {
-            // PHP 7.4+ 内置服务器多 worker，支持内部回环请求（如 RPC 演示）
+            // PHP 7.4+ built-in server multi-worker, supports internal loopback requests (e.g. RPC demo)
             $cmd = 'PHP_CLI_SERVER_WORKERS=' . (int)$this->options['workers'] . ' ' . $cmd;
         }
         if (isset($this->args['dry'])) {

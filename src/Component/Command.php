@@ -105,21 +105,17 @@ EOT;
     /**
      * @command_desc {{command.routes|show routes}}
      */
-    public function command_routes(bool $with_children = false, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
+    public function command_routes(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
     {
         $routes = RouteLister::_()->listAll($with_children, $only_controller, $only_admin, $only_user);
         foreach ($routes as $route) {
+            // url line: green background
+            echo "\033[42;30m" . $route['url'] . "\033[0m\n";
             $extra = '';
             if (!empty($route['controller'])) {
                 $extra = $route['controller'] . '->' . $route['method'];
             }
             $marks = [];
-            if ($route['is_admin']) {
-                $marks[] = 'admin';
-            }
-            if ($route['is_user']) {
-                $marks[] = 'user';
-            }
             if ($route['route_map']) {
                 $marks[] = 'route_map';
             }
@@ -133,8 +129,18 @@ EOT;
                 $extra = $extra ? $extra . ' ' : '';
                 $extra .= '(' . implode(',', $marks) . ')';
             }
-            echo $route['url'] . "\n";
-            echo '  ' . $extra . ' (:' . $route['phase'] . ")\n";
+            // admin/user: red marks at the end, without brackets
+            $admin_user = '';
+            if ($route['is_admin']) {
+                $admin_user .= ' admin';
+            }
+            if ($route['is_user']) {
+                $admin_user .= ' user';
+            }
+            $admin_user = $admin_user !== '' ? "\033[31m" . $admin_user . "\033[0m" : '';
+            $phase = $route['phase'];
+            $phase_str = $phase !== '' ? ' (' . $phase . ')' : '';
+            echo '  ' . $extra . $phase_str . $admin_user . "\n";
         }
     }
     /**
@@ -253,7 +259,7 @@ EOT;
         return $ret;
     }
     /**
-     * 多语言命令描述：替换所有 $(lang_key|default_fallback) / $(lang_key) 占位符（部分匹配）。
+     * Translate command description: replace {{lang_key|default_fallback}} / {{lang_key}} placeholders.
      * @param string $desc
      * @return string
      */
