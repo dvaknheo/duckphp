@@ -182,10 +182,6 @@ trait AppHelperTrait
     {
         return GlobalEvent::_()->on($event, $callback);
     }
-    public static function recursiveApps(&$arg, $callback, ?string $app_class = null)
-    {
-        return CoreHelper::_()->recursiveApps($arg, $callback, $app_class);
-    }
     public static function regCommandClass(string $class, string $default_method = 'command_')
     {
         return CoreHelper::_()->regCommandClass($class, $default_method);

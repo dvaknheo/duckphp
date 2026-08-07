@@ -108,9 +108,6 @@ PhaseContainer::RestAllContainerForTesting();
         
         echo "/////////////////////////////////////\n";
         
-        CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;});
-        CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;},null,false);
-
         CoreHelper::PhaseCall('z',function(){echo MaiCoreHelperApp::Phase();},123);
         CoreHelper::PhaseCall('',function(){echo MaiCoreHelperApp::Phase();},123);
         

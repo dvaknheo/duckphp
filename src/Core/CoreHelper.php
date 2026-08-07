@@ -260,25 +260,6 @@ class CoreHelper extends ComponentBase
         /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }
-    public function recursiveApps(&$arg, $callback, $parent_app = null, $auto_switch_phase = true)
-    {
-        if (!isset($parent_app)) {
-            $parent_app = App::Root();
-        }
-        $last_phase = $parent_app->Phase();
-
-        $callback($parent_app, $arg);
-
-        foreach ($parent_app->options['app'] as $class => $options) {
-            if ($options === false) {
-                continue;
-            }
-            $app = $parent_app->getThisChild($class);
-            $this->recursiveApps($arg, $callback, $app, $auto_switch_phase);
-
-            App::Phase($last_phase);
-        }
-    }
 
     /**
      * @param mixed $class
