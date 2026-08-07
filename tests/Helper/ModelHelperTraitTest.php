@@ -25,6 +25,9 @@ class ModelHelperTraitTest extends \PHPUnit\Framework\TestCase
         try{
             ModelHelper::DbForWrite();
         }catch(\Throwable $ex){}
+        try{
+            ModelHelper::DatabaseDriver();
+        }catch(\Throwable $ex){}
         \LibCoverage\LibCoverage::End();
         /*
         //*/

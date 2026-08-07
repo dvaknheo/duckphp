@@ -46,4 +46,11 @@ trait ModelHelperTrait
     {
         return DbManager::_()->_SqlForCountSimply($sql);
     }
+    /**
+     * @return string
+     */
+    public static function DatabaseDriver(): string
+    {
+        return DbManager::_()->getDatabaseDriver();
+    }
 }
