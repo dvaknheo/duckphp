@@ -92,7 +92,7 @@ class FastInstaller extends ComponentBase
                     ],
                 ],
             ];
-            ExtOptionsLoader::_()->saveData($data);
+            ExtOptionsLoader::_()->saveExtOptions($data);
             App::_()->options = array_replace_recursive(App::_()->options, $data);
 
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
@@ -286,7 +286,7 @@ and more ...\n";
             //GlobalEvent::_()->fire(App::_()->getThisClassName() .'#onBeforeChildrenInstall');
             $this->installChildren();
         }
-        ExtOptionsLoader::_()->saveData(['installed' => DATE(DATE_ATOM)]);
+        ExtOptionsLoader::_()->saveExtOptions(['installed' => DATE(DATE_ATOM)]);
         //GlobalEvent::_()->fire(App::_()->getThisClassName() . '#onInstalled');
         $app_instance = App::_();
         if (method_exists($app_instance, 'onInstalled')) {
@@ -343,7 +343,7 @@ and more ...\n";
 
             $ext_options = [];
             $ext_options['controller_resource_prefix'] = App::_()->options['controller_resource_prefix'];
-            ExtOptionsLoader::_()->saveData($ext_options);
+            ExtOptionsLoader::_()->saveExtOptions($ext_options);
 
             if ($input_options['is_clone_resource']) {
                 $info = $this->cloneResource($input_options['new_controller_resource_prefix']);

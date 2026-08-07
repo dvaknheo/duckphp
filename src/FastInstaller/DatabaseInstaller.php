@@ -53,7 +53,7 @@ class DatabaseInstaller extends ComponentBase
         $is_local = (App::_()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::_()->options['database_driver'];
 
         if ($is_local) {
-            ExtOptionsLoader::_()->saveData(['database_list' => $data]);
+            ExtOptionsLoader::_()->saveExtOptions(['database_list' => $data]);
         }
         /////////////
 

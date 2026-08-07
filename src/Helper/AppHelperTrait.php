@@ -7,6 +7,7 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Component\DbManager;
+use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookRewrite;
@@ -180,5 +181,12 @@ trait AppHelperTrait
     public static function OnGlobalEvent($event, $callback)
     {
         return GlobalEvent::_()->on($event, $callback);
+    }
+    /**
+     * @param array<string, mixed> $options
+     */
+    public static function saveExtOptions(array $options): void
+    {
+        ExtOptionsLoader::_()->saveExtOptions($options);
     }
 }

@@ -152,7 +152,7 @@ EOT;
 
         if ($this->context()->options['data_file_enable'] && $options['data_file_bump_allowed'] && in_array('is_debug', $options['data_file_bump_keys'])) {
             $is_debug = !$off;
-            ExtOptionsLoader::_()->saveData(['is_debug' => $is_debug]);
+            ExtOptionsLoader::_()->saveExtOptions(['is_debug' => $is_debug]);
             if ($is_debug) {
                 echo "Debug mode has turn on. us --off to off\n";
             } else {

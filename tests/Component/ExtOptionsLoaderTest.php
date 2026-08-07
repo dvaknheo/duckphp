@@ -27,14 +27,13 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         $old_phase = DuckPhpEOL::Phase();
         DuckPhpEOL::_()->toChildPhase(DuckPhpEOLChild::class);
         
-        ExtOptionsLoader::_()->saveData(['xdata'=>DATE(DATE_ATOM),"installed"=>"a","redis_x"=>"b"]);
+        ExtOptionsLoader::_()->saveExtOptions(['xdata'=>DATE(DATE_ATOM),"installed"=>"a","redis_x"=>"b"]);
             DuckPhpEOLChild::_(new DuckPhpEOLChild());
             ExtOptionsLoader::_(new ExtOptionsLoader());       
         DuckPhpEOL::Phase($old_phase);
         
         DuckPhpEOL::_(new DuckPhpEOL);
 PhaseContainer::RestAllContainerForTesting();
-        ExtOptionsLoader::$all_ext_options=null;
         ExtOptionsLoader::_(new ExtOptionsLoader());
         DuckPhpEOL::_()->init($options);
         ////[[[[
@@ -52,7 +51,6 @@ $options['app'] = [
         DuckPhpEOL::_(new DuckPhpEOL);
        
         ExtOptionsLoader::_(new ExtOptionsLoader());
-        ExtOptionsLoader::$all_ext_options=null;
         
         DuckPhpEOL::_()->init($options);
         ////]]]]

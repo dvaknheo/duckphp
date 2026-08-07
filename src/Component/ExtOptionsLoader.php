@@ -20,7 +20,14 @@ class ExtOptionsLoader extends ComponentBase
         'data_file_bump_keys' => ['installed' => true, 'redis' => true, 'database' => true, 'local_redis' => true, 'local_database' => true],
         'data_file_bump_prefix_keys' => ['redis_' => true, 'database_' => true],
     ];
-    public static $all_ext_options = null;
+    public $all_ext_options = null;
+    protected function getRoot()
+    {
+        $last_phase = App::Phase(App::Root()->getThisPhaseName());
+        $root = ExtOptionsLoader::_();
+        App::Phase($last_phase);
+        return $root;
+    }
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
@@ -29,17 +36,18 @@ class ExtOptionsLoader extends ComponentBase
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
+        $root = $this->getRoot();
 
-        if (!isset(self::$all_ext_options)) {
+        if (!isset($root->all_ext_options)) {
             $full_file = $this->get_ext_options_file();
             if (!is_file($full_file)) {
-                self::$all_ext_options = [];
+                $root->all_ext_options = [];
                 return $this;
             }
             $this->fill_all_ext_options($full_file);
         }
         $phase = App::_()->getThisPhaseName();
-        $ext_options = self::$all_ext_options[$phase] ?? [];
+        $ext_options = $root->all_ext_options[$phase] ?? [];
         if (empty($ext_options)) {
             return $this;
         }
@@ -88,18 +96,19 @@ class ExtOptionsLoader extends ComponentBase
     protected function fill_all_ext_options(string $full_file): void
     {
         $all_ext_options = json_decode(''.file_get_contents($full_file), true);
-        self::$all_ext_options = $all_ext_options;
+        $this->getRoot()->all_ext_options = $all_ext_options;
     }
     /**
      * @param array<string, mixed> $options
      */
-    public function saveData(array $options): void
+    public function saveExtOptions(array $options): void
     {
         $full_file = $this->get_ext_options_file();
         $phase = App::_()->getThisPhaseName();
-        $ext_options = array_replace_recursive(self::$all_ext_options[$phase] ?? [], $options);
-        self::$all_ext_options[$phase] = $ext_options;
-        $all_ext_options = self::$all_ext_options;
+        $root = $this->getRoot();
+        $ext_options = array_replace_recursive($root->all_ext_options[$phase] ?? [], $options);
+        $root->all_ext_options[$phase] = $ext_options;
+        $all_ext_options = $root->all_ext_options;
         $all_ext_options['__date__'] = date('Y-m-d H:i:s');
         $all_ext_options['__class__'] = get_class(App::_());
 

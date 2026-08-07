@@ -91,6 +91,9 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
                 
         AppHelper::OnGlobalEvent('MyEvent',function(){});
         AppHelper::FireGlobalEvent('MyEvent',function(){});
+        try {
+            AppHelper::saveExtOptions(['xdata'=>DATE(DATE_ATOM),"installed"=>"a"]);
+        } catch (\Throwable $ex) {}
         \LibCoverage\LibCoverage::End();
 
     }

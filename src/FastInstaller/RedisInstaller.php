@@ -46,7 +46,7 @@ class RedisInstaller extends ComponentBase
 
         $app = App::_();
         if ($is_local) {
-            ExtOptionsLoader::_()->saveData(['redis_list' => $data]);
+            ExtOptionsLoader::_()->saveExtOptions(['redis_list' => $data]);
         }
 
         $options = RedisManager::_()->options;
