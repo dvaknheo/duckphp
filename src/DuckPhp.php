@@ -116,11 +116,11 @@ class DuckPhp extends App
         parent::initComponentsOfInner($components, $default);
 
         if ($this->isLocalDatabase()) {
+            $this->options['database_list_reload_by_setting'] = false;
             $this->createLocalObject(DbManager::class);
             DbManager::_()->init($this->options, $this);
         }
         if ($this->isLocalRedis()) {
-            $this->options['database_list_reload_by_setting'] = false;
             $this->createLocalObject(RedisManager::class);
             RedisManager::_()->init($this->options, $this);
         }

@@ -18,6 +18,6 @@ class AdminControllerBase implements AdminControllerInterface
     protected function initController()
     {
         Helper::checkInstall($this->install_page);
-        Helper::User()->checkAccess();
+        Helper::Admin()->checkAccess();
     }
 }
