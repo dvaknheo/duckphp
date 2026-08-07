@@ -260,13 +260,4 @@ class CoreHelper extends ComponentBase
         /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }
-
-    /**
-     * @param mixed $class
-     * @param mixed $default_method
-     */
-    public function regCommandClass(string $class, string $default_method = 'command_')
-    {
-        return App::_()->regConsoleCommand($class, $default_method);
-    }
 }

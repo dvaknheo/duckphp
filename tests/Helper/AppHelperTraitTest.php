@@ -91,7 +91,6 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
                 
         AppHelper::OnGlobalEvent('MyEvent',function(){});
         AppHelper::FireGlobalEvent('MyEvent',function(){});
-        AppHelper::regCommandClass(static::class);
         \LibCoverage\LibCoverage::End();
 
     }

@@ -12,7 +12,6 @@ use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\Console;
-use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
@@ -181,9 +180,5 @@ trait AppHelperTrait
     public static function OnGlobalEvent($event, $callback)
     {
         return GlobalEvent::_()->on($event, $callback);
-    }
-    public static function regCommandClass(string $class, string $default_method = 'command_')
-    {
-        return CoreHelper::_()->regCommandClass($class, $default_method);
     }
 }

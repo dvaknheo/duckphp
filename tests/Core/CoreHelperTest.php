@@ -127,12 +127,10 @@ PhaseContainer::RestAllContainerForTesting();
 
 
         
-        echo CoreHelper::_()->regCommandClass(CoreHelperCommand::class);
-
         //*/
         ////]]]]
-        \LibCoverage\LibCoverage::End();
 
+        \LibCoverage\LibCoverage::End();
     }
 }
 class MaiCoreHelperApp extends App
@@ -158,10 +156,6 @@ class SubCoreHelperApp2 extends App
     ];
 }
 class CoreHelperComponent
-{
-    //
-}
-class CoreHelperCommand
 {
     //
 }
