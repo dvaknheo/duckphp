@@ -72,7 +72,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = [
             'action' => 'install',
             'driver' => 'sqlite',
-            'dbname' => $this->getTestPath().'runtime/installer_test.sqlite',
+            'file' => $this->getTestPath().'runtime/installer_test.sqlite',
             'host' => '127.0.0.1',
             'port' => '',
             'username' => '',
@@ -109,7 +109,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringNotContainsString('Installed Successfully', $out);
 
         // branch: connection failed
-        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'dbname' => '/nonexistent_dir_xyz/1.sqlite'];
+        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'file' => '/nonexistent_dir_xyz/1.sqlite'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Connection failed', $out);
@@ -118,7 +118,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $config_schema = $this->getTestPath().'config/sqlite.sql';
         $schema_backup = $config_schema.'.bak';
         rename($config_schema, $schema_backup);
-        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'dbname' => $this->getTestPath().'runtime/installer_test2.sqlite'];
+        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'file' => $this->getTestPath().'runtime/installer_test2.sqlite'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Schema file not found', $out);
@@ -129,8 +129,8 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = [
             'action' => 'install',
-            'driver' => ['sqlite', 'sqlite'],
-            'dbname' => [$this->getTestPath().'runtime/installer_test_a.sqlite', $this->getTestPath().'runtime/installer_test_b.sqlite'],
+            'driver' => 'sqlite',
+            'file' => [$this->getTestPath().'runtime/installer_test_a.sqlite', $this->getTestPath().'runtime/installer_test_b.sqlite'],
             'force' => '1',
         ];
         [$ret, $out] = $this->hook('install');
@@ -154,7 +154,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = [
             'action' => 'install',
             'driver' => 'sqlite',
-            'dbname' => $this->getTestPath().'runtime/installer_test3.sqlite',
+            'file' => $this->getTestPath().'runtime/installer_test3.sqlite',
             'host' => '127.0.0.1',
             'port' => '',
             'username' => '',
