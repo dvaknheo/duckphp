@@ -553,7 +553,7 @@ legend{font-weight:bold}
 <?php if (!empty($redis_error_message)): ?>
 <p class="error"><?=__h((string)$redis_error_message)?></p>
 <?php endif; ?>
-<p><label><input type="checkbox" name="redis_follow_root" value="1" checked data-target="redis-config"> Follow Main Application</label></p>
+<p><label><input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application</label></p>
 <div id="redis-config">
 <?php if (!empty($redis_list)): foreach ($redis_list as $rc): ?>
 <div class="redis-item">
