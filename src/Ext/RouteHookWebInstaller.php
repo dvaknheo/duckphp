@@ -393,13 +393,17 @@ class RouteHookWebInstaller extends ComponentBase
 
     protected function getSchemaFile(string $driver): string
     {
-        $filename = $driver.'.sql';
-        return App::_()->getConfigFile($filename);
+        return $this->getSchemaSqlFile($driver);
     }
     /**
-     * @param array<string, mixed> $post
-     * @return array<string, mixed>
+     * Locate schema sql file: {driver}{.suffix}.sql in the app config dir.
+     * suffix '' -> {driver}.sql (create), 'clean' -> {driver}.clean.sql (drop), 'data' -> {driver}.data.sql (seed data).
      */
+    protected function getSchemaSqlFile(string $driver, string $suffix = ''): string
+    {
+        $filename = $driver.($suffix === '' ? '' : '.'.$suffix).'.sql';
+        return App::_()->getConfigFile($filename);
+    }
     /**
      * @param array<string, mixed> $post
      * @param array<string, mixed> $ext_data
@@ -411,23 +415,40 @@ class RouteHookWebInstaller extends ComponentBase
         if ($driver === null) {
             throw new \Exception('No database configured.');
         }
-        $schema_file = $this->getSchemaFile($driver);
-        
-        if (!is_file($schema_file)) {
-            throw new \Exception('Schema file not found: '.__h($schema_file));
-        }
         $force = !empty($post['force']);
         try {
             $pdo = $this->createPdo($ext_data);
             if ($force) {
-                $this->dropAllTables($pdo, $driver);
+                // force reinstall: run clean script first if present
+                $clean_file = $this->getSchemaSqlFile($driver, 'clean');
+                if (is_file($clean_file)) {
+                    $this->executeSqlFile($pdo, $clean_file);
+                }
             }
-            $sql = (string) file_get_contents($schema_file);
-            $this->executeSql($pdo, $sql);
+            $schema_file = $this->getSchemaSqlFile($driver);
+            if (!is_file($schema_file)) {
+                throw new \Exception('Schema file not found: '.__h($schema_file));
+            }
+            $this->executeSqlFile($pdo, $schema_file);
+            // seed data script if present
+            $data_file = $this->getSchemaSqlFile($driver, 'data');
+            if (is_file($data_file)) {
+                $this->executeSqlFile($pdo, $data_file);
+            }
         } catch (\Throwable $ex) {
             throw new \Exception('Schema error: '.__h($ex->getMessage()));
         }
         return [];
+    }
+    /**
+     * Execute a schema sql file, replacing the {prefix} placeholder with the app table_prefix.
+     */
+    protected function executeSqlFile(\PDO $pdo, string $file): void
+    {
+        $sql = (string) file_get_contents($file);
+        $prefix = (string) (App::_()->options['table_prefix'] ?? '');
+        $sql = str_replace('{prefix}', $prefix, $sql);
+        $this->executeSql($pdo, $sql);
     }
     /**
      * @param array<string, mixed> $ext_data
@@ -460,20 +481,6 @@ class RouteHookWebInstaller extends ComponentBase
         }
         $config = $list[0];
         return new \PDO($config['dsn'], $config['username'] ?? null, $config['password'] ?? null, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-    }
-    protected function dropAllTables(\PDO $pdo, string $driver): void
-    {
-        if ($driver === 'sqlite') {
-            $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")->fetchAll(\PDO::FETCH_COLUMN);
-            foreach ($tables as $table) {
-                $pdo->exec('DROP TABLE IF EXISTS "'.str_replace('"', '""', ''.$table).'"');
-            }
-            return;
-        }
-        $schema = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()")->fetchAll(\PDO::FETCH_COLUMN);
-        foreach ($schema as $table) {
-            $pdo->exec('DROP TABLE IF EXISTS `'.str_replace('`', '``', ''.$table).'`');
-        }
     }
     protected function executeSql(\PDO $pdo, string $sql): void
     {

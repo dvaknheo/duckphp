@@ -140,6 +140,22 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $pdo = new \PDO($app->options['database_list'][0]['dsn']);
         $this->assertSame('demo', $pdo->query('select name from install_demo')->fetchColumn());
 
+        ///////////////// table_prefix: {prefix} placeholder replaced
+        $app = $this->initApp(['table_prefix' => 't_'], ['web_installer_use_redis' => false]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = [
+            'action' => 'install',
+            'driver' => 'sqlite',
+            'database' => ['file' => $this->getTestPath().'runtime/installer_test_prefix.sqlite'],
+            'force' => '1',
+        ];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('Already Installed', $out);
+        $pdo = new \PDO($app->options['database_list'][0]['dsn']);
+        $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")->fetchAll(\PDO::FETCH_COLUMN);
+        $this->assertContains('t_install_demo', $tables);
+        $this->assertSame('demo', $pdo->query('select name from t_install_demo')->fetchColumn());
+
         ///////////////// use_redis = true app: single redis
         $app = $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true]);
         // GET: single page with redis check and redis section
@@ -197,6 +213,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         @unlink($this->getTestPath().'runtime/installer_test2.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test3.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test_a.sqlite');
+        @unlink($this->getTestPath().'runtime/installer_test_prefix.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test_b.sqlite');
         clearstatcache();
         $_SERVER = $__SERVER;
