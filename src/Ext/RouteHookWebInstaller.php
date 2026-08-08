@@ -21,7 +21,7 @@ class RouteHookWebInstaller extends ComponentBase
         'web_installer_path' => 'install',
         'web_installer_use_database' => true,
         'web_installer_use_redis' => true,
-        'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true, 'duckdb'=>true],
+        'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true, 'duckdb' => false],
         'web_installer_view' => '',
         'web_installer_force' => false,
     ];
@@ -95,19 +95,40 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildPageData(array $post, array $exceptions = [], bool $installed = false): array
     {
+        $redis_list = App::_()->options['redis_list'] ?? [];
+        $database_list = App::_()->options['database_list'] ?? [];
+        if (!empty($exceptions)) {
+            // keep the posted config on failure so the user can retry with the same values
+            if (isset($post['redis_host'])) {
+                $redis_list = [[
+                    'host' => (string) ($post['redis_host'] ?? '127.0.0.1'),
+                    'port' => (string) ($post['redis_port'] ?? '6379'),
+                    'auth' => (string) ($post['redis_auth'] ?? ''),
+                    'select' => (string) ($post['redis_select'] ?? '0'),
+                ]];
+            }
+            if (isset($post['driver'])) {
+                $driver = (string) $post['driver'];
+                $dsn = $this->makeDsn($driver, $post);
+                if ($dsn !== null) {
+                    $database_list = [[
+                        'driver' => $driver,
+                        'dsn' => $dsn,
+                    ]];
+                }
+            }
+        }
         $base = [
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
             'checks' => $this->checkEnv(),
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
             'redis_can_follow_root' => $this->checkRootHasRedis(),
-            'redis_list' => App::_()->options['redis_list'] ?? [],
+            'redis_list' => $redis_list,
             'database_can_follow_root' => $this->checkRootHasDatabase(),
-            'database_list' => App::_()->options['database_list'] ?? [],
+            'database_list' => $database_list,
             'drivers' => $this->getEnabledDatabaseDrivers(),
             'installed' => $installed,
-            'flash_message' => '',
-            'error_message' => '',
             'redis_error_message' => (string) ($exceptions['redis_error_message'] ?? ''),
             'database_error_message' => (string) ($exceptions['database_error_message'] ?? ''),
             'custom_error_message' => (string) ($exceptions['custom_error_message'] ?? ''),
@@ -153,22 +174,28 @@ class RouteHookWebInstaller extends ComponentBase
                 $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
             }
         }
-        if (!empty($exceptions)) {
-            // not all checks passed: do not write anything yet
-            return ['exceptions' => $exceptions];
-        }
+        // checkCustom: override hook for extra validation after redis/database checks; throw \Exception on failure.
         try {
-            $ext_data = array_merge($ext_data, $this->doCustom($post));
+            $ext_data = array_merge($ext_data, $this->checkCustom($post));
         } catch (\Exception $e) {
             $exceptions['custom_error_message'] = $e->getMessage();
         }
         if (!empty($exceptions)) {
+            // not all checks passed: do not write anything yet
             return ['exceptions' => $exceptions];
         }
+        if ($this->options['web_installer_use_database']) {
+            try {
+                $ext_data = array_merge($ext_data, $this->doSchema($post, $ext_data));
+            } catch (\Exception $e) {
+                $exceptions['database_error_message'] = $e->getMessage();
+            }
+        }
+        // doCustom: override hook for extra install steps; runs after doSchema.
         try {
-            $ext_data = array_merge($ext_data, $this->doSchema($post, $ext_data));
+            $ext_data = array_merge($ext_data, $this->doCustom($post, $ext_data));
         } catch (\Exception $e) {
-            $exceptions['database_error_message'] = $e->getMessage();
+            $exceptions['custom_error_message'] = $e->getMessage();
         }
         if (!empty($exceptions)) {
             return ['exceptions' => $exceptions];
@@ -177,11 +204,22 @@ class RouteHookWebInstaller extends ComponentBase
         ExtOptionsLoader::_()->saveExtOptions($ext_data);
         return ['installed' => true];
     }
+    /**
+     * Override hook: extra validation after redis/database checks. Throw \Exception on failure.
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
     protected function checkCustom(array $post): array
     {
         return [];
     }
-    protected function doCustom(array $post): array
+    /**
+     * Override hook: extra install steps after doSchema. Throw \Exception on failure.
+     * @param array<string, mixed> $post
+     * @param array<string, mixed> $ext_data
+     * @return array<string, mixed>
+     */
+    protected function doCustom(array $post, array $ext_data = []): array
     {
         return [];
     }
@@ -248,8 +286,13 @@ class RouteHookWebInstaller extends ComponentBase
         if(isset($this->drivers)) {
             return $this->drivers;
         }
+        $configured = $this->options['web_installer_database_drivers'] ?? [];
+        if (is_string($configured)) {
+            // support single driver as a plain string, e.g. 'sqlite'
+            $configured = [$configured => true];
+        }
         $ret = [];       
-        foreach ($this->options['web_installer_database_drivers'] ??[] as $driver => $enabled) {
+        foreach ($configured as $driver => $enabled) {
             if ($enabled) {
                 $ret[] = $driver;
             }
@@ -434,15 +477,8 @@ legend{font-weight:bold}
 <h1>DuckPhp Web Installer</h1>
 <?php if (!empty($installed)): ?>
 <h2>Already Installed</h2>
-<?php if (!empty($flash_message)): ?><p class="ok"><?=__h((string)$flash_message)?></p><?php endif; ?>
 <p>The application is already installed. To reinstall, please remove the <code>installed</code> entry from the ext options data file.</p>
 <?php else: ?>
-<?php if (!empty($error_message)): ?>
-<p class="error"><?=__h((string)$error_message)?></p>
-<?php endif; ?>
-<?php if (!empty($flash_message)): ?>
-<p class="ok"><?=__h((string)$flash_message)?></p>
-<?php endif; ?>
 <fieldset>
 <legend>Environment Check</legend>
 <p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
