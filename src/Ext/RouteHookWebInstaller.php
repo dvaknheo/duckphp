@@ -53,11 +53,15 @@ class RouteHookWebInstaller extends ComponentBase
         }
         $post = SuperGlobal::_()->_POST();
         $post = is_array($post) ? $post : [];
-        $ext_data = [];
+        $post = $this->filterPost($post);
+        $exceptions = [];
+        $installed = false;
         if (!empty($post)) {
-            $ext_data = $this->installBusiness($post);
+            $ret = $this->installBusiness($post);
+            $exceptions = $ret['exceptions'] ?? [];
+            $installed = !empty($ret['installed']);
         }
-        $data = $this->buildPageData($post);
+        $data = $this->buildPageData($post, $exceptions, $installed);
 
         if ($this->options['web_installer_view']) {
             View::_()->_Show($data, $this->options['web_installer_view']);
@@ -65,34 +69,49 @@ class RouteHookWebInstaller extends ComponentBase
             $this->show($data);
         }
     }
+    /**
+     * Filter POST input to a whitelist before use (avoid extract() injection).
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function filterPost(array $post): array
+    {
+        $whitelist = ['action', 'driver', 'host', 'port', 'dbname', 'username', 'password', 'force', 'redis_follow_root', 'redis_host', 'redis_port', 'redis_auth', 'redis_select', 'database_follow_root'];
+        $ret = [];
+        foreach ($whitelist as $key) {
+            if (array_key_exists($key, $post)) {
+                $ret[$key] = $post[$key];
+            }
+        }
+        return $ret;
+    }
 
     //////////////////
     /**
      * @param array<string, mixed> $post
+     * @param array<string, mixed> $exceptions
+     * @param bool $installed
      * @return array<string, mixed>
      */
-    protected function buildPageData(array $post): array
+    protected function buildPageData(array $post, array $exceptions = [], bool $installed = false): array
     {
         $base = [
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
             'checks' => $this->checkEnv(),
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
-
             'redis_can_follow_root' => $this->checkRootHasRedis(),
             'redis_list' => App::_()->options['redis_list'] ?? [],
-
             'database_can_follow_root' => $this->checkRootHasDatabase(),
-            
             'database_list' => App::_()->options['database_list'] ?? [],
             'drivers' => $this->getEnabledDatabaseDrivers(),
+            'installed' => $installed,
+            'flash_message' => '',
+            'error_message' => '',
+            'redis_error_message' => (string) ($exceptions['redis_error_message'] ?? ''),
+            'database_error_message' => (string) ($exceptions['database_error_message'] ?? ''),
+            'custom_error_message' => (string) ($exceptions['custom_error_message'] ?? ''),
         ];
-        
-        $base = array_merge($base, $post);
-
-        $base['redis_follow_root'] =  $base['redis_can_follow_root']  && ($post['redis_follow_root'] ?? false);
-        $base['database_follow_root'] =  $base['database_can_follow_root']  && ($post['database_follow_root'] ?? false);
-
         return $base;
     }
     protected function checkRootHasRedis(): bool
@@ -118,46 +137,45 @@ class RouteHookWebInstaller extends ComponentBase
      */
     public function installBusiness(array $post): array
     {
-        $ext_data = [];
         $exceptions = [];
+        $ext_data = [];
         if ($this->options['web_installer_use_redis'] && empty($post['redis_follow_root'])) {
-            try{
+            try {
                 $ext_data = array_merge($ext_data, $this->checkRedis($post));
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 $exceptions['redis_error_message'] = 'Redis connection failed: '.__h($e->getMessage());
             }
         }
         if ($this->options['web_installer_use_database'] && empty($post['database_follow_root'])) {
-            try{
+            try {
                 $ext_data = array_merge($ext_data, $this->checkDatabase($post));
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
             }
         }
+        if (!empty($exceptions)) {
+            // not all checks passed: do not write anything yet
+            return ['exceptions' => $exceptions];
+        }
         try {
-            $ext_data = array_merge($ext_data, $this->checkCustom($post));
-        }catch (\Exception $e){
+            $ext_data = array_merge($ext_data, $this->doCustom($post));
+        } catch (\Exception $e) {
             $exceptions['custom_error_message'] = $e->getMessage();
         }
         if (!empty($exceptions)) {
-            return ['result'=> $ext_data,'exceptions'=> $exceptions];
+            return ['exceptions' => $exceptions];
         }
-
         try {
-            $ext_data = array_merge($ext_data, $this->doSchema($post));
-            try {
-                $ext_data = array_merge($ext_data, $this->doSchema($post));
-            }catch (\Exception $e){
-                $exceptions['database_error_message'] = $e->getMessage();
-            }
-        }catch (\Exception $e){
+            $ext_data = array_merge($ext_data, $this->doSchema($post, $ext_data));
+        } catch (\Exception $e) {
             $exceptions['database_error_message'] = $e->getMessage();
         }
         if (!empty($exceptions)) {
-            return ['result'=> $ext_data,'exceptions'=> $exceptions];
+            return ['exceptions' => $exceptions];
         }
+        $ext_data['installed'] = date(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_data);
-        return ['result'=> $ext_data,];
+        return ['installed' => true];
     }
     protected function checkCustom(array $post): array
     {
@@ -179,7 +197,6 @@ class RouteHookWebInstaller extends ComponentBase
             foreach ($drivers as $driver) {
                 $ext = 'pdo_'.$driver;
                 $ret[] = [extension_loaded($ext), 'PDO driver: '.$driver];
-                $drivers[] = $driver;
             }
         }
         if ($this->options['web_installer_use_redis']) {
@@ -194,21 +211,34 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function checkRedis(array $post): array
     {
+        if (!class_exists(\Redis::class)) {
+            throw new \Exception('Redis extension not loaded');
+        }
         $config = [
             'host' => (string) ($post['redis_host'] ?? '127.0.0.1'),
             'port' => (string) ($post['redis_port'] ?? '6379'),
             'auth' => (string) ($post['redis_auth'] ?? ''),
             'select' => (string) ($post['redis_select'] ?? '0'),
         ];
-        $redis = new \Redis();
-        $redis->connect($config['host'], (int) $config['port'], 3);
-        if (!empty($config['auth'])) {
-            $redis->auth($config['auth']);
+        try {
+            $redis = new \Redis();
+            if (!$redis->connect($config['host'], (int) $config['port'], 3)) {
+                throw new \Exception('connect failed');
+            }
+            if (!empty($config['auth'])) {
+                $redis->auth($config['auth']);
+            }
+            if ('' !== $config['select']) {
+                $redis->select((int) $config['select']);
+            }
+            if (!$redis->ping()) {
+                throw new \Exception('ping failed');
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw new \Exception($e->getMessage());
         }
-        if ('' !== $config['select']) {
-            $redis->select((int) $config['select']);
-        }
-        $redis->ping();
         return ['redis_list' => [$config]];
     }
 
@@ -221,9 +251,6 @@ class RouteHookWebInstaller extends ComponentBase
         $ret = [];       
         foreach ($this->options['web_installer_database_drivers'] ??[] as $driver => $enabled) {
             if ($enabled) {
-                if(is_file($this->getSchemaFile($driver))) {
-                    $ret[] = $driver;
-                }
                 $ret[] = $driver;
             }
         }
@@ -237,6 +264,9 @@ class RouteHookWebInstaller extends ComponentBase
     protected function checkDatabase(array $post): array
     {
         $driver = (string) ($post['driver'] ?? '');
+        if (!in_array($driver, $this->getEnabledDatabaseDrivers(), true)) {
+            throw new \Exception('Unsupported driver: '.__h($driver));
+        }
         $config = [
             'host' => (string) ($post['host'] ?? '127.0.0.1'),
             'port' => (string) ($post['port'] ?? ''),
@@ -246,13 +276,11 @@ class RouteHookWebInstaller extends ComponentBase
         ];
         $dsn = $this->makeDsn($driver, $config);
         if ($dsn === null) {
-            $this->database_error_message = 'Driver requires dbname: '.__h($driver);
-            return [];
+            throw new \Exception('Driver requires dbname: '.__h($driver));
         }
         $error = $this->testConnection($dsn, $config['username'], $config['password']);
         if ($error !== null) {
-            $this->database_error_message = 'Connection failed: '.__h($error);
-            return [];
+            throw new \Exception('Connection failed: '.__h($error));
         }
         $config['dsn'] = $dsn;
         
@@ -293,37 +321,44 @@ class RouteHookWebInstaller extends ComponentBase
      * @param array<string, mixed> $post
      * @return array<string, mixed>
      */
-    protected function doSchema(array $post): array
+    /**
+     * @param array<string, mixed> $post
+     * @param array<string, mixed> $ext_data
+     * @return array<string, mixed>
+     */
+    protected function doSchema(array $post, array $ext_data = []): array
     {
-        $driver = $this->getCurrentDriver();
+        $driver = $this->getCurrentDriver($ext_data);
         if ($driver === null) {
-            $this->database_error_message = 'No database configured.';
-            return [];
+            throw new \Exception('No database configured.');
         }
         $schema_file = $this->getSchemaFile($driver);
         
         if (!is_file($schema_file)) {
-            $this->database_error_message = 'Schema file not found: '.__h($schema_file);
-            return [];
+            throw new \Exception('Schema file not found: '.__h($schema_file));
         }
         $force = !empty($post['force']);
         try {
-            $pdo = $this->createPdo();
+            $pdo = $this->createPdo($ext_data);
             if ($force) {
                 $this->dropAllTables($pdo, $driver);
             }
             $sql = (string) file_get_contents($schema_file);
             $this->executeSql($pdo, $sql);
         } catch (\Throwable $ex) {
-            $this->database_error_message = 'Schema error: '.__h($ex->getMessage());
-            return [];
+            throw new \Exception('Schema error: '.__h($ex->getMessage()));
         }
-        $this->flash_message = 'Tables created.';
         return [];
     }
-    protected function getCurrentDriver(): ?string
+    /**
+     * @param array<string, mixed> $ext_data
+     */
+    protected function getCurrentDriver(array $ext_data = []): ?string
     {
-        $list = App::_()->options['database_list'] ?? [];
+        $list = $ext_data['database_list'] ?? [];
+        if (empty($list)) {
+            $list = App::_()->options['database_list'] ?? [];
+        }
         if (empty($list)) {
             $list = App::Root()->options['database_list'] ?? [];
         }
@@ -332,9 +367,15 @@ class RouteHookWebInstaller extends ComponentBase
         }
         return explode(':', ''.$list[0]['dsn'])[0];
     }
-    protected function createPdo(): \PDO
+    /**
+     * @param array<string, mixed> $ext_data
+     */
+    protected function createPdo(array $ext_data = []): \PDO
     {
-        $list = App::_()->options['database_list'];
+        $list = $ext_data['database_list'] ?? [];
+        if (empty($list)) {
+            $list = App::_()->options['database_list'];
+        }
         if (empty($list)) {
             $list = App::Root()->options['database_list'];
         }
@@ -454,6 +495,9 @@ legend{font-weight:bold}
 <?php endif; ?>
 <fieldset>
 <legend>Customer Setting</legend>
+<?php if (!empty($custom_error_message)): ?>
+<p class="error"><?=__h((string)$custom_error_message)?></p>
+<?php endif; ?>
 <p>Reserved for future extensions.</p>
 </fieldset>
 <form method="post">

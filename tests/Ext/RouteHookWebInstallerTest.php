@@ -42,7 +42,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(RouteHookWebInstaller::class);
         $__SERVER = $_SERVER;
-        $app = $this->initApp();
+        $app = $this->initApp([], ['web_installer_use_redis' => false]);
 
         // not installed, non-install path: pass through
         [$ret, $out] = $this->hook('');
@@ -81,7 +81,6 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         ];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
-        $this->assertStringContainsString('Installed Successfully', $out);
         $this->assertStringContainsString('Already Installed', $out);
         $list = $app->options['database_list'];
         $this->assertNotEmpty($list);
@@ -101,7 +100,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('', $out);
 
         ///////////////// branch: install fails at database step (unsupported driver)
-        $this->initApp();
+        $this->initApp([], ['web_installer_use_redis' => false]);
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = ['action' => 'install', 'driver' => 'oracle', 'dbname' => 'x'];
         [$ret, $out] = $this->hook('install');
@@ -116,12 +115,14 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Connection failed', $out);
 
         // branch: schema file missing
-        RouteHookWebInstaller::_()->options['web_installer_schema_path'] = 'config_missing';
+        $config_schema = $this->getTestPath().'config/sqlite.sql';
+        $schema_backup = $config_schema.'.bak';
+        rename($config_schema, $schema_backup);
         $_POST = ['action' => 'install', 'driver' => 'sqlite', 'dbname' => $this->getTestPath().'runtime/installer_test2.sqlite'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Schema file not found', $out);
-        RouteHookWebInstaller::_()->options['web_installer_schema_path'] = 'config';
+        rename($schema_backup, $config_schema);
 
         ///////////////// use_redis = true app
         $app = $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true]);
@@ -148,7 +149,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
             'redis_select' => '0',
         ];
         [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Installed Successfully', $out);
+        $this->assertStringContainsString('Already Installed', $out);
         $this->assertNotEmpty($app->options['redis_list']);
 
         ///////////////// use_database = false
