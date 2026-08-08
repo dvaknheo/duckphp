@@ -24,6 +24,9 @@ class RouteHookWebInstaller extends ComponentBase
         'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true, 'duckdb' => false],
         'web_installer_view' => '',
         'web_installer_force' => false,
+        'web_installer_check_custom_callback' => null,
+        'web_installer_do_custom_callback' => null,
+        'web_installer_render_custom_callback' => null,
     ];
     protected $drivers = null;
     public static function Hook($path_info)
@@ -83,8 +86,8 @@ class RouteHookWebInstaller extends ComponentBase
             $drivers = $this->getEnabledDatabaseDrivers();
             $post = [
                 'driver' => $drivers[0] ?? 'sqlite',
-                'database_list' => [['file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']],
-                'redis_list' => [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']],
+                'database' => ['file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => ''],
+                'redis' => ['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0'],
             ];
         }
         $redis = $this->buildRedisListFromPost($post);
@@ -95,8 +98,10 @@ class RouteHookWebInstaller extends ComponentBase
             'checks' => $this->checkEnv(),
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
             'redis_can_follow_root' => $this->checkRootHasRedis(),
+            'redis_can_follow_root_reason' => $this->checkRootHasRedis() ? '' : 'root app has no redis configured',
             'redis' => $redis,
             'database_can_follow_root' => $this->checkRootHasDatabase(),
+            'database_can_follow_root_reason' => $this->checkRootHasDatabase() ? '' : 'root app has no database configured',
             'database' => $database,
             'drivers' => $this->getEnabledDatabaseDrivers(),
             'installed' => $installed,
@@ -114,11 +119,13 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildRedisListFromPost(array $post): array
     {
-        $list = (array) ($post['redis_list'] ?? []);
-        if (empty($list)) {
-            $list = [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']];
-        }
-        return $list;
+        $config = (array) ($post['redis'] ?? []);
+        return [[
+            'host' => (string) ($config['host'] ?? '127.0.0.1'),
+            'port' => (string) ($config['port'] ?? '6379'),
+            'auth' => (string) ($config['auth'] ?? ''),
+            'select' => (string) ($config['select'] ?? '0'),
+        ]];
     }
     /**
      * @param array<string, mixed> $post
@@ -126,11 +133,22 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildDatabaseListFromPost(array $post): array
     {
-        $list = (array) ($post['database_list'] ?? []);
-        if (empty($list)) {
-            $list = [['driver' => '', 'file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']];
+        $driver = (string) ($post['driver'] ?? 'sqlite');
+        $config = (array) ($post['database'] ?? []);
+        $dsn = $this->makeDsn($driver, $config);
+        $config = [
+            'driver' => $driver,
+            'file' => (string) ($config['file'] ?? ''),
+            'host' => (string) ($config['host'] ?? '127.0.0.1'),
+            'port' => (string) ($config['port'] ?? ''),
+            'dbname' => (string) ($config['dbname'] ?? ''),
+            'username' => (string) ($config['username'] ?? ''),
+            'password' => (string) ($config['password'] ?? ''),
+        ];
+        if ($dsn !== null) {
+            $config['dsn'] = $dsn;
         }
-        return $list;
+        return [$config];
     }
     /**
      * Override hook: render custom setting block (Customer Setting).
@@ -140,6 +158,9 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function renderCustom(array $post): string
     {
+        if ($this->options['web_installer_render_custom_callback']) {
+            return (string) call_user_func($this->options['web_installer_render_custom_callback'], $post);
+        }
         return '';
     }
     protected function checkRootHasRedis(): bool
@@ -167,6 +188,7 @@ class RouteHookWebInstaller extends ComponentBase
         if ($this->options['web_installer_use_redis'] && empty($post['redis_follow_root'])) {
             try {
                 $ext_data = array_merge($ext_data, $this->checkRedis($post));
+                $ext_data['local_redis'] = true;
             } catch (\Exception $e) {
                 $exceptions['redis_error_message'] = 'Redis connection failed: '.__h($e->getMessage());
             }
@@ -174,6 +196,7 @@ class RouteHookWebInstaller extends ComponentBase
         if ($this->options['web_installer_use_database'] && empty($post['database_follow_root'])) {
             try {
                 $ext_data = array_merge($ext_data, $this->checkDatabase($post));
+                $ext_data['local_database'] = true;
             } catch (\Exception $e) {
                 $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
             }
@@ -215,16 +238,23 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function checkCustom(array $post): array
     {
+        if ($this->options['web_installer_check_custom_callback']) {
+            return (array) call_user_func($this->options['web_installer_check_custom_callback'], $post);
+        }
         return [];
     }
     /**
      * Override hook: extra install steps after doSchema. Throw \Exception on failure.
+     * Can be replaced by option 'web_installer_do_custom_callback'.
      * @param array<string, mixed> $post
      * @param array<string, mixed> $ext_data
      * @return array<string, mixed>
      */
     protected function doCustom(array $post, array $ext_data = []): array
     {
+        if ($this->options['web_installer_do_custom_callback']) {
+            return (array) call_user_func($this->options['web_installer_do_custom_callback'], $post, $ext_data);
+        }
         return [];
     }
     //////////////////  env
@@ -256,38 +286,31 @@ class RouteHookWebInstaller extends ComponentBase
         if (!class_exists(\Redis::class)) {
             throw new \Exception('Redis extension not loaded');
         }
-        $list = (array) ($post['redis_list'] ?? []);
-        if (empty($list)) {
-            $list = [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']];
-        }
-        $ret = [];
-        foreach ($list as $config) {
-            $config = [
-                'host' => (string) ($config['host'] ?? '127.0.0.1'),
-                'port' => (string) ($config['port'] ?? '6379'),
-                'auth' => (string) ($config['auth'] ?? ''),
-                'select' => (string) ($config['select'] ?? '0'),
-            ];
-            try {
-                $redis = new \Redis();
-                if (!$redis->connect($config['host'], (int) $config['port'], 3)) {
-                    throw new \Exception('connect failed');
-                }
-                if (!empty($config['auth'])) {
-                    $redis->auth($config['auth']);
-                }
-                if ('' !== $config['select']) {
-                    $redis->select((int) $config['select']);
-                }
-                if (!$redis->ping()) {
-                    throw new \Exception('ping failed');
-                }
-            } catch (\Throwable $e) {
-                throw new \Exception($config['host'].':'.$config['port'].' '.$e->getMessage());
+        $config = (array) ($post['redis'] ?? []);
+        $config = [
+            'host' => (string) ($config['host'] ?? '127.0.0.1'),
+            'port' => (string) ($config['port'] ?? '6379'),
+            'auth' => (string) ($config['auth'] ?? ''),
+            'select' => (string) ($config['select'] ?? '0'),
+        ];
+        try {
+            $redis = new \Redis();
+            if (!$redis->connect($config['host'], (int) $config['port'], 3)) {
+                throw new \Exception('connect failed');
             }
-            $ret[] = $config;
+            if (!empty($config['auth'])) {
+                $redis->auth($config['auth']);
+            }
+            if ('' !== $config['select']) {
+                $redis->select((int) $config['select']);
+            }
+            if (!$redis->ping()) {
+                throw new \Exception('ping failed');
+            }
+        } catch (\Throwable $e) {
+            throw new \Exception($config['host'].':'.$config['port'].' '.$e->getMessage());
         }
-        return ['redis_list' => $ret];
+        return ['redis_list' => [$config]];
     }
 
     //////////////////  database
@@ -317,36 +340,29 @@ class RouteHookWebInstaller extends ComponentBase
     protected function checkDatabase(array $post): array
     {
         $driver = (string) ($post['driver'] ?? '');
-        $list = (array) ($post['database_list'] ?? []);
-        if (empty($list)) {
-            $list = [['file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']];
+        if (!in_array($driver, $this->getEnabledDatabaseDrivers(), true)) {
+            throw new \Exception('Unsupported driver: '.__h($driver));
         }
-        $ret = [];
-        foreach ($list as $config) {
-            if (!in_array($driver, $this->getEnabledDatabaseDrivers(), true)) {
-                throw new \Exception('Unsupported driver: '.__h($driver));
-            }
-            $config = [
-                'file' => (string) ($config['file'] ?? ''),
-                'host' => (string) ($config['host'] ?? '127.0.0.1'),
-                'port' => (string) ($config['port'] ?? ''),
-                'dbname' => (string) ($config['dbname'] ?? ''),
-                'username' => (string) ($config['username'] ?? ''),
-                'password' => (string) ($config['password'] ?? ''),
-            ];
-            $dsn = $this->makeDsn($driver, $config);
-            if ($dsn === null) {
-                throw new \Exception('Driver requires dbname: '.__h($driver));
-            }
-            $error = $this->testConnection($dsn, $config['username'], $config['password']);
-            if ($error !== null) {
-                throw new \Exception('Connection failed: '.__h($error));
-            }
-            $config['driver'] = $driver;
-            $config['dsn'] = $dsn;
-            $ret[] = $config;
+        $config = (array) ($post['database'] ?? []);
+        $config = [
+            'file' => (string) ($config['file'] ?? ''),
+            'host' => (string) ($config['host'] ?? '127.0.0.1'),
+            'port' => (string) ($config['port'] ?? ''),
+            'dbname' => (string) ($config['dbname'] ?? ''),
+            'username' => (string) ($config['username'] ?? ''),
+            'password' => (string) ($config['password'] ?? ''),
+        ];
+        $dsn = $this->makeDsn($driver, $config);
+        if ($dsn === null) {
+            throw new \Exception('Driver requires dbname: '.__h($driver));
         }
-        return ['database_list' => $ret];
+        $error = $this->testConnection($dsn, $config['username'], $config['password']);
+        if ($error !== null) {
+            throw new \Exception('Connection failed: '.__h($error));
+        }
+        $config['driver'] = $driver;
+        $config['dsn'] = $dsn;
+        return ['database_list' => [$config]];
     }
     protected function makeDsn(string $driver, array $config): ?string
     {
@@ -493,6 +509,7 @@ td,th{border:1px solid #ccc;padding:4px 8px;text-align:left}
 input,select,button{padding:4px 8px}
 fieldset{border:1px solid #ccc;margin:1em 0;padding:0 1em 1em}
 legend{font-weight:bold}
+.hint{font-size:0.85em;color:#666}
 </style></head><body>
 <h1>DuckPhp Web Installer</h1>
 <?php if (!empty($installed)): ?>
@@ -517,26 +534,13 @@ legend{font-weight:bold}
 <?php if (!empty($redis_error_message)): ?>
 <p class="error"><?=__h((string)$redis_error_message)?></p>
 <?php endif; ?>
-<p><label><input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application</label></p>
+<p><label><input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application<?php if (!empty($redis_can_follow_root_reason)): ?> <span class="hint">(<?=__h($redis_can_follow_root_reason)?>)</span><?php endif; ?></label></p>
 <div id="redis-config">
-<?php if (!empty($redis)): foreach ($redis as $rc): ?>
-<div class="redis-item">
-<p><label>Host: <input type="text" name="redis_list[][host]" value="<?=__h((string)($rc['host'] ?? '127.0.0.1'))?>"></label></p>
-<p><label>Port: <input type="text" name="redis_list[][port]" value="<?=__h((string)($rc['port'] ?? '6379'))?>"></label></p>
-<p><label>Auth: <input type="password" name="redis_list[][auth]" value="<?=__h((string)($rc['auth'] ?? ''))?>"></label></p>
-<p><label>Select: <input type="text" name="redis_list[][select]" value="<?=__h((string)($rc['select'] ?? '0'))?>"></label></p>
-<p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>
-</div>
-<?php endforeach; else: ?>
-<div class="redis-item">
-<p><label>Host: <input type="text" name="redis_list[][host]" value="127.0.0.1"></label></p>
-<p><label>Port: <input type="text" name="redis_list[][port]" value="6379"></label></p>
-<p><label>Auth: <input type="password" name="redis_list[][auth]" value=""></label></p>
-<p><label>Select: <input type="text" name="redis_list[][select]" value="0"></label></p>
-<p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>
-</div>
-<?php endif; ?>
-<p class="redis-add"><button type="button" onclick="addRedisItem()">Add Redis</button></p>
+<p><label>Host: <input type="text" name="redis[host]" value="<?=__h((string)($post['redis']['host'] ?? '127.0.0.1'))?>"></label></p>
+<p><label>Port: <input type="text" name="redis[port]" value="<?=__h((string)($post['redis']['port'] ?? '6379'))?>"></label></p>
+<p><label>Auth: <input type="password" name="redis[auth]" value="<?=__h((string)($post['redis']['auth'] ?? ''))?>"></label></p>
+<p><label>Select: <input type="text" name="redis[select]" value="<?=__h((string)($post['redis']['select'] ?? '0'))?>"></label></p>
+<p class="hint">Multiple redis configs are supported: add more entries to the config file manually after install.</p>
 </div>
 </fieldset>
 <?php endif; ?>
@@ -546,7 +550,7 @@ legend{font-weight:bold}
 <?php if (!empty($database_error_message)): ?>
 <p class="error"><?=__h((string)$database_error_message)?></p>
 <?php endif; ?>
-<p><label><input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application</label></p>
+<p><label><input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application<?php if (!empty($database_can_follow_root_reason)): ?> <span class="hint">(<?=__h($database_can_follow_root_reason)?>)</span><?php endif; ?></label></p>
 <div id="database-config">
 <p><label>Driver: <select name="driver" onchange="toggleDatabaseDriver(this)">
 <?php $dc_driver = isset($database[0]['driver']) ? (string) $database[0]['driver'] : (isset($database[0]['dsn']) ? explode(':', (string) $database[0]['dsn'])[0] : ''); ?>
@@ -554,28 +558,13 @@ legend{font-weight:bold}
     <option value="<?=__h($driver)?>"<?= $driver === $dc_driver ? ' selected' : '' ?>><?=__h($driver)?></option>
 <?php endforeach; ?>
 </select></label></p>
-<?php if (!empty($database)): foreach ($database as $dc): ?>
-<div class="database-item">
-<p data-db-file><label>File: <input type="text" name="database_list[][file]" value="<?=__h((string)($dc['file'] ?? 'database/database.db'))?>"></label></p>
-<p data-db-server><label>Host: <input type="text" name="database_list[][host]" value="<?=__h((string)($dc['host'] ?? '127.0.0.1'))?>"></label></p>
-<p data-db-server><label>Port: <input type="text" name="database_list[][port]" value="<?=__h((string)($dc['port'] ?? ''))?>"></label></p>
-<p data-db-server><label>Database: <input type="text" name="database_list[][dbname]" value="<?=__h((string)($dc['dbname'] ?? ''))?>"></label></p>
-<p data-db-server><label>Username: <input type="text" name="database_list[][username]" value="<?=__h((string)($dc['username'] ?? ''))?>"></label></p>
-<p data-db-server><label>Password: <input type="password" name="database_list[][password]" value="<?=__h((string)($dc['password'] ?? ''))?>"></label></p>
-<p><button type="button" onclick="removeDatabaseItem(this)">Remove</button></p>
-</div>
-<?php endforeach; else: ?>
-<div class="database-item">
-<p data-db-file><label>File: <input type="text" name="database_list[][file]" value="database/database.db"></label></p>
-<p data-db-server><label>Host: <input type="text" name="database_list[][host]" value="127.0.0.1"></label></p>
-<p data-db-server><label>Port: <input type="text" name="database_list[][port]" value=""></label></p>
-<p data-db-server><label>Database: <input type="text" name="database_list[][dbname]" value=""></label></p>
-<p data-db-server><label>Username: <input type="text" name="database_list[][username]" value=""></label></p>
-<p data-db-server><label>Password: <input type="password" name="database_list[][password]" value=""></label></p>
-<p><button type="button" onclick="removeDatabaseItem(this)">Remove</button></p>
-</div>
-<?php endif; ?>
-<p class="database-add"><button type="button" onclick="addDatabaseItem()">Add Database</button></p>
+<p data-db-file><label>File: <input type="text" name="database[file]" value="<?=__h((string)($post['database']['file'] ?? 'database/database.db'))?>"></label></p>
+<p data-db-server><label>Host: <input type="text" name="database[host]" value="<?=__h((string)($post['database']['host'] ?? '127.0.0.1'))?>"></label></p>
+<p data-db-server><label>Port: <input type="text" name="database[port]" value="<?=__h((string)($post['database']['port'] ?? ''))?>"></label></p>
+<p data-db-server><label>Database: <input type="text" name="database[dbname]" value="<?=__h((string)($post['database']['dbname'] ?? ''))?>"></label></p>
+<p data-db-server><label>Username: <input type="text" name="database[username]" value="<?=__h((string)($post['database']['username'] ?? ''))?>"></label></p>
+<p data-db-server><label>Password: <input type="password" name="database[password]" value="<?=__h((string)($post['database']['password'] ?? ''))?>"></label></p>
+<p class="hint">Multiple database configs (master/slave) are supported: add more entries to the config file manually after install.</p>
 </div>
 <hr/>
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
@@ -604,51 +593,10 @@ function toggleFollowRoot(cb) {
     var el = document.getElementById(cb.getAttribute('data-target'));
     if (el) { el.style.display = cb.checked ? 'none' : ''; }
 }
-function addRedisItem() {
-    var container = document.getElementById('redis-config');
-    var item = document.createElement('div');
-    item.className = 'redis-item';
-    item.innerHTML = '<p><label>Host: <input type="text" name="redis_list[][host]" value="127.0.0.1"></label></p>' +
-        '<p><label>Port: <input type="text" name="redis_list[][port]" value="6379"></label></p>' +
-        '<p><label>Auth: <input type="password" name="redis_list[][auth]" value=""></label></p>' +
-        '<p><label>Select: <input type="text" name="redis_list[][select]" value="0"></label></p>' +
-        '<p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>';
-    var add = container.querySelector('.redis-add');
-    container.insertBefore(item, add);
-}
-function removeRedisItem(btn) {
-    var item = btn.closest('.redis-item');
-    if (item) { item.parentNode.removeChild(item); }
-}
-function dbItemHtml() {
-    return '<p data-db-file><label>File: <input type="text" name="database_list[][file]" value="database/database.db"></label></p>' +
-        '<p data-db-server><label>Host: <input type="text" name="database_list[][host]" value="127.0.0.1"></label></p>' +
-        '<p data-db-server><label>Port: <input type="text" name="database_list[][port]" value=""></label></p>' +
-        '<p data-db-server><label>Database: <input type="text" name="database_list[][dbname]" value=""></label></p>' +
-        '<p data-db-server><label>Username: <input type="text" name="database_list[][username]" value=""></label></p>' +
-        '<p data-db-server><label>Password: <input type="password" name="database_list[][password]" value=""></label></p>' +
-        '<p><button type="button" onclick="removeDatabaseItem(this)">Remove</button></p>';
-}
-function addDatabaseItem() {
-    var container = document.getElementById('database-config');
-    var item = document.createElement('div');
-    item.className = 'database-item';
-    item.innerHTML = dbItemHtml();
-    container.insertBefore(item, container.querySelector('.database-add'));
-    var sel = container.querySelector('[name="driver"]');
-    if (sel) { toggleDatabaseDriver(sel); }
-}
-function removeDatabaseItem(btn) {
-    var item = btn.closest('.database-item');
-    if (item) { item.parentNode.removeChild(item); }
-}
 function toggleDatabaseDriver(sel) {
     var file = (sel.value === 'sqlite' || sel.value === 'duckdb');
-    var items = document.querySelectorAll('.database-item');
-    for (var i = 0; i < items.length; i++) {
-        toggleRows(items[i].querySelectorAll('[data-db-file]'), file);
-        toggleRows(items[i].querySelectorAll('[data-db-server]'), !file);
-    }
+    toggleRows(document.querySelectorAll('[data-db-file]'), file);
+    toggleRows(document.querySelectorAll('[data-db-server]'), !file);
 }
 var cbs = document.querySelectorAll('input[type="checkbox"][data-target]');
 for (var i = 0; i < cbs.length; i++) {
