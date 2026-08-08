@@ -53,7 +53,6 @@ class RouteHookWebInstaller extends ComponentBase
         }
         $post = SuperGlobal::_()->_POST();
         $post = is_array($post) ? $post : [];
-        $post = $this->filterPost($post);
         $exceptions = [];
         $installed = false;
         if (!empty($post)) {
@@ -68,22 +67,6 @@ class RouteHookWebInstaller extends ComponentBase
         } else {
             $this->show($data);
         }
-    }
-    /**
-     * Filter POST input to a whitelist before use (avoid extract() injection).
-     * @param array<string, mixed> $post
-     * @return array<string, mixed>
-     */
-    protected function filterPost(array $post): array
-    {
-        $whitelist = ['action', 'driver', 'host', 'port', 'dbname', 'file', 'username', 'password', 'force', 'redis_follow_root', 'redis_host', 'redis_port', 'redis_auth', 'redis_select', 'database_follow_root'];
-        $ret = [];
-        foreach ($whitelist as $key) {
-            if (array_key_exists($key, $post)) {
-                $ret[$key] = $post[$key];
-            }
-        }
-        return $ret;
     }
 
     //////////////////
@@ -165,8 +148,20 @@ class RouteHookWebInstaller extends ComponentBase
             'redis_error_message' => (string) ($exceptions['redis_error_message'] ?? ''),
             'database_error_message' => (string) ($exceptions['database_error_message'] ?? ''),
             'custom_error_message' => (string) ($exceptions['custom_error_message'] ?? ''),
+            'custom_html' => $this->renderCustom($post),
+            'post' => $post,
         ];
         return $base;
+    }
+    /**
+     * Override hook: render custom setting block (Customer Setting).
+     * Return HTML string, or '' to hide the Customer Setting section.
+     * @param array<string, mixed> $post filtered POST input (for echo-back on failure)
+     * @return string
+     */
+    protected function renderCustom(array $post): string
+    {
+        return '';
     }
     protected function checkRootHasRedis(): bool
     {
@@ -617,13 +612,15 @@ legend{font-weight:bold}
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
 </fieldset>
 <?php endif; ?>
+<?php if (!empty($custom_html)): ?>
 <fieldset>
 <legend>Customer Setting</legend>
 <?php if (!empty($custom_error_message)): ?>
 <p class="error"><?=__h((string)$custom_error_message)?></p>
 <?php endif; ?>
-<p>Reserved for future extensions.</p>
+<?=$custom_html?>
 </fieldset>
+<?php endif; ?>
 <form method="post">
 <input type="hidden" name="action" value="install">
 <p><button type="submit">Install</button></p>

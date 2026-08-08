@@ -10,8 +10,10 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
     {
         return \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
     }
-    protected function initApp(array $extra = [], array $component_options = [])
+    protected $installer_class = RouteHookWebInstaller::class;
+    protected function initApp(array $extra = [], array $component_options = [], string $installer_class = RouteHookWebInstaller::class)
     {
+        $this->installer_class = $installer_class;
         $path_app = $this->getTestPath();
         @unlink($path_app.'runtime/DuckPhpData.config.json');
         clearstatcache();
@@ -19,7 +21,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
             'path' => $path_app,
             'ext_options_file_enable' => true,
             'ext' => [
-                RouteHookWebInstaller::class => array_merge([
+                $installer_class => array_merge([
                     'web_installer_schema_path' => realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config'),
                 ], $component_options),
             ],
@@ -34,7 +36,8 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
     {
         \DuckPhp\Core\SuperGlobal::LoadSuperGlobalAll();
         ob_start();
-        $ret = RouteHookWebInstaller::Hook($path_info);
+        $class = $this->installer_class;
+        $ret = $class::Hook($path_info);
         $out = (string) ob_get_clean();
         return [$ret, $out];
     }
@@ -182,6 +185,24 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringNotContainsString('Database Config', $out);
         $this->assertStringNotContainsString('Create Tables', $out);
 
+        ///////////////// default: no Customer Setting rendered
+        $this->initApp([], ['web_installer_use_redis' => false]);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
+        [$ret, $out] = $this->hook('install');
+        $this->assertTrue($ret);
+        $this->assertStringNotContainsString('Customer Setting', $out);
+
+        ///////////////// override renderCustom: custom block shown + post echo-back
+        $this->initApp([], ['web_installer_use_redis' => false], RouteHookWebInstallerCustom::class);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'unknown', 'custom_key' => 'abc123'];
+        [$ret, $out] = $this->hook('install');
+        $this->assertTrue($ret);
+        $this->assertStringContainsString('Customer Setting', $out);
+        $this->assertStringContainsString('Custom:', $out);
+        $this->assertStringContainsString('abc123', $out);
+
         // cleanup
         @unlink($this->getTestPath().'runtime/DuckPhpData.config.json');
         @unlink($this->getTestPath().'runtime/installer_test.sqlite');
@@ -201,4 +222,12 @@ class WebInstallerApp extends DuckPhp
     public $options = [
         'name' => 'WebInstallerApp',
     ];
+}
+class RouteHookWebInstallerCustom extends RouteHookWebInstaller
+{
+    protected function renderCustom(array $post): string
+    {
+        $val = (string) ($post['custom_key'] ?? 'default');
+        return '<p><label>Custom: <input type="text" name="custom_key" value="'.htmlspecialchars($val).'"></label></p>';
+    }
 }
