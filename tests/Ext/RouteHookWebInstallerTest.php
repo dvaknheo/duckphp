@@ -75,11 +75,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = [
             'action' => 'install',
             'driver' => 'sqlite',
-            'file' => $this->getTestPath().'runtime/installer_test.sqlite',
-            'host' => '127.0.0.1',
-            'port' => '',
-            'username' => '',
-            'password' => '',
+            'database_list' => [['file' => $this->getTestPath().'runtime/installer_test.sqlite']],
             'force' => '1',
         ];
         [$ret, $out] = $this->hook('install');
@@ -105,14 +101,14 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         ///////////////// branch: install fails at database step (unsupported driver)
         $this->initApp([], ['web_installer_use_redis' => false]);
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_POST = ['action' => 'install', 'driver' => 'oracle', 'dbname' => 'x'];
+        $_POST = ['action' => 'install', 'driver' => 'oracle', 'database_list' => [['dbname' => 'x']]];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Unsupported driver', $out);
         $this->assertStringNotContainsString('Installed Successfully', $out);
 
         // branch: connection failed
-        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'file' => '/nonexistent_dir_xyz/1.sqlite'];
+        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'database_list' => [['file' => '/nonexistent_dir_xyz/1.sqlite']]];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Connection failed', $out);
@@ -121,7 +117,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $config_schema = $this->getTestPath().'config/sqlite.sql';
         $schema_backup = $config_schema.'.bak';
         rename($config_schema, $schema_backup);
-        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'file' => $this->getTestPath().'runtime/installer_test2.sqlite'];
+        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'database_list' => [['file' => $this->getTestPath().'runtime/installer_test2.sqlite']]];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Schema file not found', $out);
@@ -133,7 +129,10 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = [
             'action' => 'install',
             'driver' => 'sqlite',
-            'file' => [$this->getTestPath().'runtime/installer_test_a.sqlite', $this->getTestPath().'runtime/installer_test_b.sqlite'],
+            'database_list' => [
+                ['file' => $this->getTestPath().'runtime/installer_test_a.sqlite'],
+                ['file' => $this->getTestPath().'runtime/installer_test_b.sqlite'],
+            ],
             'force' => '1',
         ];
         [$ret, $out] = $this->hook('install');
@@ -157,16 +156,12 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = [
             'action' => 'install',
             'driver' => 'sqlite',
-            'file' => $this->getTestPath().'runtime/installer_test3.sqlite',
-            'host' => '127.0.0.1',
-            'port' => '',
-            'username' => '',
-            'password' => '',
+            'database_list' => [['file' => $this->getTestPath().'runtime/installer_test3.sqlite']],
             'force' => '1',
-            'redis_host' => ['127.0.0.1', '127.0.0.1'],
-            'redis_port' => ['6379', '6379'],
-            'redis_auth' => ['123456', '123456'],
-            'redis_select' => ['0', '1'],
+            'redis_list' => [
+                ['host' => '127.0.0.1', 'port' => '6379', 'auth' => '123456', 'select' => '0'],
+                ['host' => '127.0.0.1', 'port' => '6379', 'auth' => '123456', 'select' => '1'],
+            ],
         ];
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('Already Installed', $out);

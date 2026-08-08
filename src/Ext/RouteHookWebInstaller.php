@@ -78,23 +78,17 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildPageData(array $post, array $exceptions = [], bool $installed = false): array
     {
-        $redis = App::_()->options['redis_list'] ?? [];
-        $database = App::_()->options['database_list'] ?? [];
-        if (!empty($exceptions)) {
-            // keep the posted config on failure so the user can retry with the same values
-            if (isset($post['redis_host'])) {
-                $redis = $this->buildRedisListFromPost($post);
-            }
-            if (isset($post['driver'])) {
-                $database = $this->buildDatabaseListFromPost($post);
-            }
+        if (empty($post)) {
+            // no POST: build sample default post data so the view renders the default form
+            $drivers = $this->getEnabledDatabaseDrivers();
+            $post = [
+                'driver' => $drivers[0] ?? 'sqlite',
+                'database_list' => [['file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']],
+                'redis_list' => [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']],
+            ];
         }
-        if (empty($redis)) {
-            $redis = [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']];
-        }
-        if (empty($database)) {
-            $database = [['driver' => '', 'file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']];
-        }
+        $redis = $this->buildRedisListFromPost($post);
+        $database = $this->buildDatabaseListFromPost($post);
         $base = [
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
@@ -111,9 +105,6 @@ class RouteHookWebInstaller extends ComponentBase
             'custom_error_message' => (string) ($exceptions['custom_error_message'] ?? ''),
             'custom_html' => $this->renderCustom($post),
             'post' => $post,
-            // aliases for backward compatibility
-            'redis_list' => $redis,
-            'database_list' => $database,
         ];
         return $base;
     }
@@ -123,19 +114,9 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildRedisListFromPost(array $post): array
     {
-        $hosts = (array) $post['redis_host'];
-        $ports = (array) ($post['redis_port'] ?? []);
-        $auths = (array) ($post['redis_auth'] ?? []);
-        $selects = (array) ($post['redis_select'] ?? []);
-        $count = max(count($hosts), count($ports), count($auths), count($selects));
-        $list = [];
-        for ($i = 0; $i < $count; $i++) {
-            $list[] = [
-                'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                'port' => (string) ($ports[$i] ?? '6379'),
-                'auth' => (string) ($auths[$i] ?? ''),
-                'select' => (string) ($selects[$i] ?? '0'),
-            ];
+        $list = (array) ($post['redis_list'] ?? []);
+        if (empty($list)) {
+            $list = [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']];
         }
         return $list;
     }
@@ -145,36 +126,9 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildDatabaseListFromPost(array $post): array
     {
-        $drivers = (array) $post['driver'];
-        $files = (array) ($post['file'] ?? []);
-        $hosts = (array) ($post['host'] ?? []);
-        $ports = (array) ($post['port'] ?? []);
-        $dbnames = (array) ($post['dbname'] ?? []);
-        $usernames = (array) ($post['username'] ?? []);
-        $passwords = (array) ($post['password'] ?? []);
-        $count = max(count($drivers), count($files), count($hosts), count($ports), count($dbnames), count($usernames), count($passwords));
-        $list = [];
-        for ($i = 0; $i < $count; $i++) {
-            $driver = (string) ($drivers[$i] ?? 'sqlite');
-            $dsn = $this->makeDsn($driver, [
-                'file' => (string) ($files[$i] ?? ''),
-                'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                'port' => (string) ($ports[$i] ?? ''),
-                'dbname' => (string) ($dbnames[$i] ?? ''),
-            ]);
-            $config = [
-                'driver' => $driver,
-                'file' => (string) ($files[$i] ?? ''),
-                'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                'port' => (string) ($ports[$i] ?? ''),
-                'dbname' => (string) ($dbnames[$i] ?? ''),
-                'username' => (string) ($usernames[$i] ?? ''),
-                'password' => (string) ($passwords[$i] ?? ''),
-            ];
-            if ($dsn !== null) {
-                $config['dsn'] = $dsn;
-            }
-            $list[] = $config;
+        $list = (array) ($post['database_list'] ?? []);
+        if (empty($list)) {
+            $list = [['driver' => '', 'file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']];
         }
         return $list;
     }
@@ -302,18 +256,17 @@ class RouteHookWebInstaller extends ComponentBase
         if (!class_exists(\Redis::class)) {
             throw new \Exception('Redis extension not loaded');
         }
-        $hosts = (array) ($post['redis_host'] ?? ['127.0.0.1']);
-        $ports = (array) ($post['redis_port'] ?? ['6379']);
-        $auths = (array) ($post['redis_auth'] ?? ['']);
-        $selects = (array) ($post['redis_select'] ?? ['0']);
-        $count = max(count($hosts), count($ports), count($auths), count($selects));
-        $list = [];
-        for ($i = 0; $i < $count; $i++) {
+        $list = (array) ($post['redis_list'] ?? []);
+        if (empty($list)) {
+            $list = [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']];
+        }
+        $ret = [];
+        foreach ($list as $config) {
             $config = [
-                'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                'port' => (string) ($ports[$i] ?? '6379'),
-                'auth' => (string) ($auths[$i] ?? ''),
-                'select' => (string) ($selects[$i] ?? '0'),
+                'host' => (string) ($config['host'] ?? '127.0.0.1'),
+                'port' => (string) ($config['port'] ?? '6379'),
+                'auth' => (string) ($config['auth'] ?? ''),
+                'select' => (string) ($config['select'] ?? '0'),
             ];
             try {
                 $redis = new \Redis();
@@ -332,9 +285,9 @@ class RouteHookWebInstaller extends ComponentBase
             } catch (\Throwable $e) {
                 throw new \Exception($config['host'].':'.$config['port'].' '.$e->getMessage());
             }
-            $list[] = $config;
+            $ret[] = $config;
         }
-        return ['redis_list' => $list];
+        return ['redis_list' => $ret];
     }
 
     //////////////////  database
@@ -363,46 +316,37 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function checkDatabase(array $post): array
     {
-        $drivers = (array) ($post['driver'] ?? ['sqlite']);
-        $files = (array) ($post['file'] ?? []);
-        $hosts = (array) ($post['host'] ?? ['127.0.0.1']);
-        $ports = (array) ($post['port'] ?? ['']);
-        $dbnames = (array) ($post['dbname'] ?? ['']);
-        $usernames = (array) ($post['username'] ?? ['']);
-        $passwords = (array) ($post['password'] ?? ['']);
-        $count = max(count($drivers), count($files), count($hosts), count($ports), count($dbnames), count($usernames), count($passwords));
-        $list = [];
-        for ($i = 0; $i < $count; $i++) {
-            $driver = (string) ($drivers[$i] ?? 'sqlite');
+        $driver = (string) ($post['driver'] ?? '');
+        $list = (array) ($post['database_list'] ?? []);
+        if (empty($list)) {
+            $list = [['file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']];
+        }
+        $ret = [];
+        foreach ($list as $config) {
             if (!in_array($driver, $this->getEnabledDatabaseDrivers(), true)) {
                 throw new \Exception('Unsupported driver: '.__h($driver));
             }
-            if ($driver === 'sqlite' || $driver === 'duckdb') {
-                $config = [
-                    'file' => (string) ($files[$i] ?? 'database/database.db'),
-                ];
-            } else {
-                $config = [
-                    'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                    'port' => (string) ($ports[$i] ?? ''),
-                    'dbname' => (string) ($dbnames[$i] ?? ''),
-                    'username' => (string) ($usernames[$i] ?? ''),
-                    'password' => (string) ($passwords[$i] ?? ''),
-                ];
-            }
+            $config = [
+                'file' => (string) ($config['file'] ?? ''),
+                'host' => (string) ($config['host'] ?? '127.0.0.1'),
+                'port' => (string) ($config['port'] ?? ''),
+                'dbname' => (string) ($config['dbname'] ?? ''),
+                'username' => (string) ($config['username'] ?? ''),
+                'password' => (string) ($config['password'] ?? ''),
+            ];
             $dsn = $this->makeDsn($driver, $config);
             if ($dsn === null) {
                 throw new \Exception('Driver requires dbname: '.__h($driver));
             }
-            $error = $this->testConnection($dsn, $config['username'] ?? '', $config['password'] ?? '');
+            $error = $this->testConnection($dsn, $config['username'], $config['password']);
             if ($error !== null) {
                 throw new \Exception('Connection failed: '.__h($error));
             }
             $config['driver'] = $driver;
             $config['dsn'] = $dsn;
-            $list[] = $config;
+            $ret[] = $config;
         }
-        return ['database_list' => $list];
+        return ['database_list' => $ret];
     }
     protected function makeDsn(string $driver, array $config): ?string
     {
@@ -577,18 +521,18 @@ legend{font-weight:bold}
 <div id="redis-config">
 <?php if (!empty($redis)): foreach ($redis as $rc): ?>
 <div class="redis-item">
-<p><label>Host: <input type="text" name="redis_host[]" value="<?=__h((string)($rc['host'] ?? '127.0.0.1'))?>"></label></p>
-<p><label>Port: <input type="text" name="redis_port[]" value="<?=__h((string)($rc['port'] ?? '6379'))?>"></label></p>
-<p><label>Auth: <input type="password" name="redis_auth[]" value="<?=__h((string)($rc['auth'] ?? ''))?>"></label></p>
-<p><label>Select: <input type="text" name="redis_select[]" value="<?=__h((string)($rc['select'] ?? '0'))?>"></label></p>
+<p><label>Host: <input type="text" name="redis_list[][host]" value="<?=__h((string)($rc['host'] ?? '127.0.0.1'))?>"></label></p>
+<p><label>Port: <input type="text" name="redis_list[][port]" value="<?=__h((string)($rc['port'] ?? '6379'))?>"></label></p>
+<p><label>Auth: <input type="password" name="redis_list[][auth]" value="<?=__h((string)($rc['auth'] ?? ''))?>"></label></p>
+<p><label>Select: <input type="text" name="redis_list[][select]" value="<?=__h((string)($rc['select'] ?? '0'))?>"></label></p>
 <p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>
 </div>
 <?php endforeach; else: ?>
 <div class="redis-item">
-<p><label>Host: <input type="text" name="redis_host[]" value="127.0.0.1"></label></p>
-<p><label>Port: <input type="text" name="redis_port[]" value="6379"></label></p>
-<p><label>Auth: <input type="password" name="redis_auth[]" value=""></label></p>
-<p><label>Select: <input type="text" name="redis_select[]" value="0"></label></p>
+<p><label>Host: <input type="text" name="redis_list[][host]" value="127.0.0.1"></label></p>
+<p><label>Port: <input type="text" name="redis_list[][port]" value="6379"></label></p>
+<p><label>Auth: <input type="password" name="redis_list[][auth]" value=""></label></p>
+<p><label>Select: <input type="text" name="redis_list[][select]" value="0"></label></p>
 <p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>
 </div>
 <?php endif; ?>
@@ -612,22 +556,22 @@ legend{font-weight:bold}
 </select></label></p>
 <?php if (!empty($database)): foreach ($database as $dc): ?>
 <div class="database-item">
-<p data-db-file><label>File: <input type="text" name="file[]" value="<?=__h((string)($dc['file'] ?? 'database/database.db'))?>"></label></p>
-<p data-db-server><label>Host: <input type="text" name="host[]" value="<?=__h((string)($dc['host'] ?? '127.0.0.1'))?>"></label></p>
-<p data-db-server><label>Port: <input type="text" name="port[]" value="<?=__h((string)($dc['port'] ?? ''))?>"></label></p>
-<p data-db-server><label>Database: <input type="text" name="dbname[]" value="<?=__h((string)($dc['dbname'] ?? ''))?>"></label></p>
-<p data-db-server><label>Username: <input type="text" name="username[]" value="<?=__h((string)($dc['username'] ?? ''))?>"></label></p>
-<p data-db-server><label>Password: <input type="password" name="password[]" value="<?=__h((string)($dc['password'] ?? ''))?>"></label></p>
+<p data-db-file><label>File: <input type="text" name="database_list[][file]" value="<?=__h((string)($dc['file'] ?? 'database/database.db'))?>"></label></p>
+<p data-db-server><label>Host: <input type="text" name="database_list[][host]" value="<?=__h((string)($dc['host'] ?? '127.0.0.1'))?>"></label></p>
+<p data-db-server><label>Port: <input type="text" name="database_list[][port]" value="<?=__h((string)($dc['port'] ?? ''))?>"></label></p>
+<p data-db-server><label>Database: <input type="text" name="database_list[][dbname]" value="<?=__h((string)($dc['dbname'] ?? ''))?>"></label></p>
+<p data-db-server><label>Username: <input type="text" name="database_list[][username]" value="<?=__h((string)($dc['username'] ?? ''))?>"></label></p>
+<p data-db-server><label>Password: <input type="password" name="database_list[][password]" value="<?=__h((string)($dc['password'] ?? ''))?>"></label></p>
 <p><button type="button" onclick="removeDatabaseItem(this)">Remove</button></p>
 </div>
 <?php endforeach; else: ?>
 <div class="database-item">
-<p data-db-file><label>File: <input type="text" name="file[]" value="database/database.db"></label></p>
-<p data-db-server><label>Host: <input type="text" name="host[]" value="127.0.0.1"></label></p>
-<p data-db-server><label>Port: <input type="text" name="port[]" value=""></label></p>
-<p data-db-server><label>Database: <input type="text" name="dbname[]" value=""></label></p>
-<p data-db-server><label>Username: <input type="text" name="username[]" value=""></label></p>
-<p data-db-server><label>Password: <input type="password" name="password[]" value=""></label></p>
+<p data-db-file><label>File: <input type="text" name="database_list[][file]" value="database/database.db"></label></p>
+<p data-db-server><label>Host: <input type="text" name="database_list[][host]" value="127.0.0.1"></label></p>
+<p data-db-server><label>Port: <input type="text" name="database_list[][port]" value=""></label></p>
+<p data-db-server><label>Database: <input type="text" name="database_list[][dbname]" value=""></label></p>
+<p data-db-server><label>Username: <input type="text" name="database_list[][username]" value=""></label></p>
+<p data-db-server><label>Password: <input type="password" name="database_list[][password]" value=""></label></p>
 <p><button type="button" onclick="removeDatabaseItem(this)">Remove</button></p>
 </div>
 <?php endif; ?>
@@ -664,10 +608,10 @@ function addRedisItem() {
     var container = document.getElementById('redis-config');
     var item = document.createElement('div');
     item.className = 'redis-item';
-    item.innerHTML = '<p><label>Host: <input type="text" name="redis_host[]" value="127.0.0.1"></label></p>' +
-        '<p><label>Port: <input type="text" name="redis_port[]" value="6379"></label></p>' +
-        '<p><label>Auth: <input type="password" name="redis_auth[]" value=""></label></p>' +
-        '<p><label>Select: <input type="text" name="redis_select[]" value="0"></label></p>' +
+    item.innerHTML = '<p><label>Host: <input type="text" name="redis_list[][host]" value="127.0.0.1"></label></p>' +
+        '<p><label>Port: <input type="text" name="redis_list[][port]" value="6379"></label></p>' +
+        '<p><label>Auth: <input type="password" name="redis_list[][auth]" value=""></label></p>' +
+        '<p><label>Select: <input type="text" name="redis_list[][select]" value="0"></label></p>' +
         '<p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>';
     var add = container.querySelector('.redis-add');
     container.insertBefore(item, add);
@@ -677,12 +621,12 @@ function removeRedisItem(btn) {
     if (item) { item.parentNode.removeChild(item); }
 }
 function dbItemHtml() {
-    return '<p data-db-file><label>File: <input type="text" name="file[]" value="database/database.db"></label></p>' +
-        '<p data-db-server><label>Host: <input type="text" name="host[]" value="127.0.0.1"></label></p>' +
-        '<p data-db-server><label>Port: <input type="text" name="port[]" value=""></label></p>' +
-        '<p data-db-server><label>Database: <input type="text" name="dbname[]" value=""></label></p>' +
-        '<p data-db-server><label>Username: <input type="text" name="username[]" value=""></label></p>' +
-        '<p data-db-server><label>Password: <input type="password" name="password[]" value=""></label></p>' +
+    return '<p data-db-file><label>File: <input type="text" name="database_list[][file]" value="database/database.db"></label></p>' +
+        '<p data-db-server><label>Host: <input type="text" name="database_list[][host]" value="127.0.0.1"></label></p>' +
+        '<p data-db-server><label>Port: <input type="text" name="database_list[][port]" value=""></label></p>' +
+        '<p data-db-server><label>Database: <input type="text" name="database_list[][dbname]" value=""></label></p>' +
+        '<p data-db-server><label>Username: <input type="text" name="database_list[][username]" value=""></label></p>' +
+        '<p data-db-server><label>Password: <input type="password" name="database_list[][password]" value=""></label></p>' +
         '<p><button type="button" onclick="removeDatabaseItem(this)">Remove</button></p>';
 }
 function addDatabaseItem() {
