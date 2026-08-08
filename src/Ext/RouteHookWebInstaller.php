@@ -78,61 +78,22 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildPageData(array $post, array $exceptions = [], bool $installed = false): array
     {
-        $redis_list = App::_()->options['redis_list'] ?? [];
-        $database_list = App::_()->options['database_list'] ?? [];
+        $redis = App::_()->options['redis_list'] ?? [];
+        $database = App::_()->options['database_list'] ?? [];
         if (!empty($exceptions)) {
             // keep the posted config on failure so the user can retry with the same values
             if (isset($post['redis_host'])) {
-                $hosts = (array) $post['redis_host'];
-                $ports = (array) ($post['redis_port'] ?? []);
-                $auths = (array) ($post['redis_auth'] ?? []);
-                $selects = (array) ($post['redis_select'] ?? []);
-                $count = max(count($hosts), count($ports), count($auths), count($selects));
-                $list = [];
-                for ($i = 0; $i < $count; $i++) {
-                    $list[] = [
-                        'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                        'port' => (string) ($ports[$i] ?? '6379'),
-                        'auth' => (string) ($auths[$i] ?? ''),
-                        'select' => (string) ($selects[$i] ?? '0'),
-                    ];
-                }
-                $redis_list = $list;
+                $redis = $this->buildRedisListFromPost($post);
             }
             if (isset($post['driver'])) {
-                $drivers = (array) $post['driver'];
-                $files = (array) ($post['file'] ?? []);
-                $hosts = (array) ($post['host'] ?? []);
-                $ports = (array) ($post['port'] ?? []);
-                $dbnames = (array) ($post['dbname'] ?? []);
-                $usernames = (array) ($post['username'] ?? []);
-                $passwords = (array) ($post['password'] ?? []);
-                $count = max(count($drivers), count($files), count($hosts), count($ports), count($dbnames), count($usernames), count($passwords));
-                $list = [];
-                for ($i = 0; $i < $count; $i++) {
-                    $driver = (string) ($drivers[$i] ?? 'sqlite');
-                    $dsn = $this->makeDsn($driver, [
-                        'file' => (string) ($files[$i] ?? ''),
-                        'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                        'port' => (string) ($ports[$i] ?? ''),
-                        'dbname' => (string) ($dbnames[$i] ?? ''),
-                    ]);
-                    $config = [
-                        'driver' => $driver,
-                        'file' => (string) ($files[$i] ?? ''),
-                        'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
-                        'port' => (string) ($ports[$i] ?? ''),
-                        'dbname' => (string) ($dbnames[$i] ?? ''),
-                        'username' => (string) ($usernames[$i] ?? ''),
-                        'password' => (string) ($passwords[$i] ?? ''),
-                    ];
-                    if ($dsn !== null) {
-                        $config['dsn'] = $dsn;
-                    }
-                    $list[] = $config;
-                }
-                $database_list = $list;
+                $database = $this->buildDatabaseListFromPost($post);
             }
+        }
+        if (empty($redis)) {
+            $redis = [['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0']];
+        }
+        if (empty($database)) {
+            $database = [['driver' => '', 'file' => 'database/database.db', 'host' => '127.0.0.1', 'port' => '', 'dbname' => '', 'username' => '', 'password' => '']];
         }
         $base = [
             'use_database' => (bool) $this->options['web_installer_use_database'],
@@ -140,9 +101,9 @@ class RouteHookWebInstaller extends ComponentBase
             'checks' => $this->checkEnv(),
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
             'redis_can_follow_root' => $this->checkRootHasRedis(),
-            'redis_list' => $redis_list,
+            'redis' => $redis,
             'database_can_follow_root' => $this->checkRootHasDatabase(),
-            'database_list' => $database_list,
+            'database' => $database,
             'drivers' => $this->getEnabledDatabaseDrivers(),
             'installed' => $installed,
             'redis_error_message' => (string) ($exceptions['redis_error_message'] ?? ''),
@@ -150,8 +111,72 @@ class RouteHookWebInstaller extends ComponentBase
             'custom_error_message' => (string) ($exceptions['custom_error_message'] ?? ''),
             'custom_html' => $this->renderCustom($post),
             'post' => $post,
+            // aliases for backward compatibility
+            'redis_list' => $redis,
+            'database_list' => $database,
         ];
         return $base;
+    }
+    /**
+     * @param array<string, mixed> $post
+     * @return array<int, array<string, string>>
+     */
+    protected function buildRedisListFromPost(array $post): array
+    {
+        $hosts = (array) $post['redis_host'];
+        $ports = (array) ($post['redis_port'] ?? []);
+        $auths = (array) ($post['redis_auth'] ?? []);
+        $selects = (array) ($post['redis_select'] ?? []);
+        $count = max(count($hosts), count($ports), count($auths), count($selects));
+        $list = [];
+        for ($i = 0; $i < $count; $i++) {
+            $list[] = [
+                'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
+                'port' => (string) ($ports[$i] ?? '6379'),
+                'auth' => (string) ($auths[$i] ?? ''),
+                'select' => (string) ($selects[$i] ?? '0'),
+            ];
+        }
+        return $list;
+    }
+    /**
+     * @param array<string, mixed> $post
+     * @return array<int, array<string, string>>
+     */
+    protected function buildDatabaseListFromPost(array $post): array
+    {
+        $drivers = (array) $post['driver'];
+        $files = (array) ($post['file'] ?? []);
+        $hosts = (array) ($post['host'] ?? []);
+        $ports = (array) ($post['port'] ?? []);
+        $dbnames = (array) ($post['dbname'] ?? []);
+        $usernames = (array) ($post['username'] ?? []);
+        $passwords = (array) ($post['password'] ?? []);
+        $count = max(count($drivers), count($files), count($hosts), count($ports), count($dbnames), count($usernames), count($passwords));
+        $list = [];
+        for ($i = 0; $i < $count; $i++) {
+            $driver = (string) ($drivers[$i] ?? 'sqlite');
+            $dsn = $this->makeDsn($driver, [
+                'file' => (string) ($files[$i] ?? ''),
+                'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
+                'port' => (string) ($ports[$i] ?? ''),
+                'dbname' => (string) ($dbnames[$i] ?? ''),
+            ]);
+            $config = [
+                'driver' => $driver,
+                'file' => (string) ($files[$i] ?? ''),
+                'host' => (string) ($hosts[$i] ?? '127.0.0.1'),
+                'port' => (string) ($ports[$i] ?? ''),
+                'dbname' => (string) ($dbnames[$i] ?? ''),
+                'username' => (string) ($usernames[$i] ?? ''),
+                'password' => (string) ($passwords[$i] ?? ''),
+            ];
+            if ($dsn !== null) {
+                $config['dsn'] = $dsn;
+            }
+            $list[] = $config;
+        }
+        return $list;
     }
     /**
      * Override hook: render custom setting block (Customer Setting).
@@ -550,7 +575,7 @@ legend{font-weight:bold}
 <?php endif; ?>
 <p><label><input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application</label></p>
 <div id="redis-config">
-<?php if (!empty($redis_list)): foreach ($redis_list as $rc): ?>
+<?php if (!empty($redis)): foreach ($redis as $rc): ?>
 <div class="redis-item">
 <p><label>Host: <input type="text" name="redis_host[]" value="<?=__h((string)($rc['host'] ?? '127.0.0.1'))?>"></label></p>
 <p><label>Port: <input type="text" name="redis_port[]" value="<?=__h((string)($rc['port'] ?? '6379'))?>"></label></p>
@@ -580,12 +605,12 @@ legend{font-weight:bold}
 <p><label><input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application</label></p>
 <div id="database-config">
 <p><label>Driver: <select name="driver" onchange="toggleDatabaseDriver(this)">
-<?php $dc_driver = isset($database_list[0]['driver']) ? (string) $database_list[0]['driver'] : (isset($database_list[0]['dsn']) ? explode(':', (string) $database_list[0]['dsn'])[0] : ''); ?>
+<?php $dc_driver = isset($database[0]['driver']) ? (string) $database[0]['driver'] : (isset($database[0]['dsn']) ? explode(':', (string) $database[0]['dsn'])[0] : ''); ?>
 <?php foreach($drivers as $driver): ?>
     <option value="<?=__h($driver)?>"<?= $driver === $dc_driver ? ' selected' : '' ?>><?=__h($driver)?></option>
 <?php endforeach; ?>
 </select></label></p>
-<?php if (!empty($database_list)): foreach ($database_list as $dc): ?>
+<?php if (!empty($database)): foreach ($database as $dc): ?>
 <div class="database-item">
 <p data-db-file><label>File: <input type="text" name="file[]" value="<?=__h((string)($dc['file'] ?? 'database/database.db'))?>"></label></p>
 <p data-db-server><label>Host: <input type="text" name="host[]" value="<?=__h((string)($dc['host'] ?? '127.0.0.1'))?>"></label></p>
