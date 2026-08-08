@@ -10,6 +10,7 @@ use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\View;
 
 class RouteHookWebInstaller extends ComponentBase
 {
@@ -93,23 +94,64 @@ class RouteHookWebInstaller extends ComponentBase
         if (!$this->options['web_installer_use_redis'] && $step === 'redis') {
             $step = 'done';
         }
+        $data = $this->buildPageData($step);
+        $this->renderPage($data);
+    }
+    /**
+     * @param string $step
+     * @return array<string, mixed>
+     */
+    protected function buildPageData(string $step): array
+    {
+        $base = [
+            'step' => $step,
+            'flash_message' => $this->flash_message,
+            'error_message' => $this->error_message,
+        ];
         switch ($step) {
             case 'env':
-                $this->showEnv();
-                break;
+                return $base + ['checks' => $this->checkEnv()];
             case 'database':
-                $this->showDatabase();
-                break;
+                return $base + [
+                    'driver_options' => $this->getDatabaseDriverOptions(),
+                    'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
+                ];
             case 'schema':
-                $this->showSchema();
-                break;
+                return $base + ['schema_path' => $this->getSchemaPath()];
             case 'redis':
-                $this->showRedis();
-                break;
+                return $base;
             case 'done':
-                $this->showDone();
-                break;
+                return $base;
+            case 'installed':
+                return $base + ['web_installer_path' => $this->options['web_installer_path']];
+            case 'already':
+                return $base;
         }
+        return $base;
+    }
+    /**
+     * @param array<string, mixed> $data
+     */
+    protected function renderPage(array $data)
+    {
+        if ($this->options['web_installer_view']) {
+            View::_()->_Show($data, $this->options['web_installer_view']);
+        } else {
+            $this->show($data);
+        }
+    }
+    protected function getDatabaseDriverOptions(): string
+    {
+        $drivers = $this->getEnabledDrivers();
+        $options = '';
+        $root_config = $this->getRootDatabaseConfig();
+        if ($root_config) {
+            $options .= '<option value="__root__">Use root app database ('.htmlspecialchars($root_config['driver'] ?? 'unknown').')</option>';
+        }
+        foreach ($drivers as $driver) {
+            $options .= '<option value="'.htmlspecialchars($driver).'">'.htmlspecialchars($driver).'</option>';
+        }
+        return $options;
     }
     public function installBusiness()
     {
@@ -134,24 +176,7 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  env
     protected function showEnv()
     {
-        $checks = $this->checkEnv();
-        $rows = '';
-        foreach ($checks as $item) {
-            $flag = $item[0] ? 'ok' : 'fail';
-            $rows .= "<tr><td>{$item[1]}</td><td class=\"{$flag}\">".($item[0] ? 'OK' : 'FAIL').'</td></tr>';
-        }
-        $this->showPage('Environment Check', '
-<h1>DuckPhp Web Installer</h1>
-<h2>Step 1: Environment Check</h2>
-<table>
-<thead><tr><th>Item</th><th>Status</th></tr></thead>
-<tbody>'.$rows.'</tbody>
-</table>
-'.($this->error_message ? '<p class="error">'.$this->error_message.'</p>' : '').'
-<form method="post" action="?step=env">
-<input type="hidden" name="action" value="env">
-<button type="submit">Next</button>
-</form>');
+        $this->renderPage($this->buildPageData('env'));
     }
     protected function checkEnv(): array
     {
@@ -177,30 +202,7 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  database
     protected function showDatabase()
     {
-        $drivers = $this->getEnabledDrivers();
-        $options = '';
-        $root_config = $this->getRootDatabaseConfig();
-        if ($root_config) {
-            $options .= '<option value="__root__">Use root app database ('.($root_config['driver'] ?? 'unknown').')</option>';
-        }
-        foreach ($drivers as $driver) {
-            $options .= '<option value="'.htmlspecialchars($driver).'">'.htmlspecialchars($driver).'</option>';
-        }
-        $this->showPage('Database Config', '
-<h1>DuckPhp Web Installer</h1>
-<h2>Step 2: Database Config</h2>
-<p>Current controller_resource_prefix: <code>'.htmlspecialchars(''.(App::_()->options['controller_resource_prefix'] ?? '')).'</code></p>
-'.($this->error_message ? '<p class="error">'.$this->error_message.'</p>' : '').'
-<form method="post" action="?step=database">
-<input type="hidden" name="action" value="database">
-<p><label>Driver: <select name="driver">'.$options.'</select></label></p>
-<p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
-<p><label>Port: <input type="text" name="port" value=""></label></p>
-<p><label>Database: <input type="text" name="dbname" value=""></label></p>
-<p><label>Username: <input type="text" name="username" value=""></label></p>
-<p><label>Password: <input type="password" name="password" value=""></label></p>
-<p><button type="submit" name="test" value="1">Test Connection &amp; Save</button></p>
-</form>');
+        $this->renderPage($this->buildPageData('database'));
     }
     protected function getEnabledDrivers(): array
     {
@@ -287,17 +289,7 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  schema
     protected function showSchema()
     {
-        $this->showPage('Create Tables', '
-<h1>DuckPhp Web Installer</h1>
-<h2>Step 3: Create Tables</h2>
-'.($this->flash_message ? '<p class="ok">'.$this->flash_message.'</p>' : '').'
-'.($this->error_message ? '<p class="error">'.$this->error_message.'</p>' : '').'
-<form method="post" action="?step=schema">
-<input type="hidden" name="action" value="schema">
-<p>Schema files will be loaded from: <code>'.htmlspecialchars($this->getSchemaPath()).'</code></p>
-<p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
-<p><button type="submit">Create Tables</button></p>
-</form>');
+        $this->renderPage($this->buildPageData('schema'));
     }
     protected function getSchemaPath(): string
     {
@@ -391,19 +383,7 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  redis
     protected function showRedis()
     {
-        $this->showPage('Redis Config', '
-<h1>DuckPhp Web Installer</h1>
-<h2>Step 4: Redis Config</h2>
-'.($this->flash_message ? '<p class="ok">'.$this->flash_message.'</p>' : '').'
-'.($this->error_message ? '<p class="error">'.$this->error_message.'</p>' : '').'
-<form method="post" action="?step=redis">
-<input type="hidden" name="action" value="redis">
-<p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
-<p><label>Port: <input type="text" name="port" value="6379"></label></p>
-<p><label>Auth: <input type="password" name="auth" value=""></label></p>
-<p><label>Select: <input type="text" name="select" value="0"></label></p>
-<p><button type="submit">Save Redis Config</button></p>
-</form>');
+        $this->renderPage($this->buildPageData('redis'));
     }
     protected function doRedis()
     {
@@ -446,49 +426,118 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  done
     protected function showDone()
     {
-        $this->showPage('Install Complete', '
-<h1>DuckPhp Web Installer</h1>
-<h2>Step 5: Install Complete</h2>
-'.($this->flash_message ? '<p class="ok">'.$this->flash_message.'</p>' : '').'
-<form method="post" action="?step=done">
-<input type="hidden" name="action" value="done">
-<p><button type="submit">Finish Install</button></p>
-</form>');
+        $this->renderPage($this->buildPageData('done'));
     }
     protected function doDone()
     {
         ExtOptionsLoader::_()->saveExtOptions(['installed' => date(DATE_ATOM)]);
-        $this->showPage('Installed', '
-<h1>DuckPhp Web Installer</h1>
-<h2>Installed Successfully</h2>
-<p class="ok">The application is now installed. Go to <a href="'.htmlspecialchars($this->options['web_installer_path']).'">home page</a>.</p>');
+        $this->renderPage($this->buildPageData('installed'));
     }
     //////////////////
     protected function showAlreadyInstalled()
     {
-        $this->showPage('Already Installed', '
-<h1>DuckPhp Web Installer</h1>
-<h2>Already Installed</h2>
-<p>The application is already installed. To reinstall, please remove the <code>installed</code> entry from the ext options data file.</p>');
+        $this->renderPage($this->buildPageData('already'));
     }
-    protected function showPage(string $title, string $body)
+    /**
+     * Show page: render all page info by built-in view.
+     * @param array<string, mixed> $data
+     */
+    protected function show(array $data)
     {
-        echo '<!doctype html><html><head><meta charset="utf-8"><title>'.htmlspecialchars($title).'</title>';
-        echo '<style>
+        extract($data);
+        $title = [
+            'env' => 'Environment Check',
+            'database' => 'Database Config',
+            'schema' => 'Create Tables',
+            'redis' => 'Redis Config',
+            'done' => 'Install Complete',
+            'installed' => 'Installed',
+            'already' => 'Already Installed',
+        ][$step ?? ''] ?? 'DuckPhp Web Installer';
+        ?>
+<!doctype html><html><head><meta charset="utf-8"><title><?=htmlspecialchars($title)?></title>
+<style>
 body{font-family:sans-serif;max-width:640px;margin:2em auto;color:#222}
 table{border-collapse:collapse;width:100%}
 td,th{border:1px solid #ccc;padding:4px 8px;text-align:left}
 .ok{color:#0a0}.fail{color:#a00}
-.error{color:#a00}.ok{color:#0a0}
+.error{color:#a00}
 input,select,button{padding:4px 8px}
-</style></head><body>';
-        if ($this->options['web_installer_view']) {
-            $view = $this->options['web_installer_view'];
-            $data = ['title' => $title, 'body' => $body];
-            echo (string) $view($data);
-        } else {
-            echo $body;
-        }
-        echo '</body></html>';
+</style></head><body>
+<h1>DuckPhp Web Installer</h1>
+<?php if (!empty($error_message)): ?>
+<p class="error"><?=htmlspecialchars((string)$error_message)?></p>
+<?php endif; ?>
+<?php if (!empty($flash_message)): ?>
+<p class="ok"><?=htmlspecialchars((string)$flash_message)?></p>
+<?php endif; ?>
+<?php switch ($step ?? '') {
+    case 'env': ?>
+<h2>Step 1: Environment Check</h2>
+<table>
+<thead><tr><th>Item</th><th>Status</th></tr></thead>
+<tbody>
+<?php foreach ($checks ?? [] as $item): ?>
+<tr><td><?=htmlspecialchars((string)$item[1])?></td><td class="<?=$item[0]?'ok':'fail'?>"><?=$item[0]?'OK':'FAIL'?></td></tr>
+<?php endforeach; ?>
+</tbody>
+</table>
+<form method="post" action="?step=env">
+<input type="hidden" name="action" value="env">
+<button type="submit">Next</button>
+</form>
+<?php break;
+    case 'database': ?>
+<h2>Step 2: Database Config</h2>
+<p>Current controller_resource_prefix: <code><?=htmlspecialchars((string)($controller_resource_prefix ?? ''))?></code></p>
+<form method="post" action="?step=database">
+<input type="hidden" name="action" value="database">
+<p><label>Driver: <select name="driver"><?=$driver_options ?? ''?></select></label></p>
+<p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
+<p><label>Port: <input type="text" name="port" value=""></label></p>
+<p><label>Database: <input type="text" name="dbname" value=""></label></p>
+<p><label>Username: <input type="text" name="username" value=""></label></p>
+<p><label>Password: <input type="password" name="password" value=""></label></p>
+<p><button type="submit" name="test" value="1">Test Connection &amp; Save</button></p>
+</form>
+<?php break;
+    case 'schema': ?>
+<h2>Step 3: Create Tables</h2>
+<form method="post" action="?step=schema">
+<input type="hidden" name="action" value="schema">
+<p>Schema files will be loaded from: <code><?=htmlspecialchars((string)($schema_path ?? ''))?></code></p>
+<p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
+<p><button type="submit">Create Tables</button></p>
+</form>
+<?php break;
+    case 'redis': ?>
+<h2>Step 4: Redis Config</h2>
+<form method="post" action="?step=redis">
+<input type="hidden" name="action" value="redis">
+<p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
+<p><label>Port: <input type="text" name="port" value="6379"></label></p>
+<p><label>Auth: <input type="password" name="auth" value=""></label></p>
+<p><label>Select: <input type="text" name="select" value="0"></label></p>
+<p><button type="submit">Save Redis Config</button></p>
+</form>
+<?php break;
+    case 'done': ?>
+<h2>Step 5: Install Complete</h2>
+<form method="post" action="?step=done">
+<input type="hidden" name="action" value="done">
+<p><button type="submit">Finish Install</button></p>
+</form>
+<?php break;
+    case 'installed': ?>
+<h2>Installed Successfully</h2>
+<p class="ok">The application is now installed. Go to <a href="<?=htmlspecialchars((string)($web_installer_path ?? ''))?>">home page</a>.</p>
+<?php break;
+    case 'already': ?>
+<h2>Already Installed</h2>
+<p>The application is already installed. To reinstall, please remove the <code>installed</code> entry from the ext options data file.</p>
+<?php break;
+} ?>
+</body></html>
+<?php
     }
 }
