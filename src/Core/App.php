@@ -45,6 +45,7 @@ class App extends ComponentBase
 
     protected $core_options = [
         'path_runtime' => 'runtime',
+        'path_config' => 'config',
 
         'default_exception_do_log' => true,
         'close_resource_at_output' => false,
@@ -395,6 +396,11 @@ EOT;
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
 
     }
+    public function getConfigFile(string $file): string
+    {
+        return $this->getOverrideableFile($this->options['path_config'], $file);
+    }
+
     ///////
     public static function Platform()
     {

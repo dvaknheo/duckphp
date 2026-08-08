@@ -20,17 +20,12 @@ class RouteHookWebInstaller extends ComponentBase
     public $options = [
         'web_installer_path' => 'install',
         'web_installer_use_database' => true,
-        'web_installer_use_redis' => false,
+        'web_installer_use_redis' => true,
         'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true, 'duckdb'=>true],
-        'web_installer_schema_path' => 'config',
         'web_installer_view' => '',
         'web_installer_force' => false,
     ];
-    protected $error_message = '';
-    protected $flash_message = '';
-    protected $database_error_message = '';
-    protected $redis_error_message = '';
-
+    protected $drivers = null;
     public static function Hook($path_info)
     {
         return static::_()->_Hook($path_info);
@@ -51,10 +46,6 @@ class RouteHookWebInstaller extends ComponentBase
     }
     public function installAction()
     {
-        $this->error_message = '';
-        $this->flash_message = '';
-        $this->database_error_message = '';
-        $this->redis_error_message = '';
         if (!empty(App::_()->options['installed'])) {
             // installed;
             CoreHelper::Show302('');
@@ -67,7 +58,6 @@ class RouteHookWebInstaller extends ComponentBase
             $ext_data = $this->installBusiness($post);
         }
         $data = $this->buildPageData($post);
-        $data = array_merge($data, $ext_data);
 
         if ($this->options['web_installer_view']) {
             View::_()->_Show($data, $this->options['web_installer_view']);
@@ -84,33 +74,43 @@ class RouteHookWebInstaller extends ComponentBase
     protected function buildPageData(array $post): array
     {
         $base = [
-            'flash_message' => $this->flash_message,
-            'error_message' => $this->error_message,
-            'database_error_message' => $this->database_error_message,
-            'redis_error_message' => $this->redis_error_message,
-            'installed' => !empty(App::_()->options['installed']),
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
-            'web_installer_path' => $this->options['web_installer_path'],
             'checks' => $this->checkEnv(),
-            'driver_options' => $this->getDatabaseDriverOptions(),
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
-            'database_list' => App::_()->options['database_list'] ?? [],
+
+            'redis_can_follow_root' => $this->checkRootHasRedis(),
             'redis_list' => App::_()->options['redis_list'] ?? [],
-            'redis_follow_root' => true,
-            'root_redis_list' => App::Root()->options['redis_list'] ?? [],
-            'database_can_follow_root' => in_array(App::Root()->options['database_driver'] ?? null, $this->getEnabledDrivers(), true),
+
+            'database_can_follow_root' => $this->checkRootHasDatabase(),
+            
+            'database_list' => App::_()->options['database_list'] ?? [],
+            'drivers' => $this->getEnabledDatabaseDrivers(),
         ];
+        
+        $base = array_merge($base, $post);
+
+        $base['redis_follow_root'] =  $base['redis_can_follow_root']  && ($post['redis_follow_root'] ?? false);
+        $base['database_follow_root'] =  $base['database_can_follow_root']  && ($post['database_follow_root'] ?? false);
+
         return $base;
     }
-    protected function getDatabaseDriverOptions(): string
+    protected function checkRootHasRedis(): bool
     {
-        $drivers = $this->getEnabledDrivers();
-        $options = '';
-        foreach ($drivers as $driver) {
-            $options .= '<option value="'.__h($driver).'">'.__h($driver).'</option>';
+        if (
+            App::Setting('redis_list', null) ||
+            App::Setting('redis', null) ||
+            App::Root()->options['redis'] ?? false ||
+            App::Root()->options['redis_list'] ?? false 
+        ) {
+            return true;
+        }else{
+            return false;
         }
-        return $options;
+    }
+    protected function checkRootHasDatabase(): bool
+    {
+        return !empty(App::Root()->options['database_driver']);
     }
     /**
      * @param array<string, mixed> $post
@@ -119,25 +119,53 @@ class RouteHookWebInstaller extends ComponentBase
     public function installBusiness(array $post): array
     {
         $ext_data = [];
-        if ($this->options['web_installer_use_redis']) {
-            $ext_data = array_merge($ext_data, $this->doRedis($post));
-            if ($this->redis_error_message) {
-                return $ext_data;
+        $exceptions = [];
+        if ($this->options['web_installer_use_redis'] && empty($post['redis_follow_root'])) {
+            try{
+                $ext_data = array_merge($ext_data, $this->checkRedis($post));
+            }catch (\Exception $e){
+                $exceptions['redis_error_message'] = 'Redis connection failed: '.__h($e->getMessage());
             }
+        }
+        if ($this->options['web_installer_use_database'] && empty($post['database_follow_root'])) {
+            try{
+                $ext_data = array_merge($ext_data, $this->checkDatabase($post));
+            }catch (\Exception $e){
+                $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
+            }
+        }
+        try {
+            $ext_data = array_merge($ext_data, $this->checkCustom($post));
+        }catch (\Exception $e){
+            $exceptions['custom_error_message'] = $e->getMessage();
+        }
+        if (!empty($exceptions)) {
+            return ['result'=> $ext_data,'exceptions'=> $exceptions];
         }
 
-        if ($this->options['web_installer_use_database']) {
-            $ext_data = array_merge($ext_data, $this->doDatabase($post));
-            if ($this->database_error_message) {
-                return $ext_data;
-            }
+        try {
             $ext_data = array_merge($ext_data, $this->doSchema($post));
-            if ($this->database_error_message) {
-                return $ext_data;
+            try {
+                $ext_data = array_merge($ext_data, $this->doSchema($post));
+            }catch (\Exception $e){
+                $exceptions['database_error_message'] = $e->getMessage();
             }
+        }catch (\Exception $e){
+            $exceptions['database_error_message'] = $e->getMessage();
         }
-        $ext_data = array_merge($ext_data, $this->doDone($post));
-        return $ext_data;
+        if (!empty($exceptions)) {
+            return ['result'=> $ext_data,'exceptions'=> $exceptions];
+        }
+        ExtOptionsLoader::_()->saveExtOptions($ext_data);
+        return ['result'=> $ext_data,];
+    }
+    protected function checkCustom(array $post): array
+    {
+        return [];
+    }
+    protected function doCustom(array $post): array
+    {
+        return [];
     }
     //////////////////  env
     protected function checkEnv(): array
@@ -146,24 +174,52 @@ class RouteHookWebInstaller extends ComponentBase
         $ret[] = [version_compare(PHP_VERSION, '7.4.0', '>='), 'PHP version >= 7.4 ('.PHP_VERSION.')'];
         $ret[] = [extension_loaded('PDO'), 'PDO extension'];
         $drivers = [];
-        foreach ($this->options['web_installer_database_drivers'] as $driver => $enabled) {
-            if (!$enabled) {
-                continue;
+        if ($this->options['web_installer_use_database']) {
+            $drivers = $this->getEnabledDatabaseDrivers();
+            foreach ($drivers as $driver) {
+                $ext = 'pdo_'.$driver;
+                $ret[] = [extension_loaded($ext), 'PDO driver: '.$driver];
+                $drivers[] = $driver;
             }
-            $ext = 'pdo_'.$driver;
-            $ret[] = [extension_loaded($ext), 'PDO driver: '.$driver];
-            $drivers[] = $driver;
         }
         if ($this->options['web_installer_use_redis']) {
             $ret[] = [extension_loaded('redis'), 'Redis extension'];
         }
         return $ret;
     }
-    //////////////////  database
-    protected function getEnabledDrivers(): array
+    //////////////////  redis
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function checkRedis(array $post): array
     {
-        $ret = [];
-        foreach ($this->options['web_installer_database_drivers'] as $driver => $enabled) {
+        $config = [
+            'host' => (string) ($post['redis_host'] ?? '127.0.0.1'),
+            'port' => (string) ($post['redis_port'] ?? '6379'),
+            'auth' => (string) ($post['redis_auth'] ?? ''),
+            'select' => (string) ($post['redis_select'] ?? '0'),
+        ];
+        $redis = new \Redis();
+        $redis->connect($config['host'], (int) $config['port'], 3);
+        if (!empty($config['auth'])) {
+            $redis->auth($config['auth']);
+        }
+        if ('' !== $config['select']) {
+            $redis->select((int) $config['select']);
+        }
+        $redis->ping();
+        return ['redis_list' => [$config]];
+    }
+
+    //////////////////  database
+    protected function getEnabledDatabaseDrivers(): array
+    {
+        if(isset($this->drivers)) {
+            return $this->drivers;
+        }
+        $ret = [];       
+        foreach ($this->options['web_installer_database_drivers'] ??[] as $driver => $enabled) {
             if ($enabled) {
                 if(is_file($this->getSchemaFile($driver))) {
                     $ret[] = $driver;
@@ -171,32 +227,16 @@ class RouteHookWebInstaller extends ComponentBase
                 $ret[] = $driver;
             }
         }
+        $this->drivers = $ret;
         return $ret;
     }
     /**
      * @param array<string, mixed> $post
      * @return array<string, mixed>
      */
-    protected function doDatabase(array $post): array
+    protected function checkDatabase(array $post): array
     {
-        if (!empty($post['database_follow_root'])) {
-            $root_list = App::Root()->options['database_list'] ?? [];
-            if (empty($root_list)) {
-                $this->database_error_message = 'No root database configured.';
-                return [];
-            }
-            $this->flash_message = 'Use root database.';
-            return [];
-        }
         $driver = (string) ($post['driver'] ?? '');
-        if ($driver === '__root__') {
-            $this->flash_message = 'Use root app database.';
-            return [];
-        }
-        if (!in_array($driver, $this->getEnabledDrivers(), true)) {
-            $this->database_error_message = 'Unsupported driver: '.__h($driver);
-            return [];
-        }
         $config = [
             'host' => (string) ($post['host'] ?? '127.0.0.1'),
             'port' => (string) ($post['port'] ?? ''),
@@ -215,8 +255,7 @@ class RouteHookWebInstaller extends ComponentBase
             return [];
         }
         $config['dsn'] = $dsn;
-        ExtOptionsLoader::_()->saveExtOptions(['database_list' => [$config]]);
-        $this->flash_message = 'Database saved and connected.';
+        
         return ['database_list' => [$config]];
     }
     protected function makeDsn(string $driver, array $config): ?string
@@ -247,9 +286,8 @@ class RouteHookWebInstaller extends ComponentBase
 
     protected function getSchemaFile(string $driver): string
     {
-        $path_sub = (string) $this->options['web_installer_schema_path'];
         $filename = $driver.'.sql';
-        return $this->extendFullFile('', $path_sub, $filename);
+        return App::_()->getConfigFile($filename);
     }
     /**
      * @param array<string, mixed> $post
@@ -331,69 +369,7 @@ class RouteHookWebInstaller extends ComponentBase
         }
         $pdo->exec($sql);
     }
-    //////////////////  redis
-    /**
-     * @param array<string, mixed> $post
-     * @return array<string, mixed>
-     */
-    protected function doRedis(array $post): array
-    {
-        if (!empty($post['redis_follow_root'])) {
-            $root_list = App::Root()->options['redis_list'] ?? [];
-            if (empty($root_list)) {
-                $this->redis_error_message = 'No root redis configured.';
-                return [];
-            }
-            $this->flash_message = 'Use root redis.';
-            return [];
-        }
-        $config = [
-            'host' => (string) ($post['redis_host'] ?? '127.0.0.1'),
-            'port' => (string) ($post['redis_port'] ?? '6379'),
-            'auth' => (string) ($post['redis_auth'] ?? ''),
-            'select' => (string) ($post['redis_select'] ?? '0'),
-        ];
-        $error = $this->testRedis($config);
-        if ($error !== null) {
-            $this->redis_error_message = 'Redis connection failed: '.__h($error);
-            return [];
-        }
-        ExtOptionsLoader::_()->saveExtOptions(['redis_list' => [$config]]);
-        $this->flash_message = 'Redis saved and connected.';
-        return ['redis_list' => [$config]];
-    }
-    protected function testRedis(array $config): ?string
-    {
-        if (!class_exists(\Redis::class)) {
-            return 'Redis extension not loaded';
-        }
-        try {
-            $redis = new \Redis();
-            $redis->connect($config['host'], (int) $config['port'], 3);
-            if (!empty($config['auth'])) {
-                $redis->auth($config['auth']);
-            }
-            if ('' !== $config['select']) {
-                $redis->select((int) $config['select']);
-            }
-            $redis->ping();
-            return null;
-        } catch (\Throwable $ex) {
-            return $ex->getMessage();
-        }
-    }
-    //////////////////  done
-    /**
-     * @param array<string, mixed> $post
-     * @return array<string, mixed>
-     */
-    protected function doDone(array $post): array
-    {
-        ExtOptionsLoader::_()->saveExtOptions(['installed' => date(DATE_ATOM)]);
-        $this->flash_message = 'Installed Successfully.';
-        return [];
-    }
-    //////////////////
+
     /**
      * Show page: render all install info in a single page by built-in view.
      * @param array<string, mixed> $data
@@ -461,7 +437,11 @@ legend{font-weight:bold}
 <?php endif; ?>
 <p><label><input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application</label></p>
 <div id="database-config">
-<p><label>Driver: <select name="driver" onchange="toggleDriver(this)"><?=$driver_options ?? ''?></select></label></p>
+<p><label>Driver: <select name="driver" onchange="toggleDriver(this)">
+<?php foreach($drivers as $driver): ?>
+    <option value="<?=__h($driver)?>"><?=__h($driver)?></option>
+<?php endforeach; ?>
+</select></label></p>
 <p data-db-file><label>File: <input type="text" name="dbname" value="database/database.db"></label></p>
 <p data-db-server><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
 <p data-db-server><label>Port: <input type="text" name="port" value=""></label></p>
