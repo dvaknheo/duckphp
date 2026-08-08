@@ -15,7 +15,7 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - redis-server --requirepass 123456 --daemonize yes && exec "$$@"
+      - redis-server --requirepass 123456 --save "" --appendonly no --daemonize yes && exec "$$@"
       - docker-entrypoint
     environment:
       - COMPOSER_HOME=/tmp/composer

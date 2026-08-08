@@ -468,6 +468,7 @@ trait KernelTrait
         } finally {
             Runtime::_()->clear();
         }
+        $this->phaseToCurrent();
         return $ret;
     }
     protected function prepareServe()

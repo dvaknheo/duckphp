@@ -57,7 +57,7 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
         return $data !== false?$data:'';
     }
     /**
-     * 裁剪 files 页面中随运行/版本变化的 fieldset 块（执行时间/内存、调用堆栈、包含文件）。
+     * 裁剪 files 页面中随运行/版本变化的 fieldset 块（执行时间/内存、全部单例、调用堆栈、包含文件）。
      * @param string $data
      * @return string
      */
@@ -72,6 +72,7 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             }
             if (!$skip && strpos($line, '<legend>') !== false && (
                 strpos($line, '执行时间') !== false ||
+                strpos($line, '全部单例') !== false ||
                 strpos($line, '调用堆栈') !== false ||
                 strpos($line, '包含文件') !== false
             )) {

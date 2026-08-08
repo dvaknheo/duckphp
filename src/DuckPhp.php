@@ -49,7 +49,6 @@ class DuckPhp extends App
         'class_user' => '',
         'database_driver' => '',
 
-        'cli_command_with_app' => false,
         'cli_command_with_common' => true,
 
         'lang_default' => null,
