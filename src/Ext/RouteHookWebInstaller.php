@@ -9,6 +9,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
 use DuckPhp\Core\SuperGlobal;
@@ -50,9 +51,10 @@ class RouteHookWebInstaller extends ComponentBase
     {
         $this->error_message = '';
         $this->flash_message = '';
-        if ($this->isInstalled() && !$this->options['web_installer_force']) {
-            $this->renderPage($this->buildPageData([]));
-            return;
+        if (!empty(App::_()->options['installed'])) {
+            // installed;
+            CoreHelper::Show302('');
+            return ;
         }
         $post = SuperGlobal::_()->_POST();
         $post = is_array($post) ? $post : [];
@@ -63,13 +65,13 @@ class RouteHookWebInstaller extends ComponentBase
         $data = $this->buildPageData($post);
         $data = array_merge($data, $ext_data);
 
-        $this->renderPage($data);
+        if ($this->options['web_installer_view']) {
+            View::_()->_Show($data, $this->options['web_installer_view']);
+        } else {
+            $this->show($data);
+        }
     }
 
-    protected function isInstalled(): bool
-    {
-        return !empty(App::_()->options['installed']);
-    }
     //////////////////
     /**
      * @param array<string, mixed> $post
@@ -80,29 +82,17 @@ class RouteHookWebInstaller extends ComponentBase
         $base = [
             'flash_message' => $this->flash_message,
             'error_message' => $this->error_message,
-            'installed' => $this->isInstalled(),
+            'installed' => !empty(App::_()->options['installed']),
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
             'web_installer_path' => $this->options['web_installer_path'],
             'checks' => $this->checkEnv(),
             'driver_options' => $this->getDatabaseDriverOptions(),
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
-            'schema_path' => $this->getSchemaPath(),
             'database_list' => App::_()->options['database_list'] ?? [],
             'redis_list' => App::_()->options['redis_list'] ?? [],
         ];
         return $base;
-    }
-    /**
-     * @param array<string, mixed> $data
-     */
-    protected function renderPage(array $data)
-    {
-        if ($this->options['web_installer_view']) {
-            View::_()->_Show($data, $this->options['web_installer_view']);
-        } else {
-            $this->show($data);
-        }
     }
     protected function getDatabaseDriverOptions(): string
     {
@@ -123,43 +113,20 @@ class RouteHookWebInstaller extends ComponentBase
      */
     public function installBusiness(array $post): array
     {
-        $action = (string) ($post['action'] ?? '');
-        switch ($action) {
-            case 'install':
-                return $this->doInstall($post);
-            case 'database':
-                return $this->doDatabase($post);
-            case 'schema':
-                return $this->doSchema($post);
-            case 'redis':
-                return $this->doRedis($post);
-            case 'done':
-                return $this->doDone($post);
-            default:
-                // no known action: stay on the same page
-        }
-        return [];
-    }
-    /**
-     * Run the whole install in one shot: database config, schema, redis, done.
-     * @param array<string, mixed> $post
-     * @return array<string, mixed>
-     */
-    protected function doInstall(array $post): array
-    {
         $ext_data = [];
+        if ($this->options['web_installer_use_redis']) {
+            $ext_data = array_merge($ext_data, $this->doRedis($post));
+            if ($this->error_message) {
+                return $ext_data;
+            }
+        }
+
         if ($this->options['web_installer_use_database']) {
             $ext_data = array_merge($ext_data, $this->doDatabase($post));
             if ($this->error_message) {
                 return $ext_data;
             }
             $ext_data = array_merge($ext_data, $this->doSchema($post));
-            if ($this->error_message) {
-                return $ext_data;
-            }
-        }
-        if ($this->options['web_installer_use_redis']) {
-            $ext_data = array_merge($ext_data, $this->doRedis($post));
             if ($this->error_message) {
                 return $ext_data;
             }
@@ -185,8 +152,6 @@ class RouteHookWebInstaller extends ComponentBase
         if ($this->options['web_installer_use_redis']) {
             $ret[] = [extension_loaded('redis'), 'Redis extension'];
         }
-        $schema_path = $this->getSchemaPath();
-        $ret[] = [is_dir($schema_path), 'Schema directory writable: '.$schema_path];
         return $ret;
     }
     //////////////////  database
@@ -195,6 +160,9 @@ class RouteHookWebInstaller extends ComponentBase
         $ret = [];
         foreach ($this->options['web_installer_database_drivers'] as $driver => $enabled) {
             if ($enabled) {
+                if(is_file($this->getSchemaFile($driver))) {
+                    $ret[] = $driver;
+                }
                 $ret[] = $driver;
             }
         }
@@ -273,18 +241,12 @@ class RouteHookWebInstaller extends ComponentBase
         }
     }
     //////////////////  schema
-    protected function getSchemaPath(): string
-    {
-        $schema_path = (string) $this->options['web_installer_schema_path'];
-        if (static::IsAbsPath($schema_path)) {
-            return rtrim($schema_path, '/');
-        }
-        $path = App::Root()->options['path'] ?? '';
-        return rtrim((string)$path, '/').'/'.trim($schema_path, '/');
-    }
+
     protected function getSchemaFile(string $driver): string
     {
-        return $this->getSchemaPath().'/'.$driver.'.sql';
+        $path_sub = (string) $this->options['web_installer_schema_path'];
+        $filename = $driver.'.sql';
+        return $this->extendFullFile('', $path_sub, $filename);
     }
     /**
      * @param array<string, mixed> $post
@@ -298,6 +260,7 @@ class RouteHookWebInstaller extends ComponentBase
             return [];
         }
         $schema_file = $this->getSchemaFile($driver);
+        
         if (!is_file($schema_file)) {
             $this->error_message = 'Schema file not found: '.__h($schema_file);
             return [];
