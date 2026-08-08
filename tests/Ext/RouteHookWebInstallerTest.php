@@ -58,7 +58,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('PDO driver: sqlite', $out);
         $this->assertStringContainsString('Database Config', $out);
         $this->assertStringContainsString('Create Tables', $out);
-        $this->assertStringContainsString('Finish Install', $out);
+        $this->assertStringContainsString('Install', $out);
         $this->assertStringNotContainsString('Redis Config', $out); // use_redis=false
 
         // POST unknown action: stay on same single page
@@ -68,39 +68,27 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($ret);
         $this->assertStringContainsString('Environment Check', $out);
 
-        // POST database: sqlite
+        // POST install: one-shot database + schema + done
         $_POST = [
-            'action' => 'database',
+            'action' => 'install',
             'driver' => 'sqlite',
             'dbname' => $this->getTestPath().'runtime/installer_test.sqlite',
             'host' => '127.0.0.1',
             'port' => '',
             'username' => '',
             'password' => '',
+            'force' => '1',
         ];
-        [$ret, $out] = $this->hook('install');
-        $this->assertTrue($ret);
-        $this->assertStringContainsString('Database saved', $out);
-        $this->assertStringContainsString('Current database', $out);
-        $list = $app->options['database_list'];
-        $this->assertNotEmpty($list);
-        $this->assertStringContainsString('sqlite:', $list[0]['dsn']);
-
-        // POST schema: force reinstall
-        $_POST = ['action' => 'schema', 'force' => '1'];
-        [$ret, $out] = $this->hook('install');
-        $this->assertTrue($ret);
-        $this->assertStringContainsString('Tables created', $out);
-        $pdo = new \PDO($list[0]['dsn']);
-        $this->assertSame('demo', $pdo->query('select name from install_demo')->fetchColumn());
-
-        // POST done
-        $_POST = ['action' => 'done'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Installed Successfully', $out);
         $this->assertStringContainsString('Already Installed', $out);
+        $list = $app->options['database_list'];
+        $this->assertNotEmpty($list);
+        $this->assertStringContainsString('sqlite:', $list[0]['dsn']);
         $this->assertNotEmpty($app->options['installed']);
+        $pdo = new \PDO($list[0]['dsn']);
+        $this->assertSame('demo', $pdo->query('select name from install_demo')->fetchColumn());
 
         // installed, install path: already-installed page
         [$ret, $out] = $this->hook('install');
@@ -112,57 +100,56 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($ret);
         $this->assertSame('', $out);
 
-        ///////////////// branch: unsupported driver
+        ///////////////// branch: install fails at database step (unsupported driver)
         $this->initApp();
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_POST = ['action' => 'database', 'driver' => 'oracle', 'dbname' => 'x'];
+        $_POST = ['action' => 'install', 'driver' => 'oracle', 'dbname' => 'x'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Unsupported driver', $out);
+        $this->assertStringNotContainsString('Installed Successfully', $out);
 
         // branch: connection failed
-        $_POST = ['action' => 'database', 'driver' => 'sqlite', 'dbname' => '/nonexistent_dir_xyz/1.sqlite'];
+        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'dbname' => '/nonexistent_dir_xyz/1.sqlite'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Connection failed', $out);
 
         // branch: schema file missing
-        $_POST = ['action' => 'database', 'driver' => 'sqlite', 'dbname' => $this->getTestPath().'runtime/installer_test2.sqlite'];
-        [$ret, $out] = $this->hook('install');
-        $this->assertTrue($ret);
         RouteHookWebInstaller::_()->options['web_installer_schema_path'] = 'config_missing';
-        $_POST = ['action' => 'schema'];
+        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'dbname' => $this->getTestPath().'runtime/installer_test2.sqlite'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Schema file not found', $out);
         RouteHookWebInstaller::_()->options['web_installer_schema_path'] = 'config';
 
         ///////////////// use_redis = true app
-        $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true]);
+        $app = $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true]);
         // GET: single page with redis check and redis section
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_POST = [];
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('Redis extension', $out);
         $this->assertStringContainsString('Redis Config', $out);
-        // database
+        // one-shot install with database + schema + redis + done
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_POST = ['action' => 'database', 'driver' => 'sqlite', 'dbname' => $this->getTestPath().'runtime/installer_test3.sqlite'];
-        [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Database saved', $out);
-        // schema
-        $_POST = ['action' => 'schema'];
-        [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Tables created', $out);
-        // redis
-        $_POST = ['action' => 'redis', 'host' => '127.0.0.1', 'port' => '6379', 'auth' => '123456', 'select' => '0'];
-        [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Redis saved', $out);
-        $this->assertStringContainsString('Current redis', $out);
-        // done
-        $_POST = ['action' => 'done'];
+        $_POST = [
+            'action' => 'install',
+            'driver' => 'sqlite',
+            'dbname' => $this->getTestPath().'runtime/installer_test3.sqlite',
+            'host' => '127.0.0.1',
+            'port' => '',
+            'username' => '',
+            'password' => '',
+            'force' => '1',
+            'redis_host' => '127.0.0.1',
+            'redis_port' => '6379',
+            'redis_auth' => '123456',
+            'redis_select' => '0',
+        ];
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('Installed Successfully', $out);
+        $this->assertNotEmpty($app->options['redis_list']);
 
         ///////////////// use_database = false
         $this->initApp([], ['web_installer_use_database' => false, 'web_installer_use_redis' => false]);
@@ -171,7 +158,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         [$ret, $out] = $this->hook('install');
         // database sections skipped
         $this->assertStringContainsString('Environment Check', $out);
-        $this->assertStringContainsString('Finish Install', $out);
+        $this->assertStringContainsString('Install', $out);
         $this->assertStringNotContainsString('Database Config', $out);
         $this->assertStringNotContainsString('Create Tables', $out);
 

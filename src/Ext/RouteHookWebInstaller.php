@@ -48,6 +48,8 @@ class RouteHookWebInstaller extends ComponentBase
     }
     public function installAction()
     {
+        $this->error_message = '';
+        $this->flash_message = '';
         if ($this->isInstalled() && !$this->options['web_installer_force']) {
             $this->renderPage($this->buildPageData([]));
             return;
@@ -123,6 +125,8 @@ class RouteHookWebInstaller extends ComponentBase
     {
         $action = (string) ($post['action'] ?? '');
         switch ($action) {
+            case 'install':
+                return $this->doInstall($post);
             case 'database':
                 return $this->doDatabase($post);
             case 'schema':
@@ -135,6 +139,33 @@ class RouteHookWebInstaller extends ComponentBase
                 // no known action: stay on the same page
         }
         return [];
+    }
+    /**
+     * Run the whole install in one shot: database config, schema, redis, done.
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function doInstall(array $post): array
+    {
+        $ext_data = [];
+        if ($this->options['web_installer_use_database']) {
+            $ext_data = array_merge($ext_data, $this->doDatabase($post));
+            if ($this->error_message) {
+                return $ext_data;
+            }
+            $ext_data = array_merge($ext_data, $this->doSchema($post));
+            if ($this->error_message) {
+                return $ext_data;
+            }
+        }
+        if ($this->options['web_installer_use_redis']) {
+            $ext_data = array_merge($ext_data, $this->doRedis($post));
+            if ($this->error_message) {
+                return $ext_data;
+            }
+        }
+        $ext_data = array_merge($ext_data, $this->doDone($post));
+        return $ext_data;
     }
     //////////////////  env
     protected function checkEnv(): array
@@ -336,10 +367,10 @@ class RouteHookWebInstaller extends ComponentBase
     protected function doRedis(array $post): array
     {
         $config = [
-            'host' => (string) ($post['host'] ?? '127.0.0.1'),
-            'port' => (string) ($post['port'] ?? '6379'),
-            'auth' => (string) ($post['auth'] ?? ''),
-            'select' => (string) ($post['select'] ?? '0'),
+            'host' => (string) ($post['redis_host'] ?? '127.0.0.1'),
+            'port' => (string) ($post['redis_port'] ?? '6379'),
+            'auth' => (string) ($post['redis_auth'] ?? ''),
+            'select' => (string) ($post['redis_select'] ?? '0'),
         ];
         $error = $this->testRedis($config);
         if ($error !== null) {
@@ -432,25 +463,17 @@ legend{font-weight:bold}
 <?php if (!empty($database_list)): ?>
 <p class="ok">Current database: <code><?=__h((string)$database_list[0]['dsn'])?></code></p>
 <?php endif; ?>
-<form method="post">
-<input type="hidden" name="action" value="database">
 <p><label>Driver: <select name="driver"><?=$driver_options ?? ''?></select></label></p>
 <p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
 <p><label>Port: <input type="text" name="port" value=""></label></p>
 <p><label>Database: <input type="text" name="dbname" value=""></label></p>
 <p><label>Username: <input type="text" name="username" value=""></label></p>
 <p><label>Password: <input type="password" name="password" value=""></label></p>
-<p><button type="submit">Test Connection &amp; Save</button></p>
-</form>
 </fieldset>
 <fieldset>
 <legend>Create Tables</legend>
-<form method="post">
-<input type="hidden" name="action" value="schema">
 <p>Schema files will be loaded from: <code><?=__h((string)($schema_path ?? ''))?></code></p>
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
-<p><button type="submit">Create Tables</button></p>
-</form>
 </fieldset>
 <?php endif; ?>
 <?php if (!empty($use_redis)): ?>
@@ -459,23 +482,16 @@ legend{font-weight:bold}
 <?php if (!empty($redis_list)): ?>
 <p class="ok">Current redis: <code><?=__h((string)$redis_list[0]['host'].':'.$redis_list[0]['port'])?></code></p>
 <?php endif; ?>
-<form method="post">
-<input type="hidden" name="action" value="redis">
-<p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
-<p><label>Port: <input type="text" name="port" value="6379"></label></p>
-<p><label>Auth: <input type="password" name="auth" value=""></label></p>
-<p><label>Select: <input type="text" name="select" value="0"></label></p>
-<p><button type="submit">Save Redis Config</button></p>
-</form>
+<p><label>Host: <input type="text" name="redis_host" value="127.0.0.1"></label></p>
+<p><label>Port: <input type="text" name="redis_port" value="6379"></label></p>
+<p><label>Auth: <input type="password" name="redis_auth" value=""></label></p>
+<p><label>Select: <input type="text" name="redis_select" value="0"></label></p>
 </fieldset>
 <?php endif; ?>
-<fieldset>
-<legend>Install</legend>
 <form method="post">
-<input type="hidden" name="action" value="done">
-<p><button type="submit">Finish Install</button></p>
+<input type="hidden" name="action" value="install">
+<p><button type="submit">Install</button></p>
 </form>
-</fieldset>
 <?php endif; ?>
 </body></html>
 <?php

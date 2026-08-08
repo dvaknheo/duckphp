@@ -106,11 +106,12 @@ class ExtOptionsLoader extends ComponentBase
         $full_file = $this->get_ext_options_file();
         $phase = App::_()->getThisPhaseName();
         $root = $this->getRoot();
+        $options['__class__'] = get_class(App::_());
+
         $ext_options = array_replace_recursive($root->all_ext_options[$phase] ?? [], $options);
         $root->all_ext_options[$phase] = $ext_options;
         $all_ext_options = $root->all_ext_options;
         $all_ext_options['__date__'] = date('Y-m-d H:i:s');
-        $all_ext_options['__class__'] = get_class(App::_());
 
         $string = json_encode($all_ext_options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
         file_put_contents($full_file, $string);
