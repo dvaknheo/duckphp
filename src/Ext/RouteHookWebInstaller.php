@@ -21,14 +21,15 @@ class RouteHookWebInstaller extends ComponentBase
         'web_installer_path' => 'install',
         'web_installer_use_database' => true,
         'web_installer_use_redis' => false,
-        'web_installer_local_redis' => false,
-        'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true],
+        'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true, 'duckdb'=>true],
         'web_installer_schema_path' => 'config',
         'web_installer_view' => '',
         'web_installer_force' => false,
     ];
     protected $error_message = '';
     protected $flash_message = '';
+    protected $database_error_message = '';
+    protected $redis_error_message = '';
 
     public static function Hook($path_info)
     {
@@ -52,6 +53,8 @@ class RouteHookWebInstaller extends ComponentBase
     {
         $this->error_message = '';
         $this->flash_message = '';
+        $this->database_error_message = '';
+        $this->redis_error_message = '';
         if (!empty(App::_()->options['installed'])) {
             // installed;
             CoreHelper::Show302('');
@@ -83,6 +86,8 @@ class RouteHookWebInstaller extends ComponentBase
         $base = [
             'flash_message' => $this->flash_message,
             'error_message' => $this->error_message,
+            'database_error_message' => $this->database_error_message,
+            'redis_error_message' => $this->redis_error_message,
             'installed' => !empty(App::_()->options['installed']),
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
@@ -94,6 +99,7 @@ class RouteHookWebInstaller extends ComponentBase
             'redis_list' => App::_()->options['redis_list'] ?? [],
             'redis_follow_root' => true,
             'root_redis_list' => App::Root()->options['redis_list'] ?? [],
+            'database_can_follow_root' => in_array(App::Root()->options['database_driver'] ?? null, $this->getEnabledDrivers(), true),
         ];
         return $base;
     }
@@ -115,18 +121,18 @@ class RouteHookWebInstaller extends ComponentBase
         $ext_data = [];
         if ($this->options['web_installer_use_redis']) {
             $ext_data = array_merge($ext_data, $this->doRedis($post));
-            if ($this->error_message) {
+            if ($this->redis_error_message) {
                 return $ext_data;
             }
         }
 
         if ($this->options['web_installer_use_database']) {
             $ext_data = array_merge($ext_data, $this->doDatabase($post));
-            if ($this->error_message) {
+            if ($this->database_error_message) {
                 return $ext_data;
             }
             $ext_data = array_merge($ext_data, $this->doSchema($post));
-            if ($this->error_message) {
+            if ($this->database_error_message) {
                 return $ext_data;
             }
         }
@@ -176,7 +182,7 @@ class RouteHookWebInstaller extends ComponentBase
         if (!empty($post['database_follow_root'])) {
             $root_list = App::Root()->options['database_list'] ?? [];
             if (empty($root_list)) {
-                $this->error_message = 'No root database configured.';
+                $this->database_error_message = 'No root database configured.';
                 return [];
             }
             $this->flash_message = 'Use root database.';
@@ -188,7 +194,7 @@ class RouteHookWebInstaller extends ComponentBase
             return [];
         }
         if (!in_array($driver, $this->getEnabledDrivers(), true)) {
-            $this->error_message = 'Unsupported driver: '.__h($driver);
+            $this->database_error_message = 'Unsupported driver: '.__h($driver);
             return [];
         }
         $config = [
@@ -200,12 +206,12 @@ class RouteHookWebInstaller extends ComponentBase
         ];
         $dsn = $this->makeDsn($driver, $config);
         if ($dsn === null) {
-            $this->error_message = 'Driver requires dbname: '.__h($driver);
+            $this->database_error_message = 'Driver requires dbname: '.__h($driver);
             return [];
         }
         $error = $this->testConnection($dsn, $config['username'], $config['password']);
         if ($error !== null) {
-            $this->error_message = 'Connection failed: '.__h($error);
+            $this->database_error_message = 'Connection failed: '.__h($error);
             return [];
         }
         $config['dsn'] = $dsn;
@@ -215,8 +221,8 @@ class RouteHookWebInstaller extends ComponentBase
     }
     protected function makeDsn(string $driver, array $config): ?string
     {
-        if ($driver === 'sqlite') {
-            return 'sqlite:'.($config['dbname'] ?: 'database.sqlite');
+        if ($driver === 'sqlite' || $driver === 'duckdb') {
+            return $driver.':'.($config['dbname'] ?: 'database/database.db');
         }
         if (empty($config['dbname'])) {
             return null;
@@ -253,13 +259,13 @@ class RouteHookWebInstaller extends ComponentBase
     {
         $driver = $this->getCurrentDriver();
         if ($driver === null) {
-            $this->error_message = 'No database configured.';
+            $this->database_error_message = 'No database configured.';
             return [];
         }
         $schema_file = $this->getSchemaFile($driver);
         
         if (!is_file($schema_file)) {
-            $this->error_message = 'Schema file not found: '.__h($schema_file);
+            $this->database_error_message = 'Schema file not found: '.__h($schema_file);
             return [];
         }
         $force = !empty($post['force']);
@@ -271,7 +277,7 @@ class RouteHookWebInstaller extends ComponentBase
             $sql = (string) file_get_contents($schema_file);
             $this->executeSql($pdo, $sql);
         } catch (\Throwable $ex) {
-            $this->error_message = 'Schema error: '.__h($ex->getMessage());
+            $this->database_error_message = 'Schema error: '.__h($ex->getMessage());
             return [];
         }
         $this->flash_message = 'Tables created.';
@@ -335,7 +341,7 @@ class RouteHookWebInstaller extends ComponentBase
         if (!empty($post['redis_follow_root'])) {
             $root_list = App::Root()->options['redis_list'] ?? [];
             if (empty($root_list)) {
-                $this->error_message = 'No root redis configured.';
+                $this->redis_error_message = 'No root redis configured.';
                 return [];
             }
             $this->flash_message = 'Use root redis.';
@@ -349,7 +355,7 @@ class RouteHookWebInstaller extends ComponentBase
         ];
         $error = $this->testRedis($config);
         if ($error !== null) {
-            $this->error_message = 'Redis connection failed: '.__h($error);
+            $this->redis_error_message = 'Redis connection failed: '.__h($error);
             return [];
         }
         ExtOptionsLoader::_()->saveExtOptions(['redis_list' => [$config]]);
@@ -435,26 +441,33 @@ legend{font-weight:bold}
 <?php if (!empty($use_redis)): ?>
 <fieldset>
 <legend>Redis Config</legend>
-<p><label><input type="checkbox" name="redis_follow_root" value="1" checked onchange="toggleRedis(this)"> Follow Main Application</label></p>
-<div>
-<p data-redis-row><label>Host: <input type="text" name="redis_host" value="127.0.0.1"></label></p>
-<p data-redis-row><label>Port: <input type="text" name="redis_port" value="6379"></label></p>
-<p data-redis-row><label>Auth: <input type="password" name="redis_auth" value=""></label></p>
-<p data-redis-row><label>Select: <input type="text" name="redis_select" value="0"></label></p>
+<?php if (!empty($redis_error_message)): ?>
+<p class="error"><?=__h((string)$redis_error_message)?></p>
+<?php endif; ?>
+<p><label><input type="checkbox" name="redis_follow_root" value="1" checked data-target="redis-config"> Follow Main Application</label></p>
+<div id="redis-config">
+<p><label>Host: <input type="text" name="redis_host" value="127.0.0.1"></label></p>
+<p><label>Port: <input type="text" name="redis_port" value="6379"></label></p>
+<p><label>Auth: <input type="password" name="redis_auth" value=""></label></p>
+<p><label>Select: <input type="text" name="redis_select" value="0"></label></p>
 </div>
 </fieldset>
 <?php endif; ?>
 <?php if (!empty($use_database)): ?>
 <fieldset>
 <legend>Database Config</legend>
-<p><label><input type="checkbox" name="database_follow_root" value="1" checked onchange="toggleDatabase(this)"> Follow Main Application</label></p>
-<div>
-<p data-db-row><label>Driver: <select name="driver"><?=$driver_options ?? ''?></select></label></p>
-<p data-db-row><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
-<p data-db-row><label>Port: <input type="text" name="port" value=""></label></p>
-<p data-db-row><label>Database: <input type="text" name="dbname" value=""></label></p>
-<p data-db-row><label>Username: <input type="text" name="username" value=""></label></p>
-<p data-db-row><label>Password: <input type="password" name="password" value=""></label></p>
+<?php if (!empty($database_error_message)): ?>
+<p class="error"><?=__h((string)$database_error_message)?></p>
+<?php endif; ?>
+<p><label><input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application</label></p>
+<div id="database-config">
+<p><label>Driver: <select name="driver" onchange="toggleDriver(this)"><?=$driver_options ?? ''?></select></label></p>
+<p data-db-file><label>File: <input type="text" name="dbname" value="database/database.db"></label></p>
+<p data-db-server><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
+<p data-db-server><label>Port: <input type="text" name="port" value=""></label></p>
+<p data-db-server><label>Database: <input type="text" name="dbname" value=""></label></p>
+<p data-db-server><label>Username: <input type="text" name="username" value=""></label></p>
+<p data-db-server><label>Password: <input type="password" name="password" value=""></label></p>
 </div>
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
 </fieldset>
@@ -473,16 +486,22 @@ function toggleRows(rows, show) {
         rows[i].style.display = show ? '' : 'none';
     }
 }
-function toggleRedis(cb) {
-    toggleRows(document.querySelectorAll('[data-redis-row]'), !cb.checked);
+function toggleFollowRoot(cb) {
+    var el = document.getElementById(cb.getAttribute('data-target'));
+    if (el) { el.style.display = cb.checked ? 'none' : ''; }
 }
-function toggleDatabase(cb) {
-    toggleRows(document.querySelectorAll('[data-db-row]'), !cb.checked);
+function toggleDriver(sel) {
+    var file = (sel.value === 'sqlite' || sel.value === 'duckdb');
+    toggleRows(document.querySelectorAll('[data-db-file]'), file);
+    toggleRows(document.querySelectorAll('[data-db-server]'), !file);
 }
-var __redis_cb = document.querySelector('[name="redis_follow_root"]');
-if (__redis_cb) { toggleRedis(__redis_cb); }
-var __db_cb = document.querySelector('[name="database_follow_root"]');
-if (__db_cb) { toggleDatabase(__db_cb); }
+var cbs = document.querySelectorAll('input[type="checkbox"][data-target]');
+for (var i = 0; i < cbs.length; i++) {
+    toggleFollowRoot(cbs[i]);
+    cbs[i].onchange = function() { toggleFollowRoot(this); };
+}
+var __driver = document.querySelector('[name="driver"]');
+if (__driver) { toggleDriver(__driver); }
 </script>
 <?php endif; ?>
 </body></html>

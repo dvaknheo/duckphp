@@ -57,7 +57,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Environment Check', $out);
         $this->assertStringContainsString('PDO driver: sqlite', $out);
         $this->assertStringContainsString('Database Config', $out);
-        $this->assertStringContainsString('Schema files will be loaded', $out);
+        $this->assertStringContainsString('Follow Main Application', $out);
         $this->assertStringContainsString('Install', $out);
         $this->assertStringNotContainsString('Redis Config', $out); // use_redis=false
 

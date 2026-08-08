@@ -48,7 +48,7 @@ class DuckPhp extends App
         'class_admin' => '',
         'class_user' => '',
         'database_driver' => '',
-
+        'path_config'=> 'config',
         'cli_command_with_common' => true,
 
         'lang_default' => null,
@@ -185,5 +185,9 @@ class DuckPhp extends App
         }
         //Lang::_()->init($this->options,$this);
         return Lang::_()->language($str, $args, $fallback);
+    }
+    public function getConfigFile(string $file): string
+    {
+        return $this->getOverrideableFile($this->options['path_config'], $file);
     }
 }
