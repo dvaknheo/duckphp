@@ -167,16 +167,13 @@ class RouteHookWebInstaller extends ComponentBase
     }
     protected function checkRootHasRedis(): bool
     {
-        if (
+        // Note: ?? has lower precedence than ||; wrap each array access in parens so ?? guards it.
+        return (bool) (
             App::Setting('redis_list', null) ||
             App::Setting('redis', null) ||
-            App::Root()->options['redis'] ?? false ||
-            App::Root()->options['redis_list'] ?? false 
-        ) {
-            return true;
-        }else{
-            return false;
-        }
+            (App::Root()->options['redis'] ?? false) ||
+            (App::Root()->options['redis_list'] ?? false)
+        );
     }
     protected function checkRootHasDatabase(): bool
     {
@@ -564,8 +561,8 @@ legend{font-weight:bold}
 <p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>
 </div>
 <?php endif; ?>
+<p><button type="button" class="redis-add" onclick="addRedisItem()">Add Redis</button></p>
 </div>
-<p><button type="button" onclick="addRedisItem()">Add Redis</button></p>
 </fieldset>
 <?php endif; ?>
 <?php if (!empty($use_database)): ?>
@@ -608,8 +605,8 @@ legend{font-weight:bold}
 <p><button type="button" onclick="removeDatabaseItem(this)">Remove</button></p>
 </div>
 <?php endif; ?>
+<p><button type="button" class="database-add" onclick="addDatabaseItem()">Add Database</button></p>
 </div>
-<p><button type="button" onclick="addDatabaseItem()">Add Database</button></p>
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
 </fieldset>
 <?php endif; ?>
@@ -643,7 +640,8 @@ function addRedisItem() {
         '<p><label>Auth: <input type="password" name="redis_auth[]" value=""></label></p>' +
         '<p><label>Select: <input type="text" name="redis_select[]" value="0"></label></p>' +
         '<p><button type="button" onclick="removeRedisItem(this)">Remove</button></p>';
-    container.appendChild(item);
+    var add = container.querySelector('.redis-add');
+    container.insertBefore(item, add);
 }
 function removeRedisItem(btn) {
     var item = btn.closest('.redis-item');
@@ -669,7 +667,7 @@ function addDatabaseItem() {
     var item = document.createElement('div');
     item.className = 'database-item';
     item.innerHTML = dbItemHtml('');
-    container.appendChild(item);
+    container.insertBefore(item, container.querySelector('.database-add'));
     toggleDatabaseDriver(item.querySelector('select'));
 }
 function removeDatabaseItem(btn) {
