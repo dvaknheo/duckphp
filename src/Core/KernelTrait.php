@@ -96,10 +96,18 @@ trait KernelTrait
             return $instance->serve();
         }
     }
+    /**
+     * @return static
+     */
     public static function Root()
     {
         return  PhaseContainer::_()->getClassOfContainer(self::class, self::$ROOT_PHASE);
     }
+    /**
+     * Summary of Phase
+     * @param mixed $new
+     * @return string
+     */
     public static function Phase($new = null)
     {
         return static::_()->_Phase($new);

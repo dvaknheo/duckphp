@@ -57,7 +57,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Environment Check', $out);
         $this->assertStringContainsString('PDO driver: sqlite', $out);
         $this->assertStringContainsString('Database Config', $out);
-        $this->assertStringContainsString('Create Tables', $out);
+        $this->assertStringContainsString('Schema files will be loaded', $out);
         $this->assertStringContainsString('Install', $out);
         $this->assertStringNotContainsString('Redis Config', $out); // use_redis=false
 
@@ -90,10 +90,10 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $pdo = new \PDO($list[0]['dsn']);
         $this->assertSame('demo', $pdo->query('select name from install_demo')->fetchColumn());
 
-        // installed, install path: already-installed page
+        // installed, install path: 302 redirect (no body)
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
-        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertSame('', $out);
 
         // installed, non-install path: pass through
         [$ret, $out] = $this->hook('');

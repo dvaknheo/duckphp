@@ -6,6 +6,7 @@
 
 namespace DuckPhp\Ext;
 
+use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
@@ -91,6 +92,8 @@ class RouteHookWebInstaller extends ComponentBase
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
             'database_list' => App::_()->options['database_list'] ?? [],
             'redis_list' => App::_()->options['redis_list'] ?? [],
+            'redis_follow_root' => true,
+            'root_redis_list' => App::Root()->options['redis_list'] ?? [],
         ];
         return $base;
     }
@@ -98,10 +101,6 @@ class RouteHookWebInstaller extends ComponentBase
     {
         $drivers = $this->getEnabledDrivers();
         $options = '';
-        $root_config = $this->getRootDatabaseConfig();
-        if ($root_config) {
-            $options .= '<option value="__root__">Use root app database ('.__h($root_config['driver'] ?? 'unknown').')</option>';
-        }
         foreach ($drivers as $driver) {
             $options .= '<option value="'.__h($driver).'">'.__h($driver).'</option>';
         }
@@ -168,23 +167,21 @@ class RouteHookWebInstaller extends ComponentBase
         }
         return $ret;
     }
-    protected function getRootDatabaseConfig()
-    {
-        $root = App::Root();
-        $list = $root->options['database_list'] ?? [];
-        if (empty($list)) {
-            return null;
-        }
-        $config = $list[0];
-        $config['driver'] = explode(':', ''.$config['dsn'])[0];
-        return $config;
-    }
     /**
      * @param array<string, mixed> $post
      * @return array<string, mixed>
      */
     protected function doDatabase(array $post): array
     {
+        if (!empty($post['database_follow_root'])) {
+            $root_list = App::Root()->options['database_list'] ?? [];
+            if (empty($root_list)) {
+                $this->error_message = 'No root database configured.';
+                return [];
+            }
+            $this->flash_message = 'Use root database.';
+            return [];
+        }
         $driver = (string) ($post['driver'] ?? '');
         if ($driver === '__root__') {
             $this->flash_message = 'Use root app database.';
@@ -284,6 +281,9 @@ class RouteHookWebInstaller extends ComponentBase
     {
         $list = App::_()->options['database_list'] ?? [];
         if (empty($list)) {
+            $list = App::Root()->options['database_list'] ?? [];
+        }
+        if (empty($list)) {
             return null;
         }
         return explode(':', ''.$list[0]['dsn'])[0];
@@ -291,6 +291,9 @@ class RouteHookWebInstaller extends ComponentBase
     protected function createPdo(): \PDO
     {
         $list = App::_()->options['database_list'];
+        if (empty($list)) {
+            $list = App::Root()->options['database_list'];
+        }
         $config = $list[0];
         return new \PDO($config['dsn'], $config['username'] ?? null, $config['password'] ?? null, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
     }
@@ -329,6 +332,15 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function doRedis(array $post): array
     {
+        if (!empty($post['redis_follow_root'])) {
+            $root_list = App::Root()->options['redis_list'] ?? [];
+            if (empty($root_list)) {
+                $this->error_message = 'No root redis configured.';
+                return [];
+            }
+            $this->flash_message = 'Use root redis.';
+            return [];
+        }
         $config = [
             'host' => (string) ($post['redis_host'] ?? '127.0.0.1'),
             'port' => (string) ($post['redis_port'] ?? '6379'),
@@ -408,9 +420,9 @@ legend{font-weight:bold}
 <?php if (!empty($flash_message)): ?>
 <p class="ok"><?=__h((string)$flash_message)?></p>
 <?php endif; ?>
-<p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
 <fieldset>
 <legend>Environment Check</legend>
+<p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
 <table>
 <thead><tr><th>Item</th><th>Status</th></tr></thead>
 <tbody>
@@ -420,41 +432,58 @@ legend{font-weight:bold}
 </tbody>
 </table>
 </fieldset>
-<?php if (!empty($use_database)): ?>
-<fieldset>
-<legend>Database Config</legend>
-<?php if (!empty($database_list)): ?>
-<p class="ok">Current database: <code><?=__h((string)$database_list[0]['dsn'])?></code></p>
-<?php endif; ?>
-<p><label>Driver: <select name="driver"><?=$driver_options ?? ''?></select></label></p>
-<p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
-<p><label>Port: <input type="text" name="port" value=""></label></p>
-<p><label>Database: <input type="text" name="dbname" value=""></label></p>
-<p><label>Username: <input type="text" name="username" value=""></label></p>
-<p><label>Password: <input type="password" name="password" value=""></label></p>
-</fieldset>
-<fieldset>
-<legend>Create Tables</legend>
-<p>Schema files will be loaded from: <code><?=__h((string)($schema_path ?? ''))?></code></p>
-<p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
-</fieldset>
-<?php endif; ?>
 <?php if (!empty($use_redis)): ?>
 <fieldset>
 <legend>Redis Config</legend>
-<?php if (!empty($redis_list)): ?>
-<p class="ok">Current redis: <code><?=__h((string)$redis_list[0]['host'].':'.$redis_list[0]['port'])?></code></p>
-<?php endif; ?>
-<p><label>Host: <input type="text" name="redis_host" value="127.0.0.1"></label></p>
-<p><label>Port: <input type="text" name="redis_port" value="6379"></label></p>
-<p><label>Auth: <input type="password" name="redis_auth" value=""></label></p>
-<p><label>Select: <input type="text" name="redis_select" value="0"></label></p>
+<p><label><input type="checkbox" name="redis_follow_root" value="1" checked onchange="toggleRedis(this)"> Follow Main Application</label></p>
+<div>
+<p data-redis-row><label>Host: <input type="text" name="redis_host" value="127.0.0.1"></label></p>
+<p data-redis-row><label>Port: <input type="text" name="redis_port" value="6379"></label></p>
+<p data-redis-row><label>Auth: <input type="password" name="redis_auth" value=""></label></p>
+<p data-redis-row><label>Select: <input type="text" name="redis_select" value="0"></label></p>
+</div>
 </fieldset>
 <?php endif; ?>
+<?php if (!empty($use_database)): ?>
+<fieldset>
+<legend>Database Config</legend>
+<p><label><input type="checkbox" name="database_follow_root" value="1" checked onchange="toggleDatabase(this)"> Follow Main Application</label></p>
+<div>
+<p data-db-row><label>Driver: <select name="driver"><?=$driver_options ?? ''?></select></label></p>
+<p data-db-row><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
+<p data-db-row><label>Port: <input type="text" name="port" value=""></label></p>
+<p data-db-row><label>Database: <input type="text" name="dbname" value=""></label></p>
+<p data-db-row><label>Username: <input type="text" name="username" value=""></label></p>
+<p data-db-row><label>Password: <input type="password" name="password" value=""></label></p>
+</div>
+<p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
+</fieldset>
+<?php endif; ?>
+<fieldset>
+<legend>Customer Setting</legend>
+<p>Reserved for future extensions.</p>
+</fieldset>
 <form method="post">
 <input type="hidden" name="action" value="install">
 <p><button type="submit">Install</button></p>
 </form>
+<script>
+function toggleRows(rows, show) {
+    for (var i = 0; i < rows.length; i++) {
+        rows[i].style.display = show ? '' : 'none';
+    }
+}
+function toggleRedis(cb) {
+    toggleRows(document.querySelectorAll('[data-redis-row]'), !cb.checked);
+}
+function toggleDatabase(cb) {
+    toggleRows(document.querySelectorAll('[data-db-row]'), !cb.checked);
+}
+var __redis_cb = document.querySelector('[name="redis_follow_root"]');
+if (__redis_cb) { toggleRedis(__redis_cb); }
+var __db_cb = document.querySelector('[name="database_follow_root"]');
+if (__db_cb) { toggleDatabase(__db_cb); }
+</script>
 <?php endif; ?>
 </body></html>
 <?php
