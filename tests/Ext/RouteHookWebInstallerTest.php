@@ -124,7 +124,24 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Schema file not found', $out);
         rename($schema_backup, $config_schema);
 
-        ///////////////// use_redis = true app
+        ///////////////// multi-database: two sqlite configs
+        $app = $this->initApp([], ['web_installer_use_redis' => false]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = [
+            'action' => 'install',
+            'driver' => ['sqlite', 'sqlite'],
+            'dbname' => [$this->getTestPath().'runtime/installer_test_a.sqlite', $this->getTestPath().'runtime/installer_test_b.sqlite'],
+            'force' => '1',
+        ];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertCount(2, $app->options['database_list']);
+        $this->assertStringContainsString('installer_test_b.sqlite', $app->options['database_list'][1]['dsn']);
+        // schema built into the first database
+        $pdo = new \PDO($app->options['database_list'][0]['dsn']);
+        $this->assertSame('demo', $pdo->query('select name from install_demo')->fetchColumn());
+
+        ///////////////// use_redis = true app: multi-redis
         $app = $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true]);
         // GET: single page with redis check and redis section
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -132,7 +149,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('Redis extension', $out);
         $this->assertStringContainsString('Redis Config', $out);
-        // one-shot install with database + schema + redis + done
+        // one-shot install with database + schema + multi-redis + done
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = [
             'action' => 'install',
@@ -143,14 +160,16 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
             'username' => '',
             'password' => '',
             'force' => '1',
-            'redis_host' => '127.0.0.1',
-            'redis_port' => '6379',
-            'redis_auth' => '123456',
-            'redis_select' => '0',
+            'redis_host' => ['127.0.0.1', '127.0.0.1'],
+            'redis_port' => ['6379', '6379'],
+            'redis_auth' => ['123456', '123456'],
+            'redis_select' => ['0', '1'],
         ];
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('Already Installed', $out);
         $this->assertNotEmpty($app->options['redis_list']);
+        $this->assertCount(2, $app->options['redis_list']);
+        $this->assertSame('1', $app->options['redis_list'][1]['select']);
 
         ///////////////// use_database = false
         $this->initApp([], ['web_installer_use_database' => false, 'web_installer_use_redis' => false]);
@@ -168,6 +187,8 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         @unlink($this->getTestPath().'runtime/installer_test.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test2.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test3.sqlite');
+        @unlink($this->getTestPath().'runtime/installer_test_a.sqlite');
+        @unlink($this->getTestPath().'runtime/installer_test_b.sqlite');
         clearstatcache();
         $_SERVER = $__SERVER;
         $_POST = [];
