@@ -27,7 +27,6 @@ class RouteHookWebInstaller extends ComponentBase
     ];
     protected $error_message = '';
     protected $flash_message = '';
-    protected $next_step = 'env';
 
     public static function Hook($path_info)
     {
@@ -50,7 +49,7 @@ class RouteHookWebInstaller extends ComponentBase
     public function installAction()
     {
         if ($this->isInstalled() && !$this->options['web_installer_force']) {
-            $this->renderPage($this->buildPageData(['step' => 'already']));
+            $this->renderPage($this->buildPageData([]));
             return;
         }
         $post = SuperGlobal::_()->_POST();
@@ -76,43 +75,20 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function buildPageData(array $post): array
     {
-        if (!empty($post['step'])) {
-            $step = (string) $post['step'];
-        } elseif (!empty($post)) {
-            $step = $this->next_step;
-        } else {
-            $step = (string) (SuperGlobal::_()->_GET('step') ?? 'env');
-        }
-        if (!$this->options['web_installer_use_database'] && $step === 'database') {
-            $step = 'schema';
-        }
-        if (!$this->options['web_installer_use_redis'] && $step === 'redis') {
-            $step = 'done';
-        }
         $base = [
-            'step' => $step,
             'flash_message' => $this->flash_message,
             'error_message' => $this->error_message,
+            'installed' => $this->isInstalled(),
+            'use_database' => (bool) $this->options['web_installer_use_database'],
+            'use_redis' => (bool) $this->options['web_installer_use_redis'],
+            'web_installer_path' => $this->options['web_installer_path'],
+            'checks' => $this->checkEnv(),
+            'driver_options' => $this->getDatabaseDriverOptions(),
+            'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
+            'schema_path' => $this->getSchemaPath(),
+            'database_list' => App::_()->options['database_list'] ?? [],
+            'redis_list' => App::_()->options['redis_list'] ?? [],
         ];
-        switch ($step) {
-            case 'env':
-                return $base + ['checks' => $this->checkEnv()];
-            case 'database':
-                return $base + [
-                    'driver_options' => $this->getDatabaseDriverOptions(),
-                    'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
-                ];
-            case 'schema':
-                return $base + ['schema_path' => $this->getSchemaPath()];
-            case 'redis':
-                return $base;
-            case 'done':
-                return $base;
-            case 'installed':
-                return $base + ['web_installer_path' => $this->options['web_installer_path']];
-            case 'already':
-                return $base;
-        }
         return $base;
     }
     /**
@@ -156,16 +132,11 @@ class RouteHookWebInstaller extends ComponentBase
             case 'done':
                 return $this->doDone($post);
             default:
-                // env "Next": proceed to database step (buildPageData skips to schema when use_database is off)
-                $this->next_step = 'database';
+                // no known action: stay on the same page
         }
         return [];
     }
     //////////////////  env
-    protected function showEnv()
-    {
-        $this->renderPage($this->buildPageData(['step' => 'env']));
-    }
     protected function checkEnv(): array
     {
         $ret = [];
@@ -188,10 +159,6 @@ class RouteHookWebInstaller extends ComponentBase
         return $ret;
     }
     //////////////////  database
-    protected function showDatabase()
-    {
-        $this->renderPage($this->buildPageData(['step' => 'database']));
-    }
     protected function getEnabledDrivers(): array
     {
         $ret = [];
@@ -222,12 +189,10 @@ class RouteHookWebInstaller extends ComponentBase
         $driver = (string) ($post['driver'] ?? '');
         if ($driver === '__root__') {
             $this->flash_message = 'Use root app database.';
-            $this->next_step = 'schema';
             return [];
         }
         if (!in_array($driver, $this->getEnabledDrivers(), true)) {
             $this->error_message = 'Unsupported driver: '.__h($driver);
-            $this->next_step = 'database';
             return [];
         }
         $config = [
@@ -240,19 +205,16 @@ class RouteHookWebInstaller extends ComponentBase
         $dsn = $this->makeDsn($driver, $config);
         if ($dsn === null) {
             $this->error_message = 'Driver requires dbname: '.__h($driver);
-            $this->next_step = 'database';
             return [];
         }
         $error = $this->testConnection($dsn, $config['username'], $config['password']);
         if ($error !== null) {
             $this->error_message = 'Connection failed: '.__h($error);
-            $this->next_step = 'database';
             return [];
         }
         $config['dsn'] = $dsn;
         ExtOptionsLoader::_()->saveExtOptions(['database_list' => [$config]]);
         $this->flash_message = 'Database saved and connected.';
-        $this->next_step = 'schema';
         return ['database_list' => [$config]];
     }
     protected function makeDsn(string $driver, array $config): ?string
@@ -280,10 +242,6 @@ class RouteHookWebInstaller extends ComponentBase
         }
     }
     //////////////////  schema
-    protected function showSchema()
-    {
-        $this->renderPage($this->buildPageData(['step' => 'schema']));
-    }
     protected function getSchemaPath(): string
     {
         $schema_path = (string) $this->options['web_installer_schema_path'];
@@ -306,13 +264,11 @@ class RouteHookWebInstaller extends ComponentBase
         $driver = $this->getCurrentDriver();
         if ($driver === null) {
             $this->error_message = 'No database configured.';
-            $this->next_step = 'database';
             return [];
         }
         $schema_file = $this->getSchemaFile($driver);
         if (!is_file($schema_file)) {
             $this->error_message = 'Schema file not found: '.__h($schema_file);
-            $this->next_step = 'schema';
             return [];
         }
         $force = !empty($post['force']);
@@ -325,11 +281,9 @@ class RouteHookWebInstaller extends ComponentBase
             $this->executeSql($pdo, $sql);
         } catch (\Throwable $ex) {
             $this->error_message = 'Schema error: '.__h($ex->getMessage());
-            $this->next_step = 'schema';
             return [];
         }
         $this->flash_message = 'Tables created.';
-        $this->next_step = $this->options['web_installer_use_redis'] ? 'redis' : 'done';
         return [];
     }
     protected function getCurrentDriver(): ?string
@@ -375,10 +329,6 @@ class RouteHookWebInstaller extends ComponentBase
         $pdo->exec($sql);
     }
     //////////////////  redis
-    protected function showRedis()
-    {
-        $this->renderPage($this->buildPageData(['step' => 'redis']));
-    }
     /**
      * @param array<string, mixed> $post
      * @return array<string, mixed>
@@ -394,12 +344,10 @@ class RouteHookWebInstaller extends ComponentBase
         $error = $this->testRedis($config);
         if ($error !== null) {
             $this->error_message = 'Redis connection failed: '.__h($error);
-            $this->next_step = 'redis';
             return [];
         }
         ExtOptionsLoader::_()->saveExtOptions(['redis_list' => [$config]]);
         $this->flash_message = 'Redis saved and connected.';
-        $this->next_step = 'done';
         return ['redis_list' => [$config]];
     }
     protected function testRedis(array $config): ?string
@@ -423,10 +371,6 @@ class RouteHookWebInstaller extends ComponentBase
         }
     }
     //////////////////  done
-    protected function showDone()
-    {
-        $this->renderPage($this->buildPageData(['step' => 'done']));
-    }
     /**
      * @param array<string, mixed> $post
      * @return array<string, mixed>
@@ -434,50 +378,45 @@ class RouteHookWebInstaller extends ComponentBase
     protected function doDone(array $post): array
     {
         ExtOptionsLoader::_()->saveExtOptions(['installed' => date(DATE_ATOM)]);
-        $this->next_step = 'installed';
+        $this->flash_message = 'Installed Successfully.';
         return [];
     }
     //////////////////
-    protected function showAlreadyInstalled()
-    {
-        $this->renderPage($this->buildPageData(['step' => 'already']));
-    }
     /**
-     * Show page: render all page info by built-in view.
+     * Show page: render all install info in a single page by built-in view.
      * @param array<string, mixed> $data
      */
     protected function show(array $data)
     {
         extract($data);
-        $title = [
-            'env' => 'Environment Check',
-            'database' => 'Database Config',
-            'schema' => 'Create Tables',
-            'redis' => 'Redis Config',
-            'done' => 'Install Complete',
-            'installed' => 'Installed',
-            'already' => 'Already Installed',
-        ][$step ?? ''] ?? 'DuckPhp Web Installer';
+        $title = !empty($installed) ? 'Already Installed' : 'DuckPhp Web Installer';
         ?>
 <!doctype html><html><head><meta charset="utf-8"><title><?=__h($title)?></title>
 <style>
-body{font-family:sans-serif;max-width:640px;margin:2em auto;color:#222}
+body{font-family:sans-serif;max-width:720px;margin:2em auto;color:#222}
 table{border-collapse:collapse;width:100%}
 td,th{border:1px solid #ccc;padding:4px 8px;text-align:left}
 .ok{color:#0a0}.fail{color:#a00}
 .error{color:#a00}
 input,select,button{padding:4px 8px}
+fieldset{border:1px solid #ccc;margin:1em 0;padding:0 1em 1em}
+legend{font-weight:bold}
 </style></head><body>
 <h1>DuckPhp Web Installer</h1>
+<?php if (!empty($installed)): ?>
+<h2>Already Installed</h2>
+<?php if (!empty($flash_message)): ?><p class="ok"><?=__h((string)$flash_message)?></p><?php endif; ?>
+<p>The application is already installed. To reinstall, please remove the <code>installed</code> entry from the ext options data file.</p>
+<?php else: ?>
 <?php if (!empty($error_message)): ?>
 <p class="error"><?=__h((string)$error_message)?></p>
 <?php endif; ?>
 <?php if (!empty($flash_message)): ?>
 <p class="ok"><?=__h((string)$flash_message)?></p>
 <?php endif; ?>
-<?php switch ($step ?? '') {
-    case 'env': ?>
-<h2>Step 1: Environment Check</h2>
+<p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
+<fieldset>
+<legend>Environment Check</legend>
 <table>
 <thead><tr><th>Item</th><th>Status</th></tr></thead>
 <tbody>
@@ -486,15 +425,14 @@ input,select,button{padding:4px 8px}
 <?php endforeach; ?>
 </tbody>
 </table>
-<form method="post" action="?step=env">
-<input type="hidden" name="action" value="env">
-<button type="submit">Next</button>
-</form>
-<?php break;
-    case 'database': ?>
-<h2>Step 2: Database Config</h2>
-<p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
-<form method="post" action="?step=database">
+</fieldset>
+<?php if (!empty($use_database)): ?>
+<fieldset>
+<legend>Database Config</legend>
+<?php if (!empty($database_list)): ?>
+<p class="ok">Current database: <code><?=__h((string)$database_list[0]['dsn'])?></code></p>
+<?php endif; ?>
+<form method="post">
 <input type="hidden" name="action" value="database">
 <p><label>Driver: <select name="driver"><?=$driver_options ?? ''?></select></label></p>
 <p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
@@ -502,21 +440,26 @@ input,select,button{padding:4px 8px}
 <p><label>Database: <input type="text" name="dbname" value=""></label></p>
 <p><label>Username: <input type="text" name="username" value=""></label></p>
 <p><label>Password: <input type="password" name="password" value=""></label></p>
-<p><button type="submit" name="test" value="1">Test Connection &amp; Save</button></p>
+<p><button type="submit">Test Connection &amp; Save</button></p>
 </form>
-<?php break;
-    case 'schema': ?>
-<h2>Step 3: Create Tables</h2>
-<form method="post" action="?step=schema">
+</fieldset>
+<fieldset>
+<legend>Create Tables</legend>
+<form method="post">
 <input type="hidden" name="action" value="schema">
 <p>Schema files will be loaded from: <code><?=__h((string)($schema_path ?? ''))?></code></p>
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
 <p><button type="submit">Create Tables</button></p>
 </form>
-<?php break;
-    case 'redis': ?>
-<h2>Step 4: Redis Config</h2>
-<form method="post" action="?step=redis">
+</fieldset>
+<?php endif; ?>
+<?php if (!empty($use_redis)): ?>
+<fieldset>
+<legend>Redis Config</legend>
+<?php if (!empty($redis_list)): ?>
+<p class="ok">Current redis: <code><?=__h((string)$redis_list[0]['host'].':'.$redis_list[0]['port'])?></code></p>
+<?php endif; ?>
+<form method="post">
 <input type="hidden" name="action" value="redis">
 <p><label>Host: <input type="text" name="host" value="127.0.0.1"></label></p>
 <p><label>Port: <input type="text" name="port" value="6379"></label></p>
@@ -524,23 +467,16 @@ input,select,button{padding:4px 8px}
 <p><label>Select: <input type="text" name="select" value="0"></label></p>
 <p><button type="submit">Save Redis Config</button></p>
 </form>
-<?php break;
-    case 'done': ?>
-<h2>Step 5: Install Complete</h2>
-<form method="post" action="?step=done">
+</fieldset>
+<?php endif; ?>
+<fieldset>
+<legend>Install</legend>
+<form method="post">
 <input type="hidden" name="action" value="done">
 <p><button type="submit">Finish Install</button></p>
 </form>
-<?php break;
-    case 'installed': ?>
-<h2>Installed Successfully</h2>
-<p class="ok">The application is now installed. Go to <a href="<?=__h((string)($web_installer_path ?? ''))?>">home page</a>.</p>
-<?php break;
-    case 'already': ?>
-<h2>Already Installed</h2>
-<p>The application is already installed. To reinstall, please remove the <code>installed</code> entry from the ext options data file.</p>
-<?php break;
-} ?>
+</fieldset>
+<?php endif; ?>
 </body></html>
 <?php
     }
