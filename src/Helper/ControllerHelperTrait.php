@@ -88,7 +88,7 @@ trait ControllerHelperTrait
     {
         return App::_()->_Show($data, $view);
     }
-    public static function checkInstall(string $url_install)
+    public static function checkInstall(?string $url_install = null)
     {
         App::_()->checkInstallToPage($url_install);
     }

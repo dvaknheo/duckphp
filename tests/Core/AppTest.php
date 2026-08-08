@@ -275,6 +275,9 @@ PhaseContainer::RestAllContainerForTesting();
         }catch(\Exception $ex){
             var_dump($ex->getMessage());
         }
+        // checkInstallToPage with null uses the app url_install option
+        MyApp::_()->options['installed'] = true;
+        MyApp::_()->checkInstallToPage(null);
 
 
         $_SERVER = $__SERVER;

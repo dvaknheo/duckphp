@@ -18,7 +18,6 @@ use DuckPhp\Core\SuperGlobal;
 class RouteHookWebInstaller extends ComponentBase
 {
     public $options = [
-        'web_installer_path' => 'install',
         'web_installer_use_database' => true,
         'web_installer_use_redis' => true,
         'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true, 'duckdb' => false],
@@ -38,9 +37,13 @@ class RouteHookWebInstaller extends ComponentBase
     {
         Route::_()->addRouteHook([static::class, 'Hook'], 'prepend-inner');
     }
+    protected function getInstallPath(): string
+    {
+        return (string) (App::_()->options['url_install'] ?? 'install');
+    }
     public function _Hook(string $path_info): bool
     {
-        if (__url($this->options['web_installer_path']) !== __url($path_info)) {
+        if (__url($this->getInstallPath()) !== __url($path_info)) {
             return false;
         }
         $this->installAction();

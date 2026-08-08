@@ -189,6 +189,14 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringNotContainsString('Database Config', $out);
         $this->assertStringNotContainsString('Create Tables', $out);
 
+        ///////////////// web_installer_path follows app url_install
+        $app = $this->initApp(['url_install' => 'setup'], ['web_installer_use_redis' => false]);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
+        [$ret, $out] = $this->hook('setup');
+        $this->assertTrue($ret);
+        $this->assertStringContainsString('Environment Check', $out);
+
         ///////////////// default: no Customer Setting rendered
         $this->initApp([], ['web_installer_use_redis' => false]);
         $_SERVER['REQUEST_METHOD'] = 'GET';

@@ -10,14 +10,13 @@ use DuckPhp\GlobalAdmin\AdminControllerInterface;
 
 class AdminControllerBase implements AdminControllerInterface
 {
-    protected $install_page = "install";
     public function __construct()
     {
         $this->initController();
     }
     protected function initController()
     {
-        Helper::checkInstall($this->install_page);
+        Helper::checkInstall(null);
         Helper::Admin()->checkAccess();
     }
 }

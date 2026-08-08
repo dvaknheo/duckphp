@@ -10,14 +10,13 @@ use DuckPhp\GlobalUser\UserControllerInterface;
 
 class UserControllerBase implements UserControllerInterface
 {
-    protected $install_page = "install";
     public function __construct()
     {
         $this->initController();
     }
     protected function initController()
     {
-        Helper::checkInstall($this->install_page);
+        Helper::checkInstall(null);
         Helper::User()->checkAccess();
     }
 }

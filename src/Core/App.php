@@ -65,6 +65,7 @@ class App extends ComponentBase
         'use_env_file' => false,
 
         'installed' => false,
+        'url_install' => 'install',
         //*
         // 'path_log' => 'runtime',
         // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
@@ -429,8 +430,9 @@ EOT;
     {
         return $this->_IsDebug();
     }
-    public function checkInstallToPage(string $url_install): void
+    public function checkInstallToPage(?string $url_install = null): void
     {
+        $url_install = $url_install ?? ($this->options['url_install'] ?? 'install');
         if (!$this->options['installed']) {
             SystemWrapper::_()->_header('location: '.Route::Url($url_install), true, 302);
             SystemWrapper::_()->_exit();
