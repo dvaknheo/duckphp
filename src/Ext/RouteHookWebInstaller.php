@@ -11,6 +11,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
+use DuckPhp\Core\SuperGlobal;
 
 class RouteHookWebInstaller extends ComponentBase
 {
@@ -19,13 +20,14 @@ class RouteHookWebInstaller extends ComponentBase
         'web_installer_use_database' => true,
         'web_installer_use_redis' => false,
         'web_installer_local_redis' => false,
-        'web_installer_database_drivers' => ['mysql' => true, 'sqlite' => true, 'pgsql' => true],
+        'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true],
         'web_installer_schema_path' => 'config',
         'web_installer_view' => '',
         'web_installer_force' => false,
     ];
     protected $error_message = '';
     protected $flash_message = '';
+    protected $next_step = 'env';
 
     public static function Hook($path_info)
     {
@@ -38,71 +40,55 @@ class RouteHookWebInstaller extends ComponentBase
     }
     public function _Hook(string $path_info): bool
     {
-        $is_install_path = $this->isInstallPath($path_info);
-        if ($this->isInstalled()) {
-            if ($is_install_path) {
-                $this->showAlreadyInstalled();
-                return true;
-            }
+        if (__url($this->options['web_installer_path']) !== __url($path_info)) {
             return false;
         }
-        if (!$is_install_path) {
-            return false;
-        }
-        if ($this->isPost()) {
-            $this->installBusiness();
-        } else {
-            $this->installAction();
-        }
+        $this->installAction();
+
         return true;
     }
-    protected function isInstallPath(string $path_info): bool
+    public function installAction()
     {
-        $path = $this->options['web_installer_path'];
-        return $path_info === $path || $path_info === $path.'/';
+        if ($this->isInstalled() && !$this->options['web_installer_force']) {
+            $this->renderPage($this->buildPageData(['step' => 'already']));
+            return;
+        }
+        $post = SuperGlobal::_()->_POST();
+        $post = is_array($post) ? $post : [];
+        $ext_data = [];
+        if (!empty($post)) {
+            $ext_data = $this->installBusiness($post);
+        }
+        $data = $this->buildPageData($post);
+        $data = array_merge($data, $ext_data);
+
+        $this->renderPage($data);
     }
+
     protected function isInstalled(): bool
     {
         return !empty(App::_()->options['installed']);
     }
-    protected function isPost(): bool
-    {
-        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        return strtoupper((string) ($my_server['REQUEST_METHOD'] ?? 'GET')) === 'POST';
-    }
-    protected function getStep(): string
-    {
-        $my_get = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
-        $step = (string) ($my_get['step'] ?? 'env');
-        if (!in_array($step, ['env', 'database', 'schema', 'redis', 'done'], true)) {
-            $step = 'env';
-        }
-        return $step;
-    }
-    protected function getPost(string $key, $default = null)
-    {
-        $my_post = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_POST : $_POST;
-        return $my_post[$key] ?? $default;
-    }
     //////////////////
-    public function installAction()
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function buildPageData(array $post): array
     {
-        $step = $this->getStep();
+        if (!empty($post['step'])) {
+            $step = (string) $post['step'];
+        } elseif (!empty($post)) {
+            $step = $this->next_step;
+        } else {
+            $step = (string) (SuperGlobal::_()->_GET('step') ?? 'env');
+        }
         if (!$this->options['web_installer_use_database'] && $step === 'database') {
             $step = 'schema';
         }
         if (!$this->options['web_installer_use_redis'] && $step === 'redis') {
             $step = 'done';
         }
-        $data = $this->buildPageData($step);
-        $this->renderPage($data);
-    }
-    /**
-     * @param string $step
-     * @return array<string, mixed>
-     */
-    protected function buildPageData(string $step): array
-    {
         $base = [
             'step' => $step,
             'flash_message' => $this->flash_message,
@@ -146,37 +132,39 @@ class RouteHookWebInstaller extends ComponentBase
         $options = '';
         $root_config = $this->getRootDatabaseConfig();
         if ($root_config) {
-            $options .= '<option value="__root__">Use root app database ('.htmlspecialchars($root_config['driver'] ?? 'unknown').')</option>';
+            $options .= '<option value="__root__">Use root app database ('.__h($root_config['driver'] ?? 'unknown').')</option>';
         }
         foreach ($drivers as $driver) {
-            $options .= '<option value="'.htmlspecialchars($driver).'">'.htmlspecialchars($driver).'</option>';
+            $options .= '<option value="'.__h($driver).'">'.__h($driver).'</option>';
         }
         return $options;
     }
-    public function installBusiness()
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    public function installBusiness(array $post): array
     {
-        $action = ''.$this->getPost('action');
+        $action = (string) ($post['action'] ?? '');
         switch ($action) {
             case 'database':
-                $this->doDatabase();
-                break;
+                return $this->doDatabase($post);
             case 'schema':
-                $this->doSchema();
-                break;
+                return $this->doSchema($post);
             case 'redis':
-                $this->doRedis();
-                break;
+                return $this->doRedis($post);
             case 'done':
-                $this->doDone();
-                break;
+                return $this->doDone($post);
             default:
-                $this->showEnv();
+                // env "Next": proceed to database step (buildPageData skips to schema when use_database is off)
+                $this->next_step = 'database';
         }
+        return [];
     }
     //////////////////  env
     protected function showEnv()
     {
-        $this->renderPage($this->buildPageData('env'));
+        $this->renderPage($this->buildPageData(['step' => 'env']));
     }
     protected function checkEnv(): array
     {
@@ -202,7 +190,7 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  database
     protected function showDatabase()
     {
-        $this->renderPage($this->buildPageData('database'));
+        $this->renderPage($this->buildPageData(['step' => 'database']));
     }
     protected function getEnabledDrivers(): array
     {
@@ -225,42 +213,47 @@ class RouteHookWebInstaller extends ComponentBase
         $config['driver'] = explode(':', ''.$config['dsn'])[0];
         return $config;
     }
-    protected function doDatabase()
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function doDatabase(array $post): array
     {
-        $driver = ''.$this->getPost('driver');
+        $driver = (string) ($post['driver'] ?? '');
         if ($driver === '__root__') {
             $this->flash_message = 'Use root app database.';
-            $this->showSchema();
-            return;
+            $this->next_step = 'schema';
+            return [];
         }
         if (!in_array($driver, $this->getEnabledDrivers(), true)) {
-            $this->error_message = 'Unsupported driver: '.htmlspecialchars($driver);
-            $this->showDatabase();
-            return;
+            $this->error_message = 'Unsupported driver: '.__h($driver);
+            $this->next_step = 'database';
+            return [];
         }
         $config = [
-            'host' => ''.$this->getPost('host', '127.0.0.1'),
-            'port' => ''.$this->getPost('port', ''),
-            'dbname' => ''.$this->getPost('dbname', ''),
-            'username' => ''.$this->getPost('username', ''),
-            'password' => ''.$this->getPost('password', ''),
+            'host' => (string) ($post['host'] ?? '127.0.0.1'),
+            'port' => (string) ($post['port'] ?? ''),
+            'dbname' => (string) ($post['dbname'] ?? ''),
+            'username' => (string) ($post['username'] ?? ''),
+            'password' => (string) ($post['password'] ?? ''),
         ];
         $dsn = $this->makeDsn($driver, $config);
         if ($dsn === null) {
-            $this->error_message = 'Driver requires dbname: '.htmlspecialchars($driver);
-            $this->showDatabase();
-            return;
+            $this->error_message = 'Driver requires dbname: '.__h($driver);
+            $this->next_step = 'database';
+            return [];
         }
         $error = $this->testConnection($dsn, $config['username'], $config['password']);
         if ($error !== null) {
-            $this->error_message = 'Connection failed: '.htmlspecialchars($error);
-            $this->showDatabase();
-            return;
+            $this->error_message = 'Connection failed: '.__h($error);
+            $this->next_step = 'database';
+            return [];
         }
         $config['dsn'] = $dsn;
         ExtOptionsLoader::_()->saveExtOptions(['database_list' => [$config]]);
         $this->flash_message = 'Database saved and connected.';
-        $this->showSchema();
+        $this->next_step = 'schema';
+        return ['database_list' => [$config]];
     }
     protected function makeDsn(string $driver, array $config): ?string
     {
@@ -289,7 +282,7 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  schema
     protected function showSchema()
     {
-        $this->renderPage($this->buildPageData('schema'));
+        $this->renderPage($this->buildPageData(['step' => 'schema']));
     }
     protected function getSchemaPath(): string
     {
@@ -304,21 +297,25 @@ class RouteHookWebInstaller extends ComponentBase
     {
         return $this->getSchemaPath().'/'.$driver.'.sql';
     }
-    protected function doSchema()
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function doSchema(array $post): array
     {
         $driver = $this->getCurrentDriver();
         if ($driver === null) {
             $this->error_message = 'No database configured.';
-            $this->showDatabase();
-            return;
+            $this->next_step = 'database';
+            return [];
         }
         $schema_file = $this->getSchemaFile($driver);
         if (!is_file($schema_file)) {
-            $this->error_message = 'Schema file not found: '.htmlspecialchars($schema_file);
-            $this->showSchema();
-            return;
+            $this->error_message = 'Schema file not found: '.__h($schema_file);
+            $this->next_step = 'schema';
+            return [];
         }
-        $force = (bool) $this->getPost('force');
+        $force = !empty($post['force']);
         try {
             $pdo = $this->createPdo();
             if ($force) {
@@ -327,16 +324,13 @@ class RouteHookWebInstaller extends ComponentBase
             $sql = (string) file_get_contents($schema_file);
             $this->executeSql($pdo, $sql);
         } catch (\Throwable $ex) {
-            $this->error_message = 'Schema error: '.htmlspecialchars($ex->getMessage());
-            $this->showSchema();
-            return;
+            $this->error_message = 'Schema error: '.__h($ex->getMessage());
+            $this->next_step = 'schema';
+            return [];
         }
         $this->flash_message = 'Tables created.';
-        if ($this->options['web_installer_use_redis']) {
-            $this->showRedis();
-        } else {
-            $this->showDone();
-        }
+        $this->next_step = $this->options['web_installer_use_redis'] ? 'redis' : 'done';
+        return [];
     }
     protected function getCurrentDriver(): ?string
     {
@@ -383,25 +377,30 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  redis
     protected function showRedis()
     {
-        $this->renderPage($this->buildPageData('redis'));
+        $this->renderPage($this->buildPageData(['step' => 'redis']));
     }
-    protected function doRedis()
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function doRedis(array $post): array
     {
         $config = [
-            'host' => ''.$this->getPost('host', '127.0.0.1'),
-            'port' => ''.$this->getPost('port', '6379'),
-            'auth' => ''.$this->getPost('auth', ''),
-            'select' => ''.$this->getPost('select', '0'),
+            'host' => (string) ($post['host'] ?? '127.0.0.1'),
+            'port' => (string) ($post['port'] ?? '6379'),
+            'auth' => (string) ($post['auth'] ?? ''),
+            'select' => (string) ($post['select'] ?? '0'),
         ];
         $error = $this->testRedis($config);
         if ($error !== null) {
-            $this->error_message = 'Redis connection failed: '.htmlspecialchars($error);
-            $this->showRedis();
-            return;
+            $this->error_message = 'Redis connection failed: '.__h($error);
+            $this->next_step = 'redis';
+            return [];
         }
         ExtOptionsLoader::_()->saveExtOptions(['redis_list' => [$config]]);
         $this->flash_message = 'Redis saved and connected.';
-        $this->showDone();
+        $this->next_step = 'done';
+        return ['redis_list' => [$config]];
     }
     protected function testRedis(array $config): ?string
     {
@@ -426,17 +425,22 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  done
     protected function showDone()
     {
-        $this->renderPage($this->buildPageData('done'));
+        $this->renderPage($this->buildPageData(['step' => 'done']));
     }
-    protected function doDone()
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    protected function doDone(array $post): array
     {
         ExtOptionsLoader::_()->saveExtOptions(['installed' => date(DATE_ATOM)]);
-        $this->renderPage($this->buildPageData('installed'));
+        $this->next_step = 'installed';
+        return [];
     }
     //////////////////
     protected function showAlreadyInstalled()
     {
-        $this->renderPage($this->buildPageData('already'));
+        $this->renderPage($this->buildPageData(['step' => 'already']));
     }
     /**
      * Show page: render all page info by built-in view.
@@ -455,7 +459,7 @@ class RouteHookWebInstaller extends ComponentBase
             'already' => 'Already Installed',
         ][$step ?? ''] ?? 'DuckPhp Web Installer';
         ?>
-<!doctype html><html><head><meta charset="utf-8"><title><?=htmlspecialchars($title)?></title>
+<!doctype html><html><head><meta charset="utf-8"><title><?=__h($title)?></title>
 <style>
 body{font-family:sans-serif;max-width:640px;margin:2em auto;color:#222}
 table{border-collapse:collapse;width:100%}
@@ -466,10 +470,10 @@ input,select,button{padding:4px 8px}
 </style></head><body>
 <h1>DuckPhp Web Installer</h1>
 <?php if (!empty($error_message)): ?>
-<p class="error"><?=htmlspecialchars((string)$error_message)?></p>
+<p class="error"><?=__h((string)$error_message)?></p>
 <?php endif; ?>
 <?php if (!empty($flash_message)): ?>
-<p class="ok"><?=htmlspecialchars((string)$flash_message)?></p>
+<p class="ok"><?=__h((string)$flash_message)?></p>
 <?php endif; ?>
 <?php switch ($step ?? '') {
     case 'env': ?>
@@ -478,7 +482,7 @@ input,select,button{padding:4px 8px}
 <thead><tr><th>Item</th><th>Status</th></tr></thead>
 <tbody>
 <?php foreach ($checks ?? [] as $item): ?>
-<tr><td><?=htmlspecialchars((string)$item[1])?></td><td class="<?=$item[0]?'ok':'fail'?>"><?=$item[0]?'OK':'FAIL'?></td></tr>
+<tr><td><?=__h((string)$item[1])?></td><td class="<?=$item[0]?'ok':'fail'?>"><?=$item[0]?'OK':'FAIL'?></td></tr>
 <?php endforeach; ?>
 </tbody>
 </table>
@@ -489,7 +493,7 @@ input,select,button{padding:4px 8px}
 <?php break;
     case 'database': ?>
 <h2>Step 2: Database Config</h2>
-<p>Current controller_resource_prefix: <code><?=htmlspecialchars((string)($controller_resource_prefix ?? ''))?></code></p>
+<p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
 <form method="post" action="?step=database">
 <input type="hidden" name="action" value="database">
 <p><label>Driver: <select name="driver"><?=$driver_options ?? ''?></select></label></p>
@@ -505,7 +509,7 @@ input,select,button{padding:4px 8px}
 <h2>Step 3: Create Tables</h2>
 <form method="post" action="?step=schema">
 <input type="hidden" name="action" value="schema">
-<p>Schema files will be loaded from: <code><?=htmlspecialchars((string)($schema_path ?? ''))?></code></p>
+<p>Schema files will be loaded from: <code><?=__h((string)($schema_path ?? ''))?></code></p>
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
 <p><button type="submit">Create Tables</button></p>
 </form>
@@ -530,7 +534,7 @@ input,select,button{padding:4px 8px}
 <?php break;
     case 'installed': ?>
 <h2>Installed Successfully</h2>
-<p class="ok">The application is now installed. Go to <a href="<?=htmlspecialchars((string)($web_installer_path ?? ''))?>">home page</a>.</p>
+<p class="ok">The application is now installed. Go to <a href="<?=__h((string)($web_installer_path ?? ''))?>">home page</a>.</p>
 <?php break;
     case 'already': ?>
 <h2>Already Installed</h2>

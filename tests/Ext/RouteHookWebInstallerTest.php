@@ -32,6 +32,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
     }
     protected function hook(string $path_info): array
     {
+        \DuckPhp\Core\SuperGlobal::LoadSuperGlobalAll();
         ob_start();
         $ret = RouteHookWebInstaller::Hook($path_info);
         $out = (string) ob_get_clean();
@@ -50,11 +51,19 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
 
         // not installed, install path GET: show env step
         $_GET['step'] = 'env';
+        $_POST = [];
         $_SERVER['REQUEST_METHOD'] = 'GET';
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Environment Check', $out);
         $this->assertStringContainsString('PDO driver: sqlite', $out);
+
+        // env "Next" (POST action=env): proceed to database step
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'env'];
+        [$ret, $out] = $this->hook('install');
+        $this->assertTrue($ret);
+        $this->assertStringContainsString('Database Config', $out);
 
         // POST database: sqlite
         $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -132,6 +141,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true]);
         // env shows redis check
         $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('Redis extension', $out);
         // database
@@ -155,6 +165,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         ///////////////// use_database = false
         $this->initApp([], ['web_installer_use_database' => false, 'web_installer_use_redis' => false]);
         $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
         $_GET = ['step' => 'database'];
         [$ret, $out] = $this->hook('install');
         // database skipped -> schema shown
@@ -167,6 +178,8 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         @unlink($this->getTestPath().'runtime/installer_test3.sqlite');
         clearstatcache();
         $_SERVER = $__SERVER;
+        $_POST = [];
+        $_GET = [];
         \LibCoverage\LibCoverage::End();
     }
 }
