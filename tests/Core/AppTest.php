@@ -174,6 +174,9 @@ PhaseContainer::RestAllContainerForTesting();
         ////[[[[
         AppTestApp::_()->getOverrideableFile('view', $path_view."view.php");
         AppTestApp::_()->getOverrideableFile('view', 'view.php');
+        // getConfigFile delegates to getOverrideableFile with path_config
+        $config_file = AppTestApp::_()->getConfigFile('test.conf');
+        $this->assertIsString($config_file);
         ////]]]]
         
         ////[[[[
