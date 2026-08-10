@@ -151,9 +151,19 @@ EOT;
         $is_in_full = false;
 
         foreach ($files as $file => $short_file_name) {
-            $dest_file = $dest.$short_file_name;
+            $dest_file_name = $short_file_name;
+            if (str_replace('\\', '/', $short_file_name) === 'src/System/App.php') {
+                // rename src/System/App.php to src/System/{namespace_basename}App.php
+                $dest_file_name = 'src'.DIRECTORY_SEPARATOR.'System'.DIRECTORY_SEPARATOR.$this->getNamespaceBasename().'App.php';
+            }
+            $dest_file = $dest.$dest_file_name;
             $data = (string)file_get_contents(''.$file);
             $data = $this->filteText($data, $is_in_full, $short_file_name);
+            if (str_replace('\\', '/', $short_file_name) === 'src/System/App.php') {
+                // rename class App to class {namespace_basename}App to match the new file name
+                $ns_basename = $this->getNamespaceBasename();
+                $data = str_replace('class App extends', 'class '.$ns_basename.'App extends', $data);
+            }
             $flag = file_put_contents($dest_file, $data);
 
             if ($this->options['verbose']) {
@@ -164,6 +174,18 @@ EOT;
         }
         //copy($source.'config/setting.sample.php', $dest.'config/setting.php');
         echo  "\nDone.\n";
+    }
+    /**
+     * Last segment of the project namespace, e.g. 'YourProjectName\System' -> 'System'.
+     */
+    protected function getNamespaceBasename(): string
+    {
+        $namespace = trim((string) ($this->options['namespace'] ?? ''), '\\');
+        if ($namespace === '') {
+            return '';
+        }
+        $parts = explode('\\', $namespace);
+        return (string) end($parts);
     }
     /**
      * @param array<string, mixed> $files

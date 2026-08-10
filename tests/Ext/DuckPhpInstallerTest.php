@@ -77,6 +77,17 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         file_put_contents($path.'/composer.json', json_encode($json));
         
         DuckPhpInstaller::_()->command_new();
+
+        // fresh path with NSX namespace: src/System/App.php renamed to src/System/NSXApp.php
+        $path_nsx = $path.'_nsx';
+        mkdir($path_nsx);
+        file_put_contents($path_nsx.'/composer.json', json_encode($json));
+        $_SERVER['argv'] = ['-', 'new', '--verbose', '--path='.$path_nsx];
+        DuckPhpInstaller::_()->command_new();
+        $this->assertFileExists($path_nsx.'/src/System/NSXApp.php');
+        $this->assertFileDoesNotExist($path_nsx.'/src/System/App.php');
+        $app_data = (string) file_get_contents($path_nsx.'/src/System/NSXApp.php');
+        $this->assertStringContainsString('class NSXApp extends DuckPhp', $app_data);
         
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
