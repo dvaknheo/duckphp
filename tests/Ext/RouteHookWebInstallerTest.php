@@ -111,7 +111,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = ['action' => 'install', 'driver' => 'sqlite', 'database' => ['file' => '/nonexistent_dir_xyz/1.sqlite']];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
-        $this->assertStringContainsString('Connection failed', $out);
+        $this->assertStringContainsString('connection failed', $out);
 
         // branch: schema file missing
         $config_schema = $this->getTestPath().'config/sqlite.sql';
@@ -215,6 +215,133 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Custom:', $out);
         $this->assertStringContainsString('abc123', $out);
 
+        ///////////////// use_database=false + POST: checkDatabase early-returns []
+        $this->initApp([], ['web_installer_use_database' => false, 'web_installer_use_redis' => false]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'install'];
+        [$ret, $out] = $this->hook('install');
+        $this->assertTrue($ret);
+        $this->assertStringContainsString('Already Installed', $out);
+
+        ///////////////// redis connection failed (bad port)
+        $app = $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true, 'web_installer_use_database' => false]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'install', 'redis' => ['host' => '127.0.0.1', 'port' => '1', 'auth' => '', 'select' => '0']];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('Redis connection failed', $out);
+        $this->assertStringNotContainsString('Installed Successfully', $out);
+
+        ///////////////// pgsql without dbname: Driver requires dbname (server-type makeDsn)
+        $this->initApp([], ['web_installer_use_redis' => false]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'install', 'driver' => 'pgsql', 'database' => ['host' => '127.0.0.1']];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('Driver requires dbname', $out);
+
+        ///////////////// pgsql with dbname: connection fails (no pgsql server; server-type makeDsn covered)
+        $_POST = ['action' => 'install', 'driver' => 'pgsql', 'database' => ['host' => '127.0.0.1', 'port' => '5432', 'dbname' => 'x']];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('connection failed', $out);
+        $this->assertStringNotContainsString('Installed Successfully', $out);
+
+        ///////////////// string drivers config (single driver as plain string)
+        $this->initApp([], ['web_installer_use_redis' => false, 'web_installer_database_drivers' => 'sqlite']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('sqlite', $out);
+        $this->assertStringNotContainsString('pgsql', $out);
+
+        ///////////////// custom callbacks via options (render/check/do)
+        $app = $this->initApp([], [
+            'web_installer_use_redis' => false,
+            'web_installer_render_custom_callback' => function ($post) { return '<p>Custom CB</p>'; },
+            'web_installer_check_custom_callback' => function ($post) { return []; },
+            'web_installer_do_custom_callback' => function ($post, $ext_data) { return []; },
+        ]);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('Custom CB', $out);
+
+        ///////////////// custom check callback throws -> custom_error_message
+        $this->initApp([], [
+            'web_installer_use_redis' => false,
+            'web_installer_check_custom_callback' => function ($post) { throw new \Exception('custom check fail'); },
+        ]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'install', 'driver' => 'sqlite', 'database' => ['file' => $this->getTestPath().'runtime/installer_test_b.sqlite']];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('custom check fail', $out);
+
+        ///////////////// do_custom_callback runs on success (use_database=false skips schema)
+        $this->initApp([], [
+            'web_installer_use_database' => false,
+            'web_installer_use_redis' => false,
+            'web_installer_do_custom_callback' => function ($post, $ext_data) { return []; },
+        ]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'install'];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('Already Installed', $out);
+
+        ///////////////// do_custom_callback throws -> custom_error_message
+        $this->initApp([], [
+            'web_installer_use_database' => false,
+            'web_installer_use_redis' => false,
+            'web_installer_do_custom_callback' => function ($post, $ext_data) { throw new \Exception('custom do fail'); },
+        ]);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['action' => 'install'];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('custom do fail', $out);
+        $this->assertStringNotContainsString('Already Installed', $out);
+
+        ///////////////// web_installer_view: external view used instead of built-in
+        $view_file = $this->getTestPath().'view/installer_view.php';
+        @mkdir(dirname($view_file), 0777, true);
+        file_put_contents($view_file, '<p>ExternalView:<?=__h((string)($title ?? ""))?></p>');
+        $this->initApp([], ['web_installer_use_redis' => false, 'web_installer_view' => $view_file]);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('ExternalView', $out);
+
+        ///////////////// child app: local_redis / local_database written (non-root)
+        $parent = new WebInstallerApp();
+        DuckPhp::_($parent);
+        $parent->init([
+            'path' => $this->getTestPath(),
+            'ext_options_file_enable' => true,
+            'app' => [
+                WebInstallerChildApp::class => [
+                    'path' => $this->getTestPath(),
+                    'ext_options_file_enable' => true,
+                    'ext' => [
+                        RouteHookWebInstaller::class => [
+                            'web_installer_schema_path' => realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config'),
+                            'web_installer_use_redis' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $child = $parent->getThisChild(WebInstallerChildApp::class);
+        $this->assertNotNull($child);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = [
+            'action' => 'install',
+            'driver' => 'sqlite',
+            'database' => ['file' => $this->getTestPath().'runtime/installer_test_child.sqlite'],
+            'force' => '1',
+            'redis' => ['host' => '127.0.0.1', 'port' => '6379', 'auth' => '123456', 'select' => '0'],
+        ];
+        $ret = RouteHookWebInstaller::Hook('install');
+        $this->assertTrue($ret);
+        $this->assertNotEmpty($child->options['redis_list']);
+        $this->assertTrue(!empty($child->options['local_redis']));
+        $this->assertTrue(!empty($child->options['local_database']));
+
         // cleanup
         @unlink($this->getTestPath().'runtime/DuckPhpData.config.json');
         @unlink($this->getTestPath().'runtime/installer_test.sqlite');
@@ -222,7 +349,9 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         @unlink($this->getTestPath().'runtime/installer_test3.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test_a.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test_prefix.sqlite');
+        @unlink($this->getTestPath().'runtime/installer_test_child.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test_b.sqlite');
+        @unlink($this->getTestPath().'view/installer_view.php');
         clearstatcache();
         $_SERVER = $__SERVER;
         $_POST = [];
@@ -234,6 +363,12 @@ class WebInstallerApp extends DuckPhp
 {
     public $options = [
         'name' => 'WebInstallerApp',
+    ];
+}
+class WebInstallerChildApp extends DuckPhp
+{
+    public $options = [
+        'name' => 'WebInstallerChildApp',
     ];
 }
 class RouteHookWebInstallerCustom extends RouteHookWebInstaller

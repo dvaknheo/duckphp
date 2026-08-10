@@ -150,19 +150,16 @@ class RouteHookWebInstaller extends ComponentBase
     {
         $exceptions = [];
         $ext_data = [];
-        if ($this->options['web_installer_use_redis'] && empty($post['redis_follow_root'])) {
-            try {
-                $ext_data = array_merge($ext_data, $this->checkRedis($post));
-            } catch (\Exception $e) {
-                $exceptions['redis_error_message'] = 'Redis connection failed: '.__h($e->getMessage());
-            }
+
+        try {
+            $ext_data = array_merge($ext_data, $this->checkRedis($post));
+        } catch (\Exception $e) {
+            $exceptions['redis_error_message'] = 'Redis connection failed: '.__h($e->getMessage());
         }
-        if ($this->options['web_installer_use_database'] && empty($post['database_follow_root'])) {
-            try {
-                $ext_data = array_merge($ext_data, $this->checkDatabase($post));
-            } catch (\Exception $e) {
-                $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
-            }
+        try {
+            $ext_data = array_merge($ext_data, $this->checkDatabase($post));
+        } catch (\Exception $e) {
+            $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
         }
         // checkCustom: override hook for extra validation after redis/database checks; throw \Exception on failure.
         try {
@@ -246,9 +243,10 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function checkRedis(array $post): array
     {
-        if (!class_exists(\Redis::class)) {
-            throw new \Exception('Redis extension not loaded');
+        if (!($this->options['web_installer_use_redis'] && empty($post['redis_follow_root']))) {
+            return [];
         }
+
         $config = (array) ($post['redis'] ?? []);
         $config = [
             'host' => (string) ($config['host'] ?? '127.0.0.1'),
@@ -257,8 +255,12 @@ class RouteHookWebInstaller extends ComponentBase
             'select' => (string) ($config['select'] ?? '0'),
         ];
         try {
-            // test connection through RedisManager (same logic the app uses)
-            $redis = RedisManager::_()->createServer($config);
+            // test connection through a fresh RedisManager instance (do not touch the global singleton)
+            $options = [
+                'redis_list' => [$config],
+                'redis_list_reload_by_setting' => false,
+            ];
+            $redis = (new RedisManager())->init($options, App::_())->getServer(0);
             if (!$redis->ping()) {
                 throw new \Exception('ping failed');
             }
@@ -299,6 +301,9 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function checkDatabase(array $post): array
     {
+        if (!($this->options['web_installer_use_database'] && empty($post['database_follow_root']))) {
+            return [];
+        }
         $driver = (string) ($post['driver'] ?? '');
         if (!in_array($driver, $this->getEnabledDatabaseDrivers(), true)) {
             throw new \Exception('Unsupported driver: '.__h($driver));
@@ -316,14 +321,21 @@ class RouteHookWebInstaller extends ComponentBase
         if ($dsn === null) {
             throw new \Exception('Driver requires dbname: '.__h($driver));
         }
-        // test connection with PDO directly (same as DbManager::createDatabaseObject does)
-        $error = $this->testConnection($dsn, $config['username'], $config['password']);
-        if ($error !== null) {
-            throw new \Exception('Connection failed: '.__h($error));
-        }
-        $config['driver'] = $driver;
-        $config['dsn'] = $dsn;
-        $ret = ['database_list' => [$config]];
+
+        $database = [];
+        $database['dsn'] = $dsn;
+        $database['username'] = $config['username'];
+        $database['password'] = $config['password'];
+        $ret = ['database_list' => [$database]];
+
+        $options = [
+            'database_list' => [$database],
+            'database_list_reload_by_setting' => false,
+        ];
+        // test connection through DbManager and leave the global singleton configured
+        // (doSchema below reuses DbManager::_() with this connection)
+        DbManager::_(new DbManager())->init($options, App::_())->_Db()->execute('select 1');
+
         if (!App::_()->isRoot()) {
             // child app uses its own local database config
             $ret['local_database'] = true;
@@ -345,22 +357,8 @@ class RouteHookWebInstaller extends ComponentBase
         }
         return $dsn;
     }
-    protected function testConnection(string $dsn, string $username, string $password): ?string
-    {
-        try {
-            $pdo = new \PDO($dsn, $username ?: null, $password ?: null, [\PDO::ATTR_TIMEOUT => 3, \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-            $pdo->query('select 1');
-            return null;
-        } catch (\Throwable $ex) {
-            return $ex->getMessage();
-        }
-    }
     //////////////////  schema
 
-    protected function getSchemaFile(string $driver): string
-    {
-        return $this->getSchemaSqlFile($driver);
-    }
     /**
      * Locate schema sql file: {driver}{.suffix}.sql in the app config dir.
      * suffix '' -> {driver}.sql (create), 'clean' -> {driver}.clean.sql (drop), 'data' -> {driver}.data.sql (seed data).
@@ -377,29 +375,32 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function doSchema(array $post, array $ext_data = []): array
     {
-        $driver = $this->getCurrentDriver($ext_data);
+        $driver = $this->getCurrentDriver();
         if ($driver === null) {
+            //@codeCoverageIgnoreStart
             throw new \Exception('No database configured.');
+            //@codeCoverageIgnoreEnd
         }
         $force = !empty($post['force']);
         try {
-            $pdo = $this->createPdo($ext_data);
+            // DbManager::_() is already configured by checkDatabase; reuse its connection
+            $db = DbManager::_()->_Db();
             if ($force) {
                 // force reinstall: run clean script first if present
                 $clean_file = $this->getSchemaSqlFile($driver, 'clean');
                 if (is_file($clean_file)) {
-                    $this->executeSqlFile($pdo, $clean_file);
+                    $this->executeSqlFile($db, $clean_file);
                 }
             }
             $schema_file = $this->getSchemaSqlFile($driver);
             if (!is_file($schema_file)) {
                 throw new \Exception('Schema file not found: '.__h($schema_file));
             }
-            $this->executeSqlFile($pdo, $schema_file);
+            $this->executeSqlFile($db, $schema_file);
             // seed data script if present
             $data_file = $this->getSchemaSqlFile($driver, 'data');
             if (is_file($data_file)) {
-                $this->executeSqlFile($pdo, $data_file);
+                $this->executeSqlFile($db, $data_file);
             }
         } catch (\Throwable $ex) {
             throw new \Exception('Schema error: '.__h($ex->getMessage()));
@@ -409,53 +410,29 @@ class RouteHookWebInstaller extends ComponentBase
     /**
      * Execute a schema sql file, replacing the {prefix} placeholder with the app table_prefix.
      */
-    protected function executeSqlFile(\PDO $pdo, string $file): void
+    protected function executeSqlFile(\DuckPhp\Db\Db $db, string $file): void
     {
         $sql = (string) file_get_contents($file);
         $prefix = (string) (App::_()->options['table_prefix'] ?? '');
         $sql = str_replace('{prefix}', $prefix, $sql);
-        $this->executeSql($pdo, $sql);
+        $this->executeSql($db, $sql);
     }
     /**
      * @param array<string, mixed> $ext_data
      */
-    protected function getCurrentDriver(array $ext_data = []): ?string
+    protected function getCurrentDriver(): ?string
     {
-        $list = $ext_data['database_list'] ?? [];
-        if (empty($list)) {
-            $list = App::_()->options['database_list'] ?? [];
-        }
-        if (empty($list)) {
-            $list = App::Root()->options['database_list'] ?? [];
-        }
-        if (empty($list)) {
-            return null;
-        }
-        return explode(':', ''.$list[0]['dsn'])[0];
+        $driver = DbManager::_()->getDatabaseDriver();
+        return $driver === '' ? null : $driver;
     }
-    /**
-     * @param array<string, mixed> $ext_data
-     */
-    protected function createPdo(array $ext_data = []): \PDO
-    {
-        $list = $ext_data['database_list'] ?? [];
-        if (empty($list)) {
-            $list = App::_()->options['database_list'];
-        }
-        if (empty($list)) {
-            $list = App::Root()->options['database_list'];
-        }
-        $config = $list[0];
-        return new \PDO($config['dsn'], $config['username'] ?? null, $config['password'] ?? null, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-    }
-    protected function executeSql(\PDO $pdo, string $sql): void
+    protected function executeSql(\DuckPhp\Db\Db $db, string $sql): void
     {
         // split into statements for all drivers: PDO mysql disables multi-statement by default,
         // pgsql does not support multi-statement exec, sqlite is safer split as well.
         foreach (preg_split('/;\s*(\n|$)/', $sql) as $statement) {
             $statement = trim($statement);
             if ($statement !== '') {
-                $pdo->exec($statement);
+                $db->execute($statement);
             }
         }
     }
@@ -540,12 +517,12 @@ legend{font-weight:bold}
 <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
 </fieldset>
 <?php endif; ?>
-<?php if (!empty($custom_html)): ?>
-<fieldset>
-<legend>Customer Setting</legend>
 <?php if (!empty($custom_error_message)): ?>
 <p class="error"><?=__h((string)$custom_error_message)?></p>
 <?php endif; ?>
+<?php if (!empty($custom_html)): ?>
+<fieldset>
+<legend>Customer Setting</legend>
 <?=$custom_html?>
 </fieldset>
 <?php endif; ?>
