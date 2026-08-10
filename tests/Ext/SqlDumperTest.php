@@ -13,6 +13,11 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(SqlDumper::class);
         
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
+        // clean leftover artifacts from previous runs (failed tests leave them behind)
+        \LibCoverage\LibCoverage::G()->cleanTestDb();
+        @unlink($path_app.'config/sqlite.sql');
+        @unlink($path_app.'config/sqlite.clean.sql');
+        @unlink($path_app.'config/sqlite.data.sql');
         include_once $path_app . 'Model/Base.php';
         
         $setting = include $path_app . 'config/setting.php';
@@ -20,7 +25,6 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
             'setting'=>$setting,
             'path' => $path_app,
             'path_sql_dump' => 'config',
-            'sql_dump_file' => 'sql.php',
             'namespace' =>'tests_Data_SqlDumper',
             'database_driver'=>'sqlite',
             'sql_dump_debug_show_sql'=>true,
@@ -50,20 +54,36 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::_()->options['sql_dump_include_tables_by_model']=false;
         SqlDumper::_()->options['sql_dump_data_tables']=['empty'];
         SqlDumper::_()->dump();
+        // dump now writes three files: sql / clean / data
+        $this->assertFileExists($path_app.'config/sqlite.sql');
+        $this->assertFileExists($path_app.'config/sqlite.clean.sql');
+        $this->assertFileExists($path_app.'config/sqlite.data.sql');
+        $this->assertStringContainsString('CREATE TABLE', file_get_contents($path_app.'config/sqlite.sql'));
+        $this->assertStringContainsString('DROP TABLE IF EXISTS empty', file_get_contents($path_app.'config/sqlite.clean.sql'));
+        $this->assertStringContainsString('INSERT INTO', file_get_contents($path_app.'config/sqlite.data.sql'));
 //try{
         SqlDumper::_()->install(true);
 //}catch(\Exception $ex){}
 //exit;
+        // prefix scenario: dump writes {prefix} placeholder, install replaces it
+        $sql = "CREATE TABLE new_empty (id INTEGER PRIMARY KEY AUTOINCREMENT, data INTEGER NOT NULL)";
+        DbManager::Db()->execute($sql);
+        $sql = "INSERT INTO new_empty (id, data) VALUES (1, '11');";
+        DbManager::Db()->execute($sql);
         DuckPhp::_()->options['table_prefix']='new_';
+        \DuckPhp\Core\App::_()->options['table_prefix']='new_';
         SqlDumper::_()->options['sql_dump_include_tables_all']=true;
         SqlDumper::_()->options['sql_dump_include_tables_by_model']=false;
-        SqlDumper::_()->options['sql_dump_data_tables']=['empty'];
+        SqlDumper::_()->options['sql_dump_data_tables']=['new_empty'];
 
-        SqlDumper::_()->options['sql_dump_install_replace_prefix']=true;
-        SqlDumper::_()->options['sql_dump_prefix']='em';
+        SqlDumper::_()->dump();
+        $this->assertStringContainsString('{prefix}empty', file_get_contents($path_app.'config/sqlite.sql'));
+        $this->assertStringContainsString('DROP TABLE IF EXISTS {prefix}empty', file_get_contents($path_app.'config/sqlite.clean.sql'));
 //try{
         SqlDumper::_()->install(true);
-//}catch(\Exception $ex){}        
+//}catch(\Exception $ex){}
+        $rows = DbManager::Db()->fetchAll('SELECT * FROM new_empty');
+        $this->assertCount(1, $rows);
         SqlDumper::_()->dump();// 这段需要测试通过
         
 
@@ -76,8 +96,10 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         
         
         
-        $sql_file = $path_app.'config/mysql.sql';
+        $sql_file = $path_app.'config/sqlite.sql';
         @unlink($sql_file);
+        @unlink($path_app.'config/sqlite.clean.sql');
+        @unlink($path_app.'config/sqlite.data.sql');
         ////[[[[
         $options = [
         'database_driver' => '',

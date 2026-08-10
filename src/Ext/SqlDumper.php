@@ -16,7 +16,6 @@ class SqlDumper extends ComponentBase
     public $options = [
         'path' => '',
         'path_sql_dump' => 'config',
-        'sql_dump_file' => 'install.sql',
 
         'sql_dump_include_tables' => [],
         'sql_dump_exclude_tables' => [],
@@ -25,8 +24,6 @@ class SqlDumper extends ComponentBase
         'sql_dump_include_tables_all' => false,
         'sql_dump_include_tables_by_model' => true,
 
-        'sql_dump_install_replace_prefix' => true,
-        'sql_dump_prefix' => '',
         'sql_dump_debug_show_sql' => false,
 
     ];
@@ -39,31 +36,44 @@ class SqlDumper extends ComponentBase
             return false;
         }
         $scheme = $this->getSchemes();
+        $clean = $this->getCleanTableSql();
         $data = $this->getInsertTableSql();
 
-        $file = $driver.'.sql';
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
-        $string = $scheme.$this->spliter.$data;
-        file_put_contents($full_file, $string);
+        $this->writeDumpFile($driver.'.sql', $scheme);
+        $this->writeDumpFile($driver.'.clean.sql', $clean);
+        $this->writeDumpFile($driver.'.data.sql', $data);
 
         return true;
     }
+    protected function writeDumpFile(string $file, string $string): void
+    {
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
+        file_put_contents($full_file, $string);
+    }
     public function install(bool $force = false): void
     {
-        $file = DbManager::_()->getDatabaseDriver().'.sql';
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
-        $sql = ''.@file_get_contents($full_file);
+        $driver = DbManager::_()->getDatabaseDriver();
+        $prefix = (string) (App::_()->options['table_prefix'] ?? '');
+        $path = $this->options['path'];
+        $sub = $this->options['path_sql_dump'];
 
         if ($force) {
-            //$sql = preg_replace('/CREATE TABLE [`"]([^`"]+)[`"]/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
-            $sql = preg_replace('/CREATE TABLE (\S+)/', "DROP TABLE IF EXISTS \$1;\nCREATE TABLE \$1", $sql);
+            $file = $this->extendFullFile($path, $sub, $driver.'.clean.sql');
+            if (is_file($file)) {
+                $this->executeSqlFile($file, $prefix);
+            }
         }
-
-        if ($this->options['sql_dump_install_replace_prefix']) {
-            $prefix = App::_()->options['table_prefix'];
-            $sql = str_replace(' `'.$this->options['sql_dump_prefix'], ' `'.$prefix, ''.$sql);
+        $this->executeSqlFile($this->extendFullFile($path, $sub, $driver.'.sql'), $prefix);
+        $file = $this->extendFullFile($path, $sub, $driver.'.data.sql');
+        if (is_file($file)) {
+            $this->executeSqlFile($file, $prefix);
         }
-        $sqls = explode(";\n", ''.$sql);
+    }
+    protected function executeSqlFile(string $file, string $prefix): void
+    {
+        $sql = (string) @file_get_contents($file);
+        $sql = str_replace('{prefix}', $prefix, $sql);
+        $sqls = preg_split('/;\s*(\n|$)/', $sql);
         foreach ($sqls as $sql) {
             if (empty($sql)) {
                 continue;
@@ -72,14 +82,13 @@ class SqlDumper extends ComponentBase
                 echo $sql;
                 echo ";\n";
             }
-            $flag = DbManager::Db()->execute($sql);
+            DbManager::Db()->execute($sql);
         }
     }
 
-    protected function getSchemes(): string
+    protected function getTables(): array
     {
-        $prefix = App::_()->options['table_prefix'];
-        $ret = '';
+        $prefix = (string) (App::_()->options['table_prefix'] ?? '');
         $tables = [];
         if ($this->options['sql_dump_include_tables_all']) {
             $tables = Supporter::Current()->getAllTable();
@@ -88,7 +97,7 @@ class SqlDumper extends ComponentBase
                 $tables = $this->searchTables();
             }
             $included_tables = $this->options['sql_dump_include_tables'];
-            $included_tables = str_replace('@', $prefix ?? '', $included_tables);
+            $included_tables = str_replace('@', $prefix, $included_tables);
             $tables = array_values(array_unique(array_merge($tables, $included_tables)));
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
@@ -99,18 +108,39 @@ class SqlDumper extends ComponentBase
             return true;
         });
         sort($tables);
-        foreach ($tables as $table) {
-            //try{
+        return $tables;
+    }
+    protected function getSchemes(): string
+    {
+        $ret = '';
+        foreach ($this->getTables() as $table) {
             $sql = Supporter::Current()->getSchemeByTable($table);
-            $prefix = App::_()->options['table_prefix'];
-            $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
-
-            //}catch(\Exception $ex){
-            //    continue;
-            //}
+            $sql = $this->replacePrefixToPlaceholder($sql);
             $ret .= $sql . ";\n";
         }
         return $ret;
+    }
+    protected function getCleanTableSql(): string
+    {
+        $ret = '';
+        $prefix = (string) (App::_()->options['table_prefix'] ?? '');
+        foreach ($this->getTables() as $table) {
+            $name = $table;
+            if (($prefix !== '') && (substr($name, 0, strlen($prefix)) === $prefix)) {
+                $name = '{prefix}'.substr($name, strlen($prefix));
+            }
+            $ret .= 'DROP TABLE IF EXISTS '.$name.";\n";
+        }
+        return $ret;
+    }
+    protected function replacePrefixToPlaceholder(string $sql): string
+    {
+        $prefix = (string) (App::_()->options['table_prefix'] ?? '');
+        if ($prefix === '') {
+            return $sql;
+        }
+        // handle both quoted (`new_table) and unquoted (new_table) table names
+        return str_replace([' `'.$prefix, ' '.$prefix], [' `{prefix}', ' {prefix}'], $sql);
     }
     protected function getInsertTableSql(): string
     {
@@ -133,8 +163,7 @@ class SqlDumper extends ComponentBase
         //}
         foreach ($data as $line) {
             $sql = "INSERT INTO ".DbManager::DbForRead()->qouteScheme($table)." ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
-            $prefix = App::_()->options['table_prefix'];
-            $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
+            $sql = $this->replacePrefixToPlaceholder($sql);
             $ret .= $sql;
         }
         return $ret;
