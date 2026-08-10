@@ -41,6 +41,8 @@ class RouteHookWebInstaller extends ComponentBase
         'webinstaller.h1' => 'DuckPhp Web Installer',
         'webinstaller.install_complete' => 'Install Complete',
         'webinstaller.congratulations' => 'Congratulations! The application has been installed successfully.',
+        'webinstaller.install_redirect' => 'Installation successful. Redirecting to the homepage in 5 seconds.',
+        'webinstaller.manual_redirect' => 'Go to homepage now',
         'webinstaller.env_check' => 'Environment Check',
         'webinstaller.current_controller_prefix' => 'Current controller_resource_prefix',
         'webinstaller.item' => 'Item',

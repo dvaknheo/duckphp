@@ -21,6 +21,9 @@
 <head>
 <meta charset="utf-8">
 <title><?=__h($title)?></title>
+<?php if (!empty($installed)) { ?>
+<meta http-equiv="refresh" content="5;url=<?=__h(__url(''))?>">
+<?php } ?>
 <style>
 body { font-family: sans-serif; max-width: 720px; margin: 2em auto; color: #222; }
 table { border-collapse: collapse; width: 100%; }
@@ -39,6 +42,7 @@ legend { font-weight: bold; }
 <?php if (!empty($installed)) { ?>
 <h2><?=__hl('webinstaller.install_complete')?></h2>
 <p><?=__hl('webinstaller.congratulations')?></p>
+<p><?=__hl('webinstaller.install_redirect')?> <a href="<?=__h(__url(''))?>"><?=__hl('webinstaller.manual_redirect')?></a></p>
 <?php } else { ?>
 <form method="post">
     <fieldset>

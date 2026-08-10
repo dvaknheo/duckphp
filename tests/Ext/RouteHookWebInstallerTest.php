@@ -82,6 +82,8 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
         $this->assertStringContainsString('Install Complete', $out);
+        $this->assertStringContainsString('Redirecting to the homepage in 5 seconds.', $out);
+        $this->assertStringContainsString('http-equiv="refresh"', $out);
         $list = $app->options['database_list'];
         $this->assertNotEmpty($list);
         $this->assertStringContainsString('sqlite:', $list[0]['dsn']);
