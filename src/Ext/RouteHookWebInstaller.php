@@ -146,6 +146,7 @@ class RouteHookWebInstaller extends ComponentBase
             ];
         }
         $base = [
+            'title' => !empty($installed) ? __l('webinstaller.install_complete') : __l('webinstaller.h1'),
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
             'checks' => $this->checkEnv(),
@@ -495,7 +496,6 @@ class RouteHookWebInstaller extends ComponentBase
     protected function show(array $data)
     {
         extract($data);
-        $title = !empty($installed) ? __l('webinstaller.install_complete') : __l('webinstaller.h1');
         include __DIR__.'/RouteHookWebInstallerView.php';
     }
 }
