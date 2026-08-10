@@ -6,6 +6,13 @@
  * Built-in view for RouteHookWebInstaller.
  * Included by RouteHookWebInstaller::show() after extract($data).
  * Use brace style for PHP control structures; HTML keeps its own indentation.
+ *
+ * i18n: all UI texts are translated via __hl('webinstaller.*') language keys.
+ * - Default (English) sentences are provided by RouteHookWebInstaller::builtin_default_sentences
+ *   and imported into Lang via importDefaultSentences() at init().
+ * - Override built-in defaults with the option 'web_installer_default_sentences'.
+ * - Provide real translations per language via 'lang_simple_mode_only_sentences'
+ *   or config/lang/{language}.php (real translations always win over defaults).
  */
 
 ?>
@@ -28,18 +35,18 @@ legend { font-weight: bold; }
 </style>
 </head>
 <body>
-<h1>DuckPhp Web Installer</h1>
+<h1><?=__hl('webinstaller.h1')?></h1>
 <?php if (!empty($installed)) { ?>
-<h2>Already Installed</h2>
-<p>The application is already installed. To reinstall, please remove the <code>installed</code> entry from the ext options data file.</p>
+<h2><?=__hl('webinstaller.install_complete')?></h2>
+<p><?=__hl('webinstaller.congratulations')?></p>
 <?php } else { ?>
 <form method="post">
     <fieldset>
-        <legend>Environment Check</legend>
-        <p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
+        <legend><?=__hl('webinstaller.env_check')?></legend>
+        <p><?=__hl('webinstaller.current_controller_prefix')?>: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
         <table>
             <thead>
-                <tr><th>Item</th><th>Status</th></tr>
+                <tr><th><?=__hl('webinstaller.item')?></th><th><?=__hl('webinstaller.status')?></th></tr>
             </thead>
             <tbody>
 <?php foreach ($checks ?? [] as $item) { ?>
@@ -53,54 +60,54 @@ legend { font-weight: bold; }
     </fieldset>
 <?php if (!empty($use_redis)) { ?>
     <fieldset>
-        <legend>Redis Config</legend>
+        <legend><?=__hl('webinstaller.redis_config')?></legend>
 <?php if (!empty($redis_error_message)) { ?>
         <p class="error"><?=__h((string)$redis_error_message)?></p>
 <?php } ?>
         <p><label>
-            <input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application
+            <input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> <?=__hl('webinstaller.follow_main_application')?>
 <?php if (empty($redis_can_follow_root)) { ?>
-            <span class="hint">(root app has no redis configured)</span>
+            <span class="hint">(<?=__hl('webinstaller.no_redis_in_root')?>)</span>
 <?php } ?>
         </label></p>
         <div id="redis-config">
-            <p><label>Host: <input type="text" name="redis[host]" value="<?=__h((string)($post['redis']['host'] ?? '127.0.0.1'))?>"></label></p>
-            <p><label>Port: <input type="text" name="redis[port]" value="<?=__h((string)($post['redis']['port'] ?? '6379'))?>"></label></p>
-            <p><label>Auth: <input type="password" name="redis[auth]" value="<?=__h((string)($post['redis']['auth'] ?? ''))?>"></label></p>
-            <p><label>Select: <input type="text" name="redis[select]" value="<?=__h((string)($post['redis']['select'] ?? '0'))?>"></label></p>
-            <p class="hint">Multiple redis configs are supported: add more entries to the config file manually after install.</p>
+            <p><label><?=__hl('webinstaller.host')?>: <input type="text" name="redis[host]" value="<?=__h((string)($post['redis']['host'] ?? '127.0.0.1'))?>"></label></p>
+            <p><label><?=__hl('webinstaller.port')?>: <input type="text" name="redis[port]" value="<?=__h((string)($post['redis']['port'] ?? '6379'))?>"></label></p>
+            <p><label><?=__hl('webinstaller.auth')?>: <input type="password" name="redis[auth]" value="<?=__h((string)($post['redis']['auth'] ?? ''))?>"></label></p>
+            <p><label><?=__hl('webinstaller.select')?>: <input type="text" name="redis[select]" value="<?=__h((string)($post['redis']['select'] ?? '0'))?>"></label></p>
+            <p class="hint"><?=__hl('webinstaller.multi_redis_hint')?></p>
         </div>
     </fieldset>
 <?php } ?>
 <?php if (!empty($use_database)) { ?>
     <fieldset>
-        <legend>Database Config</legend>
+        <legend><?=__hl('webinstaller.database_config')?></legend>
 <?php if (!empty($database_error_message)) { ?>
         <p class="error"><?=__h((string)$database_error_message)?></p>
 <?php } ?>
         <p><label>
-            <input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application
+            <input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> <?=__hl('webinstaller.follow_main_application')?>
 <?php if (empty($database_can_follow_root)) { ?>
-            <span class="hint">(root app has no database configured)</span>
+            <span class="hint">(<?=__hl('webinstaller.no_database_in_root')?>)</span>
 <?php } ?>
         </label></p>
         <div id="database-config">
-            <p><label>Driver: <select name="driver" onchange="toggleDatabaseDriver(this)">
+            <p><label><?=__hl('webinstaller.driver')?>: <select name="driver" onchange="toggleDatabaseDriver(this)">
 <?php $dc_driver = (string) ($post['driver'] ?? ''); ?>
 <?php foreach ($drivers as $driver) { ?>
                 <option value="<?=__h($driver)?>"<?= $driver === $dc_driver ? ' selected' : '' ?>><?=__h($driver)?></option>
 <?php } ?>
             </select></label></p>
-            <p data-db-file><label>File: <input type="text" name="database[file]" value="<?=__h((string)($post['database']['file'] ?? 'database/database.db'))?>"></label></p>
-            <p data-db-server><label>Host: <input type="text" name="database[host]" value="<?=__h((string)($post['database']['host'] ?? '127.0.0.1'))?>"></label></p>
-            <p data-db-server><label>Port: <input type="text" name="database[port]" value="<?=__h((string)($post['database']['port'] ?? ''))?>"></label></p>
-            <p data-db-server><label>Database: <input type="text" name="database[dbname]" value="<?=__h((string)($post['database']['dbname'] ?? ''))?>"></label></p>
-            <p data-db-server><label>Username: <input type="text" name="database[username]" value="<?=__h((string)($post['database']['username'] ?? ''))?>"></label></p>
-            <p data-db-server><label>Password: <input type="password" name="database[password]" value="<?=__h((string)($post['database']['password'] ?? ''))?>"></label></p>
-            <p class="hint">Multiple database configs (master/slave) are supported: add more entries to the config file manually after install.</p>
+            <p data-db-file><label><?=__hl('webinstaller.file')?>: <input type="text" name="database[file]" value="<?=__h((string)($post['database']['file'] ?? 'database/database.db'))?>"></label></p>
+            <p data-db-server><label><?=__hl('webinstaller.host')?>: <input type="text" name="database[host]" value="<?=__h((string)($post['database']['host'] ?? '127.0.0.1'))?>"></label></p>
+            <p data-db-server><label><?=__hl('webinstaller.port')?>: <input type="text" name="database[port]" value="<?=__h((string)($post['database']['port'] ?? ''))?>"></label></p>
+            <p data-db-server><label><?=__hl('webinstaller.dbname')?>: <input type="text" name="database[dbname]" value="<?=__h((string)($post['database']['dbname'] ?? ''))?>"></label></p>
+            <p data-db-server><label><?=__hl('webinstaller.username')?>: <input type="text" name="database[username]" value="<?=__h((string)($post['database']['username'] ?? ''))?>"></label></p>
+            <p data-db-server><label><?=__hl('webinstaller.password')?>: <input type="password" name="database[password]" value="<?=__h((string)($post['database']['password'] ?? ''))?>"></label></p>
+            <p class="hint"><?=__hl('webinstaller.multi_db_hint')?></p>
         </div>
         <hr/>
-        <p><label><input type="checkbox" name="force" value="1"> Force reinstall (drop existing tables)</label></p>
+        <p><label><input type="checkbox" name="force" value="1"> <?=__hl('webinstaller.force_reinstall')?></label></p>
     </fieldset>
 <?php } ?>
 <?php if (!empty($custom_error_message)) { ?>
@@ -108,12 +115,12 @@ legend { font-weight: bold; }
 <?php } ?>
 <?php if (!empty($custom_html)) { ?>
     <fieldset>
-        <legend>Customer Setting</legend>
+        <legend><?=__hl('webinstaller.customer_setting')?></legend>
 <?=$custom_html?>
     </fieldset>
 <?php } ?>
     <input type="hidden" name="action" value="install">
-    <p><button type="submit">Install</button></p>
+    <p><button type="submit"><?=__hl('webinstaller.install')?></button></p>
 </form>
 <script>
 function toggleRows(rows, show) {

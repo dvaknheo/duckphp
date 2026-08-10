@@ -33,6 +33,23 @@ class Lang extends ComponentBase
         'lang_simple_mode_only_sentences' => [],
     ];
     /**
+     * Default sentences imported via importDefaultSentences().
+     * Used as fallback when the active language has no translation for a key.
+     * @var array<string, string>
+     */
+    protected $default_sentences = [];
+    /**
+     * Import default sentences. Existing translations are NOT overwritten:
+     * this only fills in keys that have no sentence in the active language.
+     * @param array<string, string> $sentences
+     * @return $this
+     */
+    public function importDefaultSentences(array $sentences)
+    {
+        $this->default_sentences = array_merge($this->default_sentences, $sentences);
+        return $this;
+    }
+    /**
      * @param array<string, mixed> $options
      * @param object|null $context
      * @return $this
@@ -62,23 +79,22 @@ class Lang extends ComponentBase
     protected function loadLanguage(string $str, ?string $fallback = null): ?string
     {
         $language = $this->options['lang_final'];
-        if (!isset($language)) {
-            return $fallback;
-        }
-        $configs = $this->getSentenceFromConfig($language);
-        if (empty($configs)) {
-            if ($fallback === null) {
-                Logger::_()->warning("No Language sentences Dectected: $language");
+        if (isset($language)) {
+            $configs = $this->getSentenceFromConfig($language);
+            if (!empty($configs) && isset($configs[$str])) {
+                return $configs[$str];
             }
+        }
+        if (isset($this->default_sentences[$str])) {
+            return $this->default_sentences[$str];
+        }
+        if ($language === null) {
             return $fallback;
         }
-        if (!isset($configs[$str])) {
-            if ($fallback === null) {
-                Logger::_()->warning("No Language sentence Dectected $str");
-            }
-            return $fallback;
+        if ($fallback === null) {
+            Logger::_()->warning("No Language sentence Dectected $str");
         }
-        return $configs[$str];
+        return $fallback;
     }
     /**
      * @param array<string, mixed> $args

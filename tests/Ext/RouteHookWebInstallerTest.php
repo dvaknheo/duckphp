@@ -81,7 +81,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         ];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
-        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertStringContainsString('Install Complete', $out);
         $list = $app->options['database_list'];
         $this->assertNotEmpty($list);
         $this->assertStringContainsString('sqlite:', $list[0]['dsn']);
@@ -134,7 +134,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
             'force' => '1',
         ];
         [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertStringContainsString('Install Complete', $out);
         $this->assertCount(1, $app->options['database_list']);
         $this->assertStringContainsString('installer_test_a.sqlite', $app->options['database_list'][0]['dsn']);
         // schema built into the database
@@ -151,7 +151,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
             'force' => '1',
         ];
         [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertStringContainsString('Install Complete', $out);
         $pdo = new \PDO($app->options['database_list'][0]['dsn']);
         $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")->fetchAll(\PDO::FETCH_COLUMN);
         $this->assertContains('t_install_demo', $tables);
@@ -175,7 +175,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
             'redis' => ['host' => '127.0.0.1', 'port' => '6379', 'auth' => '123456', 'select' => '0'],
         ];
         [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertStringContainsString('Install Complete', $out);
         $this->assertNotEmpty($app->options['redis_list']);
         $this->assertSame('6379', $app->options['redis_list'][0]['port']);
 
@@ -222,7 +222,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = ['action' => 'install'];
         [$ret, $out] = $this->hook('install');
         $this->assertTrue($ret);
-        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertStringContainsString('Install Complete', $out);
 
         ///////////////// redis connection failed (bad port)
         $app = $this->initApp([], ['web_installer_use_redis' => true, 'web_installer_local_redis' => true, 'web_installer_use_database' => false]);
@@ -284,7 +284,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = ['action' => 'install'];
         [$ret, $out] = $this->hook('install');
-        $this->assertStringContainsString('Already Installed', $out);
+        $this->assertStringContainsString('Install Complete', $out);
 
         ///////////////// do_custom_callback throws -> custom_error_message
         $this->initApp([], [
@@ -296,7 +296,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = ['action' => 'install'];
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('custom do fail', $out);
-        $this->assertStringNotContainsString('Already Installed', $out);
+        $this->assertStringNotContainsString('Install Complete', $out);
 
         ///////////////// web_installer_view: external view used instead of built-in
         $view_file = $this->getTestPath().'view/installer_view.php';
@@ -342,6 +342,37 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($child->options['redis_list']);
         $this->assertTrue(!empty($child->options['local_redis']));
         $this->assertTrue(!empty($child->options['local_database']));
+
+        // i18n: translation via lang_simple_mode_only_sentences + lang_default
+        $_POST = [];
+        $this->initApp([
+            'lang_detect_mode' => ['default'],
+            'lang_default' => 'zh_CN',
+            'lang_simple_mode_only_sentences' => [
+                'zh_CN' => [
+                    'webinstaller.h1' => '鸭子网页安装器',
+                    'webinstaller.env_check' => '环境检查',
+                    'webinstaller.install' => '安装',
+                ],
+            ],
+        ], ['web_installer_use_redis' => false, 'web_installer_use_database' => false]);
+        [$ret, $out] = $this->hook('install');
+        $this->assertTrue($ret);
+        $this->assertStringContainsString('鸭子网页安装器', $out);
+        $this->assertStringContainsString('环境检查', $out);
+        $this->assertStringContainsString('>安装</button>', $out);
+        $this->assertStringNotContainsString('Environment Check', $out);
+        $this->assertStringNotContainsString('DuckPhp Web Installer', $out);
+
+        // i18n: web_installer_default_sentences overrides built-in defaults
+        $_POST = [];
+        $this->initApp([], ['web_installer_use_redis' => false, 'web_installer_use_database' => false, 'web_installer_default_sentences' => [
+            'webinstaller.h1' => 'My Installer',
+        ]]);
+        [$ret, $out] = $this->hook('install');
+        $this->assertTrue($ret);
+        $this->assertStringContainsString('My Installer', $out);
+        $this->assertStringNotContainsString('DuckPhp Web Installer', $out);
 
         // cleanup
         @unlink($this->getTestPath().'runtime/DuckPhpData.config.json');

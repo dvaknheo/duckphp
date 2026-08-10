@@ -116,18 +116,24 @@ PhaseContainer::RestAllContainerForTesting();
         
         MyLang::_()->manual_detectLanguage();
         
+        // importDefaultSentences: default fallback when lang_final is null
+        Lang::_()->options['lang_final'] = null;
+        Lang::_()->importDefaultSentences(['webinstaller.h1' => 'DuckPhp Web Installer', 'only_default' => 'Only Default']);
+        $this->assertSame('DuckPhp Web Installer', Lang::_()->language('webinstaller.h1', [], 'FALLBACK_TEXT'));
+        $this->assertSame('Only Default', Lang::_()->language('only_default', [], 'FALLBACK_TEXT'));
+        // translation (real sentences) wins over default sentences
+        Lang::_()->options['lang_final'] = 'zh_CN';
+        $this->assertSame('zh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CN', Lang::_()->language('AAA', [], 'FALLBACK_TEXT'));
+        // default sentences win over fallback
+        Lang::_()->options['lang_final'] = null;
+        $this->assertSame('DuckPhp Web Installer', Lang::_()->language('webinstaller.h1', [], 'FALLBACK_TEXT'));
+        // missing key -> fallback
+        $this->assertSame('FALLBACK_TEXT', Lang::_()->language('no_such_key', [], 'FALLBACK_TEXT'));
+        // importDefaultSentences merges (accumulates) and returns $this
+        Lang::_()->importDefaultSentences(['another' => 'Another']);
+        $this->assertSame('Another', Lang::_()->language('another'));
+        $this->assertSame(Lang::_(), Lang::_()->importDefaultSentences(['x' => 'y']));
         
-		
-		
-		/*
-		DuckPhp::_(new DuckPhp())->init(['path'=>$path,
-		'is_debug'=>true,);
-		
-		MyLang::_(new MyLang())->init([
-			'lang_detect_mode'=>['NoExists'],
-		]);
-		echo __l("AAA");
-		*/
         \LibCoverage\LibCoverage::End();
     }
 }

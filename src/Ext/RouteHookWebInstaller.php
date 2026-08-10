@@ -8,6 +8,7 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\Lang;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
@@ -27,8 +28,42 @@ class RouteHookWebInstaller extends ComponentBase
         'web_installer_check_custom_callback' => null,
         'web_installer_do_custom_callback' => null,
         'web_installer_render_custom_callback' => null,
+        'web_installer_default_sentences' => [],
     ];
     protected $drivers = null;
+    /**
+     * Built-in default sentences (English) used as fallback for the install view.
+     * Override via option 'web_installer_default_sentences' (empty option keeps built-in).
+     * @var array<string, string>
+     */
+    protected $builtin_default_sentences = [
+        'webinstaller.h1' => 'DuckPhp Web Installer',
+        'webinstaller.install_complete' => 'Install Complete',
+        'webinstaller.congratulations' => 'Congratulations! The application has been installed successfully.',
+        'webinstaller.env_check' => 'Environment Check',
+        'webinstaller.current_controller_prefix' => 'Current controller_resource_prefix',
+        'webinstaller.item' => 'Item',
+        'webinstaller.status' => 'Status',
+        'webinstaller.redis_config' => 'Redis Config',
+        'webinstaller.follow_main_application' => 'Follow Main Application',
+        'webinstaller.no_redis_in_root' => 'Main application has no redis configured.',
+        'webinstaller.no_database_in_root' => 'Main application has no database configured.',
+        'webinstaller.host' => 'Host',
+        'webinstaller.port' => 'Port',
+        'webinstaller.auth' => 'Auth',
+        'webinstaller.select' => 'Select',
+        'webinstaller.multi_redis_hint' => 'Multiple redis configs are supported: add more entries to the config file manually after install.',
+        'webinstaller.database_config' => 'Database Config',
+        'webinstaller.driver' => 'Driver',
+        'webinstaller.file' => 'File',
+        'webinstaller.dbname' => 'Database',
+        'webinstaller.username' => 'Username',
+        'webinstaller.password' => 'Password',
+        'webinstaller.multi_db_hint' => 'Multiple database configs (master/slave) are supported: add more entries to the config file manually after install.',
+        'webinstaller.force_reinstall' => 'Force reinstall (drop existing tables)',
+        'webinstaller.customer_setting' => 'Customer Setting',
+        'webinstaller.install' => 'Install',
+    ];
     public static function Hook($path_info)
     {
         return static::_()->_Hook($path_info);
@@ -37,6 +72,21 @@ class RouteHookWebInstaller extends ComponentBase
     protected function initContext(object $context): void
     {
         Route::_()->addRouteHook([static::class, 'Hook'], 'prepend-inner');
+    }
+    /**
+     * @param array<string, mixed> $options
+     * @param object|null $context
+     * @return $this
+     */
+    public function init(array $options, ?object $context = null)
+    {
+        parent::init($options, $context);
+        $sentences = $this->options['web_installer_default_sentences'];
+        if (empty($sentences)) {
+            $sentences = $this->builtin_default_sentences;
+        }
+        Lang::_()->importDefaultSentences($sentences);
+        return $this;
     }
     protected function getInstallPath(): string
     {
@@ -444,7 +494,7 @@ class RouteHookWebInstaller extends ComponentBase
     protected function show(array $data)
     {
         extract($data);
-        $title = !empty($installed) ? 'Already Installed' : 'DuckPhp Web Installer';
+        $title = !empty($installed) ? __l('webinstaller.install_complete') : __l('webinstaller.h1');
         include __DIR__.'/RouteHookWebInstallerView.php';
     }
 }
