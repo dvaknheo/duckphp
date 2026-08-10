@@ -4,11 +4,12 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\FastInstaller;
+namespace DuckPhp\Ext;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\FastInstaller\Supporter;
 
 class SqlDumper extends ComponentBase
 {

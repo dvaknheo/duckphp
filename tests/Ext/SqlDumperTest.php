@@ -1,9 +1,9 @@
 <?php
-namespace tests\DuckPhp\FastInstaller;
+namespace tests\DuckPhp\Ext;
 
 use DuckPhp\DuckPhpAllInOne as DuckPhp;
 use DuckPhp\Component\DbManager;
-use DuckPhp\FastInstaller\SqlDumper;
+use DuckPhp\Ext\SqlDumper;
 use tests_Data_SqlDumper\Model\EmptyModel;
 class SqlDumperTest extends \PHPUnit\Framework\TestCase
 {
