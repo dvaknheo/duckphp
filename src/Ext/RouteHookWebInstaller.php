@@ -8,6 +8,7 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\RedisManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\CoreHelper;
@@ -64,7 +65,7 @@ class RouteHookWebInstaller extends ComponentBase
         if (!empty($post)) {
             $ret = $this->installBusiness($post);
             $exceptions = $ret['exceptions'] ?? [];
-            $installed = !empty($ret['installed']);
+            $installed = !empty($ret['success']);
         }
         $data = $this->buildPageData($post, $exceptions, $installed);
 
@@ -93,19 +94,13 @@ class RouteHookWebInstaller extends ComponentBase
                 'redis' => ['host' => '127.0.0.1', 'port' => '6379', 'auth' => '', 'select' => '0'],
             ];
         }
-        $redis = $this->buildRedisListFromPost($post);
-        $database = $this->buildDatabaseListFromPost($post);
         $base = [
             'use_database' => (bool) $this->options['web_installer_use_database'],
             'use_redis' => (bool) $this->options['web_installer_use_redis'],
             'checks' => $this->checkEnv(),
             'controller_resource_prefix' => (string) (App::_()->options['controller_resource_prefix'] ?? ''),
             'redis_can_follow_root' => $this->checkRootHasRedis(),
-            'redis_can_follow_root_reason' => $this->checkRootHasRedis() ? '' : 'root app has no redis configured',
-            'redis' => $redis,
             'database_can_follow_root' => $this->checkRootHasDatabase(),
-            'database_can_follow_root_reason' => $this->checkRootHasDatabase() ? '' : 'root app has no database configured',
-            'database' => $database,
             'drivers' => $this->getEnabledDatabaseDrivers(),
             'installed' => $installed,
             'redis_error_message' => (string) ($exceptions['redis_error_message'] ?? ''),
@@ -120,39 +115,6 @@ class RouteHookWebInstaller extends ComponentBase
      * @param array<string, mixed> $post
      * @return array<int, array<string, string>>
      */
-    protected function buildRedisListFromPost(array $post): array
-    {
-        $config = (array) ($post['redis'] ?? []);
-        return [[
-            'host' => (string) ($config['host'] ?? '127.0.0.1'),
-            'port' => (string) ($config['port'] ?? '6379'),
-            'auth' => (string) ($config['auth'] ?? ''),
-            'select' => (string) ($config['select'] ?? '0'),
-        ]];
-    }
-    /**
-     * @param array<string, mixed> $post
-     * @return array<int, array<string, string>>
-     */
-    protected function buildDatabaseListFromPost(array $post): array
-    {
-        $driver = (string) ($post['driver'] ?? 'sqlite');
-        $config = (array) ($post['database'] ?? []);
-        $dsn = $this->makeDsn($driver, $config);
-        $config = [
-            'driver' => $driver,
-            'file' => (string) ($config['file'] ?? ''),
-            'host' => (string) ($config['host'] ?? '127.0.0.1'),
-            'port' => (string) ($config['port'] ?? ''),
-            'dbname' => (string) ($config['dbname'] ?? ''),
-            'username' => (string) ($config['username'] ?? ''),
-            'password' => (string) ($config['password'] ?? ''),
-        ];
-        if ($dsn !== null) {
-            $config['dsn'] = $dsn;
-        }
-        return [$config];
-    }
     /**
      * Override hook: render custom setting block (Customer Setting).
      * Return HTML string, or '' to hide the Customer Setting section.
@@ -191,7 +153,6 @@ class RouteHookWebInstaller extends ComponentBase
         if ($this->options['web_installer_use_redis'] && empty($post['redis_follow_root'])) {
             try {
                 $ext_data = array_merge($ext_data, $this->checkRedis($post));
-                $ext_data['local_redis'] = true;
             } catch (\Exception $e) {
                 $exceptions['redis_error_message'] = 'Redis connection failed: '.__h($e->getMessage());
             }
@@ -199,7 +160,6 @@ class RouteHookWebInstaller extends ComponentBase
         if ($this->options['web_installer_use_database'] && empty($post['database_follow_root'])) {
             try {
                 $ext_data = array_merge($ext_data, $this->checkDatabase($post));
-                $ext_data['local_database'] = true;
             } catch (\Exception $e) {
                 $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
             }
@@ -212,7 +172,7 @@ class RouteHookWebInstaller extends ComponentBase
         }
         if (!empty($exceptions)) {
             // not all checks passed: do not write anything yet
-            return ['exceptions' => $exceptions];
+            return ['success' => false, 'exceptions' => $exceptions];
         }
         if ($this->options['web_installer_use_database']) {
             try {
@@ -228,11 +188,11 @@ class RouteHookWebInstaller extends ComponentBase
             $exceptions['custom_error_message'] = $e->getMessage();
         }
         if (!empty($exceptions)) {
-            return ['exceptions' => $exceptions];
+            return ['success' => false, 'exceptions' => $exceptions];
         }
         $ext_data['installed'] = date(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_data);
-        return ['installed' => true];
+        return ['success' => true, 'exceptions' => []];
     }
     /**
      * Override hook: extra validation after redis/database checks. Throw \Exception on failure.
@@ -297,23 +257,20 @@ class RouteHookWebInstaller extends ComponentBase
             'select' => (string) ($config['select'] ?? '0'),
         ];
         try {
-            $redis = new \Redis();
-            if (!$redis->connect($config['host'], (int) $config['port'], 3)) {
-                throw new \Exception('connect failed');
-            }
-            if (!empty($config['auth'])) {
-                $redis->auth($config['auth']);
-            }
-            if ('' !== $config['select']) {
-                $redis->select((int) $config['select']);
-            }
+            // test connection through RedisManager (same logic the app uses)
+            $redis = RedisManager::_()->createServer($config);
             if (!$redis->ping()) {
                 throw new \Exception('ping failed');
             }
         } catch (\Throwable $e) {
             throw new \Exception($config['host'].':'.$config['port'].' '.$e->getMessage());
         }
-        return ['redis_list' => [$config]];
+        $ret = ['redis_list' => [$config]];
+        if (!App::_()->isRoot()) {
+            // child app uses its own local redis config
+            $ret['local_redis'] = true;
+        }
+        return $ret;
     }
 
     //////////////////  database
@@ -359,13 +316,19 @@ class RouteHookWebInstaller extends ComponentBase
         if ($dsn === null) {
             throw new \Exception('Driver requires dbname: '.__h($driver));
         }
+        // test connection with PDO directly (same as DbManager::createDatabaseObject does)
         $error = $this->testConnection($dsn, $config['username'], $config['password']);
         if ($error !== null) {
             throw new \Exception('Connection failed: '.__h($error));
         }
         $config['driver'] = $driver;
         $config['dsn'] = $dsn;
-        return ['database_list' => [$config]];
+        $ret = ['database_list' => [$config]];
+        if (!App::_()->isRoot()) {
+            // child app uses its own local database config
+            $ret['local_database'] = true;
+        }
+        return $ret;
     }
     protected function makeDsn(string $driver, array $config): ?string
     {
@@ -487,17 +450,14 @@ class RouteHookWebInstaller extends ComponentBase
     }
     protected function executeSql(\PDO $pdo, string $sql): void
     {
-        $driver = $this->getCurrentDriver();
-        if ($driver === 'pgsql') {
-            foreach (preg_split('/;\s*(\n|$)/', $sql) as $statement) {
-                $statement = trim($statement);
-                if ($statement !== '') {
-                    $pdo->exec($statement);
-                }
+        // split into statements for all drivers: PDO mysql disables multi-statement by default,
+        // pgsql does not support multi-statement exec, sqlite is safer split as well.
+        foreach (preg_split('/;\s*(\n|$)/', $sql) as $statement) {
+            $statement = trim($statement);
+            if ($statement !== '') {
+                $pdo->exec($statement);
             }
-            return;
         }
-        $pdo->exec($sql);
     }
 
     /**
@@ -544,7 +504,7 @@ legend{font-weight:bold}
 <?php if (!empty($redis_error_message)): ?>
 <p class="error"><?=__h((string)$redis_error_message)?></p>
 <?php endif; ?>
-<p><label><input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application<?php if (!empty($redis_can_follow_root_reason)): ?> <span class="hint">(<?=__h($redis_can_follow_root_reason)?>)</span><?php endif; ?></label></p>
+<p><label><input type="checkbox" name="redis_follow_root" value="1"<?= empty($redis_can_follow_root) ? '' : ' checked' ?> data-target="redis-config"<?= empty($redis_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application<?php if (empty($redis_can_follow_root)): ?> <span class="hint">(root app has no redis configured)</span><?php endif; ?></label></p>
 <div id="redis-config">
 <p><label>Host: <input type="text" name="redis[host]" value="<?=__h((string)($post['redis']['host'] ?? '127.0.0.1'))?>"></label></p>
 <p><label>Port: <input type="text" name="redis[port]" value="<?=__h((string)($post['redis']['port'] ?? '6379'))?>"></label></p>
@@ -560,10 +520,10 @@ legend{font-weight:bold}
 <?php if (!empty($database_error_message)): ?>
 <p class="error"><?=__h((string)$database_error_message)?></p>
 <?php endif; ?>
-<p><label><input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application<?php if (!empty($database_can_follow_root_reason)): ?> <span class="hint">(<?=__h($database_can_follow_root_reason)?>)</span><?php endif; ?></label></p>
+<p><label><input type="checkbox" name="database_follow_root" value="1"<?= empty($database_can_follow_root) ? '' : ' checked' ?> data-target="database-config"<?= empty($database_can_follow_root) ? ' disabled' : '' ?>> Follow Main Application<?php if (empty($database_can_follow_root)): ?> <span class="hint">(root app has no database configured)</span><?php endif; ?></label></p>
 <div id="database-config">
 <p><label>Driver: <select name="driver" onchange="toggleDatabaseDriver(this)">
-<?php $dc_driver = isset($database[0]['driver']) ? (string) $database[0]['driver'] : (isset($database[0]['dsn']) ? explode(':', (string) $database[0]['dsn'])[0] : ''); ?>
+<?php $dc_driver = (string) ($post['driver'] ?? ''); ?>
 <?php foreach($drivers as $driver): ?>
     <option value="<?=__h($driver)?>"<?= $driver === $dc_driver ? ' selected' : '' ?>><?=__h($driver)?></option>
 <?php endforeach; ?>
