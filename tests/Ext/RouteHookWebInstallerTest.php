@@ -308,6 +308,15 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('ExternalView', $out);
 
+        ///////////////// web_installer_view_block_custom: external view block rendered as Customer Setting
+        $block_file = $this->getTestPath().'view/custom_block.php';
+        file_put_contents($block_file, '<p>CustomBlock:<?=__h((string)($post[\'myfield\'] ?? ""))?></p>');
+        $this->initApp([], ['web_installer_use_redis' => false, 'web_installer_use_database' => false, 'web_installer_view_block_custom' => $block_file]);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_POST = [];
+        [$ret, $out] = $this->hook('install');
+        $this->assertStringContainsString('CustomBlock:', $out);
+
         ///////////////// child app: local_redis / local_database written (non-root)
         $parent = new WebInstallerApp();
         DuckPhp::_($parent);
@@ -405,9 +414,9 @@ class WebInstallerChildApp extends DuckPhp
 }
 class RouteHookWebInstallerCustom extends RouteHookWebInstaller
 {
-    protected function renderCustom(array $post): string
+    protected function renderCustom(array $view_data): string
     {
-        $val = (string) ($post['custom_key'] ?? 'default');
+        $val = (string) ($view_data['post']['custom_key'] ?? 'default');
         return '<p><label>Custom: <input type="text" name="custom_key" value="'.htmlspecialchars($val).'"></label></p>';
     }
 }

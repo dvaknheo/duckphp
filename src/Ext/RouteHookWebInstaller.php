@@ -24,6 +24,7 @@ class RouteHookWebInstaller extends ComponentBase
         'web_installer_use_redis' => true,
         'web_installer_database_drivers' => ['sqlite' => true, 'pgsql' => true, 'duckdb' => false],
         'web_installer_view' => '',
+        'web_installer_view_block_custom' => null,
         'web_installer_force' => false,
         'web_installer_check_custom_callback' => null,
         'web_installer_do_custom_callback' => null,
@@ -156,25 +157,25 @@ class RouteHookWebInstaller extends ComponentBase
             'redis_error_message' => (string) ($exceptions['redis_error_message'] ?? ''),
             'database_error_message' => (string) ($exceptions['database_error_message'] ?? ''),
             'custom_error_message' => (string) ($exceptions['custom_error_message'] ?? ''),
-            'custom_html' => $this->renderCustom($post),
             'post' => $post,
         ];
+        $base['custom_html'] = $this->renderCustom($base);
+
         return $base;
     }
     /**
-     * @param array<string, mixed> $post
-     * @return array<int, array<string, string>>
-     */
-    /**
      * Override hook: render custom setting block (Customer Setting).
      * Return HTML string, or '' to hide the Customer Setting section.
-     * @param array<string, mixed> $post filtered POST input (for echo-back on failure)
+     * @param array<string, mixed> $view_data filtered POST input (for echo-back on failure)
      * @return string
      */
-    protected function renderCustom(array $post): string
+    protected function renderCustom(array $view_data): string
     {
+        if ($this->options['web_installer_view_block_custom']) {
+            return View::_()->_Render($this->options['web_installer_view_block_custom'], $view_data);
+        }
         if ($this->options['web_installer_render_custom_callback']) {
-            return (string) call_user_func($this->options['web_installer_render_custom_callback'], $post);
+            return (string) call_user_func($this->options['web_installer_render_custom_callback'], $view_data);
         }
         return '';
     }
