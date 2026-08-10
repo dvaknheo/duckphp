@@ -56,7 +56,7 @@ class RouteHookWebInstaller extends ComponentBase
         if (!empty(App::_()->options['installed'])) {
             // installed;
             CoreHelper::Show302('');
-            return ;
+            return;
         }
         $post = SuperGlobal::_()->_POST();
         $post = is_array($post) ? $post : [];
@@ -154,12 +154,12 @@ class RouteHookWebInstaller extends ComponentBase
         try {
             $ext_data = array_merge($ext_data, $this->checkRedis($post));
         } catch (\Exception $e) {
-            $exceptions['redis_error_message'] = 'Redis connection failed: '.__h($e->getMessage());
+            $exceptions['redis_error_message'] = 'Redis connection failed: ' . __h($e->getMessage());
         }
         try {
             $ext_data = array_merge($ext_data, $this->checkDatabase($post));
         } catch (\Exception $e) {
-            $exceptions['database_error_message'] = 'Database connection failed: '.__h($e->getMessage());
+            $exceptions['database_error_message'] = 'Database connection failed: ' . __h($e->getMessage());
         }
         // checkCustom: override hook for extra validation after redis/database checks; throw \Exception on failure.
         try {
@@ -221,14 +221,14 @@ class RouteHookWebInstaller extends ComponentBase
     protected function checkEnv(): array
     {
         $ret = [];
-        $ret[] = [version_compare(PHP_VERSION, '7.4.0', '>='), 'PHP version >= 7.4 ('.PHP_VERSION.')'];
+        $ret[] = [version_compare(PHP_VERSION, '7.4.0', '>='), 'PHP version >= 7.4 (' . PHP_VERSION . ')'];
         $ret[] = [extension_loaded('PDO'), 'PDO extension'];
         $drivers = [];
         if ($this->options['web_installer_use_database']) {
             $drivers = $this->getEnabledDatabaseDrivers();
             foreach ($drivers as $driver) {
-                $ext = 'pdo_'.$driver;
-                $ret[] = [extension_loaded($ext), 'PDO driver: '.$driver];
+                $ext = 'pdo_' . $driver;
+                $ret[] = [extension_loaded($ext), 'PDO driver: ' . $driver];
             }
         }
         if ($this->options['web_installer_use_redis']) {
@@ -265,7 +265,7 @@ class RouteHookWebInstaller extends ComponentBase
                 throw new \Exception('ping failed');
             }
         } catch (\Throwable $e) {
-            throw new \Exception($config['host'].':'.$config['port'].' '.$e->getMessage());
+            throw new \Exception($config['host'] . ':' . $config['port'] . ' ' . $e->getMessage());
         }
         $ret = ['redis_list' => [$config]];
         if (!App::_()->isRoot()) {
@@ -278,7 +278,7 @@ class RouteHookWebInstaller extends ComponentBase
     //////////////////  database
     protected function getEnabledDatabaseDrivers(): array
     {
-        if(isset($this->drivers)) {
+        if (isset($this->drivers)) {
             return $this->drivers;
         }
         $configured = $this->options['web_installer_database_drivers'] ?? [];
@@ -286,7 +286,7 @@ class RouteHookWebInstaller extends ComponentBase
             // support single driver as a plain string, e.g. 'sqlite'
             $configured = [$configured => true];
         }
-        $ret = [];       
+        $ret = [];
         foreach ($configured as $driver => $enabled) {
             if ($enabled) {
                 $ret[] = $driver;
@@ -306,7 +306,7 @@ class RouteHookWebInstaller extends ComponentBase
         }
         $driver = (string) ($post['driver'] ?? '');
         if (!in_array($driver, $this->getEnabledDatabaseDrivers(), true)) {
-            throw new \Exception('Unsupported driver: '.__h($driver));
+            throw new \Exception('Unsupported driver: ' . __h($driver));
         }
         $config = (array) ($post['database'] ?? []);
         $config = [
@@ -319,7 +319,7 @@ class RouteHookWebInstaller extends ComponentBase
         ];
         $dsn = $this->makeDsn($driver, $config);
         if ($dsn === null) {
-            throw new \Exception('Driver requires dbname: '.__h($driver));
+            throw new \Exception('Driver requires dbname: ' . __h($driver));
         }
 
         $database = [];
@@ -346,14 +346,14 @@ class RouteHookWebInstaller extends ComponentBase
     {
         if ($driver === 'sqlite' || $driver === 'duckdb') {
             $file = $config['file'] ?? $config['dbname'] ?? '';
-            return $driver.':'.($file ?: 'database/database.db');
+            return $driver . ':' . ($file ?: 'database/database.db');
         }
         if (empty($config['dbname'])) {
             return null;
         }
-        $dsn = $driver.':host='.$config['host'].';dbname='.$config['dbname'];
+        $dsn = $driver . ':host=' . $config['host'] . ';dbname=' . $config['dbname'];
         if (!empty($config['port'])) {
-            $dsn .= ';port='.$config['port'];
+            $dsn .= ';port=' . $config['port'];
         }
         return $dsn;
     }
@@ -365,7 +365,7 @@ class RouteHookWebInstaller extends ComponentBase
      */
     protected function getSchemaSqlFile(string $driver, string $suffix = ''): string
     {
-        $filename = $driver.($suffix === '' ? '' : '.'.$suffix).'.sql';
+        $filename = $driver . ($suffix === '' ? '' : '.' . $suffix) . '.sql';
         return App::_()->getConfigFile($filename);
     }
     /**
@@ -394,7 +394,7 @@ class RouteHookWebInstaller extends ComponentBase
             }
             $schema_file = $this->getSchemaSqlFile($driver);
             if (!is_file($schema_file)) {
-                throw new \Exception('Schema file not found: '.__h($schema_file));
+                throw new \Exception('Schema file not found: ' . __h($schema_file));
             }
             $this->executeSqlFile($db, $schema_file);
             // seed data script if present
@@ -403,7 +403,7 @@ class RouteHookWebInstaller extends ComponentBase
                 $this->executeSqlFile($db, $data_file);
             }
         } catch (\Throwable $ex) {
-            throw new \Exception('Schema error: '.__h($ex->getMessage()));
+            throw new \Exception('Schema error: ' . __h($ex->getMessage()));
         }
         return [];
     }
