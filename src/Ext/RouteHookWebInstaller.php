@@ -463,6 +463,7 @@ legend{font-weight:bold}
 <h2>Already Installed</h2>
 <p>The application is already installed. To reinstall, please remove the <code>installed</code> entry from the ext options data file.</p>
 <?php else: ?>
+<form method="post">
 <fieldset>
 <legend>Environment Check</legend>
 <p>Current controller_resource_prefix: <code><?=__h((string)($controller_resource_prefix ?? ''))?></code></p>
@@ -526,7 +527,6 @@ legend{font-weight:bold}
 <?=$custom_html?>
 </fieldset>
 <?php endif; ?>
-<form method="post">
 <input type="hidden" name="action" value="install">
 <p><button type="submit">Install</button></p>
 </form>
