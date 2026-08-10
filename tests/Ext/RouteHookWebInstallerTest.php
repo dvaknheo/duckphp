@@ -43,7 +43,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
     }
     public function testAll()
     {
-        \LibCoverage\LibCoverage::G()->addExtFile(__DIR__.'/../../src/Ext/RouteHookWebInstaller_view.php');
+        \LibCoverage\LibCoverage::G()->addExtFile(__DIR__.'/../../src/Ext/RouteHookWebInstallerView.php');
         \LibCoverage\LibCoverage::Begin(RouteHookWebInstaller::class);
         $__SERVER = $_SERVER;
         $app = $this->initApp([], ['web_installer_use_redis' => false]);

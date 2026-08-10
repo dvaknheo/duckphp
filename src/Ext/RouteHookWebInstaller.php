@@ -445,6 +445,6 @@ class RouteHookWebInstaller extends ComponentBase
     {
         extract($data);
         $title = !empty($installed) ? 'Already Installed' : 'DuckPhp Web Installer';
-        include __DIR__.'/RouteHookWebInstaller_view.php';
+        include __DIR__.'/RouteHookWebInstallerView.php';
     }
 }
