@@ -48,9 +48,7 @@ class ExtOptionsLoader extends ComponentBase
         }
         $phase = App::_()->getThisPhaseName();
         $ext_options = $root->all_ext_options[$phase] ?? [];
-        if (empty($ext_options)) {
-            return $this;
-        }
+
         $this->bumpOptions($ext_options);
         return $this;
     }
@@ -59,6 +57,9 @@ class ExtOptionsLoader extends ComponentBase
      */
     public function bumpOptions(array $ext_options): void
     {
+        if (empty($ext_options)) {
+            return;
+        }
         if (!$this->options['data_file_bump_allowed']) {
             return;
         }
@@ -82,14 +83,10 @@ class ExtOptionsLoader extends ComponentBase
     }
     protected function get_ext_options_file(): string
     {
-        // App::Root()->getPathRuntime;
-        $full_file = App::Root()->options['data_file_json_file'] ?? $this->options['data_file_json_file'];
-
-        $path = static::SlashDir(App::Root()->options['path']);
-        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
-        $path_runtime = static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
+        $full_file = $this->options['data_file_json_file'] ?? $this->getRoot()->options['data_file_json_file'];
+        $path_runtime = App::_()->getRuntimePath();
         $is_abs = (DIRECTORY_SEPARATOR === '/') ?(substr($full_file, 0, 1) === '/'):(preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $full_file));
-        $full_file = $is_abs ? $full_file : static::SlashDir($path_runtime).$full_file;
+        $full_file = $is_abs ? $full_file : $path_runtime.$full_file;
 
         return $full_file;
     }
