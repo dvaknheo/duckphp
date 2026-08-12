@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\ExceptionWrapper;
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 
 class ExceptionWrapperTest extends \PHPUnit\Framework\TestCase
 {

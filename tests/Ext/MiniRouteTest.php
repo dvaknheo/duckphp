@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Ext
 {
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 use DuckPhp\Ext\SuperGlobalContext;
 use DuckPhp\Ext\MiniRoute;
 
@@ -367,7 +367,7 @@ use SingletonExTrait;
 }
 namespace tests_Core_Route2
 {
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 
 class baseController
 {

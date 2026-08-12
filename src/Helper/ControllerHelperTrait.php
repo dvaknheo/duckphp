@@ -14,7 +14,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonExTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
@@ -23,7 +23,7 @@ use DuckPhp\GlobalUser\GlobalUser;
 
 trait ControllerHelperTrait
 {
-    use SingletonTrait;
+    use SingletonExTrait;
 
     public static $EVENT_ACTION_REGISTING = 'action_registing';
     public static $EVENT_ACTION_REGISTED = 'action_registed';

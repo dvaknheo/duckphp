@@ -12,7 +12,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 use DuckPhp\Ext\Pager;
 use DuckPhp\Core\PhaseContainer;
 

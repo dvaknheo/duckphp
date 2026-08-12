@@ -7,7 +7,7 @@ use DuckPhp\Component\RouteLister;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SystemWrapper;
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 use DuckPhp\Core\AutoLoader;
 
 class RouteListerTest extends \PHPUnit\Framework\TestCase

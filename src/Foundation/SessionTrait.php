@@ -7,13 +7,13 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonExTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 
 trait SessionTrait
 {
-    use SingletonTrait;
+    use SingletonExTrait;
 
     protected $session_started = false;
     protected $session_prefix = '';

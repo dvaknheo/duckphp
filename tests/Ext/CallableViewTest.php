@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext{
 
 use DuckPhp\Ext\CallableView;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonExTrait;
 class CallableViewTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
@@ -43,7 +43,7 @@ class CallableViewTest extends \PHPUnit\Framework\TestCase
 }
 class MyViewClass
 {
-    use SingletonTrait;
+    use SingletonExTrait;
 public function main(){var_dump("hit?");}
 }
 class MyViewClass2 extends MyViewClass

@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\MyMiddlewareManager;
 use DuckPhp\DuckPhp as App;
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 
 class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
 {

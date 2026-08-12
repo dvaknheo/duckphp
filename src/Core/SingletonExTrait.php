@@ -8,7 +8,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\PhaseContainer;
 
-trait SingletonTrait
+trait SingletonExTrait
 {
     /**
      * @return static

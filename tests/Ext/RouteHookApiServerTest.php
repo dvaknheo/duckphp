@@ -4,7 +4,7 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookApiServer;
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 
 class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
 {

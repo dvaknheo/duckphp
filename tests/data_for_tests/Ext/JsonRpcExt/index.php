@@ -1,7 +1,7 @@
 <?php
 require_once realpath (__DIR__.'/../../../../autoload.php');
 use DuckPhp\DuckPhpAllInOne;
-use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 use DuckPhp\Ext\JsonRpcExt;
 class TestService
 {

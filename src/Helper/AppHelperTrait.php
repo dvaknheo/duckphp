@@ -16,14 +16,14 @@ use DuckPhp\Core\Console;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonExTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
 trait AppHelperTrait
 {
-    use SingletonTrait;
+    use SingletonExTrait;
     public static function CallException(\Throwable $ex)
     {
         return ExceptionManager::CallException($ex);

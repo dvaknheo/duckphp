@@ -6,9 +6,9 @@
 
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonExTrait;
 
 trait BusinessTrait
 {
-    use SingletonTrait;
+    use SingletonExTrait;
 }

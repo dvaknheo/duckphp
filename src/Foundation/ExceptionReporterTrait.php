@@ -7,11 +7,11 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonExTrait;
 
 trait ExceptionReporterTrait
 {
-    use SingletonTrait;
+    use SingletonExTrait;
     public static function OnException($ex)
     {
         $class = get_class($ex);

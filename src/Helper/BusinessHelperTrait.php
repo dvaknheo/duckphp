@@ -12,13 +12,13 @@ use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\Validator;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SingletonExTrait;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalUser\GlobalUser;
 
 trait BusinessHelperTrait
 {
-    use SingletonTrait;
+    use SingletonExTrait;
 
     public static $EVENT_REGISTING = 'registing';
     public static $EVENT_REGISTED = 'registed';
