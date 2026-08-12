@@ -19,11 +19,10 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         clearstatcache();
         $options = array_merge([
             'path' => $path_app,
+            'path_config' => realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config'),
             'ext_options_file_enable' => true,
             'ext' => [
-                $installer_class => array_merge([
-                    'web_installer_schema_path' => realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config'),
-                ], $component_options),
+                $installer_class => array_merge([], $component_options),
             ],
         ], $extra);
         \DuckPhp\Core\PhaseContainer::RestAllContainerForTesting();
@@ -45,6 +44,12 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::G()->addExtFile(__DIR__.'/../../src/Ext/RouteHookWebInstallerView.php');
         \LibCoverage\LibCoverage::Begin(RouteHookWebInstaller::class);
+        // clean leftover artifacts from previous runs (failed tests leave them behind)
+        $test_path = $this->getTestPath();
+        @unlink($test_path.'config/sqlite.sql');
+        @unlink($test_path.'config/sqlite.clean.sql');
+        @unlink($test_path.'config/sqlite.data.sql');
+        @unlink($test_path.'view/custom_block.php');
         $__SERVER = $_SERVER;
         $app = $this->initApp([], ['web_installer_use_redis' => false]);
 
@@ -117,7 +122,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('connection failed', $out);
 
         // branch: schema file missing
-        $config_schema = $this->getTestPath().'config/sqlite.sql';
+        $config_schema = realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config/sqlite.sql');
         $schema_backup = $config_schema.'.bak';
         rename($config_schema, $schema_backup);
         $_POST = ['action' => 'install', 'driver' => 'sqlite', 'database' => ['file' => $this->getTestPath().'runtime/installer_test2.sqlite']];
@@ -324,14 +329,15 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_($parent);
         $parent->init([
             'path' => $this->getTestPath(),
+            'path_config' => realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config'),
             'ext_options_file_enable' => true,
             'app' => [
                 WebInstallerChildApp::class => [
                     'path' => $this->getTestPath(),
+                    'path_config' => realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config'),
                     'ext_options_file_enable' => true,
                     'ext' => [
                         RouteHookWebInstaller::class => [
-                            'web_installer_schema_path' => realpath(__DIR__.'/../data_for_tests/Ext/RouteHookWebInstaller/config'),
                             'web_installer_use_redis' => true,
                         ],
                     ],
@@ -395,6 +401,10 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         @unlink($this->getTestPath().'runtime/installer_test_child.sqlite');
         @unlink($this->getTestPath().'runtime/installer_test_b.sqlite');
         @unlink($this->getTestPath().'view/installer_view.php');
+        @unlink($this->getTestPath().'view/custom_block.php');
+        @unlink($this->getTestPath().'config/sqlite.sql');
+        @unlink($this->getTestPath().'config/sqlite.clean.sql');
+        @unlink($this->getTestPath().'config/sqlite.data.sql');
         clearstatcache();
         $_SERVER = $__SERVER;
         $_POST = [];

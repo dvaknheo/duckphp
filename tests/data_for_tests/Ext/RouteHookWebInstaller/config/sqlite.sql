@@ -1,6 +1,5 @@
--- RouteHookWebInstaller test schema (sqlite)
-CREATE TABLE IF NOT EXISTS install_demo (
+-- RouteHookWebInstaller test schema (sqlite): create tables
+CREATE TABLE IF NOT EXISTS {prefix}install_demo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(64) NOT NULL
 );
-INSERT INTO install_demo (name) VALUES ('demo');
