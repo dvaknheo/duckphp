@@ -5,11 +5,11 @@
  */
 namespace ProjectNameTemplate\Controller;
 
-use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class Base
 {
-    use ControllerTrait;
+    use SingletonTrait;
     public function __construct()
     {
     }

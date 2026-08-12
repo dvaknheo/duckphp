@@ -17,8 +17,6 @@ if (is_file($autoload_file)) {
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\CallableView;
-use DuckPhp\Foundation\BusinessTrait; // 可变单例模式
-use DuckPhp\Foundation\ControllerTrait; // 可变单例模式
 use DuckPhp\Foundation\SingletonTrait; // 可变单例模式
 use DuckPhp\Foundation\ModelTrait; // 可变单例模式
 
@@ -58,7 +56,7 @@ class DbTestApp extends DuckPhp
 }
 class MyBusiness
 {
-    use BusinessTrait;
+    use SingletonTrait;
     public static function On404()
     {
         static::_()->action_index;
@@ -142,7 +140,7 @@ EOT;
 /////////////////////////////////////////
 class MainController
 {
-    use ControllerTrait;
+    use SingletonTrait;
     public function __construct()
     {
         //check installed

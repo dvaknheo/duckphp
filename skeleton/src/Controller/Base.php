@@ -4,11 +4,11 @@
  */
 namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 abstract class Base
 {
-    use ControllerTrait;
+    use SingletonTrait;
     public function __construct()
     {
     }

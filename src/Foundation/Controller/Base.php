@@ -6,9 +6,9 @@
 
 namespace DuckPhp\Foundation\Controller;
 
-use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 abstract class Base
 {
-    use ControllerTrait;
+    use SingletonTrait;
 }

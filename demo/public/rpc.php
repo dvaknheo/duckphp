@@ -17,12 +17,12 @@ if (is_file($autoload_file)) {
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\JsonRpcExt;
-use DuckPhp\Foundation\BusinessTrait;
+use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Controller\Helper;
 
 class CalcService
 {
-    use BusinessTrait;
+    use SingletonTrait;
     public function add($a, $b)
     {
         return $a + $b;

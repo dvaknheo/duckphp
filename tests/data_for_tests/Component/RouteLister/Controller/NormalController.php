@@ -1,6 +1,6 @@
 <?php
 namespace tests_Ext_RouteLister\Controller;
-use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class NormalController
 {

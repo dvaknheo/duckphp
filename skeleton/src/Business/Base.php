@@ -4,9 +4,9 @@
  */
 namespace YourProjectName\Business;
 
-use DuckPhp\Foundation\BusinessTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 abstract class Base
 {
-    use BusinessTrait;
+    use SingletonTrait;
 }
