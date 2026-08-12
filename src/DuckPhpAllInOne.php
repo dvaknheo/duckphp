@@ -32,6 +32,8 @@ class DuckPhpAllInOne extends DuckPhp
         ControllerHelperTrait::AdminService  insteadof BusinessHelperTrait;
         ControllerHelperTrait::UserService  insteadof BusinessHelperTrait;
     }
+    protected $head_view = 'head';
+    protected $foot_view = 'foot';
     protected function embedMe(): void
     {
         // embed welcome page to this class
@@ -67,32 +69,34 @@ class DuckPhpAllInOne extends DuckPhp
     public function onInited(): void
     {
         if ($this->options['duckphp_all_in_one_wrap_header_foot']) {
-            static::setViewHeadFoot('head', 'foot');
+            $this->head_view = 'head';
+            $this->foot_view = 'foot';
         }
     }
     /////////////// controller ///////////////
     public function action_index()
     {
-        static::Show(get_defined_vars(), 'index');
+        $this->_Show(get_defined_vars(), 'index');
     }
     /////////////// callable view (was DuckPhp\Ext\CallableView) ///////////////
-    protected static function viewToCallback(?string $func): ?array
+    protected function viewToCallback(?string $func): ?\Closure
     {
         $func = str_replace('/', '_', 'view_' . $func);
-        $ret = [static::_(), $func];
+        $ret = [$this, $func];
         if (!is_callable($ret)) {
             return null;
         }
-        return $ret;
+        return \Closure::fromCallable($ret);
     }
-    public static function Show($data = [], $view = '')
+    public function _Show(array $data, string $view = '')
     {
-        $callback = static::viewToCallback($view);
+        $callback = $this->viewToCallback($view);
         if (null === $callback) {
-            return parent::Show($data, $view);
+            parent::_Show($data, $view);
+            return;
         }
-        $head = static::viewToCallback(static::_()->head_file ?: 'head');
-        $foot = static::viewToCallback(static::_()->foot_file ?: 'foot');
+        $head = $this->viewToCallback($this->head_view ?: 'head');
+        $foot = $this->viewToCallback($this->foot_view ?: 'foot');
         if (null !== $head) {
             ($head)($data);
         }
