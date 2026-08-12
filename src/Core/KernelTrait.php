@@ -13,6 +13,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\Console;
 use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\ExitException;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
@@ -34,6 +35,7 @@ trait KernelTrait
 
         'cli_enable' => true,
         'skip_exception_check' => false,
+        'use_exit_exception' => true,
         'override_from' => null,
         'override_class' => null,
         'app_children_allow_mix_mode' => true,
@@ -265,10 +267,15 @@ trait KernelTrait
         $exception_options['default_exception_handler'] = [self::class, 'OnDefaultException']; // must be self,be root
         $exception_options['dev_error_handler'] = [self::class, 'OnDevErrorHandler'];        //be self, be root
         if (!$this->is_root) {
-            $exception_option['handle_all_dev_error'] = false;
-            $exception_option['handle_all_exception'] = false;
+            $exception_options['handle_all_dev_error'] = false;
+            $exception_options['handle_all_exception'] = false;
         }
         ExceptionManager::_()->init($exception_options, $this);
+        if ($this->options['use_exit_exception']) {
+            if (!defined('__EXIT_EXCEPTION')) {
+                define('__EXIT_EXCEPTION', ExitException::class);
+            }
+        }
     }
 
     /**

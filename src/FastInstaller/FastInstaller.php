@@ -15,7 +15,7 @@ use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
 use DuckPhp\FastInstaller\DatabaseInstaller;
 use DuckPhp\FastInstaller\RedisInstaller;
-use DuckPhp\FastInstaller\SqlDumper;
+use DuckPhp\Ext\SqlDumper;
 
 class FastInstaller extends ComponentBase
 {

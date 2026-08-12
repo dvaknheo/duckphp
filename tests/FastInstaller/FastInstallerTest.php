@@ -55,9 +55,9 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         var_dump($path_app);
 
-        @mkdir($path_app);
+        @mkdir($path_app, 0777, true);
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
-        @mkdir($path_app);
+        @mkdir($path_app, 0777, true);
         $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
         $db = $this->makeFromDsn( $setting['database_list'][0], 'mysql');

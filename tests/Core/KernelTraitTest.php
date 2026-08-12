@@ -267,6 +267,19 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         $app9 = KernelTestApp::_(new KernelTestApp())->init($options9);
+
+        // 10. use_exit_exception default true: __EXIT_EXCEPTION is defined
+        $this->assertTrue(defined('__EXIT_EXCEPTION'));
+        $this->assertSame(\DuckPhp\Core\ExitException::class, __EXIT_EXCEPTION);
+
+        // 11. use_exit_exception=false: init skips the define (if false branch), no crash
+        PhaseContainer::RestAllContainerForTesting();
+        KernelTestApp::_(new KernelTestApp())->init([
+            'path' => \LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class),
+            'skip_exception_check' => true,
+            'use_exit_exception' => false,
+        ]);
+        $this->assertTrue(defined('__EXIT_EXCEPTION')); // still defined from earlier init, not re-defined
     }
     // ======== 新增结束 ========
 
