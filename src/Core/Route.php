@@ -423,6 +423,38 @@ trait Route_Helper
         $ret .= "\n-- post run --\n";
         return $ret;
     }
+    public function isController(string $class): bool
+    {
+        $is_controller = false;
+        $postfix = $this->options['controller_class_postfix'] ?? '';
+        $class_base = $this->options['controller_class_base'] ?? '';
+        if ($postfix) {
+            if (\substr($class, - \strlen($postfix)) === $postfix) {
+                if ($class_base) {
+                    if (\is_subclass_of($class, $class_base)) {
+                        $is_controller = true;
+                    } else {
+                        $is_controller = false;
+                    }
+                } else {
+                    $is_controller = true;
+                }
+            } else {
+                $is_controller = false;
+            }
+        } else {
+            if ($class_base) {
+                if (\is_subclass_of($class, $class_base)) {
+                    $is_controller = true;
+                } else {
+                    $is_controller = false;
+                }
+            } else {
+                $is_controller = true;
+            }
+        }
+        return $is_controller;
+    }
 }
 trait Route_UrlManager
 {

@@ -252,6 +252,30 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::_()->_SERVER['SCRIPT_NAME'] = '/index.php';
         echo Route::_()->_PathInfo();
         $_SERVER = $__SERVER;
+        
+        //////////////// isController coverage
+        $route = Route::_();
+        $route->options['controller_class_postfix'] = 'Controller';
+        $route->options['controller_class_base'] = '';
+        // postfix matched, no base -> true
+        $this->assertTrue($route->isController(\tests_Core_Route\baseController::class));
+        // postfix not matched -> false
+        $this->assertFalse($route->isController(\tests_Core_Route\about::class));
+        // postfix matched + base + subclass -> true
+        $route->options['controller_class_base'] = \tests_Core_Route\baseController::class;
+        $this->assertTrue($route->isController(\tests_Core_Route\aboutController::class));
+        // postfix matched + base + not subclass -> false
+        $this->assertFalse($route->isController(\tests_Core_Route\noBaseController::class));
+        // postfix empty + no base -> true
+        $route->options['controller_class_postfix'] = '';
+        $route->options['controller_class_base'] = '';
+        $this->assertTrue($route->isController(\tests_Core_Route\about::class));
+        // postfix empty + base + subclass -> true
+        $route->options['controller_class_base'] = \tests_Core_Route\baseController::class;
+        $this->assertTrue($route->isController(\tests_Core_Route\about::class));
+        // postfix empty + base + not subclass -> false
+        $this->assertFalse($route->isController(\tests_Core_Route\noBaseController::class));
+        
         \LibCoverage\LibCoverage::End();
         return;
     }
@@ -517,6 +541,13 @@ class Main extends baseController
     public function action_do_post()
     {
         echo "action_do_post";
+    }
+}
+class aboutController extends baseController
+{
+    public function me()
+    {
+        //var_dump(DATE(DATE_ATOM));
     }
 }
 
