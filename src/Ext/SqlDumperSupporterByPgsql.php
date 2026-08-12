@@ -9,7 +9,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Component\DbManager;
 
 //@codeCoverageIgnoreStart
-class SupporterByPgsql extends Supporter
+class SqlDumperSupporterByPgsql extends SqlDumperSupporter
 {
     //////////////////
     public function getAllTable(): array

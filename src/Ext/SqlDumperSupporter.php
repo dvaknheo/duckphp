@@ -10,27 +10,27 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class Supporter extends ComponentBase
+class SqlDumperSupporter extends ComponentBase
 {
     public $options = [
-        'database_driver_supporter_map' => [
-          'mysql' => SupporterByMysql::class,
-          'sqlite' => SupporterBySqlite::class,
+        'database_driver_SqlDumperSupporter_map' => [
+          'mysql' => SqlDumperSupporterByMysql::class,
+          'sqlite' => SqlDumperSupporterBySqlite::class,
           ],
           // change.
     ];
 
     public static function Current()
     {
-        return static::_()->getSupporter();
+        return static::_()->getSqlDumperSupporter();
     }
-    public function getSupporter(): self
+    public function getSqlDumperSupporter(): self
     {
         $driver = DbManager::_()->getDatabaseDriver();
-        if (!isset($this->options['database_driver_supporter_map'][$driver])) {
-            throw new \Exception("[$driver]  No getSupporter ");
+        if (!isset($this->options['database_driver_SqlDumperSupporter_map'][$driver])) {
+            throw new \Exception("[$driver]  No getSqlDumperSupporter ");
         }
-        $new_class = $this->options['database_driver_supporter_map'][$driver];
+        $new_class = $this->options['database_driver_SqlDumperSupporter_map'][$driver];
         return $new_class::_();
     }
 

@@ -3,27 +3,27 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\DuckPhp as DuckPhp;
 use DuckPhp\Component\DbManager;
-use DuckPhp\Ext\Supporter;
+use DuckPhp\Ext\SqlDumperSupporter;
 //use tests_Data_SqlDumper\Model\EmptyModel;
 
-class SupporterTest extends \PHPUnit\Framework\TestCase
+class SqlDumperSupporterTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(Supporter::class);
+        \LibCoverage\LibCoverage::Begin(SqlDumperSupporter::class);
         try{
-            Supporter::_()->getAllTable();
+            SqlDumperSupporter::_()->getAllTable();
         }catch(\Exception $ex){}
         try{
-            Supporter::_()->getSchemeByTable('table');
+            SqlDumperSupporter::_()->getSchemeByTable('table');
         }catch(\Exception $ex){}
 
         $options =[
             'database_driver'=>'mysql',
         ];
         DuckPhp::_()->init($options);
-        Supporter::Current();
+        SqlDumperSupporter::Current();
 
         $options =[
             'database_driver'=>'no_exists',
@@ -31,7 +31,7 @@ class SupporterTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->init($options);
         DbManager::_()->options['database_driver']="no_exists";
         try{
-        Supporter::Current();
+        SqlDumperSupporter::Current();
         }catch(\Exception $ex){}
         
         \LibCoverage\LibCoverage::End();

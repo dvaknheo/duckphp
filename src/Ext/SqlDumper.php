@@ -9,7 +9,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Ext\Supporter;
+use DuckPhp\Ext\SqlDumperSupporter;
 
 class SqlDumper extends ComponentBase
 {
@@ -91,7 +91,7 @@ class SqlDumper extends ComponentBase
         $prefix = (string) (App::_()->options['table_prefix'] ?? '');
         $tables = [];
         if ($this->options['sql_dump_include_tables_all']) {
-            $tables = Supporter::Current()->getAllTable();
+            $tables = SqlDumperSupporter::Current()->getAllTable();
         } else {
             if ($this->options['sql_dump_include_tables_by_model']) {
                 $tables = $this->searchTables();
@@ -114,7 +114,7 @@ class SqlDumper extends ComponentBase
     {
         $ret = '';
         foreach ($this->getTables() as $table) {
-            $sql = Supporter::Current()->getSchemeByTable($table);
+            $sql = SqlDumperSupporter::Current()->getSchemeByTable($table);
             $sql = $this->replacePrefixToPlaceholder($sql);
             $ret .= $sql . ";\n";
         }

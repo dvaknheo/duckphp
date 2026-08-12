@@ -4,17 +4,17 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\DbManager;
 
-use DuckPhp\Ext\Supporter;
+use DuckPhp\Ext\SqlDumperSupporter;
 use DuckPhp\Db\Db;
-use DuckPhp\Ext\SupporterByMysql;
+use DuckPhp\Ext\SqlDumperSupporterByMysql;
 //use tests_Data_SqlDumper\Model\EmptyModel;
 
-class SupporterByMysqlTest extends \PHPUnit\Framework\TestCase
+class SqlDumperSupporterByMysqlTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SupporterByMysql::class);
+        \LibCoverage\LibCoverage::Begin(SqlDumperSupporterByMysql::class);
         /*
         $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
@@ -26,8 +26,8 @@ class SupporterByMysqlTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::_()->init($options);
         $this->makeData();
-        Supporter::Current()->getAllTable();
-        Supporter::Current()->getSchemeByTable('empty');
+        SqlDumperSupporter::Current()->getAllTable();
+        SqlDumperSupporter::Current()->getSchemeByTable('empty');
         
         $this->cleanData();
         */

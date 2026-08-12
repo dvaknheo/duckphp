@@ -4,14 +4,14 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\DuckPhp as DuckPhp;
 use DuckPhp\Component\DbManager;
 
-use DuckPhp\Ext\SupporterBySqlite;
-use DuckPhp\Ext\Supporter;
+use DuckPhp\Ext\SqlDumperSupporterBySqlite;
+use DuckPhp\Ext\SqlDumperSupporter;
 
-class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
+class SqlDumperSupporterBySqliteTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SupporterBySqlite::class);
+        \LibCoverage\LibCoverage::Begin(SqlDumperSupporterBySqlite::class);
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         
         $file = $path_app.'data.sqlite';
@@ -28,8 +28,8 @@ class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->init($options);
         $this->makeData();
      
-        Supporter::Current()->getAllTable();
-        Supporter::Current()->getSchemeByTable('table');
+        SqlDumperSupporter::Current()->getAllTable();
+        SqlDumperSupporter::Current()->getSchemeByTable('table');
 
         @unlink($file);
         

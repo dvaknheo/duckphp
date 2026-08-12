@@ -8,7 +8,7 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Component\DbManager;
 
-class SupporterBySqlite extends Supporter
+class SqlDumperSupporterBySqlite extends SqlDumperSupporter
 {
     //////////////////
     public function getAllTable(): array
