@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\FastInstaller;
+namespace DuckPhp\Ext;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
@@ -35,35 +35,6 @@ class Supporter extends ComponentBase
     }
 
     ///////////////
-    public function getInstallDesc(): string
-    {
-        throw new \Exception('No Impelement');
-    }
-
-    public function readDsnSetting($options)
-    {
-        if (!isset($options['dsn'])) {
-            return $options;
-        }
-        $dsn = $options['dsn'];
-        [$driver,$_] = explode(':', $dsn);
-        $data = substr($dsn, strlen($driver.':'));
-        $a = explode(';', trim($data, ';'));
-
-        $t = array_map(function ($v) {
-            return explode("=", $v);
-        }, $a);
-        $new = array_column($t, 1, 0);
-        $new = array_map('trim', $new);
-        $new = array_map('stripslashes', $new);
-        $options = array_merge($options, $new);
-        return $options;
-    }
-    public function writeDsnSetting($options)
-    {
-        throw new \Exception('No Impelement');
-    }
-
     public function getAllTable(): array
     {
         throw new \Exception('No Impelement');

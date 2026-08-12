@@ -1,11 +1,11 @@
 <?php
-namespace tests\DuckPhp\FastInstaller;
+namespace tests\DuckPhp\Ext;
 
 use DuckPhp\DuckPhp as DuckPhp;
 use DuckPhp\Component\DbManager;
 
-use DuckPhp\FastInstaller\SupporterBySqlite;
-use DuckPhp\FastInstaller\Supporter;
+use DuckPhp\Ext\SupporterBySqlite;
+use DuckPhp\Ext\Supporter;
 
 class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,26 +28,10 @@ class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->init($options);
         $this->makeData();
      
-        Supporter::Current()->getInstallDesc();
-     
-        $t = Supporter::Current()->readDsnSetting($options['database_list'][0]);
-        Supporter::Current()->writeDsnSetting($t);
-
-        
         Supporter::Current()->getAllTable();
         Supporter::Current()->getSchemeByTable('table');
 
         @unlink($file);
-        
-        
-        
-        DuckPhp::_()->options['local_database']= true;
-        $t = Supporter::Current()->readDsnSetting([]);
-        DuckPhp::_()->options['local_database']= false;
-        $t = Supporter::Current()->readDsnSetting([]);
-
-        
-        //@unlink($file2);
         
         \LibCoverage\LibCoverage::End();
     }

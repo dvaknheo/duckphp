@@ -9,7 +9,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\FastInstaller\Supporter;
+use DuckPhp\Ext\Supporter;
 
 class SqlDumper extends ComponentBase
 {

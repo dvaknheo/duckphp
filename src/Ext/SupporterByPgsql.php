@@ -4,32 +4,13 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\FastInstaller;
+namespace DuckPhp\Ext;
 
 use DuckPhp\Component\DbManager;
 
 //@codeCoverageIgnoreStart
 class SupporterByPgsql extends Supporter
 {
-    public function readDsnSetting($options)
-    {
-        $options = parent::readDsnSetting($options);
-        return array_merge(['host' => '127.0.0.1','port' => '5432'], $options);
-    }
-    public function writeDsnSetting($options)
-    {
-        $options = array_map('trim', $options);
-        $options = array_map('addslashes', $options);
-
-        $dsn = "pgsql:host={$options['host']};port={$options['port']};dbname={$options['dbname']};";
-
-        $options['dsn'] = $dsn;
-        unset($options['host']);
-        unset($options['port']);
-        unset($options['dbname']);
-
-        return $options;
-    }
     //////////////////
     public function getAllTable(): array
     {
@@ -82,19 +63,5 @@ class SupporterByPgsql extends Supporter
             $defs[] = 'PRIMARY KEY ("' . implode('","', $pk_cols) . '")';
         }
         return 'CREATE TABLE "' . $table . '" (' . implode(', ', $defs) . ')';
-    }
-
-
-    public function getInstallDesc(): string
-    {
-        $desc = <<<EOT
-----
-    host: [{host}] 
-    port: [{port}]
-    dbname: [{dbname}]
-    username: [{username}]
-    password: [{password}]
-EOT;
-        return $desc;
     }
 }//@codeCoverageIgnoreEnd

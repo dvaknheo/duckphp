@@ -1,12 +1,12 @@
 <?php
-namespace tests\DuckPhp\FastInstaller;
+namespace tests\DuckPhp\Ext;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\DbManager;
 
-use DuckPhp\FastInstaller\Supporter;
+use DuckPhp\Ext\Supporter;
 use DuckPhp\Db\Db;
-use DuckPhp\FastInstaller\SupporterByPgsql;
+use DuckPhp\Ext\SupporterByPgsql;
 //use tests_Data_SqlDumper\Model\EmptyModel;
 
 class SupporterByPgsqlTest extends \PHPUnit\Framework\TestCase
@@ -26,9 +26,6 @@ class SupporterByPgsqlTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::_()->init($options);
         $this->makeData();
-        Supporter::Current()->getInstallDesc();
-        Supporter::Current()->readDsnSetting([]);
-        Supporter::Current()->writeDsnSetting([]);
         Supporter::Current()->getAllTable();
         Supporter::Current()->getSchemeByTable('empty');
         

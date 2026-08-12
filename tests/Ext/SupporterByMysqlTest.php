@@ -1,12 +1,12 @@
 <?php
-namespace tests\DuckPhp\FastInstaller;
+namespace tests\DuckPhp\Ext;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\DbManager;
 
-use DuckPhp\FastInstaller\Supporter;
+use DuckPhp\Ext\Supporter;
 use DuckPhp\Db\Db;
-use DuckPhp\FastInstaller\SupporterByMysql;
+use DuckPhp\Ext\SupporterByMysql;
 //use tests_Data_SqlDumper\Model\EmptyModel;
 
 class SupporterByMysqlTest extends \PHPUnit\Framework\TestCase
@@ -26,9 +26,6 @@ class SupporterByMysqlTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::_()->init($options);
         $this->makeData();
-        Supporter::Current()->getInstallDesc();
-        Supporter::Current()->readDsnSetting([]);
-        Supporter::Current()->writeDsnSetting([]);
         Supporter::Current()->getAllTable();
         Supporter::Current()->getSchemeByTable('empty');
         

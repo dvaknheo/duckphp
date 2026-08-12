@@ -1,9 +1,9 @@
 <?php
-namespace tests\DuckPhp\FastInstaller;
+namespace tests\DuckPhp\Ext;
 
 use DuckPhp\DuckPhp as DuckPhp;
 use DuckPhp\Component\DbManager;
-use DuckPhp\FastInstaller\Supporter;
+use DuckPhp\Ext\Supporter;
 //use tests_Data_SqlDumper\Model\EmptyModel;
 
 class SupporterTest extends \PHPUnit\Framework\TestCase
@@ -16,28 +16,15 @@ class SupporterTest extends \PHPUnit\Framework\TestCase
             Supporter::_()->getAllTable();
         }catch(\Exception $ex){}
         try{
-            Supporter::_()->getInstallDesc([]);
-        }catch(\Exception $ex){}
-        try{
             Supporter::_()->getSchemeByTable('table');
         }catch(\Exception $ex){}
-        try{
-            Supporter::_()->writeDsnSetting([]);
-        }catch(\Exception $ex){}
-        
+
         $options =[
             'database_driver'=>'mysql',
         ];
         DuckPhp::_()->init($options);
         Supporter::Current();
-        $options =[];
-        Supporter::_()->readDsnSetting($options);
-        
-        $options =["dsn"=>'mysql:host=127.0.0.1;port=3306',"a"=>"b"];
-        Supporter::_()->readDsnSetting($options);
-        
-        
-        
+
         $options =[
             'database_driver'=>'no_exists',
         ];
