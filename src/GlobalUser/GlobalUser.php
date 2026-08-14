@@ -163,8 +163,12 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         App::Phase($old_phase);
     }
     ///////////////
-    public function checkAccess(?string $class = null, ?string $method = null, ?string $url = null): void
+    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
     {
+        $id = $this->id(false);
+        if(empty($id)) {
+            return false;
+        }
         if (is_null($class) && is_null($method) && is_null($url)) {
             $last_phase = App::_()->getLastPhase();
             $old_phase = App::Phase($last_phase);
@@ -175,7 +179,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
 
             App::Phase($old_phase);
         }
-        $this->localService()->checkAccess($this->id(), $class, $method, $url);
+        return $this->localService()->canAccess($id, $class, $method, $url);
     }
     /**
      * @param array<string, mixed> $ext

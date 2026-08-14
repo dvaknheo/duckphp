@@ -7,6 +7,7 @@
 namespace DuckPhp\Foundation\Controller;
 
 use DuckPhp\GlobalUser\UserControllerInterface;
+use DuckPhp\GlobalUser\UserException;
 
 class UserControllerBase implements UserControllerInterface
 {
@@ -17,6 +18,14 @@ class UserControllerBase implements UserControllerInterface
     protected function initController()
     {
         Helper::checkInstall(null);
-        Helper::User()->checkAccess();
+        $flag = Helper::User()->canAccess();
+        if (!$flag) {
+            if (!Helper::IsAjax()) {
+                Helper::Show302(Helper::User()->urlForLogin());
+                Helper::exit();
+            } else {
+                throw new UserException("can not access", -1);
+            }
+        }
     }
 }
