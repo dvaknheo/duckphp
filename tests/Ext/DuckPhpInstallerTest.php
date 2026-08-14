@@ -89,6 +89,14 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         $app_data = (string) file_get_contents($path_nsx.'/src/System/NSXApp.php');
         $this->assertStringContainsString('class NSXApp extends DuckPhp', $app_data);
         
+        // getNamespaceBasename: 空 namespace 分支
+        $rm = new \ReflectionMethod(\DuckPhp\Ext\DuckPhpInstaller::class, 'getNamespaceBasename');
+        $installer = DuckPhpInstaller::_();
+        $installer->options['namespace'] = '';
+        $this->assertSame('', $rm->invoke($installer));
+        $installer->options['namespace'] = 'NSX';
+        $this->assertSame('NSX', $rm->invoke($installer));
+        
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
         \LibCoverage\LibCoverage::End();

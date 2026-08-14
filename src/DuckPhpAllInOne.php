@@ -60,6 +60,7 @@ class DuckPhpAllInOne extends DuckPhp
     }
     protected function onPrepare(): void
     {
+        parent::onPrepare();
         // implements cli_command_with_app=true effect (without depending on the option)
         $this->options['cmd'] = array_merge([static::class => true], $this->options['cmd']);
         if ($this->options['cli_command_with_common']) {

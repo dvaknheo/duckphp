@@ -149,6 +149,7 @@ ControllerHelper::PageHtml(123);
             ControllerHelper::UserService();
         }catch(\Throwable $ex){}
             
+        \DuckPhp\Core\App::_()->options['installed'] = true;
         try{
             ControllerHelper::checkInstall("install");
         }catch(\Throwable $ex){}

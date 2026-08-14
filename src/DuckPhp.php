@@ -105,18 +105,14 @@ class DuckPhp extends App
     ////////////////////
     protected function initComponentsOfInner($components, $default): void
     {
-        $my_components = [
-            ExtOptionsLoader::class => 'data_file_enable',
-            Configer::class => true,
-        ];
-        $components = array_merge($components, $my_components);
-
+        $components[Configer::class] = true;
         parent::initComponentsOfInner($components, $default);
 
         if ($this->isLocalDatabase()) {
             $this->options['database_list_reload_by_setting'] = false;
             $this->createLocalObject(DbManager::class);
             DbManager::_()->init($this->options, $this);
+            $this->options['database_driver'] = DbManager::_()->options['database_driver'];
         }
         if ($this->isLocalRedis()) {
             $this->createLocalObject(RedisManager::class);
@@ -133,10 +129,21 @@ class DuckPhp extends App
             GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }
     }
+    protected function haltInitInBaseClass(): void
+    {
+        // Just Keep Blank
+    }
+
     protected function onPrepare(): void
     {
+        parent::onPrepare();
+
         if ($this->options['cli_command_with_common']) {
-            $this->options['cmd'][Command::class] = true;
+            $this->options['cmd'] = array_merge([Command::class => true], $this->options['cmd']);
+        }
+
+        if ($this->options['data_file_enable'] ?? false) {
+            ExtOptionsLoader::_()->init($this->options, $this); 
         }
     }
     /**

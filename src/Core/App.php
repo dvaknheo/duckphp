@@ -7,6 +7,7 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
@@ -37,11 +38,6 @@ class App extends ComponentBase
     const EXT_DEFAULT = 1;
     const EXT_FOLLOW_APP = 2;
     const EXT_RENEW = 3;
-
-    const HOOK_PREPEND_OUTTER = 'prepend-outter';
-    const HOOK_PREPEND_INNER = 'prepend-inner';
-    const HOOK_APPPEND_INNER = 'append-inner';
-    const HOOK_APPPEND_OUTTER = 'append-outter';
 
     protected $core_options = [
         'path_runtime' => 'runtime',
@@ -94,17 +90,14 @@ class App extends ComponentBase
         return '('.static::class.')'.static::VERSION;
     }
     //////// override KernelTrait ////////
-    protected function initComponents(): void
+    protected function onPrepare(): void
     {
         if ($this->is_root) {
             $this->loadSetting();
         }
-        $this->Kernel_initComponents();
     }
     protected function initComponentsOfRoot($components, $default): void
     {
-        $this->loadSetting();
-
         $my_components = [
             SystemWrapper::class => self::EXT_SKIP_INIT,
             Logger::class => self::EXT_SKIP_INIT,
@@ -333,9 +326,11 @@ EOT;
         }
         View::_()->_Display($error_view, $data);
     }
-    protected function onPrepare(): void
+    protected function haltInitInBaseClass(): void
     {
-        throw new \Exception("DO NOT INIT class DuckPhp\Core\App!");
+        if (static::class === self::class) {
+            throw new DuckPhpSystemException("DO NOT INIT class " . static::class . "!");
+        }
     }
 
     public function getOverrideableFile($path_sub, $file, $use_override = true)

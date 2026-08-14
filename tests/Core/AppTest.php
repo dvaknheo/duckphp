@@ -77,7 +77,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             MyApp::_()->options['is_debug']=true;
 			error_reporting($e_old);
         });
-		MyApp::_()->getRuntimePath();
+		$this->assertIsString(MyApp::_()->getRuntimePath());
 
         \DuckPhp\Core\Route::_()->bind('/NOOOOOOOOOOOOOOO'); 
         
@@ -320,22 +320,27 @@ PhaseContainer::RestAllContainerForTesting();
     public function doLoadSettingCoverage()
     {
         // 覆盖 App::loadSetting / dealWithEnvFile / dealWithSettingFile 分支
+        // 注意：必须用 DuckPhp（其 onPrepare 调用 parent::onPrepare → loadSetting），
+        // 不能用 MyApp/AppTestApp（onPrepare 空实现会跳过 loadSetting）
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
         
-        // 覆盖 use_env_file 分支
+        // 覆盖 loadSetting 基本分支（options['setting']）+ use_env_file 分支
         $envFile = $path_app . '.env';
         file_put_contents($envFile, "ENV_TEST_FOO=bar\nENV_TEST_BAZ=42\n");
 PhaseContainer::RestAllContainerForTesting();
-        AppTestApp::_(new AppTestApp());
-        AppTestApp::RunQuickly([
+        DuckPhp::_(new DuckPhp());
+        DuckPhp::RunQuickly([
             'path' => $path_app,
+            'setting' => ['base_key' => 'base_value'],
             'use_env_file' => true,
             'setting_file_enable' => false,
             'cli_enable' => false,
         ]);
+        $this->assertSame('bar', DuckPhp::Setting('ENV_TEST_FOO'));
+        $this->assertSame('base_value', DuckPhp::Setting('base_key'));
         unlink($envFile);
         
-        // 覆盖 setting_file 绝对路径分支
+        // 覆盖 setting_file 绝对路径分支（is_abs=true）
         $settingDir = $path_app . 'config/';
         if (!is_dir($settingDir)) {
             mkdir($settingDir, 0777, true);
@@ -343,27 +348,53 @@ PhaseContainer::RestAllContainerForTesting();
         $absSettingFile = $settingDir . 'AbsSetting.config.php';
         file_put_contents($absSettingFile, "<?php\nreturn ['abs_key' => 'abs_value'];\n");
 PhaseContainer::RestAllContainerForTesting();
-        AppTestApp::_(new AppTestApp());
-        AppTestApp::RunQuickly([
+        DuckPhp::_(new DuckPhp());
+        DuckPhp::RunQuickly([
             'path' => $path_app,
             'setting_file' => $absSettingFile,
             'setting_file_ignore_exists' => false,
             'cli_enable' => false,
         ]);
+        $this->assertSame('abs_value', DuckPhp::Setting('abs_key'));
         unlink($absSettingFile);
         
-        // 覆盖 setting_file 不存在且 ignore_exists=false 分支
+        // 覆盖 setting_file 相对路径分支（is_abs=false，文件存在）
+        $relSettingFile = 'RelSetting.config.php';
+        file_put_contents($path_app . $relSettingFile, "<?php\nreturn ['rel_key' => 'rel_value'];\n");
 PhaseContainer::RestAllContainerForTesting();
-        AppTestApp::_(new AppTestApp());
+        DuckPhp::_(new DuckPhp());
+        DuckPhp::RunQuickly([
+            'path' => $path_app,
+            'setting_file' => $relSettingFile,
+            'setting_file_ignore_exists' => false,
+            'cli_enable' => false,
+        ]);
+        $this->assertSame('rel_value', DuckPhp::Setting('rel_key'));
+        unlink($path_app . $relSettingFile);
+        
+        // 覆盖 setting_file 不存在且 ignore_exists=true 分支（不抛异常，直接 return）
+PhaseContainer::RestAllContainerForTesting();
+        DuckPhp::_(new DuckPhp());
+        DuckPhp::RunQuickly([
+            'path' => $path_app,
+            'setting_file' => $path_app . 'config/NotExistIgnore.config.php',
+            'setting_file_ignore_exists' => true,
+            'cli_enable' => false,
+        ]);
+        
+        // 覆盖 setting_file 不存在且 ignore_exists=false 分支（抛异常）
+PhaseContainer::RestAllContainerForTesting();
+        DuckPhp::_(new DuckPhp());
         try {
-            AppTestApp::RunQuickly([
+            DuckPhp::RunQuickly([
                 'path' => $path_app,
                 'setting_file' => $path_app . 'config/NotExist.config.php',
                 'setting_file_ignore_exists' => false,
                 'cli_enable' => false,
             ]);
+            $this->fail('should throw ErrorException for missing setting file');
         } catch (\ErrorException $ex) {
-            // expected
+            $this->assertStringContainsString('no Setting File', $ex->getMessage());
         }
     }
     public function doException()
@@ -604,7 +635,9 @@ class MyApp extends App
 {
     protected function onPrepare(): void
     {
-        //just for skip self::_()->Init;
+        // 旧 halt 机制（在 onPrepare 阻止基类 init）已改为 haltInitInBaseClass()，
+        // 这里必须调用父类以执行 App::onPrepare → loadSetting()
+        parent::onPrepare();
     }
 }
 class E extends \Exception

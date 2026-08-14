@@ -292,16 +292,16 @@ trait KernelTrait
             $options['override_from'] = get_class($this); // importance
             return $class::_(new $class)->init($options, $context);
         }
-
+        $this->haltInitInBaseClass();
         $this->initOptions($options);
 
-
         $this->is_root = is_null($context) || !(\is_a($context, self::class) || (static::class === self::class));
-        $this->is_cli = PHP_SAPI === 'cli' && $this->options['cli_enable'];
-        $this->initContainer($context);
-        $this->onPrepare();
+        $this->is_cli = (PHP_SAPI === 'cli') && $this->options['cli_enable'];
 
+        $this->initContainer($context);
         $this->initException($this->options);
+
+        $this->onPrepare();
         $this->initComponents();
 
         $this->onInit();
@@ -562,6 +562,9 @@ trait KernelTrait
         echo "_OnDevErrorHandler";
     }
     protected function onAfterCreatePhases(): void
+    {
+    }
+    protected function haltInitInBaseClass(): void
     {
     }
     protected function onPrepare(): void
