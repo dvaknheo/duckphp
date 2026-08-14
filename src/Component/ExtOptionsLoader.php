@@ -36,21 +36,31 @@ class ExtOptionsLoader extends ComponentBase
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
+        if(App::_()->isRoot()){
+            $this->loadAllOptions();
+        }
         $root = $this->getRoot();
 
-        if (!isset($root->all_ext_options)) {
-            $full_file = $this->get_ext_options_file();
-            if (!is_file($full_file)) {
-                $root->all_ext_options = [];
-                return $this;
-            }
-            $this->fill_all_ext_options($full_file);
-        }
         $phase = App::_()->getThisPhaseName();
-        $ext_options = $root->all_ext_options[$phase] ?? [];
+        $ext_options = $root->root_get_options_by_phase($phase);
 
         $this->bumpOptions($ext_options);
         return $this;
+    }
+    protected function loadAllOptions(): void
+    {
+        $full_file = $this->get_ext_options_file();
+        $this->all_ext_options = json_decode(''.file_get_contents($full_file), true);
+    }
+    protected function saveAllOptions(): void
+    {
+        $full_file = $this->get_ext_options_file();
+
+        $this->all_ext_options['__date__'] = date('Y-m-d H:i:s');
+        $string = json_encode($this->all_ext_options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
+        file_put_contents($full_file, $string);
+        clearstatcache();
+
     }
     /**
      * @param array<string, mixed> $ext_options
@@ -84,36 +94,33 @@ class ExtOptionsLoader extends ComponentBase
     protected function get_ext_options_file(): string
     {
         $full_file = $this->options['data_file_json_file'] ?? $this->getRoot()->options['data_file_json_file'];
-        $path_runtime = App::_()->getRuntimePath();
+        $path_runtime = App::Root()->getRuntimePath();
         $is_abs = (DIRECTORY_SEPARATOR === '/') ?(substr($full_file, 0, 1) === '/'):(preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $full_file));
         $full_file = $is_abs ? $full_file : $path_runtime.$full_file;
 
         return $full_file;
-    }
-    protected function fill_all_ext_options(string $full_file): void
-    {
-        $all_ext_options = json_decode(''.file_get_contents($full_file), true);
-        $this->getRoot()->all_ext_options = $all_ext_options;
     }
     /**
      * @param array<string, mixed> $options
      */
     public function saveExtOptions(array $options): void
     {
-        $full_file = $this->get_ext_options_file();
-        $phase = App::_()->getThisPhaseName();
-        $root = $this->getRoot();
+        $phase = App::_()->getThisPhaseName();      
         $options['__class__'] = get_class(App::_());
 
-        $ext_options = array_replace_recursive($root->all_ext_options[$phase] ?? [], $options);
-        $root->all_ext_options[$phase] = $ext_options;
-        $all_ext_options = $root->all_ext_options;
-        $all_ext_options['__date__'] = date('Y-m-d H:i:s');
+        $root = $this->getRoot();
 
-        $string = json_encode($all_ext_options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
-        file_put_contents($full_file, $string);
-        clearstatcache();
+        $root->root_set_options_by_phase($phase, $options);
+        $root->saveAllOptions();
 
-        $this->bumpOptions($ext_options);
+        $this->bumpOptions($options);
+    }
+    protected function root_get_options_by_phase(string $phase): array
+    {
+        return $this->all_ext_options[$phase] ?? [];
+    }
+    protected function root_set_options_by_phase(string $phase, array $options): void
+    {
+        $this->all_ext_options[$phase] = $options;
     }
 }
