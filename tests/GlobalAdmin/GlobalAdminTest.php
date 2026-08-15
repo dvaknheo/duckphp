@@ -51,9 +51,14 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         MyAdmin::_()->options['admin_callback_for_add_ext_view_data'] = [MyAction::class, 'myAddExtViewData'];
         $data2 = Helper::Admin()->addExtViewData([]);
         \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
-        Helper::Admin()->checkAccess('class','method','url');
-        // checkAccess() 无参分支：获取路由上下文
-        Helper::Admin()->checkAccess();
+        Helper::Admin()->canAccess('class','method','url');
+        // canAccess() 无参分支：获取路由上下文
+        Helper::Admin()->canAccess();
+        // canAccess(): id 为空 → return false 分支（162 行）
+        $old_id_cb = MyAdmin::_()->options['admin_callback_for_id'];
+        MyAdmin::_()->options['admin_callback_for_id'] = function ($check_login = false) { return null; };
+        \PHPUnit\Framework\Assert::assertFalse(Helper::Admin()->canAccess('class', 'method', 'url'));
+        MyAdmin::_()->options['admin_callback_for_id'] = $old_id_cb;
         try{
         Helper::Admin()->log('a','b');
         }catch(\Throwable $ex){}
@@ -108,9 +113,9 @@ class MyAction {
 }
 class MyService {
     use SingletonTrait;
-    public function checkAccess($admin_id, string $class, string $method, ?string $url = null)
+    public function canAccess($admin_id, string $class, string $method, ?string $url = null): bool
     {
-        return;
+        return true;
     }
     public function isSuper($admin_id): bool
     {

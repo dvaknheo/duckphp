@@ -54,9 +54,14 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         MyUser::_()->options['user_callback_for_add_ext_view_data'] = [MyUserAction::class, 'myAddExtViewData'];
         $data2 = Helper::User()->addExtViewData([]);
         \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
-        Helper::User()->checkAccess('class','method','url');
-        // checkAccess() 无参分支：获取路由上下文
-        Helper::User()->checkAccess();
+        Helper::User()->canAccess('class','method','url');
+        // canAccess() 无参分支：获取路由上下文
+        Helper::User()->canAccess();
+        // canAccess(): id 为空 → return false 分支（170 行）
+        $old_id_cb = MyUser::_()->options['user_callback_for_id'];
+        MyUser::_()->options['user_callback_for_id'] = function ($check_login = false) { return null; };
+        \PHPUnit\Framework\Assert::assertFalse(Helper::User()->canAccess('class', 'method', 'url'));
+        MyUser::_()->options['user_callback_for_id'] = $old_id_cb;
         try{
         Helper::User()->log('a','b');
         }catch(\Throwable $ex){}
@@ -109,9 +114,9 @@ class MyUserAction {
 }
 class MyUserService {
     use SingletonTrait;
-    public function checkAccess($user_id, string $class, string $method, ?string $url = null)
+    public function canAccess($user_id, string $class, string $method, ?string $url = null): bool
     {
-        return;
+        return true;
     }
     public function batchGetUsernames(array $ids): array
     {
