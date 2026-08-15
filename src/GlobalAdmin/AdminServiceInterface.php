@@ -18,5 +18,5 @@ interface AdminServiceInterface
     public function log($admin_id, string $string, ?string $type = null, array $ext = []);
 
     public function isSuper($admin_id): bool;
-    public function getIdFromCacheForDebug();
+    //public function getCurrentUIdBreakStatusLess();
 }

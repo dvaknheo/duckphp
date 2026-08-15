@@ -19,5 +19,5 @@ interface UserServiceInterface
      * @param array<string, mixed> $ids
      */
     public function batchGetUsernames(array $ids): array;
-    public function getIdFromCacheForDebug();
+    //public function getCurrentUIdBreakStatusLess();
 }
