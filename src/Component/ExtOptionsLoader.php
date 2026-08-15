@@ -50,7 +50,7 @@ class ExtOptionsLoader extends ComponentBase
     protected function loadAllOptions(): void
     {
         $full_file = $this->get_ext_options_file();
-        $this->all_ext_options = json_decode(''.file_get_contents($full_file), true);
+        $this->all_ext_options = json_decode(''.@file_get_contents($full_file), true);
     }
     protected function saveAllOptions(): void
     {
