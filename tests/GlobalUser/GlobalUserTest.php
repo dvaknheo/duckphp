@@ -13,7 +13,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(GlobalUser::class);
-        DuckPhp::_()->init(['class_user'=>MyUser::class]);
+        DuckPhp::_()->init(['user_provider'=>MyUser::class]);
         Helper::UserId();
         try{
         (Helper::UserId());

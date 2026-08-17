@@ -11,11 +11,11 @@ class AdminControllerBaseTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(AdminControllerBase::class);
 
-        // 成功构造：已安装 + 配置 class_user provider
+        // 成功构造：已安装 + 配置 admin_provider
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'class_admin' => FakeProviderForControllerBase::class,
+            'admin_provider' => FakeProviderForControllerBase::class,
         ]);
         $obj = new AdminControllerBase();
         $this->assertInstanceOf(AdminControllerBase::class, $obj);
@@ -33,7 +33,7 @@ class AdminControllerBaseTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'class_admin' => FakeDenyProviderForControllerBase::class,
+            'admin_provider' => FakeDenyProviderForControllerBase::class,
         ]);
         \DuckPhp\Core\SystemWrapper::system_wrapper_replace(['exit' => function () {}]);
         $obj = new AdminControllerBase();
@@ -44,7 +44,7 @@ class AdminControllerBaseTest extends \PHPUnit\Framework\TestCase
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'class_admin' => FakeDenyProviderForControllerBase::class,
+            'admin_provider' => FakeDenyProviderForControllerBase::class,
         ]);
         try {
             new AdminControllerBase();

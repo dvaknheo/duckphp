@@ -11,11 +11,11 @@ class UserControllerBaseTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(UserControllerBase::class);
 
-        // 成功构造：已安装 + 配置 class_user provider
+        // 成功构造：已安装 + 配置 user_provider
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'class_user' => FakeUserProviderForControllerBase::class,
+            'user_provider' => FakeUserProviderForControllerBase::class,
         ]);
         $obj = new UserControllerBase();
         $this->assertInstanceOf(UserControllerBase::class, $obj);
@@ -33,7 +33,7 @@ class UserControllerBaseTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'class_user' => FakeUserDenyProviderForControllerBase::class,
+            'user_provider' => FakeUserDenyProviderForControllerBase::class,
         ]);
         \DuckPhp\Core\SystemWrapper::system_wrapper_replace(['exit' => function () {}]);
         $obj = new UserControllerBase();
@@ -44,7 +44,7 @@ class UserControllerBaseTest extends \PHPUnit\Framework\TestCase
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'class_user' => FakeUserDenyProviderForControllerBase::class,
+            'user_provider' => FakeUserDenyProviderForControllerBase::class,
         ]);
         try {
             new UserControllerBase();

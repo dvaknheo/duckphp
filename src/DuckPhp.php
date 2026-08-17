@@ -45,8 +45,8 @@ class DuckPhp extends App
 
         'use_user_view' => true,
         'use_admin_view' => true,
-        'class_admin' => '',
-        'class_user' => '',
+        'admin_provider' => '',
+        'user_provider' => '',
         'database_driver' => '',
         'cli_command_with_common' => true,
 
@@ -118,13 +118,13 @@ class DuckPhp extends App
             $this->createLocalObject(RedisManager::class);
             RedisManager::_()->init($this->options, $this);
         }
-        if ($this->options['class_admin']) {
-            $class = $this->options['class_admin'];
+        if ($this->options['admin_provider']) {
+            $class = $this->options['admin_provider'];
             $object = $class::_()->init($this->options, $this);
             GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }
-        if ($this->options['class_user']) {
-            $class = $this->options['class_user'];
+        if ($this->options['user_provider']) {
+            $class = $this->options['user_provider'];
             $object = $class::_()->init($this->options, $this);
             GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }

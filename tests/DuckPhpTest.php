@@ -114,8 +114,8 @@ PhaseContainer::RestAllContainerForTesting();
         
         // use_user_view 分支：路由调用类实现 UserControllerInterface
         DuckPhp::_(new DuckPhp())->init([
-            'class_user' => FakeUser::class,
-            'class_admin' => FakeAdmin::class,
+            'user_provider' => FakeUser::class,
+            'admin_provider' => FakeAdmin::class,
             'path_view' => $path.'views/',
         ]);
         Route::_()->calling_class = FakeUserController::class;
@@ -149,8 +149,8 @@ class DuckPhp_Sub extends DuckPhp
 {
     public $options =[
         'class_session' => FakeSession::class,
-        'class_admin' => FakeAdmin::class,
-        'class_user' => FakeUser::class,
+        'admin_provider' => FakeAdmin::class,
+        'user_provider' => FakeUser::class,
         
         'namespace_controller' => 'zz',
         'database_driver' =>'unknown',

@@ -13,7 +13,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(GlobalAdmin::class);
-        DuckPhp::_()->init(['class_admin'=>MyAdmin::class]);
+        DuckPhp::_()->init(['admin_provider'=>MyAdmin::class]);
         Helper::AdminId();
         try{
         (Helper::AdminId());
