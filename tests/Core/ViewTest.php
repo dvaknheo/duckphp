@@ -40,6 +40,20 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         ////
         //View::_()->options['path_view_override_from']=$path_view.'overrided/';
         //View::_()->Show([],'override');
+        
+        // 覆盖 View context_class 分支 + App::onBeforeOutput
+        \DuckPhp\Core\PhaseContainer::RestAllContainerForTesting();
+        $app = \DuckPhp\Core\App::_(new \DuckPhp\DuckPhp());
+        $app->init([
+            'path' => $path_view,
+            'namespace' => __NAMESPACE__,
+            'cli_enable' => false,
+        ]);
+        View::_(new View())->init($options, $app);
+        ob_start();
+        View::_()->_Show([], 'view');
+        ob_get_clean();
+        
         \LibCoverage\LibCoverage::End();
     }
 }

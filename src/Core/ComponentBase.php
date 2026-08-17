@@ -6,6 +6,7 @@
 
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\App;
 use DuckPhp\Core\SingletonExTrait;
 
 class ComponentBase // implements ComponentInterface
@@ -23,7 +24,7 @@ class ComponentBase // implements ComponentInterface
 
     public function context()
     {
-        return !empty($this->context_class) ? ($this->context_class)::_() : App::_();
+        return App::_(); // this is feature
     }
     /**
      * @param array<string, mixed> $options
@@ -40,7 +41,6 @@ class ComponentBase // implements ComponentInterface
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options), $this->options);
         $this->initOptions($options);
         if ($context !== null) {
-            $this->context_class = get_class($context);
             $this->initContext($context);
         }
         $this->is_inited = true;
@@ -60,14 +60,20 @@ class ComponentBase // implements ComponentInterface
     }
     //for override
     /**
+     * for override
      * @param array<string, mixed> $options
      */
     protected function initOptions(array $options):void
     {
     }
     //for override
+    /**
+     * for override
+     * 
+     */
     protected function initContext(object $context):void
     {
+        // $this->context_class = get_class($context);
     }
     //helper
     protected static function IsAbsPath($path)

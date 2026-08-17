@@ -151,6 +151,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $data = $this->mergeViewData($data);
 
         $old_phase = App::Phase($last_phase);
+        App::_()->onBeforeOutput();
         View::_()->_Show($data, $view);
         App::Phase($old_phase);
     }

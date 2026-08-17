@@ -159,6 +159,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         $data = $this->mergeViewData($data);
 
         $old_phase = App::Phase($last_phase);
+        App::_()->onBeforeOutput();
         View::_()->_Show($data, $view);
         App::Phase($old_phase);
     }

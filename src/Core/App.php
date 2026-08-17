@@ -217,6 +217,7 @@ EOT;
         }
 
         View::_(new View())->init($this->options, $this);
+        $this->onBeforeOutput();
         View::_()->_Show([], $error_view);
     }
     //@override
@@ -272,6 +273,7 @@ EOT;
         }
 
         View::_(new View())->init($this->options, $this);
+        $this->onBeforeOutput();
         View::_()->_Show($data, $error_view);
     }
     //@override
@@ -382,6 +384,7 @@ EOT;
      */
     public function _Show(array $data, string $view = '')
     {
+        $this->onBeforeOutput();
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;
         View::_()->_Show($data, $view);
     }

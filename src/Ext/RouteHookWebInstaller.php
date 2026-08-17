@@ -123,6 +123,7 @@ class RouteHookWebInstaller extends ComponentBase
         $data = $this->buildPageData($post, $exceptions, $installed);
 
         if ($this->options['web_installer_view']) {
+            App::_()->onBeforeOutput();
             View::_()->_Show($data, $this->options['web_installer_view']);
         } else {
             $this->show($data);

@@ -57,9 +57,6 @@ class View extends ComponentBase
      */
     public function _Show(array $data, string $view)
     {
-        if ($this->context_class) {
-            $this->context()->onBeforeOutput();
-        }
         if ($this->options['view_skip_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
