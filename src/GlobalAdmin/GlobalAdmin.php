@@ -113,7 +113,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
      * @param array<string, mixed> $input
      * @param array<string, mixed> $input
      */
-    public function addExtViewData(array $input): array
+    protected function addExtViewData(array $input): array
     {
         if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
             return $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $input);
@@ -145,7 +145,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     /**
      * @param array<string, mixed> $data
      */
-    public function show(array $data = [], string $view = '')
+    public function _Show(array $data = [], string $view = '')
     {
         $last_phase = App::_()->getLastPhase();
         $data = $this->mergeViewData($data);

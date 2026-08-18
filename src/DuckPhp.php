@@ -156,12 +156,12 @@ class DuckPhp extends App
     {
         if ($this->options['use_user_view'] && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
             $view === '' ? Route::_()->getRouteCallingPath() : $view;
-            GlobalUser::_()->show($data, $view);
+            GlobalUser::_()->_Show($data, $view);
             return;
         }
         if ($this->options['use_admin_view'] && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
             $view === '' ? Route::_()->getRouteCallingPath() : $view;
-            GlobalAdmin::_()->show($data, $view);
+            GlobalAdmin::_()->_Show($data, $view);
             return;
         }
         parent::_Show($data, $view);
