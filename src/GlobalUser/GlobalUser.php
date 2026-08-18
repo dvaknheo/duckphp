@@ -153,15 +153,20 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     /**
      * @param array<string, mixed> $data
      */
-    public function show(array $data = [], string $view = ''): void
+    public function show(array $data = [], string $view = '')
     {
         $last_phase = App::_()->getLastPhase();
         $data = $this->mergeViewData($data);
 
+        $full_header_file = App::_()->getOverrideableFile('view', $this->options['user_view_file_header'], true);
+        $full_footer_file = App::_()->getOverrideableFile('view', $this->options['user_view_file_footer'], true);
+
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
-        View::_()->_Show($data, $view);
+        View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
+        $ret = View::_()->_Show($data, $view);
         App::Phase($old_phase);
+        return $ret;
     }
     ///////////////
     public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool

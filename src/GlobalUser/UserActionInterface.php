@@ -54,7 +54,7 @@ interface UserActionInterface
     /**
      * @param array<string, mixed> $data
      */
-    public function show(array $data = [], string $view = ''): void;
+    public function show(array $data = [], string $view = '');
     public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool;
     /**
      * @param array<string, mixed> $ext
