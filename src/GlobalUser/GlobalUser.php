@@ -45,7 +45,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
 
         if (is_array($callback) && is_string($callback[0])) {
             $class = $callback[0];
-            $callback[0] = $class::_();
+            if ($this->options['user_enable_callback_singleton']) {
+                $callback[0] = $class::_();
+            }
         }
         return call_user_func($callback, ...$args);
     }
