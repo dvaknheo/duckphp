@@ -97,7 +97,9 @@ class DuckPhp extends App
         $components = array_merge($components, $my_components);
 
         parent::initComponentsOfRoot($components, $default);
-
+        if ($this->options['data_file_enable'] ?? false) {
+            ExtOptionsLoader::_()->init($this->options, $this);
+        }
         DbManager::_()->init($this->options, $this);
         RedisManager::_()->init($this->options, $this);
         $this->options['database_driver'] = DbManager::_()->options['database_driver'];
@@ -105,6 +107,12 @@ class DuckPhp extends App
     ////////////////////
     protected function initComponentsOfInner($components, $default): void
     {
+        if (!$this->is_root && ($this->options['data_file_enable'] ?? false)) {
+            ExtOptionsLoader::_()->init($this->options, $this);
+        }
+        if ($this->options['cli_command_with_common']) {
+            $this->options['cmd'] = array_merge([Command::class => true], $this->options['cmd']);
+        }
         $components[Configer::class] = true;
         parent::initComponentsOfInner($components, $default);
 
@@ -132,19 +140,6 @@ class DuckPhp extends App
     protected function haltInitInBaseClass(): void
     {
         // Just Keep Blank
-    }
-
-    protected function onPrepare(): void
-    {
-        parent::onPrepare();
-
-        if ($this->options['cli_command_with_common']) {
-            $this->options['cmd'] = array_merge([Command::class => true], $this->options['cmd']);
-        }
-
-        if ($this->options['data_file_enable'] ?? false) {
-            ExtOptionsLoader::_()->init($this->options, $this); 
-        }
     }
     /**
      * override

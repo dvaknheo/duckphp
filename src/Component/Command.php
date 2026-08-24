@@ -90,7 +90,7 @@ EOT;
         $cmd = array_shift($args);
         list($class, $method) = explode('@', $cmd);
         $class = str_replace('/', '\\', $class);
-        if ('\\'!==substr($class,0,1)) {
+        if ('\\' !== substr($class, 0, 1)) {
             $namespace = '' . $this->context()->options['namespace'];
             $class = $namespace . 'Business\\' . $class;
         } else {

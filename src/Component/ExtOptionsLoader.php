@@ -36,7 +36,7 @@ class ExtOptionsLoader extends ComponentBase
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if(App::_()->isRoot()){
+        if (App::_()->isRoot()) {
             $this->loadAllOptions();
         }
         $root = $this->getRoot();
@@ -105,7 +105,7 @@ class ExtOptionsLoader extends ComponentBase
      */
     public function saveExtOptions(array $options): void
     {
-        $phase = App::_()->getThisPhaseName();      
+        $phase = App::_()->getThisPhaseName();
         $options['__class__'] = get_class(App::_());
 
         $root = $this->getRoot();

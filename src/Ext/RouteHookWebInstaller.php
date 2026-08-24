@@ -14,8 +14,8 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\View;
 use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Core\View;
 
 class RouteHookWebInstaller extends ComponentBase
 {

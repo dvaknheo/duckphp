@@ -45,7 +45,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
 
         if (is_array($callback) && is_string($callback[0])) {
             $class = $callback[0];
-            if ($this->options['user_enable_callback_singleton']) {
+            $flag = $this->options['user_enable_callback_singleton'] ?? true;
+            if ($flag) {
                 $callback[0] = $class::_();
             }
         }
@@ -174,7 +175,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
     {
         $id = $this->id(false);
-        if(empty($id)) {
+        if (empty($id)) {
             return false;
         }
         if (is_null($class) && is_null($method) && is_null($url)) {

@@ -173,6 +173,13 @@ trait KernelTrait
     {
         return $this->is_root;
     }
+    public function isCli()
+    {
+        if ($this->is_root) {
+            return $this->is_cli;
+        }
+        return self::Root()->isCli();
+    }
     public function getLastPhase()
     {
         return $this->last_phase ?? self::$ROOT_PHASE;

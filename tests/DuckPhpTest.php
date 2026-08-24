@@ -208,7 +208,7 @@ class FakeAdmin
     {
         return 1;
     }
-    public function show(array $data, string $view = '')
+    public function _Show(array $data, string $view = '')
     {
         return;
     }
@@ -229,7 +229,7 @@ class FakeUser
     {
         return 1;
     }
-    public function show(array $data, string $view = '')
+    public function _Show(array $data, string $view = '')
     {
         return;
     }

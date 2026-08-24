@@ -69,7 +69,7 @@ class ComponentBase // implements ComponentInterface
     //for override
     /**
      * for override
-     * 
+     *
      */
     protected function initContext(object $context):void
     {

@@ -43,8 +43,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
 
         if (is_array($callback) && is_string($callback[0])) {
             $class = $callback[0];
-            if ($this->options['admin_enable_callback_singleton']) {
+            $flag = $this->options['admin_enable_callback_singleton'] ?? true;
+            if ($flag) {
                 $callback[0] = $class::_();
+
             }
         }
         return call_user_func($callback, ...$args);
@@ -166,7 +168,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
     {
         $id = $this->id(false);
-        if(empty($id)) {
+        if (empty($id)) {
             return false;
         }
         if (is_null($class) && is_null($method) && is_null($url)) {

@@ -316,6 +316,7 @@ PhaseContainer::RestAllContainerForTesting();
         //$old_phase = KernelTestApp::Phase();
         KernelTestApp::FromCurrentParent();
         KernelTestApp3::FromCurrentParent();
+        KernelTestApp3::_()->isCli();
         
         KernelTestApp::Phase(KernelTestApp::Root()->getThisPhaseName());
         KernelTestApp::_()->getThisChild('NotExsits');

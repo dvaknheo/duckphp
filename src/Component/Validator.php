@@ -183,57 +183,57 @@ class Validator extends ComponentBase
     protected function checkRule(string $rule, $value, ?string $params, array $data = [], ?string $field = null): bool
     {
         switch ($rule) {
-        case 'required':
-            return !$this->isEmpty($value);
-        case 'nullable':
-            return true;
-        case 'email':
-            return is_scalar($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
-        case 'url':
-            return is_scalar($value) && filter_var($value, FILTER_VALIDATE_URL) !== false;
-        case 'int':
-            return is_scalar($value) && filter_var($value, FILTER_VALIDATE_INT) !== false;
-        case 'integer':
-            return is_int($value);
-        case 'numeric':
-            return is_numeric($value);
-        case 'string':
-            return is_string($value);
-        case 'array':
-            return is_array($value);
-        case 'bool':
-            return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null;
-        case 'min':
-            return is_numeric($value) && $value >= (int)$params;
-        case 'max':
-            return is_numeric($value) && $value <= (int)$params;
-        case 'between':
-            [$min, $max] = array_pad(explode(',', (string)$params), 2, null);
-            return is_numeric($value) && $value >= (int)$min && $value <= (int)$max;
-        case 'minLen':
-            return is_scalar($value) && $this->strLen((string)$value) >= (int)$params;
-        case 'maxLen':
-            return is_scalar($value) && $this->strLen((string)$value) <= (int)$params;
-        case 'length':
-            return is_scalar($value) && $this->strLen((string)$value) === (int)$params;
-        case 'in':
-            return is_scalar($value) && in_array($value, explode(',', (string)$params));
-        case 'confirmed':
-            return is_scalar($value) && $value == ($data[$field.'_confirmation'] ?? null);
-        case 'regex':
-            return is_string($value) && (bool)preg_match((string)$params, $value);
-        case 'date':
-            return is_scalar($value) && strtotime((string)$value) !== false;
-        case 'json':
-            if (!is_string($value)) {
-                return false;
-            }
-            json_decode($value);
-            return json_last_error() === JSON_ERROR_NONE;
-        case 'callback':
-            return (bool)call_user_func($params, $value, $data);
-        default:
-            throw new \InvalidArgumentException('Unknown validator rule: '.$rule);
+            case 'required':
+                return !$this->isEmpty($value);
+            case 'nullable':
+                return true;
+            case 'email':
+                return is_scalar($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+            case 'url':
+                return is_scalar($value) && filter_var($value, FILTER_VALIDATE_URL) !== false;
+            case 'int':
+                return is_scalar($value) && filter_var($value, FILTER_VALIDATE_INT) !== false;
+            case 'integer':
+                return is_int($value);
+            case 'numeric':
+                return is_numeric($value);
+            case 'string':
+                return is_string($value);
+            case 'array':
+                return is_array($value);
+            case 'bool':
+                return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null;
+            case 'min':
+                return is_numeric($value) && $value >= (int)$params;
+            case 'max':
+                return is_numeric($value) && $value <= (int)$params;
+            case 'between':
+                [$min, $max] = array_pad(explode(',', (string)$params), 2, null);
+                return is_numeric($value) && $value >= (int)$min && $value <= (int)$max;
+            case 'minLen':
+                return is_scalar($value) && $this->strLen((string)$value) >= (int)$params;
+            case 'maxLen':
+                return is_scalar($value) && $this->strLen((string)$value) <= (int)$params;
+            case 'length':
+                return is_scalar($value) && $this->strLen((string)$value) === (int)$params;
+            case 'in':
+                return is_scalar($value) && in_array($value, explode(',', (string)$params));
+            case 'confirmed':
+                return is_scalar($value) && $value == ($data[$field.'_confirmation'] ?? null);
+            case 'regex':
+                return is_string($value) && (bool)preg_match((string)$params, $value);
+            case 'date':
+                return is_scalar($value) && strtotime((string)$value) !== false;
+            case 'json':
+                if (!is_string($value)) {
+                    return false;
+                }
+                json_decode($value);
+                return json_last_error() === JSON_ERROR_NONE;
+            case 'callback':
+                return (bool)call_user_func($params, $value, $data);
+            default:
+                throw new \InvalidArgumentException('Unknown validator rule: '.$rule);
         }
     }
     protected function strLen(string $str): int

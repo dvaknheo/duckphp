@@ -6,8 +6,8 @@
 
 namespace DuckPhp\Component;
 
-use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\RouteHookRewrite;
+use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;

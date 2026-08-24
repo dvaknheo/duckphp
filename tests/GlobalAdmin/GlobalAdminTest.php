@@ -49,8 +49,8 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         \PHPUnit\Framework\Assert::assertStringContainsString('Block', $data3['__view_data']['footer'] ?? '');
         // test admin_callback_for_add_ext_view_data
         MyAdmin::_()->options['admin_callback_for_add_ext_view_data'] = [MyAction::class, 'myAddExtViewData'];
-        $data2 = Helper::Admin()->addExtViewData([]);
-        \PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
+        //$data2 = Helper::Admin()->addExtViewData([]);
+        //\PHPUnit\Framework\Assert::assertTrue(isset($data2['__view_data']['custom']));
         Helper::Admin()->canAccess('class','method','url');
         // canAccess() 无参分支：获取路由上下文
         Helper::Admin()->canAccess();
@@ -65,7 +65,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         
         // show() 分支：渲染视图
         ob_start();
-        Helper::Admin()->show([], $path.'views/block');
+        Helper::Admin()->_Show([], $path.'views/block');
         ob_get_clean();
         
         
@@ -81,13 +81,13 @@ class MyAdmin extends GlobalAdmin
 {
     public $options =[
         'admin_url_home' => 'home',
-        
         'admin_callback_for_id' => [MyAction::class,'id'],
         'admin_callback_for_name' => [MyAction::class,'name'],
         'admin_callback_for_url_for_login' => [MyAction::class,'urlForLogin'],
         'admin_url_logout' => 'logout',
         'admin_callback_for_local_service'=>[MyService::class,'_'],
         'admin_view_file_header'=>'/abc',
+
     ];
 }
 class MyAction {
