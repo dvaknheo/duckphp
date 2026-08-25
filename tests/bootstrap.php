@@ -41,7 +41,6 @@ class MyLibCoverage extends \LibCoverage\LibCoverage
     public function doBegin($class)
     {
         $this->this_class=$class;
-        echo "\n\033[42;30m".$class."\033[0m Test Start\n";
         parent::doBegin($class);
     }
     public function cleanTestDb()
@@ -60,5 +59,5 @@ class MyLibCoverage extends \LibCoverage\LibCoverage
 }
 $setting = require __DIR__.'/data_for_tests/setting.php';
 $options = $setting['options_test'];
-\LibCoverage\LibCoverage::G(MyLibCoverage::G())->init($options);
+\LibCoverage\LibCoverage::_(MyLibCoverage::_())->init($options);
 
