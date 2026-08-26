@@ -488,9 +488,10 @@ trait KernelTrait
             $this->runException($ex);
             $ret = true;
         } finally {
+            $this->phaseToCurrent();
+            Route::_()->runFinallyHooks();
             Runtime::_()->clear();
         }
-        $this->phaseToCurrent();
         return $ret;
     }
     protected function prepareServe()

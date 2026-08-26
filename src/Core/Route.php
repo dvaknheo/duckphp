@@ -42,7 +42,7 @@ class Route extends ComponentBase
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
-
+    public $finally_run_hook_list = [];
     //properties
     protected $parameters = [];
     public $route_error = '';
@@ -125,6 +125,20 @@ class Route extends ComponentBase
         }
         return false;
     }
+    public function runFinallyHooks()
+    {
+        if (empty($this->finally_run_hook_list)) {
+            return;
+        }
+
+        $path_info = $this->getPathInfo();
+        foreach ($this->finally_run_hook_list as $callback) {
+            $flag = ($callback)($path_info);
+            if ($flag) {
+                return;
+            }
+        }
+    }
     protected function getRunResult(): bool
     {
         if ($this->is_failed) {
@@ -146,6 +160,10 @@ class Route extends ComponentBase
             if (($position === 'append-inner' || $position === 'append-outter') && in_array($callback, $this->post_run_hook_list)) {
                 return false;
             }
+            if (($position === 'finally-inner' || $position === 'finally-outter') && in_array($callback, $this->finally_run_hook_list)) {
+                return false;
+            }
+
         }
         switch ($position) {
             case 'prepend-outter':
@@ -159,6 +177,12 @@ class Route extends ComponentBase
                 break;
             case 'append-outter':
                 array_push($this->post_run_hook_list, $callback);
+                break;
+            case 'finally-inner':
+                array_unshift($this->finally_run_hook_list, $callback);
+                break;
+            case 'finally-outter':
+                array_push($this->finally_run_hook_list, $callback);
                 break;
             default:
                 return false;
