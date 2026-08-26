@@ -93,8 +93,7 @@ class DuckPhpAllInOne extends DuckPhp
     {
         $callback = $this->viewToCallback($view);
         if (null === $callback) {
-            parent::_Show($data, $view);
-            return;
+            return parent::_Show($data, $view);
         }
         $head = $this->viewToCallback($this->head_view ?: 'head');
         $foot = $this->viewToCallback($this->foot_view ?: 'foot');

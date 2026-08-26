@@ -386,6 +386,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             Route::_()->addRouteHook($prepended, 'prepend-inner', true);
             Route::_()->addRouteHook($prepended, 'prepend-outter', false);
         });
+        Route::_()->runFinallyHooks();
         // append true.
         
         Route::_(new Route());
@@ -395,9 +396,25 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 var_dump(DATE(DATE_ATOM));
                 return true;
             };
+
             Route::_()->addRouteHook($appended, 'append-inner', true);
             Route::_()->addRouteHook($appended, 'append-outter', true);
+
+         
         });
+        $appended2=function () {
+            var_dump(DATE(DATE_ATOM));
+            return true;
+        };
+        $appended3=function () {
+            var_dump(DATE(DATE_ATOM));
+            return true;
+        };
+
+        Route::_()->addRouteHook($appended2, 'finally-outter', true);
+        Route::_()->addRouteHook($appended2, 'finally-outter', true);
+        Route::_()->addRouteHook($appended3, 'finally-inner', true);
+        Route::_()->runFinallyHooks();
     }
     protected function doUrl()
     {

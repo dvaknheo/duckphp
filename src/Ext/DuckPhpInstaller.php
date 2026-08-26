@@ -178,7 +178,7 @@ EOT;
     /**
      * Last segment of the project namespace, e.g. 'YourProjectName\System' -> 'System'.
      */
-    protected function getNamespaceBasename(): string
+    public function getNamespaceBasename(): string
     {
         $namespace = trim((string) ($this->options['namespace'] ?? ''), '\\');
         if ($namespace === '') {

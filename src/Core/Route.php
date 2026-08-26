@@ -127,15 +127,13 @@ class Route extends ComponentBase
     }
     public function runFinallyHooks()
     {
-        if (empty($this->finally_run_hook_list)) {
-            return;
-        }
-
-        $path_info = $this->getPathInfo();
-        foreach ($this->finally_run_hook_list as $callback) {
-            $flag = ($callback)($path_info);
-            if ($flag) {
-                return;
+        if (!empty($this->finally_run_hook_list)) {
+            $path_info = $this->getPathInfo();
+            foreach ($this->finally_run_hook_list as $callback) {
+                $flag = ($callback)($path_info);
+                if ($flag) {
+                    return;
+                }
             }
         }
     }

@@ -59,5 +59,5 @@ class MyLibCoverage extends \LibCoverage\LibCoverage
 }
 $setting = require __DIR__.'/data_for_tests/setting.php';
 $options = $setting['options_test'];
-\LibCoverage\LibCoverage::_(MyLibCoverage::_())->init($options);
+\LibCoverage\LibCoverage::G(MyLibCoverage::G())->init($options);
 
