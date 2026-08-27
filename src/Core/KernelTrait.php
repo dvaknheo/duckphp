@@ -288,7 +288,7 @@ trait KernelTrait
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
-     * @return $this
+     * @return static
      */
     //init
     public function init(array $options, ?object $context = null)
@@ -510,8 +510,9 @@ trait KernelTrait
         }
         // don't change to $this->phaseToCurrent();
         Runtime::_()->last_phase = $last_phase;
+        Runtime::_()->onException();
         ExceptionManager::CallException($ex);
-        Runtime::_()->onException($ex);
+        
     }
     protected function runChildren(): bool
     {

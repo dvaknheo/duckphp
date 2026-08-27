@@ -42,7 +42,7 @@ class Lang extends ComponentBase
      * Import default sentences. Existing translations are NOT overwritten:
      * this only fills in keys that have no sentence in the active language.
      * @param array<string, string> $sentences
-     * @return $this
+     * @return static
      */
     public function importDefaultSentences(array $sentences)
     {
@@ -52,7 +52,7 @@ class Lang extends ComponentBase
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
-     * @return $this
+     * @return static
      */
     public function init(array $options, ?object $context = null)
     {

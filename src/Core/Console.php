@@ -30,7 +30,7 @@ class Console extends ComponentBase
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
-     * @return $this
+     * @return static
      */
     public function init(array $options, ?object $context = null)
     {

@@ -79,7 +79,7 @@ class RouteHookWebInstaller extends ComponentBase
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
-     * @return $this
+     * @return static
      */
     public function init(array $options, ?object $context = null)
     {
@@ -473,7 +473,6 @@ class RouteHookWebInstaller extends ComponentBase
         $this->executeSql($db, $sql);
     }
     /**
-     * @param array<string, mixed> $ext_data
      */
     protected function getCurrentDriver(): ?string
     {

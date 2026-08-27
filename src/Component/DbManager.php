@@ -41,7 +41,7 @@ class DbManager extends ComponentBase
     /**
      * @param array<string, mixed> $options
      * @param object|null $context
-     * @return $this
+     * @return static
      */
     public function init(array $options, ?object $context = null) //return $this
     {
@@ -193,7 +193,11 @@ class DbManager extends ComponentBase
         return $this->_Db(static::TAG_READ);
     }
 
-    public function _DbCloseAll(): void
+    /**
+     * Summary of _DbCloseAll
+     * @return void
+     */
+    public function _DbCloseAll()
     {
         foreach ($this->databases as $tag => $db) {
             $db->close();
@@ -205,7 +209,7 @@ class DbManager extends ComponentBase
         if (!$this->options['database_log_sql_query']) {
             return;
         }
-        Logger::_()->log($this->options['database_log_sql_level'], '[sql]: ' . $sql, $args);
+        Logger::_()->log($this->options['database_log_sql_level'], '[sql]: ' . $sql . ' ' . var_export($args, true));
     }
     public function _SqlForPager($sql, $page_no, $page_size = 10)
     {

@@ -28,7 +28,7 @@ class CallableView extends View
      *
      * @param array<string, mixed> $options
      * @param object $context
-     * @return $this
+     * @return static
      */
     public function init(array $options, ?object $context = null)
     {

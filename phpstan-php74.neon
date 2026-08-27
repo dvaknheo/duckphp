@@ -16,5 +16,3 @@ parameters:
         - '#with no typehint specified#'
         - '#has no typehint specified#'
     # Prevents scanning given folders/files
-    excludes_analyse:
-        - src/Core/Functions.php

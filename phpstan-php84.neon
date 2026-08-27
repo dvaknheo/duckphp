@@ -16,4 +16,8 @@ parameters:
         - '#parameter .* with generic class ReflectionClass but does not specify its types#'
         - '#Call to an undefined method object::#'
         - '#is used zero times and is not analysed#'
+        -
+            identifier: method.void
+        -
+            identifier: staticMethod.void
     # Prevents scanning given folders/files
