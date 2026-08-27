@@ -13,8 +13,6 @@ parameters:
         - '#has parameter .* with no type specified#'
         - '#Property .* has no type specified#'
         - '#has no value type specified in iterable type array#'
-        - '#parameter .* with generic class ReflectionClass but does not specify its types#'
-        - '#Call to an undefined method object::#'
         - '#is used zero times and is not analysed#'
         -
             identifier: method.void

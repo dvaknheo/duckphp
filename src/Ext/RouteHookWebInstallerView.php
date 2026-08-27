@@ -20,7 +20,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title><?=__h($title)?></title>
+<title><?=__h($title??'')?></title>
 <?php if (!empty($installed)) { ?>
 <meta http-equiv="refresh" content="5;url=<?=__h(__url(''))?>">
 <?php } ?>
@@ -98,7 +98,7 @@ legend { font-weight: bold; }
         <div id="database-config">
             <p><label><?=__hl('webinstaller.driver')?>: <select name="driver" onchange="toggleDatabaseDriver(this)">
 <?php $dc_driver = (string) ($post['driver'] ?? ''); ?>
-<?php foreach ($drivers as $driver) { ?>
+<?php foreach ($drivers ??[] as $driver) { ?>
                 <option value="<?=__h($driver)?>"<?= $driver === $dc_driver ? ' selected' : '' ?>><?=__h($driver)?></option>
 <?php } ?>
             </select></label></p>
