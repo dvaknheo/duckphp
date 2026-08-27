@@ -44,10 +44,10 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         $res = Helper::User()->mergeViewData([]);
         \PHPUnit\Framework\Assert::assertSame('', $res['__view_data']['header'] ?? '');
         // mergeViewData: with header
-        MyUser::_()->options['user_view_file_header']=$path.'views/block';
+        MyUser::_()->options['user_view_file_header']=$path.'view/block';
         Helper::User()->mergeViewData($data);
         // mergeViewData: with header + footer
-        MyUser::_()->options['user_view_file_footer']=$path.'views/block';
+        MyUser::_()->options['user_view_file_footer']=$path.'view/block';
         $data3 = Helper::User()->mergeViewData($data);
         \PHPUnit\Framework\Assert::assertStringContainsString('Block', $data3['__view_data']['footer'] ?? '');
         // test user_callback_for_add_ext_view_data
@@ -68,7 +68,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         
         // show() 分支：渲染视图
         ob_start();
-        Helper::User()->_Show([], $path.'views/block');
+        Helper::User()->_Show([], $path.'view/block');
         ob_get_clean();
         
         

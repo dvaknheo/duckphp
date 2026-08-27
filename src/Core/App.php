@@ -393,7 +393,6 @@ EOT;
         $path = $this->getProjectPath();
         $path_runtime = static::SlashDir(static::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
-
     }
     public function getConfigFile(string $file): string
     {

@@ -91,6 +91,10 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         
         // getNamespaceBasename: 空 namespace 分支
         $rm = new \ReflectionMethod(\DuckPhp\Ext\DuckPhpInstaller::class, 'getNamespaceBasename');
+        
+        if (version_compare(PHP_VERSION,'8.1.0','<')) {
+            $rm->setAccessible(true);
+        }
         $installer = DuckPhpInstaller::_();
         $installer->options['namespace'] = '';
         $this->assertSame('', $rm->invoke($installer));

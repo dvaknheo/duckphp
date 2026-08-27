@@ -60,7 +60,6 @@ class ExtOptionsLoader extends ComponentBase
         $string = json_encode($this->all_ext_options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
         file_put_contents($full_file, $string);
         clearstatcache();
-
     }
     /**
      * @param array<string, mixed> $ext_options

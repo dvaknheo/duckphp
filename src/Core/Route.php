@@ -161,7 +161,6 @@ class Route extends ComponentBase
             if (($position === 'finally-inner' || $position === 'finally-outter') && in_array($callback, $this->finally_run_hook_list)) {
                 return false;
             }
-
         }
         switch ($position) {
             case 'prepend-outter':

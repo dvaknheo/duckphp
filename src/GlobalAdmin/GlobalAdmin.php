@@ -46,7 +46,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
             $flag = $this->options['admin_enable_callback_singleton'] ?? true;
             if ($flag) {
                 $callback[0] = $class::_();
-
             }
         }
         return call_user_func($callback, ...$args);

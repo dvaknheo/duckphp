@@ -41,10 +41,10 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         $res = Helper::Admin()->mergeViewData([]);
         \PHPUnit\Framework\Assert::assertSame('', $res['__view_data']['header'] ?? '');
         // mergeViewData: with header
-        MyAdmin::_()->options['admin_view_file_header']=$path.'views/block';
+        MyAdmin::_()->options['admin_view_file_header']=$path.'view/block';
         Helper::Admin()->mergeViewData($data);
         // mergeViewData: with header + footer
-        MyAdmin::_()->options['admin_view_file_footer']=$path.'views/block';
+        MyAdmin::_()->options['admin_view_file_footer']=$path.'view/block';
         $data3 = Helper::Admin()->mergeViewData($data);
         \PHPUnit\Framework\Assert::assertStringContainsString('Block', $data3['__view_data']['footer'] ?? '');
         // test admin_callback_for_add_ext_view_data
@@ -65,7 +65,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         
         // show() 分支：渲染视图
         ob_start();
-        Helper::Admin()->_Show([], $path.'views/block');
+        Helper::Admin()->_Show([], $path.'view/block');
         ob_get_clean();
         
         

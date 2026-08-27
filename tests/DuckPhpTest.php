@@ -17,7 +17,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $LibCoverage = \LibCoverage\LibCoverage::G();
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
 
-        $path_view= $path.'views/';
+        $path_view= $path.'view/';
         $options=[
             'log_sql_query'=>true,
             'path_view'=>$path_view,
@@ -108,7 +108,7 @@ PhaseContainer::RestAllContainerForTesting();
         // _Show() 三分支测试
         Route::_()->calling_class = '';
         ob_start();
-        DuckPhp::_()->_Show(['A'=>'b'], $path.'views/block');
+        DuckPhp::_()->_Show(['A'=>'b'], $path.'view/block');
         $out_show = ob_get_clean();
         $this->assertStringContainsString('Block', $out_show);
         
@@ -116,17 +116,17 @@ PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'user_provider' => FakeUser::class,
             'admin_provider' => FakeAdmin::class,
-            'path_view' => $path.'views/',
+            'path_view' => $path.'view/',
         ]);
         Route::_()->calling_class = FakeUserController::class;
         try {
-            DuckPhp::_()->_Show(['A'=>'b'], $path.'views/block');
+            DuckPhp::_()->_Show(['A'=>'b'], $path.'view/block');
         } catch (\Throwable $ex) {
         }
         // use_admin_view 分支：路由调用类实现 AdminControllerInterface
         Route::_()->calling_class = FakeAdminController::class;
         try {
-            DuckPhp::_()->_Show(['A'=>'b'], $path.'views/block');
+            DuckPhp::_()->_Show(['A'=>'b'], $path.'view/block');
         } catch (\Throwable $ex) {
         }
         Route::_()->calling_class = '';
