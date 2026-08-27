@@ -168,7 +168,7 @@ PhaseContainer::RestAllContainerForTesting();
         AppTestApp::_(new AppTestApp());
         MyApp::_(new MyApp());//->overriding_class = MyApp::class; //要这么清理状态可不好，最好不要裸用App 类以防处意外
         MyApp::_()->init($options);
-        \DuckPhp\Core\View::Show(['A'=>'b'],"view");
+        MyApp::_()->_Show(['A'=>'b'],"view");
         
         ////
         ////[[[[

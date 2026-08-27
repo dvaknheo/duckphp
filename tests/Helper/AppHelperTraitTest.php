@@ -91,9 +91,11 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
                 
         AppHelper::OnGlobalEvent('MyEvent',function(){});
         AppHelper::FireGlobalEvent('MyEvent',function(){});
-        try {
+        //try {
             AppHelper::saveExtOptions(['xdata'=>DATE(DATE_ATOM),"installed"=>"a"]);
-        } catch (\Throwable $ex) {}
+        //} catch (\Throwable $ex) {
+
+        //}
         \LibCoverage\LibCoverage::End();
 
     }
@@ -102,9 +104,10 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
 
         $new_namespace=__NAMESPACE__;
         $new_namespace.='\\';
-    
+        $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+
         $options=[
-            //'path' => $path_app,
+            'path' => $path_app,
             'is_debug' => true,
             'namespace'=> __NAMESPACE__,
         ];
