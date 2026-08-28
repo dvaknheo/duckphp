@@ -525,9 +525,9 @@ trait Route_UrlManager
         $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
         if (!$controller_resource_prefix) {
             if (isset($url) && '/' !== substr($url, 0, 1)) {
-                $base = dirname($this->_Url(''));
+                $base = $this->_Url('');
                 $base = ($base === '/' || $base === '\\')?'':$base;
-                $url = $base.'/'.$url;
+                $url = rtrim($base,'/').'/'.$url;
             }
             return $this->_Url($url);
         }

@@ -17,7 +17,7 @@ class RouteHookResource extends ComponentBase
         'path' => '',
         'path_resource' => 'res',
         'path_document' => 'public',
-        'controller_url_prefix' => '',
+        'controller_url_prefix' => null,
         'controller_resource_prefix' => '',
     ];
     public static function Hook($path_info)
@@ -26,7 +26,7 @@ class RouteHookResource extends ComponentBase
     }
     protected function initContext(object $context): void
     {
-        if ($this->options['controller_resource_prefix']) {
+        if (isset($this->options['controller_resource_prefix'])) {
             Route::_()->addRouteHook([static::class,'Hook'], 'append-outter');
         }
     }
