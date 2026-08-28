@@ -78,16 +78,12 @@ class ComponentBase // implements ComponentInterface
     //helper
     protected static function IsAbsPath($path)
     {
-        if (DIRECTORY_SEPARATOR === '/') {
-            // Linux
-            return substr($path, 0, 1) === '/';
-        }
-        // Windows
-        return (bool) preg_match('/^([a-zA-Z]:[\\\\\/]?|\\\\\\\\)/', $path); // @codeCoverageIgnore
+        $is_abs = preg_match('#^(?:/|[a-zA-Z]:[\\\\/]|\\\\{2})#', $path ?? '') > 0;
+        return $is_abs;
     }
     protected static function SlashDir($path)
     {
-        $path = ($path !== '') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
+        $path = ($path !== '') ? rtrim($path, '/\\').DIRECTORY_SEPARATOR : '';
         return $path;
     }
     public function extendFullFile($path_main, $path_sub, $file, $use_override = true)
