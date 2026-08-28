@@ -24,6 +24,7 @@
         "php": ">=7.4.0"
     },
     "require-dev": {
+        "phpunit/php-code-coverage": "^9.2.32",
         "dvaknheo/libcoverage": "^1.0.8",
         "friendsofphp/php-cs-fixer": "*",
         "phpstan/phpstan": "*",

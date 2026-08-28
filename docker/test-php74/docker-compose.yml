@@ -2,6 +2,7 @@ version: "3"
 
 services:
   fulltest:
+    image: duckphp/test-php74:latest
     build:
       context: ../..
       dockerfile: docker/test-php74/Dockerfile
@@ -9,7 +10,6 @@ services:
     volumes:
       - ../../:/DATA
       - vendor:/DATA/vendor
-      - data-for-tests74:/DATA/tests/data_for_tests
       - composer-cache:/tmp/composer
       - ./test_reports:/DATA/test_reports
       - ./test_coveragedumps:/DATA/test_coveragedumps
@@ -23,15 +23,15 @@ services:
       - XDEBUG_MODE=coverage
     extra_hosts:
       - "redis:127.0.0.1"
-    comm command:
+    command:
       - sh
       - -c
       - |
         cd /DATA &&
         rm -f /DATA/composer.lock &&
         composer update --no-interaction --prefer-dist --no-scripts &&
-        composer exec phpunitvolumes:
-
+        composer exec phpunit
+volumes:
   composer-cache:
   vendor:
-  for-tests74:
+  data-for-tests74:

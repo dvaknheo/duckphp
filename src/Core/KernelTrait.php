@@ -444,7 +444,7 @@ trait KernelTrait
             }
 
             if ('/' !== substr($options['controller_url_prefix'] ?? '', 0, 1)) {
-                $options['controller_url_prefix'] = ltrim(Route::_()->options['controller_url_prefix'].'/'.$options['controller_url_prefix'], '/');
+                $options['controller_url_prefix'] = ltrim(Route::_()->options['controller_url_prefix'].'/'.($options['controller_url_prefix'] ?? ''), '/');
             }
             $object = $class::_()->init($options, $this);
             $phase = $object->getThisPhaseName();
