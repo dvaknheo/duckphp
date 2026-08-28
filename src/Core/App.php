@@ -299,7 +299,7 @@ EOT;
             'errstr' => $errstr,
             'errfile' => $errfile,
             'errline' => $errline,
-            'error_desc' => $descs[$errno],
+            'error_desc' => $descs[$errno] ??'',
             'error_shortfile' => $error_shortfile,
         );
         $error_view = $this->options['error_debug'] ?? '';

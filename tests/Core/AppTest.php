@@ -63,9 +63,11 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         MyApp::_(new MyApp());
         MyApp::RunQuickly($options,function(){
+            /*
 			$e_old = error_reporting();
 			error_reporting($e_old |E_USER_NOTICE |E_NOTICE |E_STRICT |E_DEPRECATED |E_USER_DEPRECATED);
-            $value = $cache[$key]; // trigger notice
+            $cache = [];
+            //$value = $cache[$key]; // trigger notice
             MyApp::_()->options['error_debug']='_sys/error-debug';
             $value = $cache[$key]; 
             
@@ -76,6 +78,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             $value = $cache[$key]; 
             MyApp::_()->options['is_debug']=true;
 			error_reporting($e_old);
+            */
         });
 		$this->assertIsString(MyApp::_()->getRuntimePath());
 

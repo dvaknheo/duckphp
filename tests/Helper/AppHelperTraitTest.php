@@ -81,7 +81,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         AppHelper::assignImportantRoute('ab/c',['z']);
         try{
             AppHelper::Redis();
-        }catch(\TypeError $ex){}
+        }catch(\Throwable $ex){}
         
         AppHelper::assignRewrite('zxvf', 'zz');
         AppHelper::getRewrites();

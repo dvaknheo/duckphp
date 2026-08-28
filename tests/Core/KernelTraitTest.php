@@ -434,6 +434,7 @@ class KernelTestObjectA
 {
     static $x;
     use SingletonExTrait;
+    public $options = [];
     public static function Foo()
     {
         return "OK";

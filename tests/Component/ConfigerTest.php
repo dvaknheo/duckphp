@@ -17,6 +17,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
             'setting_file_enable'=>true,
         ];
         DuckPhp::_()->init($options);
+        $key = 'key';
         Configer::_()->_Config('config', $key, null);
         Configer::_(new Configer())->init($options);
         Configer::_()->init($options);

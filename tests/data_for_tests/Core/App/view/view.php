@@ -6,7 +6,7 @@
 <body>
 <h1>Hello DuckPhp</h1>
 <div>
-Time Now is <?php echo $var;?>
+Time Now is <?php echo $var??'';?>
 </div>
 <div>For More Take the DuckPhp-FullTest (TODO)</div>
 </body>

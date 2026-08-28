@@ -248,7 +248,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_()->options['controller_fix_mistake_path_info']=true;
         SuperGlobal::_()->reInit(['superglobal_auto_define'=>true],null);
         SuperGlobal::_()->_SERVER['REQUEST_URI']='/index.php';
-        SuperGlobal::_()->_SERVER['PATH_INFO'];
+        //SuperGlobal::_()->_SERVER['PATH_INFO'];
         SuperGlobal::_()->_SERVER['SCRIPT_NAME'] = '/index.php';
         echo Route::_()->_PathInfo();
         $_SERVER = $__SERVER;

@@ -30,7 +30,7 @@ $sql = "DROP TABLE IF EXISTS empty";
   data INTEGER NOT NULL
 )";
         DuckPhpAllInOne::Db()->execute($sql);
-
+        $id =1;
         EmptyModel::_()->test($id);
         
 $sql= 'DROP TABLE IF EXISTS empty';
