@@ -1,6 +1,7 @@
 <?php
 $full_db_file = __DIR__.'/dbtest.sqlite';
 return [
+'rpc_port' => 9801,
 'redis_list'=>
     [[
         'host'=>'redis',

@@ -12,7 +12,9 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(JsonRpcExt::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(JsonRpcExt::class);
-        
+        $setting_file = $path_app.'../../setting.php';
+        $setting = include $setting_file;
+        $port = $setting['rpc_port'] ?? '9528';
         $ret=JsonRpcExt::_()->onRpcCall([
             'method'=>TestService::class.'.foo',
             'params'=>[
@@ -46,7 +48,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'jsonrpc_namespace'=>'JsonRpc',
-            'jsonrpc_backend'=>'http://127.0.0.1:9528/json_rpc',
+            'jsonrpc_backend'=>"http://127.0.0.1:{$port}/json_rpc",
             'jsonrpc_is_debug'=>true,
             'jsonrpc_check_token_handler'=>function($ch){ var_dump('OOK');}
         ];
@@ -58,7 +60,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         $server_options=[
             'path'=>$path_app,
             'path_document'=>'',
-            'port'=>9528,
+            'port'=>$port,
             'background'=>true,
             
         ];
@@ -71,7 +73,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         JS::_()->foo();
         
         JsonRpcExt::_()->clear();
-        $options['jsonrpc_backend']=['http://localdomain.dev/json_rpc','127.0.0.1:9528'];
+        $options['jsonrpc_backend']=["http://localdomain.dev/json_rpc","127.0.0.1:{$port}"];
         JsonRpcExt::_()->init($options,null);
         JS::_()->foo();
 

@@ -40,7 +40,7 @@ class JsonExtApp extends DuckPhpAllInOne
             return;
         }
         $ret= JsonRpcExt::_()->onRpcCall(static::POST(null));
-        
+        $ret['__DATE__'] = DATE(DATE_ATOM);
         static::ShowJson($ret);
     }
 }
