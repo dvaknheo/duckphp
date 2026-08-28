@@ -2,11 +2,11 @@
 return [
     'echo_failed_content' => false,
     'path_app' => realpath(__DIR__.'/../../demo/').'/',
-    'port' => 9529,
+    'port' => 9802,
     'server_options' => [
         'path' => realpath(__DIR__.'/../../demo/').'/',
         'path_document' => 'public',
-        'port' => 9529,
+        'port' => 9802,
         'background' => true,
         'workers' => 4,
     ],

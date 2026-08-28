@@ -15,6 +15,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
     {
         $this->installer_class = $installer_class;
         $path_app = $this->getTestPath();
+        @mkdir($path_app.'runtime', 0777, true);
         @unlink($path_app.'runtime/DuckPhpData.config.json');
         clearstatcache();
         $options = array_merge([
