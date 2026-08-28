@@ -207,9 +207,9 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             $rm2->setAccessible(true);
         }
         $cmd = Command::_();
-        $this->assertSame('Use foo mode', $rm2->invoke($cmd, 'Use {{command.foo|foo}} mode'));
+        $this->assertSame('Use foo mode', $rm2->invoke($cmd, 'Use [[command.foo|foo]] mode'));
         $this->assertSame('no placeholder', $rm2->invoke($cmd, 'no placeholder'));
-        $this->assertSame('command.foo', $rm2->invoke($cmd, '{{command.foo}}'));  // 无 fallback → 返回 key 本身
+        $this->assertSame('command.foo', $rm2->invoke($cmd, '[[command.foo]]'));  // 无 fallback → 返回 key 本身
         
         // 多语言：设置 lang_handler 后 $(key|fallback) 走翻译
         $old_handler = DuckPhp::_()->options['lang_handler'] ?? null;
@@ -218,7 +218,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         };
         $descs = $rm->invoke(Command::_(), new \ReflectionClass(Console_Command::class), 'command_');
         $this->assertSame('运行服务', $descs['run']);          // 翻译命中
-        $this->assertSame('Use 运行服务 mode', $rm2->invoke($cmd, 'Use {{command.run_item|foo}} mode')); // 部分匹配翻译
+        $this->assertSame('Use 运行服务 mode', $rm2->invoke($cmd, 'Use [[command.run_item|foo]] mode')); // 部分匹配翻译
         if ($old_handler === null) {
             unset(DuckPhp::_()->options['lang_handler']);
         } else {
@@ -253,7 +253,7 @@ class Console_Command
     public function command_new(){}
     public function command_help(){}
     /**
-     * @command_desc {{command.run_item|run the server}}
+     * @command_desc [[command.run_item|run the server]]
      */
     public function command_run(){}
 }

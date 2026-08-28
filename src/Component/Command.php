@@ -103,7 +103,7 @@ EOT;
         echo json_encode($ret);
     }
     /**
-     * @command_desc {{command.routes|show routes}}
+     * @command_desc [[command.routes|show routes]]
      */
     public function command_routes(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
     {
@@ -259,7 +259,7 @@ EOT;
         return $ret;
     }
     /**
-     * Translate command description: replace {{lang_key|default_fallback}} / {{lang_key}} placeholders.
+     * Translate command description: replace [[lang_key|default_fallback]] / [[lang_key]] placeholders.
      * @param string $desc
      * @return string
      */

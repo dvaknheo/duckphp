@@ -105,13 +105,13 @@ class Lang extends ComponentBase
         return $this->format($newstr ?? $str, $args);
     }
     /**
-     * Replace all {{lang_key|fallback}} / {{lang_key}} placeholders in text (partial match).
-     * fallback may contain {word} blocks, e.g. {{some_key|just {myword}}}.
+     * Replace all [[lang_key|fallback]] / [[lang_key]] placeholders in text (partial match).
+     * fallback may contain {word} blocks, e.g. [[some_key|just {myword}]].
      * @param array<string, mixed> $args
      */
     public function replaceText(string $text, array $args = []): string
     {
-        return preg_replace_callback('/\{\{([^{}|]+)(?:\|((?:[^{}]|\{[^}]*\})*))?\}\}/', function ($m) use ($args) {
+        return preg_replace_callback('/\[\[([^\[\]|]+)(?:\|([^\]]*))?\]\]/', function ($m) use ($args) {
             $key = $m[1];
             $fallback = $m[2] ?? null;
             return $this->language($key, $args, $fallback);

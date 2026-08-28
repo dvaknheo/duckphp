@@ -55,18 +55,18 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		__l("BBB");
 		// fallback：有 fallback 且翻译未命中 → 用 fallback
 		$this->assertSame('FALLBACK_TEXT', __l("NoExists", [], 'FALLBACK_TEXT'));
-		// __langtext：部分匹配 {{key|fallback}}
-		$this->assertSame('Use foo mode', __langtext("Use {{command.foo|foo}} mode"));
-		// __langtext：无 fallback {{key}} → 未命中返回 key 本身
-		$this->assertSame('command.bar', __langtext("{{command.bar}}"));
+		// __langtext：部分匹配 [[key|fallback]]
+		$this->assertSame('Use foo mode', __langtext("Use [[command.foo|foo]] mode"));
+		// __langtext：无 fallback [[key]] → 未命中返回 key 本身
+		$this->assertSame('command.bar', __langtext("[[command.bar]]"));
 		// __langtext：无占位符原样返回
 		$this->assertSame('plain text', __langtext('plain text'));
 		// __langtext：fallback 含 {word} 块
-		$this->assertSame('just {myword}', __langtext("{{some_key|just {myword}}}"));
+		$this->assertSame('just {myword}', __langtext("[[some_key|just {myword}]]"));
 		// Lang::replaceText：部分匹配混排
-		$this->assertSame('Use foo mode', Lang::_()->replaceText('Use {{command.foo|foo}} mode'));
-		// replaceText：{{key}} 无 fallback → 未命中返回 key 本身
-		$this->assertSame('command.bar', Lang::_()->replaceText('{{command.bar}}'));
+		$this->assertSame('Use foo mode', Lang::_()->replaceText('Use [[command.foo|foo]] mode'));
+		// replaceText：[[key]] 无 fallback → 未命中返回 key 本身
+		$this->assertSame('command.bar', Lang::_()->replaceText('[[command.bar]]'));
 		// replaceText：无占位符原样
 		$this->assertSame('plain text', Lang::_()->replaceText('plain text'));
 		
@@ -111,8 +111,8 @@ PhaseContainer::RestAllContainerForTesting();
         echo __l("IMNOEXITSADSF");
         // replaceText：翻译命中（lang_simple_mode_only_sentences，lang_final=zh_CN）
         Lang::_()->options['lang_final'] = 'zh_CN';
-        $this->assertSame('zh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CN', Lang::_()->replaceText('{{AAA|fallback}}'));
-        $this->assertSame('fallback', Lang::_()->replaceText('{{NOEXIT|fallback}}'));
+        $this->assertSame('zh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CN', Lang::_()->replaceText('[[AAA|fallback]]'));
+        $this->assertSame('fallback', Lang::_()->replaceText('[[NOEXIT|fallback]]'));
         
         MyLang::_()->manual_detectLanguage();
         
