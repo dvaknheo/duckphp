@@ -8,10 +8,11 @@ services:
     working_dir: /DATA
     volumes:
       - ../../:/DATA
-      - ../../composer-test-php74.json:/DATA/composer.json
-      - ../../composer-test-php74.lock:/DATA/composer.lock
       - vendor:/DATA/vendor
+      - data-for-tests74:/DATA/tests/data_for_tests
       - composer-cache:/tmp/composer
+      - ./test_reports:/DATA/test_reports
+      - ./test_coveragedumps:/DATA/test_coveragedumps
     entrypoint:
       - /bin/sh
       - -c
@@ -19,14 +20,18 @@ services:
       - docker-entrypoint
     environment:
       - COMPOSER_HOME=/tmp/composer
+      - XDEBUG_MODE=coverage
     extra_hosts:
       - "redis:127.0.0.1"
-    command: >
-      sh -c "
-        ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist) &&
-        composer run-script --timeout=0 fulltest
-      "
+    comm command:
+      - sh
+      - -c
+      - |
+        cd /DATA &&
+        rm -f /DATA/composer.lock &&
+        composer update --no-interaction --prefer-dist --no-scripts &&
+        composer exec phpunitvolumes:
 
-volumes:
   composer-cache:
   vendor:
+  for-tests74:

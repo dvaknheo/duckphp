@@ -11,7 +11,7 @@
     "authors": [
         {
             "name": "davknheo",
-            "email": "davknheo@qq.com"
+            "email": "dvaknheo@qq.com"
         }
     ],
 	"version": "1.4.1",
@@ -25,19 +25,11 @@
     },
     "require-dev": {
         "dvaknheo/libcoverage": "^1.0.8",
-        "friendsofphp/php-cs-fixer": "2.18.6",
-        "phpunit/phpunit": "^9.6.36",
-        "phpstan/phpstan": "^0.12.35"
+        "friendsofphp/php-cs-fixer": "*",
+        "phpstan/phpstan": "*",
+        "phpstan/phpstan-phpunit": "*",
+        "phpunit/phpunit":"*"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../libcoverage",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "bin": [
         "bin/duckphp"
     ],
