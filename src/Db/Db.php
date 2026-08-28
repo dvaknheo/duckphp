@@ -35,7 +35,7 @@ class Db implements DbInterface
         $config = $this->config;
         $driver_options = $config['driver_options'] ?? [];
         $driver_options = array_replace_recursive($this->driver_options, $driver_options);
-        $this->pdo = new \PDO($config['dsn'], $config['username'], $config['password'], $driver_options);
+        $this->pdo = new \PDO($config['dsn'], $config['username'] ?? null, $config['password'] ?? null, $driver_options);
         [$driver,$_] = explode(":", $config['dsn']);
         $this->driver = $driver;
     }

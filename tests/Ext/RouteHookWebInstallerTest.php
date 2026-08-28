@@ -323,7 +323,6 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
         $_POST = [];
         [$ret, $out] = $this->hook('install');
         $this->assertStringContainsString('CustomBlock:', $out);
-
         ///////////////// child app: local_redis / local_database written (non-root)
         $parent = new WebInstallerApp();
         DuckPhp::_($parent);
