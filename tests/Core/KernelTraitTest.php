@@ -141,8 +141,8 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         App::_()->serve();
         $phase=App::Phase();
         
-        App::_()->getThisChild(KernelTestApp2::class);
-        App::_()->getThisChild(KernelTestApp3::class);
+        App::_()->toThisChild(KernelTestApp2::class);
+        App::_()->toThisChild(KernelTestApp3::class);
         App::Phase($phase);
         $last_phase = App::_()->getLastPhase();
         /////////////////////
@@ -319,8 +319,8 @@ PhaseContainer::RestAllContainerForTesting();
         KernelTestApp3::_()->isCli();
         
         KernelTestApp::Phase(KernelTestApp::Root()->getThisPhaseName());
-        KernelTestApp::_()->getThisChild('NotExsits');
-        KernelTestApp::_()->getThisChild(KernelTestApp3::class);
+        KernelTestApp::_()->toThisChild('NotExsits');
+        KernelTestApp::_()->toThisChild(KernelTestApp3::class);
         KernelTestApp3::_()->getThisParent();
         
 PhaseContainer::RestAllContainerForTesting();

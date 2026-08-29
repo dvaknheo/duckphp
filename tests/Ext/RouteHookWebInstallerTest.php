@@ -344,7 +344,7 @@ class RouteHookWebInstallerTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ]);
-        $child = $parent->getThisChild(WebInstallerChildApp::class);
+        $child = $parent->toThisChild(WebInstallerChildApp::class);
         $this->assertNotNull($child);
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = [

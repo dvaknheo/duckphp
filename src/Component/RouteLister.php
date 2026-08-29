@@ -210,7 +210,7 @@ class RouteLister extends ComponentBase
             $parent_app = App::_();
             $last_phase = App::Phase();
             foreach ($parent_app->options['app'] as $class => $app_options) {
-                if ($parent_app->getThisChild($class) === null) {
+                if ($parent_app->toThisChild($class) === null) {
                     // e.g. app entry is false (disabled)
                     continue;
                 }

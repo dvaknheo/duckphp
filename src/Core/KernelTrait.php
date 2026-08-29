@@ -196,7 +196,7 @@ trait KernelTrait
         $class = self::class;
         return $class::_();
     }
-    public function getThisChild($class)
+    public function toThisChild($class)
     {
         $phase = $this->options['app'][$class]['__phase__'] ?? null;
         if (!isset($phase)) {
@@ -519,7 +519,7 @@ trait KernelTrait
         $flag = false;
 
         foreach ($this->options['app'] as $class => $options) {
-            $object = $this->getThisChild($class);
+            $object = $this->toThisChild($class);
             $flag = $object->serve();
             if ($flag) {
                 break;
