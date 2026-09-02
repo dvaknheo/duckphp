@@ -1,4 +1,4 @@
-# DuckPhp\FastInstaller\SqlDumper
+# DuckPhp\Ext\SqlDumper
 
 SQL 导出与导入组件。
 
@@ -27,7 +27,7 @@ SQL 导出与导入组件。
 ### 导出 SQL
 
 ```php
-use DuckPhp\FastInstaller\SqlDumper;
+use DuckPhp\\Ext\\SqlDumper;
 
 SqlDumper::_()->dump();
 ```
@@ -37,7 +37,7 @@ SqlDumper::_()->dump();
 ### 导入 SQL
 
 ```php
-use DuckPhp\FastInstaller\SqlDumper;
+use DuckPhp\\Ext\\SqlDumper;
 
 SqlDumper::_()->install(true);  // 强制导入，会先执行 DROP TABLE IF EXISTS
 SqlDumper::_()->install();      // 普通导入
@@ -130,6 +130,5 @@ public $options = [
 
 ## 相关链接
 
-- [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md)
-- [DuckPhp\FastInstaller\Supporter](FastInstaller-Supporter.md)
+- [DuckPhp\Ext\SqlDumperSupporter](Ext-SqlDumperSupporter.md)
 - [DuckPhp\Component\DbManager](Component-DbManager.md)

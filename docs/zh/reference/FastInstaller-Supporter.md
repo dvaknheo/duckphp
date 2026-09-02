@@ -101,5 +101,5 @@ public $options = [
 - [DuckPhp\FastInstaller\SupporterByPgsql](FastInstaller-SupporterByPgsql.md)
 - [DuckPhp\FastInstaller\SupporterBySqlite](FastInstaller-SupporterBySqlite.md)
 - [DuckPhp\FastInstaller\DatabaseInstaller](FastInstaller-DatabaseInstaller.md)
-- [DuckPhp\FastInstaller\SqlDumper](FastInstaller-SqlDumper.md)
+- [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md)
 - [DuckPhp\Component\DbManager](Component-DbManager.md)

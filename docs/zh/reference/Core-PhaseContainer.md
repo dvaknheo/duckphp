@@ -131,4 +131,4 @@ PhaseContainer::GetContainer()->dumpAllObject();
 
 ## 相关链接
 
-- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
+- [DuckPhp\Core\SingletonTrait](Core-SingletonExTrait.md)

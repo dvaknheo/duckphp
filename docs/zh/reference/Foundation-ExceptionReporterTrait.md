@@ -64,5 +64,5 @@ MyExceptionReporter::OnException($exception);
 
 ## 相关链接
 
-- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
+- [DuckPhp\Core\SingletonTrait](Core-SingletonExTrait.md)
 - [DuckPhp\Core\App](Core-App.md)

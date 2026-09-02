@@ -4,7 +4,7 @@
 
 ## 简介
 
-`PhaseProxy` 用于在调用某个对象的方法前临时切换到指定相位（应用上下文），调用完成后自动恢复原始相位。它常与 `ZCallTrait` 配合使用，解决跨应用或跨相位调用单例对象的问题。
+`PhaseProxy` 用于在调用某个对象的方法前临时切换到指定相位（应用上下文），调用完成后自动恢复原始相位。它解决跨应用或跨相位调用单例对象的问题。
 
 ## 使用场景
 
@@ -31,29 +31,6 @@ $proxy = PhaseProxy::CreatePhaseProxy(\OtherApp\System\App::class, \OtherApp\Ser
 
 ```php
 $proxy = PhaseProxy::CreatePhaseProxy(null, \OtherApp\Service\UserService::class);
-```
-
-## 与 ZCallTrait 配合使用
-
-`ZCallTrait` 提供 `_Z()` 方法，简化跨相位调用：
-
-```php
-namespace OtherApp\Service;
-
-use DuckPhp\Component\ZCallTrait;
-
-class UserService
-{
-    use ZCallTrait;
-    
-    public function getUser($id)
-    {
-        // ...
-    }
-}
-
-// 在另一个相位中调用
-$username = UserService::_Z(\OtherApp\System\App::class)->getUser(1);
 ```
 
 ## 使用方式
@@ -105,5 +82,4 @@ $service = $proxy->self();  // 返回 UserService::_()
 
 ## 相关链接
 
-- [DuckPhp\Component\ZCallTrait](Component-ZCallTrait.md)
 - [DuckPhp\Core\App](Core-App.md)

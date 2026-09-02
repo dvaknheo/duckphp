@@ -33,4 +33,4 @@ interface ComponentInterface
 ## 相关链接
 
 - [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
+- [DuckPhp\Core\SingletonTrait](Core-SingletonExTrait.md)

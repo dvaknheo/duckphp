@@ -109,5 +109,4 @@ class App extends DuckPhp
 ## 相关链接
 
 - [DuckPhp\Component\DbManager](Component-DbManager.md)
-- [DuckPhp\Component\ZCallTrait](Component-ZCallTrait.md)
-- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
+- [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md)

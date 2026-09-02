@@ -190,5 +190,5 @@ class App extends \DuckPhp\DuckPhp
 ## 相关链接
 
 - [DuckPhp\Db\Db](Db-Db.md)
-- [DuckPhp\Foundation\ModelHelper](Foundation-ModelHelper.md)
+- [DuckPhp\Foundation\Model\Helper](Foundation-Model-Helper.md)
 - [DuckPhp\Core\App](Core-App.md)

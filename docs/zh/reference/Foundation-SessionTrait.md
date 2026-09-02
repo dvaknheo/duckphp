@@ -81,7 +81,7 @@ class App extends DuckPhp
 
 ## 相关链接
 
-- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
+- [DuckPhp\Core\SingletonTrait](Core-SingletonExTrait.md)
 - [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
 - [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
 - [DuckPhp\Core\App](Core-App.md)

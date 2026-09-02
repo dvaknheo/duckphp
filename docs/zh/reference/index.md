@@ -24,13 +24,12 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 核心应用初始化流程 Trait，定义 `kernel_options` 与生命周期事件。 |
 | [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) | 所有组件的基类，提供选项合并、单例容器等通用机制。 |
 | [DuckPhp\Core\ComponentInterface](Core-ComponentInterface.md) | 组件接口。 |
-| [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md) | 单例模式 Trait。 |
+| [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md) | 可变单例 Trait。 |
 | [DuckPhp\Core\PhaseContainer](Core-PhaseContainer.md) | 相位容器，管理应用实例与子应用的单例对象。 |
 | [DuckPhp\Core\Route](Core-Route.md) | 默认 MVC 路由组件，负责解析 PATH_INFO 并调用控制器。 |
 | [DuckPhp\Core\Runtime](Core-Runtime.md) | 运行期数据保存组件，管理输出缓冲与运行状态。 |
 | [DuckPhp\Core\Logger](Core-Logger.md) | 日志组件，按模板写入文件。 |
 | [DuckPhp\Core\View](Core-View.md) | 视图组件，负责模板渲染与视图文件查找。 |
-| [DuckPhp\Ext\EventManager](Ext-EventManager.md) | 事件管理组件。 |
 | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 异常与错误处理组件。 |
 | [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) | 超全局变量上下文组件，支持隔离与保存。 |
 | [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md) | 系统同名函数替换 Trait，便于测试与拦截。 |
@@ -55,6 +54,7 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Component\Configer](Component-Configer.md) | 配置读取组件，从 `config/` 目录加载 PHP 配置。 |
 | [DuckPhp\Component\DbManager](Component-DbManager.md) | 数据库管理组件，支持多库与读写分离。 |
 | [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md) | 额外选项加载组件，支持 `DuckPhpApps.config.php`。 |
+| [DuckPhp\Component\GlobalEvent](Component-GlobalEvent.md) | 全局事件组件。 |
 | [DuckPhp\Component\Lang](Component-Lang.md) | 多语言（i18n）组件。 |
 | [DuckPhp\Component\Pager](Component-Pager.md) | 分页组件，渲染 HTML 分页条。 |
 | [DuckPhp\Component\PagerInterface](Component-PagerInterface.md) | 分页接口。 |
@@ -62,12 +62,11 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) | 相位代理组件。 |
 | [DuckPhp\Component\RedisCache](Component-RedisCache.md) | 基于 Redis 的缓存组件。 |
 | [DuckPhp\Component\RedisManager](Component-RedisManager.md) | Redis 管理器，支持多 Redis 实例。 |
-| [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md) | 路由钩子，检查维护与安装状态。 |
 | [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 无 PATH_INFO 兼容模式组件。 |
 | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 资源路由钩子，处理静态资源请求。 |
 | [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md) | 路由重写组件。 |
 | [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md) | 路由映射组件，支持正则与占位符路由。 |
-| [DuckPhp\Component\ZCallTrait](Component-ZCallTrait.md) | 调用 Trait。 |
+| [DuckPhp\Component\RouteLister](Component-RouteLister.md) | 路由枚举组件，用于列出所有路由。 |
 
 ---
 
@@ -80,9 +79,9 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 可接受函数调用的视图组件。 |
 | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 项目安装器，支持 `new`、`show` 等命令。 |
 | [DuckPhp\Ext\EmptyView](Ext-EmptyView.md) | 空视图组件，仅填充数据不输出。 |
+| [DuckPhp\Ext\EventManager](Ext-EventManager.md) | 事件管理组件。 |
 | [DuckPhp\Ext\ExceptionWrapper](Ext-ExceptionWrapper.md) | 异常包裹组件。 |
 | [DuckPhp\Ext\ExtendableStaticCallTrait](Ext-ExtendableStaticCallTrait.md) | 可扩展静态调用的 Trait。 |
-| [DuckPhp\Ext\FinderForController](Ext-FinderForController.md) | 控制器枚举组件。 |
 | [DuckPhp\Ext\HookChain](Ext-HookChain.md) | 把回调扩展成链的类。 |
 | [DuckPhp\Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md) | JsonRpc 客户端基类。 |
 | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | JsonRpc 远程调用组件。 |
@@ -96,8 +95,14 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) | 多目录基准模式路由钩子。 |
 | [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) | 函数模式路由钩子。 |
 | [DuckPhp\Ext\RouteHookManager](Ext-RouteHookManager.md) | 路由钩子管理器。 |
+| [DuckPhp\Ext\RouteHookWebInstaller](Ext-RouteHookWebInstaller.md) | Web 安装器路由钩子。 |
+| [DuckPhp\Ext\RouteHookWebInstallerView](Ext-RouteHookWebInstallerView.md) | Web 安装器视图。 |
+| [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 数据库结构导出组件。 |
+| [DuckPhp\Ext\SqlDumperSupporter](Ext-SqlDumperSupporter.md) | SQL 导出支持基类。 |
+| [DuckPhp\Ext\SqlDumperSupporterByMysql](Ext-SqlDumperSupporterByMysql.md) | MySQL SQL 导出支持类。 |
+| [DuckPhp\Ext\SqlDumperSupporterByPgsql](Ext-SqlDumperSupporterByPgsql.md) | PostgreSQL SQL 导出支持类。 |
+| [DuckPhp\Ext\SqlDumperSupporterBySqlite](Ext-SqlDumperSupporterBySqlite.md) | SQLite SQL 导出支持类。 |
 | [DuckPhp\Ext\StaticReplacer](Ext-StaticReplacer.md) | 适配协程的静态替换写法类。 |
-| [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md) | 严格检查模式组件。 |
 
 ---
 
@@ -110,23 +115,6 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Db\Db](Db-Db.md) | 数据库类。 |
 | [DuckPhp\Db\DbAdvanceTrait](Db-DbAdvanceTrait.md) | 为 `Db` 增加高级功能的 Trait。 |
 | [DuckPhp\Db\DbInterface](Db-DbInterface.md) | `Db` 实现的接口。 |
-
----
-
-## 命令行安装器
-
-`DuckPhp\FastInstaller` 命名空间下的安装程序相关类。
-
-| 类 | 说明 |
-|---|---|
-| [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 安装程序入口。 |
-| [DuckPhp\FastInstaller\DatabaseInstaller](FastInstaller-DatabaseInstaller.md) | 数据库安装器。 |
-| [DuckPhp\FastInstaller\RedisInstaller](FastInstaller-RedisInstaller.md) | Redis 安装器。 |
-| [DuckPhp\FastInstaller\SqlDumper](FastInstaller-SqlDumper.md) | 数据库结构导出器。 |
-| [DuckPhp\FastInstaller\Supporter](FastInstaller-Supporter.md) | 安装器支持基类。 |
-| [DuckPhp\FastInstaller\SupporterByMysql](FastInstaller-SupporterByMysql.md) | MySQL 支持类。 |
-| [DuckPhp\FastInstaller\SupporterByPgsql](FastInstaller-SupporterByPgsql.md) | PostgreSQL 支持类。 |
-| [DuckPhp\FastInstaller\SupporterBySqlite](FastInstaller-SupporterBySqlite.md) | SQLite 支持类。 |
 
 ---
 
@@ -159,18 +147,21 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | 类 | 说明 |
 |---|---|
 | [DuckPhp\Foundation\Helper](Foundation-Helper.md) | 助手集合类。 |
+| [DuckPhp\Foundation\Business\Base](Foundation-Business-Base.md) | 业务层基类。 |
 | [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md) | 业务助手类。 |
+| [DuckPhp\Foundation\Controller\ActionBase](Foundation-Controller-ActionBase.md) | 控制器 Action 基类。 |
+| [DuckPhp\Foundation\Controller\AdminControllerBase](Foundation-Controller-AdminControllerBase.md) | 管理员控制器基类。 |
+| [DuckPhp\Foundation\Controller\Base](Foundation-Controller-Base.md) | 控制器层基类。 |
 | [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md) | 控制器助手类。 |
+| [DuckPhp\Foundation\Controller\UserControllerBase](Foundation-Controller-UserControllerBase.md) | 用户控制器基类。 |
+| [DuckPhp\Foundation\Model\Base](Foundation-Model-Base.md) | 模型层基类。 |
 | [DuckPhp\Foundation\Model\Helper](Foundation-Model-Helper.md) | 模型助手类。 |
 | [DuckPhp\Foundation\System\Helper](Foundation-System-Helper.md) | 系统助手类。 |
 | [DuckPhp\Foundation\ExceptionReporterTrait](Foundation-ExceptionReporterTrait.md) | 错误报告 Trait。 |
-| [DuckPhp\Foundation\BusinessTrait](Foundation-BusinessTrait.md) | 简单业务 Trait。 |
-| [DuckPhp\Foundation\ControllerTrait](Foundation-ControllerTrait.md) | 简单控制器 Trait。 |
 | [DuckPhp\Foundation\ExceptionTrait](Foundation-ExceptionTrait.md) | 简单异常 Trait。 |
 | [DuckPhp\Foundation\ModelTrait](Foundation-ModelTrait.md) | 简单模型 Trait。 |
 | [DuckPhp\Foundation\SessionTrait](Foundation-SessionTrait.md) | 简单会话 Trait。 |
 | [DuckPhp\Foundation\SingletonTrait](Foundation-SingletonTrait.md) | 简单单例 Trait。 |
-| [DuckPhp\Foundation\FastInstallerTrait](Foundation-FastInstallerTrait.md) | 快速安装器助手 Trait。 |
 
 ---
 
@@ -183,7 +174,6 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | 类 | 说明 |
 |---|---|
 | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 全局管理员组件。 |
-| [DuckPhp\GlobalAdmin\GlobalAdminTrait](GlobalAdmin-GlobalAdminTrait.md) | 管理员 Trait：事件/服务/视图。 |
 | [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) | 管理员操作接口。 |
 | [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) | 管理员控制器接口（标记）。 |
 | [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | 管理员服务接口。 |
@@ -194,7 +184,6 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | 类 | 说明 |
 |---|---|
 | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 全局用户组件。 |
-| [DuckPhp\GlobalUser\GlobalUserTrait](GlobalUser-GlobalUserTrait.md) | 用户 Trait：事件/服务/视图。 |
 | [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) | 用户操作接口。 |
 | [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 用户控制器接口（标记）。 |
 | [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | 用户服务接口。 |

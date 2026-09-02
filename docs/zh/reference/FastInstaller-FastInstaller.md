@@ -189,7 +189,7 @@ public $options = [
 
 - [DuckPhp\FastInstaller\DatabaseInstaller](FastInstaller-DatabaseInstaller.md)
 - [DuckPhp\FastInstaller\RedisInstaller](FastInstaller-RedisInstaller.md)
-- [DuckPhp\FastInstaller\SqlDumper](FastInstaller-SqlDumper.md)
+- [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md)
 - [DuckPhp\Core\App](Core-App.md)
 - [DuckPhp\Core\Console](Core-Console.md)
 - [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)

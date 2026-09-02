@@ -139,5 +139,5 @@ public $options = [
 ## 相关链接
 
 - [DuckPhp\Core\ComponentInterface](Core-ComponentInterface.md)
-- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
+- [DuckPhp\Core\SingletonTrait](Core-SingletonExTrait.md)
 - [DuckPhp\Core\App](Core-App.md)

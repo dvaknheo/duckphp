@@ -266,7 +266,7 @@ protected $kernel_options = [
 - [DuckPhp\Component\RedisManager](Component-RedisManager.md)
 - [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md)
 - [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md)
-- [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
+- [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 - [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md)
 - [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 - [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)

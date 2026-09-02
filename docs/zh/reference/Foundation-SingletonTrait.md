@@ -47,4 +47,4 @@ MyService::_()->doSomething();
 
 ## 相关链接
 
-- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
+- [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md)
