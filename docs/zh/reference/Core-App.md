@@ -1,285 +1,248 @@
 # DuckPhp\Core\App
 
-DuckPHP 核心应用类。
+DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力，是 `DuckPhp` / `DuckPhpAllInOne` 的父类。
 
 ## 简介
 
-`App` 继承自 `ComponentBase` 并使用了 `KernelTrait`，是 DuckPHP 框架的核心应用类。它在 `KernelTrait` 提供的生命周期之上，进一步初始化了 `Logger`、`SuperGlobal`、`SystemWrapper`、`View` 等核心组件，并提供了默认的 404、异常和开发错误处理行为。
+`App` 位于 `DuckPhp\Core\App`：`class App extends ComponentBase { use KernelTrait }`，并对外部可见成员做了一层整理。
 
-`DuckPhp\DuckPhp` 是 `App` 的直接子类，标准应用通常继承 `DuckPhp\DuckPhp` 而不是直接使用 `App`。
+- 它把 KernelTrait 里几个“装组件 / 跑一次请求”的入口改名后 override，从而在工作骨干里插入框架的静态组件（`SystemWrapper`、`Logger`、`CoreHelper`、`Route`、`View`、`SuperGlobal`）与设置(supplier→setting)加载。
+- 构造时把来自 kernel / core / 用户 options 按 `array_replace_recursive` 合并进 `public $options`，并清空临时属性；`core_options` 设定了若干个进程级/错误/设置文件默认配置。
+- 还提供把 Framework 公共能力做网关的一组静态/实例便利：`Setting()/version()/Platform()`、命名 debug 判断 `IsDebug/IsRealDebug`、错误页/维护页回调、可覆盖文件查询、URL/lang 简单口味等。
+
+一般项目并不直接 new `App`；通常你定义一个 `class XApp extends DuckPhp\DuckPhp` 或 `DuckPhpAllInOne`，其父链最终会用本类的那些组件/设置。只有在你**自行组装底层**时才直接 extend `App`。
+
+<br/>(类源里 `require_once __DIR__.'/Functions.php'` 已含于本入口。)
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class App extends ComponentBase`
+- 使用 Trait：`KernelTrait`
+- 用 `as` 改名再 override：`initComponents`→`Kernel_initComponents`、`prepareServe`→…、`initComponentsOfRoot`→…、`Inner`、`Dynmic`；然后在自身方法里调用 `Kernel_xxx()` 保持父骨架行为。
+- 常量：`VERSION=1.4.1` 、 `EXT_SKIP_INIT=-1`、`EXT_DISABLE=0`、`EXT_DEFAULT=1`、`EXT_FOLLOW_APP=2`、`EXT_RENEW=3`。
+- 公共属性：`$options`、`$setting`(从配置文件装载)、加上 Kernel 内核态字段。
 
 ## 选项
 
-### 核心选项（core_options）
+`App::core_options`（默认）你几乎总能改；下表为实际生效的键：
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `path_runtime` | `'runtime'` | 运行时目录。 |
-| `alias` | `null` | 子应用别名，用于覆盖文件路径解析。 |
-| `default_exception_do_log` | `true` | 是否记录默认异常日志。 |
-| `close_resource_at_output` | `false` | 是否在输出后关闭资源。 |
-| `html_handler` | `null` | 自定义 HTML 处理函数。 |
-| `lang_handler` | `null` | 自定义语言处理函数。 |
-| `error_404` | `null` | 404 视图文件或回调。 |
-| `error_500` | `null` | 500 错误视图文件或回调。 |
-
-### 继承自 KernelTrait 的选项
-
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `path` | `null` | 项目根路径。 |
-| `override_class` | `null` | 覆盖类。 |
-| `cli_enable` | `true` | 是否启用 CLI。 |
-| `is_debug` | `false` | 调试模式。 |
-| `ext` | `[]` | 主扩展列表。 |
-| `app` | `[]` | 子应用列表。 |
-| `skip_404` | `false` | 是否跳过 404 处理。 |
-| `skip_exception_check` | `false` | 是否跳过异常检查。 |
-| `on_init` | `null` | 初始化回调。 |
-| `namespace` | `null` | 项目命名空间。 |
-| `setting_file` | `'config/DuckPhpSettings.config.php'` | Setting 文件路径。 |
-| `setting_file_enable` | `true` | 是否启用 Setting 文件。 |
-| `use_env_file` | `false` | 是否加载 `.env` 文件。 |
-| `exception_reporter` | `null` | 异常报告器。 |
-| `options_file` | `'config/DuckPhpOptions.config.php'` | 选项文件路径。 |
-| `options_file_enable` | `false` | 是否启用选项文件。 |
-| `path_installed_options` | `'config'` | 已安装选项目录。 |
-| `installed_options_file` | `'DuckPhpInstalled.config.php'` | 已安装选项文件。 |
-| `installed_options_enable` | `false` | 是否启用已安装选项。 |
-| `cli_command_classes` | `[]` | CLI 命令类。 |
-| `cli_command_prefix` | `null` | CLI 命令前缀。 |
-| `cli_command_method_prefix` | `'command_'` | CLI 方法前缀。 |
+| `path_runtime` | `'runtime'` | 运行期相对项目根目录（或绝对路径）。`getRuntimePath()` 返回。 |
+| `path_config` | `'config'` | 配置文件目录（`getConfigFile()` 基于它+Phase覆盖查找）。 |
+| `default_exception_do_log` | `true` | 默认异常处理器是否写日志。 |
+| `close_resource_at_output` | `false` | 输出结束是否统一关闭/回收资源（默认关闭）。 |
+| `html_handler` | `null` | （预留/扩展用）任意 html 处理器回调。 |
+| `lang_handler` | `null` | 传入后 `lang()`/`langText()` 将优先走它，而不再 fallback 简易替换。 |
+| `is_maintain` | `false` | 维护标记。命中时 `prepareServe()` 渲维护页（`error_maintain`）。 |
+| `error_404` | `null` | 404 时用（路径或可调用）。null → 内置 404 占位/开发信息。 |
+| `error_500` | `null` | 异常默认总页（路径或可调用）。null → debug 下详细、非 debug 精简。 |
+| `error_debug` | `null` | 开发期错误视图/可调用。null → 内置 fieldset 回执。 |
+| `error_maintain` | `null` | 维护页视图/可调用。null → 内置 “Maintaining.”。 |
+| `setting_file` | `'config/DuckPhpSettings.config.php'` | Setting 文件（相对根或绝对）。 |
+| `setting_file_ignore_exists` | `true` | 设置文件缺失时是否忽略（并不抛错）。 |
+| `setting_file_enable` | `true` | 是否加载设置文件。 |
+| `use_env_file` | `false` | 为真则在 loadSetting 一并读根 `.env`(INI) 合并。 |
+| `installed` | `false` | 应用是否“已安装”（false 会触发安装跳转）。 |
+| `url_install` | `'install'` | 未安装时跳到的安装 URL。 |
 
 ## 使用方式
 
-### 定义应用
+在真正的项目，写自己 App 最常用 `DuckPhp`；如果连 DuckPhp 那层也不要，可这样继承：
 
 ```php
-use DuckPhp\Core\App;
+    namespace Demo\System;
+    use DuckPhp\Core\App;
 
-class MyApp extends App
-{
+    class App extends App {
     public $options = [
-        'path' => __DIR__ . '/../',
-        'is_debug' => true,
-        'namespace' => 'MyApp',
+    'namespace' => 'Demo',
+    'path'      => __DIR__.'/../..',
+    'error_404' => '_sys/error_404',
     ];
-}
 
-MyApp::RunQuickly();
+    protected function onPrepare(): void { parent::onPrepare(); /* 预整理 */ }
+    }
 ```
 
-### 获取版本
+然后可用 `Demo\System\App::RunQuickly([])` 启动（Kernel 提供）——它会走 Settings 已读 + 组件装载 + root 路由环节。
+
+### 静态便捷在业务/模板里的入口
 
 ```php
-echo MyApp::_()->version();
+    \App::version();      // (Demo\System\App)1.4.1
+    \App::Setting('site_name','');  //读取 setting
+    \App::_()->getRuntimePath();    // .../runtime/
+    \App::IsDebug();                // 是否 debug
+    \App::Platform();               // duckphp_platform(可直接看到是什么环境)
 ```
 
-### 自定义 404 页面
+### 加载顺序摘要
 
-```php
-class MyApp extends App
-{
-    public $options = [
-        'error_404' => 'error-404', // 对应 view/error-404.php
-    ];
-}
-```
-
-### 自定义 500 页面
-
-```php
-class MyApp extends App
-{
-    public $options = [
-        'error_500' => 'error-500', // 对应 view/error-500.php
-        'error_debug' => 'error-debug', // 对应 view/error-debug.php
-    ];
-}
-```
-
-### 检查调试模式
-
-```php
-if (MyApp::IsDebug()) {
-    // 调试模式
-}
-```
+- `init()`内：kernel 完成 options/phase/exception → `onPrepare()`（root 时会读 `.env`+Setting 到 `$this->setting`）→ `initComponents…` 由 App 插入 System components → `…`后续 Kernel 流程一致。
+- `serve()` 前：`prepareServe()` 维护态会先输出维护页。
 
 ## 配置示例
 
-### 基础 Web 应用
-
 ```php
-class MyApp extends App
-{
+    class App extends \DuckPhp\DuckPhp {
     public $options = [
-        'path' => __DIR__ . '/../',
-        'is_debug' => true,
-        'namespace' => 'MyApp',
-        'error_404' => 'error-404',
-        'error_500' => 'error-500',
+    'path_runtime'   => 'runtime',
+    'setting_file_enable' => true,
+    'setting_file'    => 'config/site.config.php',
+    'use_env_file'    => true,
+    'error_404'       => '_sys/error_404',
+    'error_500'       => '_sys/error_500',
+    'error_maintain'  => '_sys/maintain',
+    'is_maintain'     => false,
+    'installed'       => true,
     ];
-}
-```
-
-### 禁用 Setting 文件
-
-```php
-class MyApp extends App
-{
-    public $options = [
-        'setting_file_enable' => false,
-    ];
-}
-```
-
-### 自定义错误回调
-
-```php
-class MyApp extends App
-{
-    public $options = [
-        'error_404' => function () {
-            echo 'Custom 404 Page';
-        },
-        'error_500' => function ($ex) {
-            echo 'Custom 500: ' . $ex->getMessage();
-        },
-    ];
-}
+    }
 ```
 
 ## 注意事项
 
-1. `App` 构造时会将 `kernel_options`、`core_options`、`common_options` 和 `$options` 合并为一个统一的 `$options` 数组，之后不再保留 `kernel_options` 等属性。
-2. 核心组件 `Logger`、`SuperGlobal`、`SystemWrapper`、`View` 在 `doInitComponents()` 中初始化。
-3. `_On404()` 默认行为：
-   - 发送 `HTTP/1.1 404 Not Found` 头。
-   - 如果 `error_404` 是回调则执行回调。
-   - 否则输出默认 404 信息，调试模式下显示路由错误详情。
-4. `_OnDefaultException()` 默认行为：
-   - 切换到根应用 Phase。
-   - 如果 `default_exception_do_log` 为 `true`，记录异常日志。
-   - 发送 `HTTP/1.1 500 Server Error` 头。
-   - 如果 `error_500` 是回调则执行回调；否则输出默认 500 页面，调试模式下显示异常详情。
-5. `_OnDevErrorHandler()` 默认行为：
-   - 仅在调试模式下生效。
-   - 输出包含错误类型、文件、行号和错误信息的调试 HTML 块。
-6. `lang()` 方法在 `App` 中提供基础参数替换；`DuckPhp\DuckPhp` 会将其委托给 `Lang` 组件。
+1. 不要在运行时直接改 `$setting`→依赖 `Setting()`；需改由文件/覆改内核使一致。
+2. 维护(`is_maintain` 或 Setting 里的 `duckphp_is_maintain=true`)会让你看到维护页而不是正常业务。
+3. `haltInitInBaseClass()` 抛 `DuckPhpSystemException` 而是继承；不要直接对 Base `App::_()->init()`。
+4. `installed=false` 时请求会 302 到 `url_install`（看 `checkInstallToPage`），上线请设成 true。
+5. `_On404/_OnDefaultException/_OnDevErrorHandler` 均会调 `onBeforeOutput()`（如有 View page），可提前把资源 header 等放 `onBeforeOutput()`。
+6. `_DEPRECATED` 提示仅在 debug+inited 才输出；undefined 会回触 dev handler。
 
 ## 全部选项
 
 ```php
-protected $core_options = [
+    protected $core_options = [
     'path_runtime' => 'runtime',
-    'alias' => null,
+    'path_config' => 'config',
+
     'default_exception_do_log' => true,
     'close_resource_at_output' => false,
     'html_handler' => null,
     'lang_handler' => null,
+
+    'is_maintain' => false,
     'error_404' => null,
     'error_500' => null,
-];
+    'error_debug' => null,
+    'error_maintain' => null,
 
-protected $kernel_options = [
-    'path' => null,
-    'override_class' => null,
-    'override_class_from' => null,
-    'cli_enable' => true,
-    'is_debug' => false,
-    'ext' => [],
-    'app' => [],
-    'skip_404' => false,
-    'skip_exception_check' => false,
-    'on_init' => null,
-    'namespace' => null,
     'setting_file' => 'config/DuckPhpSettings.config.php',
     'setting_file_ignore_exists' => true,
     'setting_file_enable' => true,
     'use_env_file' => false,
-    'exception_reporter' => null,
-    'exception_for_project' => null,
-    'options_file' => 'config/DuckPhpOptions.config.php',
-    'options_file_enable' => false,
-    'path_installed_options' => 'config',
-    'installed_options_file' => 'DuckPhpInstalled.config.php',
-    'installed_options_enable' => false,
-    'cli_command_classes' => [],
-    'cli_command_prefix' => null,
-    'cli_command_method_prefix' => 'command_',
-];
+
+    'installed' => false,
+    'url_install' => 'install',
+    ];
 ```
 
 ## 方法列表
 
+本文件只收录 `App.php` 内 `class App …` 自身定义的方法；由 KernelTrait 引入的同名 shell 见 [Core-KernelTrait](Core-KernelTrait.md)，不在此重复。
+
 ### 公共方法
 
     public function __construct()
-构造应用实例，合并所有选项并设置 `overriding_class`
-
-    public static function _($object = null)
-获取或设置应用实例，通过 `PhaseContainer` 管理
+合并 kernel/core/common 与用户 options 进 $options；清空临时 options 容器并记录 this_class
 
     public function version()
-返回应用版本字符串，包含类名和版本号
+返回 `(类名)VERSION` 版本标识（调试/CLI 用）
 
-    public function _On404(): void
-404 默认处理：设置 404 响应头并渲染 `error_404` 视图或回调
+    public static function Setting($key = null, $default = null)
+静态读设置：委托根应用 _Setting
 
-    public function _OnDefaultException($ex): void
-默认异常处理：记录日志、设置 500 响应头并渲染 `error_500` 视图或回调
-
-    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-开发错误处理：仅在调试模式下输出调试信息
-
-    public function getOverrideableFile($path_sub, $file, $use_override = true)
-解析可覆盖文件路径，支持子应用别名和根应用路径回退
-
-    public function skip404Handler()
-设置 `skip_404` 为 `true`
-
-    public function onBeforeOutput()
-输出前触发 `EventManager` 事件
-
-    public function adjustViewFile($view)
-视图文件名为空时，返回当前路由调用路径
+    public function _Setting($key = null, $default = null)
+读根 setting：有 key→`Root()->setting[$key] ?? default`；无→返回整个 setting
 
     public static function Platform()
-返回当前平台标识
+读设置 `duckphp_platform` 的平台静态壳
 
     public function _Platform()
-从 Setting 中读取 `duckphp_platform`
+实例：返回 duckphp_platform 值
 
     public static function IsDebug()
-判断是否处于调试模式
+静态判断 debug：委托 __IsDebug()
 
     public function _IsDebug()
-综合 Setting 和选项判断调试模式
+debug = setting(duckphp_is_debug) ∨ 根 options is_debug ∨ 本 options is_debug
 
     public static function IsRealDebug()
-判断是否为真实调试模式
+真实 debug 静态壳
 
     public function _IsRealDebug()
-内部实现，等价于 `_IsDebug()`
+默认等同 `_IsDebug()`（上层若要区分再做覆盖）
 
-    public function isInstalled()
-返回 `installed` 选项值
+    public function _On404(): void
+404 兜底：header 404，error_404 可回调/视图执行；缺省时输出占位并在 debug 下附 route error；is_root/skip 先 return
 
-    public function lang($str, $args = [])
-基础语言/参数替换处理
+    public function _OnDefaultException($ex): void
+默认异常出口：回 phase、可选日志、500 header，走 error_500 或缺省详/占位；避免 ininit 前置 error_500
+
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+调试错误处理：非 debug return；装配 errno/…/shortfile，用 error_debug 或内建 
+
+    public function getOverrideableFile($path_sub, $file, $use_override = true)
+Phase 感知可覆盖文件查找：按当前 phase 深度找 path_sub/子目录中 file，存在即命中并返回其路径
+
+    public function getConfigFile(string $file): string
+取 config 下某文件（基底 path_config + getOverrideableFile）
+
+    public function getRuntimePath(): string
+返回运行期绝对目录（path_runtime 相对则拼根 path）
+
+    public function skip404Handler()
+置 options[skip_404]=true，跳过 404 展示
+
+    public function onBeforeOutput()
+输出前钩子；框架决定 View 渲染时先调它（空基）
+
+    public function _Show(array $data, string $view = '')
+渲染一带数据视图；视图名缺省=当前 route path；先 onBeforeOutput
+
+    public function checkInstallToPage(?string $url_install = null): void
+未安装：302 到安装 URL（缺省用 options[url_install]）并 exit
+
+    public function lang($str, $args = [], $fallback = null)
+极简翻译：lang_handler 回调优先；否则按 {key} 替换 / fallback
+
+    public function langText(string $desc, array $args = []): string
+把文本里的 `[[key|fallback]]` 片段经 lang() 翻译（可传递 args）
 
 ### 受保护方法
 
-    protected function doInitComponents(): void
-初始化 `Logger`、`SuperGlobal`、`SystemWrapper`、`View` 核心组件
+    protected function onPrepare(): void
+根应用时在 Kernel 的 onPrepare 阶段调用 loadSetting() 加载设置
+
+    protected function initComponentsOfRoot($components, $default): void
+根组件补 SystemWrapper/Logger/CoreHelper(EXT_SKIP_INIT) 后走 Kernel_initComponentsOfRoot
+
+    protected function initComponentsOfInner($classes, $default): void
+内层并入 View(FOLLOW_APP) 后走 Kernel…Inner
+
+    protected function initComponentsOfDynmic($classes, $default): void
+动态层并入 SuperGlobal 与 View(FOLLOW_APP) 后走 Kernel…Dynmic
+
+    protected function prepareServe()
+调 Kernel…prepareServe 后：命中维护设置(error_maintain / view)则直接出维护页
+
+    protected function loadSetting(): void
+以 options[setting] 起，按 use_env_file、setting_file_enable 相继 dealWithEnvFile/SettingFile
+
+    protected function dealWithEnvFile(): void
+parse_ini_file(根/.env) 并入 $this->setting
+
+    protected function dealWithSettingFile(): void
+按绝对/相对解析 config 文件，require 返回数组并入 setting；不存在且 !ignore 抛 ErrorException
+
+    protected function haltInitInBaseClass(): void
+static::class===self::class(直接 App)时抛 “DO NOT INIT App!”
 
 ## 相关链接
 
+- [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) — 本类的骨架（init/run/services）
+- [DuckPhp\DuckPhp](DuckPhp.md) / [DuckPhp\DuckPhpAllInOne](DuckPhpAllInOne.md) — 常用入口
 - [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-- [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
-- [DuckPhp\DuckPhp](DuckPhp.md)
-- [DuckPhp\Core\Logger](Core-Logger.md)
-- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
-- [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
-- [DuckPhp\Core\View](Core-View.md)
+- [DuckPhp\Core\View](Core-View.md)、[DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)、[DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)、[DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
+- guide：[configuration](../guide/configuration.md)、[lifecycle](../guide/lifecycle.md)
