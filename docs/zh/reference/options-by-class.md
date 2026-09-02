@@ -307,12 +307,6 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 | `empty_view_trim_view_wellcome` | `true` | `DuckPhp\Ext\EmptyView` | 是否裁剪欢迎类前缀。|
 | `empty_view_skip_replace` | `false` | `DuckPhp\Ext\EmptyView` | 是否跳过替换默认 `View` 组件。|
 
-### DuckPhp\Ext\FinderForController
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `classes_to_get_controller_path` | `[]` | `DuckPhp\Ext\FinderForController` | 用于推断控制器路径的类名列表。|
-
 ### DuckPhp\Ext\JsonRpcExt
 
 | 选项 | 默认。| 来源、| 说明 |
@@ -429,34 +423,23 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 
 ---
 
-## 命令行安装器选项
+## SQL 导出选项
 
-### DuckPhp\FastInstaller\FastInstaller
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `install_input_validators` | `[]` | `DuckPhp\FastInstaller\FastInstaller` | 安装输入校验器。|
-| `install_default_options` | `[]` | `DuckPhp\FastInstaller\FastInstaller` | 安装默认选项。|
-| `install_input_desc` | `''` | `DuckPhp\FastInstaller\FastInstaller` | 安装输入提示描述。|
-| `install_callback` | `null` | `DuckPhp\FastInstaller\FastInstaller` | 安装完成回调。|
-| `install_support_database_list` | `''` | `DuckPhp\FastInstaller\FastInstaller` | 支持的数据库列表。|
-| `allow_require_ext_app` | `false` | `DuckPhp\FastInstaller\FastInstaller` | 是否允许 `require` 外部子应用。|
-
-### DuckPhp\FastInstaller\SqlDumper
+### DuckPhp\Ext\SqlDumper
 
 | 选项 | 默认。| 来源、| 说明 |
 |---|---|---|---|
-| `path` | `''` | `DuckPhp\FastInstaller\SqlDumper` | 项目路径。|
-| `path_sql_dump` | `'config'` | `DuckPhp\FastInstaller\SqlDumper` | SQL 导出目录。|
-| `sql_dump_file` | `'install.sql'` | `DuckPhp\FastInstaller\SqlDumper` | SQL 导出文件名。|
-| `sql_dump_include_tables` | `[]` | `DuckPhp\FastInstaller\SqlDumper` | 显式包含的表。|
-| `sql_dump_exclude_tables` | `[]` | `DuckPhp\FastInstaller\SqlDumper` | 排除的表。|
-| `sql_dump_data_tables` | `[]` | `DuckPhp\FastInstaller\SqlDumper` | 需要导出数据的表。|
-| `sql_dump_include_tables_all` | `false` | `DuckPhp\FastInstaller\SqlDumper` | 是否导出所有表。|
-| `sql_dump_include_tables_by_model` | `true` | `DuckPhp\FastInstaller\SqlDumper` | 是否通过模型扫描表。|
-| `sql_dump_install_replace_prefix` | `true` | `DuckPhp\FastInstaller\SqlDumper` | 安装时是否替换表前缀。|
-| `sql_dump_prefix` | `''` | `DuckPhp\FastInstaller\SqlDumper` | SQL 中的表前缀。|
-| `sql_dump_debug_show_sql` | `false` | `DuckPhp\FastInstaller\SqlDumper` | 是否显示执行。SQL。|
+| `path` | `''` | `DuckPhp\Ext\SqlDumper` | 项目路径。|
+| `path_sql_dump` | `'config'` | `DuckPhp\Ext\SqlDumper` | SQL 导出目录。|
+| `sql_dump_file` | `'install.sql'` | `DuckPhp\Ext\SqlDumper` | SQL 导出文件名。|
+| `sql_dump_include_tables` | `[]` | `DuckPhp\Ext\SqlDumper` | 显式包含的表。|
+| `sql_dump_exclude_tables` | `[]` | `DuckPhp\Ext\SqlDumper` | 排除的表。|
+| `sql_dump_data_tables` | `[]` | `DuckPhp\Ext\SqlDumper` | 需要导出数据的表。|
+| `sql_dump_include_tables_all` | `false` | `DuckPhp\Ext\SqlDumper` | 是否导出所有表。|
+| `sql_dump_include_tables_by_model` | `true` | `DuckPhp\Ext\SqlDumper` | 是否通过模型扫描表。|
+| `sql_dump_install_replace_prefix` | `true` | `DuckPhp\Ext\SqlDumper` | 安装时是否替换表前缀。|
+| `sql_dump_prefix` | `''` | `DuckPhp\Ext\SqlDumper` | SQL 中的表前缀。|
+| `sql_dump_debug_show_sql` | `false` | `DuckPhp\Ext\SqlDumper` | 是否显示执行。SQL。|
 
 ---
 
@@ -508,7 +491,6 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 |---|---|---|---|
 | `alias` | `null` | [DuckPhp\Core\App](Core-App.md) | 子应用别名，用于视图等资源路径调整。|
 | `allow_require_ext_app` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否允许 `require` 命令安装外部子应用。|
-| `allow_require_ext_app` | `false` | [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 是否允许 `require` 外部子应用。|
 | `api_server_404_as_exception` | `false` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 404 是否抛出异常。|
 | `api_server_base_class` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 限定 API 基类或接口。|
 | `api_server_class_postfix` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | API 类名后缀。|
@@ -526,7 +508,6 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 | `callable_view_skip_replace` | `false` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 是否跳过替换默认 `View` 组件。|
 | `class_admin` | `''` | [DuckPhp\DuckPhp](DuckPhp.md) | 管理员类名，设置后自动启用全局管理员。|
 | `class_user` | `''` | [DuckPhp\DuckPhp](DuckPhp.md) | 用户类名，设置后自动启用全局用户。|
-| `classes_to_get_controller_path` | `[]` | [DuckPhp\Ext\FinderForController](Ext-FinderForController.md) | 用于推断控制器路径的类名列表。|
 | `cli_command_classes` | `[]` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | CLI 命令类列表。|
 | `cli_command_default` | `'help'` | [DuckPhp\Core\Console](Core-Console.md) | 默认命令。|
 | `cli_command_group` | `[]` | [DuckPhp\Core\Console](Core-Console.md) | 命令分组注册信息。|
@@ -605,11 +586,6 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 | `help` | `false` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 是否显示帮助。|
 | `host` | `'127.0.0.1'` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 服务器监听地址。|
 | `html_handler` | `null` | [DuckPhp\Core\App](Core-App.md) | HTML 编码函数回调。|
-| `install_callback` | `null` | [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 安装完成回调。|
-| `install_default_options` | `[]` | [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 安装默认选项。|
-| `install_input_desc` | `''` | [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 安装输入提示描述。|
-| `install_input_validators` | `[]` | [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 安装输入校验器。|
-| `install_support_database_list` | `''` | [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 支持的数据库列表。|
 | `installed_options_enable` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否启用已安装选项文件。|
 | `installed_options_file` | `'DuckPhpInstalled.config.php'` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 已安装选项文件名。|
 | `is_debug` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否调试模式。|
@@ -667,7 +643,7 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 | `path` | `''` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 项目路径。|
 | `path` | `''` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 项目路径。|
 | `path` | `''` | [DuckPhp\Ext\Misc](Ext-Misc.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 项目路径。|
+| `path` | `''` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 项目路径。|
 | `path` | `''` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 项目路径。|
 | `path_config` | `'config'` | [DuckPhp\Component\Configer](Component-Configer.md) | 配置文件目录。|
 | `path_document` | `'public'` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 文档根目录。|
@@ -683,7 +659,7 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 | `path_resource` | `'res'` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 资源目录。|
 | `path_runtime` | `'runtime'` | [DuckPhp\Core\App](Core-App.md) | 运行目录路径。|
 | `path_runtime` | `'runtime'` | [DuckPhp\Core\Runtime](Core-Runtime.md) | 运行目录路径。|
-| `path_sql_dump` | `'config'` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | SQL 导出目录。|
+| `path_sql_dump` | `'config'` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | SQL 导出目录。|
 | `path_view` | `'view'` | [DuckPhp\Core\View](Core-View.md) | 视图目录路径。|
 | `port` | `'8080'` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 服务器监听端口。|
 | `postfix_batch_business` | `'BatchBusiness'` | DuckPhp\Ext\StrictCheck | 批量业务类后缀。|
@@ -708,15 +684,15 @@ DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\
 | `skip_404` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否跳过 404 处理。|
 | `skip_app_autoload` | `false` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 是否跳过应用命名空间自动加载。|
 | `skip_exception_check` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否跳过异常检查，用于配合其他框架。|
-| `sql_dump_data_tables` | `[]` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 需要导出数据的表。|
-| `sql_dump_debug_show_sql` | `false` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 是否显示执行。SQL。|
-| `sql_dump_exclude_tables` | `[]` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 排除的表。|
-| `sql_dump_file` | `'install.sql'` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | SQL 导出文件名。|
-| `sql_dump_include_tables` | `[]` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 显式包含的表。|
-| `sql_dump_include_tables_all` | `false` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 是否导出所有表。|
-| `sql_dump_include_tables_by_model` | `true` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 是否通过模型扫描表。|
-| `sql_dump_install_replace_prefix` | `true` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | 安装时是否替换表前缀。|
-| `sql_dump_prefix` | `''` | [DuckPhp\FastInstaller\SqlDumper](Ext-SqlDumper.md) | SQL 中的表前缀。|
+| `sql_dump_data_tables` | `[]` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 需要导出数据的表。|
+| `sql_dump_debug_show_sql` | `false` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 是否显示执行。SQL。|
+| `sql_dump_exclude_tables` | `[]` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 排除的表。|
+| `sql_dump_file` | `'install.sql'` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | SQL 导出文件名。|
+| `sql_dump_include_tables` | `[]` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 显式包含的表。|
+| `sql_dump_include_tables_all` | `false` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 是否导出所有表。|
+| `sql_dump_include_tables_by_model` | `true` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 是否通过模型扫描表。|
+| `sql_dump_install_replace_prefix` | `true` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 安装时是否替换表前缀。|
+| `sql_dump_prefix` | `''` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | SQL 中的表前缀。|
 | `strict_check_context_class` | `null` | DuckPhp\Ext\StrictCheck | 指定上下文类。|
 | `strict_check_enable` | `true` | DuckPhp\Ext\StrictCheck | 是否启用严格检查模式。|
 | `superglobal_auto_define` | `false` | [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) | 初始化时是否定义 `__SUPERGLOBAL_CONTEXT` 宏。|
