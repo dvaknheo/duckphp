@@ -1,176 +1,98 @@
 # DuckPhp\Component\Command
 
-`DuckPhp\Component\Command` 是 DuckPHP 框架内置的 CLI 命令集合。它提供 `version`、`help`、`run`、`fetch`、`call` 和 `debug` 等常用命令，通过 `DuckPhp\Core\Console` 组件注册到 CLI 命令组中。
-
----
+框架内置的一组实用 CLI 命令集合：版本/帮助/内嵌 HTTP 服务/抓取路由/调用方法/列表路由/开关调试。
 
 ## 简介
 
-`Command` 组件中的每个公共 `command_*` 方法都对应一个 CLI 命令。`DuckPhp\DuckPhp` 默认在 `prepareComponents()` 阶段将 `Command` 类加入 `cli_command_classes`，因此这些命令无需额外配置即可使用。
+`Command extends ComponentBase` 是 DuckPHP 默认注册的命令包（DuckPhp/DuckPhpAllInOne 会在必要时把它并进当前 App 命令空间，见其 onPrepare）。当你在 CLI 跑 `command help` 等，多是由这里的方法响应。
 
-该组件本身没有公共选项，其行为受 `DuckPhp\Core\Console` 的选项控制。
+命令命名法：命令类里以 `command_xxx` 开头的方法就是一个动作；Command 里提供：
 
----
+- `command_version()` 版本
+- `command_help()` 展示使用与命令列表（从 Console 注册与各方法 @command_desc 汇总）
+- `command_run()` 用 HttpServer 把当前应用跑成内嵌 HTTP 会话；
+- `command_fetch($uri,$post)` 于 CLI 抓取私有路径（经 SuperGlobal context 写入并调 App→serve）
+- `command_call(<class>@<method>…)` 调用某个业务方法（business 便利）
+- `command_routes()` 让 RouteLister 枚举路由并带高亮打印
+- `command_debug($off=false)` 切换 dev flag（需 data_file 能力）
 
-## 选项
+此外含若干被引用的获取/解析辅助方法（methods 列表详下）。
 
-`Command` 组件本身没有独立选项。相关行为由 `DuckPhp\Core\Console` 的以下选项决定：
+## 类信息
 
-| 选项 | 默认值 | 来源类 | 说明 |
-|---|---|---|---|
-| `cli_command_default` | `'help'` | `DuckPhp\Core\Console` | 默认 CLI 命令。 |
-| `cli_command_group` | `[]` | `DuckPhp\Core\Console` | CLI 命令分组配置。 |
-| `cli_command_classes` | `[]` | `DuckPhp\Core\Console` | 注册的 CLI 命令类列表。 |
-| `cli_readlines_logfile` | `''` | `DuckPhp\Core\Console` | CLI 读取日志文件。 |
+- 命名空间：`DuckPhp\Component`
+- 声明：`class Command extends ComponentBase`
 
----
+## 使用方式
 
-## 内置命令
+（通常已被注册为默认命令，可直接）在 CLI：
 
-### version
-
-显示当前应用版本。
-
-```bash
-php cli.php version
+```text
+php xx run                 # 由 command_run 起内嵌 http
+php xx version
+php xx help
+php xx routes
+php xx call foo/MyBiz@doWork a --x=1
+php xx fetch '/account/detail'
+php xx debug --off
 ```
 
-输出示例：
+命令描述语料（如 help 中 README 文案）来自方法 docblock 里 `@command_desc 语句`（支持 `[[lang|fallback]]`，会经 `translateCommandDesc/langText` 翻译）。
 
-```
-(MyApp\System\App)1.3.4
-```
+## 实现说明（命令描述从哪里来）
 
-### help
-
-显示帮助信息，包括所有可用命令列表。
-
-```bash
-php cli.php help
-```
-
-### run
-
-启动内置开发服务器。
-
-```bash
-php cli.php run
-php cli.php run --port=8080
-php cli.php run --host=127.0.0.1
-```
-
-> 注意：使用 `run` 命令需要 `DuckPhp\HttpServer\HttpServer` 可用。
-
-### fetch
-
-在命令行中模拟 HTTP 请求，调用当前应用处理一个 URI。
-
-```bash
-php cli.php fetch /article/list
-php cli.php fetch /api/login --post=1
-```
-
-### call
-
-直接调用某个类的对象方法。格式为 `namespace/class@method`，参数跟在后面。
-
-```bash
-php cli.php call MyApp/Business/UserBusiness@getUser 1
-```
-
-> 被调用的类必须实现 `::_()` 可变单例访问模式。
-
-### debug
-
-切换调试模式。需要启用 `data_file_enable`、`data_file_bump_allowed`，并且 `data_file_bump_keys` 包含 `'is_debug'`。
-
-```bash
-php cli.php debug
-php cli.php debug --off
-```
-
----
-
-## 添加自定义命令
-
-继承 `Command` 类或创建自己的命令类，方法名以 `command_` 开头即可。
-
-```php
-namespace MyApp\Controller;
-
-use DuckPhp\Component\Command;
-
-class MyCommand extends Command
-{
-    /**
-     * my custom command
-     */
-    public function command_hello($name = 'World'): void
-    {
-        echo "Hello, $name\n";
-    }
-}
-```
-
-然后在应用选项中注册：
-
-```php
-class App extends \DuckPhp\DuckPhp
-{
-    public $options = [
-        'cli_command_classes' => [
-            \DuckPhp\Component\Command::class,
-            \MyApp\Controller\MyCommand::class,
-        ],
-    ];
-}
-```
-
-执行：
-
-```bash
-php cli.php hello
-php cli.php hello DuckPhp
-```
-
----
-
-## 注意事项
-
-1. 命令方法名必须以 `command_` 前缀开头。
-2. 命令帮助信息来自方法上方的 PHPDoc 注释第一行。
-3. `run` 和 `fetch` 命令会临时切换应用的 `cli_enable` 状态。
-4. `debug` 命令依赖 `DuckPhp\Component\ExtOptionsLoader` 保存数据文件。
-
----
+help 用 `Command::command_help()` 里收集 `Console` 各注册类的方法名（可选 per class `getCommandsOfThis`），逐个从 `@command_desc`/doc 首行取描述；命名空间为空的是 `*Default*`。
 
 ## 方法列表
 
-### 公共命令方法
+### 公共方法（命令）
 
-| 方法 | 说明 |
-|---|---|
-| `command_version()` | 显示应用版本。 |
-| `command_help()` | 显示帮助信息。 |
-| `command_run()` | 启动内置开发服务器。 |
-| `command_fetch($uri = '', $post = false)` | 模拟 HTTP 请求处理指定 URI。 |
-| `command_call()` | 调用指定类的对象方法。 |
-| `command_debug(bool $off = false)` | 切换调试模式。 |
+    public function command_version(): void
+输出所属 App::version()。
 
-### 受保护辅助方法
+    public function command_help(): void
+输出版本 + 常用 help 文案 + 全部命令列表（getCommandListInfo）。
 
-| 方法 | 说明 |
-|---|---|
-| `getCommandListInfo()` | 生成命令列表信息。 |
-| `getCommandsByClasses(array $classes, string $method_prefix, string $phase)` | 批量获取多个类的命令。 |
-| `getCommandsByClass(string $class, string $method_prefix, string $phase)` | 获取单个类的命令。 |
-| `getCommandsOfThis($method_prefix, $phase)` | 获取当前类自身的命令。 |
-| `getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix)` | 通过反射提取命令名和描述。 |
+    public function command_run()
+读取 Console CLI 参数，用 HttpServer 使 App 以内嵌 http-server 跑起来（会临时切 cli_enable off）。
 
----
+    public function command_fetch($uri = '', $post = false)
+CLI 里“抓取”：向 __SUPERGLOBAL_CONTEXT (或全局) 写 REQUEST_URI/PATH_INFO/METHOD，再 context->serve()。
+
+    public function command_call()
+`namespace/Business@method +args`：解析业务类并反射调用（经 Console::callObject）。
+
+    public function command_routes(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
+交给 RouteLister listAll() 后端颜色高亮输出 url/controller/route-map/admin-user/phase。
+
+    public function command_debug(bool $off = false): void
+开关调试标记（写 ext options 之 is_debug），受限前提：data_file_enable + data_file_bump_allowed…
+
+### 公共方法（供类扩展/描述）
+
+    public function getCommandsOfThis($method_prefix, $phase)
+若某命令类自己提供此方法，框架用反射类方法名提取命令列表。
+
+### 受保护方法
+
+    protected function getCommandListInfo(): string
+历遍 Console classes，打印每个 namespace（默认 `*Default*`）->组命令（去前缀+pad）。
+
+    protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
+把多 class 映射并（filter false）聚合各自命令。
+
+    protected function getCommandsByClass(string $class, string $method_prefix, string $phase): array
+单个命令类：若有 getCommandsOfThis 则走；否则调用反射提取。
+
+    protected function getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix): array
+反射全部方法，前缀过滤出 command 名，取 @command_desc（或 doc 首行）作为描述，并翻译。
+
+    protected function translateCommandDesc(string $desc): string
+把描述里 `[[key|fallback]]` 片段经 `App::langText()` 翻译。
 
 ## 相关链接
 
-- [DuckPhp\Core\Console](Core-Console.md)
-- [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md)
-- [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md)
+- [DuckPhp\Core\Console](Core-Console.md) —— 命令执行主机
+- [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) —— command_run 起服务
+- [DuckPhp\Component\RouteLister](Component-RouteLister.md) —— command_routes 用
+- [DuckPhp\Core\App](Core-App.md)/langText —— 版本/lang 翻译来源

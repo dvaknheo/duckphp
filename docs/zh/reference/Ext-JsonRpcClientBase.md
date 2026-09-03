@@ -1,87 +1,50 @@
 # DuckPhp\Ext\JsonRpcClientBase
 
-JSON-RPC 客户端基类。
-
 ## 简介
 
-`JsonRpcClientBase` 是所有 JSON-RPC 代理类的基类。当代理类调用不存在的方法时，方法名和参数会被转发到 `JsonRpcExt::callRpc()`，从而向远程服务器发起 JSON-RPC 请求。
+`JsonRpcClientBase` 是 JSON-RPC **客户端**基类：把对本对象的任意方法调用转成一次 RPC 请求发给服务端（经 `JsonRpcExt::callRpc`）。配合 `JsonRpcExt` 的自动加载（`JsonRpc\` 前缀下的类自动继承本类），可在代码里“像调本地对象一样”调用远程服务。
 
-它通常不需要手动实例化，而是由 `JsonRpcExt` 自动加载或 `Wrap` 方法创建。
+用法：通过 `JsonRpcExt::_Wrap($class)` 生成/包装一个客户端实例（`JsonRpcClientBase`），或继承本类并 `setJsonRpcClientBase($realClass)` 指定对应的服务类名。
 
-## 选项
+## 类信息
 
-该类本身没有独立选项，全部行为由 `DuckPhp\Ext\JsonRpcExt` 的选项控制。
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class JsonRpcClientBase extends DuckPhp\Core\ComponentBase`
 
 ## 使用方式
 
-### 通过自动加载代理类
-
 ```php
-use JsonRpc\MyApp\Service\UserService;
+use DuckPhp\Ext\JsonRpcExt;
 
-$client = UserService::_();
-$result = $client->getUser(1);
-```
-
-### 通过 `JsonRpcExt::Wrap()` 创建
-
-```php
-$proxy = \DuckPhp\Ext\JsonRpcExt::Wrap(\MyApp\Service\UserService::class);
-$result = $proxy->getUser(1);
-```
-
-### 手动设置基类
-
-```php
-$base = new \DuckPhp\Ext\JsonRpcClientBase();
-$base->setJsonRpcClientBase(\MyApp\Service\UserService::class);
-$base->getUser(1);
-```
-
-## 配置示例
-
-无需单独配置 `JsonRpcClientBase`，只需配置 `JsonRpcExt`：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Ext\JsonRpcExt::class => true,
-        ],
-        'jsonrpc_backend' => 'https://api.example.com/rpc',
-        'jsonrpc_namespace' => 'JsonRpc',
-    ];
-}
+$client = JsonRpcExt::_Wrap(CalculatorService::class);
+// $client 是 JsonRpcClientBase：以下调用变成远程 RPC
+$sum = $client->add(1, 2);
 ```
 
 ## 注意事项
 
-1. 所有方法调用都被 `__call()` 捕获并转发到 `JsonRpcExt`。
-2. `init()` 和 `isInited()` 方法也会被转发，避免破坏单例生命周期。
-3. 如果未设置 `_base_class`，则通过 `JsonRpcExt::getRealClass()` 自动推导当前代理类名。
-
-## 全部选项
-
-无
+- `__call`：`$method`/`$arguments` 交给 `JsonRpcExt::callRpc($base_class, $method, $arguments)`；`$base_class` 未显式设置时由 `JsonRpcExt::getRealClass($this)` 推断（去掉 `JsonRpc\` 前缀）。
+- `init()/isInited()` 被覆盖：设置了 `_base_class` 时，这两个调用也会先经 RPC 通知服务端（`callRPC`）再走父类逻辑——即客户端对象本身的生命周期也会镜像到远端。
 
 ## 方法列表
 
 ### 公共方法
 
+    public function __construct()
+空构造器。
+
     public function setJsonRpcClientBase(string $class): self
-设置代理所代表的真实类名，并返回当前实例。
+设置对应的“真实服务类名”，返回自身。
 
     public function __call(string $method, array $arguments)
-将方法调用转发到 `JsonRpcExt::callRpc()`。
+把未定义的方法调用转成 RPC 请求并返回结果。
 
     public function init(array $options, ?object $context = null)
-如果设置了基类，则将该方法调用通过 RPC 转发；否则调用父类初始化。
+初始化：先 RPC 通知远端，再走父类流程。
 
     public function isInited(): bool
-如果设置了基类，则将该方法调用通过 RPC 转发；否则返回父类状态。
+先 RPC 查询远端，再返回父类初始化状态。
 
 ## 相关链接
 
-- [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+- [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) — RPC 服务端/传输实现

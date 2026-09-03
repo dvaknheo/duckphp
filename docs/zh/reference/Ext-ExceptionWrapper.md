@@ -1,93 +1,52 @@
 # DuckPhp\Ext\ExceptionWrapper
 
-异常包装扩展组件。
-
 ## 简介
 
-`ExceptionWrapper` 用于把可变单例调用封装起来，使方法调用在异常时返回异常对象本身，而不是抛出异常。
+`ExceptionWrapper` 是一个“异常安全调用包装”：把一个对象包进本组件后，对它发起的任何方法调用（经魔术 `__call`）都会被 try/catch 包裹——成功返回调用结果，失败则把 `\Exception` 对象作为返回值交回调用方（而不是抛出）。
 
-典型用法：
+常用于“调用第三方/容易抛异常的对象，且希望把异常当返回值处理”的场景。
 
-```php
-$ret = ExceptionWrapper::Wrap(MyClass::_())->foo();
-```
+## 类信息
 
-- 如果 `MyClass::_()->foo()` 正常执行，返回其结果。
-- 如果 `foo()` 抛出 `\Exception`，则返回该异常对象。
-
-## 选项
-
-无。本组件不定义配置选项。
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class ExceptionWrapper extends DuckPhp\Core\ComponentBase`
 
 ## 使用方式
 
-### 包装对象并调用方法
-
 ```php
 use DuckPhp\Ext\ExceptionWrapper;
-use DuckPhp\Component\DbManager;
 
-$ret = ExceptionWrapper::Wrap(DbManager::_())->Db();
+$safe = ExceptionWrapper::Wrap($httpClient);
+$ret  = $safe->request('https://…');   // 正常→结果；抛异常→返回 $ex 对象
 
-if ($ret instanceof \Exception) {
-    // 出现异常
-    echo $ret->getMessage();
-} else {
-    // 正常结果
-    $db = $ret;
-}
-```
-
-### 链式调用
-
-```php
-$ret = ExceptionWrapper::Wrap(MyService::_())->getUser(1);
-
-if ($ret instanceof \Exception) {
-    // 处理异常
-} else {
-    $user = $ret;
-}
-```
-
-### 释放包装对象
-
-```php
-$wrapper = ExceptionWrapper::Wrap(MyService::_());
-$wrapper->doSomething();
-
-$object = ExceptionWrapper::Release(); // 或 $wrapper->doRelease()
+$obj = ExceptionWrapper::Release();     // 取回被包装对象并清空
 ```
 
 ## 注意事项
 
-1. 只捕获 `\Exception` 及其子类，`\Error` 和 `\Throwable` 不会被捕获。
-2. 返回异常对象后，调用方需要自行判断返回值类型。
-3. 该组件主要用于需要把异常转换为返回值的场景，例如某些链式调用或测试代码。
-4. 在正式业务中，建议显式处理异常，而不是依赖返回异常对象。
+- `Wrap($object)`（静态）等价 `doWrap`；`Release()`（静态）等价 `doRelease`（返回被包装对象并置空内部引用）。
+- 只捕获 `\Exception`（不捕获 `\Error`/`\Throwable` 中的非 Exception）。
+- 通过 `static::_()` 单例持有当前对象，同一时刻只包装一个对象；需要并行包装请各自实例化。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function Wrap($object)
-包装一个对象，返回 ExceptionWrapper 实例
+静态：把 `$object` 交给当前实例包装。
 
     public static function Release()
-释放并返回当前包装的对象
+静态：取回被包装对象并清空。
 
     public function doWrap($object): self
-实例方法：设置被包装对象
+保存待包装对象，返回自身。
 
     public function doRelease(): ?object
-实例方法：释放被包装对象
-
-### 魔术方法
+返回被包装对象并置空内部引用（无则 `null`）。
 
     public function __call(string $method, array $args)
-代理被包装对象的方法调用，捕获 `\Exception` 并返回异常对象
+代理调用被包装对象的方法；抛 `\Exception` 时返回该异常对象。
 
 ## 相关链接
 
-- [DuckPhp\Core\CoreHelper](Core-CoreHelper.md)
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件基类

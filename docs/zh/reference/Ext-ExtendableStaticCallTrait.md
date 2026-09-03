@@ -1,95 +1,56 @@
 # DuckPhp\Ext\ExtendableStaticCallTrait
 
-> ⚠️ 警告：该扩展是实验性的或已废弃，不建议在新项目中使用。
-
 ## 简介
 
-`ExtendableStaticCallTrait` 是一个 Trait，用于为类提供可扩展的静态方法调用能力。它允许在运行时为类动态分配静态方法，并通过 `__callStatic` 魔术方法调用这些方法。
+`ExtendableStaticCallTrait` 为类提供「外部扩展静态方法」的能力：通过 `AssignExtendStaticMethod()` 注册额外静态方法（键 → 回调），之后对类调用这些“未定义”的静态方法时，由魔术 `__callStatic` 转交给注册的回调执行。
 
-该方法主要用于为 facade 或 helper 类提供静态调用扩展点，但实现较为复杂，且容易引入隐藏依赖，因此不建议在新项目中使用。
+回调可以是闭包/可调用数组，也支持两种字符串简写：`Class@method`（把 `Class` 经 `_()` 取单例）与 `Class->method`（`new Class` 后调用）。
 
-## 选项
+## 类信息
 
-无。
+- 命名空间：`DuckPhp\Ext`
+- 声明：`trait ExtendableStaticCallTrait`
 
 ## 使用方式
 
-### 在类中使用 Trait
-
 ```php
-use DuckPhp\Ext\ExtendableStaticCallTrait;
-
-class MyHelper
+class Demo
 {
-    use ExtendableStaticCallTrait;
-}
-```
-
-### 分配扩展方法
-
-```php
-use DuckPhp\Ext\ExtendableStaticCallTrait;
-
-class MyHelper
-{
-    use ExtendableStaticCallTrait;
+    use \DuckPhp\Ext\ExtendableStaticCallTrait;
 }
 
-MyHelper::AssignExtendStaticMethod('hello', function ($name) {
-    return "Hello, {$name}";
-});
+// 注册扩展静态方法
+Demo::AssignExtendStaticMethod('foo', function ($a) { return 'foo:'.$a; });
+Demo::AssignExtendStaticMethod('bar', MyClass::class.'@baz'); // 或 'MyClass->baz'
 
-MyHelper::AssignExtendStaticMethod([
-    'foo' => function () { return 'foo'; },
-    'bar' => function () { return 'bar'; },
-]);
+echo Demo::foo(1);    // foo:1 （经 __callStatic → CallExtendStaticMethod）
 ```
-
-### 使用字符串回调
-
-```php
-MyHelper::AssignExtendStaticMethod('foo', 'FooService@doFoo'); // 调用 FooService::_()->doFoo(...)
-MyHelper::AssignExtendStaticMethod('bar', 'BarService->doBar'); // 调用 (new BarService())->doBar(...)
-
-MyHelper::foo();
-MyHelper::bar();
-```
-
-### 获取已分配的扩展方法
-
-```php
-$methods = MyHelper::GetExtendStaticMethodList();
-```
-
-## 配置示例
-
-无。
 
 ## 注意事项
 
-1. 扩展方法以静态方式存储，按调用类的实际类名隔离。
-2. 字符串回调支持 `Class@method` 和 `Class->method` 两种格式，分别解析为单例调用和实例调用。
-3. 如果方法不存在或回调无效，调用时会触发 PHP 错误。
-4. 该 Trait 会改变类的静态方法解析行为，应谨慎使用。
+- 注册表按 `static::class` 分开存放（每个子类一份 `$static_methods`）。
+- `AssignExtendStaticMethod($key, $value)`：`$key` 为数组且 `$value === null` 时按批量合并；否则单键赋值。
+- 字符串回调 `Class@method` 使用 `$class::_()`（单例）；`Class->method` 使用 `new $class()`。
+- 注册的回调找不到时，`call_user_func_array(null, …)` 会抛错——确保调用的方法已注册。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function AssignExtendStaticMethod($key, $value = null)
-为当前类分配一个或多个扩展静态方法。`$key` 为数组时批量分配。
+注册一个（或批量）扩展静态方法。
 
     public static function GetExtendStaticMethodList()
-获取当前类已分配的所有扩展静态方法。
+返回当前类已注册的扩展静态方法表。
 
     public static function __callStatic($name, $arguments)
-拦截未定义的静态方法调用，并路由到已分配的扩展方法。
+魔术：把未定义的静态调用转给 `CallExtendStaticMethod`。
 
 ### 受保护方法
 
     protected static function CallExtendStaticMethod($name, $arguments)
-解析并执行对应的扩展回调。支持字符串形式的 `Class@method` 和 `Class->method` 解析。
+按名查注册表并解析回调（支持 `@`/`->` 简写）后调用。
 
 ## 相关链接
 
-- [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md)
+- [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md) — 基于静态转发思想的门面基类（相关设计）

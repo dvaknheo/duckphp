@@ -1,112 +1,205 @@
 # DuckPhp\Helper\ControllerHelperTrait
 
-控制器层 Helper Trait。
-
 ## 简介
 
-`DuckPhp\Helper\ControllerHelperTrait` 提供控制器层常用的静态方法，包括路由信息、视图渲染、请求参数获取、分页、HTTP 头/Cookie 操作、异常处理、事件触发以及全局管理员/用户信息访问。
+`ControllerHelperTrait` 是面向 **Controller（控制器层）** 的静态助手集合，也是四个 Helper Trait 中最丰富的一个。它提供控制器日常所需的全部便捷入口：
 
-## 选项
+- 请求输入：`GET/POST/REQUEST/COOKIE/SERVER`；
+- 路由与 URL：`PathInfo/Url/Res/Domain/Parameter/getRouteCallingClass/getRouteCallingMethod`；
+- 输出：`Show/Render/Show302/Show404/ShowJson/IsAjax`；
+- 可替换系统函数：`header/setcookie/exit`；
+- 异常处理注册：`assignExceptionHandler/setMultiExceptionHandler/setDefaultExceptionHandler/ControllerThrowOn`；
+- 分页：`Pager/PageNo/PageWindow/PageHtml`；
+- 配置/设置：`Setting/Options/Config`；
+- 事件：`FireGlobalEvent/OnGlobalEvent`；
+- 用户/管理员：`Admin*`/`User*` 系列。
 
-无。
+Trait 自带 6 个“动作级”事件常量（`$EVENT_ACTION_*`），供控制器动作生命周期事件使用。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Helper`
+- 声明：`trait ControllerHelperTrait`
+- 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
+- 事件常量：`$EVENT_ACTION_REGISTING/REGISTED/LOGINING/LOGINED/LOGOUTING/LOGOUTED`
 
 ## 使用方式
 
-### 在类中引入
-
 ```php
+namespace MyProject\Controller;
+
 use DuckPhp\Helper\ControllerHelperTrait;
 
-class MyControllerHelper
+class Base
 {
     use ControllerHelperTrait;
 }
-```
 
-### 常用操作
-
-```php
-use DuckPhp\Foundation\Controller\Helper;
-
-// 获取请求参数
-$id = Helper::GET('id', 0);
-$name = Helper::POST('name', '');
-
-// 路由信息
-$path = Helper::PathInfo();
-$url = Helper::Url('/home');
-
-// 渲染视图
-Helper::Render('index', ['name' => $name]);
-
-// 响应
-Helper::ShowJson(['code' => 0, 'data' => []]);
-Helper::Show302('/login');
-Helper::Show404();
-
-// 分页
-$pager = Helper::PageHtml($total);
-
-// 设置 Cookie
-Helper::setcookie('key', 'value');
+// 在 Controller 内：
+public function action_login()
+{
+    $name = Base::POST('name');
+    if (Base::IsAjax()) {
+        Base::ShowJson(['ok' => true]);
+        return;
+    }
+    Base::assignViewData('name', $name);
+    Base::Show(get_defined_vars(), 'login');
+}
 ```
 
 ## 注意事项
 
-1. 该 Trait 使用 `DuckPhp\Core\SingletonTrait`，引入类后具备单例访问能力。
-2. 方法依赖 `DuckPhp\Core\Route`、`DuckPhp\Core\View`、`DuckPhp\Core\SuperGlobal`、`DuckPhp\Core\SystemWrapper` 等组件，需确保应用已初始化。
+- `Show($data, $view)` 最终走 `App::_()->_Show()`（含 head/foot 包裹与视图文件查找）；`Render` 走 `View::_Render()`（不含 head/foot）。
+- `GET/POST/REQUEST/COOKIE/SERVER` 均来自 `SuperGlobal`，返回 `$default` 兜底。
+- `Admin/AdminId/AdminName/User/UserId/UserName` 对应 `GlobalAdmin`/`GlobalUser` 的动作接口与登录查询；`AdminService/UserService` 取 service。
+- `PageHtml($total, $options)` 由 `Pager` 生成 HTML 分页条。
+- 控制器里建议用 `Show302/Show404` 而非直接 `exit`（更可测）；需直出时可 `exit()`（经 SystemWrapper）。
 
 ## 方法列表
 
 ### 公共方法
 
-| 方法 | 说明 |
-|---|---|
-| `Setting($key = null, $default = null)` | 读取应用设置 |
-| `XpCall($callback, ...$args)` | 执行回调并捕获异常 |
-| `Config($file_basename, $key = null, $default = null)` | 读取配置文件 |
-| `getRouteCallingClass()` | 获取当前路由调用的类 |
-| `getRouteCallingMethod()` | 获取当前路由调用的方法 |
-| `PathInfo()` | 获取当前 PATH_INFO |
-| `Url($url = null)` | 生成 URL |
-| `Domain($use_scheme = false)` | 获取当前域名 |
-| `Res($url = null)` | 生成资源 URL |
-| `Parameter($key = null, $default = null)` | 获取路由参数 |
-| `Render($view, $data = null)` | 渲染视图 |
-| `Show($data = [], $view = '')` | 显示视图 |
-| `setViewHeadFoot($head_file = null, $foot_file = null)` | 设置视图头尾文件 |
-| `assignViewData($key, $value = null)` | 赋值视图数据 |
-| `IsAjax()` | 判断是否为 Ajax 请求 |
-| `Show302($url)` | 302 跳转 |
-| `Show404()` | 显示 404 页面 |
-| `ShowJson($ret, $flags = 0)` | 输出 JSON 响应 |
-| `header($output, bool $replace = true, int $http_response_code = 0)` | 发送 HTTP 头 |
-| `setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)` | 设置 Cookie |
-| `exit($code = 0)` | 终止程序 |
-| `assignExceptionHandler($classes, $callback = null)` | 分配异常处理器 |
-| `setMultiExceptionHandler(array $classes, $callback)` | 设置批量异常处理器 |
-| `setDefaultExceptionHandler($callback)` | 设置默认异常处理器 |
-| `ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)` | 控制器异常断言 |
-| `GET($key = null, $default = null)` | 获取 GET 参数 |
-| `POST($key = null, $default = null)` | 获取 POST 参数 |
-| `REQUEST($key = null, $default = null)` | 获取 REQUEST 参数 |
-| `COOKIE($key = null, $default = null)` | 获取 COOKIE |
-| `SERVER($key = null, $default = null)` | 获取 SERVER 参数 |
-| `Pager($new = null)` | 获取分页对象 |
-| `PageNo($new_value = null)` | 获取/设置页码 |
-| `PageWindow($new_value = null)` | 获取/设置分页窗口 |
-| `PageHtml($total, $options = [])` | 生成分页 HTML |
-| `FireEvent($event, ...$args)` | 触发事件 |
-| `OnEvent($event, $callback)` | 注册事件监听 |
-| `Admin()` | 获取管理员对象 |
-| `AdminId($check_login = true)` | 获取管理员 ID |
-| `AdminName($check_login = true)` | 获取管理员名称 |
-| `AdminService()` | 获取管理员服务 |
-| `User()` | 获取用户对象 |
-| `UserId($check_login = true)` | 获取用户 ID |
-| `UserName($check_login = true)` | 获取用户名称 |
-| `UserService()` | 获取用户服务 |
+    public static function Setting($key = null, $default = null)
+读取应用设置（等价 `App::Setting`）。
+
+    public static function Options(string $key, $default = null)
+读取应用 options 中某键。
+
+    public static function XpCall($callback, ...$args)
+异常封装调用（转发 `CoreHelper::_XpCall`）。
+
+    public static function Config($file_basename, $key = null, $default = null)
+读取 `config/` 下配置文件内容（转发 `Configer`）。
+
+    public static function getRouteCallingClass(): ?string
+当前路由命中的控制器类（`Route` 上下文）。
+
+    public static function getRouteCallingMethod(): ?string
+当前路由命中的方法名。
+
+    public static function PathInfo(): ?string
+当前 PATH_INFO（`Route::PathInfo`）。
+
+    public static function Url($url = null)
+生成应用内 URL（`Route::_Url`）。
+
+    public static function Domain(bool $use_scheme = false): string
+当前域名（`Route::_Domain`）。
+
+    public static function Res($url = null)
+生成资源 URL（`Route::_Res`）。
+
+    public static function Parameter($key = null, $default = null)
+取路由参数（`Route::Parameter`）。
+
+    public static function Render($view, $data = null)
+渲染视图并返回（`View::_Render`）。
+
+    public static function Show($data = [], $view = '')
+渲染页面并输出（走 `App::_Show`，含 head/foot）。
+
+    public static function checkInstall(?string $url_install = null)
+未安装时跳转到安装页（`App::checkInstallToPage`）。
+
+    public static function setViewHeadFoot($head_file = null, $foot_file = null)
+设置视图 head/foot 模板（转发 `View::setViewHeadFoot`）。
+
+    public static function assignViewData($key, $value = null)
+向视图数据赋值（转发 `View::assignViewData`）。
+
+    public static function IsAjax()
+是否 Ajax 请求（`CoreHelper::IsAjax`）。
+
+    public static function Show302($url)
+302 跳转（`CoreHelper::Show302`）。
+
+    public static function Show404()
+输出 404 页（`CoreHelper::Show404`）。
+
+    public static function ShowJson($ret, $flags = 0)
+输出 JSON（`CoreHelper::ShowJson`）。
+
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+发送 HTTP 头（经 SystemWrapper）。
+
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+写 Cookie（经 SystemWrapper）。
+
+    public static function exit($code = 0)
+退出（经 SystemWrapper，可配为抛异常）。
+
+    public static function assignExceptionHandler($classes, $callback = null)
+为特定异常类注册处理器（转发 `ExceptionManager`）。
+
+    public static function setMultiExceptionHandler(array $classes, $callback)
+为多个异常类注册同一处理器。
+
+    public static function setDefaultExceptionHandler($callback)
+设置默认异常处理器。
+
+    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+`$flag` 为真时抛控制器异常。
+
+    public static function GET($key = null, $default = null)
+读 `$_GET`（经 `SuperGlobal`）。
+
+    public static function POST($key = null, $default = null)
+读 `$_POST`。
+
+    public static function REQUEST($key = null, $default = null)
+读 `$_REQUEST`。
+
+    public static function COOKIE($key = null, $default = null)
+读 `$_COOKIE`。
+
+    public static function SERVER($key = null, $default = null)
+读 `$_SERVER`。
+
+    public static function Pager($new = null)
+取（或替换）分页组件实例。
+
+    public static function PageNo($new_value = null)
+取/设当前页码。
+
+    public static function PageWindow($new_value = null)
+取/设分页窗口。
+
+    public static function PageHtml($total, $options = [])
+生成分页 HTML（`Pager::PageHtml`）。
+
+    public static function FireGlobalEvent($event, ...$args)
+触发全局事件。
+
+    public static function OnGlobalEvent($event, $callback)
+注册全局事件监听。
+
+    public static function Admin()
+返回管理员动作接口（`GlobalAdmin::_()`）。
+
+    public static function AdminId(bool $check_login = true)
+当前管理员 ID（未登录按 `$check_login` 处理）。
+
+    public static function AdminName(bool $check_login = true)
+当前管理员名。
+
+    public static function AdminService()
+管理员 service（`GlobalAdmin::_()->service()`）。
+
+    public static function User()
+返回用户动作接口（`GlobalUser::_()`）。
+
+    public static function UserId(bool $check_login = true)
+当前用户 ID。
+
+    public static function UserName(bool $check_login = true)
+当前用户名。
+
+    public static function UserService()
+用户 service（`GlobalUser::_()->service()`）。
 
 ## 相关链接
 
-- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md)
+- [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md) — 业务层助手（本 Trait 也含其 `AdminService/UserService` 等）
+- [DuckPhp\Helper\AppHelperTrait](Helper-AppHelperTrait.md) — 应用级助手
+- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md) — 工程化 Controller 助手类

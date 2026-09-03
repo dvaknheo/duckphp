@@ -1,102 +1,75 @@
 # DuckPhp\Ext\HookChain
 
-钩子链扩展组件。
-
 ## 简介
 
-`HookChain` 实现了一个可调用钩子链。它按顺序执行一组回调，直到某个回调返回 `true` 时停止。该组件实现了 `ArrayAccess` 接口，可以直接当作数组操作。
+`HookChain` 表示一串「回调链」：`__invoke()` 时按顺序执行链中回调，任一回调返回真值即中断；也可作为数组使用（实现 `ArrayAccess`）。它常被用于“一组钩子按优先级执行、命中即停”的模式（框架内部曾用于状态检查等钩子组织）。
 
-## 选项
+`Hook::Hook(&$var, $callable, ...)` 是个便捷入口：把已有回调/链与新回调合并成一条链并写回 `$var`。
 
-该组件没有独立选项。
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class HookChain implements \ArrayAccess`
 
 ## 使用方式
 
-### 创建并执行钩子链
-
 ```php
-$chain = new \DuckPhp\Ext\HookChain();
-$chain->add(function () {
-    echo 'first';
-    return false;
-}, true, true);
-$chain->add(function () {
-    echo 'second';
-    return true;
-}, true, true);
+use DuckPhp\Ext\HookChain;
 
-($chain)(); // 输出 first second
+$chain = new HookChain();
+$chain->add(function () { /* 1 */ }, true, true);
+$chain->add(function () { return true; }, true, true); // 返回 true → 中断
+$chain(); // 顺序调用，遇 true 停
+
+// 便捷合并：
+HookChain::Hook($target, function () { /* … */ });
+// $target 若是回调/数组/链/空，都会整理成一条 HookChain
 ```
-
-### 使用 `Hook()` 静态方法挂载
-
-```php
-$callback = null;
-\DuckPhp\Ext\HookChain::Hook($callback, function () {
-    return true;
-});
-
-($callback)();
-```
-
-### 作为数组使用
-
-```php
-$chain = new \DuckPhp\Ext\HookChain();
-$chain[] = function () { return true; };
-isset($chain[0]); // true
-unset($chain[0]);
-```
-
-## 配置示例
-
-`HookChain` 为独立工具类，通常无需在框架配置中加载。
 
 ## 注意事项
 
-1. 调用钩子链时，按 `chain` 数组顺序执行，直到某个回调返回 `true` 停止。
-2. `add()` 支持 `append` 和 `once` 参数：`append` 为 `true` 时追加，`false` 时前置；`once` 为 `true` 时避免重复添加。
-3. `Hook()` 静态方法会把原变量与新的回调组合成新的 `HookChain`。
-4. 实现了 `ArrayAccess` 的四个方法：赋值、存在检测、删除、读取。
-
-## 全部选项
-
-无
+- `add($callable, bool $append, bool $once)`：`$append=true` 追加到尾部、`false` 插到头部；`$once=true` 时重复回调不加入。
+- `__invoke()` 逐个执行，遇回调返回“真值”即 `break`。
+- `ArrayAccess`：`$chain[$i]` 读写链上元素；`offsetSet(null,…)` 视为追加。
+- `Hook()` 静态：`$var` 为 `HookChain` 时直接 add；为 `null` 时新建并 add；为其它值（如已有回调）时把旧值与新回调一并放入新链。
 
 ## 方法列表
 
 ### 公共方法
 
+    public function __construct()
+构造空链。
+
     public function __invoke(): void
-执行钩子链，按顺序调用回调，遇到返回 `true` 时停止。
+顺序执行链上回调，任一返回真值即中断。
 
     public static function Hook(&$var, $callable, $append = true, $once = true)
-将回调挂载到变量。如果变量已是 `HookChain`，则添加到该链；如果为 `null`，则创建新链；否则创建新链并包含原变量和新回调。
+把 `$callable` 与既有 `$var` 合并成一条链写回 `$var`。
 
     public function add(callable $callable, bool $append, bool $once)
-添加回调到链中。`once` 为 `true` 时，如果回调已存在则跳过。
+向链中追加/前插回调（`once` 时去重）。
 
     public function remove(callable $callable): void
 从链中移除指定回调。
 
     public function has(callable $callable): bool
-判断链中是否包含指定回调。
+链中是否包含指定回调。
 
     public function all(): array
-返回链中所有回调。
+返回整条回调链数组。
 
-    public function offsetSet($offset, $value)
-实现 `ArrayAccess`：设置回调。
+    public function offsetSet($offset, $value): void
+数组写（null 偏移追加）。
 
-    public function offsetExists($offset)
-实现 `ArrayAccess`：判断是否存在。
+    public function offsetExists($offset): bool
+数组键是否存在。
 
-    public function offsetUnset($offset)
-实现 `ArrayAccess`：删除回调。
+    public function offsetUnset($offset): void
+删除数组键。
 
     public function offsetGet($offset)
-实现 `ArrayAccess`：获取回调。
+取数组键（不存在返回 `null`）。
 
 ## 相关链接
 
-- [DuckPhp\Ext\RouteHookManager](Ext-RouteHookManager.md)
+- [DuckPhp\Ext\Misc](Ext-Misc.md) — 其它杂项工具扩展

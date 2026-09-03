@@ -1,170 +1,154 @@
 # DuckPhp\Core\View
 
-视图组件。
+视图组件：负责把控制器/逻辑要展示的数据渲染成输出（模板 include），支持头/脚包裹、数据委托与“渲染成字符串”拾取。
 
 ## 简介
 
-`View` 提供基于 PHP 文件的视图渲染能力。支持头部/尾部布局、视图数据赋值、返回渲染字符串或输出，并能在渲染时临时忽略 `E_NOTICE` 错误。
+`View` 是 DuckPHP 的默认视图实现（`class View extends ComponentBase`）。它不依赖任何模板引擎，而是直接用 PHP 模板文件（include `.php`）渲染 —— 这类文件就是我们通常说的 `view/*.php`。
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+核心能力：
+
+- 把一段数据 `extract()` 成“局部变量作用出来”，再 `include` 视图(以及可选 head/foot)输出；
+- 渲染接口三兄弟 `Show`(立即输出) `Display`(输出指定模板) `Render`(捕获 → 字符串) —— 每个都有静态壳（入 Controller/Helper 里调 `View::Show(...)` 等最容易用）；
+- 数据相关：`assignViewData()`/`getViewData()`，可把数据事先预分配到实例的上下文中；
+- 视图文件定位基于 `options[path]/options[path_view]` + `getOverrideableFile()`（支持 Phase 级覆盖子目录）。
+
+通常不做单根 `View()`;只需在 `<controller>_Show(...)`、或全局 `View::_()->_Show(...)`/static 壳里指定“视图名/文件”即可。它也在 App/DuckPhpAllInOne 里被包装成更上层的 `_Show`。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class View extends ComponentBase`
+- 常用获取：`View::_()` 返回当前应用 Phase 的实例；或者用对称静态壳 `View::Show/Display/Render`。
+- 公共属性：`$options`；`$data`（当前预分配数据）。
 
 ## 选项
 
+`View::$options`：(默认值)
+
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `path` | `''` | 项目根路径。 |
-| `path_view` | `'view'` | 视图文件目录，相对于 `path`。 |
-| `view_skip_notice_error` | `true` | 渲染视图时是否忽略 `E_NOTICE` 错误。 |
+| `path` | `''` | 项目根路径（组件层对“相对”的基准）。一般由 App 合并好后传入。 |
+| `path_view` | `'view'` | 视图目录相对名（相对 `path`；可绝对则用之）。`getViewFile()` 用它拼 `{$path}/{$path_view}/{$file}.php`。 |
+| `view_skip_notice_error` | `true` | 渲染时是否临时屏蔽 `E_NOTICE` 噪声。为 true 时 `_Show` 会临时去掉 E_NOTICE 再到结束恢复。 |
 
 ## 使用方式
 
-### 显示视图
+### 直接渲染输出（最常见）
 
 ```php
 use DuckPhp\Core\View;
 
-View::Show([
-    'title' => '首页',
-    'user' => $user,
-], 'index');
+// 视图名（相对 view/ 不带 .php）
+View::Show(['user' => $user], 'user/profile');
 ```
 
-### 显示视图片段
+等价于静态转发：
 
 ```php
-use DuckPhp\Core\View;
-
-View::Display('partials/header', ['title' => '标题']);
+View::_()->_Show(['msg'=>'hi'], 'welcome');   // 输出 welcome.php
+View::Display('welcome', ['x'=>1]);           // 同位置的一次输出（带可选 data）
+$html = View::Render('mail/body', ['order'=>$o]); // 捕获到变量
 ```
 
-### 获取渲染结果
+### 预分配数据 + 取回
 
 ```php
-use DuckPhp\Core\View;
-
-$html = View::Render('emails/welcome', ['user' => $user]);
+View::_()->assignViewData('shop_name', 'DemoShop');
+View::_()->assignViewData(['title'=>'首页', 'extra'=>1]);  // 数组批量
+$viewData = View::_()->getViewData();
 ```
 
-### 全局函数
+> `_Show()` 会 area_merge 自带的 `$data` 与已 assign 的数据后 `extract` —— 对应 view 文件内这些名字就是变量。
+
+### head/foot 绕头尾
 
 ```php
-__display('partials/header', ['title' => '标题']);
+View::_()->setViewHeadFoot('_layout/head', '_layout/foot');
+View::_()->_Show(['name'=>'D'], 'another'); // hence: head、主体、foot 依次输出
 ```
 
-### 设置布局
+注意 `_Show` 用传入（对象级的 `$head_file/ $foot_file`）默认取当前设置；不设时只有主体。
 
-```php
-use DuckPhp\Core\View;
+#### reset
 
-View::_()->setViewHeadFoot('header', 'footer');
-View::Show(['title' => '带布局的页面'], 'content');
-```
-
-### 赋值视图数据
-
-```php
-use DuckPhp\Core\View;
-
-View::_()->assignViewData('title', '页面标题');
-View::_()->assignViewData([
-    'user' => $user,
-    'items' => $items,
-]);
-```
-
-## 视图文件
-
-视图文件默认位于 `view/` 目录，扩展名为 `.php`。例如调用 `View::Show([], 'user/profile')` 会加载 `view/user/profile.php`。
-
-视图模板示例：
-
-```php
-<!-- view/index.php -->
-<h1><?= __h($title); ?></h1>
-<p>Hello, <?= __h($user['name']); ?></p>
-```
+处理完一个周期后调用 `View::_()->reset()` 清除 head/foot/data/view 状态，便于每个请求/测试零状态。
 
 ## 配置示例
 
-### 基础配置
-
 ```php
-class App extends \DuckPhp\DuckPhp
-{
-    public $options = [
-        'path_view' => 'view',
-        'view_skip_notice_error' => true,
-    ];
-}
+// config (通常在 app options)
+$viewOptions = [
+    'path'      => __DIR__,          // root 项目
+    'path_view' => 'view',           // view/ 
+];
 ```
 
-### 自定义视图目录
-
-```php
-class App extends \DuckPhp\DuckPhp
-{
-    public $options = [
-        'path' => __DIR__,
-        'path_view' => 'templates',
-    ];
-}
-```
+例：`View::Show(['count'=>$n],'list')` 会尝试 include `<root>/view/list.php`，模板内直接 `$count` 用之。
 
 ## 注意事项
 
-1. 视图文件中的变量会通过 `extract()` 展开，渲染前传入的数组键名可直接作为变量使用。
-2. 如果开启 `view_skip_notice_error`，渲染期间会临时关闭 `E_NOTICE` 报告，渲染结束后会恢复。
-3. 使用 `View::Show()` 时，如果设置了 `head_file` 和 `foot_file`，会自动包含头部和尾部文件。
-4. 调用 `reset()` 可以清空视图数据和布局设置。
+1. 视图文件若不存在并不会报错——include 抛 warning/视 engine 而定；建议结构上放好 .php。
+2. 自定义 `path_view` 允许多层路径 `mails/digest`。
+3. 输出即回显：要点不 echo View 值。若需拿到字符串用 `Render`（内部 ob 捕获）。
+4. 静态壳 `Show/Display/Render` 与实例 `_Show/_Display/_Render` 一一对应；壳总是作用于当前 Phase 实例。
+5. `extendFullFile` 会进一步支持子应用/Phase 覆盖（见 `ComponentBase`）。
 
 ## 全部选项
 
 ```php
-    'path' => '',
-    'path_view' => 'view',
-    'view_skip_notice_error' => true,
+    public $options = [
+        'path' => '',
+        'path_view' => 'view',
+        'view_skip_notice_error' => true,
+    ];
 ```
 
 ## 方法列表
 
+> 源码定义的全部 public/protected（无 static label 时说明 instance member）。static/none static 混排按源码顺序给出，并在壳上注明“静态”。
+
 ### 公共方法
 
-    public static function Show(array $data = [], string $view = null): void
-渲染并输出视图，支持头部和尾部布局
+    public static function Show(array $data = [], ?string $view = null)
+静态壳 → `static::_()->_Show($data,$view)`；最常用渲染入口（立即输出）
 
     public static function Display(string $view, ?array $data = null): void
-渲染并输出单个视图文件，不包含布局
+静态壳 → `static::_()->_Display(...)`
 
     public static function Render(string $view, ?array $data = null): string
-渲染视图并返回字符串
+静态壳：渲染并捕获返回字符串
 
-    public function _Show(array $data, string $view): void
-`Show` 的内部实现
+    public function _Show(array $data, string $view)
+(核心) 若 view_skip_notice_error 临时降 E_NOTICE；解析 view/head/foot 文件、合并数据并 extract；按 head → 主view → foot 顺序 include 输出；渲染后恢复 reporting 边界
 
     public function _Display(string $view, ?array $data = null): void
-`Display` 的内部实现
+单文件输出指定模板（合并好 data,排除 'this' 键）并 include
 
     public function _Render(string $view, ?array $data = null): string
-`Render` 的内部实现
+捕获"输出"为字符串：ob start→ _Display → ob 取内容 → 结束
 
     public function reset()
-重置视图数据、布局文件和错误报告状态
+重置实例：清空 head/foot/view 与临时文件/旧 error level，让每个周期零状态
 
     public function getViewData(): array
-获取当前视图数据
+返回当前已 assign 数据数组
 
     public function setViewHeadFoot(?string $head_file, ?string $foot_file): void
-设置头部和尾部布局文件
+设置渲染包裹的头/脚模板
 
     public function assignViewData($key, $value = null): void
-赋值视图数据，支持数组批量赋值
+预分配变量：数组($value null)整体 merge，或单项 $key=>$value
 
 ### 受保护方法
 
     protected function getViewFile(?string $view): string
-根据视图名获取完整视图文件路径
+把视图名补成 `<path>/<path_view>/<name>.php`（`.php` 已带时不加）返回绝对；空则空串
 
 ## 相关链接
 
-- [DuckPhp\Core\CoreHelper](Core-CoreHelper.md)
-- [DuckPhp\Core\App](Core-App.md)
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件 init / extendFullFile
+- [DuckPhp\Core\App](Core-App.md) — host 层 `_Show` 视图入口会调用 View
+- [DuckPhp\Ext\CallableView](Ext-CallableView.md)、[DuckPhp\Ext\JsonView](Ext-JsonView.md) — 其它视图风格组件
+- 层级解释：[Foundation\Controller](Foundation-Controller-Base.md) ; 页面 shell 见 DuckPhpAllInOne view_head/foot
+- guide：[layers](../guide/layers.md)

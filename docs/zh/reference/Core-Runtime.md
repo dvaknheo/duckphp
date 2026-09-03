@@ -1,90 +1,64 @@
 # DuckPhp\Core\Runtime
 
-运行时组件。
+运行期状态与输出缓冲管理的小组件：标记“正在运行”、捕获是否输出过、`run()/clear()` 兜输出缓冲、进入异常时改状态。
 
 ## 简介
 
-`Runtime` 负责管理应用的运行状态，包括运行标记、输出缓冲控制以及异常状态标记。它为 `DuckPhp` 主流程提供运行期上下文。
+`Runtime`（`class Runtime extends ComponentBase`）不是大的业务组件，而是应用生命周期里的一个“状态记录 + output buffer 容器”：
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+- 提供 `isRunning/isInException/isOutputed` 三个只读状态；
+- `run()`：若 opts `use_output_buffer` true，则 `ob_start()` 并记住进入前 ob 层级；
+- `clear()`：结束时把自身的缓冲区 flush 到进入时层级，并把 is_running=false、is_outputed=true；
+- `onException()`：把 `is_in_exception` 置真（供上层判断此刻是否在异常处理路径上）。
+
+Kernel `serve()`/异常流会围绕它来包“一次请求运行窗口”。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class Runtime extends ComponentBase`
 
 ## 选项
 
+`Runtime::$options`
+
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `use_output_buffer` | `false` | 是否启用输出缓冲。 |
-| `path_runtime` | `'runtime'` | 运行时目录路径。 |
+| `use_output_buffer` | `false` | 是否开启整体输出缓冲；开启时 run() 开始一个 ob、clear() 负责 flush。 |
 
 ## 使用方式
 
-### 检查运行状态
-
 ```php
 use DuckPhp\Core\Runtime;
-
-if (Runtime::_()->isRunning()) {
-    // 当前应用正在运行中
-}
-
-if (Runtime::_()->isInException()) {
-    // 当前处于异常处理流程
-}
-
-if (Runtime::_()->isOutputed()) {
-    // 输出已经清理/完成
-}
-```
-
-### 启动运行时
-
-```php
-use DuckPhp\Core\Runtime;
-
-Runtime::_()->run();   // 若启用 use_output_buffer 则开启输出缓冲
-```
-
-### 清理运行时
-
-```php
-use DuckPhp\Core\Runtime;
-
-Runtime::_()->clear(); // 关闭输出缓冲，重置运行状态
-```
-
-### 标记异常状态
-
-```php
-use DuckPhp\Core\Runtime;
-
-Runtime::_()->onException(true);  // 清理输出缓冲并标记异常状态
-Runtime::_()->onException(false); // 仅标记异常状态
+$r = Runtime::_()->init(['use_output_buffer'=>true]);
+$r->run();          // 若开缓冲 -> ob_start
+// ... 输出 ...
+$r->clear();        // 缓冲 flush；is_outputed 变 true
+Runtime::_()->isRunning();       // false（已清）
+Runtime::_()->isInException();
 ```
 
 ## 配置示例
 
-### 启用输出缓冲
-
 ```php
-class App extends \DuckPhp\DuckPhp
-{
-    public $options = [
-        'use_output_buffer' => true,
-        'path_runtime' => 'runtime',
-    ];
-}
+// app options（框架通常按此兜）
+Runtime::_()->init([
+    'use_output_buffer' => true,   // 需要等“谁先输出”都要由缓冲收拢时开启
+]);
 ```
 
 ## 注意事项
 
-1. `run()` 和 `clear()` 应成对使用，`clear()` 会关闭 `run()` 开启的输出缓冲层。
-2. 当 `use_output_buffer` 为 `true` 时，`run()` 会记录当前 `ob_get_level()` 并在 `clear()` 时恢复到该层级。
-3. `onException()` 通常由框架异常处理流程调用，一般不需要手动调用。
+- `clear()` 若尚未 `run()` 又没输出层级会直接 false。
+- onException 状态会被 Kernel 用来调整：异常期间到底层 handler。
+- clear 会 flush 但不会 abandon；需要完全吞可用到别处 ob API。
 
 ## 全部选项
 
 ```php
-    'use_output_buffer' => false,
-    'path_runtime' => 'runtime',
+    public $options = [
+        'use_output_buffer' => false,
+    ];
 ```
 
 ## 方法列表
@@ -92,24 +66,23 @@ class App extends \DuckPhp\DuckPhp
 ### 公共方法
 
     public function isRunning()
-返回当前是否处于运行状态
+是否在 run→clear 之间的运行窗口内。
 
     public function isInException()
-返回当前是否处于异常处理流程
+是否已走进 onException（异常处理中）。
 
     public function isOutputed()
-返回输出是否已经清理/完成
+本轮是否已 clear/输出结束。
 
     public function run()
-启动运行时，若启用输出缓冲则开启缓冲
+若 use_output_buffer 则记录初始 ob 层级后开始缓冲；置 is_running=true。
 
     public function clear()
-清理运行时状态并关闭输出缓冲层
+结束时把自身已开缓冲 flush 到 init 层级；is_running=false；is_outputed=true。若未运行返回 false。
 
-    public function onException($skip_exception_check)
-标记异常状态。传入 `true` 时会先调用 `clear()`
+    public function onException()
+把 is_in_exception 置为 true。
 
 ## 相关链接
 
-- [DuckPhp\Core\App](Core-App.md)
-- [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
+- [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) — serve 流程围绕它管理“一次请求的窗口”与异常 onException 状态

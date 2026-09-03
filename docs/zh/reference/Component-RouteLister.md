@@ -1,59 +1,92 @@
 # DuckPhp\Component\RouteLister
 
-`DuckPhp\Component\RouteLister` 路由枚举组件。
+路由枚举：把当前应用的路由集合（Rewrite / important 地图 / 控制器自动路由 / 普通地图，以及子应用）整理成统一记录集 —— 供权限导出、路由展示（如 CLI `routes`）使用。
 
 ## 简介
 
-`RouteLister` 是 `DuckPhp\Component` 命名空间下的 类，由 DuckPhp 框架提供。
+`RouteLister extends ComponentBase` 提供“把系统能答应的 URL 全列出来”的能力，输出一行行如下结构：
+
+```php
+['url','phase','controller','method',
+ 'is_admin','is_user',
+ 'route_map','route_map_important','rewrite_map'];
+```
+
+- 顺序固定：rewrite_map → route_map_important → 控制器方法 → route_map；
+- 控制器 URL 由「查配置文件目录下所有控制器类 + 反射公共方法」反推（见 `pathInfoFromClassAndMethod`）；
+- 分别带 admin/user 标记；可用 `only_controller/only_admin/only_user` 过滤；
+- `with_children` 开时递归第子应用（children）各行，phase 也各自正确浮现。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class RouteLister extends ComponentBase`
+- 通常被命令层调用（如在 `DuckPhp\Component\Command::command_routes` 中显示）。
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
+`RouteLister::$options`：
+
+| 选项 | 默认 | 说明 |
 |---|---|---|
-| `classes_to_get_controller_path` | `[]` |  |
+| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。
+
+补充：它不承担“哪些方法被路由”（判断基于 controller_class_postfix/method_prefix, controller_class_base 检查依 Route），它只是索引其 path；欢迎/Helper/Base也被试优先定位目录。
 
 ## 使用方式
 
-### 基本用法
-
 ```php
 use DuckPhp\Component\RouteLister;
-
-$obj = RouteLister::_();
+$rows = RouteLister::_()->listAll();
+// CLI: 展示成彩行可自行 echo（见 Component\Command.command_routes）。
+$rows_admin = RouteLister::_()->listAll(true, true, true, false);  // 仅 admin 控制器
 ```
+
+## 生成 URL 的方式
+
+控制器的“一行 url”由 `pathInfoFromClassAndMethod(全名, 动作名)` 反推：类 postfix、方法 prefix 处理后，首部分=`namespace_controller…/…`，method 尾段 URL 前缀并补 method/欢迎，返回 url 字符串（含 ext & url_prefix）。（方法内部还支持 route `controller_class_adjust` 的逆向还原。）
 
 ## 注意事项
 
-1. 本类为框架内部或扩展组件，通常由框架自动加载。
-2. 如需自定义行为，可继承本类并覆盖相应方法。
+- 需要控制器目录能反射到文件名（真实类已 autoload）走反射；失败返回 null 的行会跳过。
+- 过滤 only_admin/only_user 不能同时 true（抛 `InvalidArgumentException`）。
+- list 结果中 controller rows 总是存在（忽略 only_controller 只给 rows），而 route 三块（map/…）会被 only_controller 隐跳过。
 
 ## 方法列表
 
 ### 公共方法
 
-    function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
+    public pathInfoFromClassAndMethod($class, $method, $adjuster = null)
+根据 控制器全名+方法 → 该路由可写 URL（或欢迎/欢迎方法特殊短文/空 return prefix）。实现去反向 controller_class_adjust。
 
-    function listAll(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): array
-List all routes as recordset.
- Order: rewrite_map, route_map_important, controller routes, route_map.
- @return array<int, array<string, mixed>>
+    public listAll(bool $with_children = true,
+                   bool $only_controller = false,
+                   bool $only_admin = false,
+                   bool $only_user = false): array
+核心：组装 rewrite_important 路由/rows+控制器方法（可滤 admin/user），再普通 route_map；如 with_children 递归附加子应用记录。
 
 ### 受保护方法
 
-    function doControllerClassAdjust(string $first, string $method): array
+    protected doControllerClassAdjust(string $first, string $method): array
+还原路径段：uc_method/uc_class(lcfirst of last)/uc_full_class（各段 lcfirst）等。
 
-    function getAllControllerClasses(): array
+    protected getAllControllerClasses(): array
+用候选类定 controller 目录，递归扫目录中 `.php`（去 postfix）返回键 class=>absfile 映射。
 
-    function getControllerMethods(string $full_class, ?callable $adjuster = null): array
+    protected getControllerMethods(string $full_class, ?callable $adjuster = null): array
+反射 public 非 static 非构造方法，可逆成 URL 并跳过 pathInfo 返回 null 的。
 
-    function listControllerRows(bool $only_admin, bool $only_user): array
-@return array<int, array<string, mixed>>
+    protected listControllerRows(bool $only_admin, bool $only_user): array
+遍历 classes 过滤 接口归属后，为每个方法合成一行记录。
 
-    function parseRouteMapCallback(string $callback): array
-@return array{0: string, 1: string}
+    protected parseRouteMapCallback(string $callback): array
+把 route_map 目标 `~Class@method`/`Class@method` 拆 [class,method]。
 
-    function isSubclassOf(string $class, string $interface): bool
+    protected isSubclassOf(string $class, string $interface): bool
+反射判断是否实现接口子类（捕获反射异常→false）。
 
 ## 相关链接
 
-- [中文参考手册目录](index.md)
+- 命令侧输出者 [DuckPhp\Component\Command](Component-Command.md)
+- 数据源两个路由地图组件：Rewrite / RouteMap（见本目录参考）
+- 用户/管理判定：GlobalUser / GlobalAdmin interfaces

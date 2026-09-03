@@ -1,45 +1,42 @@
 # DuckPhp\Foundation\ExceptionTrait
 
-¼òµ¥Òì³£Àà Trait¡£
+## ç®€ä»‹
 
-## ¼ò½é
+`ExceptionTrait` æ˜¯ Foundation å±‚å¯¹ `Core\ThrowOnTrait` çš„**è–„å°è£…**ï¼šè®©å·¥ç¨‹å†…çš„è‡ªå®šä¹‰å¼‚å¸¸ç±»é€šè¿‡ `use ExceptionTrait` è·å¾—é™æ€ `ThrowOn($flag, $message, ...)` å¿«æ·æŠ›å¼‚å¸¸èƒ½åŠ›ï¼Œè€Œä¸å¿…ç›´æ¥ä¾èµ– `Core` å‘½åç©ºé—´ã€‚
 
-`DuckPhp\Foundation\ExceptionTrait` ÊÇÒì³£ÀàµÄ¼ò»¯×éºÏ Trait£¬½öÒıÈëÁË `DuckPhp\Core\ThrowOnTrait`£¬Ê¹Òì³£ÀàÖ§³Ö¿ìËÙÅ×³öÒì³£µÄ·½·¨¡£
+å®ç°ä¸º `use DuckPhp\Core\ThrowOnTrait;`ã€‚
 
-## Ñ¡Ïî
+## ç±»ä¿¡æ¯
 
-ÎŞ¡£
+- å‘½åç©ºé—´ï¼š`DuckPhp\Foundation`
+- å£°æ˜ï¼š`trait ExceptionTrait`
+- ä½¿ç”¨çš„ Traitï¼š`DuckPhp\Core\ThrowOnTrait`
 
-## Ê¹ÓÃ·½Ê½
-
-### ÔÚ×Ô¶¨ÒåÒì³£ÀàÖĞÊ¹ÓÃ
+## ä½¿ç”¨æ–¹å¼
 
 ```php
+namespace MyProject\System;
+
 use DuckPhp\Foundation\ExceptionTrait;
 
 class MyException extends \Exception
 {
     use ExceptionTrait;
 }
+
+// ç”¨æ³•ï¼šæ¡ä»¶ä¸ºçœŸå³æŠ›ï¼ˆå¼‚å¸¸ç±»ä¸º static::classï¼Œå³ MyExceptionï¼‰
+MyException::ThrowOn($flag, 'å‡ºé”™äº†', 1001);
 ```
 
-### Å×³öÒì³£
+## æ³¨æ„äº‹é¡¹
 
-```php
-MyException::ThrowOn($condition, 'error message', 500);
-```
+- æ¡†æ¶è‡ªå¸¦çš„ç³»ç»Ÿå¼‚å¸¸ï¼ˆ`DuckPhpSystemException`ï¼‰å·²ç»„åˆ `ThrowOnTrait`ï¼›æœ¬ Trait æ˜¯ä¸ºâ€œå·¥ç¨‹è‡ªå®šä¹‰å¼‚å¸¸â€å‡†å¤‡çš„åŒç­‰èƒ½åŠ›ã€‚
 
-## ×¢ÒâÊÂÏî
+## æ–¹æ³•åˆ—è¡¨
 
-1. ¸Ã Trait ±¾ÉíÃ»ÓĞ¶¨Òå·½·¨£¬ËùÓĞ·½·¨¾ùÀ´×Ô `ThrowOnTrait`¡£
-2. ×Ô¶¨ÒåÒì³£ÀàÍ¨³£¼Ì³Ğ `\Exception` »ò `\RuntimeException`¡£
+æœ¬ Trait æœªè‡ªè¡Œå£°æ˜æ–¹æ³•ï¼šé™æ€ `ThrowOn(...)` ç”± `Core\ThrowOnTrait` æä¾›ï¼ˆç»„åˆåå³å¯ `MyException::ThrowOn($flag, $message, $code)`ï¼‰ã€‚
 
-## ·½·¨ÁĞ±í
+## ç›¸å…³é“¾æ¥
 
-### ¹«¹²·½·¨
-
-À´×ÔÒıÈëµÄ Trait£¬ÎŞ×ÔÓĞ·½·¨¡£
-
-## Ïà¹ØÁ´½Ó
-
-- [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md)
+- [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md) â€” å®é™…å®ç°
+- [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md) â€” å·²ä½¿ç”¨è¯¥èƒ½åŠ›çš„ç³»ç»Ÿå¼‚å¸¸

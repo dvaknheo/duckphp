@@ -1,122 +1,72 @@
 # DuckPhp\Ext\EventManager
 
-事件管理组件。
-
 ## 简介
 
-`EventManager` 组件提供了一个简单的事件监听和触发机制。它允许在应用的不同阶段注册事件回调，并在事件触发时按注册顺序依次执行。
+`EventManager` 是简单的事件管理器扩展：以 `事件名 => [回调…]` 存放监听，支持注册（`on`）、触发（`fire`）、查询（`all`）、移除（`remove`），并提供一套静态便捷入口（`OnEvent/FireEvent/AllEvents/RemoveEvent`）。事件名可以是字符串或数组（数组会以 `::` 拼接为字符串键）。
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+与 `Component\GlobalEvent` 的定位差异：`GlobalEvent` 面向“全局事件”（供 App 选项开关配置）；`EventManager` 是组件化的独立实现，可自行引入使用。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class EventManager extends DuckPhp\Core\ComponentBase`
 
 ## 使用方式
-
-### 静态方法
 
 ```php
 use DuckPhp\Ext\EventManager;
 
-// 监听事件
-EventManager::OnEvent('user.login', function ($userId) {
-    echo "User {$userId} logged in\n";
-});
+EventManager::OnEvent('order.created', function ($orderId) { /* … */ });
+EventManager::OnEvent('order.created', $listener2);
 
-// 触发事件
-EventManager::FireEvent('user.login', 123);
+EventManager::FireEvent('order.created', 42);   // 按注册顺序逐个调用回调
 
-// 获取所有事件
-$events = EventManager::AllEvents();
-
-// 移除事件
-EventManager::RemoveEvent('user.login');
-```
-
-### 使用类名作为事件名
-
-事件名也支持数组形式，通常用于 `类名::事件名`：
-
-```php
-use DuckPhp\GlobalUser\GlobalUser;
-
-EventManager::OnEvent([GlobalUser::class, GlobalUser::EVENT_LOGINED], function ($user) {
-    // ...
-});
-
-EventManager::FireEvent([GlobalUser::class, GlobalUser::EVENT_LOGINED], $user);
-```
-
-## 事件回调
-
-事件回调可以是任意可调用对象。触发事件时，会依次调用所有监听该事件的回调：
-
-```php
-EventManager::OnEvent('app.init', function () {
-    // 第一个回调
-});
-
-EventManager::OnEvent('app.init', function () {
-    // 第二个回调
-});
-
-EventManager::FireEvent('app.init');  // 两个回调都会执行
-```
-
-## 移除事件
-
-移除单个回调：
-
-```php
-$callback = function () { /* ... */ };
-EventManager::OnEvent('my.event', $callback);
-EventManager::RemoveEvent('my.event', $callback);
-```
-
-移除整个事件的所有回调：
-
-```php
-EventManager::RemoveEvent('my.event');
+$all = EventManager::AllEvents();               // ['order.created' => [callable…]]
+EventManager::RemoveEvent('order.created');     // 移除该事件的全部监听
+EventManager::RemoveEvent('order.created', $listener2); // 只移除某个回调
 ```
 
 ## 注意事项
 
-1. 同一个回调不会被重复注册到同一事件。
-2. 事件触发时按注册顺序执行回调。
-3. 事件名内部统一转为字符串处理，数组形式会拼接为 `Class::EVENT`。
-4. 事件管理器没有返回值，回调结果不传递给后续回调。
+- `on()`：同一事件下重复注册同一回调会被跳过（`in_array` 判重）。
+- `fire()`：事件无监听时静默返回；监听回调逐个 `(…)($args)` 调用，返回值不聚合。
+- `remove()`：不传 `$callback` 时整个事件清空；传了则按回调过滤（宽松比较 `!=`）。
+- `eventName()`：数组事件（如 `[Class::class,'method']`）拼成 `Class::method` 形式字符串。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function OnEvent($event, $callback)
-注册事件监听器
+静态注册监听（等价 `on`）。
 
     public static function FireEvent($event, ...$args)
-触发事件，依次调用所有监听器
+静态触发事件（等价 `fire`）。
 
     public static function AllEvents()
-获取所有已注册事件
+静态取全部事件表。
 
     public static function RemoveEvent($event, $callback = null)
-移除事件监听器。`$callback` 为 `null` 时移除整个事件
+静态移除监听（等价 `remove`）。
 
     public function on($event, $callback)
-实例方法版本，注册事件监听器
+注册事件监听（去重后追加）。
 
     public function fire($event, ...$args)
-实例方法版本，触发事件
+触发事件：依次调用该事件的全部回调。
 
     public function all()
-实例方法版本，获取所有事件
+返回全部事件表（事件名 => 回调数组）。
 
     public function remove($event, $callback = null)
-实例方法版本，移除事件监听器
+移除事件：无回调清空整事件，有回调则过滤掉相等的回调。
 
 ### 受保护方法
 
     protected function eventName($event): string
-将事件名统一转换为字符串
+规范化事件名：数组用 `::` 拼成字符串。
 
 ## 相关链接
 
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-- [DuckPhp\Core\App](Core-App.md)
+- [DuckPhp\Component\GlobalEvent](Component-GlobalEvent.md) — 全局事件组件
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件基类

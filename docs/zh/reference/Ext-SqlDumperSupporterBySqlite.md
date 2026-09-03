@@ -1,38 +1,38 @@
 # DuckPhp\Ext\SqlDumperSupporterBySqlite
 
-`DuckPhp\Ext\SqlDumperSupporterBySqlite` 数据库结构导出组件。
-
 ## 简介
 
-`SqlDumperSupporterBySqlite` 是 `DuckPhp\Ext` 命名空间下的 类，由 DuckPhp 框架提供。
+`SqlDumperSupporterBySqlite` 是 `SqlDumperSupporter` 的 **SQLite** 驱动实现：
 
-## 选项
+- `getAllTable()`：查 `sqlite_master`（`type='table'`）收集表名，跳过系统表（`sqlite_*` 前缀）；
+- `getSchemeByTable()`：取 `sqlite_master.sql` 中的建表语句，并把 `CREATE TABLE "名"` 转成反引号风格 `` CREATE TABLE `名` ``。
 
-无。
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class SqlDumperSupporterBySqlite extends SqlDumperSupporter`
 
 ## 使用方式
 
-### 基本用法
+（通常无需直接使用，由 `SqlDumperSupporter::Current()` 按驱动自动选择。）
 
 ```php
-use DuckPhp\Ext\SqlDumperSupporterBySqlite;
-
-$obj = SqlDumperSupporterBySqlite::_();
+$s = SqlDumperSupporterBySqlite::_();
+$tables = $s->getAllTable();
+$ddl    = $s->getSchemeByTable('user');
 ```
-
-## 注意事项
-
-1. 本类为框架内部或扩展组件，通常由框架自动加载。
-2. 如需自定义行为，可继承本类并覆盖相应方法。
 
 ## 方法列表
 
 ### 公共方法
 
-    function getAllTable(): array
+    public function getAllTable(): array
+查 `sqlite_master` 返回全部用户表名（排除 `sqlite_*` 系统表）。
 
-    function getSchemeByTable(string $table): string
+    public function getSchemeByTable(string $table): string
+返回建表 SQL（表名统一为反引号）。
 
 ## 相关链接
 
-- [中文参考手册目录](index.md)
+- [DuckPhp\Ext\SqlDumperSupporter](Ext-SqlDumperSupporter.md) — 父类
+- [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) — 使用方

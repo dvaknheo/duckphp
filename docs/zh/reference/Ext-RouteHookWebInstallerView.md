@@ -1,47 +1,43 @@
 # DuckPhp\Ext\RouteHookWebInstallerView
 
-Web 安装器默认视图模板。
-
 ## 简介
 
-`RouteHookWebInstallerView` 不是 PHP 类，而是 `DuckPhp\Ext\RouteHookWebInstaller` 使用的内置视图模板文件。它包含完整的 HTML 表单，用于在浏览器中完成项目首次安装时的环境检查、数据库配置、Redis 配置与安装执行。
+`RouteHookWebInstallerView` 是 `RouteHookWebInstaller` 的**内置安装视图**。注意：该文件**不定义任何 PHP 类/函数**，而是一份混排 HTML 与 PHP 的视图模板，由 `RouteHookWebInstaller` 在 `show()` 时 `extract($data)` 后引入渲染（见文件头注释）。
 
-该视图通过 `RouteHookWebInstaller` 的 `show()` 方法渲染，渲染前会 `extract($data)` 注入变量，因此模板中可直接使用 `$title`、`$checks`、`$installed`、`$post` 等变量。
+页面职责：
 
-## 选项
+- 已安装（`$installed` 非空）：显示“安装完成”与 5 秒后跳转首页；
+- 未安装：显示环境检查表（`$checks`）、数据库/Redis 配置表单（含 `controller_resource_prefix` 提示）、`web_installer_force` 复选与自定义区块。
 
-无。视图本身不定义配置选项，其行为由 `RouteHookWebInstaller` 的选项控制。
+所有 UI 文案均经 `__hl('webinstaller.*')` 取多语言句（默认句来自 `RouteHookWebInstaller::builtin_default_sentences`，真实翻译优先）。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：无（纯视图文件，无 class/interface/trait）
 
 ## 使用方式
 
-### 默认视图
-
-`RouteHookWebInstaller` 默认使用本视图文件渲染安装页面：
+一般不需要直接引用本文件：配置 `RouteHookWebInstaller`（`web_installer_view` 留空）即使用内置视图。
 
 ```php
-use DuckPhp\Ext\RouteHookWebInstaller;
-
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            RouteHookWebInstaller::class => true,
-        ],
-    ];
-}
+// App 选项示例：
+'ext' => [\DuckPhp\Ext\RouteHookWebInstaller::class => true],
 ```
 
-### 自定义视图
-
-通过 `web_installer_view` 选项指定自定义视图类，或设置 `web_installer_view_block_custom` 修改安装表单区块。
+需要定制外观时，把内置文件拷出修改后经 `web_installer_view` 指定；如需在表单里追加自定义字段，用 `web_installer_view_block_custom`。
 
 ## 注意事项
 
-1. 模板中使用 `__hl()` 输出多语言文本，使用 `__h()` 输出 HTML 转义内容。
-2. 表单提交后会回到当前 URL，`RouteHookWebInstaller` 负责处理 POST 数据。
-3. 如需完全自定义界面，建议继承 `RouteHookWebInstaller` 并覆盖 `render()` 相关方法。
+- 视图数据由宿主注入：`$title`、`$installed`、`$checks`、`$controller_resource_prefix`、各配置表项等；请勿在本文件内直接触碰框架 API。
+- 文案键统一 `webinstaller.*`；给 `web_installer_default_sentences` 传数组可覆盖默认英文句。
+- 文件采用“控制结构用花括号、HTML 保留自身缩进”的写法（见头注释约定）。
+
+## 方法列表
+
+本文件为视图模板，无任何方法。
 
 ## 相关链接
 
-- [中文参考手册目录](index.md)
-- [DuckPhp\Ext\RouteHookWebInstaller](Ext-RouteHookWebInstaller.md)
+- [DuckPhp\Ext\RouteHookWebInstaller](Ext-RouteHookWebInstaller.md) — 宿主（负责数据与渲染）
+- [DuckPhp\Component\Lang](Component-Lang.md) — `__hl()` 多语言来源

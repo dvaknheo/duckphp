@@ -1,135 +1,69 @@
 # DuckPhp\Component\Configer
 
-配置读取组件。
+从 `config/` 读取 PHP 配置文件的极简组件：按“基名”require、缓存结果、支持取整/单键。
 
 ## 简介
 
-`Configer` 组件负责从 `config/` 目录加载 PHP 配置文件。它通过文件基名（不含 `.php` 后缀）缓存并返回配置数组，支持按键读取默认值。
+`Configer extends ComponentBase` 负责把 `{file_basename}.php`（返回数组）读入内存并缓存（`$all_config`）。
 
-配置文件的查找路径为：`{path}/{path_config}/{file_basename}.php`。例如 `config/app.php` 对应基名 `app`。
+- `_Config($file_basename,$key,$default)`：读整个或单键；
+- 单文件缺失返回 `[]` / default，不抛错；
+- 文件后缀 `.php` 由内部补；目标相对 `path_config`（相对项目根），存储 `extendFullFile`（因此会参与 Phase 子应用覆盖）。
 
-该组件会在首次调用时自动初始化，通常通过 `Controller\Helper::Config()` 或 `Business\Helper::Config()` 间接使用。
+业务层一般不直接 Command，而用随各层 Helper（如 Business/Controller 的 `Config`）最终经它；但 Doc 面向其方法本身。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class Configer extends ComponentBase`
 
 ## 选项
 
+`Configer::$options`:
+
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `path` | `''` | 项目根路径。通常由框架自动填充。 |
-| `path_config` | `'config'` | 配置目录名（相对于 `path`）。 |
-
-## 配置文件格式
-
-配置文件是一个普通的 PHP 文件，返回一个关联数组：
-
-```php
-<?php
-// config/app.php
-return [
-    'name' => 'MyApp',
-    'version' => '1.0.0',
-    'features' => [
-        'cache' => true,
-        'log' => false,
-    ],
-];
-```
-
-```php
-<?php
-// config/database.php
-return [
-    'default' => 'mysql',
-    'connections' => [
-        'mysql' => [
-            'host' => '127.0.0.1',
-            'dbname' => 'test',
-        ],
-    ],
-];
-```
+| `path` | `''` | 项目根（用于把相对 config 拼绝对）。 |
+| `path_config` | `'config'` | 配置目录名（相对 `path`，可给绝对覆盖）。 |
 
 ## 使用方式
-
-### 通过 Controller Helper
-
-```php
-use DuckPhp\Foundation\Controller\Helper;
-
-$config = Helper::Config('app');                  // 获取整个 app.php 配置
-$name = Helper::Config('app', 'name', 'Default'); // 获取 'name' 键，默认 'Default'
-$cache = Helper::Config('app', 'features.cache', false); // 不支持点号，仅演示顶层键
-```
-
-### 通过 Business Helper
-
-```php
-use DuckPhp\Foundation\Business\Helper;
-
-$dbConfig = Helper::Config('database');
-$default = Helper::Config('database', 'default', 'mysql');
-```
-
-### 直接通过 Configer 组件
 
 ```php
 use DuckPhp\Component\Configer;
 
-$config = Configer::_()->_Config('app');
-$name = Configer::_()->_Config('app', 'name', 'Default');
+$c = Configer::_()->init(['path'=>__DIR__,'path_config'=>'config']);
+
+$all = $c->_Config('app');              // 返回 config/app.php 内容
+$val = $c->_Config('app','debug',false); // 取单键
 ```
 
-## 配置示例
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'path' => __DIR__ . '/../../',
-        'path_config' => 'config',
-    ];
-}
-```
-
-```php
-<?php
-// config/app.php
-return [
-    'name' => 'MyApp',
-    'version' => '1.0.0',
-];
-```
+config/app.php 例如 `return [ 'debug'=>true, 'db'=>... ];`。
 
 ## 注意事项
 
-1. 配置文件的基名不需要带 `.php` 后缀，例如读取 `config/app.php` 时传入 `'app'`。
-2. 如果文件不存在，`_Config()` 返回空数组或默认值。
-3. 读取结果会缓存在 `$all_config` 中，避免重复加载文件。
-4. `Configer` 只支持读取顶层键，不支持点号路径（如 `a.b.c`）。如需深层读取，请自行解析返回的数组。
-
-## 全部选项
-
-```
-'path' => '',
-'path_config' => 'config',
-```
+- 缓存基于 basename：同 basename 第二次不会重复 require。
+- 目录完全缺文件 → 空数组；没有异常。
+- 子应用用相同文件可覆盖：extendFullFile 查找能命中（phase 优先）。
 
 ## 方法列表
 
 ### 公共方法
 
     public function _Config($file_basename = 'config', $key = null, $default = null)
-加载并返回指定配置文件。`$key` 为 `null` 时返回整个配置数组；否则返回指定键，不存在时返回 `$default`。
+读某配置：无 key 返回整块（空→default）；有 key 返回 `$config[$key] ?? $default`（经 _LoadConfig 缓存）。
 
 ### 受保护方法
 
     protected function _LoadConfig(string $file_basename): array
-加载指定基名的配置文件，并缓存到 `$all_config`。
+已缓存则直接；否则补 `.php`、经 `extendFullFile(path, path_config, file)` 定位并 require，成功即写 all_config 缓存。缺失存 [] 并返回 []。
 
     protected function loadFile(string $file): array
-使用 `require` 加载文件并返回配置数组。
+`return require $file;`，实际读文件为数组。
+
+（另有继承于 ComponentBase 的 init/`_()` 等不下表。）
 
 ## 相关链接
 
-- [DuckPhp\Component\Cache](Component-Cache.md)
-- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md)
-- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md)
+- [DuckPhp\Core\App](Core-App.md)（把 Configer 预注册等）
+- `Foundation` 各层 Helper 里 Config 走此
+- config 目录约定见 Project 结构指南

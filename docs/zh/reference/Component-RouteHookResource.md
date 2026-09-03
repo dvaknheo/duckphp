@@ -1,133 +1,87 @@
 # DuckPhp\Component\RouteHookResource
 
-路由钩子：静态资源处理。
+让 Route 还能挡掉并直接打出静态资源（res）的钩子组件；顺带提供把 `res/` 拷贝到发布（document root）的 `cloneResource` 工具。
 
 ## 简介
 
-`RouteHookResource` 组件用于处理通过 `controller_resource_prefix` 前缀访问的静态资源文件。它可以直接响应资源文件请求，也可以将资源文件从子应用复制到主应用的 `public` 目录。
+`RouteHookResource extends ComponentBase` 两面：
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载，但只在配置了 `controller_resource_prefix` 时才会注册路由钩子。
+1. 作为路由钩子（`initContext` 在检测到 resource 前缀时给 `Route` 挂 `append-outter` 的 `Hook`）：如果某 `path_info` 落在 resource 前缀且能对应到 `res/{file}` 的真实文件（且非 `.php`、无 `..`），则直接发送该「 mime+内容」并 `return true`（命中）。这就是它把静态资源从框架内 res 目录“经 DuckPhp 也能发布”的方式；
+2. `cloneResource($force,&$info)`：控制台辅助——把 `res/` 内容部署/拷贝到 document root 所在的资源前缀目标目录（供静态真实 server 无需框架也可直接给出），内含一套递归 copy/建目录/防重写的受保护小工具。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class RouteHookResource extends ComponentBase`
+- 交付面：资源 URL 可写成相对（如以 `controller_resource_prefix` 指定 CDN/子目录，或留空用默认 res 相对）。
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
+`RouteHookResource::$options`：
+
+| 选项 | 默认 | 说明 |
 |---|---|---|
-| `path` | `''` | 应用根目录。 |
-| `path_resource` | `'res'` | 资源文件目录名。 |
-| `path_document` | `'public'` | 文档根目录名。 |
-| `controller_url_prefix` | `''` | 控制器 URL 前缀。 |
-| `controller_resource_prefix` | `''` | 资源文件 URL 前缀。为空时不启用资源钩子。 |
-
-## 资源文件访问
-
-当请求路径以 `controller_resource_prefix` 开头时，路由钩子会尝试从 `path/path_resource` 目录中查找并返回对应文件：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'controller_resource_prefix' => 'res/',
-    ];
-}
-```
-
-请求 `/res/js/app.js` 会映射到 `path/res/js/app.js`。
-
-## 子应用资源处理
-
-子应用通常有自己的资源文件。`RouteHookResource` 提供了 `cloneResource()` 方法，用于将子应用的资源文件复制到主应用的 `public` 目录：
-
-```php
-use DuckPhp\Component\RouteHookResource;
-
-$info = '';
-RouteHookResource::_()->cloneResource(false, $info);
-echo $info;
-```
-
-### 命令行工具
-
-DuckPHP 的命令行工具通常包含资源复制命令：
-
-```bash
-php vendor/bin/duckphp resource --app=AdminApp
-```
-
-## 安全限制
-
-资源钩子对请求路径有以下安全限制：
-
-1. 禁止 `../` 路径穿越。
-2. 禁止访问 `.php` 文件。
-3. 文件不存在时返回 `false`，让后续路由或错误处理接管。
+| `path` | `''` | 项目根（拼 res 与 docroot 相对）。 |
+| `path_resource` | `'res'` | 资源源目录（默认 `res`）。 |
+| `path_document` | `'public'` | 发布根目录名（clone 目标）。 |
+| `controller_url_prefix` | null | 路由资源 URL 前缀段（可选）。 |
+| `controller_resource_prefix` | `''` | 访问前缀（例如 `res/` 或 `//cdn/…`）；决定 hook/clone 行为。 |
 
 ## 使用方式
 
-### 在视图模板中引用资源
-
-```html
-<script src="/res/js/app.js"></script>
-<link rel="stylesheet" href="/res/css/app.css">
-```
-
-### 复制资源到 public 目录
+挂路由时 `RouteHookResource` 常与 `controller_resource_prefix`/CDN 搭配选择。如果需要让静态被打出而不依赖额外 web server，则希望把 URL/前缀指向本地、开启该 hook，之后访问 `…/{prefix}x.png`：
 
 ```php
-$force = false;  // 是否覆盖已有文件
-$info = '';
-RouteHookResource::_()->cloneResource($force, $info);
+RouteHookResource::_()->init([
+    'path_resource' => 'res',
+    'controller_resource_prefix' => 'res/',
+], App::_());
+// 之后 GET /res/logo.png -> 从 <path>/res/logo.png 读并给 mimeHeader 输出
+```
+
+部署一条龙（把 res 内容 po 到 doc root 相应位置、避免手工 diff）：
+
+```php
+RouteHookResource::_()->init([], App::_());
+RouteHookResource::_()->cloneResource();   // force=false，已有文件则不覆盖
+RouteHookResource::_()->cloneResource(true, $info); // force 覆盖；$info 收集拷贝日志
 ```
 
 ## 注意事项
 
-1. 生产环境中建议将资源文件直接复制到 Web 服务器目录，而不是通过 PHP 响应。
-2. `cloneResource()` 会切换相位到根应用，确保资源目录正确。
-3. 如果 `controller_resource_prefix` 是 `http://` 或 `https://` 开头的外部 URL，则不会复制资源。
-4. 资源文件响应会自动设置 `Content-Type` 头。
-
-## 全部选项
-
-```php
-public $options = [
-    'path' => '',
-    'path_resource' => 'res',
-    'path_document' => 'public',
-    'controller_url_prefix' => '',
-    'controller_resource_prefix' => '',
-];
-```
+- 只服务“存在的真实文件”；对 `.php`/越权`..`返回 false（交给后续 Route/404）。
+- res 内容克隆避免手动同步；document_root 目标通常就是 web 能直接读的地方。
+- 多 target（CDN/远程）场景资源前缀为 `//`/`https://` 时不再本地 hook，而由 CDN 直接——由前缀判断决定（见 code）。
 
 ## 方法列表
 
 ### 公共方法
 
-    public static function Hook($path_info)
-路由钩子入口，内部调用 `_Hook()`
-
-    public function _Hook($path_info)
-处理资源文件请求，验证路径并输出文件内容
+    public static function Hook($path_info) → 实例 `_Hook`
+路由钩子实现：decode、前缀判定、防越权/php，存在则 content-type输出文件并 return true；否则 false。
 
     public function cloneResource($force = false, &$info = '')
-将资源文件复制到文档根目录
+把 <path>/<path_resource> 内容拷贝（建 docroot对应前缀）到 document_root；force 决定是否跳过已存在文件。
 
-### 受保护方法
+    protected function initContext(object $context): void（受保护）
+当启用该资源前缀时向 Route 挂 `append-outter` hook。
 
-    protected function initContext(object $context): void
-如果配置了 `controller_resource_prefix`，则注册 `append-outter` 路由钩子
+### 受保护助手（cloneResource 用）
 
     protected function get_dest_dir(string $path_parent, string $path): string
-根据目标路径递归创建目录
+按路径层级建立并返回目标目录（存在则跳）。
 
-    protected function copy_dir($source, $dest, $force = false, &$info = '')
-递归复制源目录到目标目录
+    protected function copy_dir($source, $dest, $force=false, &$info='')
+递归把 source 内文件拷到 dest；force=false 遇已存在则取消输出 `File Exsits`。
 
     protected function check_files_exist(string $source, string $dest, array $files, string &$info): bool
-检查目标文件是否已存在
+扫某 dest 已有则 true。
 
     protected function create_directories(string $dest, array $files, string &$info): bool
-为要复制的文件创建目标目录
+根据文件相对路径预建目录，mk 失败返回 false。
 
 ## 相关链接
 
-- [DuckPhp\Core\Route](Core-Route.md)
-- [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
+- [DuckPhp\Core\Route](Core-Route.md) hook append-outter
+- route resources: controller_resource_prefix（见 Core-Route options）
+- clone 经 app 命令行使用（Component/DuckPhpInstaller 等）

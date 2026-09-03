@@ -234,29 +234,17 @@ finally 收尾钩子逐个执行；任一返回真即停
     public function setRouteCallingMethod($calling_method)
 主动改写“当前动作方法”（rare）
 
-    public static function PathInfo($path_info = null)
-读或设 PATH_INFO 的静态壳（委托 _PathInfo）
+    public static function PathInfo($path_info = null)  ；实例 `_PathInfo($path_info = null)`
+（成对）传值则 setPathInfo(写 PATH_INFO)，不传则返回当前 getPathInfo；静态转发实例 _PathInfo。
 
-    public function _PathInfo($path_info = null)
-实例壳：传值→ setPathInfo；否则返回当前 getPathInfo
+    public static function Url($url = null) ；实例 `_Url($url = null)`
+（成对 URL 生成器）生成应用内 URL；若设 url_handler 则委托之，否则走 defaultUrlHandler（绝对 `/` 保留、`?`/`#` 追加、相对拼基路径）。
 
-    public static function Url($url = null)
-生成应用内 URL（静态）：见 _Url
+    public static function Res($url = null) ；实例 `_Res(?string $url = null)`
+（成对资源 URL）结合 controller_resource_prefix 生成静态资源 URL：`//`/`https?://` 原样，相对先补基路径。
 
-    public static function Res($url = null)
-生成静态资源 URL：见 _Res
-
-    public static function Domain($use_scheme = false)
-生成当前域名：见 _Domain
-
-    public function _Url($url = null)
-真正逻辑：有 url_handler 则交给 handler；否则 defaultUrlHandler
-
-    public function _Res(?string $url = null)
-结合 controller_resource_prefix 生成资源 url（支持 `//` `https?://` 与相对前缀）
-
-    public function _Domain($use_scheme = false)
-据 REQUEST_SCHEME/HOST/SERVER_PORT 拼 host（默认不带 schema）
+    public static function Domain($use_scheme = false) ；实例 `_Domain($use_scheme = false)`
+（成对域名）据 REQUEST_SCHEME/HOST/[SERVER_PORT] 拼 host：默认不含 scheme，true 时含。
 
     public function defaultUrlHandler($url = null)
 默认 URL 生成：以 `/` 开头的原样返回，否则用基路径拼接；支持 `?` `#` 开头追加

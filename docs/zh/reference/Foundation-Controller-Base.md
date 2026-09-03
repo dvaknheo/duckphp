@@ -1,37 +1,41 @@
 # DuckPhp\Foundation\Controller\Base
 
-`DuckPhp\Foundation\Controller\Base` 控制器层基类。
-
 ## 简介
 
-`Base` 是 `DuckPhp\Foundation\Controller` 命名空间下的 类，由 DuckPhp 框架提供。
+`Foundation\Controller\Base` 是工程「控制器层」的推荐基类（abstract）。源码极简：只有 `use SingletonTrait`，即让控制器类拥有 `类名::_()` 式的单例访问。
 
-## 选项
+工程中你的控制器基类应继承它（或直接继承它以共享该模式），控制器动作仍按 `action_xxx()` 等路由约定书写；本类不绑定任何输入/输出能力——那由控制器 `Helper`（`ControllerHelperTrait`）提供。
 
-无。
+## 类信息
+
+- 命名空间：`DuckPhp\Foundation\Controller`
+- 声明：`abstract class Base`
+- 使用的 Trait：`DuckPhp\Foundation\SingletonTrait`
 
 ## 使用方式
 
-### 基本用法
-
 ```php
+namespace MyProject\Controller;
+
 use DuckPhp\Foundation\Controller\Base;
 
-$obj = Base::_();
+abstract class MyControllerBase extends Base
+{
+    // 子类即可用 static::_() 取实例
+}
 ```
 
 ## 注意事项
 
-1. 本类为框架内部或扩展组件，通常由框架自动加载。
-2. 如需自定义行为，可继承本类并覆盖相应方法。
+- 这是“示例工程分层”里的基础：真正“登录/后台/无权限处理”的控制器基类见 `AdminControllerBase`/`UserControllerBase`；`Controller\Helper` 提供静态方法。
+- 本类未定义路由方法；业务动作由具体控制器按框架路由约定提供。
 
 ## 方法列表
 
-### 公共方法
-
-    static function _($object = null)
-@return static
+本类为空抽象基类，未额外声明方法（`_()` 由 SingletonTrait → `Core\SingletonExTrait` 提供）。
 
 ## 相关链接
 
-- [中文参考手册目录](index.md)
+- [DuckPhp\Foundation\SingletonTrait](Foundation-SingletonTrait.md) — 单例入口来源
+- [DuckPhp\Foundation\Controller\AdminControllerBase](Foundation-Controller-AdminControllerBase.md) / [UserControllerBase](Foundation-Controller-UserControllerBase.md) — 需登录的控制器基类
+- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md) — 控制器静态助手

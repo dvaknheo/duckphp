@@ -1,58 +1,97 @@
 # DuckPhp\GlobalUser\UserActionInterface
 
-用户操作接口。
-
 ## 简介
 
-`UserActionInterface` 定义了用户系统需要实现的全部方法。`GlobalUser` 通过 `user_callback_*` 选项委托回调来实现这些方法，实际用户系统开发中实现此接口的类作为回调目标。
+`UserActionInterface` 是「用户会话动作」的契约接口：实现方（如 `GlobalUser`，工程内也可以是 `UserAction` 类）向框架提供当前用户的身份查询（`id/name/data`）、站点 URL（`urlForRegist/urlForLogin/urlForLogout/urlForHome`）、视图合并（`mergeViewData/_Show`）、权限与服务（`canAccess/log/batchGetUsernames/service/localService`）。
 
-## 接口定义
+与管理员侧 `AdminActionInterface` 相比，用户侧多了“注册 URL（`urlForRegist`）”与“批量取用户名（`batchGetUsernames`）”，没有 `isSuper`。
+
+## 类信息
+
+- 命名空间：`DuckPhp\GlobalUser`
+- 声明：`interface UserActionInterface`
+- 实现方：`DuckPhp\GlobalUser\GlobalUser`
+
+## 使用方式
+
+工程中让自定义的“用户动作实现”实现本接口即可接入框架（通常通过 `user_callback_for_*` 选项指向该类）：
 
 ```php
-namespace DuckPhp\GlobalUser;
+namespace MyProject\System;
 
-interface UserActionInterface
+use DuckPhp\GlobalUser\UserActionInterface;
+
+class UserAction implements UserActionInterface
 {
-    public function id(bool $check_login = true);
-    public function name(bool $check_login = true): string;
-    public function data(bool $check_login = true): array;
-
-    public function service();
-    public function localService();
-
-    public function urlForRegist(?string $url_back = null, ?array $ext = null): string;
-    public function urlForLogin(?string $url_back = null, ?array $ext = null): string;
-    public function urlForLogout(?string $url_back = null, ?array $ext = null): string;
-    public function urlForHome(?string $url_back = null, ?array $ext = null): string;
-
-    public function mergeViewData(array $input): array;
-
-    public function checkAccess(string $class, string $method, ?string $url = null);
-    public function log(string $string, ?string $type = null, array $ext = []);
-    
-    public function batchGetUsernames(array $ids): array;
+    public function id(bool $check_login = true) { /* 返回当前用户 id */ }
+    public function name(bool $check_login = true): string { /* … */ }
+    public function data(bool $check_login = true): array { /* … */ }
+    public function service() { /* 跨 Phase 代理 */ }
+    public function localService() { /* 返回 UserServiceInterface */ }
+    public function urlForRegist(?string $url_back = null, ?array $ext = null): string { /* … */ }
+    public function urlForLogin(?string $url_back = null, ?array $ext = null): string { /* … */ }
+    public function urlForLogout(?string $url_back = null, ?array $ext = null): string { /* … */ }
+    public function urlForHome(?string $url_back = null, ?array $ext = null): string { /* … */ }
+    public function mergeViewData(array $input): array { /* … */ }
+    public function _Show(array $data = [], string $view = '') { /* … */ }
+    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool { /* … */ }
+    public function log(string $string, ?string $type = null, array $ext = []) { /* … */ }
+    public function batchGetUsernames(array $ids): array { /* … */ }
 }
 ```
 
-## 方法说明
+## 注意事项
 
-| 方法 | 说明 |
-|---|---|
-| `id($check_login)` | 获取当前用户 ID。未登录时根据 `$check_login` 决定是否抛异常 |
-| `name($check_login): string` | 获取当前用户名 |
-| `data($check_login): array` | 获取当前用户完整数据（ID、角色、头像等） |
-| `service()` | 返回 `UserServiceInterface` 实例（通常通过 PhaseProxy 包装） |
-| `localService()` | 返回本地的 `UserServiceInterface` 实例 |
-| `urlForRegist($url_back, $ext): string` | 注册页面 URL |
-| `urlForLogin($url_back, $ext): string` | 登录页面 URL |
-| `urlForLogout($url_back, $ext): string` | 登出 URL |
-| `urlForHome($url_back, $ext): string` | 首页 URL |
-| `mergeViewData($input): array` | 融合用户视图头尾数据到 `$input['__view_data']` |
-| `checkAccess($class, $method, $url)` | 检查当前用户是否有权限访问指定类和方法 |
-| `log($string, $type, $ext)` | 记录用户操作日志 |
-| `batchGetUsernames($ids): array` | 批量查询用户 ID 对应的用户名，返回 `[id => name]` |
+- `id()/name()/data()` 的 `$check_login` 为 `true` 时通常要求已登录。
+- `service()` 与 `localService()`：前者返回跨 Phase 代理，后者返回当前 Phase 内直接服务（`GlobalUser` 用 `PhaseProxy` 实现前者）。
+
+## 方法列表
+
+### 公共方法
+
+    public function id(bool $check_login = true)
+返回当前用户 ID（`int|string`）。
+
+    public function name(bool $check_login = true): string
+返回当前用户名。
+
+    public function data(bool $check_login = true): array
+返回当前用户数据数组。
+
+    public function service()
+返回跨 Phase 的用户服务（`UserServiceInterface`）。
+
+    public function localService()
+返回本地（当前 Phase）用户服务（`UserServiceInterface`）。
+
+    public function urlForRegist(?string $url_back = null, ?array $ext = null): string
+注册页 URL。
+
+    public function urlForLogin(?string $url_back = null, ?array $ext = null): string
+登录页 URL。
+
+    public function urlForLogout(?string $url_back = null, ?array $ext = null): string
+退出登录 URL。
+
+    public function urlForHome(?string $url_back = null, ?array $ext = null): string
+站内首页 URL。
+
+    public function mergeViewData(array $input): array
+把当前用户信息（id/name/退出 URL/头尾 HTML）合并进视图数据。
+
+    public function _Show(array $data = [], string $view = '')
+以“已登录用户页面”方式渲染（切 Phase、设头尾模板后交给 `View`）。
+
+    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
+判断当前用户能否访问指定控制器/方法/URL（缺省用当前路由）。
+
+    public function log(string $string, ?string $type = null, array $ext = [])
+记录一条用户操作日志。
+
+    public function batchGetUsernames(array $ids): array
+按 ID 批量取用户名（返回 id => 用户名 的映射）。
 
 ## 相关链接
 
-- [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md)
-- [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md)
+- [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) — 本接口的默认实现
+- [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) — 用户服务接口

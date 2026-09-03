@@ -1,87 +1,66 @@
 # DuckPhp\Foundation\SessionTrait
 
-简单 Session 管理 Trait。
-
 ## 简介
 
-`DuckPhp\Foundation\SessionTrait` 提供了一套简单的 Session 读写封装。它会自动启动 Session，并支持通过 `session_prefix` 配置实现键前缀隔离。
+`SessionTrait` 为组合它的类提供**带前缀的 Session 读写**：首次访问时自动 `session_start()`（经 `SystemWrapper`），并用 `App::options['session_prefix']` 作为键前缀隔离命名空间，避免与其它应用/模块的会话键冲突。
 
-## 选项
+实现要点：
+- `checkSessionStart()`：已启动则跳过；否则 `_session_start()` 并把 `session_prefix` 从 App 选项读入缓存。
+- `get/set/unset`：读写删除 `session_prefix + key` 对应的会话变量（经 `SuperGlobal`）。
 
-### 依赖配置
+## 类信息
 
-| 配置 | 说明 |
-|---|---|
-| `session_prefix` | 应用配置中的 Session 键前缀。读取 `App::Current()->options['session_prefix']` |
+- 命名空间：`DuckPhp\Foundation`
+- 声明：`trait SessionTrait`
+- 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
+- 使用方：工程中需要会话的控制器/系统类（如 `Controller\Session`）
 
 ## 使用方式
 
-### 在 Session 管理类中使用
-
 ```php
+namespace MyProject\Controller;
+
 use DuckPhp\Foundation\SessionTrait;
 
-class MySession
+class Session
 {
     use SessionTrait;
 
-    public function getUserId()
+    public function remember($name)
     {
-        return $this->get('user_id');
+        $this->set('name', $name);      // 实际写入 session_prefix + 'name'
+        return $this->get('name');
     }
-
-    public function setUserId($id)
+    public function forget()
     {
-        $this->set('user_id', $id);
+        $this->unset('name');
     }
-
-    public function clearUserId()
-    {
-        $this->unset('user_id');
-    }
-}
-```
-
-### 单例调用
-
-```php
-$session = MySession::_();
-$session->setUserId(123);
-$id = $session->getUserId();
-```
-
-## 配置示例
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'session_prefix' => 'myapp_',
-    ];
 }
 ```
 
 ## 注意事项
 
-1. 该 Trait 使用 `DuckPhp\Core\SingletonTrait`，内部以单例形式工作。
-2. 首次读写时会自动调用 `SystemWrapper::_()->_session_start()` 启动 Session。
-3. 键名会自动拼接 `App::Current()->options['session_prefix']`。
-4. `unset` 是 PHP 保留关键字，但此处作为方法名是被允许的。
+- 三个读写方法都是 `protected`，供组合类内部使用（不暴露为静态 API）。
+- Session 键前缀来自应用选项 `session_prefix`；未配置时前缀为空字符串。
+- `session_start` 经 `SystemWrapper` 调用，测试环境可替换注入。
 
 ## 方法列表
 
 ### 受保护方法
 
-| 方法 | 说明 |
-|---|---|
-| `checkSessionStart()` | 检查并启动 Session |
-| `get($key, $default = null)` | 读取 Session 值 |
-| `set($key, $value)` | 写入 Session 值 |
-| `unset($key)` | 删除 Session 值 |
+    protected function checkSessionStart(): void
+确保会话已启动并缓存 `session_prefix`（幂等）。
+
+    protected function get(string $key, $default = null)
+读会话变量（`session_prefix + $key`），无则返回 `$default`。
+
+    protected function set(string $key, $value)
+写会话变量（`session_prefix + $key`）。
+
+    protected function unset(string $key)
+删除会话变量（`session_prefix + $key`）。
 
 ## 相关链接
 
-- [DuckPhp\Core\SingletonTrait](Core-SingletonExTrait.md)
-- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
-- [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
-- [DuckPhp\Core\App](Core-App.md)
+- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) — 会话读写的底层封装
+- [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md) — session_start 的可替换实现

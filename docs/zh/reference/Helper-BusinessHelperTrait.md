@@ -1,76 +1,98 @@
 # DuckPhp\Helper\BusinessHelperTrait
 
-业务层 Helper Trait。
-
 ## 简介
 
-`DuckPhp\Helper\BusinessHelperTrait` 提供业务层常用的静态方法，包括应用设置、配置读取、异常捕获、业务异常断言、缓存访问、事件触发、路径获取以及全局管理员/用户服务访问。
+`BusinessHelperTrait` 是面向 **Business（业务层）** 的静态助手集合。业务层通过它访问：应用设置与路径（`Setting`/`Options`/`PathOfProject`/`PathOfRuntime`）、配置（`Config`）、缓存（`Cache`）、校验（`Validator*`）、事件（`FireGlobalEvent`/`OnGlobalEvent`）、用户/管理员服务（`AdminService`/`UserService`）以及业务异常快速抛出（`BusinessThrowOn`）。
 
-## 选项
+Trait 自带 4 个事件名常量（`$EVENT_REGISTING/$EVENT_REGISTED/$EVENT_LOGINING/$EVENT_LOGINED`），供注册/登录等业务生命周期事件使用。
 
-无。
+## 类信息
+
+- 命名空间：`DuckPhp\Helper`
+- 声明：`trait BusinessHelperTrait`
+- 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
+- 事件名常量：`$EVENT_REGISTING = 'registing'`、`$EVENT_REGISTED = 'registed'`、`$EVENT_LOGINING = 'logining'`、`$EVENT_LOGINED = 'logined'`
 
 ## 使用方式
 
-### 在类中引入
-
 ```php
+namespace MyProject\Business;
+
 use DuckPhp\Helper\BusinessHelperTrait;
 
-class MyBusinessHelper
+class Base
 {
     use BusinessHelperTrait;
 }
-```
 
-### 常用操作
-
-```php
-use DuckPhp\Foundation\Business\Helper;
-
-// 读取设置
-$siteName = Helper::Setting('site_name');
-
-// 读取配置
-$config = Helper::Config('database');
-
-// 业务异常断言
-Helper::BusinessThrowOn($user === null, '用户不存在', 404);
-
-// 获取缓存
-$cache = Helper::Cache();
-
-// 触发事件
-Helper::FireEvent('order.paid', $order);
-
-// 获取服务
-$userService = Helper::UserService();
-$adminService = Helper::AdminService();
+// 在 Business 内：
+$conf = Base::Config('database', 'host');
+$rows = Base::Cache()->get('k');          // 取缓存
+$ok   = Base::XpCall([$obj, 'method']);   // 异常封装调用
+$errs = Base::ValidatorValid($_POST, ['age' => 'int|min:1']);
+Base::BusinessThrowOn(!$flag, '业务不允许', 10001);
 ```
 
 ## 注意事项
 
-1. 该 Trait 使用 `DuckPhp\Core\SingletonTrait`，引入类后具备单例访问能力。
-2. 部分方法依赖 `DuckPhp\Core\App`、`DuckPhp\Component\Configer`、`DuckPhp\Component\Cache` 等组件，需确保应用已初始化。
+- `Setting`/`Options` 读取的是 App 的设置与选项；`PathOfProject`/`PathOfRuntime` 来自 App 的项目/运行时路径。
+- `Validator*` 三个方法分别是 `filter`/`check`/`valid` 的口径：`ValidatorFilter` 返回过滤后数据、`ValidatorCheck` 失败抛异常、`ValidatorValid` 返回错误数组。
+- `AdminService`/`UserService` 分别取 `GlobalAdmin`/`GlobalUser` 的 service，供业务层做认证服务调用。
 
 ## 方法列表
 
 ### 公共方法
 
-| 方法 | 说明 |
-|---|---|
-| `Setting($key = null, $default = null)` | 读取应用设置 |
-| `Config($file_basename, $key = null, $default = null)` | 读取配置文件 |
-| `XpCall($callback, ...$args)` | 执行回调并捕获异常 |
-| `BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)` | 业务异常断言 |
-| `Cache($object = null)` | 获取或设置缓存对象 |
-| `PathOfProject()` | 获取项目根目录 |
-| `PathOfRuntime()` | 获取运行时目录 |
-| `FireEvent($event, ...$args)` | 触发事件 |
-| `OnEvent($event, $callback)` | 注册事件监听 |
-| `AdminService()` | 获取全局管理员服务 |
-| `UserService()` | 获取全局用户服务 |
+    public static function Setting($key = null, $default = null)
+读取应用设置（等价 `App::_()->_Setting()`）。
+
+    public static function Options(string $key, $default = null)
+读取应用 options 中某键（未设置返回 `$default`）。
+
+    public static function Config($file_basename, $key = null, $default = null)
+读取 `config/` 下某配置文件的内容（经由 `Configer`）。
+
+    public static function XpCall($callback, ...$args)
+以“异常封装”方式调用回调并透传结果（经由 `CoreHelper`，业务异常可在上层被统一捕获）。
+
+    public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+`$flag` 为真时抛业务异常（默认业务异常类，可指定 `$exception_class`）。
+
+    public static function Cache($object = null)
+取（或替换）缓存组件实例。
+
+    public static function PathOfProject(): string
+项目根路径（`App::getProjectPath()`）。
+
+    public static function PathOfRuntime(): string
+运行时目录路径（`App::getRuntimePath()`）。
+
+    public static function FireGlobalEvent($event, ...$args)
+触发全局事件（转发 `GlobalEvent::fire`）。
+
+    public static function OnGlobalEvent($event, $callback)
+注册全局事件监听（转发 `GlobalEvent::on`）。
+
+    public static function AdminService()
+返回管理员 service（`GlobalAdmin::_()->service()`）。
+
+    public static function UserService()
+返回用户 service（`GlobalUser::_()->service()`）。
+
+    public static function Validator($new = null)
+取（或替换）`Validator` 组件实例。
+
+    public static function ValidatorFilter($data, $rules, $messages = [])
+按规则校验并返回过滤后的数据（失败抛异常，等价 filter 口径）。
+
+    public static function ValidatorCheck($data, $rules, $messages = [])
+按规则校验，失败抛异常（check 口径）。
+
+    public static function ValidatorValid($data, $rules, $messages = [])
+按规则校验并返回错误数组（valid 口径，无错为空数组）。
 
 ## 相关链接
 
-- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md)
+- [DuckPhp\Helper\ControllerHelperTrait](Helper-ControllerHelperTrait.md) — 控制器层助手（含 `AdminService`/`UserService` 的控制器版）
+- [DuckPhp\Helper\ModelHelperTrait](Helper-ModelHelperTrait.md) — 数据层助手
+- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md) — 工程化 Business 助手类

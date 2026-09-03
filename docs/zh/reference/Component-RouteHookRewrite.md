@@ -1,151 +1,91 @@
 # DuckPhp\Component\RouteHookRewrite
 
-路由钩子：URL 重写。
+给 Route 加“重写地图（rewrite_map）”的能力：通过一个（前端好看 url → 内部 path）列表，在默认路由前把传入的 path 改写/重定到内部形式。
 
 ## 简介
 
-`RouteHookRewrite` 组件提供 URL 重写功能。它允许你将某些 URL 路径映射为其他路径，支持精确匹配和正则表达式匹配。重写后的 URL 会继续参与后续路由匹配。
+`RouteHookRewrite extends ComponentBase` 主要服务“前端优雅 URL + 真正内部 path 分离”：配置诸如
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载，挂在 `prepend-outter` 位置。
+```php
+'rewrite_map' => [
+  '/news'         => '/controller/news/',
+  '/user/@[0-9]+'? => ...   // (用 `~` 前缀表示正则模版)
+]
+```
+
+行为：
+
+- `init()` 使其以 `prepend-outter` 挂一张 rewrite hook（还支持 `RouteHookDirectoryMode` 复用 `filteRewrite`）；
+- hook 时把 `path_info + query` 作为输入 url，跑 `filteRewrite`；
+  - 精确匹配：template == path（去前缀不加处理），命中后换到目标（新 query 合并）；
+  - `~regex` 模板：视作正则整体替换输入 path 得到新 URL（`$`/编号可用）——都遵循上述合并查询参数。
+- 命中后 `changeRouteUrl()`（保存原 GET，放新 query 到上下文/全局）并把 `PathInfo` 设为新 path 后续默认路由使用；仍向 Route 返回 false（继续其后 hook）。
+
+DuckPhp 默认 ext 已装它。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class RouteHookRewrite extends ComponentBase`
+- 常被前面 `prepend-outter` 于默认路由之前。
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
+`RouteHookRewrite::$options`:
+
+| 选项 | 默认 | 说明 |
 |---|---|---|
-| `controller_url_prefix` | `''` | 控制器 URL 前缀。重写只对匹配该前缀的 URL 生效。 |
-| `rewrite_map` | `[]` | URL 重写规则映射。 |
+| `controller_url_prefix` | `''` | 可选 url 前缀（命中前去掉、重写后会补回）。 |
+| `rewrite_map` | `[]` | 映射表 `匹配模板 => 内部url`；模板以 `~` 开头时被当正则。 |
 
-## 重写规则格式
+运行时也可 `assignRewrite(键/数组)` 追加并 `getRewrites()` 查看。
 
-`rewrite_map` 是一个关联数组，键是模板 URL，值是目标 URL：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'rewrite_map' => [
-            'old/page' => 'new/page',
-            '~about/(.+)' => 'article/detail/$1',
-        ],
-    ];
-}
-```
-
-### 精确匹配
-
-键不以 `~` 开头，表示精确匹配 URL 路径：
-
-```php
-'old/page' => 'new/page',
-```
-
-- `/old/page` → `/new/page`
-
-### 正则匹配
-
-键以 `~` 开头，表示正则表达式匹配：
-
-```php
-'~about/(.+)' => 'article/detail/$1',
-```
-
-- `/about/company` → `/article/detail/company`
-
-正则表达式使用 `~` 作为分隔符，匹配的是 URL 路径（不含查询参数）。
-
-## 运行时添加规则
-
-通过 `assignRewrite()` 方法可以在运行时添加或修改重写规则：
+## 使用方式
 
 ```php
 use DuckPhp\Component\RouteHookRewrite;
-
-RouteHookRewrite::_()->assignRewrite('old/page', 'new/page');
-
-// 批量添加
-RouteHookRewrite::_()->assignRewrite([
-    'old/page' => 'new/page',
-    'legacy/url' => 'modern/url',
-]);
+RouteHookRewrite::_()->init([
+  'rewrite_map' => [
+     '/about'          => '/site/about',
+     '~/user/([0-9]+)' => '/user/index?id=$1',
+  ],
+], App::_());
+// GET /about -> 内部 /site/about
 ```
-
-## 获取当前规则
-
-```php
-$rules = RouteHookRewrite::_()->getRewrites();
-```
-
-## 使用场景
-
-### 旧 URL 兼容
-
-```php
-'class-name' => 'ClassName',
-'user/profile' => 'account/profile',
-```
-
-### 伪静态
-
-```php
-'~article/(\d+)' => 'article/detail?id=$1',
-```
-
-访问 `/article/123` 会被重写为 `/article/detail?id=123`。
 
 ## 注意事项
 
-1. 重写钩子挂在 `prepend-outter` 位置，在路由匹配之前执行。
-2. 重写只影响路径部分和查询参数，不会改变请求方法或 HTTP 头。
-3. 如果 URL 不匹配 `controller_url_prefix` 前缀，重写不会生效。
-4. 正则重写中，`$1`、`$2` 等反向引用会被替换为对应的匹配组。
-5. 重写后的 URL 会重新设置 `$_GET` 和 `PATH_INFO`，供后续路由组件使用。
-
-## 全部选项
-
-```php
-public $options = [
-    'controller_url_prefix' => '',
-    'rewrite_map' => [],
-];
-```
+- rewrite 只 happen exact或 regex；命中则返回 true 无 → 本组件返回 false 交给之后路由继续跑；若没命中也 false（就原本 path）。
+- query 在你改写中会被保留合并（filter/新 merge）；命中时旧 `$_GET` 会存档到 `_SERVER[init_get]`、覆盖为命中 url 的查询集，便于后续 route 参数的 code 一致读取。
+- 对 URL 匹配基础是 path（+ 可带查询）；基于 controller_url_prefix 关系处理前后缀。
+- DirectoryMode 等调用 filteRewrite() 复用本转换（不给 hook 二次改变）。
 
 ## 方法列表
 
-### 公共方法
+    public static function Hook($path_info)   → 实例 doHook
+路由入口（由挂 hook 触发）。
 
-    public static function Hook($path_info)
-路由钩子入口，内部调用 `doHook()`
-
-    public function assignRewrite($key, $value = null)
-添加单条或多条重写规则
-
-    public function getRewrites(): array
-获取当前所有重写规则
-
-    public function replaceRegexUrl($input_url, $template_url, $new_url)
-使用正则表达式替换 URL
-
-    public function replaceNormalUrl($input_url, $template_url, $new_url)
-使用精确匹配替换 URL
-
-    public function filteRewrite($input_url)
-依次尝试所有重写规则，返回重写后的 URL 或 `null`
-
-### 受保护方法
-
-    protected function initOptions(array $options): void
-合并 `rewrite_map` 选项
-
-    protected function initContext(object $context): void
-将 `Hook` 方法注册到 `prepend-outter` 路由钩子位置
+    protected function doHook(string $path_info): ?bool（实现在文件后）
+做前缀裁、输入 query 拼 url → filteRewrite；命中则 change url + PathInfo。返回 false。
 
     protected function changeRouteUrl(string $url): void
-根据重写后的 URL 更新 `$_GET` 和 `PATH_INFO`
+保存旧 GET 到 init_get、设置新 query（上下文/全局）。
 
-    protected function doHook(string $path_info): ?bool
-执行重写逻辑
+    public assignRewrite($key, $value = null)
+添加一条（或一批） rewrite 到内部 map。
+
+    public getRewrites(): array
+返回当前 map。
+
+    public replaceRegexUrl($input_url, $template_url, $new_url)
+模板以 `~` 开头时：把 input 的 path 用正则（`~\`）替换成 new；并合 query。否则返回 null。
+
+    public replaceNormalUrl($input_url, $template_url, $new_url)
+模板非 `~`：比较 path 相等才命中；拼 new_path + 合并 query。 
+    public filteRewrite($input_url)
+依次逐条（normal→regex）跑，返回第一个命中结果或 null。
 
 ## 相关链接
 
-- [DuckPhp\Core\Route](Core-Route.md)
-- [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+- [DuckPhp\Core\Route](Core-Route.md)（hook 挂载）
+- [DuckPhp\Component\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)（会调用 filteRewrite）

@@ -1,69 +1,55 @@
 # DuckPhp\Ext\StaticReplacer
 
-> ⚠️ 警告：该扩展是实验性的或已废弃，不建议在新项目中使用。
-
 ## 简介
 
-`StaticReplacer` 是一个用于替换全局变量、静态变量和类静态变量的实验性组件。它允许在测试或特定场景下替换这些变量，但实现依赖反射和 `debug_backtrace`，不够稳定，不建议在新项目中使用。
+`StaticReplacer` 提供“把全局变量 / 函数内静态变量 / 类静态属性”挪到实例存储里仿真的能力，用于测试等需要隔离或可控替换全局状态的场景。三个方法都**按引用返回**，读写方式接近原生结构：
 
-## 选项
+- `_GLOBALS($k, $v)`：仿真 `$GLOBALS[$k]`；
+- `_STATICS($name, $value)`：按调用位置（`debug_backtrace`：对象/类/方法）为键仿真的“函数静态变量”；
+- `_CLASS_STATICS($class_name, $var_name)`：读取某类静态属性到本地缓存（首读经反射取真值，之后用缓存值）。
 
-无。
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class StaticReplacer extends DuckPhp\Core\ComponentBase`
 
 ## 使用方式
 
-### 替换全局变量
-
 ```php
 use DuckPhp\Ext\StaticReplacer;
 
-$GLOBALS = &StaticReplacer::_()->_GLOBALS('test_key', 'default_value');
-$GLOBALS = 'new_value';
+$sr = StaticReplacer::_();
+
+// 仿真全局变量
+$v = &$sr->_GLOBALS('counter');
+$v++;
+
+// 仿真函数内静态（键含调用位置）
+$x = &$sr->_STATICS('cache', null);
+
+// 读/替换某类静态属性
+$old = &$sr->_CLASS_STATICS(MyClass::class, 'property');
 ```
-
-### 替换函数/方法内的静态变量
-
-```php
-function myFunction()
-{
-    $static_var = &DuckPhp\Ext\StaticReplacer::_()->_STATICS('my_var', 'default_value', 0);
-}
-```
-
-### 替换类静态变量
-
-```php
-use DuckPhp\Ext\StaticReplacer;
-
-$staticProp = &StaticReplacer::_()->_CLASS_STATICS(SomeClass::class, 'staticProperty');
-$staticProp = 'new_value';
-```
-
-## 配置示例
-
-无。
 
 ## 注意事项
 
-1. 该组件主要用于测试场景下的变量替换，不建议用于生产代码。
-2. `_STATICS()` 依赖 `debug_backtrace()` 分析调用栈，可能受 PHP 优化设置影响。
-3. `_CLASS_STATICS()` 使用反射读取类静态属性，如果属性不存在会抛出异常。
-4. 变量引用返回需要注意引用生命周期，避免意外修改。
-5. 源码中 TODO 标记了未完成的 `Replace` 功能。
+- `_STATICS` 的键由 `debug_backtrace` 推导（对象 hash + 类 + 类型 + 函数名），因此**不同调用位置**即使同名也是不同槽位；`$parent` 参数可指定回溯层。
+- `_CLASS_STATICS` 只在首次通过反射读取真实值，此后返回本地副本——**对副本的修改不会写回真实类静态属性**（适合读隔离）。
+- 类为普通组件实例，状态跨请求持久与否取决于组件容器生命周期。
 
 ## 方法列表
 
 ### 公共方法
 
-    public function &_GLOBALS($k, $v = null)
-获取或初始化一个全局变量替换值。返回引用，允许外部修改。
+    public function &_GLOBALS(string $k, $v = null)
+按引用取/建一个“全局变量”槽位。
 
-    public function &_STATICS($name, $value = null, $parent = 0)
-根据调用栈信息获取或初始化一个静态变量替换值。返回引用。
+    public function &_STATICS(string $name, $value = null, int $parent = 0)
+按引用取/建一个“函数静态变量”槽位（键含调用上下文）。
 
-    public function &_CLASS_STATICS($class_name, $var_name)
-通过反射获取或初始化一个类静态属性替换值。返回引用。
+    public function &_CLASS_STATICS(string $class_name, string $var_name)
+按引用取某类静态属性的本地缓存（首次经反射读取）。
 
 ## 相关链接
 
-无。
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件基类

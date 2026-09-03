@@ -1,138 +1,73 @@
 # DuckPhp\Component\RouteHookPathInfoCompat
 
-路由钩子：PATH_INFO 兼容模式。
+无 PATH_INFO / 紧凑 URL 兼容路由钩子：当服务器不提供 canonical PATH_INFO 时，通过 query 键（如 `?_r=…`）携带路由路径；同时 URL 生成会编回这种 query 形式。
 
 ## 简介
 
-`RouteHookPathInfoCompat` 提供了一种兼容不支持 PATH_INFO 的服务器环境的路由方案。它通过 URL 参数或查询字符串参数来模拟 PATH_INFO，使 DuckPHP 能够在共享主机、Nginx 未配置 PATH_INFO 等环境下工作。
+`RouteHookPathInfoCompat extends ComponentBase` 在启用（init 时 `path_info_compact_enable` 非 false）时给 `Route` 装上：
 
-该组件默认不加载，需要在 `DuckPhp\DuckPhp` 的 `ext` 选项中手动启用，或在 `DuckPhp` 初始化时通过条件分支启用。
+- 一个**入向钩子**（`prepend-outter`·`Hook`）：在无 PATH_INFO 的环境，从 `$(module) 请求键`/`action_key` 还原出 path_info 写回 Route（保留一份 `PATH_INFO_OLD`）；
+- 一个 **URL handler**（`Url`）：生成的 “相对 URL” 会被替换成 **basepath + `?{action_key}=路由 path**（若 `path_info_compact_class_key` 设置则模块/动作各挂一个键）。
+
+于是类似 `?…index.php?_r=/foo/bar` 的环境，仍可与“干净路由人肉一样的映射”，生成的链接也同样 compact query 格式。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class RouteHookPathInfoCompat extends ComponentBase`
+- 主题目标：`Route`（App 的默认 hook）。
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
+`RouteHookPathInfoCompat::$options`:
+
+| 选项 | 默认 | 说明 |
 |---|---|---|
-| `path_info_compact_enable` | `true` | 是否启用兼容模式。 |
-| `path_info_compact_action_key` | `'_r'` | 指定 action 的 URL 参数名。 |
-| `path_info_compact_class_key` | `''` | 指定 controller 类路径的 URL 参数名。为空时，action 参数直接包含完整路径。 |
+| `path_info_compact_enable` | true | 开关（init 才装 hook/url handler）。 |
+| `path_info_compact_action_key` | `'_r'` | 动作路由所在的 query 键。 |
+| `path_info_compact_class_key` | `''` | 可选“模块（类路径段）”所在 query 键；留空则整路径都放 action键。 |
 
-## 两种兼容模式
+## 使用方式
 
-### 单参数模式（默认）
-
-`path_info_compact_class_key` 为空时，使用单个参数指定完整路径：
+启用（多数是 DuckPhp 内置把 PathInfoCompat 装进 ext；否则手动）：
 
 ```php
-class App extends DuckPhp
-{
-    public $options = [
-        'path_info_compact_action_key' => '_r',
-        'path_info_compact_class_key' => '',
-    ];
-}
+use DuckPhp\Component\RouteHookPathInfoCompat;
+RouteHookPathInfoCompat::_()->init([
+  'path_info_compact_enable' => true,     // 默认即此
+], App::_());
 ```
 
-URL 示例：
-
-- `/index.php?_r=hello/index` → 路由到 `HelloController::index()`
-- `/index.php?_r=admin/user/edit` → 路由到 `Admin\UserController::edit()`
-
-### 双参数模式
-
-`path_info_compact_class_key` 非空时，分别指定 controller 路径和 action：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'path_info_compact_action_key' => 'a',
-        'path_info_compact_class_key' => 'm',
-    ];
-}
-```
-
-URL 示例：
-
-- `/index.php?m=hello&a=index` → 路由到 `HelloController::index()`
-- `/index.php?m=admin/user&a=edit` → 路由到 `Admin\UserController::edit()`
-
-## URL 生成
-
-`RouteHookPathInfoCompat` 同时注册了一个 URL 处理器，因此 `__url()` 函数会自动生成兼容模式的 URL：
-
-```php
-// path_info_compact_class_key = '' 时
-__url('hello/index');
-// 生成：/index.php?_r=hello%2Findex
-
-// path_info_compact_class_key = 'm' 时
-__url('hello/index');
-// 生成：/index.php?m=hello&a=index
-```
-
-## 启用方式
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Component\RouteHookPathInfoCompat::class => true,
-        ],
-    ];
-}
-```
-
-或者在运行环境检测后启用：
-
-```php
-if (!isset($_SERVER['PATH_INFO'])) {
-    RouteHookPathInfoCompat::_()->init($this->options, $this);
-}
-```
+然后请求 /old-host/index.php?_r=user/detail → 经 Hook 得到 path `/user/detail` 正常路由；`Url('user/detail')` 放出的链接为相同 query form。
 
 ## 注意事项
 
-1. 该组件仅在不支持 PATH_INFO 的环境中需要启用。
-2. 启用后会替换默认的 URL 处理器，影响 `__url()` 的输出格式。
-3. 该钩子挂在 `prepend-outter` 位置，在路由匹配之前执行。
-4. 路径中会自动处理 `index.php` 入口文件，避免生成的 URL 中出现重复的入口文件名。
-
-## 全部选项
-
-```php
-public $options = [
-    'path_info_compact_enable' => true,
-    'path_info_compact_action_key' => '_r',
-    'path_info_compact_class_key' => '',
-];
-```
+- 已有 PATH_INFO 时其实无需它；此组件“只在 compact/无 path_info urls 下补充”而 API 稳定。
+- both Hook/Url 仍返回 false/或原始（对绝对同 URL 不做重写），交由 Route 其余 hook。
 
 ## 方法列表
 
-### 公共方法
+    public function initContext(object $context): void（受保护 override）
+enable=true 时：Route::addRouteHook([static::class,'Hook'],'prepend-outter') + Route::setUrlHandler([static::class,'Url'])。
 
-    public static function Url($url = null)
-URL 处理器入口，内部调用 `onUrl()`
+    public static function Url($url = null)  → onUrl 生成 compact
+把相对 url 转为  base+query _r=…（绝对 `/` 或没有时直接返回原）。
 
-    public function onUrl(?string $url = null): string
-生成兼容模式的 URL
+    public onUrl(?string $url = null): string
+实现（支持 REQUEST_URI 基址、按 option keys、合并当前 query）。
 
-    public static function Hook($path_info)
-路由钩子入口，内部调用 `_Hook()`
+    protected filteRewrite(string $url, &$flag=false): ?string
+（预留给外部 rewrite 能力钩子，当前原样 return url。）
 
-    public function _Hook($path_info)
-将 URL 参数转换为 PATH_INFO，设置到路由组件中
+    public static function Hook($path_info) → _Hook
+静态壳 → 实例 _Hook。
 
-### 受保护方法
+    public _Hook($path_info)
+打包：从（context 或全局）request 的 class/action 两个键读 path 并 `Route::PathInfo(...)`;返回 false(继续路由)。
 
-    protected function initContext(object $context): void
-注册路由钩子和 URL 处理器
-
-    protected function filteRewrite(string $url, &$ret = false): ?string
-可扩展的 URL 重写过滤接口（当前默认关闭）
+（注：模块参数 `$m` = value of `path_info_compact_class_key` 可为空串。）
 
 ## 相关链接
 
-- [DuckPhp\Core\Route](Core-Route.md)
-- [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md)
+- [DuckPhp\Core\Route](Core-Route.md) 挂载面
+- 同族：RouteHookRewrite / RouteHookRouteMap / RouteHookResource

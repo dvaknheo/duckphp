@@ -1,78 +1,34 @@
 # DuckPhp\HttpServer\HttpServerInterface
 
-HTTP 服务器接口。
-
 ## 简介
 
-`HttpServerInterface` 定义了 DuckPhp HTTP 服务器组件应实现的基本契约。实现类需要支持快速启动、运行、获取进程 ID 和关闭服务器等能力。
+`HttpServerInterface` 是 DuckPHP 内置 HTTP 服务器启动器的契约接口，规定实现方必须提供：快捷启动（`RunQuickly`）、启动运行（`run()`）、取 PID（`getPid()`）、关闭（`close()`）。框架的 `HttpServer` 即按此接口实现。
 
-## 选项
+## 类信息
 
-无。
+- 命名空间：`DuckPhp\HttpServer`
+- 声明：`interface HttpServerInterface`
 
 ## 使用方式
 
-### 实现接口
-
-自定义 HTTP 服务器类可实现该接口：
-
-```php
-use DuckPhp\HttpServer\HttpServerInterface;
-
-class MyHttpServer implements HttpServerInterface
-{
-    public static function RunQuickly($options)
-    {
-        // ...
-    }
-
-    public function run();
-    {
-        // ...
-    }
-
-    public function getPid();
-    {
-        // ...
-    }
-
-    public function close();
-    {
-        // ...
-    }
-}
-```
-
-### 作为依赖类型
-
-该接口可用于类型提示，便于替换不同的 HTTP 服务器实现。
-
-## 配置示例
-
-无。
-
-## 注意事项
-
-1. 接口本身不定义选项，具体选项由实现类决定。
-2. `RunQuickly` 是静态方法，通常用于一次性快速启动服务器。
-3. 实现类应保证 `run()` 方法能够真正启动服务或进入服务循环。
+一般直接使用 `HttpServer::RunQuickly($options)` 即可；需要自定义启动器时实现本接口，并保持“`RunQuickly($options)` 一次性启动”的用法一致。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function RunQuickly($options)
-快速启动服务器。接收配置数组并返回运行结果。
+快捷启动：按 `$options` 初始化并开始运行（约定返回后服务器已启动或已派发到系统命令）。
 
-    public function run();
-运行服务器。启动 HTTP 服务或进入服务循环。
+    public function run()
+启动/运行服务器主流程。
 
-    public function getPid();
-获取服务器进程 ID。
+    public function getPid()
+取后台运行进程 PID。
 
-    public function close();
-关闭服务器。
+    public function close()
+结束/关闭服务器进程。
 
 ## 相关链接
 
-- [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md)
+- [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) — 本接口的默认实现

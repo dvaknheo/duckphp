@@ -1,37 +1,44 @@
 # DuckPhp\Foundation\Business\Base
 
-`DuckPhp\Foundation\Business\Base` 业务层基类。
-
 ## 简介
 
-`Base` 是 `DuckPhp\Foundation\Business` 命名空间下的 类，由 DuckPhp 框架提供。
+`Business\Base` 是工程「Business（业务层）」的推荐基类（abstract）。源码极简：`use SingletonTrait`，让业务类可通过 `类名::_()` 单例访问。
 
-## 选项
+业务层约定为“纯逻辑、无状态处理请求上下文”，本基类不绑定任何框架 API——业务所需的设置/缓存/校验等由 `Business\Helper`（`BusinessHelperTrait`）提供。
 
-无。
+## 类信息
+
+- 命名空间：`DuckPhp\Foundation\Business`
+- 声明：`abstract class Base`
+- 使用的 Trait：`DuckPhp\Foundation\SingletonTrait`
 
 ## 使用方式
 
-### 基本用法
-
 ```php
+namespace MyProject\Business;
+
 use DuckPhp\Foundation\Business\Base;
 
-$obj = Base::_();
+class UserBusiness extends Base
+{
+    public function getList()
+    {
+        // 业务逻辑；可调 Model
+    }
+}
+// 控制器内：UserBusiness::_()->getList()
 ```
 
 ## 注意事项
 
-1. 本类为框架内部或扩展组件，通常由框架自动加载。
-2. 如需自定义行为，可继承本类并覆盖相应方法。
+- 本类未定义任何业务方法；业务方法由子类提供。
+- 分层约定见 `docs/zh/guide/layers.md`：Business 只依赖 System 层与 Model，不直接触碰请求上下文。
 
 ## 方法列表
 
-### 公共方法
-
-    static function _($object = null)
-@return static
+本类为空抽象基类，未额外声明方法（`_()` 来自 SingletonTrait）。
 
 ## 相关链接
 
-- [中文参考手册目录](index.md)
+- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md) — 业务静态助手（BusinessHelperTrait）
+- [DuckPhp\Foundation\SingletonTrait](Foundation-SingletonTrait.md) — 单例入口来源

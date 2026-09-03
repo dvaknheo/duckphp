@@ -1,179 +1,103 @@
 # DuckPhp\HttpServer\HttpServer
 
-内置 PHP 开发用 HTTP 服务器。
-
 ## 简介
 
-`HttpServer` 基于 PHP 内置的 `php -S` 命令，提供简单的 HTTP 服务器封装。它支持配置主机、端口、文档根目录，并可通过命令行参数覆盖配置，适合在开发环境中快速启动本地服务。
+`HttpServer` 是 DuckPHP 内置的“用 PHP 内置服务器跑项目”的启动器：它按参数拼出 `php -S host:port -t docroot` 命令并执行，用于本地开发/演示（`./vendor/bin/duckphp` 等 CLI 背后常驱动它）。支持 `--help`/`--host`/`--port`/`--docroot`/`--dry`/`--background` 等命令行选项，也支持 PHP 7.4+ 内置服务器多进程（`PHP_CLI_SERVER_WORKERS`）。
+
+该类为独立实现（不继承 `ComponentBase`），自带一份“嵌入式单例” `_()`（支持 `__SINGLETONEX_REPALACER` 替换钩子）。
+
+## 类信息
+
+- 命名空间：`DuckPhp\HttpServer`
+- 声明：`class HttpServer`
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `host` | `'127.0.0.1'` | 服务器监听主机。 |
-| `port` | `'8080'` | 服务器监听端口。 |
-| `path` | `''` | 文档根目录的前置路径。 |
-| `path_document` | `'public'` | 文档根目录目录名，与 `path` 拼接为完整根目录。 |
-| `background` | `false` | 是否在后台运行服务器。 |
+`public $options` 属性（`init()` 时与传入项深度合并）：
 
-> 命令行参数：`host`、`port`、`docroot`、`background`、`dry`、`help` 等可进一步覆盖或扩展行为。
+| 键 | 默认值 | 说明 |
+|---|---|---|
+| `host` | `'127.0.0.1'` | 监听地址；也可被 CLI 参数 `--host`/`-H` 覆盖。 |
+| `port` | `'8080'` | 监听端口；也可被 CLI 参数 `--port`/`-P` 覆盖。 |
+| `path` | `''` | 项目根路径，与 `path_document` 拼成 docroot。 |
+| `path_document` | `'public'` | 文档目录名；实际 docroot = `path/path_document`。 |
+| `workers` | `null` | 非空时用 `PHP_CLI_SERVER_WORKERS=N` 启动多进程内置服务器。 |
+
+CLI 选项元数据在 `$cli_options`（`help/host/port/docroot/dry/background`，含 `short/desc/required/optional`），用于 `parseCaptures()` 解析与 `--help` 输出。
 
 ## 使用方式
-
-### 快速启动
 
 ```php
 use DuckPhp\HttpServer\HttpServer;
 
 HttpServer::RunQuickly([
     'host' => '127.0.0.1',
-    'port' => '8080',
-    'path' => '',
-    'path_document' => 'public',
+    'port' => '9628',
+    'path' => __DIR__,
+    // 'workers' => 4, // PHP 7.4+ 多进程
 ]);
 ```
 
-### 获取实例运行
+命令行方式（框架 CLI 也会用到）：
 
-```php
-use DuckPhp\HttpServer\HttpServer;
-
-$server = HttpServer::_();
-$server->init([
-    'host' => '0.0.0.0',
-    'port' => '8888',
-    'path' => '/var/www',
-    'path_document' => 'public',
-])->run();
-```
-
-### 后台运行与关闭
-
-```php
-use DuckPhp\HttpServer\HttpServer;
-
-$server = HttpServer::_();
-$server->init([
-    'port' => '8090',
-    'background' => true,
-])->run();
-
-$pid = $server->getPid();
-// ...
-$server->close();
-```
-
-### 命令行使用
-
-在项目目录下通过 CLI 启动服务器：
-
-```bash
-php -r "require 'vendor/autoload.php'; DuckPhp\HttpServer\HttpServer::RunQuickly([]);"
-```
-
-常用参数：
-
-```bash
--H 127.0.0.1  # 主机
--P 8080       # 端口
--t public     # 文档根目录
--b            # 后台运行
---dry         # 仅显示命令，不执行
--h            # 显示帮助
-```
-
-## 配置示例
-
-### 基础配置
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'http_server' => [
-            'host' => '127.0.0.1',
-            'port' => '8080',
-            'path' => '',
-            'path_document' => 'public',
-        ],
-    ];
-}
-```
-
-### 开发环境后台运行
-
-```php
-HttpServer::RunQuickly([
-    'host' => '0.0.0.0',
-    'port' => '8088',
-    'path' => dirname(__DIR__),
-    'path_document' => 'public',
-    'background' => true,
-]);
+```text
+php -r 'require "vendor/autoload.php"; \DuckPhp\HttpServer\HttpServer::RunQuickly([]);' -- --host 0.0.0.0 --port 8080 --docroot public
 ```
 
 ## 注意事项
 
-1. 生产环境不建议使用此内置服务器，仅适用于开发调试。
-2. 文档根目录最终路径为 `path/path_document`。例如 `path` 为空，`path_document` 为 `public` 时，文档根目录为 `public/`。
-3. 命令行参数 `host`、`port`、`docroot` 优先级高于配置选项。
-4. 后台运行依赖 `posix_kill`，在 Windows 环境下可能无法正常工作。
-5. `dry` 模式仅输出要执行的 `php -S` 命令，不真正启动服务。
-
-## 全部选项
-
-```php
-public $options = [
-    'host' => '127.0.0.1',
-    'port' => '8080',
-    'path' => '',
-    'path_document' => 'public',
-    // 'background' => false,
-];
-```
+- `init()` 会：合并选项 → 记录 host/port → `parseCaptures($cli_options)` 解析 CLI 参数（短参映射到长参，剩余位置参数并入）→ 计算 docroot → 用 CLI 参数覆盖 host/port/docroot。
+- `run()`：先输出欢迎语；`--help` 时打印帮助；否则进入 `runHttpServer()`。
+- `runHttpServer()`：拼出并执行命令；`--dry` 只打印命令不执行；`--background`/`-b` 时后台运行并把 PID 存入 `$pid`（随后可用 `getPid()`/`close()`）。
+- `close()` 使用 `posix_kill($pid, 9)`（仅类 Unix；Windows 环境按需调整）。
+- 源码中 `isInited()` 读取 `$is_inited`，但 `init()` 并未把该属性置真——实际初始化状态以 `init()` 已执行为准。
+- `docroot` 的 CLI 覆盖键是 `docroot`（对应 `$cli_options` 里的 `docroot`），而选项表里对应默认目录用的是 `path`+`path_document` 组合。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function _($object = null)
-获取或设置单例实例。
+嵌入式单例入口：有 `__SINGLETONEX_REPALACER` 时交给它；传对象则登记为实例；否则创建并缓存。
+
+    public function __construct()
+空构造器。
 
     public static function RunQuickly($options)
-快速初始化并运行服务器。
+快捷启动：`static::_()->init($options)->run()`。
 
-    public function init(array $options, object $context = null)
-初始化服务器，合并配置并解析命令行参数。
+    public function init(array $options, ?object $context = null)
+合并选项、解析 CLI 参数并计算 docroot，返回自身（`$context` 不使用）。
 
     public function isInited(): bool
-返回组件是否已初始化（当前始终返回 `false`）。
+返回 `$is_inited`（源码中 `init()` 未置真，行为以源码为准）。
 
     public function run()
-运行服务器，展示欢迎信息，处理 `--help` 或启动 HTTP 服务。
+启动入口：打印欢迎语；`--help` 时输出帮助；否则运行内置服务器。
 
     public function getPid(): int
-获取当前服务器进程 ID。
+返回后台运行时的进程 PID。
 
     public function close()
-关闭后台运行的服务器，发送 `SIGKILL` 信号。
+结束后台进程：`posix_kill($this->pid, 9)`；无 PID 时返回 `false`。
 
 ### 受保护方法
 
     protected function getopt(string $options, array $longopts, &$optind)
-封装 `getopt()` 调用，便于测试覆盖。
+包装原生 `getopt()`（便于测试替换）。
 
     protected function parseCaptures(array $cli_options): array
-解析命令行选项，返回合并后的参数数组。
+按 `$cli_options` 元数据解析 CLI：生成短/长选项串，调用 `getopt()`，把短参映射为长参，并把剩余位置参数并入返回数组。
 
     protected function showWelcome(): void
-输出欢迎信息。
+输出欢迎语。
 
     protected function showHelp()
-输出命令行帮助信息。
+按 `$cli_options` 输出 `--help` 帮助文本与当前参数。
 
     protected function runHttpServer()
-构建并执行 `php -S` 命令，启动 PHP 内置 HTTP 服务器。
+拼装并执行 `php -S host:port -t docroot` 命令；`workers` 设置 `PHP_CLI_SERVER_WORKERS`；`--dry` 仅打印；后台模式执行后记录 `$pid` 并返回。
 
 ## 相关链接
 
-- [DuckPhp\HttpServer\HttpServerInterface](HttpServer-HttpServerInterface.md)
+- [DuckPhp\HttpServer\HttpServerInterface](HttpServer-HttpServerInterface.md) — 启动器接口

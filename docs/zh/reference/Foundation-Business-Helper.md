@@ -1,66 +1,36 @@
 # DuckPhp\Foundation\Business\Helper
 
-业务层 Helper 类。
-
 ## 简介
 
-`DuckPhp\Foundation\Business\Helper` 聚合了 `DuckPhp\Helper\BusinessHelperTrait`，为业务层提供统一的静态方法入口，用于访问配置、设置、缓存、事件、路径以及全局用户与管理员服务等。
+`Business\Helper` 是工程「业务层静态助手」的推荐实现：一个静态类，`use BusinessHelperTrait`。业务层通过 `Helper::Config(...)`、`Helper::Cache()`、`Helper::ValidatorValid(...)`、`Helper::AdminService()` 等调用业务所需的框架能力，而不直接接触组件类。
 
-## 选项
+## 类信息
 
-无。
+- 命名空间：`DuckPhp\Foundation\Business`
+- 声明：`class Helper`
+- 使用的 Trait：`DuckPhp\Helper\BusinessHelperTrait`
 
 ## 使用方式
-
-### 静态调用
 
 ```php
 use DuckPhp\Foundation\Business\Helper;
 
-// 读取配置
-$config = Helper::Config('database');
-
-// 读取设置
-$setting = Helper::Setting('site_name');
-
-// 获取缓存对象
-$cache = Helper::Cache();
-
-// 触发自定义事件
-Helper::FireEvent('user.created', $user);
-
-// 获取用户/管理员服务
-$userService = Helper::UserService();
-$adminService = Helper::AdminService();
+$setting = Helper::Setting('app_name');
+$rows    = Helper::Cache()->get('hot_list');
+$errors  = Helper::ValidatorValid($input, ['age' => 'int|between:1,120']);
 ```
-
-### 在 Business 类中使用
-
-业务类通常使用 `DuckPhp\Foundation\BusinessTrait`，它组合了单例和快速调用能力，也可以直接通过 `Helper` 类访问这些能力。
 
 ## 注意事项
 
-1. 该类没有任何自有方法，所有方法均来自 `DuckPhp\Helper\BusinessHelperTrait`。
-2. 部分方法（如 `Setting`、`Config`、`XpCall`）依赖 `DuckPhp\Core\App` 及相关组件，需确保应用已初始化。
+- Helper 类不保存状态；方法全部来自 `BusinessHelperTrait`（再转发到 `App/Configer/Cache/GlobalEvent/Validator/GlobalAdmin/GlobalUser` 等）。
+- 若需要同时使用 Controller/App 助手，可改用 `Foundation\Helper`（四合一）。
 
 ## 方法列表
 
-### 公共方法
-
-| 方法 | 说明 |
-|---|---|
-| `Setting($key = null, $default = null)` | 读取应用设置 |
-| `Config($file_basename, $key = null, $default = null)` | 读取配置文件 |
-| `XpCall($callback, ...$args)` | 执行回调并捕获异常 |
-| `BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)` | 业务异常断言 |
-| `Cache($object = null)` | 获取或设置缓存对象 |
-| `PathOfProject()` | 获取项目根目录 |
-| `PathOfRuntime()` | 获取运行时目录 |
-| `FireEvent($event, ...$args)` | 触发事件 |
-| `OnEvent($event, $callback)` | 注册事件监听 |
-| `AdminService()` | 获取全局管理员服务 |
-| `UserService()` | 获取全局用户服务 |
+本类方法全部由 `BusinessHelperTrait` 提供（16 个静态方法），签名与说明见 [Helper-BusinessHelperTrait](Helper-BusinessHelperTrait.md)。
 
 ## 相关链接
 
-- [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md)
+- [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md) — 方法来源
+- [DuckPhp\Foundation\Business\Base](Foundation-Business-Base.md) — 业务基类
+- [DuckPhp\Foundation\Helper](Foundation-Helper.md) — 四层合一的静态助手

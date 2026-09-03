@@ -1,66 +1,56 @@
 # DuckPhp\Core\SingletonExTrait
 
-可变单例 Trait。
-
 ## 简介
 
-`SingletonExTrait` 为类提供统一的单例访问入口 `_()`。它本身不维护实例，而是通过 `PhaseContainer::GetObject()` 实现按“相位/容器”隔离的可变单例，因此同一类在不同应用或不同相位下可以拥有不同实例。
+`SingletonExTrait` 是 DuckPHP 里“单例式访问”的常见来源 Trait。通过 `use SingletonExTrait`，一个类可以直接获得 `类名::_()` 这样的静态入口，由 `PhaseContainer` 统一管理并返回该类的（当前 Phase 内）实例。
 
-## 选项
+它与经典“静态单例属性”不同：**实例的归属和管理完全交给 `PhaseContainer`**，并且支持传入 `$object` 来登记/替换实例。由于 Phase 容器按“Phase + 类名”区隔实例，同一类在不同 Phase 下可以持有不同对象——这也是子应用/多租户各自独立实例得以实现的基础。
 
-无。本 Trait 不直接定义配置选项。
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`trait SingletonExTrait`
+- 使用方：`DuckPhp\Core\ComponentBase`（大多数组件经由它获得 `_()`）；各 `Helper` Trait 也会引入它以便对外暴露 `_()` 便捷。
 
 ## 使用方式
 
-### 在类中使用 Trait
+### 让类拥有 `_()` 入口
 
 ```php
-namespace MyApp\Service;
-
 use DuckPhp\Core\SingletonExTrait;
 
-class UserService
+class MyService
 {
     use SingletonExTrait;
-
-    public function getUser()
-    {
-        return 'user';
-    }
+    // ... 业务
 }
-```
 
-### 获取单例
+$svc = MyService::_();          // 取当前 Phase 里的实例（没有则创建并登记）
+```
+放在框架中时，实际返回时经由 `PhaseContainer::GetObject(static::class, $object)`；多数字段不必亲自 new。
+
+### 登记一个已构造实例
 
 ```php
-$service = UserService::_();
-
-// 手动设置实例
-$service = new UserService();
-UserService::_($service);
+$existing = new MyService;
+MyService::_($existing);        // 返回（并把 $existing 登记为当前 Phase 实例）$existing
 ```
-
-### 多应用/相位隔离
-
-`SingletonExTrait` 配合 `PhaseContainer` 使用。当 `PhaseContainer` 切换当前容器时，通过 `_()` 获取到的实例会对应到当前容器，从而实现不同应用拥有独立单例。
-
-## 配置示例
-
-无。
+这样可替换/预置某个组件实例（常用于测试或框架替换组件的实现）。
 
 ## 注意事项
 
-1. 本 Trait 只提供 `_()` 方法，真正的实例管理由 `PhaseContainer` 负责。
-2. 在单元测试中可以通过 `PhaseContainer::ResetContainer()` 重置容器状态。
-3. 不同相位下可以存在同一类的不同实例，编写跨相位代码时应注意实例作用域。
+- 这是静态入口所在；如需“可变单例/与 container 解耦”，本 Trait 只是壳，真正语义由 `PhaseContainer` 决定（查找顺序：当前 Phase → 公共/父容器 → 自动创建）。
+- `$object` 非空时会把传入对象登记后返回同一对象，从而“覆盖”此前实例而不会新建。
+- 与 PHP 内置关键字/其它 singleton 无冲突；可被多个类重复 use。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function _($object = null)
-访问或设置当前类的单例。不传参数时返回实例；传入对象时将该对象注册为当前类的单例。
+单例入口：返回（无参）或登记后返回（传对象）`static::class` 的当前 Phase 实例，内部委托 `PhaseContainer::GetObject()`。
 
 ## 相关链接
 
-- [DuckPhp\Core\PhaseContainer](Core-PhaseContainer.md)
+- [DuckPhp\Core\PhaseContainer](Core-PhaseContainer.md) — 真正的实例/单例查找与创建所在
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 引入本 Trait 的组件基类

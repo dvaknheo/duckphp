@@ -1,141 +1,106 @@
 # DuckPhp\Ext\DuckPhpInstaller
 
-DuckPhp 项目安装器扩展组件。
-
 ## 简介
 
-`DuckPhpInstaller` 提供命令行工具，用于在当前目录新建项目、显示帮助信息或运行示例 HTTP 服务器。它会把框架自带的 skeleton 目录复制到目标目录，并替换命名空间等占位符。
+`DuckPhpInstaller` 是 `bin/duckphp` 背后的命令行安装器，提供三个 CLI 命令：
 
-该组件通常不直接参与 Web 请求处理，而是作为 `bin/duckphp` 或命令行入口使用。
+- `new`：从框架 `skeleton` 复制一个新工程到指定目录，并把 `ProjectNameTemplate` 命名空间/App 类名替换为你设置的命名空间（`command_new`）；
+- `show`：用内置 HttpServer 跑框架的 demo 页面（`command_show` → `runDemo`）；
+- `help`：输出帮助文本（`command_help` → `showHelp`）。
+
+工程内直接使用较少，多经 `./vendor/bin/duckphp new/show` 触发。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class DuckPhpInstaller extends DuckPhp\Core\ComponentBase`
 
 ## 选项
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `path` | `''` | 目标路径。新项目将被复制到此目录。 |
-| `namespace` | `''` | 项目命名空间。为空时安装器会交互式询问。 |
-| `force` | `false` | 是否覆盖已存在的文件。 |
-| `autoloader` | `'vendor/autoload.php'` | 自动加载文件路径，用于替换 `@DUCKPHP_HEADFILE` 占位符。 |
-| `verbose` | `false` | 是否显示复制进度。 |
-| `help` | `false` | 是否显示帮助信息。 |
+| `path` | `''` | 目标路径（`new` 的落盘目录 / 覆盖）。 |
+| `namespace` | `''` | 新工程的命名空间（缺省自动探测/询问）。 |
+| `force` | `false` | 目标已存在文件时是否强制覆盖。 |
+| `autoloader` | `'vendor/autoload.php'` | 使用的 autoload 路径。 |
+| `verbose` | `false` | 是否打印过程信息。 |
+| `help` | `false` | 帮助开关。 |
 
 ## 使用方式
 
-### 命令行入口
-
-```php
-$installer = new \DuckPhp\Ext\DuckPhpInstaller();
-$installer->command_new();  // 创建新项目
-$installer->command_help(); // 显示帮助
-$installer->command_show();  // 运行示例服务器
-```
-
-### 显示帮助
-
-```php
-$installer = new \DuckPhp\Ext\DuckPhpInstaller();
-$installer->showHelp();
-```
-
-输出内容包含可用的命令、参数及说明。
-
-### 创建新项目
-
-```php
-$installer = new \DuckPhp\Ext\DuckPhpInstaller();
-$installer->newProject();
-```
-
-该方法会读取 CLI 参数，如 `--namespace`、`--force`、`--verbose`、`--autoloadfile`、`--path`，然后把 `src/Ext/../../skeleton` 目录复制到目标位置。
-
-### 运行示例服务器
-
-```php
-$installer = new \DuckPhp\Ext\DuckPhpInstaller();
-$installer->runDemo();
-```
-
-默认使用 `template` 目录作为项目路径，端口默认为 `8080`。可以通过 `--port` 指定端口，通过 `--http_server` 指定自定义 HTTP 服务器类。
-
-## 配置示例
-
-安装器通常不需要在 Web 应用配置中加载。命令行用法示例：
-
-```php
-#!/usr/bin/env php
-<?php
-require __DIR__ . '/vendor/autoload.php';
-
-$installer = new \DuckPhp\Ext\DuckPhpInstaller();
-$installer->command_new();
+```text
+./vendor/bin/duckphp new --namespace MyProject --path ./myproj --force
+./vendor/bin/duckphp new --help
+./vendor/bin/duckphp show --port 8080
 ```
 
 ## 注意事项
 
-1. `newProject()` 依赖 `DuckPhp\Core\Console` 获取 CLI 参数，运行环境必须支持命令行。
-2. 如果目标文件已存在且 `force` 为 `false`，安装器会提示使用 `--force` 覆盖并终止。
-3. 复制文件时会替换三个占位符：`@DUCKPHP_HEADFILE`、`@DUCKPHP_DELETE`、`@DUCKPHP_NAMESPACE`。
-4. `runDemo()` 通过 `DuckPhp\HttpServer\HttpServer` 启动服务器，需要单独安装 HTTP 服务器组件。
-
-## 全部选项
-
-```php
-    public $options = [
-        'path' => '',
-        'namespace' => '',
-        'force' => false,
-        'autoloader' => 'vendor/autoload.php',
-        'verbose' => false,
-        'help' => false,
-    ];
-```
+- `newProject()`：命名空间优先级 = CLI `--namespace` → composer.json `psr-4`（取 `src/` 对应项，经 `getNameSpaceByComposer`）→ 控制台询问（`getNamespaceByConsole`）。
+- `dumpDir()`：递归复制 `skeleton`；`src/System/App.php` 会重命名为 `{NamespaceBasename}App.php` 并把 `class App extends` 改为对应类名；文件内容经 `filteText`（含命名空间/宏过滤）处理；`force=false` 且目标有同名文件时中止（`checkFilesExist`）。
+- `runDemo()`：以内置模板目录为源，用 `HttpServer::RunQuickly($options)` 起服务；支持 `--port` 与自定义 `--http_server`。
 
 ## 方法列表
 
 ### 公共方法
 
     public function command_new(): void
-创建新项目。初始化组件后调用 `newProject()`。
+`new` 命令：解析 CLI 参数后 `newProject()`（`--help` 时仅打印帮助）。
 
     public function command_help()
-显示帮助信息。
+`help` 命令：打印帮助。
 
     public function command_show()
-运行示例服务器。
+`show` 命令：运行 demo 服务器。
 
     public function showHelp(): void
-输出命令行帮助文本。
+输出帮助文本。
 
     public function newProject($options = [])
-根据 CLI 参数复制 skeleton 目录并替换命名空间。
+创建新工程：确定命名空间并复制/改写骨架。
 
     public function runDemo(): void
-使用 template 目录运行示例 HTTP 服务器。
+以模板为源启动 HttpServer demo。
 
 ### 受保护方法
 
+    protected function getNameSpaceByComposer(string $path): string
+从 composer.json 的 `psr-4`（`src/`）推断命名空间。
+
+    protected function getNamespaceByConsole(): string
+交互式询问命名空间（默认 `Demo`）。
+
     protected function dumpDir(string $source, string $dest, bool $force = false): void
-递归复制源目录到目标目录，并处理文件过滤。
+递归复制目录并逐个改写文件内容。
 
-    protected function checkFilesExist(string $source, string $dest, array $files): bool
-检查目标文件是否已存在。如果存在且未开启 `force`，则返回 `false`。
+    protected function getNamespaceBasename()
+取命名空间末段（用于 App 类重命名）。
 
-    protected function createDirectories(string $dest, array $files): bool
-根据文件列表创建目标目录结构。
+    protected function checkFilesExist()
+检查目标是否已有同名文件（非 force 时中止）。
 
-    protected function filteText(string $data, bool $is_in_full, string $short_file_name): string
-对单个文件内容进行过滤：替换头文件、删除标记、替换命名空间。
+    protected function createDirectories()
+在目标创建目录结构。
 
-    protected function filteMacro(string $data): string
-删除包含 `@DUCKPHP_DELETE` 的整行。
+    protected function filteText()
+对单文件内容做宏/命名空间替换过滤。
 
-    protected function filteNamespace(string $data, string $namespace): string
-替换 `@DUCKPHP_NAMESPACE` 和 `YourProjectName\` 为指定命名空间。
+    protected function filteMacro()
+替换模板宏占位。
 
-    protected function changeHeadFile(string $data, string $short_file_name, string $autoload_file): string
-替换 `@DUCKPHP_HEADFILE` 为相对目录的 `require_once` 语句。
+    protected function filteNamespace()
+替换命名空间占位。
+
+    protected function changeHeadFile()
+处理头文件模板。
+
+    protected function genProjectName()
+生成工程名。
+
+    protected function detectedClass()
+探测类信息（用于改写）。
 
 ## 相关链接
 
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-- [DuckPhp\Core\Console](Core-Console.md)
+- [DuckPhp\Core\Console](Core-Console.md) — CLI 参数读取
+- [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) — demo 服务器

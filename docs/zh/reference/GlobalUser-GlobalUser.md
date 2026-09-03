@@ -1,335 +1,120 @@
 # DuckPhp\GlobalUser\GlobalUser
 
-全局用户组件。
-
 ## 简介
 
-`GlobalUser` 是内置的 `UserActionInterface` 实现，通过**回调配置**提供用户系统的完整功能。你可以直接使用 `GlobalUser::class` 作为 `class_user` 的值，也可以继承它。
+`GlobalUser` 是 DuckPHP 的「全局用户组件」：它实现 `UserActionInterface`，把“当前用户是谁 / 站内 URL / 用户视图 / 权限与日志”等能力集中到一个组件，并允许通过**选项回调（callback）**把具体实现外包给工程类（如 `UserAction`、`UserService`）。
+
+典型接入方式：在应用选项中配置 `user_callback_for_id/name/data/local_service`（以及若干 `user_url_*`/`user_callback_for_url_for_*`）指向工程实现；控制器侧经 `Helper`（`User()/UserId()/…`）或直接 `GlobalUser::_()` 使用。`Foundation\Controller\UserControllerBase` 与之配套使用。
+
+与 `GlobalAdmin` 的差异：面向“前台登录用户”场景，URL 含注册（`user_url_regist`/`urlForRegist`），服务含批量取用户名（`batchGetUsernames`），没有“超级管理员”。
+
+## 类信息
+
+- 命名空间：`DuckPhp\GlobalUser`
+- 声明：`class GlobalUser extends DuckPhp\Core\ComponentBase implements UserActionInterface`
+- 实现的接口：`UserActionInterface`
 
 ## 选项
-### 注册为提供者
-
-    'class_user' => GlobalUser::class,  // 或你的 MyUser implements UserActionInterface
-
-### 回调选项
-
-`GlobalUser` 的方法由以下回调驱动，配置回调后即可使用：
-
-| 选项 | 对应方法 | 默认值说明 |
-|---|---|---|
-| `user_callback_for_id` | `id()` | 获取当前用户 ID，参数 `(bool $check_login)` |
-| `user_callback_for_name` | `name()` | 获取当前用户名 |
-| `user_callback_for_data` | `data()` | 获取当前用户数据数组 |
-| `user_callback_for_local_service` | `localService()` | 返回 `UserServiceInterface` 实例 |
-| `user_callback_for_add_ext_view_data` | `addExtViewData()` | 扩展视图数据 |
-| `user_callback_for_url_for_home` | `urlForHome()` | 自定义首页 URL 生成 |
-| `user_callback_for_url_for_regist` | `urlForRegist()` | 自定义注册页 URL 生成 |
-| `user_callback_for_url_for_login` | `urlForLogin()` | 自定义登录页 URL 生成 |
-| `user_callback_for_url_for_logout` | `urlForLogout()` | 自定义登出页 URL 生成 |
-
-### 直接 URL 选项
-
-如果未设置对应的 `url_*` 回调，则使用以下固定 URL：
-
-| 选项 | 说明 |
-|---|---|
-| `user_url_home` | 首页 URL |
-| `user_url_regist` | 注册页 URL |
-| `user_url_login` | 登录页 URL |
-| `user_url_logout` | 登出页 URL |
-
-### 视图选项
-
-| 选项 | 说明 |
-|---|---|
-| `user_view_file_header` | 用户界面 header 视图文件路径 |
-| `user_view_file_footer` | 用户界面 footer 视图文件路径 |
-
-### 回调单例模式
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `user_enable_callback_singleton` | `true` | 启用后，回调数组 `[ClassName::class, 'method']` 自动转为 `ClassName::_()->method()` |
-
----
+| `user_url_home` / `user_url_regist` / `user_url_login` / `user_url_logout` | `null` | 站内首页/注册/登录/退出 URL（未配 callback 时用 `__url()` 生成）。 |
+| `user_view_file_header` / `user_view_file_footer` | `null` | 用户页头/页脚视图文件。 |
+| `user_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 时是否先把类名转成 `类名::_()` 单例实例。 |
+| `user_callback_for_id` / `for_name` / `for_data` | `null` | 取当前用户 id/name/data 的回调。 |
+| `user_callback_for_local_service` | `null` | 返回本地 `UserServiceInterface` 实现的回调。 |
+| `user_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
+| `user_callback_for_url_for_home` / `for_regist` / `for_login` / `for_logout` | `null` | 生成对应 URL 的回调（优先于 `user_url_*`）。 |
 
 ## 使用方式
 
-### 作为子应用
-
-当你需要把自己的用户系统封装给其他应用使用时：
-比如 
-
-下面的 `MyUserProvider\System\UserApp` 是你自己的用户系统。
-下面的 `MainApp\System\App` 是主系统。
-
 ```php
-namespace MainApp\System;
-use MyUserProvider\System\UserApp;
-class App extends DuckPhp
-{
-    public $options = [
-        'app' =>[
-            UserApp::class => [
-                'controller_url_prefix' =>'user/',
-                'user_url_home' => '/',  // 登录之类的成功后到网站首页
-            ],
-        ]
-    ];
-}
+// App 选项里配置 provider（工程示例）：
+$options = [
+    'user_callback_for_id'   => [UserAction::class, 'id'],
+    'user_callback_for_name' => [UserAction::class, 'name'],
+    'user_callback_for_data' => [UserAction::class, 'data'],
+    'user_callback_for_local_service' => [UserAction::class, 'service'],
+];
+
+// 控制器内：
+$user = GlobalUser::_();
+$uid  = $user->id();                      // 当前用户 id（未登录抛错）
+if (!$user->canAccess()) { /* 无权 */ }
+$names = $user->batchGetUsernames([1, 2, 3]);
+$user->_Show($data, 'user/center');       // 带用户页头尾的渲染
 ```
 
----
+## 注意事项
 
-
-### 例子
-
-```php
-namespace MainApp\Controller;
-class managerController
-{
-    public function dashboard()
-    {
-        
-        $data =[];
-        $data['user_name'] = Helper::UserName();
-        $data['url_logout'] = Helper::User()->urlForLogout();
-
-        $data = Helper::User()->mergeViewData($data);
-        Helper::Show($data,'dashboard');
-    }
-}
-```
-
-```php
-<?php
-// view/dashboard.php
-if(isset($data['__view_data']['header'])){
-    echo $data['__view_data']['header'];
-}
-?>
-以上是来自 GlobalUser 提供者的页眉 <br>
-
-你好  <span> <?=__h($user_name)?></span> <a href="<?= $url_logout ?>>登出</a>
-
-以下是来自 GlobalUser 提供者的页脚 <br>
-<?php
-if(isset($data['__view_data']['footer'])){
-    echo $data['__view_data']['footer'];
-}
-?>
-
-```
-这个案例，对应的 url 是
-`/manager/dashboard`
-
-我们通常通过 Controller 层的 Helper::User 来使用 GlobalUser
-
-当没登录的时候；会被子应用处理。通常情况下会跳转到登录页面
-
-当成功登录，会显示当前用户名。和登出链接。
-
-同时会把子应用设定的页眉页脚数据附加到视图里。
-
-### URL 生成
-
-```php
-$url = Helper::User()->urlForLogin('/back');  // 登录后跳回 /back
-$url = Helper::User()->urlForLogout();
-$url = Helper::User()->urlForHome();
-$url = Helper::User()->urlForRegist();
-```
-### 视图融合
-```php
-$data = GlobalUser::_()->mergeViewData($input);
-// $data['__view_data']['header'] 和 ['footer'] 已填充
-```
-这个方法用在编写用户后台时，主应用通过 `mergeViewData()` 获取提供者的页眉/页脚：
-
-
-### 配置回调
-
-在子 App 中配置 `user_callback_*` 指向自己的实现类。回调数组 `[ClassName::class, 'method']` 在 `user_enable_callback_singleton` 开启时会自动实例化为单例：
-
-```php
-use MyUserProvider\System;
-class UserApp extends DuckPhp
-{
-    public $options = [
-        'user_callback_for_id' => [UserAction::class, 'id'],
-        'user_callback_for_name' => [UserAction::class, 'name'],
-        'user_callback_for_data' => [UserAction::class, 'data'],
-        'user_callback_for_local_service' => [UserAction::class, 'service'],
-        
-        'user_url_login' => 'login',
-        'user_url_logout' => 'logout',
-        'user_url_home' => 'home',
-        'user_url_regist' => 'regist',
-    ];
-}
-```
-> `user_url_*` 的 URL 一般写成相对路径。
-
-
-回调说明：
-- `user_callback_for_id`/`for_name`/`for_data`：指向你的 `UserAction` 类，从 Session/Token 读取当前用户信息
-- `user_callback_for_local_service`：指向 `UserAction::service()`，返回 `UserServiceInterface` 实例
-- `user_callback_for_url_for_*`：可选的 URL 生成回调，不设置时走 `user_url_*` 固定 URL
-
-### UserAction 实现示例
-
-```php
-use MyUserProvider\Controller;
-use MyUserProvider\Business\UserBusiness;
-class UserAction
-{
-    // 会被 user_callback_for_id 调用
-    public function id($check_login = true)
-    {
-        $id = $_SESSION['user_id'] ?? null;
-        if ($check_login && !$id) {
-            throw new \Exception('未登录');
-        }
-        return $id;
-    }
-    public function name($check_login = true): string
-    {
-        return $_SESSION['user_name'] ?? '';
-
-    }
-    public function data($check_login = true): array
-    {
-        return $_SESSION['user_data'] ?? [];
-    }
-    // 会被 user_callback_for_local_service 调用
-    public function service()
-    {
-        return UserBusiness::_();  // UserBusiness implements UserServiceInterface
-    }
-}
-```
-对应的，当你设置 `'user_callback_for_id' => [UserAction::class, 'id']` 后，主应用或其他应用调用 `Helper::UserId()` 时，实际执行的就是 `UserAction::id()`。
-
-
-### 所有应用的 Controller 中调用
-
-所有应用的 Controller 通过 `Helper::User()` 即可获得 `UserActionInterface` 实例，无需关心底层实现。
-
-```php
-$userId = Helper::UserId(true);             // => GlobalUser::_()->id(); => UserAction::_()->id();（未登录抛异常）
-$userName = Helper::UserName();             // => GlobalUser::_()->name(); => UserAction::_()->name()
-$user = Helper::User();                     // => GlobalUser 实例
-$userService = Helper::UserService();       // => GlobalUser::_()->service()
-```
-
-### 服务委托
-
-`GlobalUser::_()->service()` 返回 `UserServiceInterface` 的 PhaseProxy，可在 Business 层安全调用：
-
-```php
-
-$service = Helper::User()->service();
-$service->checkAccess($userId, __CLASS__, __METHOD__);
-$service->log($userId, '操作', 'audit');
-$usernames = $service->batchGetUsernames([1, 2, 3]);
-```
-
----
-## 全部选项
-
-        'user_url_home' => null,
-        'user_url_regist' => null,
-        'user_url_login' => null,
-        'user_url_logout' => null,
-        
-        'user_view_file_header' => null, // 'inc-head',
-        'user_view_file_footer' => null, // 'inc-foot',
-        
-        'user_enable_callback_singleton' => true,
-        'user_callback_for_id' => null, //[UserAction::class,'id'],
-        'user_callback_for_name' => null, //[UserAction::class,'name'],
-        'user_callback_for_data' => null, //[UserAction::class,'data'],
-        'user_callback_for_local_service' => null, //[UserAction::class,'service'],
-        'user_callback_for_add_ext_view_data' => null, //[UserAction::class,'addExtViewData'],
-
-        'user_callback_for_url_for_home' => null,
-        'user_callback_for_url_for_regist' => null,
-        'user_callback_for_url_for_login' => null,
-        'user_callback_for_url_for_logout' => null,
+- **callback 机制**：`run_callback_by_key()` 要求对应选项键已配置（否则 `ThrowOn "need app options 'key'"`）；回调是 `[类名, 方法]` 且 `user_enable_callback_singleton` 开启时，把类名替换为 `类名::_()`。
+- `id()` 未配置 provider 时抛 `"No GlobalUser Provider."`。
+- `service()` 与 `localService()`：前者经 `PhaseProxy` 包装成可跨 Phase 调用的代理；后者返回当前 Phase 的服务。
+- URL 生成优先 callback；无 callback 时 `__url($options['user_url_*'])`。
+- `_Show()` 会临时切到 `App::getLastPhase()` 并设置 `user_view_file_header/footer` 为头尾模板后渲染，结束后恢复原 Phase。
+- `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, …)`（注意与 `GlobalAdmin` 不同，本实现不额外包 `__url()`，以源码为准）。
+- 组件经 `ComponentBase` 的 `_()` 取实例。
 
 ## 方法列表
-
-| 方法 | 说明 |
-|---|---|
-| `id(bool $check_login = true)` | 获取当前用户 ID。`true` 且未登录时抛异常 |
-| `name(bool $check_login = true): string` | 获取当前用户名 |
-| `data(bool $check_login = true): array` | 获取当前用户数据 |
-| `service()` | 返回 `UserServiceInterface` 的 PhaseProxy |
-| `localService()` | 返回本地 `UserServiceInterface` 实例 |
-| `urlForHome(?string $url_back, ?array $ext): string` | 首页 URL |
-| `urlForRegist(?string $url_back, ?array $ext): string` | 注册页 URL |
-| `urlForLogin(?string $url_back, ?array $ext): string` | 登录页 URL |
-| `urlForLogout(?string $url_back, ?array $ext): string` | 登出页 URL |
-| `mergeViewData(array $input): array` | 融合视图头尾数据到 `$input['__view_data']` |
-| `addExtViewData(array $input): array` | 扩展视图数据钩子，优先使用 `user_callback_for_add_ext_view_data` 回调 |
-| `checkAccess($class, $method, $url)` | 检查权限，委托给 `localService()->checkAccess()` |
-| `log($string, $type, $ext)` | 记录操作日志，委托给 `localService()->log()` |
-| `batchGetUsernames(array $ids): array` | 批量获取用户名，委托给 `localService()->batchGetUsernames()` |
-
 
 ### 公共方法
 
     public function id(bool $check_login = true)
-获取当前用户 ID。`true` 且未登录时抛异常
+当前用户 ID（`$check_login=true` 时未登录即报错）。
 
     public function name(bool $check_login = true): string
-获取当前用户名
+当前用户名。
 
     public function data(bool $check_login = true): array
-获取当前用户数据
-
-    public function service()
-返回 UserServiceInterface 实例（PhaseProxy）
+当前用户数据数组。
 
     public function localService()
-返回本地 UserServiceInterface 实例
+返回本地（当前 Phase）的 `UserServiceInterface` 实现。
 
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
-获取首页 URL
+站内首页 URL。
 
     public function urlForRegist(?string $url_back = null, ?array $ext = null): string
-获取注册页 URL
+注册 URL。
 
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
-获取登录页 URL
+登录 URL。
 
     public function urlForLogout(?string $url_back = null, ?array $ext = null): string
-获取登出页 URL
+退出 URL。
+
+    public function service()
+返回可跨 Phase 调用的用户服务（`PhaseProxy` 包装 `localService()`）。
 
     public function mergeViewData(array $input): array
-融合视图头尾数据到 input['__view_data']
+合并用户信息与页面头尾 HTML 到视图数据（`__logined_id/name/url_logout/__view_data`）。
 
-    public function addExtViewData(array $input): array
-扩展视图数据。优先使用 `user_callback_for_add_ext_view_data` 回调，否则直接返回原数据
+    public function _Show(array $data = [], string $view = '')
+以“登录用户页面”方式渲染（切 Phase、设头尾、走 `View::_Show`）。
 
-    public function checkAccess(string $class, string $method, ?string $url = null)
-检查权限，委托给 localService()->checkAccess()
+    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
+判断当前用户能否访问；缺省参数取当前路由上下文。
 
     public function log(string $string, ?string $type = null, array $ext = [])
-记录日志，委托给 localService()->log()
+记录用户操作日志（委托 localService）。
 
     public function batchGetUsernames(array $ids): array
-批量获取用户名，委托给 localService()->batchGetUsernames()
+按 ID 批量取用户名（委托 localService）。
 
 ### 受保护方法
 
     protected function run_callback_by_key(string $key, ...$args)
-回调 $options[$key]
+按选项键执行回调：键缺失抛错；`[类, 方法]` 且开启 singleton 时类名转实例。
 
     protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
-URL 生成路由：优先回调，回退固定 URL
+生成 URL 的公共逻辑：有 callback 用 callback，否则 `__url(options[key_url])`。
+
+    protected function addExtViewData(array $input): array
+追加视图数据：默认补 `__logined_id/name/url_logout`，可被 `user_callback_for_add_ext_view_data` 覆盖。
 
 ## 相关链接
 
-- [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md)
-- [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md)
+- [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) — 本组件实现的接口
+- [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) — 服务侧契约
+- [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) — service() 的跨 Phase 代理
+- [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) — 管理员侧同构组件

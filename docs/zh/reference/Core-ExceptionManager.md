@@ -1,199 +1,127 @@
 # DuckPhp\Core\ExceptionManager
 
-异常管理组件。
+框架异常/错误处理的中枢：自定义 PHP 的 `set_error_handler/set_exception_handler`，把错误与异常按既定路由分发到“项目处理器/默认处理器/调试器”。
 
 ## 简介
 
-`ExceptionManager` 负责接管 PHP 的异常和错误处理流程。它通过注册全局的异常处理函数和错误处理函数，将未捕获的异常、致命错误以及开发期提示性错误统一交给框架处理。
+`ExceptionManager`（`class ExceptionManager extends ComponentBase`）做了两件事：
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+- **接管 PHP 错误**：当 `handle_all_dev_error` 打开则以 `on_error_handler` 作错误回调（注意级别才触发 `dev_error_handler`；其它会转 `ErrorException`）。
+- **接管异常**：当 `handle_all_exception` 打开则 `set_exception_handler(CallException)`，由 `_CallException`：如果异常是 `__EXIT_EXCEPTION` 则直接放行；否则从 `exceptionHandlers`（按注册顺序反转）里找第一个是 a 该异常的类回调并执行，都找不到最后交给 `default_exception_handler`。
+
+框架（Core `KernelTrait`）会在初始化阶段 `init` 它，并把 root App 的 `OnDefaultException` 作为 `default_exception_handler`、`OnDevErrorHandler` 作 `dev_error_handler`，所以多数项目不必手调这些。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class ExceptionManager extends ComponentBase`
 
 ## 选项
 
+`ExceptionManager::$options`：
+
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `handle_all_dev_error` | `true` | 是否接管 PHP 开发期错误（notice、deprecated、strict 等）。 |
-| `handle_all_exception` | `true` | 是否接管未捕获的异常。 |
-| `system_exception_handler` | `null` | 自定义系统级异常处理器。为空时使用默认的 `set_exception_handler`。 |
-| `handle_exception_on_init` | `true` | 初始化完成后是否立即启用异常处理。 |
-| `default_exception_handler` | `null` | 默认异常处理回调，当没有任何具体处理器匹配时调用。 |
-| `dev_error_handler` | `null` | 开发期错误的处理回调，仅在 `handle_all_dev_error` 为 `true` 时生效。 |
-| `exception_reporter` | `null` | 自定义异常报告器类名。设置后，将 `exception_for_project` 指定的异常类交给该报告器处理。 |
-| `exception_for_project` | `null` | 异常报告器捕获的异常类。 |
+| `handle_all_dev_error` | true | 是否接管 PHP 错误处理器（dev path）。 |
+| `handle_all_exception` | true | 是否接管全局异常处理器。 |
+| `system_exception_handler` | null | 自定义异常安装回调 `function(callable $handler)`，可替代内建 set_exception_handler（极端/跨运行时用）。 |
+| `handle_exception_on_init` | true | init 时立即 run 接管。 |
+| `default_exception_handler` | null | 未匹配的自定义回退（通常填 App::OnDefaultException）。 |
+| `dev_error_handler` | null | dev错误回调（通常 App::OnDevErrorHandler）。 |
+| `exception_reporter` | null | 项目级“异常报告类”（要有静态 OnException），会在 init 时 assign。 |
+| `exception_for_project` | null | project 主异常类名；给了 exception_reporter 时作为 assign 目标基类。 |
 
-## 使用方式
-
-### 基本使用
-
-默认情况下，`DuckPhp` 初始化后会自动启用异常处理，无需手动调用。
-
-```php
-use DuckPhp\DuckPhp;
-
-$app = DuckPhp::_();
-$app->init([
-    'path' => __DIR__,
-]);
-```
-
-### 手动注册异常处理器
+## 使用方式（一般不需要手工大改）
 
 ```php
 use DuckPhp\Core\ExceptionManager;
 
-ExceptionManager::_()->assignExceptionHandler(\MyApp\Exception\BusinessException::class, function ($ex) {
-    echo '业务异常: ' . $ex->getMessage();
-});
-
-ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) {
-    echo '默认异常处理: ' . $ex->getMessage();
+// 预分配某个异常族“ 自己的回调”
+ExceptionManager::_()->assignExceptionHandler(MyAppException::class, function ($ex) {
+    // 自定义处理
 });
 ```
 
-### 批量注册异常处理器
-
 ```php
-use DuckPhp\Core\ExceptionManager;
-
-ExceptionManager::_()->assignExceptionHandler([
-    \MyApp\Exception\NotFoundException::class => function ($ex) {
-        // 处理 404 相关异常
-    },
-    \MyApp\Exception\AuthException::class => function ($ex) {
-        // 处理权限相关异常
-    },
-]);
-
-ExceptionManager::_()->setMultiExceptionHandler([
-    \MyApp\Exception\A::class,
-    \MyApp\Exception\B::class,
-], function ($ex) {
-    // 统一处理 A 和 B 异常
-});
+// 主动把一个异常按规则宣判（内部 call default/report ... 都经 _CallException）
+ExceptionManager::CallException($ex);
 ```
 
-### 运行与清理
+### 全局接管/清除
+
+普通 run/clear 场景极少手动做（框架处理好）。若独自加载：
 
 ```php
-use DuckPhp\Core\ExceptionManager;
-
-$manager = ExceptionManager::_();
-$manager->run();     // 注册全局错误/异常处理
-$manager->clear();   // 恢复默认错误/异常处理
+$em = ExceptionManager::_()->init([]);
+$em->run();     // 装上 error/exception 处理器
+// ...
+$em->clear();   // restore 掉
 ```
 
 ## 配置示例
 
-### 基础配置
-
 ```php
-class App extends \DuckPhp\DuckPhp
-{
-    public $options = [
-        'handle_all_exception' => true,
-        'handle_all_dev_error' => true,
-        'handle_exception_on_init' => true,
-    ];
-}
+// 在业务 app options…
+'exception_reporter'   => \App\ExceptionReporter::class,  // class with OnException()
+'exception_for_project'=> \App\BusinessException::class,
 ```
-
-### 自定义异常处理器
-
-```php
-class App extends \DuckPhp\DuckPhp
-{
-    public $options = [
-        'handle_all_exception' => true,
-        'default_exception_handler' => function ($ex) {
-            header('Content-Type: text/plain');
-            echo 'Exception: ' . $ex->getMessage();
-        },
-        'dev_error_handler' => function ($errno, $errstr, $errfile, $errline) {
-            error_log("DevError [$errno]: $errstr in $errfile:$errline");
-        },
-    ];
-}
-```
-
-### 使用异常报告器
-
-```php
-class App extends \DuckPhp\DuckPhp
-{
-    public $options = [
-        'exception_reporter' => \MyApp\Controller\ExceptionReporter::class,
-        'exception_for_project' => \MyApp\System\ProjectException::class,
-    ];
-}
-```
-
-`ExceptionReporter` 类需要实现 `OnException($ex)` 方法。
 
 ## 注意事项
 
-1. 异常处理器按后进先出的顺序匹配，最后注册的处理器会优先检查。
-2. 错误处理时，notice、strict、deprecated 等开发期错误会交给 `dev_error_handler`，其他错误会转为 `ErrorException` 抛出。
-3. 调用 `clear()` 后，会恢复 PHP 默认的错误和异常处理机制。
-4. `ExitException` 会被跳过处理，以避免退出流程被重复处理。
-
-## 全部选项
-
-```php
-    'handle_all_dev_error' => true,
-    'handle_all_exception' => true,
-    'system_exception_handler' => null,
-    'handle_exception_on_init' => true,
-
-    'default_exception_handler' => null,
-    'dev_error_handler' => null,
-    'exception_reporter' => null,
-    'exception_for_project' => null,
-```
+1. `on_error_handler` 把 非 notice 级别的错误声为 `ErrorException` 抛出；notice/deprecated 交给 `dev_error_handler`。
+2. `_CallException` 匹配是按**注册的倒序**找第一个 is_a 打中的，越晚 assign 声明匹配优先（通常用它做“最具体类型优先”）。
+3. `__EXIT_EXCEPTION`（ExitException）会跳过分发，让“退出”不被误拦。
+4. 未安装 `exception_reporter`/无子类匹配时仅 default；若 default 为 null，异常最终不会再被处理（会交由 PHP）。
+5. `clear()` restore 掉 PHP 处理器并复位运行标记。
 
 ## 方法列表
 
 ### 公共方法
 
     public function init(array $options, ?object $context = null)
-初始化异常管理器，并根据 `handle_exception_on_init` 决定是否自动启用处理
+父 init 后按 options 生效：`handle_exception_on_init` 时 run()；并 if exception_reporter then assign default了 exception_for_project 的回调。
 
     public static function CallException($ex)
-静态入口，调用当前实例的 `_CallException` 处理异常
+把异常丢进 `_CallException`（shell）供 set_exception_handler/捕获方。
 
     public function setDefaultExceptionHandler($default_exception_handler)
-设置默认异常处理回调
+设默认回退处理器。
 
     public function assignExceptionHandler($class, $callback = null)
-注册一个或多个异常处理器。`$class` 可以是类名字符串，也可以是 `[类名 => 回调]` 的数组
+登记：单类(string=>callback) 或 批量数组 类=>callback。
 
     public function setMultiExceptionHandler(array $classes, $callback)
-为多个异常类注册同一个回调
+同一回调用于多个异常类。
 
     public function on_error_handler($errno, $errstr, $errfile, $errline)
-PHP 错误处理回调，将非 notice 类错误转为 `ErrorException`
+被 `set_error_handler` 使用；notice/deprecation→dev_error_handler，其余 throw ErrorException；返回 true 阻止 PHP 默认。
 
-    public function isInited():bool
-返回组件是否已初始化
+    public function _CallException($ex)
+分发核心（见简介）。
+
+    public function isInited(): bool
+是否已初始化。
 
     public function run()
-启用全局错误/异常处理
+装 error/exception 处理器（避免重复），保存 last handlers。
 
     public function reset()
-重置处理器状态（当前实现不清理已注册的处理器）
+（占位）只是返回 this（示意准备清空接口，具体清空由 clear 做）。
 
     public function clear()
-清理并恢复默认错误/异常处理机制
+restore_error/exception_handler（或 system 清空），标记 is_running/is_inited 复位。
 
 ### 受保护方法
 
     protected function initOptions(array $options): void
-从选项中初始化默认异常处理器和系统异常处理器
+从 options 取出 default/system 两个 handler 存到 properties。
 
-    public function _CallException($ex)
-根据注册顺序查找匹配处理器并执行；没有匹配则调用默认处理器
+
+### （register up 存在原样示例，多数走 init）
 
 ## 相关链接
 
-- [DuckPhp\Core\Logger](Core-Logger.md)
-- [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
-- [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md)
+- [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) — 初始化时装配它（默认/dev handler 为 App 的 on404 等）
+- [DuckPhp\Core\App](Core-App.md) —`OnDefaultException`/`OnDevErrorHandler`
+- [DuckPhp\Core\ExitException](Core-ExitException.md) — 被 _CallException 直接放行的类型
+- guid：exception.md

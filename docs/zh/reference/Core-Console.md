@@ -1,189 +1,169 @@
 # DuckPhp\Core\Console
 
-命令行控制台组件。
+命令行（Console）执行 / 命令路由核心：把 CLI 的 argv 转成命令调用与直接扫描/运行。
 
 ## 简介
 
-`Console` 组件提供了命令行程序的入口。它解析 `$_SERVER['argv']` 参数，根据 `cli_command_group` 配置分发到对应的命令类和方法执行。DuckPHP 的命令行工具就是基于此组件实现的。
+`Console` 是 DuckPHP 对 CLI 的命令处理根：CLI 入口（Kernel 的 `execute()`）会让它从 `$_SERVER['argv']` 读参数、解析出“命令名 + 选项名值”，再从一组“命名空间 → 命令类”里找到要调用的类与方法，实例化并反射调用（支持按方法参数名自动传值 + 缺省参数/报错）。
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+它同时提供：
+
+- 命令按命名空间组织：`ns:sub:command` 用冒号分隔，`getThisCommandPrefix()`（Core 级别 Phase 名规范化命令组）/各类 help 由 `DuckPhp\Component\Command` 展开；
+- 注册 API：`regCommandClasses / regCommandClassSingle / DoRun`；
+- 参数读取：`getArgs()`/`getCliParameters()` 与 readLines 交互式提示输入；
+- 结构无关：不做 `execute/exit` 自身，而由宿主做异常 → 见 Kernel.runException（Console 出错就抛 `DuckPhpSystemException`…）。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class Console extends ComponentBase`
+- 继承链可用 `Console::_()`/`RunQuickly`（若单件使用），init 幂等常规默认同 app。
 
 ## 选项
 
+`Console::$options`
+
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `cli_command_group` | `[]` | 命令分组配置。键为命令命名空间，值为命令类数组等配置。 |
-| `cli_command_default` | `'help'` | 默认命令。当没有指定命令时执行。 |
-| `cli_readlines_logfile` | `''` | `readLines()` 输入日志文件路径。 |
+| `console_command_classes` | `[]` | 命令注册表：`namespace => [ className => 方法前缀 ]`。前缀 `true` 会解释为 `command_`。 |
+| `console_command_phase` | `[]` | `namespace => phase` 的映射，运行某命名空间命令前先切到对应 Phase。 |
+| `console_command_default` | `'help'` | 无尾部位置参数时（仍给 `--` 一个命令串）用作默认命令词。 |
+| `console_readlines_logfile` | `''` | 若给路径：`readLines` 在每次输入回显后把它写入该文件（相对 `path_runtime`）；相对实际 `path_runtime`。 |
 
-## 命令分组配置
-
-`cli_command_group` 格式如下：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'cli_command_group' => [
-            '' => [
-                'phase' => \App\System\App::class,
-                'classes' => [\App\Command\DefaultCommand::class],
-                'method_prefix' => 'command_',
-            ],
-            'app' => [
-                'phase' => \App\System\App::class,
-                'classes' => [\App\Command\AppCommand::class],
-                'method_prefix' => 'command_',
-            ],
-        ],
-    ];
-}
-```
-
-| 键 | 说明 |
-|---|---|
-| `phase` | 命令执行时切换到的相位应用类。 |
-| `classes` | 命令类数组。命令会按数组顺序查找，后面的优先。 |
-| `method_prefix` | 命令方法前缀。例如 `command_` 表示命令 `install` 对应方法 `command_install`。 |
+（`context_class` 等受保护选项不需覆盖。）
 
 ## 使用方式
 
-### 命令行入口
+框架 CLI 场景：业务通常不自己碰 `Console` 底层，CLI 命令最自然照下面雏形：
 
 ```php
-// cli.php
-require __DIR__ . '/vendor/autoload.php';
+class DemoApp extends \DuckPhp\DuckPhp { }
+\DemoApp::_()->init([]);
+\Admin\ConsoleCommand 类等放 app 的 cmd ...
 
-use DuckPhp\Core\Console;
-
-Console::DoRun();
-```
-
-### 执行命令
-
-```bash
-php cli.php install
-php cli.php app:install --force
-```
-
-### 定义命令类
-
-```php
-namespace App\Command;
-
-class DefaultCommand
-{
-    public function command_install($name = 'default')
-    {
-        echo "Installing {$name}...\n";
-    }
+// 骨架化 —— 实际经由运行，Controller/D 用户自己命令类形如：
+class MyCmd {
+    public function command_hello() { echo "hello\n"; }
 }
-```
 
-## 命令参数解析
-
-Console 使用自定义的 CLI 参数解析器：
-
-- 第一个参数是命令名，支持 `namespace:command` 格式
-- `--option` 是选项，会自动转为下划线键名
-- `--option=value` 设置选项值
-- 跟在命令名后面的普通参数是位置参数
-
-示例：
-
-```bash
-php cli.php user:create --role=admin john 123
-```
-
-解析结果大致为：
-
-```php
-[
-    '--' => ['user:create', 'john', '123'],
-    'role' => 'admin',
-]
-```
-
-## 交互式输入
-
-`Console` 提供了 `readLines()` 方法用于命令行交互输入：
-
-```php
+// 注册 & 运行命令“hello”：
 use DuckPhp\Core\Console;
-
-$options = ['name' => 'admin', 'password' => ''];
-$desc = "Input name {name}\nInput password {password}";
-$ret = Console::_()->readLines($options, $desc);
+$c = Console::_()->init([]);
+$c->regCommandClassSingle('', MyCmd::class, true);   // true => command_
+$c->run();   // 通常带 argv（如 `php x.php hello …`）
 ```
 
-可以通过 `readLinesFill()` 和 `readLinesCleanFill()` 实现测试模式下的模拟输入。
+## 配置示例
+
+以较典型用法，在 App 将命令类登记给当前 namespace:
+
+```php
+// 在 MyApp::regConsoleCommand … 或直接：
+Console::_()->regCommandClasses('sub', [
+    StatusCmd::class => 'command_',     // 为该 phase 名字的前缀
+]);
+// 命令 “sub:ping” 会尝试 StatusCmd->command_ping()…
+```
+
+CLI 如何被入口接到决定略：见到 KernelTrait execute() 即 `Console::_()->run()`。
+
+## readLines（交互）
+
+`readLines` 依据多行 `$desc` 中 `{key}` 占位 + 末尾默认值输出提示 / 读一行，返回数组。它是“脚手架 new 时的问答式向导”通用地基。
+
+```php
+$answers = Console::_()->readLines(
+    ['db' => 'mysql', 'name' => 'x'],
+    "{db} 打数据库类型  \n{name} 打 名称:"
+);
+```
+
+`readLinesFill/readLinesCleanFill` 用于测试注入（把字符串当 stdin 喂）、`console_readlines_logfile` 可记录。
 
 ## 注意事项
 
-1. 命令方法名中的 `-` 会自动替换为 `_`。例如命令 `my-install` 会查找 `command_my_install`。
-2. 命令类中可以使用可变单例 `::_()`，也可以作为普通类实例化。
-3. 命令执行前会切换到配置的 `phase`，确保命令在正确的应用上下文中运行。
-4. 如果命令找不到，会抛出 `ReflectionException`。
+1. parser 规则（`parseCliArgs`）：`--option[=value]` 采用下划线化键；`--flag` 无值会记 `true`；重复传值会聚成数组；`--`（位置）值收集进 `$ret['--']`，若无则填 `console_command_default`。
+2. `run()` 先用 `splitCommand` 拆冒号 → 命名空间/尾部命令；`getCommandCallback` 返回首个 存在方法的前缀=真，否则没有命令会抛 `DuckPhpSystemException(…Command Not Found…)`。
+3. phase 自动跳：`console_command_phase` 找到的话先 `App::Phase(predetermined)` 执行后恢复。
+4. 命令方法可能反射用参数名绑值（`callObject` 检查入参名、默认值等；缺失必填抛异常）。
+5. `DoRun($path)` 只是 `run()` 的一静态别名；`app()` 见 context。
+6. 该文件不含对外 exit；跨 phase 后的异常交给上游。
 
 ## 全部选项
 
 ```php
-public $options = [
-    'cli_command_group' => [],
-    'cli_command_default' => 'help',
-    'cli_readlines_logfile' => '',
-];
+    public $options = [
+        'console_command_classes' => [],
+        'console_command_phase' => [],
+        'console_command_default' => 'help',
+        'console_readlines_logfile' => '',
+    ];
 ```
 
 ## 方法列表
 
+> `__construct` 继承自 ComponentBase（不在此重复）;以下仅为 Console 源码方法（含 protected 工具）.
+
 ### 公共方法
 
     public function init(array $options, ?object $context = null)
-初始化命令行组件
+选项白名单合并（沿用 component 语义）；设 context_class；标记 is_inited。
 
     public function getCliParameters()
-获取解析后的 CLI 参数
+返回绑定参数（无则解析一遍 argv）──包含命名参数与 `--` 位置数组。
 
     public function getArgs()
-获取位置参数数组
+只返回位置参数（`$ret['--']` 数组）。
 
     public function app()
-返回当前上下文应用对象
+返回所属应用（同 `context()`，语义常用）。
 
-    public function regCommandClass($command_namespace, $phase, $classes, $method_prefix = 'command_')
-注册一个命令分组
+    public function regCommmandPrefixPhase($prefix, $phase)
+登记命令前缀 → Phase 映射（执行该 namespace 前切 Phase）。
+
+    public function regCommandClasses($prefix, array $classes)
+合并给定前缀的命令类映射（新增/替换）；classes 形如 `[X::class => 方法前缀]`。
+
+    public function regCommandClassSingle(string $prefix, string $class, $method_prefix)
+精确登记单条命令（prefix 名,class,method_prefix——传 `true`→‘command_’）。
 
     public static function DoRun($path_info = '')
-静态入口，执行命令行运行
+一次性 wrapper：调 run()。$path 为惯例占位。
 
     public function run()
-解析参数并执行命令
+读取 argv →parseCli →取命令 → splitCommand→getCommandCallback；查 namespace →切 phase →callObject;错误/没找到则抛异常。
+
+    public function getCommandCallback($cmd)
+给定命令串返回 `[class,method]` 或 `[null,null]`：查前缀 classes；（按后注册先？）用方法命中返回。
+
+### 运行/注册辅助
 
     public function readLinesFill($data)
-填充模拟输入数据
+把 $data 直接视为待读内容附加（供测试 / 交互脚本模式）。
 
     public function readLinesCleanFill()
-清空模拟输入数据
+清空数据，让 readLines 回到普通 stdin 模式。
 
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
-交互式读取多行输入
-
-    public function getCallback($group, $cmd_method)
-根据命令分组和方法名查找可调用的类和方法
+按描述符逐行 Prompt 输入：支撑 {key} 占位默认值、校验器(filter_var_array)、读日志与 echo 回显。
 
     public function callObject($class, $method, $args, $input)
-调用命令对象方法，自动映射参数
+用反射实例化/取 command 对象并同方法参数名从 input/arg 填绑定调用；缺失必填抛 DuckPhpSystemException(-2)。
 
 ### 受保护方法
 
+    protected function splitCommand($cmd)
+把 `ns:cmd` 拆成 `[命名空间, 尾部方法]`。
+
     protected function parseCliArgs(array $argv): array
-解析 `$_SERVER['argv']` 参数
+状态机解析 argv：--放/单横/等号/value 收集，输出含 `--`,`key…` 与位置数组等结构。
 
     protected function getObject(string $class): object
-获取命令对象实例，优先使用 `::_()` 可变单例
+优先调用 `class::_()`（若可调用）否则 `new $class`。
 
 ## 相关链接
 
-- [DuckPhp\Core\App](Core-App.md)
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+- [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) — `execute()`→`Console::run()` 的宿主
+- [DuckPhp\Component\Command](Component-Command.md) — 默认 CLI 例子/help 集合
+- [DuckPhp\Core\App](Core-App.md) — 应用及存取 command 在 options
+- guide：[cli](../guide/cli.md)

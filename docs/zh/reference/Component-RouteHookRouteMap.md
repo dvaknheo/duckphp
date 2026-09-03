@@ -1,165 +1,101 @@
 # DuckPhp\Component\RouteHookRouteMap
 
-路由钩子：路由映射。
+路由地图钩子：允许把某些 URL（精确、持 `*`、或 `^…$)正则）直接跳到特定“回调/控制器”处理，分“重要（route_map_important，前置在内）”与“普通（route_map，后置收尾）”两组。
 
 ## 简介
 
-`RouteHookRouteMap` 组件允许通过配置将 URL 直接映射到回调函数或控制器方法。它支持精确匹配、通配符匹配和正则匹配，并且比默认的 PATH_INFO 路由更灵活。
+`RouteHookRouteMap extends ComponentBase` 通过两个 `Route` hook：
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。`route_map_important` 挂在 `prepend-inner` 位置，`route_map` 挂在 `append-outter` 位置。
+- `prepend-inner`.(PrependHook)：先跑 `route_map_important`；
+- `append-outter`.(AppendHook)：默认解析没命中后再试 `route_map`。
+
+地图写法（options `route_map`/`route_map_important` 为 `模式→ 目标`）：
+
+模式可：
+- 固定全路径（以 `/` 开头精确比较，可去 `controller_url_prefix`）；
+- `^…$`（完整正则，`x` 修饰可以带 `#…` 尾注释扩）；
+- 以 `@` 开头（会从 `{name(:regex)?}` 片段包被编译成正则 命名捕获——由 `compile()` 处理）；
+- 尾部 `*`＝前缀匹配，把余下部分作为 para 塞给 `Route::Parameter`。
+
+目标（callback）可 `Class@method`（单例 `_()`）、`Class->method`（new）、真回调调 `setParameters` 并执行。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class RouteHookRouteMap extends ComponentBase`
+- 目标：改由地图立即处理 URL（默认 Route 被短路）。
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
+`RouteHookRouteMap::$options`：
+
+| 选项 | 默认 | 说明 |
 |---|---|---|
-| `controller_url_prefix` | `''` | 控制器 URL 前缀。映射只对匹配该前缀的 URL 生效。 |
-| `route_map_important` | `[]` | 高优先级路由映射。在其他路由匹配之前执行。 |
-| `route_map` | `[]` | 普通路由映射。在默认 PATH_INFO 路由之后作为 fallback 执行。 |
+| `controller_url_prefix` | `''` | 匹配前可统一去掉 url 前缀。 |
+| `route_map_important` | `[]` | 重要组（先探）。 |
+| `route_map` | `[]` | 普通组（后探）。 |
 
-## 路由映射格式
+运行时也可动态追加 `assignRoute`/`assignImportantRoute`；`getRouteMaps()` 读回两份。
 
-`route_map` 和 `route_map_important` 都是关联数组，键是 URL 模式，值是回调：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'route_map' => [
-            'hello' => 'HelloController@index',
-            'user/{id:\d+}' => 'UserController@detail',
-            'api/*' => 'ApiController@handle',
-            '~^test/(\d+)$~x' => 'TestController@show',
-        ],
-    ];
-}
-```
-
-### 模式类型
-
-| 模式前缀 | 说明 | 示例 |
-|---|---|---|
-| 无 / 或普通字符串 | 精确匹配路径。 | `'hello' => 'HelloController@index'` |
-| `/` | 精确匹配路径，与无前缀等效。 | `'/hello' => 'HelloController@index'` |
-| `@` | 占位符模式，支持 `{name}` 和 `{name:regex}`。 | `'@user/{id:\d+}' => 'UserController@detail'` |
-| `~` | 完整正则表达式模式。 | `'~^test/(\d+)$~x' => 'TestController@show'` |
-| 末尾 `*` | 通配符匹配，捕获剩余路径作为参数。 | `'api/*' => 'ApiController@handle'` |
-
-### 回调格式
-
-| 回调形式 | 说明 | 示例 |
-|---|---|---|
-| `'ClassName@method'` | 调用可变单例 `ClassName::_()` 的 `method` 方法。 | `'UserController@index'` |
-| `'ClassName->method'` | 创建新实例并调用 `method` 方法。 | `'UserController->index'` |
-| 可调用数组 | 直接调用。 | `['ClassName', 'method']` 或 `[$obj, 'method']` |
-| 闭包 | 直接执行。 | `function () { ... }` |
-
-### 控制器命名空间替换
-
-如果回调以 `~` 开头，会自动替换为当前控制器命名空间前缀：
+## 使用方式
 
 ```php
-'route_map' => [
-    '@user/{id}' => '~UserController@detail',
-]
-// 实际映射为：@user/{id} => App\Controller\UserController@detail
+RouteHookRouteMap::_()->init([
+  'route_map_important' => [
+     '/login' => 'Public@action_login',
+     '@page/{id:\d+}'  => 'Post@showPage',
+  ],
+  'route_map' => [
+     '/go/*'   => 'Legacy@forward',   // * 段进 Parameter
+  ],
+], App::_());
 ```
 
-## 运行时添加映射
+## 说明/细节
 
-通过 `assignRoute()` 和 `assignImportantRoute()` 可以在运行时添加映射：
-
-```php
-use DuckPhp\Component\RouteHookRouteMap;
-
-RouteHookRouteMap::_()->assignRoute('new/page', 'NewController@index');
-RouteHookRouteMap::_()->assignImportantRoute('admin/login', 'AdminController@login');
-```
-
-## 获取当前映射
-
-```php
-$maps = RouteHookRouteMap::_()->getRouteMaps();
-// 返回 ['route_map_important' => [...], 'route_map' => [...]]
-```
-
-## 参数传递
-
-占位符和正则匹配捕获的参数会通过 `Route::_()->setParameters()` 设置，在控制器中可以通过参数获取：
-
-```php
-class UserController
-{
-    public function detail($id)
-    {
-        // $id 来自路由映射中的 {id} 占位符
-    }
-}
-```
-
-## 注意事项
-
-1. `route_map_important` 在 `prepend-inner` 位置执行，优先于默认 PATH_INFO 路由。
-2. `route_map` 在 `append-outter` 位置执行，作为默认路由未匹配时的 fallback。
-3. 同一映射中的占位符和正则会被自动编译为完整的正则表达式。
-4. 如果映射的回调指向控制器类，需要确保类能被自动加载。
-5. 映射匹配的 URL 会先去除 `controller_url_prefix` 前缀。
-
-## 全部选项
-
-```php
-public $options = [
-    'controller_url_prefix' => '',
-    'route_map_important' => [],
-    'route_map' => [],
-];
-```
+- 逻辑顺序：prepend → important map → “默认路由” → append → normal map（因此 normal 作为兜底）。
+- compileMap 会把 callback 中 `~` 换成 controller 命名空间（便于写 `~Post@…`）。
+- 命中后 `($callback)()`（若有 callable real），对于字符串 `Class@method` / `Class->method` 解析并将其 method 放 `${attributes} CallingMethod`。
+- matchRoute 还支持指定 (regex) 与 wild*。
 
 ## 方法列表
 
-### 公共方法
+（分 host / tool / 规则段参见源码顺序）
 
-    public static function PrependHook($path_info)
-高优先级路由钩子入口，处理 `route_map_important`
+    public static PrependHook($path_info)          → 实例 doHook($path,false)
+    public static AppendHook($path_info)           → 实例 doHook($path,true)
 
-    public static function AppendHook($path_info)
-普通路由钩子入口，处理 `route_map`
+    protected initContext(object $context): void
+    挂入 prepend-inner + append-outter。
 
-    public function compile(string $pattern_url, array $rules = []): string
-将占位符模式编译为完整正则表达式
+    public compile(string $pattern_url, array $rules=[]): string
+    把 `{name(:regex)?(optional?)}` 编译回 完整正则（`~^…$ # comment~x`）。
 
-    public function assignRoute($key, $value = null)
-添加普通路由映射
+    public assignRoute($key,$value) / assignImportantRoute($key,$value)
+    动态追加 route/important 地图（也支持数组）。
 
-    public function assignImportantRoute($key, $value = null)
-添加高优先级路由映射
+    public getRouteMaps()
+    返回两组的当前配置。
 
-    public function getRouteMaps()
-获取当前所有路由映射
+    protected compileMap(array $map,string $namesapceCtl): array
+    对地图预处理 `@` 编译 / `~namespace` 展开。
 
-    public function doHook($path_info, $is_append)
-根据 `$is_append` 选择处理 `route_map` 或 `route_map_important`
+    protected matchRoute(string $pattern,string $path,&$params): bool
+    固定 / ^正则 / * 的匹配器。
 
-### 受保护方法
+    protected getRouteHandelByMap(array $routeMap,string $path)
+    遍历某组取首个命中匹配的模式返回调 target。
 
-    protected function initContext(object $context): void
-注册 `prepend-inner` 和 `append-outter` 路由钩子
+    protected adjustCallback($callback,array $parameters)
+    解析 `@`/`->`/callable，写入 Route 参数与方法 call。
 
-    protected function compileMap(array $map, string $namespace_controller): array
-编译整个路由映射表，替换控制器命名空间前缀
+    protected doHookByMap(string $path,array $map): bool
+    用该 map 找 handler 命中则调用并 return true。
 
-    protected function matchRoute(string $pattern_url, string $path_info, &$parameters): bool
-根据模式匹配 URL，填充参数
-
-    protected function getRouteHandelByMap(array $routeMap, string $path_info)
-在映射表中查找匹配的回调
-
-    protected function adjustCallback($callback, array $parameters)
-调整回调形式，设置调用方法，返回可调用的回调
-
-    protected function doHookByMap(string $path_info, array $route_map): bool
-执行匹配到的回调
+    public doHook($path_info,$is_append)
+    主要入口（is_append 决定地图组与是否允许普通行）。返回 true/false 让 Route 上下文。
 
 ## 相关链接
 
 - [DuckPhp\Core\Route](Core-Route.md)
-- [DuckPhp\Helper\AppHelperTrait](Helper-AppHelperTrait.md)
+- 与 rewrite/resource 一样是路由钩子族；Lister 列出它地址上的映射见 Component-RouteLister。

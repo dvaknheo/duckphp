@@ -1,35 +1,37 @@
 # DuckPhp\GlobalAdmin\AdminControllerInterface
 
-管理员控制器接口。
-
 ## 简介
 
-`AdminControllerInterface` 是一个标记接口（无方法定义）。用于标识控制器类属于管理员后端，便于框架或中间件进行身份校验。
+`AdminControllerInterface` 是一个**空的标记接口**（marker interface，不声明任何方法）。工程中的“后台管理员控制器”基类通过 `implements` 它来标识自己属于 Admin 区域，便于框架按接口识别/约束管理员控制器。
 
-## 接口定义
+## 类信息
 
-```php
-namespace DuckPhp\GlobalAdmin;
-
-interface AdminControllerInterface
-{
-}
-```
+- 命名空间：`DuckPhp\GlobalAdmin`
+- 声明：`interface AdminControllerInterface`（无方法）
 
 ## 使用方式
 
 ```php
-namespace YourProject\Controller;
+namespace MyProject\Controller;
 
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 
-class AdminUserController extends Base implements AdminControllerInterface
+class AdminBase implements AdminControllerInterface
 {
-    // 实现此接口后，框架可在路由阶段自动执行管理员身份检查
+    // 用 implements 标记：凡继承本类的控制器都算“管理员控制器”
 }
 ```
 
+## 注意事项
+
+- 本接口不提供方法，实际管理员的会话/权限能力来自 `AdminActionInterface` 与 `AdminServiceInterface`。
+- `Foundation\Controller\AdminControllerBase` 即按此模式组织（细节见 Foundation 篇）。
+
+## 方法列表
+
+本接口为空标记接口，不声明任何方法。
+
 ## 相关链接
 
-- [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md)
-- [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md)
+- [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) — 管理员动作接口
+- [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) — 管理员组件实现

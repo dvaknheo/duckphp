@@ -1,64 +1,43 @@
 # DuckPhp\Component\PagerInterface
 
-分页组件接口。
+分页器契约接口：规定一个分页组件至少要能为“当前页 / 每页量 / 渲染”提供一致 API。
 
 ## 简介
 
-`PagerInterface` 定义了分页组件需要实现的最小方法集合。自定义分页组件可以实现此接口以替换默认的 `DuckPhp\Component\Pager`。
+`PagerInterface` 定义实现分页器所需的最小接口：能读/写当前页、每页数量、并在给定总条数时给出（默认是 HTML 字符串的）render 返回。
 
-## 接口定义
+框架自带 `DuckPhp\Component\Pager` 实现了该接口（`class Pager extends ComponentBase implements PagerInterface`）。使用分页相关业务多基于 Pager 实例；基于接口可以让替换实现不变更上层。
 
-```php
-namespace DuckPhp\Component;
+## 类信息
 
-interface PagerInterface
-{
-    public function current($new_value = null) : int;
-    public function pageSize($new_value = null) : int;
-    public function render($total, $options = []) : string;
-}
-```
+- 命名空间：`DuckPhp\Component`
+- 声明：`interface PagerInterface`
 
-## 方法说明
-
-    public function current($new_value = null) : int;
-获取或设置当前页码
-
-    public function pageSize($new_value = null) : int;
-获取或设置每页条数
-
-    public function render($total, $options = []) : string;
-根据总记录数渲染分页 HTML
-
-## 自定义分页组件
-
-实现 `PagerInterface` 接口后，可以通过 `pager` 相关配置或替换组件的方式接入：
+## 使用方式
 
 ```php
-namespace App\Component;
-
 use DuckPhp\Component\PagerInterface;
 
-class MyPager implements PagerInterface
-{
-    public function current($new_value = null) : int;
-    {
-        return $new_value ?? 1;
-    }
-
-    public function pageSize($new_value = null) : int;
-    {
-        return $new_value ?? 20;
-    }
-
-    public function render($total, $options = []) : string;
-    {
-        // 自定义分页 HTML 渲染
-        return '';
-    }
+function renderList(PagerInterface $pager, int $total) {
+    return $pager->render($total, []);
 }
 ```
+
+定制实现示例 → 继承框架 `Pager` 并覆盖渲染细节即可仍满足接口。
+
+## 方法列表
+
+### 接口方法
+
+    public function current($new_value = null): int
+（读）返回当前页号；（写）设当前页后返回。
+
+    public function pageSize($new_value = null): int
+（读）每页条数；传值设置并返回。
+
+    public function render($total, $options = []): string
+给定总条数（与每页量一起推算总页）渲染分页结果为字符串。
 
 ## 相关链接
 
-- [DuckPhp\Component\Pager](Component-Pager.md)
+- [DuckPhp\Component\Pager](Component-Pager.md) —— 标准实现

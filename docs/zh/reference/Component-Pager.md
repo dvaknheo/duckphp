@@ -1,170 +1,99 @@
 # DuckPhp\Component\Pager
 
-分页组件。
+简单分页器：负责“第几页/每页量”、生成每页 URL，并输出一串 `page` 链接的 HTML（page window 窗口）。
 
 ## 简介
 
-`Pager` 组件用于生成分页 HTML，支持从 URL 参数自动识别当前页码，并支持自定义 URL 生成规则。
+`Pager extends ComponentBase implements PagerInterface` 把最简分页逻辑集中：页面计数、URL 组合、HTML 渲染。
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。 //TODO 并没有
+- current：默认自 GET `{page_key}`（默认 `page`）得到第几页，≥1；
+- page_size 每页数量；
+- `getPageCount(total)`=ceil；
+- `getUrl(page)`：无 rewrite 回调则按 `url`(可含占位 `{page}`) 或 requestUri 拼出；第一页不置 page 参数；
+- `render(total,options)`：不足一页空；否则给出 window=`3` 的下标 + “1 … x … tail”，生成带 class 的内联 HTML（默认无外部 CSS，样式类如 `.page/.current/.page_blank` 供你做样式）。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class Pager extends ComponentBase implements PagerInterface`
 
 ## 选项
 
+`Pager::$options`：
+
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `url` | `null` | 基础 URL。为空时使用当前请求 URL。 |
-| `current` | `null` | 当前页码。为空时从 URL 参数自动获取。 |
-| `page_size` | `30` | 每页记录数。 |
-| `page_key` | `'page'` | URL 参数名。 |
-| `rewrite` | `null` | URL 重写回调。为空时使用默认 URL 生成逻辑。 |
+| `url` | null | 手工给分页基底 URL（空则 requestUri）。可含 `{page}` 占位符替换。 |
+| `current` | null | 手动指定当前页；缺省由 GET {page_key} 得。 |
+| `page_size` | `30` | 每页条数。 |
+| `page_key` | `'page'` | 当前页 URL 参数名。 |
+| `rewrite` | null | （callable）自定义写 URL 的回调当作 getUrl 分支；否则走 defaultGetUrl。 |
 
 ## 使用方式
-
-### 全局函数
-//TODO 没有全局函数
-```php
-$pageNo = __page_no();      // 当前页码
-$pageSize = __page_size();  // 每页条数
-$html = __page_html($total); // 生成分页 HTML
-```
-
-### 在 Controller 中使用
-
-```php
-use DuckPhp\Foundation\Controller\Helper;
-
-class PostController
-{
-    public function index()
-    {
-        $pageNo = Helper::PageNo();
-        $pageSize = Helper::PageSize();
-        $total = PostModel::getTotal();
-        $posts = PostModel::getList($pageNo, $pageSize);
-        $pagerHtml = Helper::PageHtml($total);
-        
-        Helper::Show(get_defined_vars(), ['pager' => $pagerHtml]);
-    }
-}
-```
-
-### 直接调用组件
 
 ```php
 use DuckPhp\Component\Pager;
 
-$pager = Pager::_();
-$pageNo = $pager->current();
-$pageSize = $pager->pageSize();
-$html = $pager->render($total);
+Pager::_()->init([
+    'page_size' => 12,
+    'url' => '/list?cat=1&{page}',
+])-> render? //可用：
+echo Pager::_()->render(230);   // 230 条记录 → 总页 20 的自盒
+
+Pager::PageNo(3);                       // 静态设/取 current
+Pager::PageWindow(20);                  // 设 page_size
+Pager::PageHtml(500, ['page_size'=>20]); //静态渲染
 ```
 
-## URL 生成规则
+在 controller/show 里拿总条数交给 render 即可。
 
-### 默认 URL 生成
+## 说明
 
-默认从 `$_SERVER['REQUEST_URI']` 解析，并在 query string 中附加 `page` 参数：
-
-- 第 1 页：`/post`
-- 第 2 页：`/post?page=2`
-
-### 使用占位符
-
-如果 `url` 选项包含 `{page}` 占位符，则直接替换：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'pager' => [
-            'url' => '/post/list/{page}',
-        ],
-    ];
-}
-```
-
-生成结果：
-
-- 第 1 页：`/post/list/`
-- 第 2 页：`/post/list/2`
-
-### 自定义重写函数
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'pager' => [
-            'rewrite' => function ($page) {
-                return '/post/page/' . $page;
-            },
-        ],
-    ];
-}
-```
-
-## 注意事项
-
-1. 当前页码会自动校正为大于等于 1 的整数。
-2. 总页数小于等于 1 时，`render()` 返回空字符串。
-3. 分页窗口默认显示 3 页，超过范围时会显示省略号。
-4. 第 1 页的 `page` 参数会自动省略。
-
-## 全部选项
-
-```php
-public $options = [
-    'url' => null,
-    'current' => null,
-    'page_size' => 30,
-    'page_key' => 'page',
-    'rewrite' => null,
-];
-```
+- current/pageSize 可读可设；init 会归 one 补默认 current。
+- HTML 是轻量自渲染：想接入自己 CSS 请基于 class 名（page/page_wraper/current/page_blank/page_spliter）。
+- `defaultGetUrl`：优先用 url 里的 `{page}` 占位替换（page=1 清空），否则组合 path+query。
 
 ## 方法列表
 
-### 公共方法
+### 公共静态方法
 
-    public static function PageNo($new_value = null)
-获取或设置当前页码
+    static PageNo($new_value = null)
+读/设当前页（→current）。
 
-    public static function PageWindow($new_value = null)
-获取或设置每页条数
+    static PageWindow($new_value = null)
+读/设 page_size。
 
-    public static function PageHtml($total, $options = [])
-渲染分页 HTML
+    static PageHtml($total, $options = [])
+渲染一段分页 HTML（→render）。
 
-    public function init(array $options, object $context = null)
-初始化组件，设置当前页码
+### 公共实例方法
 
     public function current($new_value = null): int
-获取或设置当前页码
+当前页 getter/setter（缺省推算）。
 
     public function pageSize($new_value = null): int
-获取或设置每页条数
+每页数量 getter/setter。
 
     public function getPageCount(int $total): int
-根据总数计算总页数
+总页＝ceil(total/page_size)。
 
     public function getUrl($page): string
-获取指定页的 URL
+单页 URL；rewrite 回调优先。
 
     public function defaultGetUrl(int $page): string
-默认 URL 生成逻辑
+“url 模板/请求 + page param”组装，page=1 不出现页参数。
 
     public function render($total, $options = []): string
-渲染分页 HTML
+结合上述渲染 window HTML。
 
 ### 受保护方法
 
     protected function getDefaultUrl(): string
-从 `$_SERVER['REQUEST_URI']` 获取默认 URL
+取 requestUri 作为默认 url（无 __SUPERGLOBAL_CONTEXT 时全局）。
 
     protected function getDefaultPageNo(): int
-从 `$_GET[$page_key]` 获取默认页码
+从 GET[page_key] 取页（缺 1）。
 
 ## 相关链接
 
 - [DuckPhp\Component\PagerInterface](Component-PagerInterface.md)
-- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md)

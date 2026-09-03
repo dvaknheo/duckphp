@@ -1,103 +1,59 @@
 # DuckPhp\Ext\EmptyView
 
-空视图扩展组件。
-
 ## 简介
 
-`EmptyView` 继承自 `DuckPhp\Core\View`。它不会渲染真正的模板文件，而是把视图名和头尾文件信息存入数据数组中，方便由调用方自行处理或输出。该组件常用于需要完全由前端或上层逻辑决定输出的场景。
+`EmptyView` 是 `Core\View` 的扩展：它**不渲染模板文件**，而是把“要渲染的视图信息”装配进数据后交给外层处理——适合把渲染工作委托给其它模板引擎、前端框架或自研输出器的场景。
+
+行为：
+- `_Show($data, $view)`：合并数据后把 `$view` 写入 `$data['view']`（键名由 `empty_view_key_view` 指定），并附带 `view_head`/`view_foot`（父类 head/foot 模板文件全路径）。若开启 `empty_view_trim_view_wellcome`，视图名以 `Main/`（`empty_view_key_wellcome_class`）开头时去掉该前缀。
+- `_Display($view, $data)`：只把 `$data['view']` 设为视图文件全路径。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class EmptyView extends DuckPhp\Core\View`
 
 ## 选项
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `empty_view_key_view` | `'view'` | 存储当前视图名的数据键名。 |
-| `empty_view_key_wellcome_class` | `'Main/'` | 默认入口类前缀。如果视图名以此前缀开头，可选择去除。 |
-| `empty_view_trim_view_wellcome` | `true` | 为 `true` 时，自动去除视图名开头的 `empty_view_key_wellcome_class` 前缀。 |
-| `empty_view_skip_replace` | `false` | 为 `true` 时，初始化后不把全局 `View` 单例替换为当前组件。 |
+| `empty_view_key_view` | `'view'` | 装配进数据的“视图键名”。 |
+| `empty_view_key_wellcome_class` | `'Main/'` | 欢迎视图前缀（配合 trim 用）。 |
+| `empty_view_trim_view_wellcome` | `true` | 是否去掉视图名的欢迎前缀。 |
+| `empty_view_skip_replace` | `false` | 为 `true` 时不替换全局 `View::_()`。 |
 
 ## 使用方式
 
-### 作为全局视图组件加载
-
 ```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Ext\EmptyView::class => true,
-        ],
-        'empty_view_key_view' => 'view',
-        'empty_view_key_wellcome_class' => 'Main/',
-    ];
-}
-```
+\DuckPhp\Ext\EmptyView::_()->init([], $app);
 
-### 在 Controller 中赋值
-
-```php
-$this->_Show(['title' => 'Hello'], 'Main/index');
-```
-
-调用后数据数组中会包含：
-
-```php
-[
-    'title' => 'Hello',
-    'view' => 'index',
-    'view_head' => '...', // 头文件路径
-    'view_foot' => '...', // 尾文件路径
-]
-```
-
-上层代码可以读取 `view` 键自行渲染。
-
-## 配置示例
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Ext\EmptyView::class => true,
-        ],
-        'empty_view_key_view' => 'page',
-        'empty_view_trim_view_wellcome' => true,
-        'empty_view_skip_replace' => false,
-    ];
-}
+// 之后 Helper::Show($data, 'user/list') 不渲染文件，
+// 而是把 $data['view']='user/list'（及 view_head/view_foot 路径）留给外层处理。
 ```
 
 ## 注意事项
 
-1. 构造方法会合并父类 `View` 的选项，因此 `View` 原有选项仍然可用。
-2. 默认初始化后会把全局 `View` 单例替换为 `EmptyView`，除非设置 `empty_view_skip_replace => true`。
-3. 视图名仅做字符串处理，不会真正读取模板文件内容。
-4. 头尾文件通过 `getViewFile()` 获取路径，同样不会读取文件内容。
-
-## 全部选项
-
-```php
-    public $options = [
-        'empty_view_key_view' => 'view',
-        'empty_view_key_wellcome_class' => 'Main/',
-        'empty_view_trim_view_wellcome' => true,
-        'empty_view_skip_replace' => false,
-    ];
-```
+- `_Show` 与 `_Display` 都不输出任何 HTML；真正输出由使用方依据 `$data` 完成。
+- `view_head`/`view_foot` 存的是 `getViewFile()` 解析后的全路径，不是内容。
 
 ## 方法列表
 
 ### 公共方法
 
-    public function init(array $options, object $context = null)
-初始化组件，默认将全局 `View` 单例替换为当前实例（除非 `empty_view_skip_replace` 为 `true`）。
+    public function __construct()
+合并父类选项后构造。
 
-    public function _Show(array $data, string $view): void
-将数据合并到视图对象，并把视图名、头文件、尾文件分别存入数据数组。
+    public function init(array $options, ?object $context = null)
+初始化；默认把 `View::_()` 替换为本实例。
+
+    public function _Show(array $data, string $view)
+装配视图信息（view/view_head/view_foot）进数据，不渲染文件。
 
     public function _Display(string $view, ?array $data = null): void
-设置视图数据并记录当前视图文件路径。
+只设置 `$data['view']` 为视图文件全路径。
 
 ## 相关链接
 
-- [DuckPhp\Core\View](Core-View.md)
+- [DuckPhp\Core\View](Core-View.md) — 父类
+- [DuckPhp\Ext\CallableView](Ext-CallableView.md) — 用回调代替模板的扩展
+- [DuckPhp\Ext\JsonView](Ext-JsonView.md) — 输出 JSON 的扩展

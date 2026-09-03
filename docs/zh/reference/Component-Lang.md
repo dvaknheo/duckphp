@@ -1,237 +1,126 @@
 # DuckPhp\Component\Lang
 
-多语言（i18n）组件。
+多语言（i18n）组件：按可配置策略自动检测当前语言，从语言文件（或内联句子）取翻译并支持 `{key}` 参数替换。
 
 ## 简介
 
-`Lang` 组件负责框架的国际化翻译。它根据配置的检测模式自动识别当前语言，从对应的语言文件中加载翻译句子，并支持参数替换。
+`Lang extends ComponentBase` 提供简单而完整的界面翻译：
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+- `lang_final` 一步到底：非根、且 follow_root 命中时直接用根 final；否则 `detectLanguage()`。
+- 检测顺序经 `lang_detect_mode` 列表：`url`（参数）→`cookie`→`header`(Accept-Language)→`cli`(环境)→`default`（lang_default）；
+- 取句：先看当前语言的配置（默认由 `Configer` 读 `config/lang/{locale}.php`，或从简单模式脚本 `lang_simple_mode_only_sentences`），再回退 `importDefaultSentences()` 注入的默认集；
+- `language()` 返回带 `{param}` 替换；`replaceText()`（或 App.langText）处理文本里的 `[[key|fallback]]`。
+
+DuckPhp 默认把 `Lang` 放进 `ext`（DuckPhp.php），因此绝大多数 App 可用全局 `__l`/`__langtext`/Helper 的 `LangText`。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class Lang extends ComponentBase`
 
 ## 选项
 
+`Lang::$options`：
+
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `lang_final` | `null` | 最终语言。如果设置，则跳过自动检测，直接使用该语言。子应用默认会跟随根应用的 `lang_final`。 |
-| `lang_default` | `null` | 默认语言。当其他检测方式都失败时回退使用该语言。 |
-| `lang_detect_mode` | `['url', 'cookie', 'header', 'cli', 'default']` | 语言检测顺序。可选值：`url`、`cookie`、`header`、`cli`、`default`。 |
-| `lang_follow_root` | `true` | 子应用是否跟随根应用的语言设置。为 `true` 时，子应用直接使用根应用的 `lang_final`。 |
-| `lang_url_param` | `'lang'` | URL 参数名，用于 `url` 检测模式。例如 `?lang=zh_CN`。 |
-| `lang_cookie_name` | `'lang'` | Cookie 名称，用于 `cookie` 检测模式。 |
-| `lang_file_path` | `'lang/'` | 语言文件目录（相对于 `config/` 目录）。 |
-| `lang_simple_mode_only_sentences` | `[]` | 简单模式句子数组。如果非空，则直接从该数组读取翻译，不加载语言文件。 |
-
-## 语言文件
-
-默认从 `config/lang/{locale}.php` 加载语言配置。文件返回一个关联数组：
-
-```php
-<?php
-// config/lang/zh_CN.php
-return [
-    'hello' => '你好',
-    'welcome_message' => '欢迎，{name}',
-    'user_not_found' => '用户不存在',
-];
-```
-
-```php
-<?php
-// config/lang/en_US.php
-return [
-    'hello' => 'Hello',
-    'welcome_message' => 'Welcome, {name}',
-    'user_not_found' => 'User not found',
-];
-```
-
-## 语言代码格式
-
-组件内部会将语言代码统一标准化为 `zh_CN` 格式：
-
-- 将 `-` 替换为 `_`
-- 语言代码小写，地区代码大写
-- 例如：`zh-cn` → `zh_CN`，`en-us` → `en_US`
-
-## 语言检测顺序
-
-默认按以下顺序检测：
-
-1. **URL 参数**：`?lang=zh_CN`
-2. **Cookie**：`$_COOKIE['lang']`
-3. **HTTP Header**：`Accept-Language`
-4. **CLI 环境变量**：`LANG` / `LC_ALL` / `LC_MESSAGES` / `LANGUAGE`
-5. **默认语言**：`lang_default`
-
-可以通过 `lang_detect_mode` 调整顺序或禁用某些检测方式。
+| `lang_final` | null | 最终语言，设就别再探测；非根子层 follow root 会取根值。 |
+| `lang_default` | null | 兜底：别的方式都不中时返回它。 |
+| `lang_detect_mode` | `['url','cookie','header','cli','default']` | 探测顺序与可用入口名单。 |
+| `lang_follow_root` | true | 子应用时候跟随根 Final。 |
+| `lang_url_param` | `'lang'` | url 探测参数名（例如 `?lang=zh_CN`）。 |
+| `lang_cookie_name` | `'lang'` | cookie 名。 |
+| `lang_file_path` | `'lang/'` | 语言目录（相对配置，实际由 Configer 拼 `{path}.php`）。 |
+| `lang_simple_mode_only_sentences` | `[]` | 简单模式句子集：语言=>[key=>sentence]。非空则不读配置直接用它。 |
 
 ## 使用方式
 
-### 全局函数
-
-```php
-__l('hello');                              // 输出 '你好'
-__l('welcome_message', ['name' => '世界']);  // 输出 '你好，世界'
-__l('not_exists');                         // 键不存在，原样返回 'not_exists'
-
-__hl('hello');                             // 国际化 + HTML 转义
-```
-
-### 通过 Lang 组件
+直接经组件：
 
 ```php
 use DuckPhp\Component\Lang;
 
-$text = Lang::_()->lang('hello');                              // '你好'
-$text = Lang::_()->lang('welcome_message', ['name' => '世界']); // '你好，世界'
+Lang::_()->init([
+    'lang_default' => 'zh_CN',
+    'lang_final'   => 'zh_CN',
+]);
+echo Lang::_()->language('welcome', ['name' => 'Duck']);   // 欢迎，Duck
+echo Lang::_()->replaceText('登录：[[login.fail|失败]]');    // [[…]] 片段转译
 ```
 
-### 在 Controller 中使用
+### 语言文件结构
+
+`config/lang/zh_CN.php` 等默认按 locale 存放，返回句子关联数组：
 
 ```php
-use DuckPhp\Foundation\Controller\Helper;
-
-$message = Helper::lang('welcome_message', ['name' => $userName]);
+return [
+    'welcome' => '欢迎，{name}',
+];
 ```
 
-### 在 Business 中使用
+### 探测/规范化
 
-```php
-use DuckPhp\Foundation\Business\Helper;
-
-$error = Helper::lang('user_not_found');
-```
-
-## 配置示例
-
-### 基础配置
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'lang_default' => 'zh_CN',
-        'lang_detect_mode' => ['url', 'cookie', 'header', 'default'],
-    ];
-}
-```
-
-### 仅使用 URL 参数
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'lang_detect_mode' => ['url', 'default'],
-        'lang_default' => 'en_US',
-    ];
-}
-```
-
-### 简单模式
-
-如果不使用语言文件，可以直接在配置中定义翻译：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'lang_final' => 'zh_CN',
-        'lang_simple_mode_only_sentences' => [
-            'zh_CN' => [
-                'hello' => '你好',
-            ],
-            'en_US' => [
-                'hello' => 'Hello',
-            ],
-        ],
-    ];
-}
-```
-
-## 子应用语言设置
-
-默认情况下，子应用会跟随根应用的语言：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'app' => [
-            \ApiApp\System\ApiApp::class => [
-                'lang_follow_root' => true,  // 默认
-            ],
-            \ApiApp\System\ApiApp::class => [
-                'lang_follow_root' => false,
-                'lang_default' => 'en_US',  // 子应用独立语言
-            ],
-        ],
-    ];
-}
-```
+- locale 码统一为 `xx_YY`（`-`→`_`，语言小写、地区大写；`zh-cn`→`zh_CN`）。
+- 探测顺序可调（`lang_detect_mode`）；CLI 读 `LANG/LC_ALL/…`；header 读 HTTP_ACCEPT_LANGUAGE（q 降序后取第一个）。
 
 ## 注意事项
 
-1. 语言配置在根应用生效。子应用默认跟随根应用，除非设置 `lang_follow_root => false`。
-2. 找不到翻译键时，会原样返回传入的字符串，并记录 warning 日志。
-3. 语言文件路径相对于 `config/` 目录，默认是 `config/lang/`。
-4. 参数替换使用 `{key}` 格式，例如 `'{name}'` 会被替换为 `$args['name']`。
-
-## 全部选项
-
-        'lang_final' => null,
-        'lang_default' => null,
-        'lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
-        'lang_follow_root' => true,
-        'lang_url_param' => 'lang',
-        'lang_cookie_name' => 'lang',
-        'lang_file_path' => 'lang/',
-        'lang_simple_mode_only_sentences' => [],
+1. final 只在 init 时算一次；lang_follow_root 需 root 已定（先 init 根）。
+2. 找不到句子回退 默认集→ `$str`；若有 fallback 参数用之；language()`无 fallback 且无 key 会 warning 记录。
+3. 简单模式给语言文件免 filesystem 的场景。
+4. 语言“配置只根生效”逻辑见代码注释——子层跟随根设置需在子 init(其 root 后)。
 
 ## 方法列表
 
 ### 公共方法
 
-    public function init(array $options, ?object $context = null)
-初始化组件，检测并设置最终语言
+    public function importDefaultSentences(array $sentences)
+把回退句子合入 default_sentences（当语言层无翻译时用）；返回 this。
 
-    public function lang(string $str, array $args = []): string
-翻译指定键，支持参数替换。如果找不到翻译，则返回原字符串
+    public function init(array $options, ?object $context = null)
+父 init；non-root 且 follow_root 用根 lang_final，否则 detectLanguage 生成自己的 final；并把 final 写回 context options.
+
+    public function language(string $str, array $args = [], ?string $fallback = null): string
+主翻译口：loadLanguage 取句后 format（{k} 替换）；不回退原语。
+
+    public function replaceText(string $text, array $args = []): string
+把文本中 `[[key|fallback]]`/`[[key]]` 片段语法经 language() 替换。 (实现为逐段 preg_replace_callback——实际调用 language() 并带 fallback)
 
 ### 受保护方法
 
     protected function getSentenceFromConfig(string $language): ?array
-从配置或语言文件加载指定语言的句子。如果 `lang_simple_mode_only_sentences` 非空，则直接从中读取；否则从 `config/lang/{language}.php` 读取
+简单模式则返回 `lang_simple_mode_only_sentences[$language]`；否则经 Configer 读 `{lang_file_path}{language}.php` 内容。
 
-    protected function loadLanguage(string $str): ?string
-加载指定键的翻译。找不到时返回 `null`，并记录 warning 日志
+    protected function loadLanguage(string $str, ?string $fallback = null): ?string
+按 language 查 configs → 命中即返回；否则查 default_sentences；language null→fallback；无 fallback(warning)...
 
     protected function format(string $str, array $args): string
-替换 `{key}` 格式的参数
+`{k}` → $args[k] 替换实现。
 
     protected function normalizeLocale(string $locale): string
-标准化语言代码为 `xx_XX` 格式。将 `-` 替换为 `_`，语言部分小写，地区部分大写
+把 zh-cn/zh_CN 规范化成 zh_CN 格式。
 
     protected function detectLanguage(): ?string
-按 `lang_detect_mode` 顺序自动检测语言
+沿 lang_detect_mode 试各 detect*，返回首个非 null 并规范化。
 
     protected function detectFromUrl(): ?string
-从 URL 参数 `lang_url_param` 检测语言
+取 URL 参数。
 
     protected function detectFromCookie(): ?string
-从 Cookie `lang_cookie_name` 检测语言
+取 cookie。
 
     protected function detectFromHeader(): ?string
-从 `HTTP_ACCEPT_LANGUAGE` 头检测语言，按优先级返回第一个匹配项
+parse Accept-Language，q 排序后取第一个。
 
     protected function detectFromCli(): ?string
-从 CLI 环境变量 `LANG`/`LC_ALL`/`LC_MESSAGES`/`LANGUAGE` 检测语言
+读 LANG/LC_ALL/LC_MESSAGES/LANGUAGE（去 .UTF-8 尾）。
 
     protected function detectFromDefault(): ?string
-返回 `lang_default` 配置的语言
+返回 lang_default。
 
 ## 相关链接
 
-- [DuckPhp\Component\Configer](Component-Configer.md)
-- [DuckPhp\Component\Core\Logger](Core-Logger.md)
-
+- [DuckPhp\DuckPhp](DuckPhp.md) —— 默认 ext 启用了 Lang
+- [DuckPhp\Component\Configer](Component-Configer.md) —— 读语言文件
+- [DuckPhp\Core\Functions](Core-Functions.md) —— `__l/__langtext` 走它
+- App::langtext/ format 说明（Core-App/lang）

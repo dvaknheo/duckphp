@@ -1,112 +1,61 @@
 # DuckPhp\Ext\MyFacadesAutoLoader
 
-> ⚠️ 警告：该扩展是实验性的或已废弃，不建议在新项目中使用。
-
 ## 简介
 
-`MyFacadesAutoLoader` 是一个用于自动加载 facade 类的扩展。它注册一个自动加载器，当请求特定命名空间下的类时，动态生成一个继承自 `MyFacadesBase` 的空类，并将静态调用转发到映射的真实类。
+`MyFacadesAutoLoader` 实现“Facade（门面）命名空间自动加载”：当代码访问 `facades_namespace`（默认 `MyFacades\`）下的某个未定义类，或命中 `facades_map` 中的键时，组件动态 `eval` 生成一个继承 `MyFacadesBase` 的类，使该类的任意静态调用能经 `MyFacadesBase::__callStatic` 转给真实类。
 
-该扩展使用 `eval()` 动态生成类，且依赖 `MyFacadesBase` 实现静态调用转发，属于实验性实现，不建议在新项目中使用。
+用法上：把某实现类注册到 `facades_map`（如 `MyFacades\Foo => RealFoo::class`），或直接把真实类名放在 `MyFacades\` 前缀下，即可用门面方式静态调用。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class MyFacadesAutoLoader extends DuckPhp\Core\ComponentBase`
 
 ## 选项
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `facades_namespace` | `'MyFacades'` | Facade 类所在的命名空间前缀。 |
-| `facades_map` | `[]` | Facade 类到真实类的映射表。 |
-| `facades_enable_autoload` | `true` | 是否注册自动加载器。 |
+| `facades_namespace` | `'MyFacades'` | 门面类命名空间（会 trim 反斜杠）。 |
+| `facades_map` | `[]` | 门面类名 → 真实类名的映射。 |
+| `facades_enable_autoload` | `true` | 是否注册 `spl_autoload`（关闭则需自行触发）。 |
 
 ## 使用方式
 
-### 基础配置
-
 ```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            DuckPhp\Ext\MyFacadesAutoLoader::class => true,
-        ],
-        'facades_namespace' => 'MyFacades',
-        'facades_map' => [
-            'MyFacades\UserService' => App\Service\UserService::class,
-        ],
-    ];
-}
-```
+\DuckPhp\Ext\MyFacadesAutoLoader::_()->init([
+    'facades_namespace' => 'MyFacades',
+    'facades_map' => ['MyFacades\User' => \MyProject\UserService::class],
+], $app);
 
-### 使用自动加载的 Facade
-
-```php
-use MyFacades\UserService;
-
-$result = UserService::getUserById(123);
-// 等价于 App\Service\UserService::_()->getUserById(123)
-```
-
-### 获取映射回调
-
-```php
-$callback = MyFacadesAutoLoader::_()->getFacadesCallback('MyFacades\UserService', 'getUserById');
-// 返回 [$object, 'getUserById']
-```
-
-### 清除自动加载器
-
-```php
-MyFacadesAutoLoader::_()->clear();
-```
-
-## 配置示例
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            DuckPhp\Ext\MyFacadesAutoLoader::class => true,
-            DuckPhp\Ext\MyFacadesBase::class => true,
-        ],
-        'facades_namespace' => 'Facades',
-        'facades_map' => [
-            'Facades\User' => App\Service\UserService::class,
-            'Facades\Order' => App\Service\OrderService::class,
-        ],
-    ];
-}
+// 之后静态调用会被转发到 UserService::_() 实例的对应方法：
+MyFacades\User::getById(1);
 ```
 
 ## 注意事项
 
-1. 自动加载器通过 `eval()` 动态生成 facade 类，可能影响性能与 IDE 提示。
-2. 真实目标类需要实现 `_()` 单例方法，否则静态调用会失败。
-3. 如果类名不在 `facades_map` 中，但命名空间匹配 `facades_namespace`，则去掉前缀后的类名作为真实类名。
-4. 调用 `clear()` 会清空映射并注销自动加载器。
-
-## 全部选项
-
-        'facades_namespace' => 'MyFacades',
-        'facades_map' => [],
-        'facades_enable_autoload' => true,
+- `_autoload()`：类名以 `MyFacades\` 开头或位于 `facades_map` 键时，生成 `class X extends \DuckPhp\Ext\MyFacadesBase {}`（`eval` 方式）。
+- `getFacadesCallback($input_class,$name)`：先在 `facades_map` 精确匹配，否则按前缀剥离得到真实类；真实类需可 `_()`（`is_callable([$class,'_'])`），返回 `[$object,$name]`。
+- `clear()`：清空 map 并注销 autoload。
 
 ## 方法列表
 
 ### 公共方法
 
     public function _autoload($class): void
-注册的自动加载回调。如果类匹配 facade 命名空间或映射表，则动态生成对应的类定义。
+自动加载钩子：为门面命名空间动态生成门面类。
 
     public function getFacadesCallback(string $input_class, string $name): ?array
-根据 facade 类名获取真实对象及其方法回调。
+解析门面静态调用目标：返回 `[真实对象, 方法名]` 或 `null`。
 
     public function clear(): void
-清空 facade 映射并注销自动加载器。
+清空映射并注销自动加载。
 
 ### 受保护方法
 
     protected function initOptions(array $options): void
-初始化选项，解析命名空间前缀，并在启用自动加载时注册自动加载器。
+初始化前缀、映射；按选项注册 `spl_autoload`。
 
 ## 相关链接
 
-- [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md)
+- [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md) — 门面基类（__callStatic 入口）
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件基类

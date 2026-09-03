@@ -1,104 +1,158 @@
 # DuckPhp\Helper\AppHelperTrait
 
-应用层 Helper Trait。
-
 ## 简介
 
-`DuckPhp\Helper\AppHelperTrait` 提供应用层通用的静态方法，涵盖异常调用、事件管理、运行状态判断、路由操作、视图数据获取、数据库与 Redis 访问、Session/Cookie 操作、系统包装函数、CLI 参数以及核心辅助功能。
+`AppHelperTrait` 是**应用级（App 上下文）**的静态助手集合，汇集了“框架级但不属于某一层专属”的常用转发：异常处理、全局事件、运行状态、路由钩子与映射、会话/请求状态（`SuperGlobal`）、可替换系统函数（`SystemWrapper`：`header`/`setcookie`/`exit`/`session_*` 等）、DB/Redis、CLI 参数、扩展选项保存等。
 
-## 选项
+业务代码通常不直接使用本 Trait；它是 `DuckPhpAllInOne` 组合的四个 Helper 之一，工程里也可由自己的 `System` 层/应用基类组合。
 
-无。
+## 类信息
+
+- 命名空间：`DuckPhp\Helper`
+- 声明：`trait AppHelperTrait`
+- 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
 
 ## 使用方式
 
-### 在类中引入
-
 ```php
-use DuckPhp\Helper\AppHelperTrait;
-
-class MyHelper
+class MyApp extends DuckPhp\DuckPhp
 {
-    use AppHelperTrait;
+    use DuckPhp\Helper\AppHelperTrait; // 或直接继承 DuckPhpAllInOne
+
+    // 控制器动作内即可使用这些应用级能力：
+    // self::header('Content-Type: application/json');
+    // self::addRouteHook(..., 'prepend-outter');
+    // $map = self::getRouteMaps();
+    // self::FireGlobalEvent('my_event', $data);
 }
-```
-
-### 常用操作
-
-```php
-use DuckPhp\Foundation\System\Helper;
-
-// 关闭所有数据库连接
-Helper::DbCloseAll();
-
-// 获取 Redis 对象
-$redis = Helper::Redis();
-
-// 获取 CLI 参数
-$params = Helper::getCliParameters();
-
-// 获取项目路径
-$projectPath = Helper::PathOfProject();
-$runtimePath = Helper::PathOfRuntime();
-
-// 注册命令行命令类
-Helper::regCommandClass(\MyApp\Command\MyCommand::class);
 ```
 
 ## 注意事项
 
-1. 该 Trait 使用 `DuckPhp\Core\SingletonTrait`，引入类后具备单例访问能力。
-2. 方法依赖多个核心组件（如 `App`、`Route`、`View`、`DbManager`、`RedisManager`、`SystemWrapper` 等），需确保相关组件已初始化。
-3. `system_wrapper_replace` 等系统包装函数主要用于测试或替换全局函数，需谨慎使用。
+- 大多方法为**纯转发**：同一能力的“下层组件”在对应组件文档（`ExceptionManager`/`Runtime`/`Route`/`RouteHookRouteMap`/`RouteHookRewrite`/`SuperGlobal`/`SystemWrapper`/`DbManager`/`RedisManager`/`Console`/`GlobalEvent`/`ExtOptionsLoader`/`View`）中描述。
+- `header`/`setcookie`/`exit`/`session_*`/`set_exception_handler`/`register_shutdown_function`/`mime_content_type` 走 `SystemWrapper`，即**可被替换的系统函数**（测试/常驻场景可注入实现）。
+- 本 Trait 未包含 `Controller` 层的 `GET/POST/Show/Url` 等方法；那些属于 `ControllerHelperTrait`。
 
 ## 方法列表
 
 ### 公共方法
 
-| 方法 | 说明 |
-|---|---|
-| `CallException($ex)` | 调用异常管理器 |
-| `RemoveEvent($event, $callback = null)` | 移除事件监听 |
-| `isRunning()` | 判断应用是否运行中 |
-| `isInException()` | 判断是否处于异常处理中 |
-| `addRouteHook($callback, $position = 'append-outter', $once = true)` | 添加路由钩子 |
-| `replaceController($old_class, $new_class)` | 替换控制器类 |
-| `getViewData()` | 获取视图数据 |
-| `DbCloseAll()` | 关闭所有数据库连接 |
-| `SESSION($key = null, $default = null)` | 获取 `$_SESSION` 数据 |
-| `FILES($key = null, $default = null)` | 获取 `$_FILES` 数据 |
-| `SessionSet($key, $value)` | 设置 Session 值 |
-| `SessionUnset($key)` | 删除 Session 值 |
-| `SessionGet($key, $default = null)` | 获取 Session 值 |
-| `CookieSet($key, $value, $expire = 0)` | 设置 Cookie |
-| `CookieGet($key, $default = null)` | 获取 Cookie |
-| `system_wrapper_replace(array $funcs)` | 替换系统包装函数 |
-| `system_wrapper_get_providers(): array` | 获取系统包装函数提供者 |
-| `header($output, bool $replace = true, int $http_response_code = 0)` | 发送 HTTP 头 |
-| `setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)` | 设置 Cookie |
-| `exit($code = 0)` | 终止程序 |
-| `set_exception_handler(callable $exception_handler)` | 设置异常处理器 |
-| `register_shutdown_function(callable $callback, ...$args)` | 注册关闭函数 |
-| `session_start(array $options = [])` | 启动 Session |
-| `session_id($session_id = null)` | 获取/设置 Session ID |
-| `session_destroy()` | 销毁 Session |
-| `session_set_save_handler(\SessionHandlerInterface $handler)` | 设置 Session 保存处理器 |
-| `mime_content_type($file)` | 获取文件 MIME 类型 |
-| `setBeforeGetDbHandler($db_before_get_object_handler)` | 设置获取数据库前的回调 |
-| `Redis($tag = 0)` | 获取 Redis 对象 |
-| `getRouteMaps()` | 获取路由映射 |
-| `assignRoute($key, $value = null)` | 分配路由映射 |
-| `assignImportantRoute($key, $value = null)` | 分配高优先级路由映射 |
-| `assignRewrite($key, $value = null)` | 分配重写规则 |
-| `getRewrites()` | 获取所有重写规则 |
-| `getCliParameters()` | 获取 CLI 参数 |
-| `FireEvent($event, ...$args)` | 触发事件 |
-| `OnEvent($event, $callback)` | 注册事件监听 |
-| `PathOfProject()` | 获取项目根目录 |
-| `PathOfRuntime()` | 获取运行时目录 |
-| `recursiveApps(&$arg, $callback, ?string $app_class = null)` | 递归遍历应用 |
-| `regCommandClass(string $class, string $default_method = 'command_')` | 注册命令行命令类 |
+    public static function CallException(\Throwable $ex)
+把异常交给异常管理器处理（`ExceptionManager::CallException`）。
+
+    public static function RemoveEvent($event, $callback = null)
+移除全局事件监听（转发 `GlobalEvent::remove`）。
+
+    public static function isRunning(): bool
+框架是否处于运行中（`Runtime` 状态）。
+
+    public static function isInException(): bool
+当前是否处于异常处理流程中（`Runtime` 状态）。
+
+    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
+注册路由钩子（`Route::addRouteHook`，位置见 Core-Route）。
+
+    public static function replaceController(string $old_class, string $new_class)
+替换路由中某控制器类（`Route::replaceController`）。
+
+    public static function getViewData(): array
+取视图数据（`View::getViewData`）。
+
+    public static function DbCloseAll()
+关闭全部数据库连接（`DbManager`）。
+
+    public static function SESSION($key = null, $default = null)
+读会话变量（转发 `SuperGlobal::_SESSION`）。
+
+    public static function FILES($key = null, $default = null)
+读上传文件变量（转发 `SuperGlobal::_FILES`）。
+
+    public static function SessionSet($key, $value)
+写会话变量。
+
+    public static function SessionUnset($key)
+删除会话变量。
+
+    public static function SessionGet($key, $default = null)
+读单个会话变量。
+
+    public static function CookieSet($key, $value, $expire = 0)
+写 Cookie（转发 `SuperGlobal::_CookieSet`）。
+
+    public static function CookieGet($key, $default = null)
+读 Cookie（转发 `SuperGlobal::_CookieGet`）。
+
+    public static function system_wrapper_replace(array $funcs)
+注入可替换系统函数实现（转发 `SystemWrapper::_system_wrapper_replace`）。
+
+    public static function system_wrapper_get_providers(): array
+取当前系统函数提供者表。
+
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+发送 HTTP 头（经 SystemWrapper，可替换）。
+
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+写 Cookie（经 SystemWrapper，可替换）。
+
+    public static function exit($code = 0)
+退出（经 SystemWrapper；框架可配成抛 `ExitException` 以便捕获）。
+
+    public static function set_exception_handler(callable $exception_handler)
+注册异常处理（经 SystemWrapper）。
+
+    public static function register_shutdown_function(callable $callback, ...$args)
+注册关闭回调（经 SystemWrapper）。
+
+    public static function session_start(array $options = [])
+启动会话（经 SystemWrapper；`$options` 传给原生 `session_start`）。
+
+    public static function session_id($session_id = null)
+取/设会话 ID（经 SystemWrapper）。
+
+    public static function session_destroy()
+销毁会话（经 SystemWrapper）。
+
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+设置会话保存句柄（经 SystemWrapper）。
+
+    public static function mime_content_type($file)
+取文件 MIME 类型（经 SystemWrapper）。
+
+    public static function setBeforeGetDbHandler($db_before_get_object_handler)
+设置“取库前”回调（转发 `DbManager::setBeforeGetDbHandler`）。
+
+    public static function Redis($tag = 0)
+取 Redis 客户端（`RedisManager::Redis($tag)`）。
+
+    public static function getRouteMaps()
+取路由映射表（转发 `RouteHookRouteMap::getRouteMaps`）。
+
+    public static function assignRoute($key, $value = null)
+登记路由映射（转发 `RouteHookRouteMap::assignRoute`）。
+
+    public static function assignImportantRoute($key, $value = null)
+登记重要路由映射（不会被覆盖）。
+
+    public static function assignRewrite($key, $value = null)
+登记 URL 重写规则（转发 `RouteHookRewrite::assignRewrite`）。
+
+    public static function getRewrites()
+取当前重写规则表。
+
+    public static function getCliParameters()
+取 CLI 解析出的参数（转发 `Console::getCliParameters`）。
+
+    public static function FireGlobalEvent($event, ...$args)
+触发全局事件（转发 `GlobalEvent::fire`）。
+
+    public static function OnGlobalEvent($event, $callback)
+注册全局事件监听（转发 `GlobalEvent::on`）。
+
+    public static function saveExtOptions(array $options): void
+把扩展选项写入（转发 `ExtOptionsLoader::saveExtOptions`）。
 
 ## 相关链接
 
-- [DuckPhp\Foundation\System\Helper](Foundation-System-Helper.md)
+- [DuckPhp\Helper\ControllerHelperTrait](Helper-ControllerHelperTrait.md) — 控制器层助手
+- [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md) — 业务层助手
+- [DuckPhp\DuckPhpAllInOne](DuckPhpAllInOne.md) — 组合四个 Helper Trait 的入口类

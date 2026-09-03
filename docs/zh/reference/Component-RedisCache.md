@@ -1,154 +1,89 @@
 # DuckPhp\Component\RedisCache
 
-基于 Redis 的缓存组件。
+Redis 缓存实现（契合简单 Cache 握手：set 会 JSON UNSICII、set 可选 TTL），缺省可把自己替换成全局 `Cache` 的实际实现。
 
 ## 简介
 
-`RedisCache` 组件实现了一套符合 PSR-16 风格的缓存接口，底层依赖 `DuckPhp\Component\RedisManager` 获取 Redis 连接。启用后，它会自动替换默认的 `DuckPhp\Component\Cache` 实例，使 `Cache::_()` 指向 Redis 缓存。
+`RedisCache extends ComponentBase`（注释 align `Psr\SimpleCache`）是在 Redis 上实现简单缓存字面入口组件：
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+- 复用 `RedisManager::Redis()` 连接；
+- key 会用 `redis_cache_prefix` 前缀避免跨 app 串扰；
+- 值 JSON 编码（UNESCAPED_UNICODE）+ json_decode 取出；
+- 提供 get/set/delete/has/…multiple…、clear(未实现/占位)；
+- 其构造函数/init 时（除非 `redis_cache_skip_replace`）会 `Cache::_($this)` 向父 Cache 替换引用——即默认组件拿到“缓存”指的就是这个 Redis 实现；否则用基类 Cache 空实现 or 上层替换。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Component`
+- 声明：`class RedisCache extends ComponentBase`
+- 关联连接：RedisManager::Redis()。
 
 ## 选项
 
-| 选项 | 默认值 | 说明 |
+`RedisCache::$options`：
+
+| 选项 | 默认 | 说明 |
 |---|---|---|
-| `redis_cache_skip_replace` | `false` | 是否跳过替换默认 `Cache` 实例。为 `true` 时，`Cache::_()` 不会指向 Redis 缓存。 |
-| `redis_cache_prefix` | `''` | 所有 Redis 缓存键的前缀。 |
-
-## 启用方式
-
-在 `App` 的 `ext` 选项中启用 `RedisCache`：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Component\RedisCache::class => true,
-        ],
-    ];
-}
-```
-
-或者启用数组形式的配置：
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Component\RedisCache::class => [
-                'redis_cache_prefix' => 'app:',
-            ],
-        ],
-    ];
-}
-```
-
-启用后，框架中所有通过 `Cache::_()` 访问的缓存都会自动使用 Redis。
+| `redis_cache_skip_replace` | false | 若 true 不 replace 全局 Cache（由自己取舍）。 |
+| `redis_cache_prefix` | `''` | 本缓存键前缀。 |
 
 ## 使用方式
 
-### 通过 Cache 组件
+经 DuckPhp 提供的缓存（RedisCache 若启用则是实现）：
 
 ```php
+use DuckPhp\Component\RedisCache;
 use DuckPhp\Component\Cache;
 
-Cache::_()->set('user:1', $userData, 3600);
-$user = Cache::_()->get('user:1');
-$exists = Cache::_()->has('user:1');
-Cache::_()->delete('user:1');
+RedisCache::_()->init([...]);      // 缺省 skip=false → Cache::_(this)
+Cache::_()->set('k','v');
+$ret = Cache::_()->get('k');
 ```
-
-### 通过 Business Helper
-
-```php
-use DuckPhp\Foundation\Business\Helper;
-
-Helper::Cache()::set('config', $config, 3600);
-$config = Helper::Cache()::get('config');
-```
-
-### 批量操作
-
-```php
-use DuckPhp\Component\Cache;
-
-$items = ['key1' => 'value1', 'key2' => 'value2'];
-Cache::_()->setMultiple($items, 3600);
-
-$values = Cache::_()->getMultiple(['key1', 'key2']);
-Cache::_()->deleteMultiple(['key1', 'key2']);
-```
-
-## 存储格式
-
-`RedisCache` 使用 JSON 序列化存储值，因此存储的数据类型会被转换为 JSON 可表示的类型：
-
-- 数组和对象 → JSON 字符串
-- 字符串、数字、布尔值 → JSON 字符串
-- `null` → `'null'` 字符串
-
-读取时通过 `json_decode($ret, true)` 还原为数组。如果缓存值为对象或需要保留原始类型，需要自行处理序列化。
 
 ## 注意事项
 
-1. `RedisCache` 依赖 `RedisManager`，请确保已正确配置 `redis` 或 `redis_list`。
-2. 所有键都会自动加上 `redis_cache_prefix` 前缀。
-3. `clear()` 方法当前未实现，调用无效果。
-4. `setMultiple()` 内部会调用 `set()` 逐条写入，不是原子操作。
-5. 存储复杂对象前，建议先自行序列化为字符串。
-
-## 全部选项
-
-```php
-public $options = [
-    'redis_cache_skip_replace' => false,
-    'redis_cache_prefix' => '',
-];
-```
+- value 存为 JSON 字符串；数字会 json 化出来，取数据按数组用即可重现结构。
+- clear 目前只是空实现（return）——真实需要清库自行扩展。
+- delete 接受数组（del 多条）。
 
 ## 方法列表
 
 ### 公共方法
 
-    public function init(array $options, ?object $context = null)
-初始化组件，并根据 `redis_cache_skip_replace` 决定是否替换 `Cache::_()` 实例
-
     public function get($key, $default = null)
-从 Redis 获取缓存值，不存在则返回 `default`
+get 原始 → json decode（否则返回 default / 处理 false boolean？若原始数值 false decode 难——实现获取再 json_decode或 false else）。
 
     public function set($key, $value, $ttl = null)
-将值以 JSON 格式写入 Redis，支持设置过期时间（秒）
+json 编码 + redis set（TTL 可选）。
 
     public function delete($key)
-删除单个或多个缓存键。参数可以是字符串或数组
+（原数组 key为默认 handled）del。
 
     public function has($key)
-判断缓存键是否存在
+redis exists。
 
     public function clear()
-清空缓存。当前未实现
+未实现（占位 return）。
 
     public function getMultiple($keys, $default = null)
-批量获取缓存值
+逐 key get 组装。
 
     public function setMultiple($values, $ttl = null)
-批量设置缓存值
+循环 set。
 
     public function deleteMultiple($keys)
-批量删除缓存键
+delete 数组。
 
 ### 受保护方法
 
     protected function initContext(object $context): void
-初始化上下文，替换默认 `Cache` 实例
+（skip=false）则 Cache::_($this) 替换框架默认缓存实现。
 
     protected function redis(): \Redis
-获取 Redis 连接实例，来自 `RedisManager::Redis()`
+由 RedisManager::Redis() 取的连接。
 
 ## 相关链接
 
 - [DuckPhp\Component\Cache](Component-Cache.md)
-- [DuckPhp\Component\RedisManager](Component-RedisManager.md)
-- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md)
+- [DuckPhp\Component\RedisManager](Component-RedisManager.md) —— Redis 连接管理
+- Redis cache 若不想全局替换可置 skip。

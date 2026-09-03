@@ -1,101 +1,61 @@
 # DuckPhp\Ext\RouteHookFunctionRoute
 
-函数路由钩子扩展。
-
 ## 简介
 
-`RouteHookFunctionRoute` 是一个路由钩子，允许将 URL 路径直接映射为全局函数或命名空间函数。当路由找不到控制器时，会尝试调用以 `function_route_method_prefix` 为前缀的函数。
+`RouteHookFunctionRoute` 是“函数式路由”扩展：把当前 PATH_INFO 映射成**可调用函数/回调名**并执行，而不是走“控制器类 + 动作方法”的标准路由。默认挂在 `append-inner` 钩子位（默认路由失败后才尝试）。
+
+映射规则：`PATH_INFO` 去掉前导 `/` 后把 `/` 换成 `_`，空串用 `index`；再拼上前缀（`function_route_method_prefix` 默认 `action_`）与 POST 时追加的 `controller_prefix_post`（如 `do_`），得到回调名；若 `is_callable` 则调用并命中。可配置 404 时回退到 `{prefix}index`。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class RouteHookFunctionRoute extends DuckPhp\Core\ComponentBase`
 
 ## 选项
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `function_route` | `false` | 是否启用函数路由。 |
-| `function_route_method_prefix` | `'action_'` | 函数名前缀。 |
-| `function_route_404_to_index` | `false` | 为 `true` 时，找不到函数则回退到 `action_index`。 |
+| `function_route` | `false` | 是否启用（保留开关位）。 |
+| `function_route_method_prefix` | `'action_'` | 回调名前缀。 |
+| `function_route_404_to_index` | `false` | 未命中时是否回退调用 `{prefix}index`。 |
 
 ## 使用方式
 
-### 作为 DuckPhp 扩展加载
-
 ```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Ext\RouteHookFunctionRoute::class => true,
-        ],
-        'function_route' => true,
-        'function_route_method_prefix' => 'action_',
-        'function_route_404_to_index' => true,
-    ];
-}
-```
+\DuckPhp\Ext\RouteHookFunctionRoute::_()->init([], $app);
 
-### 定义函数
-
-```php
-function action_user_profile()
-{
-    echo 'User Profile';
-}
-```
-
-访问 `/user/profile` 时会调用 `action_user_profile`。
-
-### 表单 POST 支持
-
-当请求为 POST 时，`Route` 的 `controller_prefix_post` 会作为额外前缀拼接，例如 `action_post_user_profile`。
-
-## 配置示例
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Ext\RouteHookFunctionRoute::class => true,
-        ],
-        'function_route' => true,
-        'function_route_method_prefix' => 'do_',
-        'function_route_404_to_index' => false,
-    ];
-}
+// 请求 /hello/world（GET）→ 尝试调用回调 action_hello_world
+// 请求 /hello/world（POST 且 controller_prefix_post='do_'）→ 先试 action_do_hello_world
+function action_hello_world() { echo 'hello'; }
 ```
 
 ## 注意事项
 
-1. 初始化时会注册 `append-inner` 路由钩子。
-2. 路径中的 `/` 会被替换为 `_`，因此多级路径对应下划线分隔的函数名。
-3. 空路径会映射为 `index`。
-4. 函数不存在时返回 `false`；若开启 `function_route_404_to_index`，则尝试调用 `action_index`。
-
-## 全部选项
-
-```php
-    public $options = [
-        'function_route' => false,
-        'function_route_method_prefix' => 'action_',
-        'function_route_404_to_index' => false,
-    ];
-```
+- 回调名是否“可调用”以 `is_callable` 判定：可以是已定义函数、闭包或其它可调用体（需要提前注册）。
+- `_Hook` 里先用 POST 参数决定是否加 `do_` 前缀；带 POST 未命中时还会再去掉 `do_` 试一次。
+- 本钩子位于 `append-inner`：默认 MVC 路由不命中时才有机会执行（可作“函数路由兜底”）。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function Hook($path_info)
-路由钩子入口。
+静态钩子入口，转发 `_Hook`。
 
     public function _Hook($path_info = '/')
-解析路径并尝试调用对应函数。
+按 PATH_INFO 拼回调名并尝试调用；未命中按选项回退 `index`。
+
+### 受保护方法
+
+    protected function initContext(object $context): void
+把 `Hook` 挂到 Route 的 `append-inner` 钩子位。
 
 ### 私有方法
 
     private function runCallback($callback)
-如果回调可调用则执行，并返回 `true`；否则返回 `false`。
+若回调可调用则执行并返回 `true`。
 
 ## 相关链接
 
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-- [DuckPhp\Core\Route](Core-Route.md)
+- [DuckPhp\Core\Route](Core-Route.md) — 钩子宿主
+- [DuckPhp\Ext\RouteHookManager](Ext-RouteHookManager.md) — 钩子列表管理

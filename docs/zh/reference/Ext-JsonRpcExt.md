@@ -1,141 +1,93 @@
 # DuckPhp\Ext\JsonRpcExt
 
-JSON-RPC 扩展组件。
-
 ## 简介
 
-`JsonRpcExt` 为框架提供 JSON-RPC 2.0 的客户端与服务端能力。它可以自动为服务端接口生成代理类，也可以接收 JSON-RPC 请求并调用本地服务类。
+`JsonRpcExt` 是 JSON-RPC 扩展的总控：既是**客户端传输层**（`callRpc()` 经 HTTP/curl 按 JSON-RPC 2.0 调用远端），也是**服务端分发**（`onRpcCall()` 把 `Namespace.Service.method` 形式的方法名解析到本地服务类并调用），还带一个 `JsonRpc\` 命名空间的自动加载（客户端类生成）。
 
-该组件通常由 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+典型链路：客户端 `JsonRpcClientBase::__call` → `JsonRpcExt::callRpc`（POST 到 `jsonrpc_backend`）→ 远端 `onRpcCall` 分发到 `Service::_()->method(...)`。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class JsonRpcExt extends DuckPhp\Core\ComponentBase`
 
 ## 选项
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `jsonrpc_namespace` | `'JsonRpc'` | 自动加载的代理类命名空间前缀。 |
-| `jsonrpc_backend` | `'https://127.0.0.1'` | 后端 JSON-RPC 服务器地址。 |
-| `jsonrpc_is_debug` | `false` | 是否为调试模式。为 `true` 时错误信息会包含原始响应。 |
-| `jsonrpc_enable_autoload` | `true` | 是否注册自动加载器，以懒加载代理类。 |
-| `jsonrpc_check_token_handler` | `null` | 请求 Token 处理回调，签名 `function($ch)`。 |
-| `jsonrpc_wrap_auto_adjust` | `true` | 是否自动调整包装行为。 |
-| `jsonrpc_service_interface` | `''` | 本地服务接口约束。如果非空，仅允许该接口的实现类被调用。 |
-| `jsonrpc_service_namespace` | `''` | 本地服务类命名空间前缀。 |
-| `jsonrpc_timeout` | `5` | cURL 请求超时时间（秒）。 |
+| `jsonrpc_namespace` | `'JsonRpc'` | 客户端自动加载的命名空间前缀。 |
+| `jsonrpc_backend` | `'https://127.0.0.1'` | 服务端地址（也可传 `[base, real_host]` 以使用 `CURLOPT_CONNECT_TO`）。 |
+| `jsonrpc_is_debug` | `false` | 失败时是否在异常消息中带原始返回。 |
+| `jsonrpc_enable_autoload` | `true` | 是否注册客户端类自动加载。 |
+| `jsonrpc_check_token_handler` | `null` | 可选：给 curl 会话加 token 的回调。 |
+| `jsonrpc_wrap_auto_adjust` | `true` | （保留配置）自动调整包装行为。 |
+| `jsonrpc_service_interface` | `''` | 服务端校验：服务类需是该接口的子类才接受。 |
+| `jsonrpc_service_namespace` | `''` | 服务类命名空间（客户端/服务端两侧补全用）。 |
+| `jsonrpc_timeout` | `5` | curl 超时秒数。 |
 
 ## 使用方式
 
-### 作为客户端
-
 ```php
-use DuckPhp\Ext\JsonRpcExt;
+\DuckPhp\Ext\JsonRpcExt::_()->init([
+    'jsonrpc_backend' => 'https://rpc.example.com/rpc.php',
+    'jsonrpc_service_namespace' => 'MyProject\\RpcService',
+], $app);
 
-$client = new \JsonRpc\Service\MyService(); // 通过自动加载的代理类
-$result = $client->foo(['bar' => 1]);
-```
+// 客户端（假设计算器服务）：
+$c = JsonRpcExt::_Wrap(Calculator::class);
+echo $c->add(3, 4);
 
-代理类不需要真实存在，`JsonRpcExt` 会按需通过 `eval` 创建继承 `JsonRpcClientBase` 的类。
-
-### 使用 `Wrap` 包装现有类
-
-```php
-$proxy = JsonRpcExt::Wrap(\MyService::class);
-$result = $proxy->method($arg);
-```
-
-### 作为服务端
-
-在路由钩子中处理请求：
-
-```php
-$input = json_decode(file_get_contents('php://input'), true);
-$ret = JsonRpcExt::_()->onRpcCall($input);
-echo json_encode($ret);
-```
-
-`onRpcCall` 会解析 `method` 为 `ClassName.method`，调用对应服务类方法。
-
-## 配置示例
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'ext' => [
-            \DuckPhp\Ext\JsonRpcExt::class => true,
-        ],
-        'jsonrpc_namespace' => 'JsonRpc',
-        'jsonrpc_backend' => 'https://api.example.com/rpc',
-        'jsonrpc_service_namespace' => 'MyApp\\Service',
-        'jsonrpc_service_interface' => 'MyApp\\Service\\RpcServiceInterface',
-        'jsonrpc_timeout' => 10,
-    ];
-}
+// 服务端（rpc.php 里）：
+$result = JsonRpcExt::_()->onRpcCall(json_decode(file_get_contents('php://input'), true));
+echo json_encode($result);
 ```
 
 ## 注意事项
 
-1. 代理类通过 `spl_autoload_register` 注册，若关闭 `jsonrpc_enable_autoload`，需要手动创建代理类。
-2. 客户端通过 `JsonRpcExt::callRpc()` 发起 cURL 请求，并返回服务端 `result` 字段。
-3. 服务端会调用 `adjustService()` 校验类是否实现 `jsonrpc_service_interface`。
-4. 调用失败时抛出 `ErrorException` 或 `Exception`。
-5. 支持 `CURLOPT_CONNECT_TO` 进行主机重定向，传数组形式的后端地址即可。
-
-## 全部选项
-
-```php
-    public $options = [
-        'jsonrpc_namespace' => 'JsonRpc',
-        'jsonrpc_backend' => 'https://127.0.0.1',
-        'jsonrpc_is_debug' => false,
-        'jsonrpc_enable_autoload' => true,
-        'jsonrpc_check_token_handler' => null,
-        'jsonrpc_wrap_auto_adjust' => true,
-        'jsonrpc_service_interface' => '',
-        'jsonrpc_service_namespace' => '',
-        'jsonrpc_timeout' => 5,
-    ];
-```
+- 客户端 `_Wrap($class)` 返回一个以 `JsonRpcClientBase` 为实例、可 `_()` 替换的“伪类”实例；`_autoload` 对 `JsonRpc\` 前缀动态生成客户端类。
+- 请求方法名为 `服务类全名(\.分隔).方法`（如 `MyProject.RpcService.Calculator.add`）；服务端按末段取方法、前缀拼 `jsonrpc_service_namespace` 定位服务类，并校验其实现 `jsonrpc_service_interface`。
+- `callRpc()`：响应为空或含 `error` 时抛异常；否则返回 `result`。
+- `prepare_token()`：配置了 `jsonrpc_check_token_handler` 时用于给请求附加令牌。
 
 ## 方法列表
 
 ### 公共方法
 
     public function clear(): void
-注销自动加载器。
+注销自动加载。
 
     public function getRealClass(object $object): string
-获取对象的真实类名，去除 `jsonrpc_namespace` 前缀。
+去掉客户端对象类名中的 `JsonRpc\` 前缀，得到真实服务类名。
 
     public static function Wrap($class)
-包装类为代理对象（静态代理到 `JsonRpcClientBase`）。
+静态便捷：等价 `_Wrap`。
 
     public static function _Wrap($class)
-创建 `JsonRpcClientBase` 实例并注入原始类。
+把服务类包装成 RPC 客户端（返回可 `_()` 替换的 `JsonRpcClientBase` 实例）。
 
     public function _autoload($class): void
-自动加载 `jsonrpc_namespace` 下的代理类。
+为 `JsonRpc\` 前缀动态生成客户端类。
 
     public function callRpc(string $classname, string $method, array $arguments)
-向后端发送 JSON-RPC 请求，并返回 `result` 字段。
+发送 JSON-RPC 2.0 请求并返回 `result`；失败抛异常。
 
     public function onRpcCall(array $input)
-处理 JSON-RPC 请求输入，调用本地服务类并返回响应数组。
+服务端入口：解析方法名、分发到服务类并返回 JSON-RPC 响应（异常转入 `error`）。
 
 ### 受保护方法
 
     protected function initOptions(array $options): void
-初始化选项，注册自动加载器。
+初始化调试/前缀/自动加载。
 
     protected function adjustService(string $service): ?string
-校验服务类并返回完整类名。如果配置了接口约束但未实现，则返回 `null`。
+补全服务类命名空间并校验 `jsonrpc_service_interface`。
 
     protected function curl_file_get_contents($url, $post): string
-使用 cURL 发送 JSON-RPC 请求。
+用 curl 发起 POST（支持 `CURLOPT_CONNECT_TO`、超时与 token）。
 
     protected function prepare_token($ch)
-如果配置了 `jsonrpc_check_token_handler`，则调用该回调处理请求句柄。
+按 `jsonrpc_check_token_handler` 为 curl 会话附加令牌。
 
 ## 相关链接
 
-- [DuckPhp\Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md)
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+- [DuckPhp\Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md) — 客户端基类

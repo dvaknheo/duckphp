@@ -1,191 +1,133 @@
 # DuckPhp\Core\SystemWrapper
 
-系统函数包装组件。
+把一批 PHP 系统函数（header/setcookie/exit/异常/会话/mime）包成“统一 static/instance 入口”，可在 CLI / 测试 / 多请求环境被无缝替代或拦截。
 
 ## 简介
 
-`SystemWrapper` 对 PHP 的系统函数（如 `header`、`setcookie`、`exit`、`session_start`、`mime_content_type` 等）进行了包装。通过替换处理器，可以在单元测试中 mock 这些系统调用，避免真实执行。
+`SystemWrapper` 把常见“副作用型”系统函数放到一处，便于：CLI 下不抛 header、测试时能注入行为、或整包交给替换实现（`__SYSTEM_WRAPPER_REPLACER` 常量）。
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+它以 `system_handlers` 记录一组 handler（函数名→回调，null 表示默认），静态壳/实例方法都叫同名（如 `header` 与 `_header`）。通用转发 `system_wrapper_replace(handlers)` 可整体替换某几个的实装，GET_PROVIDERS 把这些默认补齐。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class SystemWrapper extends ComponentBase`（`init_once=true`）
+- 关联常量：`__SYSTEM_WRAPPER_REPLACER` —— 若定义成某类名，任意 wrapper 调用会送去 `[常量, 函数名](...)`；否则用 handlers → 原样系统函数。
 
 ## 选项
 
-`SystemWrapper` 本身没有额外的配置选项，通过 `system_wrapper_replace` 方法替换系统函数处理器。
+本类无 user opts；内部 `protected $system_handlers` 为下列函数的默认列表：
+`header/setcookie/exit/set_exception_handler/register_shutdown_function/session_start/session_id/session_destroy/session_set_save_handler/mime_content_type`（值 null=默认）。
 
 ## 使用方式
 
-### 静态调用系统函数
+常规不需直接调用；它们被 App/Core 代替那些调用。也可:
 
 ```php
 use DuckPhp\Core\SystemWrapper;
 
-SystemWrapper::header('Content-Type: application/json');
-SystemWrapper::setcookie('name', 'value', 3600);
+SystemWrapper::header('Location: /x', true, 302);
+SystemWrapper::setcookie('tk','v',0,'/');
+SystemWrapper::exit(0);                 // 有 __EXIT_EXCEPTION => 抛（否则真 exit）
 SystemWrapper::session_start();
-$mime = SystemWrapper::mime_content_type('logo.png');
+SystemWrapper::session_set_save_handler($myHandler);
+$mime = SystemWrapper::mime_content_type($file);
 ```
 
-### 替换系统函数处理器
+### 整体替换一批系统函数（测试内）：
 
 ```php
-use DuckPhp\Core\SystemWrapper;
-
-$records = [];
-SystemWrapper::_()->_system_wrapper_replace([
-    'header' => function ($output) use (&$records) {
-        $records[] = $output;
-    },
-    'setcookie' => function ($key, $value, $expire) use (&$records) {
-        $records[] = [$key, $value, $expire];
-    },
+// 直接为提供默认实现
+$ret = SystemWrapper::system_wrapper_replace([
+   'header'  => function ($out, $r=true, $c=0) { /* spy */ },
 ]);
 ```
 
-### 获取当前处理器提供者
+### 简化 wrapper 升级到全整组供给者：
 
 ```php
-use DuckPhp\Core\SystemWrapper;
-
-$providers = SystemWrapper::_()->_system_wrapper_get_providers();
-// 返回所有系统函数对应的处理器，未替换的默认指向当前类的方法
+$providers = SystemWrapper::system_wrapper_get_providers();   //返回 函数=> impl(默认即 [this,'x'])
 ```
-
-### 使用 `__SYSTEM_WRAPPER_REPLACER`
-
-```php
-// 定义替换类，所有系统函数调用都会转发到该类的同名方法
-if (!defined('__SYSTEM_WRAPPER_REPLACER')) {
-    define('__SYSTEM_WRAPPER_REPLACER', \MyApp\Test\SystemMock::class);
-}
-```
-
-## 支持的系统函数
-
-| 函数 | 说明 |
-|---|---|
-| `header` | 发送 HTTP 头。 |
-| `setcookie` | 设置 Cookie。 |
-| `exit` | 终止程序。若定义了 `__EXIT_EXCEPTION`，会抛出对应异常。 |
-| `set_exception_handler` | 设置异常处理函数。 |
-| `register_shutdown_function` | 注册关闭时回调。 |
-| `session_start` | 启动 Session。 |
-| `session_id` | 获取或设置 Session ID。 |
-| `session_destroy` | 销毁 Session。 |
-| `session_set_save_handler` | 设置自定义 Session 存储处理器。 |
-| `mime_content_type` | 根据文件扩展名获取 MIME 类型。 |
 
 ## 配置示例
 
+利用 `__SYSTEM_WRAPPER_REPLACER`：
+
 ```php
-class App extends \DuckPhp\DuckPhp
-{
-    public function onInit()
-    {
-        SystemWrapper::_()->_system_wrapper_replace([
-            'header' => function ($output) {
-                // 自定义 header 处理
-            },
-        ]);
-    }
-}
+// 启动时定义：
+define('__SYSTEM_WRAPPER_REPLACER', MyReplacer::class);
+// 之后 SystemWrapper::* 若 myreplacer 有同名 method 就会被调
 ```
+（多数环境用自动默认 handler 就够了。）
 
 ## 注意事项
 
-1. 所有方法调用都会先检查是否被替换，如果没有被替换则调用原生的 PHP 系统函数。
-2. 当定义了 `__SYSTEM_WRAPPER_REPLACER` 常量时，所有调用会转发到该类的同名方法，优先级高于 `system_handlers`。
-3. `exit` 在定义了 `__EXIT_EXCEPTION` 时会抛出该异常，否则调用原生 `exit()`。
-4. `mime_content_type()` 使用内置的 MIME 类型映射表，不依赖 `fileinfo` 扩展。
+1. CLI/已 headers 的 SAPI：`_header` 在 cli 或 headers_sent 时静默 return，不炸。
+2. `_exit`：定义了以 `__SYSTEM_WRAPPER..` 且 exit_class 为 \Throwable → throw `new __EXIT_EXCEPTION`（而不是 process-exit）；否则真 exit。
+3. `_setcookie` 要求字符串参数等，有 domain/secure/flags。
+4. 每方法都先走 check/call (look at REPLACER/handler/delay) —— 看到可替换性设计，并非总是断言命名规则，具体看源码 `system_wrapper_call*`。
+5. 受保护 `getMimeData()` 内含内置常用 mime types 表（扩展名→mime），供无 `mime_content_type` 的环境。
 
 ## 方法列表
 
-### 公共方法
+> 每组函数封装都有 public static（shell）与 public 实例方法 `_xxx`，语义一致；二者均支持 handlers/REPLACER override。
+
+### 静态与实例外壳（成对）
+
+    header($output, bool $replace = true, int $http_response_code = 0)  // & _header
+发送原始 HTTP 头(work in web & obey replace/status)；默认环境可写 header，若有 sub-overrider优先。
+
+    setcookie(string $key,string $value='',int $expire=0,string $path='/',string $domain='',bool $secure=false,bool $httponly=false)  // _setcookie
+原生 setcookie 封装（含一定签名一致）。
+
+    exit($code=0)  // _exit
+见注意事项 2（__EXIT_EXCEPTION 抛异常代替 exit）。
+
+    set_exception_handler(callable $handler)  // _set_exception_handler
+设全局异常handler（仍可替换捕获）。
+
+    register_shutdown_function(callable $cb, ...$args)  // _register_shutdown_function
+注册 shutdown。
+
+    session_start(array $options = [])  // _session_start
+带默认 handlers，@抑制。
+
+    session_id($session_id = null)  // _session_id
+取或设 id。
+
+    session_destroy()  // _session_destroy
+
+    session_set_save_handler(\SessionHandlerInterface $h)  // _session_set_save_handler
+
+    mime_content_type($file)  // `_mime_content_type
+内置表，无 mime 函数时给出扩展名→type；带 sub-replacer 优先。
+
+### 替换 / 供给
 
     public static function system_wrapper_replace(array $funcs)
-静态入口：替换一个或多个系统函数处理器
+按名覆盖 this handlers → 返回 true。
 
-    public static function system_wrapper_get_providers(): array
-静态入口：返回所有系统函数当前的处理器提供者
+    public function _system_wrapper_replace(array $funcs)（同）
 
-    public function _system_wrapper_replace(array $funcs)
-替换系统函数处理器
+    public static function system_wrapper_get_providers():array
+取值：缺省按 [$class,$name] 提供 callable 的对像；返回 全数组替换方案。
 
-    public function _system_wrapper_get_providers()
-获取所有系统函数处理器，未替换的默认指向当前类方法
-
-    public static function header($output, bool $replace = true, int $http_response_code = 0)
-调用 `header` 函数
-
-    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-调用 `setcookie` 函数
-
-    public static function exit($code = 0)
-调用 `exit` 函数
-
-    public static function set_exception_handler(callable $exception_handler)
-调用 `set_exception_handler` 函数
-
-    public static function register_shutdown_function(callable $callback, ...$args)
-调用 `register_shutdown_function` 函数
-
-    public static function session_start(array $options = [])
-调用 `session_start` 函数
-
-    public static function session_id($session_id = null)
-调用 `session_id` 函数
-
-    public static function session_destroy()
-调用 `session_destroy` 函数
-
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
-调用 `session_set_save_handler` 函数
-
-    public static function mime_content_type($file)
-调用 `mime_content_type` 函数
-
-    public function _header($output, bool $replace = true, int $http_response_code = 0)
-`header` 包装实现，CLI 环境下不执行
-
-    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-`setcookie` 包装实现
-
-    public function _exit($code = 0)
-`exit` 包装实现
-
-    public function _set_exception_handler(callable $exception_handler)
-`set_exception_handler` 包装实现
-
-    public function _register_shutdown_function(callable $callback, ...$args)
-`register_shutdown_function` 包装实现
-
-    public function _session_start(array $options = [])
-`session_start` 包装实现
-
-    public function _session_id($session_id = null)
-`session_id` 包装实现
-
-    public function _session_destroy()
-`session_destroy` 包装实现
-
-    public function _session_set_save_handler(\SessionHandlerInterface $handler)
-`session_set_save_handler` 包装实现
-
-    public function _mime_content_type($file)
-根据扩展名返回 MIME 类型
+    public function _system_wrapper_get_providers()（同）
 
 ### 受保护方法
 
     protected function system_wrapper_call_check(string $func): bool
-检查指定函数是否被替换或存在
+是否要为某系统函数走 override（__SYSTEM_WRAPPER_REPLACER 可调或 handler 设过）。
 
     protected function system_wrapper_call(string $func, array $input_args)
-执行替换后的处理器或原生系统函数
+若 REPLACER 调用之；否则 handler；否则直接(原 PHP)call，缺函数抛 ErrorException。
 
     protected function getMimeData(): string
-返回内置的 MIME 类型映射数据
+内置 mime 类型表（heredoc），供 _mime_content_type fallback。
 
 ## 相关链接
 
-- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
-- [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
-- [DuckPhp\Core\ExitException](Core-ExitException.md)
+- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) —— header/cake 由 cookie 发
+- [DuckPhp\Core\App](Core-App.md) —— error handler / exit exception使用
+- [DuckPhp\Core\ExitException](Core-ExitException.md) —— `__EXIT_EXCEPTION`语义（exit 转异常）
+- guide：testing —— 测试隔离 header/session

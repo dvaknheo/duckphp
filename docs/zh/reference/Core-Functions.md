@@ -6,7 +6,33 @@
 
 `src/Core/Functions.php` 定义了一组以双下划线 `__` 开头的全局函数。这些函数是 `DuckPhp\Core\CoreHelper` 的快捷映射，便于在视图模板和控制器中直接调用。
 
-> 注意：这些全局函数需要 `DuckPhp\Core\KernelTrait` 加载后才可以使用，框架默认会自动引入。
+> 注意：本文件由框架入口通过 `require_once __DIR__ . '/Functions.php'` 引入（见 `App`/`DuckPhp` 同文件顶部），无需在业务里手动 require。由于各函数用 `if ( ! function_exists(...) )` 包裹，重复引入是安全的。
+
+## 源码函数全集与签名
+
+本页函数均来自 `src/Core/Functions.php`，全集与签名如下（含映射目标）：
+
+| 函数 | 签名(源码) | 对应 |
+|---|---|---|
+| `__h` | `($str)` | `CoreHelper::H` |
+| `__l` | `($str, $args = [], $fallback = null)` | `CoreHelper::L` |
+| `__langtext` | `($desc, $args = [])` | `CoreHelper::LangText` |
+| `__hl` | `($str, $args = [])` | `CoreHelper::Hl` |
+| `__json` | `($data, int $options = 0)` | `CoreHelper::Json` |
+| `__url` | `($url)` | `CoreHelper::Url` |
+| `__domain` | `($use_scheme = false)` | `CoreHelper::Domain` |
+| `__res` | `($url)` | `CoreHelper::Res` |
+| `__display` | `(...$args)` | `CoreHelper::Display` |
+| `__var_dump` | `(...$args)` | `CoreHelper::var_dump` |
+| `__var_log` | `($var)` | `CoreHelper::VarLog` |
+| `__trace_dump` | `()` | `CoreHelper::TraceDump` |
+| `__debug_log` | `($str, $args = [])` | `CoreHelper::DebugLog`(转发时展开 `...$args`) |
+| `__logger` | `()` | `CoreHelper::Logger` |
+| `__is_debug` | `()` | `CoreHelper::IsDebug` |
+| `__is_real_debug` | `()` | `CoreHelper::IsRealDebug` |
+| `__platform` | `()` | `CoreHelper::Platform` |
+
+（分组讲解见下。）
 
 ## 函数分组
 
@@ -21,13 +47,22 @@ $name = '<script>alert(1)</script>';
 echo __h($name);  // 输出 &lt;script&gt;alert(1)&lt;/script&gt;
 ```
 
-#### `__l($str, $args = [])`
+#### `__l($str, $args = [], $fallback = null)`
 
-多语言翻译。对应 `CoreHelper::L()`。
+多语言翻译。对应 `CoreHelper::L()`。第三参 `$fallback` 为找不到翻译时的回退文本。
 
 ```php
-echo __l('hello');                       // 你好
-echo __l('welcome, {name}', ['name' => 'Duck']);  // 你好, Duck
+echo __l('hello');                              // 你好
+echo __l('welcome, {name}', ['name' => 'Duck']); // …
+echo __l('missing_key', ['a'=>1], '兜底文本');
+```
+
+#### `__langtext($desc, $args = [])`
+
+把文本中的 `[[lang_key|fallback]]` 片段翻译。对应 `CoreHelper::LangText()`。适合渲染较大跨度并含占位键的文案。
+
+```php
+echo __langtext('通知：[[notice.success|操作成功]] #{id}', ['id' => 7]);
 ```
 
 #### `__hl($str, $args = [])`
@@ -157,33 +192,15 @@ $platform = __platform();  // 'prod-server-01'
 __logger()->info('user login: {id}', ['id' => $userId]);
 ```
 
-## 全部函数索引
-
-```php
-function __h($str);
-function __l($str, $args = []);
-function __hl($str, $args = []);
-function __json($data, int $options = 0);
-function __url($url);
-function __domain($use_scheme = false);
-function __res($url);
-function __display(...$args);
-function __var_dump(...$args);
-function __var_log($var);
-function __trace_dump();
-function __debug_log($str, $args = []);
-function __logger();
-function __is_debug();
-function __is_real_debug();
-function __platform();
-```
+> 全部函数的完整签名请见上文「源码函数全集与签名」表。
 
 ## 注意事项
 
 1. 全局函数以双下划线开头，避免与项目其他函数冲突。
-2. 所有函数都直接映射到 `CoreHelper` 的同名静态方法。
+2. 每个函数都把调用转交给 `DuckPhp\Core\CoreHelper` 对应的静态方法（映射对照见上文“源码函数全集与签名”表）。
 3. 调试函数（`__var_dump`、`__trace_dump`、`__debug_log`、`__var_log`）在调试模式下才会生效，避免泄露信息到生产环境。
-4. 这些函数在 `KernelTrait` 加载 `Functions.php` 后可用，不需要手动引入。
+4. 这些函数由框架入口(App / DuckPhp) `require_once src/Core/Functions.php` 自动引入，业务无需手动引用；`if ( ! function_exists())` 包裹使它重复引入也安全。
+
 
 ## 相关链接
 

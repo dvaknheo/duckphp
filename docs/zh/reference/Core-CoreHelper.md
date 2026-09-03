@@ -1,246 +1,217 @@
 # DuckPhp\Core\CoreHelper
 
-核心辅助组件。
+供全局函数/视图模板直接使用的“Helper 集合”：常见 HTML/JSON/语言/URL 输出等一站式便捷包装。
 
 ## 简介
 
-`CoreHelper` 提供了一组全局可用的辅助方法，对应框架中的全局函数（`src/Core/Functions.php`）。它封装了 HTML 转义、多语言、URL 生成、视图渲染、调试输出、异常抛出、相位调用等常用操作。
+`CoreHelper` 是框架把“常用小功能”收纳为一组**静态便捷方法**的门面：`__h`、`__l`、`Clone…` 型全局函数（见 `Core-Functions`）多数最终走它；业务里也常直接 `CoreHelper::H()`、`::Json()` 等。
 
-该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+- 输出与转码：`H`（HTML 转义）、`Hl`（先翻译再转义）；
+- 语言：`L`、`LangText`；
+- JSON：`Json`（默认带 `JSON_UNESCAPED_UNICODE|JSON_NUMERIC_CHECK`，debug 再加美化）；
+- URL/Domain/Res（转发给 `Route`）；
+- 视图：`Display`（转发 `View`）；
+- 调试：`var_dump/VarLog/TraceDump/DebugLog`（仅 debug 生效，转发 Logger）；
+- 环境/Request：`IsDebug/IsRealDebug/Platform/IsAjax`；
+- 业务友好：`ShowJson/Show302/XpCall/PhaseCall/BusinessThrowOn/ControllerThrowOn`。
+
+大部分能设置为静态壳转发到**对应实例方法** `_Xxx`；改动可只用（覆盖）实例或其关的处理器（html_handler、lang_handler）。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class CoreHelper extends ComponentBase`
+- 常被 `App` 用 `EXT_SKIP_INIT` 预建（见 Core-App 的 initComponentsOfRoot）。
 
 ## 选项
 
-`CoreHelper` 本身没有独立的选项，但会读取当前应用 `App` 的选项，例如 `html_handler`、`exception_for_business`、`exception_for_controller` 等。
+本类本身无自行 options（其行为依托 App 的这些设置）：
+
+| 影响者 | 说明 |
+|---|---|
+| `html_handler` | 传入则 `_H` 使用它而不是默认 `htmlspecialchars`。 |
+| `lang_handler` | 见 `App::lang`——`L/Hl/LangText` 经由它。 |
+| `exception_for_business/controller/project` | `Business/ControllerThrowOn` 未指定时使用。 |
+| debug(`App::_IsDebug()`) | 决定 Debug 输出族、IsDebug、Json 美化等。 |
 
 ## 使用方式
 
-### 全局函数
-
-```php
-__h('<script>');              // HTML 转义
-__l('hello');                  // 多语言翻译
-__hl('hello');                 // 翻译 + HTML 转义
-__json(['a' => 1]);            // JSON 编码
-__url('user/profile');         // 生成 URL
-__domain();                    // 当前域名
-__res('css/style.css');        // 生成资源 URL
-
-__display('view_name', $data); // 渲染视图片段
-__var_dump($var);              // 调试输出（仅调试模式）
-__var_log($var);               // 调试日志（仅调试模式）
-__trace_dump();                // 输出调用栈（仅调试模式）
-__debug_log('message');        // 调试日志（仅调试模式）
-__logger();                    // 获取 Logger 实例
-__is_debug();                  // 是否调试模式
-__platform();                  // 平台标识
-```
-
-### 通过 CoreHelper 组件
-
 ```php
 use DuckPhp\Core\CoreHelper;
 
-$html = CoreHelper::H($str);
-$text = CoreHelper::L('hello', ['name' => 'Duck']);
-$url = CoreHelper::Url('user/profile');
-CoreHelper::ShowJson(['code' => 0, 'data' => $data]);
-CoreHelper::Show302('/home');
+echo CoreHelper::H($username);            // HTML 转义
+echo CoreHelper::L('hello');              // 翻译
+echo CoreHelper::Json(['ok'=>1]);         // json 串（unicode/数值不转义+美化选择）
+echo CoreHelper::Url('user/show');
+CoreHelper::ShowJson(['ok'=>true]);       // 头 json + echo
+CoreHelper::IsDebug();
 ```
 
-### 条件抛出异常
+对应的全局函数（Functions 层）见 [Core-Functions](Core-Functions.md)。
+
+### Business/Controller 抛出
 
 ```php
-use DuckPhp\Core\CoreHelper;
-
-CoreHelper::BusinessThrowOn($user === null, '用户不存在', 404);
-CoreHelper::ControllerThrowOn(!Helper::UserId(), '未登录', 401);
+CoreHelper::BusinessThrowOn($userId === null, 'no user');
+CoreHelper::ControllerThrowOn($tokenNotOk, 'bad token', 400);
 ```
 
-### 跨相位调用
+## 配置示例
 
 ```php
-use DuckPhp\Core\CoreHelper;
-
-$ret = CoreHelper::PhaseCall(\OtherApp\System\OtherApp::class, function () {
-    return OtherService::_()->doSomething();
-});
+// 改变 HTML 处理或接管语言（app options）
+$options['html_handler'] = function ($s) { return htmlspecialchars($s, ENT_QUOTES); };
+$options['lang_handler'] = function ($s, $a) { return my_t($s, $a); };
 ```
 
-## 全局函数列表
+## 注意事项
 
-| 函数 | 对应方法 | 说明 |
-|---|---|---|
-| `__h($str)` | `H()` | HTML 转义 |
-| `__l($str, $args = [])` | `L()` | 多语言翻译 |
-| `__hl($str, $args = [])` | `Hl()` | 翻译后 HTML 转义 |
-| `__json($data, $options = 0)` | `Json()` | JSON 编码 |
-| `__url($url)` | `Url()` | 生成 URL |
-| `__domain($use_scheme = false)` | `Domain()` | 获取当前域名 |
-| `__res($url)` | `Res()` | 生成资源 URL |
-| `__display(...)` | `Display()` | 渲染视图片段 |
-| `__var_dump(...)` | `var_dump()` | 调试输出 |
-| `__var_log($var)` | `VarLog()` | 调试日志 |
-| `__trace_dump()` | `TraceDump()` | 输出调用栈 |
-| `__debug_log($str, $args = [])` | `DebugLog()` | 调试日志 |
-| `__logger()` | `Logger()` | 获取 Logger 实例 |
-| `__is_debug()` | `IsDebug()` | 是否调试模式 |
-| `__is_real_debug()` | `IsRealDebug()` | 是否真实调试模式 |
-| `__platform()` | `Platform()` | 平台标识 |
+1. HTML 转义 `H` 为默认行为；有 html_handler 就用你给的。
+2. Debug 工具（var_dump/VarLog/TraceDump/DebugLog/ShowJson 中 Json 美化）在非 debug 静默/不加美化，避免生产信息外泄（同时需要开发调试请打开 debug）。
 
 ## 方法列表
 
-### 公共方法
+> 下述静态壳大多转手同名 `_Xxx` 实例层方法；业务用 Shell 即可。
+
+### 公共静态方法
 
     public static function H($str)
-HTML 转义。支持字符串和数组递归转义
+返回 HTML 实体转义后的 $str（数组则递归 H）；有 html_handler 优先用 handler。
 
-    public static function L($str, $args = [])
-多语言翻译，委托给 `App::lang()`
+    public static function L($str, $args = [], $fallback = null)
+翻译：委托 `App->_lang`（如果配置 lang_handler 则走 it）。
 
     public static function Hl($str, $args = [])
-先翻译再 HTML 转义
+先 L 后 H 的组合转义壳。
+
+    public static function LangText($desc, $args = [])
+经 Lang 解析 `[[key|fallback]]` 段；委托 App::langText()。
 
     public static function Json($data, $flags = 0)
-JSON 编码，自动开启 `JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK`，调试模式下美化
+给 json 编码，附加 UNESCAPED_UNICODE|NUMERIC_CHECK；debug 加 JSON_PRETTY_PRINT。
 
     public static function Url($url = null)
-生成 URL
-
-    public static function Domain($use_scheme = false)
-获取当前域名
+返回`Route`生成的 站内 URL（委托 `Route::_()->_Url`）。
 
     public static function Res($url = null)
-生成资源 URL
+静态资源 URL（委托 `Route::_()->_Res`）。
+
+    public static function Domain($use_scheme = false)
+当前域名（委托 `Route::_()->_Domain`）。
 
     public static function Display($view, $data = null)
-渲染视图片段
+直接输出某视图（委托 `View::_()->_Display`）。
 
     public static function var_dump(...$args)
-调试模式下输出 `var_dump`
+debug 时回显 `<pre>var_dump</pre>`。
 
     public static function VarLog($var)
-调试模式下记录变量日志
+debug 时把 `var_export` 记日志（Logger）。
 
     public static function TraceDump()
-调试模式下输出调用栈
+debug 时回显当前 exception 的 trace。
 
-    public static function DebugLog($message, array $context = [])
-调试模式下记录日志
+    public static function DebugLog($message, array $context = array())
+debug 时把 message+context 记（Logger::debug）。
 
     public static function Logger($object = null)
-获取或设置 Logger 实例
+返回（或用 $object 注入）日志器 — 直通 `Logger::_()`。
 
     public static function IsDebug()
-是否调试模式
+是否 debug（App::_IsDebug）。
 
     public static function IsRealDebug()
-是否真实调试模式
+真实 debug 判定。
 
     public static function Platform()
-获取平台标识
+平台标识（App::_Platform）。
 
     public static function IsAjax()
-判断是否为 AJAX 请求
+检测 X-Requested-With: XMLHttpRequest。
 
     public static function ShowJson($ret, $flags = 0)
-输出 JSON 响应并设置响应头
+设 JSON 响应头后 echo Json($ret)；通常作为(面向 Ajax/API)输出。
 
     public static function Show302($url)
-302 跳转，不跳转到外部域名
-
-    public static function Show404()
-触发 404 处理
+同站跳转：写 `Location`，跨域 url 直接忽略（PHP_URL_HOST）。
 
     public static function XpCall($callback, ...$args)
-捕获异常的回调执行，返回结果或异常对象
+“限制异常”调用：抛 `Exception` 则返回 ex，否则返回结果。
 
     public static function PhaseCall($phase, $callback, ...$args)
-在指定相位下执行回调，完成后恢复原始相位
+在给定 Phase 下执行并对后返回，随后切回原 Phase。
 
     public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-条件为真时抛出业务异常
+若 $flag 真则丢 business 异常（或 exception_class）。
 
     public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-条件为真时抛出控制器异常
+同上但对 controller 层；取 exception_for_controller→project→Exception。
 
-    public static function PathOfProject()
-获取项目根路径
+    public static function Show404()
+转为“调 App::On404()”（根挂的 404 兜底）。
 
-    public static function PathOfRuntime()
-获取运行时路径
-
-### 实例方法
+### 实例方法（_X 对应）
 
     public function _H(&$str)
-HTML 转义内部实现
+HTML 转义/数组递归实现。
 
-    public function _L($str, $args = [])
-翻译内部实现
+    public function _L($str, $args = [], $fallback = null)
+翻译实际入口（App::lang）。
 
     public function _Hl($str, $args)
-翻译后转义内部实现
+`_L(...)` 后 `_H(...)`。
+
+    public function _LangText($desc, $args = [])
+App::langText 转发。
 
     public function _Json($data, $flags = 0)
-JSON 编码内部实现
+json_encode with flags 逻辑。
 
     public function _VarLog($var)
-调试日志内部实现
+debug gate 下把 var_export($var,true) 交 Logger::debug。
 
     public function _var_dump(...$args)
-调试输出内部实现
+debug gate 下回显 `<pre>var_dump</pre>`。
 
     public function _TraceDump()
-调用栈输出内部实现
+debug gate 下重建空异常 trace 输出 `<pre>`。
 
     public function _DebugLog($message, array $context = array())
-调试日志内部实现
+debug gate 下 logger debug（$context）。非 debug 返回 false。
 
     public function _IsDebug()
-调试模式判断内部实现
+转 App::_IsDebug。
 
     public function _IsRealDebug()
-真实调试模式判断内部实现
+转 App::_IsRealDebug。
 
     public function _Platform()
-平台标识内部实现
+转 App::_Platform。
 
     public function _IsAjax()
-AJAX 判断内部实现
+取 `HTTP_X_REQUESTED_WITH`。
 
     public function _ShowJson($ret, $flags = 0)
-JSON 响应内部实现
+header json + echo。
 
     public function _Show302($url)
-302 跳转内部实现
+仅同站跳转。
 
     public function _XpCall($callback, ...$args)
-捕获异常回调执行内部实现
+捕获 Exception 返回异常或结果实现。
 
     public function _PhaseCall($phase, $callback, ...$args)
-跨相位调用内部实现
+phase 切换回调后可逆实现。
 
-    public function _BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-业务异常抛出内部实现
+    public function _BusinessThrowOn(bool $flag, string $msg, int $code = 0, $exception_class = null)
+impls;business 异常路径。
 
-    public function _ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-控制器异常抛出内部实现
-
-    public function _PathOfProject()
-项目路径内部实现
-
-    public function _PathOfRuntime()
-运行时路径内部实现
-
-    public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase = true)
-递归遍历所有子应用
-
-    public function regCommandClass(string $class, string $default_method = 'command_')
-注册命令行命令类
+    public function _ControllerThrowOn(bool $flag, string $msg, int $code = 0, $exception_class = null)
+controller 抛路径。
 
 ## 相关链接
 
-- [DuckPhp\Core\Functions](Core-Functions.md)
-- [DuckPhp\Core\App](Core-App.md)
-- [DuckPhp\Core\Logger](Core-Logger.md)
-- [DuckPhp\Core\Route](Core-Route.md)
-- [DuckPhp\Core\View](Core-View.md)
+- [DuckPhp\Core\Functions](Core-Functions.md) — 由 __xxx() 全局函数对应
+- [DuckPhp\Core\App](Core-App.md) 提供 html/lang_handler/debug 环境
+- [DuckPhp\Core\Logger](Core-Logger.md)、[DuckPhp\Core\View](Core-View.md)、[DuckPhp\Core\Route](Core-Route.md) 被转发目标
+- guide：[helper](../guide/helper.md)

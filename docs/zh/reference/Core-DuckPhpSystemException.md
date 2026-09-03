@@ -1,62 +1,45 @@
 # DuckPhp\Core\DuckPhpSystemException
 
-框架系统异常基类。
-
 ## 简介
 
-`DuckPhpSystemException` 是 DuckPHP 框架内部异常体系的根类，继承自 PHP 内置 `Exception`，并使用 `ThrowOnTrait` 提供 `ThrowOn()` 辅助方法。所有 DuckPHP 系统级别的异常（如 `ExitException`）都继承自此类。
+系统抛出的、携带 ThrowOn 能力的通用异常基类。
 
-## 选项
+`DuckPhpSystemException extends Exception`（PHP 标准异常），并用 `ThrowOnTrait` 提供静态遍历“满足则抛”的入口。框架内部在各处用它的子类直接抛异常来描述问题（如“Phase 重名”“不可 init 基类”等），同时业务可将自己的异常类继承它，或用其 Trait 获得 `ThrowOn` 一次性守卫式抛法。
 
-无。本类不直接定义配置选项。
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class DuckPhpSystemException extends Exception`
+- 使用 Trait：`DuckPhp\Core\ThrowOnTrait`
 
 ## 使用方式
 
-### 抛出系统异常
-
 ```php
 use DuckPhp\Core\DuckPhpSystemException;
 
-throw new DuckPhpSystemException('系统错误', 500);
+// 守卫式：不满足即抛
+DuckPhpSystemException::ThrowOn($user == null, 'not logged in');
 ```
 
-### 条件抛出
+自定义更专业异常时直接子类化：
 
 ```php
-DuckPhpSystemException::ThrowOn($error, '发生错误', 500);
-```
-
-### 自定义子类
-
-```php
-namespace MyApp\Exception;
-
-use DuckPhp\Core\DuckPhpSystemException;
-
-class MySystemException extends DuckPhpSystemException
+class MyBizException extends DuckPhpSystemException
 {
-    // 可在此添加自定义业务逻辑
 }
 ```
 
-## 配置示例
-
-无。
-
-## 注意事项
-
-1. 这是框架级异常基类，业务代码通常应继承它创建自己的异常体系。
-2. `ThrowOn()` 在条件成立时抛出 `new static(...)`，因此自定义子类抛出的实例类型为子类自身。
-3. 该异常类不会自动处理 HTTP 响应码或错误页面，需要结合框架的错误处理机制使用。
+### 作为“exit 换成异常”的基类
+`DuckPhp\Core\ExitException extends DuckPhpSystemException`，供 `__EXIT_EXCEPTION` 语义（通过抛 ExitException 实现中断而不是真正的 exit）。可见 `use_exit_exception` 描述于 `Core-KernelTrait`。
 
 ## 方法列表
 
-### 公共方法
+本类**自身没有显式声明任何方法**，可用能力来自以下来源：
 
-    public static function ThrowOn($flag, $message, $code = 0)
-来自 `ThrowOnTrait`，当 `$flag` 为真时抛出 `new static($message, $code)` 异常
+- 静态抛出工具 `ThrowOn(...)`：来自 `use DuckPhp\Core\ThrowOnTrait` —— 首位参数为真时 `throw new static($message,$code)`；详见 [Core-ThrowOnTrait](Core-ThrowOnTrait.md)。
+- 标准异常能力：来自 PHP 内置 `Exception`（`getMessage()`、`getCode()`、`getPrevious()`、`getLine()`、`getFile()`、`getTrace()`、`__toString()` 等），全部可用。
 
 ## 相关链接
 
-- [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md)
-- [DuckPhp\Core\ExitException](Core-ExitException.md)
+- [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md) — 静态抛异常来源 Trait
+- [DuckPhp\Core\ExitException](Core-ExitException.md) — 它的独特子类（exit 语义）

@@ -1,22 +1,30 @@
 # DuckPhp\Core\ComponentBase
 
-核心组件基类。
-
 ## 简介
 
-`ComponentBase` 是 DuckPHP 中绝大多数核心组件的基类。它通过 `SingletonTrait` 提供可变单例访问模式，并实现了 `ComponentInterface` 所约定的基本契约：通过 `init()` 合并选项、传入上下文、完成初始化，以及通过 `isInited()` 检查初始化状态。
+`ComponentBase` 是 DuckPHP 框架中绝大多数组件的基类。框架的核心类（`Route`、`View`、`Console`、`Logger`、`SuperGlobal`、`SystemWrapper` 等）以及各 `Component\*`、`Ext\*` 组件均直接或间接继承它。
 
-虽然源码中未显式声明 `implements ComponentInterface`，但 `ComponentBase` 已经实现了该接口的全部方法约定。子类通常只需覆盖 `initOptions()` 和 `initContext()` 即可完成自定义初始化。
+它把「组件」的通用行为收敛到一处：通过 `use SingletonExTrait` 获得 `类名::_()` 单例式访问入口；通过 `init()` 的模板流程统一完成选项合并、上下文注入与初始化；通过 `isInited()` 暴露初始化状态。子类通常只覆盖 `initOptions()` / `initContext()` 两个空钩子即可完成自定义初始化，无需关心基类流程。
 
-## 选项
+> 源码中 `class ComponentBase // implements ComponentInterface` 一句以注释形式说明它实现了 `ComponentInterface` 的契约（并未用关键字 `implements` 声明）。
 
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `init_once` | `false` | 是否只允许初始化一次。为 `true` 时，重复调用 `init()` 会直接返回当前实例，除非传入 `force_new_init` 强制重新初始化。 |
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`class ComponentBase`
+- 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
+
+## 选项机制
+
+`ComponentBase` 自身只声明一个空的 `public $options = []`，**不定义任何具体选项键**。具体选项由子类在自己的 `public $options` 中声明。基类提供的选项机制如下：
+
+- `init()` 合并选项时使用 `array_intersect_key(array_replace_recursive($this->options, $options), $this->options)`：只保留**子类已声明过**的键，传入的未知选项会被白名单过滤掉（这也是框架“选项名可控、不随意扩展”的根基）。
+- `init_once`（受保护属性，默认 `false`）：为 `true` 时，`init()` 在已初始化过的情况下直接返回当前实例，除非传入的选项中带 `__force__ => true`。
+- `reInit()` 内部只是把 `__force__` 置真后重走 `init()`，用于强制重新初始化。
 
 ## 使用方式
 
-### 作为组件基类
+### 自定义一个组件
 
 ```php
 namespace My\Component;
@@ -29,115 +37,92 @@ class MyComponent extends ComponentBase
         'my_option' => 'default',
     ];
 
-    protected function initOptions(array $options):void
+    protected function initOptions(array $options): void
     {
-        // 处理自定义选项
+        // 这里可读取合并后的 $this->options 做加工
     }
 
-    protected function initContext(object $context):void
+    protected function initContext(object $context): void
     {
-        // 处理上下文，例如保存当前 App 实例
+        // $context 通常是所属 App 实例；需要时可保存
     }
 }
 
+// 取实例并初始化（$app 一般传 App::_()）
 $component = MyComponent::_()->init(['my_option' => 'value'], $app);
-```
-
-### 获取组件实例
-
-```php
-use DuckPhp\Core\ComponentBase;
-
-$component = ComponentBase::_();
-$component->init($options);
-
 if ($component->isInited()) {
-    // 组件已初始化
-}
-```
-
-### 重新初始化
-
-```php
-// 强制重新初始化，忽略 init_once 限制
-$component->reInit($options);
-```
-
-## 配置示例
-
-### 基础组件配置
-
-```php
-class MyComponent extends ComponentBase
-{
-    public $options = [
-        'init_once' => true,
-        'my_option' => 'default',
-    ];
+    // 已初始化完成
 }
 ```
 
 ### 强制重新初始化
 
 ```php
-MyComponent::_()->reInit([
-    'my_option' => 'new_value',
-]);
+$component->reInit(['my_option' => 'other']);
+```
+
+### 访问所属 App
+
+```php
+$app = $component->context(); // 内部等价 App::_()
+```
+
+## 配置示例
+
+`ComponentBase` 没有具体选项；需要配置时由子类声明 `public $options` 并传入对应键，例如：
+
+```php
+$component = MyComponent::_()->init([
+    'my_option' => 'value',
+    // 未在 $options 中声明的键会被过滤掉
+], App::_());
 ```
 
 ## 注意事项
 
-1. `init()` 会自动用传入的选项合并并过滤当前 `$options` 中已存在的键。
-2. `initOptions()` 和 `initContext()` 是可重写方法，用于子类扩展。
-3. `context()` 默认返回 `App::Current()`，即当前 Phase 下的应用实例。
-4. `extendFullFile()` 辅助方法用于在组件中解析可覆盖文件路径。
-
-## 全部选项
-
-```php
-public $options = [
-    'init_once' => false,
-];
-```
+- `init()` 的返回值为当前实例，可链式调用；接口/调用方常以 `ClassName::_()->init($options, $context)` 形式使用。
+- `isInited()` 在 `init_once` 场景外并不阻止重复 `init()`；需要幂等初始化请自行把子类 `init_once` 属性设为 `true`。
+- 传入的 `$context` 为 `null` 时跳过 `initContext()`（`App` 等自身作为上下文时会传入实例）。
+- `IsAbsPath()` / `SlashDir()` 为受保护静态工具，供子类在拼接/判断路径时使用；`extendFullFile()` 在存在上下文时会把路径查找委托给 `App::getOverrideableFile()`（即“可覆盖文件”机制）。
 
 ## 方法列表
 
 ### 公共方法
 
     public function __construct()
-构造函数，子类可以覆盖以执行额外的构造逻辑
+空构造器，便于子类不写构造函数也能被 `_()` 直接 `new`。
 
     public function context()
-返回当前应用上下文，默认等价于 `App::Current()`
+返回当前所属 App 实例，内部等价 `App::_()`。
 
-    public function init(array $options, ?object $context = null) //return $this
-初始化组件：合并选项、调用 `initOptions()` 和 `initContext()`，并标记初始化完成
+    public function init(array $options, ?object $context = null)
+组件初始化模板：选项白名单合并 → `initOptions()` → 传入上下文时 `initContext()` → 标记 `is_inited`；`init_once` 且已初始化且未带 `__force__` 时直接返回自身。
 
     public function reInit(array $options, ?object $context = null)
-强制重新初始化，通过设置 `force_new_init` 选项绕过 `init_once` 限制
+把 `__force__` 置为 `true` 后重走 `init()`，用于强制重新初始化。
 
     public function isInited(): bool
-返回组件是否已完成初始化
+返回是否已完成初始化。
 
     public function extendFullFile($path_main, $path_sub, $file, $use_override = true)
-解析文件完整路径，支持上下文覆盖和绝对路径判断
+把“主路径/子路径/文件名”组合成完整文件路径；存在上下文时委托给 `App::getOverrideableFile()` 以支持覆盖文件查找。
 
 ### 受保护方法
 
-    protected function initOptions(array $options):void
-【可重写】处理组件自定义选项，默认空实现
+    protected function initOptions(array $options): void
+子类覆盖点：处理并消费合并后的选项。基类为空实现。
 
-    protected function initContext(object $context):void
-【可重写】处理上下文对象，默认空实现
+    protected function initContext(object $context): void
+子类覆盖点：接收并处理上下文（通常是所属 App）。基类为空实现。
 
     protected static function IsAbsPath($path)
-判断路径是否为绝对路径
+判断路径是否为绝对路径（`/` 开头、盘符如 `C:\`、或 `\\` 开头）。
 
     protected static function SlashDir($path)
-将路径统一以目录分隔符结尾
+把路径尾部统一为目录分隔符结尾（非空时 `rtrim` 后补 `DIRECTORY_SEPARATOR`）。
 
 ## 相关链接
 
-- [DuckPhp\Core\ComponentInterface](Core-ComponentInterface.md)
-- [DuckPhp\Core\SingletonTrait](Core-SingletonExTrait.md)
-- [DuckPhp\Core\App](Core-App.md)
+- [DuckPhp\Core\ComponentInterface](Core-ComponentInterface.md) — 本类实现的组件接口
+- [DuckPhp\Core\App](Core-App.md) — `context()` 返回的所属应用实例
+- [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md) — `_()` 静态入口的来源 Trait

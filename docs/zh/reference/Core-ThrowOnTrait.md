@@ -1,61 +1,45 @@
 # DuckPhp\Core\ThrowOnTrait
 
-条件抛出异常 Trait。
-
 ## 简介
 
-`ThrowOnTrait` 提供一个简单的辅助方法 `ThrowOn()`，当传入的条件为真时抛出当前类的异常。该 Trait 通常被异常类自身使用，例如 `DuckPhpSystemException` 及其子类。
+`ThrowOnTrait` 提供静态条件抛出异常方法。用于简写“当某条件满足时抛一个当前类的实例”。
 
-## 选项
+- `ThrowOn($flag, $message, $code)`：当 `$flag` 为真时 `throw new static($message, $code)`；否则什么都不做。
 
-无。本 Trait 不直接定义配置选项。
+它常被异常类继承使用：把异常类本身当成“构造函数 + 抛出”均可的载体。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Core`
+- 声明：`trait ThrowOnTrait`
+- 典型宿主：`DuckPhp\Core\DuckPhpSystemException`。任何类都要能 `use` 后获得 `static::ThrowOn(...)`。
 
 ## 使用方式
 
-### 在自定义异常类中使用
-
 ```php
-namespace MyApp\Exception;
-
-use DuckPhp\Core\ThrowOnTrait;
-
-class BusinessException extends \Exception
+class MyException extends \DuckPhp\Core\DuckPhpSystemException
 {
-    use ThrowOnTrait;
 }
+
+// 简单：flag 成立则抛
+MyException::ThrowOn($ok === false, 'invalid token');
 ```
 
-### 条件抛出异常
-
-```php
-BusinessException::ThrowOn($user === null, '用户不存在', 404);
-```
-
-等价于：
-
-```php
-if ($user === null) {
-    throw new BusinessException('用户不存在', 404);
-}
-```
-
-## 配置示例
-
-无。
+若 `$flag` 为真抛异常；为假则静默返回。
 
 ## 注意事项
 
-1. `ThrowOn()` 在条件为真时抛出 `new static(...)`，因此 Trait 应被类（尤其是异常类）使用，而不是普通类。
-2. 抛出异常的代码行应包含清晰的消息与可选的业务错误码。
-3. 该 Trait 不会记录日志或做任何额外处理，仅做条件抛出的语法糖。
+- 抛出的实例类型为 `static::class`（当前用处的类）。
+- 它假设是用该 trait 的类是 `Exception`（或其子类），否则 `new static(...)` 不接 ($message,$code)。
+- 直接把条件判断简并一行，适合做“守卫”式校验。
 
 ## 方法列表
 
 ### 公共方法
 
     public static function ThrowOn($flag, $message, $code = 0)
-当 `$flag` 为真时抛出 `new static($message, $code)` 异常
+若 $flag 为真则 `throw new static($message, $code)`；否则直接返回（无副作用）。
 
 ## 相关链接
 
-- [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md)
+- [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md) — 宿主异常基类

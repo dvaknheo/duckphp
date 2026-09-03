@@ -1,38 +1,41 @@
 # DuckPhp\Ext\SqlDumperSupporterByPgsql
 
-`DuckPhp\Ext\SqlDumperSupporterByPgsql` 数据库结构导出组件。
-
 ## 简介
 
-`SqlDumperSupporterByPgsql` 是 `DuckPhp\Ext` 命名空间下的 类，由 DuckPhp 框架提供。
+`SqlDumperSupporterByPgsql` 是 `SqlDumperSupporter` 的 **PostgreSQL** 驱动实现：
 
-## 选项
+- `getAllTable()`：查 `pg_tables`（`schemaname='public'`）收集表名；
+- `getSchemeByTable()`：从 `information_schema.columns` 读取列定义、主键（`key_column_usage`）等信息，手工拼出 `CREATE TABLE "表名" (…)` 语句。
 
-无。
+源码标记为 `@codeCoverageIgnore`。注意默认 `SqlDumperSupporter::$options` 的驱动映射只含 `mysql`/`sqlite`，用 pgsql 时需要把本类加进 `database_driver_SqlDumperSupporter_map`。
+
+## 类信息
+
+- 命名空间：`DuckPhp\Ext`
+- 声明：`class SqlDumperSupporterByPgsql extends SqlDumperSupporter`
 
 ## 使用方式
 
-### 基本用法
-
 ```php
-use DuckPhp\Ext\SqlDumperSupporterByPgsql;
-
-$obj = SqlDumperSupporterByPgsql::_();
+\DuckPhp\Ext\SqlDumperSupporter::_()->init([
+    'database_driver_SqlDumperSupporter_map' => [
+        'pgsql' => \DuckPhp\Ext\SqlDumperSupporterByPgsql::class,
+        // mysql / sqlite 的映射保留或自行补充
+    ],
+], $app);
 ```
-
-## 注意事项
-
-1. 本类为框架内部或扩展组件，通常由框架自动加载。
-2. 如需自定义行为，可继承本类并覆盖相应方法。
 
 ## 方法列表
 
 ### 公共方法
 
-    function getAllTable(): array
+    public function getAllTable(): array
+查 `pg_tables` 返回 public schema 下全部表名。
 
-    function getSchemeByTable(string $table): string
+    public function getSchemeByTable(string $table): string
+基于 `information_schema` 生成 `CREATE TABLE` 语句（列类型/可空/默认值/主键）。
 
 ## 相关链接
 
-- [中文参考手册目录](index.md)
+- [DuckPhp\Ext\SqlDumperSupporter](Ext-SqlDumperSupporter.md) — 父类
+- [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) — 使用方

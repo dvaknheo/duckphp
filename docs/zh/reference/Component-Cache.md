@@ -1,129 +1,54 @@
 # DuckPhp\Component\Cache
 
-缓存组件（占位实现）。
+缓存组件抽象/默认空实现：声明一套 PSR-16-like（`Psr\SimpleCache\CacheInterface` 风格注释，非 implements）缓存操作接口的骨架；在不做真实替换时是“什么都不存”的空实现。
 
 ## 简介
 
-`Cache` 组件提供一个缓存接口的占位实现。默认情况下，它不会真正存储任何数据：
+`Cache extends ComponentBase` 为整条目录的缓存接口提供兜底。直接使用 `Cache::_()` 的行为是 **no-op**（get→default；set/delete/has→false；clear 无操作），目的是让代码既能面向一组稳定缓存 API，又不引入默认不可控存储。
 
-- `get()` 始终返回 `$default`
-- `set()` 始终返回 `false`
-- `has()` 始终返回 `false`
-- `delete()` 始终返回 `false`
-- `clear()` 不执行任何操作
+真正缓存能力由具体缓存包装（如 `Component\RedisCache`）或你项目实现的同类接口提供：把它们整体替换成 `Component\Cache` 的位置即可，业务在使用层统一 `Cache接口 + methods`。
 
-该组件的主要作用是占住缓存接口的位置，方便后续替换为真实缓存实现（如 RedisCache、Memcached 等）。框架通过该组件在 `Business\Helper` 中提供 `Helper::Cache()` 访问点。
+可把它视作“缓存入口的契约 + 无缓存降级”。当你需要把 `Cache`（或默认值）在系统里当全局入口，请用 `Manager`/ext 给它配一个真实现。
 
-该组件没有公共选项，通过 `Business\Helper::Cache()` 获取当前相位下的单例。
+## 类信息
 
-## 选项
-
-`Cache` 组件没有公共选项。
-
-## 使用方式
-
-### 通过 Business Helper
-
-```php
-use DuckPhp\Foundation\Business\Helper;
-
-$cache = Helper::Cache();
-$cache->set('key', 'value', 3600);
-$value = $cache->get('key', 'default');
-```
-
-### 直接通过 Cache 组件
-
-```php
-use DuckPhp\Component\Cache;
-
-$value = Cache::_()->get('key', 'default');
-Cache::_()->set('key', 'value', 3600);
-```
-
-## 自定义缓存实现
-
-由于默认 `Cache` 是空实现，通常需要替换为真实缓存。可以通过以下方式扩展：
-
-```php
-use DuckPhp\Component\Cache;
-
-class MyCache extends Cache
-{
-    protected $data = [];
-    
-    public function get($key, $default = null)
-    {
-        return $this->data[$key] ?? $default;
-    }
-    
-    public function set($key, $value, $ttl = null)
-    {
-        $this->data[$key] = $value;
-        return true;
-    }
-    
-    public function has($key)
-    {
-        return isset($this->data[$key]);
-    }
-    
-    public function delete($key)
-    {
-        unset($this->data[$key]);
-        return true;
-    }
-    
-    public function clear(): void
-    {
-        $this->data = [];
-    }
-}
-```
-
-然后在 `Business\Helper` 或系统初始化中替换单例：
-
-```php
-use DuckPhp\Component\Cache;
-
-Cache::_(new MyCache());
-```
-
-## 注意事项
-
-1. 默认 `Cache` 组件是空实现，不会持久化任何数据。
-2. 生产环境中应替换为 `RedisCache` 或其他真实缓存实现。
-3. 该组件支持 PSR-16 风格的接口（`get`/`set`/`delete`/`has`/`clear`/`getMultiple`/`setMultiple`/`deleteMultiple`），但目前未实现 `Psr\SimpleCache\CacheInterface` 接口。
+- 命名空间：`DuckPhp\Component`
+- 声明：`class Cache extends ComponentBase`（源码注释 `implements Psr\SimpleCache\CacheInterface`——未用关键字 implements）
 
 ## 方法列表
+
+> 无自有 options。
 
 ### 公共方法
 
     public function get($key, $default = null)
-获取缓存值。默认实现始终返回 `$default`。
+返回 $default（空实现不存）。
 
     public function set($key, $value, $ttl = null)
-写入缓存。默认实现始终返回 `false`。
+返回 false（未持久）。
 
     public function delete($key)
-删除缓存键。默认实现始终返回 `false`。
+返回 false。
 
     public function has($key)
-检查缓存键是否存在。默认实现始终返回 `false`。
+返回 false。
 
     public function clear(): void
-清空所有缓存。默认实现不执行任何操作。
+无内容直接 return（void）。
 
     public function getMultiple($keys, $default = null)
-批量获取缓存值。默认实现对每个键调用 `get()` 并返回结果数组。
+逐 key 委托 get：仅组装并返回各键默认。
 
     public function setMultiple($values, $ttl = null)
-批量写入缓存。默认实现对每个键调用 `set()` 并返回 `true`。
+对每个 {key=>value} 调 set（均 false）；兑现空实现语义返回 true 以保证外层逻辑继续。
 
     public function deleteMultiple($keys)
-批量删除缓存键。默认实现直接调用 `delete($keys)`。
+简单返回 `delete(key)`? 实现即把整个 $keys 传给 delete 单键实现（空实现返回 false 亦一致）。实际注意该基实现将 $keys 当单键传 delete ... 若需要多删实现由子类覆盖。
+
+> 语义：此基类只是契约空壳；加缓存的目标请覆盖这些方法，或改用其他实现。
 
 ## 相关链接
 
-- [DuckPhp\Component\RedisCache](Component-RedisCache.md)
-- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md)
+- [DuckPhp\Component\RedisCache](Component-RedisCache.md) —— Redis 真实现
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+- PSR 参照：`Psr\SimpleCache\CacheInterface`
