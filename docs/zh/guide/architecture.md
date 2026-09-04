@@ -93,7 +93,6 @@ phaseToCurrent → Runtime::run() → Console::run() → (异常) → Runtime::c
 - `init(array $options, ?object $context)` — 模板方法，子类可重写 `initOptions()` 和 `initContext()`
 - `init_once` 防止重复初始化
 - `context()` 获取所属 App 实例
-- `extendFullFile()` — 文件路径查找（支持 App 的 Phase 覆盖）
 - `IsAbsPath()` / `SlashDir()` — 跨平台路径工具
 
 ### 2.4 PhaseContainer.php — 阶段/Phase 容器

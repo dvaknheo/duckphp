@@ -83,7 +83,7 @@ $component = MyComponent::_()->init([
 - `init()` 的返回值为当前实例，可链式调用；接口/调用方常以 `ClassName::_()->init($options, $context)` 形式使用。
 - `isInited()` 在 `init_once` 场景外并不阻止重复 `init()`；需要幂等初始化请自行把子类 `init_once` 属性设为 `true`。
 - 传入的 `$context` 为 `null` 时跳过 `initContext()`（`App` 等自身作为上下文时会传入实例）。
-- `IsAbsPath()` / `SlashDir()` 为受保护静态工具，供子类在拼接/判断路径时使用；`extendFullFile()` 在存在上下文时会把路径查找委托给 `App::getOverrideableFile()`（即“可覆盖文件”机制）。
+- `IsAbsPath()` / `SlashDir()` 为受保护静态工具，供子类在拼接/判断路径时使用；
 
 ## 方法列表
 
@@ -103,9 +103,6 @@ $component = MyComponent::_()->init([
 
     public function isInited(): bool
 返回是否已完成初始化。
-
-    public function extendFullFile($path_main, $path_sub, $file, $use_override = true)
-把“主路径/子路径/文件名”组合成完整文件路径；存在上下文时委托给 `App::getOverrideableFile()` 以支持覆盖文件查找。
 
 ### 受保护方法
 

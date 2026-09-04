@@ -23,7 +23,6 @@
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `path` | `''` | 项目根（用于把相对 config 拼绝对）。 |
 | `path_config` | `'config'` | 配置目录名（相对 `path`，可给绝对覆盖）。 |
 
 ## 使用方式
@@ -43,7 +42,7 @@ config/app.php 例如 `return [ 'debug'=>true, 'db'=>... ];`。
 
 - 缓存基于 basename：同 basename 第二次不会重复 require。
 - 目录完全缺文件 → 空数组；没有异常。
-- 子应用用相同文件可覆盖：extendFullFile 查找能命中（phase 优先）。
+- 子应用用相同文件可覆盖：`App->getOverrideFile`查找能命中（phase 优先）。
 
 ## 方法列表
 
@@ -55,7 +54,7 @@ config/app.php 例如 `return [ 'debug'=>true, 'db'=>... ];`。
 ### 受保护方法
 
     protected function _LoadConfig(string $file_basename): array
-已缓存则直接；否则补 `.php`、经 `extendFullFile(path, path_config, file)` 定位并 require，成功即写 all_config 缓存。缺失存 [] 并返回 []。
+已缓存则直接；否则补 `.php`、经 `App->getOverrideFile(path_config, file)` 定位并 require，成功即写 all_config 缓存。缺失存 [] 并返回 []。
 
     protected function loadFile(string $file): array
 `return require $file;`，实际读文件为数组。

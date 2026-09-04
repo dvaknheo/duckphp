@@ -21,7 +21,6 @@
 
 | 选项 | 默认 | 说明 |
 |---|---|---|
-| `path` | `''` | 项目根（拼 res 与 docroot 相对）。 |
 | `path_resource` | `'res'` | 资源源目录（默认 `res`）。 |
 | `path_document` | `'public'` | 发布根目录名（clone 目标）。 |
 | `controller_url_prefix` | null | 路由资源 URL 前缀段（可选）。 |

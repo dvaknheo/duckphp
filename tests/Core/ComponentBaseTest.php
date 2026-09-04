@@ -14,7 +14,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
 
         ComponentBaseObject::_()->init(['a'=>'b'],new \stdClass());
         ComponentBaseObject::_()->isInited();
-
+        ComponentBaseObject::_()->testStaticMethods();
 
         ComponentBaseObject::_();
         ComponentBaseObject::_();
@@ -25,24 +25,11 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject2::_()->init([],App::_());
         ComponentBaseObject2::_()->reInit(['extx'=>true],App::_());
         
-        ComponentBaseObject2::_()->context();
-        //var_dump(ComponentBase::SlashDir(''));
-        //var_dump(ComponentBase::IsAbsPath(''));
+
         $options=[
             'path'=> $path_data,
             'path_data'=> '',
         ];
-        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
-
-        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path_data'], 'data.php');
-        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path'], 'data.php');
-        ComponentBaseObject::_()->init($options, App::_());
-        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
-        
-        ComponentBaseObject3::_()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
-        ComponentBaseObject3::_()->extendFullFile($options['path'],'/sub','data.php');
-        
-        echo ComponentBaseObject3::_()->extendFullFile($options['path'],'sub','data.php');
 
     
         \LibCoverage\LibCoverage::G($LibCoverage);
@@ -70,6 +57,12 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
         $_instance=$_instance??[];
         $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new $class));
         return $_instance[$class];
+    }
+    public function testStaticMethods()
+    {
+        $this->context();
+        ComponentBase::SlashDir('');
+        ComponentBase::IsAbsPath('');
     }
 }
 

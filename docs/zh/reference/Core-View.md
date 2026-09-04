@@ -28,7 +28,6 @@
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `path` | `''` | 项目根路径（组件层对“相对”的基准）。一般由 App 合并好后传入。 |
 | `path_view` | `'view'` | 视图目录相对名（相对 `path`；可绝对则用之）。`getViewFile()` 用它拼 `{$path}/{$path_view}/{$file}.php`。 |
 | `view_skip_notice_error` | `true` | 渲染时是否临时屏蔽 `E_NOTICE` 噪声。为 true 时 `_Show` 会临时去掉 E_NOTICE 再到结束恢复。 |
 
@@ -79,7 +78,6 @@ View::_()->_Show(['name'=>'D'], 'another'); // hence: head、主体、foot 依�
 ```php
 // config (通常在 app options)
 $viewOptions = [
-    'path'      => __DIR__,          // root 项目
     'path_view' => 'view',           // view/ 
 ];
 ```
@@ -92,13 +90,11 @@ $viewOptions = [
 2. 自定义 `path_view` 允许多层路径 `mails/digest`。
 3. 输出即回显：要点不 echo View 值。若需拿到字符串用 `Render`（内部 ob 捕获）。
 4. 静态壳 `Show/Display/Render` 与实例 `_Show/_Display/_Render` 一一对应；壳总是作用于当前 Phase 实例。
-5. `extendFullFile` 会进一步支持子应用/Phase 覆盖（见 `ComponentBase`）。
 
 ## 全部选项
 
 ```php
     public $options = [
-        'path' => '',
         'path_view' => 'view',
         'view_skip_notice_error' => true,
     ];
@@ -147,7 +143,7 @@ $viewOptions = [
 
 ## 相关链接
 
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件 init / extendFullFile
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件 init
 - [DuckPhp\Core\App](Core-App.md) — host 层 `_Show` 视图入口会调用 View
 - [DuckPhp\Ext\CallableView](Ext-CallableView.md)、[DuckPhp\Ext\JsonView](Ext-JsonView.md) — 其它视图风格组件
 - 层级解释：[Foundation\Controller](Foundation-Controller-Base.md) ; 页面 shell 见 DuckPhpAllInOne view_head/foot

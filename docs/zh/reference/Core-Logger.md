@@ -26,7 +26,6 @@
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `path` | `''` | 项目根（与相对 path_log 合成绝对路径）。 |
 | `path_log` | `'runtime'` | 日志目录（可绝对，可相对根）。 |
 | `log_file_template` | `'log_%Y-%m-%d_%H_%i.log'` | 日志文件名模板；`%X` 由 `date(X)` 展开。 |
 | `log_prefix` | `'DuckPhpLog'` | 写到行的前缀标识。 |

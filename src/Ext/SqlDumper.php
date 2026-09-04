@@ -47,7 +47,7 @@ class SqlDumper extends ComponentBase
     }
     protected function writeDumpFile(string $file, string $string): void
     {
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
+        $full_file = App::_()->getOverrideableFile($this->options['path_sql_dump'], $file);
         file_put_contents($full_file, $string);
     }
     public function install(bool $force = false): void
@@ -57,14 +57,16 @@ class SqlDumper extends ComponentBase
         $path = $this->options['path'];
         $sub = $this->options['path_sql_dump'];
 
+
         if ($force) {
-            $file = $this->extendFullFile($path, $sub, $driver.'.clean.sql');
+            $file = App::_()->getOverrideableFile($this->options['path_sql_dump'], $driver.'.clean.sql');
             if (is_file($file)) {
                 $this->executeSqlFile($file, $prefix);
             }
         }
-        $this->executeSqlFile($this->extendFullFile($path, $sub, $driver.'.sql'), $prefix);
-        $file = $this->extendFullFile($path, $sub, $driver.'.data.sql');
+        $file = App::_()->getOverrideableFile($this->options['path_sql_dump'], $driver.'.sql');
+        $this->executeSqlFile($file, $prefix);
+        $file = App::_()->getOverrideableFile($this->options['path_sql_dump'], $driver.'.data.sql');
         if (is_file($file)) {
             $this->executeSqlFile($file, $prefix);
         }

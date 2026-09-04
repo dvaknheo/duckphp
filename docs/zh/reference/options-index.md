@@ -309,14 +309,9 @@
 | `page_size` | `30` | `DuckPhp\Component\Pager` | 每页大小。 |
 | `page_size` | `30` | [DuckPhp\Component\Pager](Component-Pager.md) | 每页大小。 |
 | `path` | `null` | `DuckPhp\Core\KernelTrait` | 项目根路径。 |
-| `path` | `''` | `DuckPhp\Core\Logger` | 项目路径。 |
-| `path` | `''` | `DuckPhp\Core\View` | 项目路径。 |
 | `path` | `''` | `DuckPhp\Core\AutoLoader` | 项目路径。 |
-| `path` | `''` | `DuckPhp\Component\Configer` | 项目路径。 |
-| `path` | `''` | `DuckPhp\Component\RouteHookResource` | 项目路径。 |
 | `path` | `''` | `DuckPhp\Ext\DuckPhpInstaller` | 项目路径。 |
 | `path` | `''` | `DuckPhp\Ext\Misc` | 项目路径。 |
-| `path` | `''` | `DuckPhp\Ext\SqlDumper` | 项目路径。 |
 | `path` | `''` | `DuckPhp\HttpServer\HttpServer` | 项目路径。 |
 | `path` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 项目根路径。 |
 | `path` | `''` | [DuckPhp\Core\Logger](Core-Logger.md) | 项目路径。 |
@@ -326,7 +321,6 @@
 | `path` | `''` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 项目路径。 |
 | `path` | `''` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 项目路径。 |
 | `path` | `''` | [DuckPhp\Ext\Misc](Ext-Misc.md) | 项目路径。 |
-| `path` | `''` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 项目路径。 |
 | `path` | `''` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 项目路径。 |
 | `path_config` | `'config'` | `DuckPhp\Component\Configer` | 配置文件目录。 |
 | `path_config` | `'config'` | [DuckPhp\Component\Configer](Component-Configer.md) | 配置文件目录。 |

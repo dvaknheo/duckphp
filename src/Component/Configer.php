@@ -35,7 +35,8 @@ class Configer extends ComponentBase
         }
 
         $file = $file_basename.'.php';
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_config'], $file);
+        //App::_()->
+        $full_file = $this->context()->getOverrideableFile($this->options['path_config'], $file);
         if (!is_file($full_file)) {
             $this->all_config[$file_basename] = [];
             return [];

@@ -50,7 +50,7 @@ class RouteHookResource extends ComponentBase
             return false;
         }
 
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_resource'], $file);
+        $full_file = $full_file = $this->context()->getOverrideableFile($this->options['path_resource'], $file); 
         if (!is_file($full_file)) {
             return false;
         }
@@ -79,7 +79,7 @@ class RouteHookResource extends ComponentBase
         if ($flag) {
             return;
         }
-        $source = $this->extendFullFile($this->options['path'], $this->options['path_resource'], '', false);
+        $source = $this->context()->getOverrideableFile($this->options['path_resource'], '');
         $source = realpath($source);
         if (!$source) {
             return;
