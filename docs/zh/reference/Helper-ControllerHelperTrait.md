@@ -5,8 +5,9 @@
 `ControllerHelperTrait` 是面向 **Controller（控制器层）** 的静态助手集合，也是四个 Helper Trait 中最丰富的一个。它提供控制器日常所需的全部便捷入口：
 
 - 请求输入：`GET/POST/REQUEST/COOKIE/SERVER`；
+- 请求类型判断：`IsPost`（当前是否 POST）、`IsAjax`（是否 Ajax）；
 - 路由与 URL：`PathInfo/Url/Res/Domain/Parameter/getRouteCallingClass/getRouteCallingMethod`；
-- 输出：`Show/Render/Show302/Show404/ShowJson/IsAjax`；
+- 输出：`Show/Render/Show302/Show404/ShowJson`；
 - 可替换系统函数：`header/setcookie/exit`；
 - 异常处理注册：`assignExceptionHandler/setMultiExceptionHandler/setDefaultExceptionHandler/ControllerThrowOn`；
 - 分页：`Pager/PageNo/PageWindow/PageHtml`；
@@ -140,6 +141,9 @@ public function action_login()
 
     public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 `$flag` 为真时抛控制器异常。
+
+    public static function IsPost()
+当前请求是否为 POST（经 `SuperGlobal` 读 `REQUEST_METHOD`）。
 
     public static function GET($key = null, $default = null)
 读 `$_GET`（经 `SuperGlobal`）。

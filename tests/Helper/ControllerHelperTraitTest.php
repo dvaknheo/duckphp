@@ -80,7 +80,7 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::setDefaultExceptionHandler($callback);
         
 
-
+        ControllerHelper::IsPost();
         ControllerHelper::GET('a');
         ControllerHelper::POST('a');
         ControllerHelper::REQUEST('a');

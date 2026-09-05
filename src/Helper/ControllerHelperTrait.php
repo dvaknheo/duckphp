@@ -153,6 +153,10 @@ trait ControllerHelperTrait
         return CoreHelper::_()->_ControllerThrowOn($flag, $message, $code, $exception_class);
     }
     /////////////
+    public static function IsPost()
+    {
+        return SuperGlobal::_()->_SERVER('REQUEST_METHOD', 'GET') === 'POST';
+    }
     public static function GET($key = null, $default = null)
     {
         return SuperGlobal::_()->_GET($key, $default);
