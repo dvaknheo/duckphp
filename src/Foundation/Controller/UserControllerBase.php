@@ -6,6 +6,7 @@
 
 namespace DuckPhp\Foundation\Controller;
 
+use DuckPhp\Core\App;
 use DuckPhp\GlobalUser\UserControllerInterface;
 use DuckPhp\GlobalUser\UserException;
 
@@ -27,5 +28,6 @@ class UserControllerBase implements UserControllerInterface
                 throw new UserException("can not access", -1);
             }
         }
+        App::_()->options['use_user_view'] = true;
     }
 }

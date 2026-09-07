@@ -43,8 +43,6 @@ class DuckPhp extends App
         'session_prefix' => null,
         'table_prefix' => null,
 
-        'use_user_view' => true,
-        'use_admin_view' => true,
         'admin_provider' => '',
         'user_provider' => '',
         'database_driver' => '',
@@ -55,6 +53,9 @@ class DuckPhp extends App
         'lang_final' => null,
         'local_database' => false,
         'local_redis' => false,
+
+        // 'use_user_view' => true,
+        // 'use_admin_view' => true,
 
 
         //*
@@ -150,12 +151,12 @@ class DuckPhp extends App
 
     public function _Show(array $data, string $view = '')
     {
-        if ($this->options['use_user_view'] && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
+        if (($this->options['use_user_view'] ?? false) && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
             $view === '' ? Route::_()->getRouteCallingPath() : $view;
             GlobalUser::_()->_Show($data, $view);
             return;
         }
-        if ($this->options['use_admin_view'] && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
+        if (($this->options['use_admin_view'] ?? false) && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
             $view === '' ? Route::_()->getRouteCallingPath() : $view;
             GlobalAdmin::_()->_Show($data, $view);
             return;

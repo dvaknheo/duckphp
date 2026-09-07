@@ -27,5 +27,6 @@ class AdminControllerBase implements AdminControllerInterface
                 throw new AdminException("can not access", -1);
             }
         }
+        App::_()->options['use_admin_view'] = true;
     }
 }
