@@ -198,7 +198,7 @@ class MyUser extends GlobalUser
         'user_callback_for_url_for_register' => [MyUserAction::class,'urlForRegister'],
         'user_callback_for_url_for_logout' => [MyUserAction::class,'urlForLogout'],
         'user_callback_for_local_service'=>[MyUserService::class,'_'],
-        'user_callback_for_login_session'=>[MyUserSession::class,'_'],
+        'user_callback_for_session'=>[MyUserSession::class,'_'],
         'user_callback_for_data' => [MyUserAction::class, 'data'],
         'user_view_file_header'=>'/abc',
         'user_loginout_auto_redirect' => false,

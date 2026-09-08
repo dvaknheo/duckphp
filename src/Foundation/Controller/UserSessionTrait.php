@@ -23,12 +23,12 @@ trait UserSessionTrait
     {
         return $this->get('user', []);
     }
-    public function setCurrentUser(array $user): void
+    public function setCurrentUser($user)
     {
         $this->set('user', $user);
     }
 
-    public function unsetCurrentUser(): void
+    public function unsetCurrentUser()
     {
         $this->set('user', []);
     }

@@ -78,7 +78,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         if (isset($this->options['user_callback_for_id'])) {
             return $this->run_callback_by_key('user_callback_for_id', $check_login);
         }
-        throw new DuckPhpSystemException("No GlobalUser Provider.", -1);
+        throw new DuckPhpSystemException("id(): No GlobalUser Provider.", -1);
     }
     public function name(bool $check_login = true): string
     {
@@ -90,7 +90,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         if (isset($this->options['user_callback_for_name'])) {
             return $this->run_callback_by_key('user_callback_for_name', $check_login);
         }
-        throw new DuckPhpSystemException("No GlobalUser Provider.", -2);
+        throw new DuckPhpSystemException("name():No GlobalUser Provider." , -2);
     }
     public function data(bool $check_login = true): array
     {
@@ -205,7 +205,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     protected function getLoginSession(): UserSessionInterface
     {
-        return $this->run_callback_by_key('user_callback_for_login_session');
+        return $this->run_callback_by_key('user_callback_for_session');
     }
     public function register(array $post)
     {
