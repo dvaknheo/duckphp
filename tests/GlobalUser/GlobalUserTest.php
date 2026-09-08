@@ -266,6 +266,10 @@ class MyUserService {
         $this->sessionData[$id] = $user;
         return $user;
     }
+    public function logout($user_id): void
+    {
+        unset($this->sessionData[$user_id]);
+    }
     public function setCurrentUser(array $user): void
     {
         $this->sessionData[$user['id']] = $user;
@@ -275,7 +279,7 @@ class MyUserService {
         $this->sessionData = [];
     }
 }
-class MyUserSession {
+class MyUserSession implements \DuckPhp\GlobalUser\UserSessionInterface {
     use SingletonTrait;
     protected $currentUserId = null;
     protected $currentUserName = null;
@@ -287,14 +291,18 @@ class MyUserSession {
     {
         return $this->currentUserName ?? '';
     }
-    public function setCurrentUser(array $user): void
+    public function setCurrentUser($user)
     {
         $this->currentUserId = $user['id'] ?? null;
         $this->currentUserName = $user['username'] ?? '';
     }
-    public function unsetCurrentUser(): void
+    public function unsetCurrentUser()
     {
         $this->currentUserId = null;
         $this->currentUserName = null;
+    }
+    public function getCurrentUser()
+    {
+        return ['id' => $this->currentUserId, 'name' => $this->currentUserName];
     }
 }

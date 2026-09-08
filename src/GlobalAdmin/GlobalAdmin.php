@@ -68,7 +68,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     {
         if (isset($this->options['admin_callback_for_session'])) {
             $id = $this->getLoginSession()->getCurrentUserId();
-            Helper::ControllerThrowOn($check_login && !$id," NoLogin 1", -1, AdminException::class);
+            Helper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, AdminException::class);
             return $id ?? 0;
         }
         if (isset($this->options['admin_callback_for_id'])) {
@@ -199,7 +199,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $this->getLoginSession()->setCurrentUser($user);
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGED, $post);
 
-        if($this->options['admin_loginout_auto_redirect']){
+        if ($this->options['admin_loginout_auto_redirect']) {
             CoreHelper::Show302($this->urlForHome());
         }
     }
@@ -210,7 +210,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $this->localService()->logout($user_id);
         $this->getLoginSession()->unsetCurrentUser();
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTED, $user_id);
-        if($this->options['admin_loginout_auto_redirect']){
+        if ($this->options['admin_loginout_auto_redirect']) {
             CoreHelper::Show302($this->urlForLogin());
         }
     }

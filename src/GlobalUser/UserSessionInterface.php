@@ -1,10 +1,16 @@
 <?php declare(strict_types=1);
-namespace DuckAdmin\DemoUsers\System;
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+
+namespace DuckPhp\GlobalUser;
+
 interface UserSessionInterface
 {
     public function setCurrentUser($user);
     public function unsetCurrentUser();
     public function getCurrentUser();
     public function getCurrentUserName();
-    public function getCurrentUserId();    
+    public function getCurrentUserId();
 }
