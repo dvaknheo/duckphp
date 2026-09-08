@@ -89,6 +89,8 @@ PhaseContainer::RestAllContainerForTesting();
         $data = include(__DIR__.'/data_for_tests/setting.php');
         $database_list=$data['database_list'];
         DuckPhp::_(new DuckPhp())->init([
+                'use_user_view' => true,
+                'use_admin_view' => true,
                 'database_list'=> $database_list,
                 'app' => [ 
                     DuckPhp_Sub::class => [
@@ -116,6 +118,9 @@ PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'user_provider' => FakeUser::class,
             'admin_provider' => FakeAdmin::class,
+                'use_user_view' => true,
+                'use_admin_view' => true,
+
             'path_view' => $path.'view/',
         ]);
         Route::_()->calling_class = FakeUserController::class;

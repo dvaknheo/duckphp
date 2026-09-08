@@ -6,6 +6,7 @@
 
 namespace DuckPhp\Foundation\Controller;
 
+use DuckPhp\Core\App;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckPhp\GlobalAdmin\AdminException;
 
