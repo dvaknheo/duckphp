@@ -55,6 +55,9 @@ interface UserActionInterface
      * @param array<string, mixed> $data
      */
     public function _Show(array $data = [], string $view = '');
+    public function register(array $post);
+    public function login(array $post);
+    public function logout();
     public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool;
     /**
      * @param array<string, mixed> $ext
