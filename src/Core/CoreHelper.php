@@ -105,6 +105,15 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_PhaseCall($phase, $callback, ...$args);
     }
+    public static function ChildCall($phase, $callback, ...$args)
+    {
+        return static::_()->_ChildCall($phase, $callback, ...$args);
+    }
+    public static function ProjectThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    {
+        return static::_()->_ProjectThrowOn($flag, $message, $code, $exception_class);
+    }
+
     public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
         return static::_()->_BusinessThrowOn($flag, $message, $code, $exception_class);
@@ -240,13 +249,32 @@ class CoreHelper extends ComponentBase
         App::Phase($old_phase);
         return $ret;
     }
+    public function _ChildCall($child_app, $callback, ...$args)
+    {
+        $last_Phase = App::Phase();
+        App::_()->toThisChild($child_app);
+        $ret = ($callback)(...$args);
+        App::Phase($last_Phase);
+        return $ret;
+    }
+    public function _ProjectThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    {
+        if (!$flag) {
+            return;
+        }
+        $exception_class = $exception_class ?? (App::_()->options['exception_for_project'] ?? \Exception::class);
+        $exception_class = App::_()->options['exception_map'][$exception_class] ?? $exception_class;
+        /** @phpstan-ignore-next-line */
+        throw new $exception_class($message, $code);
+    }
+
     public function _BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
         if (!$flag) {
             return;
         }
         $exception_class = $exception_class ?? (App::_()->options['exception_for_business'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
-
+        $exception_class = App::_()->options['exception_map'][$exception_class] ?? $exception_class;
         /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }
@@ -256,7 +284,7 @@ class CoreHelper extends ComponentBase
             return;
         }
         $exception_class = $exception_class ?? (App::_()->options['exception_for_controller'] ?? (App::_()->options['exception_for_project'] ?? \Exception::class));
-
+        $exception_class = App::_()->options['exception_map'][$exception_class] ?? $exception_class;
         /** @phpstan-ignore-next-line */
         throw new $exception_class($message, $code);
     }

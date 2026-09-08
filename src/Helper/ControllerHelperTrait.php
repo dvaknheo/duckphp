@@ -38,7 +38,7 @@ trait ControllerHelperTrait
     {
         return App::Setting($key, $default);
     }
-    public static function Options(string $key, $default = null)
+    public static function AppOptions(string $key, $default = null)
     {
         return App::_()->options[$key] ?? $default;
     }
@@ -152,6 +152,11 @@ trait ControllerHelperTrait
     {
         return CoreHelper::_()->_ControllerThrowOn($flag, $message, $code, $exception_class);
     }
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    {
+        return CoreHelper::_()->_ControllerThrowOn($flag, $message, $code, $exception_class);
+    }
+
     /////////////
     public static function IsPost()
     {

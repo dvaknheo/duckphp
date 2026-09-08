@@ -30,7 +30,7 @@ trait BusinessHelperTrait
     {
         return App::_()->_Setting($key, $default);
     }
-    public static function Options(string $key, $default = null)
+    public static function AppOptions(string $key, $default = null)
     {
         return App::_()->options[$key] ?? $default;
     }
@@ -46,6 +46,11 @@ trait BusinessHelperTrait
     {
         return CoreHelper::_()->_BusinessThrowOn($flag, $message, $code, $exception_class);
     }
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    {
+        return CoreHelper::_()->_BusinessThrowOn($flag, $message, $code, $exception_class);
+    }
+
     public static function Cache($object = null)
     {
         return Cache::_($object);

@@ -62,6 +62,7 @@ class App extends ComponentBase
 
         'installed' => false,
         'url_install' => 'install',
+        'exception_map'=> [],
         //*
         // 'path_log' => 'runtime',
         // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
