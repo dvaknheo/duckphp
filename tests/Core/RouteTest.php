@@ -386,7 +386,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             Route::_()->addRouteHook($prepended, 'prepend-inner', true);
             Route::_()->addRouteHook($prepended, 'prepend-outter', false);
         });
-        Route::_()->runFinallyHooks();
+        Route::_()->clear();
         // append true.
         
         Route::_(new Route());

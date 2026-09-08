@@ -489,7 +489,7 @@ trait KernelTrait
             $ret = true;
         } finally {
             $this->phaseToCurrent();
-            Route::_()->runFinallyHooks();
+            Route::_()->clear();
             Runtime::_()->clear();
         }
         return $ret;

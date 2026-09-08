@@ -125,7 +125,7 @@ class Route extends ComponentBase
         }
         return false;
     }
-    public function runFinallyHooks()
+    public function clear()
     {
         if (!empty($this->finally_run_hook_list)) {
             $path_info = $this->getPathInfo();
