@@ -6,16 +6,24 @@
 
 namespace DuckPhp\GlobalAdmin;
 
+use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
+use DuckPhp\Foundation\Controller\Helper;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
+use DuckPhp\GlobalAdmin\AdminSessionInterface;
 
 class GlobalAdmin extends ComponentBase implements AdminActionInterface
 {
+    const EVENT_ACTION_ADMIN_LOGINING = 'ACTION_ADMIN_LOGINING';
+    const EVENT_ACTION_ADMIN_LOGED = 'ACTION_ADMIN_LOGED';
+    const EVENT_ACTION_ADMIN_LOGOUTING = 'ACTION_ADMIN_LOGOUTING';
+    const EVENT_ACTION_ADMIN_LOGOUTED = 'ACTION_ADMIN_LOGOUTED';
     public $options = [
         'admin_url_home' => null,
         'admin_url_login' => null,
@@ -30,6 +38,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         'admin_callback_for_data' => null, //[AdminAction::class,'data'],
         'admin_callback_for_local_service' => null, //[AdminAction::class,'service'],
         'admin_callback_for_add_ext_view_data' => null, //[AdminAction::class,'addExtViewData'],
+        'admin_callback_for_session' => null,
+        'admin_loginout_auto_redirect' => true,
 
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,
@@ -41,14 +51,14 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
 
         $callback = $this->options[$key];
 
-        if (is_array($callback) && is_string($callback[0])) {
+        if (\is_array($callback) && \is_string($callback[0])) {
             $class = $callback[0];
             $flag = $this->options['admin_enable_callback_singleton'] ?? true;
             if ($flag) {
                 $callback[0] = $class::_();
             }
         }
-        return call_user_func($callback, ...$args);
+        return \call_user_func($callback, ...$args);
     }
     /**
      * @param bool $check_login
@@ -56,12 +66,27 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
      */
     public function id(bool $check_login = true)
     {
-        DuckPhpSystemException::ThrowOn(!isset($this->options['admin_callback_for_id']), "No GlobalAdmin Provider.");
-        return $this->run_callback_by_key('admin_callback_for_id', $check_login);
+        if (isset($this->options['admin_callback_for_session'])) {
+            $id = $this->getLoginSession()->getCurrentUserId();
+            Helper::ControllerThrowOn($check_login && !$id," NoLogin 1", -1, AdminException::class);
+            return $id ?? 0;
+        }
+        if (isset($this->options['admin_callback_for_id'])) {
+            return $this->run_callback_by_key('admin_callback_for_id', $check_login);
+        }
+        throw new DuckPhpSystemException("No GlobalAdmin Provider.", -1);
     }
     public function name(bool $check_login = true): string
     {
-        return $this->run_callback_by_key('admin_callback_for_name', $check_login);
+        if (isset($this->options['admin_callback_for_session'])) {
+            $name = $this->getLoginSession()->getCurrentUserName();
+            Helper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, AdminException::class);
+            return $name;
+        }
+        if (isset($this->options['admin_callback_for_name'])) {
+            return $this->run_callback_by_key('admin_callback_for_name', $check_login);
+        }
+        throw new DuckPhpSystemException("No GlobalAdmin Provider.", -2);
     }
     public function data(bool $check_login = true): array
     {
@@ -116,20 +141,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
      * @param array<string, mixed> $input
      * @param array<string, mixed> $input
      */
-    protected function addExtViewData(array $input): array
-    {
-        if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
-            return $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $input);
-        }
-        $input['__logined_id'] ??= $this->id(true);
-        $input['__logined_name'] ??= $this->name(true);
-        $input['__logined_url_logout'] ??= $this->urlForLogout();
-
-        return $input;
-    }
-    /**
-     * @param array<string, mixed> $input
-     */
     public function mergeViewData(array $input): array
     {
         $input = $this->addExtViewData($input);
@@ -143,6 +154,19 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         }
         $input['__view_data']['header'] = $header;
         $input['__view_data']['footer'] = $footer;
+        return $input;
+    }
+    /**
+     * @param array<string, mixed> $input
+     */
+    protected function addExtViewData(array $input): array
+    {
+        if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
+            return $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $input);
+        }
+        $input['__logined_id'] ??= $this->id(true);
+        $input['__logined_name'] ??= $this->name(true);
+        $input['__logined_url_logout'] ??= $this->urlForLogout();
         return $input;
     }
     /**
@@ -164,20 +188,46 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         return $ret;
     }
     ///////////////
+    protected function getLoginSession(): AdminSessionInterface
+    {
+        return $this->run_callback_by_key('admin_callback_for_session');
+    }
+    public function login(array $post)
+    {
+        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGINING, $post);
+        $user = $this->localService()->login($post);
+        $this->getLoginSession()->setCurrentUser($user);
+        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGED, $post);
+
+        if($this->options['admin_loginout_auto_redirect']){
+            CoreHelper::Show302($this->urlForHome());
+        }
+    }
+    public function logout()
+    {
+        $user_id = $this->id(false);
+        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTING, $user_id);
+        $this->localService()->logout($user_id);
+        $this->getLoginSession()->unsetCurrentUser();
+        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTED, $user_id);
+        if($this->options['admin_loginout_auto_redirect']){
+            CoreHelper::Show302($this->urlForLogin());
+        }
+    }
+    ///////////////
     public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
     {
         $id = $this->id(false);
         if (empty($id)) {
             return false;
         }
-        if (is_null($class) && is_null($method) && is_null($url)) {
+        if (\is_null($class) && \is_null($method) && \is_null($url)) {
             $last_phase = App::_()->getLastPhase();
             $old_phase = App::Phase($last_phase);
 
             $class = Route::_()->getRouteCallingClass();
             $method = Route::_()->getRouteCallingMethod();
             $url = Route::_()->_PathInfo();
-            $url = __url($url);
 
             App::Phase($old_phase);
         }

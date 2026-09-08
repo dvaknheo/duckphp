@@ -203,7 +203,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         return $this->localService();
     }
-    protected function getLoginSession()
+    protected function getLoginSession(): UserSessionInterface
     {
         return $this->run_callback_by_key('user_callback_for_login_session');
     }
@@ -234,6 +234,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         $user_id = $this->id(false);
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTING, $user_id);
+        $this->localService()->logout($user_id);
         $this->getLoginSession()->unsetCurrentUser();
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTED, $user_id);
         if($this->options['user_loginout_auto_redirect']){
