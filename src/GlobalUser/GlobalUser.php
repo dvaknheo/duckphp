@@ -28,7 +28,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     const EVENT_ACTION_USER_LOGOUTED = 'ACTION_USER_LOGOUTED';
     public $options = [
         'user_url_home' => null,
-        'user_url_regist' => null,
+        'user_url_register' => null,
         'user_url_login' => null,
         'user_url_logout' => null,
 
@@ -122,9 +122,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     /**
      * @param array<string, mixed> $ext
      */
-    public function urlForRegist(?string $url_back = null, ?array $ext = null): string
+    public function urlForRegister(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_for_url_for_regist', 'user_url_regist', $url_back, $ext);
+        return $this->go_url('user_callback_for_url_for_regist', 'user_url_register', $url_back, $ext);
     }
     /**
      * @param array<string, mixed> $ext

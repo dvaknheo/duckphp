@@ -32,7 +32,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         Helper::User()->urlForLogout();
         }catch(\Exception $ex){}
         try{
-        Helper::User()->urlForRegist();
+        Helper::User()->urlForRegister();
         }catch(\Exception $ex){}
         try{
         }catch(\Exception $ex){}
@@ -144,10 +144,10 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         \PHPUnit\Framework\Assert::assertArrayHasKey('__logined_url_logout', $extData);
 
         // Test go_url() fallback branch (when callback not set but URL is set)
-        MyUser::_()->options['user_callback_for_url_for_regist'] = null; // clear callback
-        MyUser::_()->options['user_url_regist'] = 'register'; // but URL is set
-        $registUrl = Helper::User()->urlForRegist();
-        \PHPUnit\Framework\Assert::assertStringContainsString('register', $registUrl);
+        MyUser::_()->options['user_callback_for_url_for_register'] = null; // clear callback
+        MyUser::_()->options['user_url_register'] = 'register'; // but URL is set
+        $registerUrl = Helper::User()->urlForRegister();
+        \PHPUnit\Framework\Assert::assertStringContainsString('register', $registerUrl);
 
         // Test batchGetUsernames() with data
         MyUserService::_()->resetSession();
@@ -187,7 +187,7 @@ class MyUser extends GlobalUser
 {
     public $options =[
         'user_url_home' => 'home',
-        'user_url_regist' => 'regist',
+        'user_url_register' => 'register',
         'user_url_login' => 'login',
         'user_url_logout' => 'logout',
 
@@ -195,7 +195,7 @@ class MyUser extends GlobalUser
         'user_callback_for_name' => [MyUserAction::class,'name'],
         'user_callback_for_url_for_login' => [MyUserAction::class,'urlForLogin'],
         'user_callback_for_url_for_home' => [MyUserAction::class,'urlForHome'],
-        'user_callback_for_url_for_regist' => [MyUserAction::class,'urlForRegist'],
+        'user_callback_for_url_for_register' => [MyUserAction::class,'urlForRegister'],
         'user_callback_for_url_for_logout' => [MyUserAction::class,'urlForLogout'],
         'user_callback_for_local_service'=>[MyUserService::class,'_'],
         'user_callback_for_login_session'=>[MyUserSession::class,'_'],
@@ -227,9 +227,9 @@ class MyUserAction {
     {
         return 'home';
     }
-    public function urlForRegist(?string $url_back = null, ?array $ext = null): string
+    public function urlForRegister(?string $url_back = null, ?array $ext = null): string
     {
-        return 'regist';
+        return 'register';
     }
     public function urlForLogout(?string $url_back = null, ?array $ext = null): string
     {

@@ -32,7 +32,7 @@ interface UserActionInterface
     /**
      * @param array<string, mixed> $ext
      */
-    public function urlForRegist(?string $url_back = null, ?array $ext = null): string;
+    public function urlForRegister(?string $url_back = null, ?array $ext = null): string;
     /**
      * @param array<string, mixed> $ext
      */
