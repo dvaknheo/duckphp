@@ -414,7 +414,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_()->addRouteHook($appended2, 'finally-outter', true);
         Route::_()->addRouteHook($appended2, 'finally-outter', true);
         Route::_()->addRouteHook($appended3, 'finally-inner', true);
-        Route::_()->runFinallyHooks();
+        Route::_()->clear();
     }
     protected function doUrl()
     {

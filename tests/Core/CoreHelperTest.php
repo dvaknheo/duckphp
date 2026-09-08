@@ -77,7 +77,11 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         echo CoreHelper::Json($data);
 
 
-        
+        try{
+            CoreHelper::ProjectThrowOn(false, "haha",1);
+            CoreHelper::ProjectThrowOn(true, "haha",2,\Exception::class);
+        }catch(\Throwable $ex){}
+
         try{
             CoreHelper::BusinessThrowOn(false, "haha",1);
             CoreHelper::BusinessThrowOn(true, "haha",2,\Exception::class);
@@ -110,7 +114,9 @@ PhaseContainer::RestAllContainerForTesting();
         
         CoreHelper::PhaseCall('z',function(){echo MaiCoreHelperApp::Phase();},123);
         CoreHelper::PhaseCall('',function(){echo MaiCoreHelperApp::Phase();},123);
-        
+        CoreHelper::ChildCall(SubCoreHelperApp1::class,function(){echo MaiCoreHelperApp::Phase();},123);
+
+
         
         
         ////[[[[

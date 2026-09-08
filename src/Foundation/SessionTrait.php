@@ -24,7 +24,7 @@ trait SessionTrait
         }
         SystemWrapper::_()->_session_start();
         $this->session_started = true;
-        $this->session_prefix = (string)(App::_()->options['session_prefix']??'');
+        $this->session_prefix = (string)(App::_()->options['session_prefix'] ?? '');
     }
     protected function get(string $key, $default = null)
     {

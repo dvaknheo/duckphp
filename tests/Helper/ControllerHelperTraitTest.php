@@ -89,9 +89,9 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
 /////
 echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
 DuckPhp::_()->init(['my_test_key' => 'my_value']);
-ControllerHelper::Options('my_test_key');
-ControllerHelper::Options('my_test_key', 'default');
-ControllerHelper::Options('no_such_key', 'default');
+ControllerHelper::AppOptions('my_test_key');
+ControllerHelper::AppOptions('my_test_key', 'default');
+ControllerHelper::AppOptions('no_such_key', 'default');
 ControllerHelper::Pager(new Pager());
 ControllerHelper::PageNo();
 ControllerHelper::PageWindow();
@@ -109,6 +109,7 @@ ControllerHelper::PageHtml(123);
 
         try{
             ControllerHelper::ControllerThrowOn(false, "haha",1);
+            ControllerHelper::ThrowOn(false, "haha",1);
         }catch(\Throwable $ex){}
         
         try{

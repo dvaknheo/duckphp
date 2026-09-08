@@ -527,7 +527,7 @@ trait Route_UrlManager
             if (isset($url) && '/' !== substr($url, 0, 1)) {
                 $base = $this->_Url('');
                 $base = ($base === '/' || $base === '\\')?'':$base;
-                $url = rtrim($base,'/').'/'.$url;
+                $url = rtrim($base, '/').'/'.$url;
             }
             return $this->_Url($url);
         }

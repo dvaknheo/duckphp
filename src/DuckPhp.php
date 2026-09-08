@@ -47,7 +47,7 @@ class DuckPhp extends App
         'user_provider' => '',
         'database_driver' => '',
         'cli_command_with_common' => true,
-        'duckcoverage_test_lister'=>null,
+        'duckcoverage_test_lister' => null,
 
         'lang_default' => null,
         'lang_final' => null,

@@ -33,6 +33,7 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         }
         try{
             BusinessHelper::BusinessThrowOn(false, "haha",1);
+            BusinessHelper::ThrowOn(false, "haha",1);
         }catch(\Throwable $ex){}
         
         try{
@@ -58,9 +59,9 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         }
 
         DuckPhp::_()->init(['my_test_key' => 'my_value']);
-        BusinessHelper::Options('my_test_key');
-        BusinessHelper::Options('my_test_key', 'default');
-        BusinessHelper::Options('no_such_key', 'default');
+        BusinessHelper::AppOptions('my_test_key');
+        BusinessHelper::AppOptions('my_test_key', 'default');
+        BusinessHelper::AppOptions('no_such_key', 'default');
         BusinessHelper::PathOfRuntime();
         BusinessHelper::PathOfProject();
 

@@ -512,7 +512,7 @@ trait KernelTrait
         Runtime::_()->last_phase = $last_phase;
         Runtime::_()->onException();
         ExceptionManager::CallException($ex);
-        
+
     }
     protected function runChildren(): bool
     {

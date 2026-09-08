@@ -94,7 +94,10 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         //try {
             AppHelper::saveExtOptions(['xdata'=>DATE(DATE_ATOM),"installed"=>"a"]);
         //} catch (\Throwable $ex) {
-
+        //try {
+            AppHelper::ProjectThrowOn(false,"An Error");
+            AppHelper::ThrowOn(false,"An Error");
+        //} catch (\Throwable $ex) {
         //}
         \LibCoverage\LibCoverage::End();
 

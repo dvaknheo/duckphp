@@ -16,16 +16,16 @@ class Helper
 {
     use ModelHelperTrait;
     use BusinessHelperTrait, ControllerHelperTrait, AppHelperTrait{
+        AppHelperTrait::ThrowOn insteadof ControllerHelperTrait;
+        AppHelperTrait::ThrowOn insteadof BusinessHelperTrait;
         BusinessHelperTrait::Setting insteadof ControllerHelperTrait;
-        BusinessHelperTrait::Options insteadof ControllerHelperTrait;
+        BusinessHelperTrait::AppOptions insteadof ControllerHelperTrait;
         BusinessHelperTrait::Config insteadof ControllerHelperTrait;
         BusinessHelperTrait::XpCall insteadof ControllerHelperTrait;
         BusinessHelperTrait::FireGlobalEvent insteadof ControllerHelperTrait;
         BusinessHelperTrait::OnGlobalEvent insteadof ControllerHelperTrait;
         BusinessHelperTrait::OnGlobalEvent insteadof AppHelperTrait;
         BusinessHelperTrait::FireGlobalEvent insteadof AppHelperTrait;
-        BusinessHelperTrait::PathOfProject insteadof AppHelperTrait;
-        BusinessHelperTrait::PathOfRuntime insteadof AppHelperTrait;
         ControllerHelperTrait::header insteadof AppHelperTrait;
         ControllerHelperTrait::setcookie  insteadof AppHelperTrait;
         ControllerHelperTrait::exit  insteadof AppHelperTrait;
