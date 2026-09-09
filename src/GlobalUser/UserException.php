@@ -6,9 +6,9 @@
 
 namespace DuckPhp\GlobalUser;
 
-use DuckPhp\Core\DuckPhpSystemException;
+use Exception;
 
-class UserException extends DuckPhpSystemException
+class UserException extends Exception
 {
     //
 }

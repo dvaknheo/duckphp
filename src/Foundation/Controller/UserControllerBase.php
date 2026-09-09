@@ -28,6 +28,6 @@ class UserControllerBase implements UserControllerInterface
                 throw new UserException("can not access", -1);
             }
         }
-        App::_()->options['use_user_view'] = true;
+        App::_()->options['use_user_view'] = App::_()->options['use_user_view'] ?? true;
     }
 }
