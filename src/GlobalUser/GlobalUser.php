@@ -79,7 +79,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         if (isset($this->options['user_callback_for_session'])) {
             $id = $this->getLoginSession()->getCurrentUserId();
-            Helper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, UserException::class);
+            Helper::ControllerThrowOn($check_login && !$id, "id(): NoLogin", -1, UserException::class);
             return $id ?? 0;
         }
         if (isset($this->options['user_callback_for_id'])) {
@@ -91,7 +91,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         if (isset($this->options['user_callback_for_session'])) {
             $name = $this->getLoginSession()->getCurrentUserName();
-            Helper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, UserException::class);
+            Helper::ControllerThrowOn($check_login && !$name, "name() NoLogin 2", -2, UserException::class);
             return $name;
         }
         if (isset($this->options['user_callback_for_name'])) {
@@ -210,7 +210,10 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         return $this->localService();
     }
-    protected function getLoginSession(): UserSessionInterface
+    /**
+     * @return UserSessionInterface
+     */
+    protected function getLoginSession()
     {
         return $this->run_callback_by_key('user_callback_for_session');
     }

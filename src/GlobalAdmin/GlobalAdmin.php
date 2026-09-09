@@ -74,7 +74,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     public function id(bool $check_login = true)
     {
         if (isset($this->options['admin_callback_for_session'])) {
-            $id = $this->getLoginSession()->getCurrentUserId();
+            $id = $this->getLoginSession()->getCurrentAdminId();
             Helper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, AdminException::class);
             return $id ?? 0;
         }
@@ -86,7 +86,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     public function name(bool $check_login = true): string
     {
         if (isset($this->options['admin_callback_for_session'])) {
-            $name = $this->getLoginSession()->getCurrentUserName();
+            $name = $this->getLoginSession()->getCurrentAdminName();
             Helper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, AdminException::class);
             return $name;
         }
@@ -195,15 +195,19 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         return $ret;
     }
     ///////////////
-    protected function getLoginSession(): AdminSessionInterface
+    /**
+     * Summary of getLoginSession
+     * @return AdminSessionInterface
+     */
+    protected function getLoginSession()
     {
         return $this->run_callback_by_key('admin_callback_for_session');
     }
     public function login(array $post)
     {
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGINING, $post);
-        $user = $this->localService()->login($post);
-        $this->getLoginSession()->setCurrentUser($user);
+        $admin = $this->localService()->login($post);
+        $this->getLoginSession()->setCurrentAdmin($admin);
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGED, $post);
 
         if ($this->options['admin_loginout_auto_redirect']) {
@@ -212,11 +216,11 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     public function logout()
     {
-        $user_id = $this->id(false);
-        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTING, $user_id);
-        $this->localService()->logout($user_id);
-        $this->getLoginSession()->unsetCurrentUser();
-        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTED, $user_id);
+        $admin_id = $this->id(false);
+        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTING, $admin_id);
+        $this->localService()->logout($admin_id);
+        $this->getLoginSession()->unsetCurrentAdmin();
+        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTED, $admin_id);
         if ($this->options['admin_loginout_auto_redirect']) {
             CoreHelper::Show302($this->urlForLogin());
         }

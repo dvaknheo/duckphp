@@ -75,7 +75,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         MyAdmin::_()->options['admin_loginout_auto_redirect'] = false;
         MyAdmin::_()->options['admin_callback_for_session'] = [MyAdminSession::class, '_'];
         ob_start();
-        Helper::Admin()->login(['username' => 'test', 'password' => '123456']);
+        Helper::Admin()->login(['name' => 'test', 'password' => '123456']);
         $output = ob_get_clean();
         \PHPUnit\Framework\Assert::assertSame('', $output);
 
@@ -83,7 +83,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         MyAdmin::_()->options['admin_loginout_auto_redirect'] = true;
         MyAdmin::_()->options['admin_url_home'] = 'http://localhost/home';
         ob_start();
-        Helper::Admin()->login(['username' => 'test', 'password' => '123456']);
+        Helper::Admin()->login(['name' => 'test', 'password' => '123456']);
         $output = ob_get_clean();
 
         // Test logout() without auto redirect
@@ -100,12 +100,12 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
 
         // Test id() with session callback
         MyAdmin::_()->options['admin_callback_for_session'] = [MyAdminSession::class, '_'];
-        MyAdminSession::_()->unsetCurrentUser();
-        MyAdminSession::_()->setCurrentUser(['id' => 1, 'username' => 'session_admin']);
+        MyAdminSession::_()->unsetCurrentAdmin();
+        MyAdminSession::_()->setCurrentAdmin(['id' => 1, 'name' => 'session_admin']);
         $id = Helper::Admin()->id(false);
         \PHPUnit\Framework\Assert::assertEquals(1, $id);
         // id() with check_login=true should throw when not logged in
-        MyAdminSession::_()->unsetCurrentUser();
+        MyAdminSession::_()->unsetCurrentAdmin();
         try {
             Helper::Admin()->id(true);
             \PHPUnit\Framework\Assert::fail("Should throw AdminException");
@@ -114,14 +114,14 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         }
 
         // Test name() with session callback
-        MyAdminSession::_()->setCurrentUser(['id' => 1, 'username' => 'session_admin']);
+        MyAdminSession::_()->setCurrentAdmin(['id' => 1, 'name' => 'session_admin']);
         $name = Helper::Admin()->name(false);
         \PHPUnit\Framework\Assert::assertEquals('session_admin', $name);
 
         // Test addExtViewData() default branch (without callback) - via mergeViewData
         unset(MyAdmin::_()->options['admin_callback_for_add_ext_view_data']);
-        // Set session user first since addExtViewData calls $this->id(true) and $this->name(true)
-        MyAdminSession::_()->setCurrentUser(['id' => 99, 'username' => 'extadmin']);
+        // Set session admin first since addExtViewData calls $this->id(true) and $this->name(true)
+        MyAdminSession::_()->setCurrentAdmin(['id' => 99, 'name' => 'extadmin']);
         $extData = Helper::Admin()->mergeViewData(['test' => 'value']);
         \PHPUnit\Framework\Assert::assertEquals('value', $extData['test'] ?? null);
         \PHPUnit\Framework\Assert::assertEquals(99, $extData['__logined_id'] ?? null);
@@ -222,9 +222,9 @@ class MyService {
     public function login(array $post): array
     {
         $id = $post['id'] ?? 1;
-        $user = ['id' => $id, 'username' => $post['username'] ?? 'admin_' . $id];
-        $this->sessionData[$id] = $user;
-        return $user;
+        $admin = ['id' => $id, 'name' => $post['name'] ?? 'admin_' . $id];
+        $this->sessionData[$id] = $admin;
+        return $admin;
     }
     public function logout($admin_id): void
     {
@@ -237,28 +237,28 @@ class MyService {
 }
 class MyAdminSession implements \DuckPhp\GlobalAdmin\AdminSessionInterface {
     use SingletonTrait;
-    protected $currentUserId = null;
-    protected $currentUserName = null;
-    public function getCurrentUserId()
+    protected $currentAdminId = null;
+    protected $currentAdminName = null;
+    public function getCurrentAdminId()
     {
-        return $this->currentUserId;
+        return $this->currentAdminId;
     }
-    public function getCurrentUserName(): string
+    public function getCurrentAdminName(): string
     {
-        return $this->currentUserName ?? '';
+        return $this->currentAdminName ?? '';
     }
-    public function setCurrentUser($user)
+    public function setCurrentAdmin($admin)
     {
-        $this->currentUserId = $user['id'] ?? null;
-        $this->currentUserName = $user['username'] ?? '';
+        $this->currentAdminId = $admin['id'] ?? null;
+        $this->currentAdminName = $admin['name'] ?? '';
     }
-    public function unsetCurrentUser()
+    public function unsetCurrentAdmin()
     {
-        $this->currentUserId = null;
-        $this->currentUserName = null;
+        $this->currentAdminId = null;
+        $this->currentAdminName = null;
     }
-    public function getCurrentUser()
+    public function getCurrentAdmin()
     {
-        return ['id' => $this->currentUserId, 'name' => $this->currentUserName];
+        return ['id' => $this->currentAdminId, 'name' => $this->currentAdminName];
     }
 }

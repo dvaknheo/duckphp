@@ -77,6 +77,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
 
         // Test register() without auto redirect
         MyUser::_()->options['user_loginout_auto_redirect'] = false;
+        MyUser::_()->options['user_callback_for_session'] = [MyUserSession::class, '_'];
         ob_start();
         Helper::User()->register(['username' => 'test', 'password' => '123456']);
         $output = ob_get_clean();
@@ -198,7 +199,6 @@ class MyUser extends GlobalUser
         'user_callback_for_url_for_register' => [MyUserAction::class,'urlForRegister'],
         'user_callback_for_url_for_logout' => [MyUserAction::class,'urlForLogout'],
         'user_callback_for_local_service'=>[MyUserService::class,'_'],
-        'user_callback_for_session'=>[MyUserSession::class,'_'],
         'user_callback_for_data' => [MyUserAction::class, 'data'],
         'user_view_file_header'=>'/abc',
         'user_loginout_auto_redirect' => false,
