@@ -53,8 +53,6 @@ interface AdminActionInterface
      * @param array<string, mixed> $data
      */
     public function _Show(array $data = [], string $view = '');
-    public function login(array $post);
-    public function logout();
     public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool;
     /**
      * @param array<string, mixed> $ext
@@ -62,4 +60,6 @@ interface AdminActionInterface
     public function log(string $string, ?string $type = null, array $ext = []);
 
     public function isSuper(): bool;
+    // public function login(array $post);
+    // public function logout();
 }
