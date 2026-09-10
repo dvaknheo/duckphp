@@ -14,11 +14,10 @@ use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
-use DuckPhp\Foundation\Controller\Helper;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
 use DuckPhp\GlobalAdmin\AdminSessionInterface;
 
-class GlobalAdmin extends ComponentBase implements AdminActionInterface
+class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLoginActionInterface
 {
     const EVENT_ACTION_ADMIN_REGISTERING = 'ACTION_ADMIN_REGISTERING';
     const EVENT_ACTION_ADMIN_REGISTERED = 'ACTION_ADMIN_REGISTERED';
@@ -47,6 +46,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         'admin_callback_for_data' => null, //[AdminAction::class,'data'],
         'admin_callback_for_local_service' => null, //[AdminAction::class,'service'],
         'admin_callback_for_add_ext_view_data' => null, //[AdminAction::class,'addExtViewData'],
+        'admin_callback_for_login_service' => null,
         'admin_callback_for_session' => null,
         'admin_loginout_auto_redirect' => true,
 
@@ -76,8 +76,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     public function id(bool $check_login = true)
     {
         if (isset($this->options['admin_callback_for_session'])) {
-            $id = $this->getLoginSession()->getCurrentAdminId();
-            Helper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, AdminException::class);
+            $id = $this->getSession()->getCurrentAdminId();
+            CoreHelper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, AdminException::class);
             return $id ?? 0;
         }
         if (isset($this->options['admin_callback_for_id'])) {
@@ -88,8 +88,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     public function name(bool $check_login = true): string
     {
         if (isset($this->options['admin_callback_for_session'])) {
-            $name = $this->getLoginSession()->getCurrentAdminName();
-            Helper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, AdminException::class);
+            $name = $this->getSession()->getCurrentAdminName();
+            CoreHelper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, AdminException::class);
             return $name;
         }
         if (isset($this->options['admin_callback_for_name'])) {
@@ -198,19 +198,24 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         return $ret;
     }
     ///////////////
+    protected function getLoginBusiness()
+    {
+        return $this->run_callback_by_key('user_callback_for_login_service');
+    }
+
     /**
-     * Summary of getLoginSession
+     * Summary of getSession
      * @return AdminSessionInterface
      */
-    protected function getLoginSession()
+    protected function getSession()
     {
         return $this->run_callback_by_key('admin_callback_for_session');
     }
     public function login(array $post)
     {
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGINING, $post);
-        $admin = $this->localService()->login($post);
-        $this->getLoginSession()->setCurrentAdmin($admin);
+        $admin = $this->getLoginBusiness()->login($post);
+        $this->getSession()->setCurrentAdmin($admin);
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGED, $post);
 
         if ($this->options['admin_loginout_auto_redirect']) {
@@ -221,8 +226,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     {
         $admin_id = $this->id(false);
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTING, $admin_id);
-        $this->localService()->logout($admin_id);
-        $this->getLoginSession()->unsetCurrentAdmin();
+        $this->getLoginBusiness()->logout($admin_id);
+        $this->getSession()->unsetCurrentAdmin();
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGOUTED, $admin_id);
         if ($this->options['admin_loginout_auto_redirect']) {
             CoreHelper::Show302($this->urlForLogin());

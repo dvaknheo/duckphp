@@ -14,11 +14,10 @@ use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
-use DuckPhp\Foundation\Controller\Helper;
 use DuckPhp\GlobalUser\UserActionInterface;
 use DuckPhp\GlobalUser\UserSessionInterface;
 
-class GlobalUser extends ComponentBase implements UserActionInterface
+class GlobalUser extends ComponentBase implements UserActionInterface, UserLoginActionInterface
 {
     const EVENT_ACTION_USER_REGISTERING = 'ACTION_USER_REGISTERING';
     const EVENT_ACTION_USER_REGISTERED = 'ACTION_USER_REGISTERED';
@@ -48,6 +47,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         'user_callback_for_data' => null, //[UserAction::class,'data'],
         'user_callback_for_local_service' => null, //[UserAction::class,'service'],
         'user_callback_for_add_ext_view_data' => null, //[UserAction::class,'addExtViewData'],
+        'user_callback_for_login_service' => null,
         'user_callback_for_session' => null,
         'user_loginout_auto_redirect' => true,
 
@@ -78,8 +78,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     public function id(bool $check_login = true)
     {
         if (isset($this->options['user_callback_for_session'])) {
-            $id = $this->getLoginSession()->getCurrentUserId();
-            Helper::ControllerThrowOn($check_login && !$id, "id(): NoLogin", -1, UserException::class);
+            $id = $this->getSession()->getCurrentUserId();
+            CoreHelper::ControllerThrowOn($check_login && !$id, "id(): NoLogin", -1, UserException::class);
             return $id ?? 0;
         }
         if (isset($this->options['user_callback_for_id'])) {
@@ -90,8 +90,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     public function name(bool $check_login = true): string
     {
         if (isset($this->options['user_callback_for_session'])) {
-            $name = $this->getLoginSession()->getCurrentUserName();
-            Helper::ControllerThrowOn($check_login && !$name, "name() NoLogin 2", -2, UserException::class);
+            $name = $this->getSession()->getCurrentUserName();
+            CoreHelper::ControllerThrowOn($check_login && !$name, "name() NoLogin 2", -2, UserException::class);
             return $name;
         }
         if (isset($this->options['user_callback_for_name'])) {
@@ -209,12 +209,12 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     ///////////////
     protected function getLoginBusiness()
     {
-        return $this->localService();
+        return $this->run_callback_by_key('user_callback_for_login_service');
     }
     /**
      * @return UserSessionInterface
      */
-    protected function getLoginSession()
+    protected function getSession()
     {
         return $this->run_callback_by_key('user_callback_for_session');
     }
@@ -222,7 +222,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_REGISTERING, $post);
         $user = $this->getLoginBusiness()->register($post);
-        $this->getLoginSession()->setCurrentUser($user);
+        $this->getSession()->setCurrentUser($user);
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_REGISTERED, $post);
 
         if ($this->options['user_loginout_auto_redirect']) {
@@ -234,7 +234,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGINING, $post);
         $user = $this->getLoginBusiness()->login($post);
-        $this->getLoginSession()->setCurrentUser($user);
+        $this->getSession()->setCurrentUser($user);
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGINED, $post);
 
         if ($this->options['user_loginout_auto_redirect']) {
@@ -250,8 +250,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         // }
         $user_id = $this->id(false);
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTING, $user_id);
-        $this->localService()->logout($user_id);
-        $this->getLoginSession()->unsetCurrentUser();
+        $this->getLoginBusiness()->logout($user_id);
+        $this->getSession()->unsetCurrentUser();
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTED, $user_id);
         if ($this->options['user_loginout_auto_redirect']) {
             CoreHelper::Show302($this->urlForLogin());

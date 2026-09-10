@@ -13,14 +13,6 @@ interface AdminServiceInterface
      */
     public function canAccess($admin_id, string $class, string $method, ?string $url = null): bool;
     /**
-     * @param array<string, mixed>
-     */
-    public function login(array $post): array;
-    /**
-     * @param int|string $admin_id
-     */
-    public function logout($admin_id);
-    /**
      * @param int|string $admin_id
      * @param array<string, mixed> $ext
      */

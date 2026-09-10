@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\Foundation\Controller;
+namespace DuckPhp\GlobalUser;
 
 trait UserSessionTrait
 {

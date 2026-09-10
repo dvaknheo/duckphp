@@ -65,8 +65,4 @@ interface UserActionInterface
      * @param array<string, mixed> $ids
      */
     public function batchGetUsernames(array $ids): array;
-    ///////////////
-    // public function register(array $post);
-    // public function login(array $post);
-    // public function logout();
 }
