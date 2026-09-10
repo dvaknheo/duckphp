@@ -201,6 +201,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
         View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
+        $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;
         $ret = View::_()->_Show($data, $view);
         App::Phase($old_phase);
         return $ret;
@@ -242,6 +243,11 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function logout()
     {
+        die("TODO");
+        // if (empty(Helper::AppOptions('user_provider'))) {
+        //     Helper::Show302(Helper::User()->urlForHome());
+        //     return;
+        // }
         $user_id = $this->id(false);
         GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTING, $user_id);
         $this->localService()->logout($user_id);
