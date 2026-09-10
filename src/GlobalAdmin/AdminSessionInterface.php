@@ -8,7 +8,7 @@ namespace DuckPhp\GlobalAdmin;
 
 interface AdminSessionInterface
 {
-    public function setCurrentAdmin($user);
+    public function setCurrentAdmin($admin);
     public function unsetCurrentAdmin();
     public function getCurrentAdmin();
     public function getCurrentAdminName();

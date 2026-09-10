@@ -78,6 +78,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         // Test register() without auto redirect
         MyUser::_()->options['user_loginout_auto_redirect'] = false;
         MyUser::_()->options['user_callback_for_session'] = [MyUserSession::class, '_'];
+        MyUser::_()->options['user_callback_for_login_service'] = [MyUserService::class, '_'];
         ob_start();
         Helper::User()->register(['username' => 'test', 'password' => '123456']);
         $output = ob_get_clean();
@@ -116,6 +117,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
 
         // Test id() with session callback
         MyUser::_()->options['user_callback_for_session'] = [MyUserSession::class, '_'];
+        MyUser::_()->options['user_callback_for_login_service'] = [MyUserService::class, '_'];
         MyUserService::_()->resetSession();
         MyUserSession::_()->setCurrentUser(['id' => 1, 'username' => 'session_user']);
         $id = Helper::User()->id(false);
@@ -157,13 +159,11 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
 
         // Test exception paths: id() and name() when no provider is set
         // We need a separate test class for this since we need to unset callbacks
-        $old_id_cb = MyUser::_()->options['user_callback_for_id'];
-        $old_name_cb = MyUser::_()->options['user_callback_for_name'];
-        $old_session_cb = MyUser::_()->options['user_callback_for_session'];
         // Unset both id and name callbacks, and session callback
         MyUser::_()->options['user_callback_for_id'] = null;
         MyUser::_()->options['user_callback_for_name'] = null;
         MyUser::_()->options['user_callback_for_session'] = null;
+        MyUser::_()->options['user_callback_for_login_service'] = null;
         try {
             Helper::User()->id(false);
             \PHPUnit\Framework\Assert::fail("Should throw DuckPhpSystemException");
@@ -176,10 +176,6 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
             \PHPUnit\Framework\Assert::assertStringContainsString("No GlobalUser Provider", $ex->getMessage());
         }
-        // Restore options
-        MyUser::_()->options['user_callback_for_id'] = $old_id_cb;
-        MyUser::_()->options['user_callback_for_name'] = $old_name_cb;
-        MyUser::_()->options['user_callback_for_session'] = $old_session_cb;
 
         \LibCoverage\LibCoverage::End();
     }

@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Foundation\Controller;
+namespace tests\DuckPhp\GlobalUser;
 
-use DuckPhp\Foundation\Controller\UserSessionTrait;
+use DuckPhp\GlobalUser\UserSessionTrait;
 use DuckPhp\Foundation\SessionTrait;
 
 class UserSessionTraitTest extends \PHPUnit\Framework\TestCase
@@ -35,6 +35,6 @@ class UserSessionTraitTest extends \PHPUnit\Framework\TestCase
 // Mock class that uses SessionTrait to provide get()/set() methods
 class MyUserSessionTrait
 {
-    use \DuckPhp\Foundation\SessionTrait;
-    use \DuckPhp\Foundation\Controller\UserSessionTrait;
+    use SessionTrait;
+    use UserSessionTrait;
 }

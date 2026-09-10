@@ -74,6 +74,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         // Test login() without auto redirect
         MyAdmin::_()->options['admin_loginout_auto_redirect'] = false;
         MyAdmin::_()->options['admin_callback_for_session'] = [MyAdminSession::class, '_'];
+        MyAdmin::_()->options['admin_callback_for_login_service'] = [MyService::class, '_'];
         ob_start();
         Helper::Admin()->login(['name' => 'test', 'password' => '123456']);
         $output = ob_get_clean();
@@ -100,6 +101,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
 
         // Test id() with session callback
         MyAdmin::_()->options['admin_callback_for_session'] = [MyAdminSession::class, '_'];
+        MyAdmin::_()->options['admin_callback_for_login_service'] = [MyService::class, '_'];
         MyAdminSession::_()->unsetCurrentAdmin();
         MyAdminSession::_()->setCurrentAdmin(['id' => 1, 'name' => 'session_admin']);
         $id = Helper::Admin()->id(false);
@@ -137,13 +139,12 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         MyAdmin::_()->options['admin_callback_for_url_for_home'] = $old_url_for_home_cb;
 
         // Test exception paths: id() and name() when no provider is set
-        $old_id_cb = MyAdmin::_()->options['admin_callback_for_id'];
-        $old_name_cb = MyAdmin::_()->options['admin_callback_for_name'];
-        $old_session_cb = MyAdmin::_()->options['admin_callback_for_session'];
+
         // Unset both id and name callbacks, and session callback
         MyAdmin::_()->options['admin_callback_for_id'] = null;
         MyAdmin::_()->options['admin_callback_for_name'] = null;
         MyAdmin::_()->options['admin_callback_for_session'] = null;
+        MyAdmin::_()->options['admin_callback_for_login_service'] = null;
         try {
             Helper::Admin()->id(false);
             \PHPUnit\Framework\Assert::fail("Should throw DuckPhpSystemException");
@@ -156,10 +157,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
             \PHPUnit\Framework\Assert::assertStringContainsString("No GlobalAdmin Provider", $ex->getMessage());
         }
-        // Restore options
-        MyAdmin::_()->options['admin_callback_for_id'] = $old_id_cb;
-        MyAdmin::_()->options['admin_callback_for_name'] = $old_name_cb;
-        MyAdmin::_()->options['admin_callback_for_session'] = $old_session_cb;
+
 
         \LibCoverage\LibCoverage::End();
     }

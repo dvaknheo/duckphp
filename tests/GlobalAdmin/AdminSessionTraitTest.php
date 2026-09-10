@@ -1,9 +1,8 @@
 <?php
 namespace tests\DuckPhp\Foundation\Controller;
 
-use DuckPhp\Foundation\Controller\AdminSessionTrait;
+use DuckPhp\GlobalAdmin\AdminSessionTrait;
 use DuckPhp\Foundation\SessionTrait;
-use DuckPhp\Foundation\SingletonExTrait;
 
 class AdminSessionTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,6 +35,6 @@ class AdminSessionTraitTest extends \PHPUnit\Framework\TestCase
 // Mock class that uses SessionTrait to provide get()/set() methods
 class MyAdminSessionTrait
 {
-    use \DuckPhp\Foundation\SessionTrait;
-    use \DuckPhp\Foundation\Controller\AdminSessionTrait;
+    use SessionTrait;
+    use AdminSessionTrait;
 }

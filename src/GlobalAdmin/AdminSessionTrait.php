@@ -23,12 +23,12 @@ trait AdminSessionTrait
     {
         return $this->get('admin', []);
     }
-    public function setCurrentAdmin(array $admin): void
+    public function setCurrentAdmin($admin)
     {
         $this->set('admin', $admin);
     }
 
-    public function unsetCurrentAdmin(): void
+    public function unsetCurrentAdmin()
     {
         $this->set('admin', []);
     }
