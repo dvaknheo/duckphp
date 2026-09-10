@@ -195,8 +195,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         $last_phase = App::_()->getLastPhase();
         $data = $this->mergeViewData($data);
 
-        $full_header_file = App::_()->getOverrideableFile('view', $this->options['user_view_file_header'], true);
-        $full_footer_file = App::_()->getOverrideableFile('view', $this->options['user_view_file_footer'], true);
+        $full_header_file = $this->options['user_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['user_view_file_header'], true) : '';
+        $full_footer_file = $this->options['user_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['user_view_file_footer'], true) : '';
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
@@ -243,7 +243,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     }
     public function logout()
     {
-        die("TODO");
+        // $last_phase = App::_()->getLastPhase();
         // if (empty(Helper::AppOptions('user_provider'))) {
         //     Helper::Show302(Helper::User()->urlForHome());
         //     return;

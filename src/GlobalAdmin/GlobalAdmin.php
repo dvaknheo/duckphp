@@ -186,8 +186,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         $last_phase = App::_()->getLastPhase();
         $data = $this->mergeViewData($data);
 
-        $full_header_file = App::_()->getOverrideableFile('view', $this->options['admin_view_file_header'], true);
-        $full_footer_file = App::_()->getOverrideableFile('view', $this->options['admin_view_file_footer'], true);
+        $full_header_file = $this->options['admin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_header'], true) : '';
+        $full_footer_file = $this->options['admin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_footer'], true) : '';
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
