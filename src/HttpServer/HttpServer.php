@@ -47,6 +47,13 @@ class HttpServer
         ],
     ];
     public $pid = 0;
+    /**
+     * Handle of the background server process. Only used on Windows, where the server is
+     * started through proc_open() because there is no POSIX shell to background it with.
+     *
+     * @var resource|null
+     */
+    protected $process;
 
     protected $cli_options_ex = [];
     protected $args = [];
@@ -161,10 +168,31 @@ class HttpServer
     }
     public function close()
     {
+        // Windows: there is no posix_kill(), so the server is terminated through its handle.
+        if (is_resource($this->process)) {
+            proc_terminate($this->process, 9);
+            proc_close($this->process); // reap the child, otherwise PHP waits for it on shutdown
+            $this->process = null;
+            $this->pid = 0;
+            return true;
+        }
         if (!$this->pid) {
             return false;
         }
+        if (static::isWindows()) {
+            // A PID without a handle can only come from the outside; kill the whole tree.
+            exec('taskkill /F /T /PID ' . (int)$this->pid);
+            return true;
+        }
         posix_kill($this->pid, 9);
+        return true;
+    }
+    /**
+     * Windows has no POSIX shell, so the two platforms need different handling.
+     */
+    protected static function isWindows(): bool
+    {
+        return PHP_OS_FAMILY === 'Windows';
     }
     protected function showWelcome(): void
     {
@@ -211,6 +239,12 @@ class HttpServer
             // PHP 7.4+ built-in server multi-worker, supports internal loopback requests (e.g. RPC demo)
             $cmd = 'PHP_CLI_SERVER_WORKERS=' . (int)$this->options['workers'] . ' ' . $cmd;
         }
+        // Windows has no POSIX shell: there, "> /dev/null 2>&1 & echo $!;" makes cmd.exe write
+        // "The system cannot find the path specified." to stderr and return a bogus PID, so the
+        // server is started without any shell on that platform.
+        if (static::isWindows()) {
+            return $this->runHttpServerOnWindows();
+        }
         if (isset($this->args['dry'])) {
             echo $cmd;
             echo "\n";
@@ -224,5 +258,65 @@ class HttpServer
         }
         echo "DuckPhp running at : http://{$this->host}:{$this->port}/ \n"; // @codeCoverageIgnore
         return system($cmd); // @codeCoverageIgnore
+    }
+    /**
+     * Start the built-in server on Windows without going through a shell.
+     *
+     * The command is handed to proc_open() as an array, so no cmd.exe is involved: the child
+     * cannot write to our stderr, and proc_get_status() reports the real PID. The standard
+     * streams are redirected to the null device instead of pipes, otherwise the server would
+     * block as soon as a pipe buffer fills up.
+     *
+     * @return int|false|void
+     */
+    protected function runHttpServerOnWindows()
+    {
+        $command = [PHP_BINARY, '-S', $this->host . ':' . $this->port, '-t', $this->docroot];
+
+        if (isset($this->args['dry'])) {
+            echo implode(' ', $command);
+            echo "\n";
+            return;
+        }
+        if (!($this->options['background'] ?? false)) {
+            echo "DuckPhp running at : http://{$this->host}:{$this->port}/ \n"; // @codeCoverageIgnore
+            $process = proc_open($command, [0 => STDIN, 1 => STDOUT, 2 => STDERR], $pipes, null, $this->serverEnvironment()); // @codeCoverageIgnore
+            return is_resource($process) ? proc_close($process) : false; // @codeCoverageIgnore
+        }
+        $process = proc_open(
+            $command,
+            [0 => ['file', 'NUL', 'r'], 1 => ['file', 'NUL', 'a'], 2 => ['file', 'NUL', 'a']],
+            $pipes,
+            null,
+            $this->serverEnvironment()
+        );
+        if (!is_resource($process)) {
+            throw new \RuntimeException('DuckPhp: unable to start the PHP built-in server');
+        }
+        $this->process = $process;
+        /** @var array{pid:int} $status */
+        $status = proc_get_status($process);
+        $this->pid = (int)$status['pid'];
+        // PHP waits for a live proc_open() child when the script ends, so always reap it.
+        register_shutdown_function([$this, 'close']);
+        return $this->pid;
+    }
+    /**
+     * Environment for the server process. On Windows PHP_CLI_SERVER_WORKERS has to be an
+     * environment variable: the POSIX variant puts it in front of the shell command, where
+     * cmd.exe would read it as the name of the program to run.
+     *
+     * @return array<string,string>
+     */
+    protected function serverEnvironment(): array
+    {
+        $env = getenv();
+        if (!is_array($env)) {
+            $env = [];
+        }
+        if (!empty($this->options['workers'])) {
+            $env['PHP_CLI_SERVER_WORKERS'] = (string)(int)$this->options['workers'];
+        }
+        return $env;
     }
 }
