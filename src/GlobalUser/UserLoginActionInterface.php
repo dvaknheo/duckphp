@@ -6,7 +6,6 @@
 
 namespace DuckPhp\GlobalUser;
 
-
 interface UserLoginActionInterface
 {
     public function register(array $post);

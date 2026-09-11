@@ -170,19 +170,21 @@ class HttpServer
     {
         // Windows: there is no posix_kill(), so the server is terminated through its handle.
         if (is_resource($this->process)) {
-            proc_terminate($this->process, 9);
-            proc_close($this->process); // reap the child, otherwise PHP waits for it on shutdown
-            $this->process = null;
-            $this->pid = 0;
-            return true;
+            proc_terminate($this->process, 9); // @codeCoverageIgnore
+
+            // reap the child, otherwise PHP waits for it on shutdown
+            proc_close($this->process); // @codeCoverageIgnore
+            $this->process = null; // @codeCoverageIgnore
+            $this->pid = 0; // @codeCoverageIgnore
+            return true; // @codeCoverageIgnore
         }
         if (!$this->pid) {
             return false;
         }
         if (static::isWindows()) {
             // A PID without a handle can only come from the outside; kill the whole tree.
-            exec('taskkill /F /T /PID ' . (int)$this->pid);
-            return true;
+            exec('taskkill /F /T /PID ' . (int)$this->pid); // @codeCoverageIgnore
+            return true; // @codeCoverageIgnore
         }
         posix_kill($this->pid, 9);
         return true;
@@ -243,7 +245,7 @@ class HttpServer
         // "The system cannot find the path specified." to stderr and return a bogus PID, so the
         // server is started without any shell on that platform.
         if (static::isWindows()) {
-            return $this->runHttpServerOnWindows();
+            return $this->runHttpServerOnWindows(); // @codeCoverageIgnore
         }
         if (isset($this->args['dry'])) {
             echo $cmd;
@@ -259,6 +261,7 @@ class HttpServer
         echo "DuckPhp running at : http://{$this->host}:{$this->port}/ \n"; // @codeCoverageIgnore
         return system($cmd); // @codeCoverageIgnore
     }
+    // @codeCoverageIgnoreStart
     /**
      * Start the built-in server on Windows without going through a shell.
      *
@@ -318,5 +321,5 @@ class HttpServer
             $env['PHP_CLI_SERVER_WORKERS'] = (string)(int)$this->options['workers'];
         }
         return $env;
-    }
+    } // @codeCoverageIgnoreEnd
 }

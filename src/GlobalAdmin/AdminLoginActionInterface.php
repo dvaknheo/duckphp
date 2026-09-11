@@ -6,7 +6,6 @@
 
 namespace DuckPhp\GlobalAdmin;
 
-
 interface AdminLoginActionInterface
 {
     public function login(array $post);

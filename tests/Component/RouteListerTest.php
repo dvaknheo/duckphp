@@ -6,6 +6,7 @@ use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\RouteLister;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 use DuckPhp\Core\AutoLoader;
@@ -116,14 +117,29 @@ class RouteListerTest extends \PHPUnit\Framework\TestCase
 
         Route::_()->options['namespace']="NoExists";
         RouteLister::_()->listAll();
+        //////////////
+        PhaseContainer::RestAllContainerForTesting();
+
+        include $path.'System/RouteListerApp.php';
+        \tests_Ext_RouteLister\System\RouteListerApp::_()->init([
+             'path'=>$path,
+        ]);
+        MyRouteLister::_()->getControllerPathByApp(Route::_()->getControllerNamespacePrefix());
+
+        Route::_()->options['namespace_controller'] = '\\';
+        MyRouteLister::_()->getControllerPathByApp(Route::_()->getControllerNamespacePrefix());
 
         \LibCoverage\LibCoverage::End();
     }
 }
 class MyRouteLister extends RouteLister
 {
-    //
+    public function getControllerPathByApp($prefix)
+    {
+        return parent::getControllerPathByApp($prefix);
+    }
 }
 class SubAppForRouteLister extends DuckPhp
 {
+
 }

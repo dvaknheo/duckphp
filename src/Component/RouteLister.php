@@ -6,6 +6,7 @@
 
 namespace DuckPhp\Component;
 
+use Directory;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
@@ -85,15 +86,31 @@ class RouteLister extends ComponentBase
         }
         return [$first,$method];
     }
-    protected function getAllControllerClasses(): array
+    protected function getControllerPathByApp($prefix)
     {
-        $prefix = Route::_()->getControllerNamespacePrefix();
+        if ("\\" === substr($prefix, 0, 1)) {
+            return null;
+        }
+        $class = App::_()->getThisClassName();
+        $reflect = new \ReflectionClass($class);
+        $filename = $reflect->getFileName();
+
+        $namespace = trim((string) App::_()->options['namespace'], '\\');
+        $base_path = substr($filename, 0, 0 - (strlen($class) - strlen($namespace) - 1 + strlen('.php')));
+        $path = $base_path . str_replace("\\", DIRECTORY_SEPARATOR, Route::_()->options['namespace_controller']);
+        if (!is_dir($path)) {
+            return null;
+        }
+        return $path;
+    }
+    protected function getControllerPathByDetected($prefix)
+    {
         $classToTest[] = Route::_()->options['controller_welcome_class'].Route::_()->options['controller_class_postfix'];
         $classToTest[] = 'Helper';
         $classToTest[] = 'Base';
 
         $classToTest = array_merge($classToTest, $this->options['classes_to_get_controller_path']);
-        $path = '';
+        $path = null;
         foreach ($classToTest as $base_class) {
             try {
                 $class = $prefix. basename(str_replace("\\", '/', $base_class));
@@ -104,6 +121,16 @@ class RouteLister extends ComponentBase
             }
             break;
         }
+
+        return $path;
+    }
+    protected function getAllControllerClasses(): array
+    {
+        $prefix = Route::_()->getControllerNamespacePrefix();
+
+        $path = null;
+        $path = $path ?? $this->getControllerPathByApp($prefix);
+        $path = $path ?? $this->getControllerPathByDetected($prefix);
 
         if (!$path) {
             return [];
