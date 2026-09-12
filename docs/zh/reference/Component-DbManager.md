@@ -75,10 +75,10 @@ DbManager::_()->_DbCloseAll();
 
 ## 方法列表
 
-### 公共方法（连接获取）
+### 公共方法
 
     public function init(array $options, ?object $context = null)
-父 init + 回填 database_driver=getDatabaseDriver。
+父组件 init + 回填 `database_driver = getDatabaseDriver()`。
 
     public function getDatabaseConfigList(): array
 当前（最终）连接配置列表。
@@ -87,47 +87,58 @@ DbManager::_()->_DbCloseAll();
 options 配置优先；否则从第一条非空 dsn 推断并回填 driver。
 
     public static function Db($tag = null)
-静态取句：null→写(tag0)；有 tag 取该 tag。
+静态取连接：`null` → 写（tag 0）；有 tag 取该 tag。
 
-    public static function DbForWrite() / _DbForWrite()
-取 tag0 写连接。
+    public static function DbForWrite()
+取 tag 0 写连接。
 
-    public static function DbForRead() / _DbForRead()
+    public static function DbForRead()
 有 read 配置取读连接，否则回落写。
 
-### 连接创建与缓存
+    public static function DbCloseAll()
+遍历 cache 内的 db 逐个 `close()` 后清空。
+
+    public static function OnQuery($db, $sql, ...$args)
+SQL 日志钩子：开启时 `Logger->log(level, '[sql]:…')`。
+
+    public function setBeforeGetDbHandler($db_before_get_object_handler)
+设置“每次取连接前”的自定义钩子。
+
+    public function _Db($tag = null)
+实例实现入口：默认写；错误时抛 missing 异常。
+
+    public function _DbForWrite()
+`DbForWrite()` 的实例实现：取 tag 0 写连接。
+
+    public function _DbForRead()
+`DbForRead()` 的实例实现：有 read 配置取读连接，否则回落写。
+
+    public function _DbCloseAll()
+`DbCloseAll()` 的实例实现：关闭并清空缓存连接。
+
+    public function _OnQuery($db, $sql, ...$args)
+`OnQuery()` 的实例实现。
+
+    public function _SqlForPager($sql, $page_no, $page_size = 10)
+把分页 SQL 交给写连接生成。
+
+    public function _SqlForCountSimply($sql)
+交给连接做简单 count。
+
+### 受保护方法
 
     protected function initOptions(array $options): void
 组装 database_config_list：`database_list` 或（try single）按 `database`。
 
     protected function initContext(object $context): void
-reload_by_setting 时用 context->_Setting 取 database_list/database 覆盖 config list。
+`reload_by_setting` 时用 `context->_Setting` 取 database_list/database 覆盖 config list。
 
     protected function getDatabase($tag): object
-懒建：若有 beforeGet handler 先调用；不存在则从 config 建Db + cache。
+懒建连接：存在 beforeGet handler 时先调用；不存在则按 config 建 Db 并缓存。
 
     protected function createDatabaseObject(array $db_config): object
-sqlite 相对处理绝对化；用 database_class 或 DuckPhp\Db\Db；init config；若要 SQL-queries log，则 setBeforeQueryHandler。
+建连接对象：sqlite 相对路径绝对化；用 `database_class` 或 `DuckPhp\Db\Db`；init config；开启 SQL 日志时 `setBeforeQueryHandler`。
 
-    public function _Db($tag = null)
-实现入口：默认写；错误时抛 missing error。
-
-### 静态壳 & 日志/收尾
-
-    public static function DbCloseAll() / _DbCloseAll()
-遍历 cache 内的 db->close() 后清空。
-
-    public static function OnQuery($db, $sql, ...$args) / 实例 _OnQuery(...)
-若 SQL 日志开启则 `Logger->log(level,'[sql]:…')`。
-
-    public function setBeforeGetDbHandler($handler)
-在每次取连接前可调的自定义钩子。
-
-    public function _SqlForPager($sql, $page_no, $page_size = 10)
-把分页 SQL 交给写连接生成器。
-
-    public function _SqlForCountSimply($sql)
-交给连接简算 count。
 
 ## 相关链接
 

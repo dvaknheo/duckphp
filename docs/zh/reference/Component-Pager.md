@@ -55,18 +55,19 @@ Pager::PageHtml(500, ['page_size'=>20]); //静态渲染
 
 ## 方法列表
 
-### 公共静态方法
+### 公共方法
 
-    static PageNo($new_value = null)
-读/设当前页（→current）。
+    public static function PageNo($new_value = null)
+读/设当前页（→ `current`）。
 
-    static PageWindow($new_value = null)
+    public static function PageWindow($new_value = null)
 读/设 page_size。
 
-    static PageHtml($total, $options = [])
-渲染一段分页 HTML（→render）。
+    public static function PageHtml($total, $options = [])
+渲染一段分页 HTML（→ `render`）。
 
-### 公共实例方法
+    public function init(array $options, ?object $context = null)
+组件初始化（承接 options 与上下文）。
 
     public function current($new_value = null): int
 当前页 getter/setter（缺省推算）。
@@ -75,13 +76,13 @@ Pager::PageHtml(500, ['page_size'=>20]); //静态渲染
 每页数量 getter/setter。
 
     public function getPageCount(int $total): int
-总页＝ceil(total/page_size)。
+总页数 = ceil(total / page_size)。
 
     public function getUrl($page): string
 单页 URL；rewrite 回调优先。
 
     public function defaultGetUrl(int $page): string
-“url 模板/请求 + page param”组装，page=1 不出现页参数。
+“url 模板/请求 + page 参数”组装，page=1 时不出现页参数。
 
     public function render($total, $options = []): string
 结合上述渲染 window HTML。
@@ -89,10 +90,11 @@ Pager::PageHtml(500, ['page_size'=>20]); //静态渲染
 ### 受保护方法
 
     protected function getDefaultUrl(): string
-取 requestUri 作为默认 url（无 __SUPERGLOBAL_CONTEXT 时全局）。
+取 requestUri 作为默认 url（无 `__SUPERGLOBAL_CONTEXT` 时读全局）。
 
     protected function getDefaultPageNo(): int
-从 GET[page_key] 取页（缺 1）。
+从 `GET[page_key]` 取页（缺省 1）。
+
 
 ## 相关链接
 

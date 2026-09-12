@@ -62,28 +62,40 @@ RouteHookRewrite::_()->init([
 
 ## 方法列表
 
-    public static function Hook($path_info)   → 实例 doHook
-路由入口（由挂 hook 触发）。
+### 公共方法
 
-    protected function doHook(string $path_info): ?bool（实现在文件后）
-做前缀裁、输入 query 拼 url → filteRewrite；命中则 change url + PathInfo。返回 false。
+    public static function Hook($path_info)
+路由入口（由挂到 Route 的钩子触发）：静态壳，转发实例 `doHook`。
+
+    public function assignRewrite($key, $value = null)
+添加一条（数组形式则批量）rewrite 到内部映射 `rewrite_map`。
+
+    public function getRewrites(): array
+返回当前 rewrite 映射。
+
+    public function replaceRegexUrl($input_url, $template_url, $new_url)
+模板以 `~` 开头时的正则替换：改写 input 的 path 并合并 query；不匹配返回 `null`。
+
+    public function replaceNormalUrl($input_url, $template_url, $new_url)
+模板非 `~`：path 完全相等才命中；拼 `new_path` 并合并 query。
+
+    public function filteRewrite($input_url)
+逐条尝试（先 normal 后 regex），返回第一个命中结果或 `null`。
+
+### 受保护方法
+
+    protected function initOptions(array $options): void
+把选项 `rewrite_map` 合并进内部映射。
+
+    protected function initContext(object $context): void
+向 `Route` 挂 `prepend-outter` 钩子（`[static::class,'Hook']`）。
 
     protected function changeRouteUrl(string $url): void
-保存旧 GET 到 init_get、设置新 query（上下文/全局）。
+保存旧 GET 到 `init_get` 并设置新 query（上下文/全局）。
 
-    public assignRewrite($key, $value = null)
-添加一条（或一批） rewrite 到内部 map。
+    protected function doHook(string $path_info): ?bool
+前缀裁剪、用输入 query 拼 url → `filteRewrite`；命中则改 URL + `PathInfo`，返回 `false`（继续路由）。
 
-    public getRewrites(): array
-返回当前 map。
-
-    public replaceRegexUrl($input_url, $template_url, $new_url)
-模板以 `~` 开头时：把 input 的 path 用正则（`~\`）替换成 new；并合 query。否则返回 null。
-
-    public replaceNormalUrl($input_url, $template_url, $new_url)
-模板非 `~`：比较 path 相等才命中；拼 new_path + 合并 query。 
-    public filteRewrite($input_url)
-依次逐条（normal→regex）跑，返回第一个命中结果或 null。
 
 ## 相关链接
 

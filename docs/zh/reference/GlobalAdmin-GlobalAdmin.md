@@ -32,16 +32,23 @@ const EVENT_SERVICE_ADMIN_LOGOUTED    = 'SERVICE_ADMIN_LOGOUTED';
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `admin_url_home` / `admin_url_login` / `admin_url_logout` | `null` | 后台首页/登录/退出 URL（未配 callback 时用 `__url()` 生成）。 |
-| `admin_view_file_header` / `admin_view_file_footer` | `null` | 后台页头/页脚视图文件（渲染时并入 `__view_data.header/footer`）。 |
+| `admin_url_home` | `null` | 后台首页 URL（未配回调时用 `__url()` 生成）。 |
+| `admin_url_login` | `null` | 后台登录 URL。 |
+| `admin_url_logout` | `null` | 后台退出 URL。 |
+| `admin_view_file_header` | `null` | 后台页头视图文件（渲染时并入 `__view_data.header`）。 |
+| `admin_view_file_footer` | `null` | 后台页脚视图文件（渲染时并入 `__view_data.footer`）。 |
 | `admin_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 数组时，是否先把类名转成 `类名::_()` 单例实例。 |
-| `admin_callback_for_id` / `for_name` / `for_data` | `null` | 取当前管理员 id/name/data 的回调（可 `[AdminAction::class,'id']` 等）。 |
+| `admin_callback_for_id` | `null` | 取当前管理员 id 的回调。 |
+| `admin_callback_for_name` | `null` | 取当前管理员名的回调。 |
+| `admin_callback_for_data` | `null` | 取当前管理员数据（数组）的回调。 |
 | `admin_callback_for_local_service` | `null` | 返回本地 `AdminServiceInterface` 实现的回调。 |
 | `admin_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
 | `admin_callback_for_login_service` | `null` | 登录服务回调（`login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
 | `admin_callback_for_session` | `null` | 管理员会话实现回调（返回 `AdminSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
 | `admin_loginout_auto_redirect` | `true` | `login()/logout()` 完成后是否自动 302（登录跳 home、退出跳 login）。 |
-| `admin_callback_for_url_for_home` / `for_login` / `for_logout` | `null` | 生成对应 URL 的回调（优先于 `admin_url_*`）。 |
+| `admin_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
+| `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
+| `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
 
 ## 使用方式
 

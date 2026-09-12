@@ -15,7 +15,8 @@
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `callable_view_head` / `callable_view_foot` | `null` | head/foot 视图回调名（缺省用父类 `head_file`/`foot_file`）。 |
+| `callable_view_head` | `null` | head 视图回调名（缺省用父类 `head_file`）。 |
+| `callable_view_foot` | `null` | foot 视图回调名（缺省用父类 `foot_file`）。 |
 | `callable_view_class` | `null` | 提供视图回调的类（可为类名字符串或对象）。 |
 | `callable_view_is_object_call` | `true` | 类名为字符串且可 `_()` 时转为单例实例，否则 `new`。 |
 | `callable_view_prefix` | `null` | 视图名加工前缀（如 `view_`，与 `/`→`_` 替换）。 |

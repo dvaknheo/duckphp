@@ -34,16 +34,25 @@ const EVENT_SERVICE_USER_LOGOUTED    = 'SERVICE_USER_LOGOUTED';
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `user_url_home` / `user_url_register` / `user_url_login` / `user_url_logout` | `null` | 站内首页/注册/登录/退出 URL（未配 callback 时用 `__url()` 生成）。注意注册项键名为 `user_url_register`（由旧 `user_url_regist` 更名）。 |
-| `user_view_file_header` / `user_view_file_footer` | `null` | 用户页头/页脚视图文件。 |
+| `user_url_home` | `null` | 站内首页 URL（未配回调时用 `__url()` 生成）。 |
+| `user_url_register` | `null` | 注册 URL（键名由旧 `user_url_regist` 更名）。 |
+| `user_url_login` | `null` | 登录 URL。 |
+| `user_url_logout` | `null` | 退出 URL。 |
+| `user_view_file_header` | `null` | 用户页头视图文件。 |
+| `user_view_file_footer` | `null` | 用户页脚视图文件。 |
 | `user_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 时是否先把类名转成 `类名::_()` 单例实例。 |
-| `user_callback_for_id` / `for_name` / `for_data` | `null` | 取当前用户 id/name/data 的回调。 |
+| `user_callback_for_id` | `null` | 取当前用户 id 的回调。 |
+| `user_callback_for_name` | `null` | 取当前用户名的回调。 |
+| `user_callback_for_data` | `null` | 取当前用户数据（数组）的回调。 |
 | `user_callback_for_local_service` | `null` | 返回本地 `UserServiceInterface` 实现的回调。 |
 | `user_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
 | `user_callback_for_login_service` | `null` | 登录服务回调（`register()/login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
 | `user_callback_for_session` | `null` | 用户会话实现回调（返回 `UserSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
 | `user_loginout_auto_redirect` | `true` | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
-| `user_callback_for_url_for_home` / `for_regist` / `for_login` / `for_logout` | `null` | 生成对应 URL 的回调（优先于 `user_url_*`）。 |
+| `user_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `user_url_home`）。 |
+| `user_callback_for_url_for_regist` | `null` | 生成注册 URL 的回调（键名仍为 `..._regist`，源码原样）。 |
+| `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
+| `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
 
 ## 使用方式
 

@@ -47,25 +47,30 @@ RouteHookPathInfoCompat::_()->init([
 
 ## 方法列表
 
-    public function initContext(object $context): void（受保护 override）
-enable=true 时：Route::addRouteHook([static::class,'Hook'],'prepend-outter') + Route::setUrlHandler([static::class,'Url'])。
+### 公共方法
 
-    public static function Url($url = null)  → onUrl 生成 compact
-把相对 url 转为  base+query _r=…（绝对 `/` 或没有时直接返回原）。
+    public static function Url($url = null)
+把相对 url 转为 `base + query(_r=…)`（绝对 `/` 或无法处理时原样返回）。
 
-    public onUrl(?string $url = null): string
-实现（支持 REQUEST_URI 基址、按 option keys、合并当前 query）。
+    public function onUrl(?string $url = null): string
+URL 生成实现（支持 REQUEST_URI 基址、按 option keys、合并当前 query）。
 
-    protected filteRewrite(string $url, &$flag=false): ?string
-（预留给外部 rewrite 能力钩子，当前原样 return url。）
+    public static function Hook($path_info)
+静态壳：转发实例 `_Hook`。
 
-    public static function Hook($path_info) → _Hook
-静态壳 → 实例 _Hook。
+    public function _Hook($path_info)
+打包：从（context 或全局）request 的 class/action 两个键读 path 并 `Route::PathInfo(...)`；返回 `false`（继续路由）。
 
-    public _Hook($path_info)
-打包：从（context 或全局）request 的 class/action 两个键读 path 并 `Route::PathInfo(...)`;返回 false(继续路由)。
+    （注：模块取参键 `path_info_compact_class_key` 的值可为空串。）
 
-（注：模块参数 `$m` = value of `path_info_compact_class_key` 可为空串。）
+### 受保护方法
+
+    protected function initContext(object $context): void
+`enable=true` 时：`Route::addRouteHook([static::class,'Hook'],'prepend-outter')` 并 `Route::setUrlHandler([static::class,'Url'])`。
+
+    protected function filteRewrite(string $url, &$ret = false): ?string
+预留给外部 rewrite 的能力钩子（当前原样返回 url）。
+
 
 ## 相关链接
 

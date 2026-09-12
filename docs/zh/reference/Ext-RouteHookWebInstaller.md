@@ -21,7 +21,9 @@
 | `web_installer_view` | `''` | 自定义安装视图文件（空用内置视图）。 |
 | `web_installer_view_block_custom` | `null` | 自定义区块模板（视图内嵌）。 |
 | `web_installer_force` | `false` | 是否强制重装（先清表）。 |
-| `web_installer_check_custom_callback` / `do_custom_callback` / `render_custom_callback` | `null` | 自定义检查/执行/渲染回调。 |
+| `web_installer_check_custom_callback` | `null` | 自定义“环境检查”回调。 |
+| `web_installer_do_custom_callback` | `null` | 自定义“安装执行”回调。 |
+| `web_installer_render_custom_callback` | `null` | 自定义“渲染”回调。 |
 | `web_installer_default_sentences` | `[]` | 界面文案覆盖（空则用内置英文默认文案 `builtin_default_sentences`）。 |
 
 ## 使用方式

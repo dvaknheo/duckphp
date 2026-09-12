@@ -23,6 +23,7 @@
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
+| `path` | `''` | 项目根路径（相对路径基准）。 |
 | `path_config` | `'config'` | 配置目录名（相对 `path`，可给绝对覆盖）。 |
 
 ## 使用方式
@@ -43,6 +44,15 @@ config/app.php 例如 `return [ 'debug'=>true, 'db'=>... ];`。
 - 缓存基于 basename：同 basename 第二次不会重复 require。
 - 目录完全缺文件 → 空数组；没有异常。
 - 子应用用相同文件可覆盖：`App->getOverrideFile`查找能命中（phase 优先）。
+
+## 全部选项
+
+```php
+    public $options = [
+        'path' => '',
+        'path_config' => 'config',
+    ];
+```
 
 ## 方法列表
 
