@@ -55,19 +55,55 @@ SuperGlobal::_()->_CookieSet('theme','dark', 3600);   // 底层走 SystemWrapper
 ### 公共静态方法
 
     public static function DefineSuperGlobalContext()
-若未定义则定义 `__SUPERGLOBAL_CONTEXT`（值为 `SuperGlobal::_`），返回是否新定义。
+未定义时定义常量 `__SUPERGLOBAL_CONTEXT`（值为 `SuperGlobal::_`），返回是否新定义。
 
     public static function LoadSuperGlobalAll()
-壳 →  `_->_LoadSuperGlobalAll`。
+静态壳：转发实例 `_LoadSuperGlobalAll`。
 
     public static function SaveSuperGlobalAll()
-壳 → `._SaveSuperGlobalAll`。
+静态壳：转发实例 `_SaveSuperGlobalAll`。
 
     public static function LoadSuperGlobal($key)
-单键 `_Load...` 。
+静态壳：转发实例 `_LoadSuperGlobal`。
 
     public static function SaveSuperGlobal($key)
-单键 `_Save…`。
+静态壳：转发实例 `_SaveSuperGlobal`。
+
+    public static function GET($key = null, $default = null)
+读 `$_GET`（静态壳 → `_GET`）。
+
+    public static function POST($key = null, $default = null)
+读 `$_POST`。
+
+    public static function REQUEST($key = null, $default = null)
+读 `$_REQUEST`。
+
+    public static function COOKIE($key = null, $default = null)
+读 `$_COOKIE`。
+
+    public static function SERVER($key = null, $default = null)
+读 `$_SERVER`。
+
+    public static function SESSION($key = null, $default = null)
+读 `$_SESSION`。
+
+    public static function FILES($key = null, $default = null)
+读 `$_FILES`。
+
+    public static function SessionSet($key, $value)
+写 SESSION（静态壳 → `_SessionSet`）。
+
+    public static function SessionUnset($key)
+删除 SESSION 键。
+
+    public static function SessionGet($key, $default = null)
+读 SESSION 键。
+
+    public static function CookieSet($key, $value, $expire = 0)
+发 Cookie（静态壳 → `_CookieSet`，经 SystemWrapper）。
+
+    public static function CookieGet($key, $default = null)
+读 Cookie 键。
 
 ### 公共实例方法
 
@@ -75,36 +111,57 @@ SuperGlobal::_()->_CookieSet('theme','dark', 3600);   // 底层走 SystemWrapper
 把全局超全局快照赋到 `_GET…_FILES` 字段。
 
     public function _SaveSuperGlobalAll()
-把字段写回对应全局超全局（除已注掉的 $_ENV）。
+把字段写回对应全局超全局。
 
-    public function _LoadSuperGlobal($key) / _SaveSuperGlobal($key)
-单键版本字段↔`$GLOBALS[$key]`。
+    public function _LoadSuperGlobal($key)
+单键：字段 ← `$GLOBALS[$key]`。
 
-    public function _GET($key = null, $default = null)（下同 _POST/_REQUEST/_COOKIE/_SERVER/_SESSION/_FILES）
-读取对应容器：取 key 或整个；来源：优先 `__SUPERGLOBAL_CONTEXT` 上下文对象，否则 `$GLOBALS[同]`。
+    public function _SaveSuperGlobal($key)
+单键：`$GLOBALS[$key]` ← 字段。
+
+    public function _GET($key = null, $default = null)
+读 `_GET` 容器（上下文优先，否则 `$GLOBALS`），取 key 或整体。
+
+    public function _POST($key = null, $default = null)
+读 POST 容器。
+
+    public function _REQUEST($key = null, $default = null)
+读 REQUEST 容器。
+
+    public function _COOKIE($key = null, $default = null)
+读 COOKIE 容器。
+
+    public function _SERVER($key = null, $default = null)
+读 SERVER 容器。
+
+    public function _SESSION($key = null, $default = null)
+读 SESSION 容器。
+
+    public function _FILES($key = null, $default = null)
+读 FILES 容器。
 
     public function _SessionSet($key, $value)
-写 SESSION（上下文或全局  分支）。
+写 SESSION（上下文或全局分支）。
 
     public function _SessionUnset($key)
-删掉 SESSION 键。
+删除 SESSION 键。
 
     public function _SessionGet($key, $default = null)
-取 SESSION。
+读 SESSION 键。
 
     public function _CookieGet($key, $default = null)
-从 COOKIE 取。
+从 COOKIE 读取。
 
     public function _CookieSet($key, $value, $expire = 0)
-发 Cookie（经 SystemWrapper::setcookie；expire 计时）。
+发 Cookie（经 `SystemWrapper::setcookie`，expire 计时）。
 
 ### 受保护方法
 
     protected function initOptions(array $options): void
-superglobal_auto_define true 时 define + load all。
+`superglobal_auto_define` 为真时 `DefineSuperGlobalContext()` 并 `LoadSuperGlobalAll()`。
 
     protected function getSuperGlobalData(string $superglobal_key, ?string $key, $default)
-实际取接口：上下文→上下文对象属性；否则 `$GLOBALS[$key?下标:全部]`。
+实际取数：上下文优先取上下文对象属性，否则 `$GLOBALS[$key?下标:全部]`。
 
 ## 相关链接
 

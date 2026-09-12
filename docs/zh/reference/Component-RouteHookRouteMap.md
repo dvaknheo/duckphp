@@ -60,40 +60,48 @@ RouteHookRouteMap::_()->init([
 
 ## 方法列表
 
-（分 host / tool / 规则段参见源码顺序）
+### 公共方法
 
-    public static PrependHook($path_info)          → 实例 doHook($path,false)
-    public static AppendHook($path_info)           → 实例 doHook($path,true)
+    public static function PrependHook($path_info)
+静态壳：转发实例 `doHook($path_info, false)`（prepend 组）。
 
-    protected initContext(object $context): void
-    挂入 prepend-inner + append-outter。
+    public static function AppendHook($path_info)
+静态壳：转发实例 `doHook($path_info, true)`（append 组）。
 
-    public compile(string $pattern_url, array $rules=[]): string
-    把 `{name(:regex)?(optional?)}` 编译回 完整正则（`~^…$ # comment~x`）。
+    public function compile(string $pattern_url, array $rules = []): string
+把 `{name(:regex)?(optional?)}` 形式的模式编译为完整正则（`~^…$ #comment~x`）。
 
-    public assignRoute($key,$value) / assignImportantRoute($key,$value)
-    动态追加 route/important 地图（也支持数组）。
+    public function assignRoute($key, $value = null)
+动态追加 route 映射（支持数组批量）。
 
-    public getRouteMaps()
-    返回两组的当前配置。
+    public function assignImportantRoute($key, $value = null)
+动态追加 important 路由映射（优先级更高）。
 
-    protected compileMap(array $map,string $namesapceCtl): array
-    对地图预处理 `@` 编译 / `~namespace` 展开。
+    public function getRouteMaps()
+返回两组（普通/重要）当前映射配置。
 
-    protected matchRoute(string $pattern,string $path,&$params): bool
-    固定 / ^正则 / * 的匹配器。
+    public function doHook($path_info, $is_append)
+主入口：按 `$is_append` 选择地图组并尝试匹配（命中则调用并返回 `true`）。
 
-    protected getRouteHandelByMap(array $routeMap,string $path)
-    遍历某组取首个命中匹配的模式返回调 target。
+### 受保护方法
 
-    protected adjustCallback($callback,array $parameters)
-    解析 `@`/`->`/callable，写入 Route 参数与方法 call。
+    protected function initContext(object $context): void
+挂入 `prepend-inner` + `append-outter` 两个钩子位。
 
-    protected doHookByMap(string $path,array $map): bool
-    用该 map 找 handler 命中则调用并 return true。
+    protected function compileMap(array $map, string $namespace_controller): array
+地图预处理：`@` 编译 / `~namespace` 展开。
 
-    public doHook($path_info,$is_append)
-    主要入口（is_append 决定地图组与是否允许普通行）。返回 true/false 让 Route 上下文。
+    protected function matchRoute(string $pattern_url, string $path_info, &$parameters): bool
+模式匹配器：固定串 / `^` 正则 / `*` 通配，并导出参数。
+
+    protected function getRouteHandelByMap(array $routeMap, string $path_info)
+遍历某组映射，取首个命中模式并返回其 target。
+
+    protected function adjustCallback($callback, array $parameters)
+解析 `@`/`->`/callable 回调并写入 Route 参数、返回可调用目标。
+
+    protected function doHookByMap(string $path_info, array $route_map): bool
+用给定 map 找 handler，命中则调用并返回 `true`。
 
 ## 相关链接
 

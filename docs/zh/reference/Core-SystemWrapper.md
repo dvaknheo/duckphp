@@ -70,60 +70,92 @@ define('__SYSTEM_WRAPPER_REPLACER', MyReplacer::class);
 
 ## 方法列表
 
-> 每组函数封装都有 public static（shell）与 public 实例方法 `_xxx`，语义一致；二者均支持 handlers/REPLACER override。
+> 每组系统函数封装都有 `public static`（壳）与 `public` 实例方法 `_xxx`，语义一致，均支持 handlers / REPLACER 覆盖。
 
-### 静态与实例外壳（成对）
-
-    header($output, bool $replace = true, int $http_response_code = 0)  // & _header
-发送原始 HTTP 头(work in web & obey replace/status)；默认环境可写 header，若有 sub-overrider优先。
-
-    setcookie(string $key,string $value='',int $expire=0,string $path='/',string $domain='',bool $secure=false,bool $httponly=false)  // _setcookie
-原生 setcookie 封装（含一定签名一致）。
-
-    exit($code=0)  // _exit
-见注意事项 2（__EXIT_EXCEPTION 抛异常代替 exit）。
-
-    set_exception_handler(callable $handler)  // _set_exception_handler
-设全局异常handler（仍可替换捕获）。
-
-    register_shutdown_function(callable $cb, ...$args)  // _register_shutdown_function
-注册 shutdown。
-
-    session_start(array $options = [])  // _session_start
-带默认 handlers，@抑制。
-
-    session_id($session_id = null)  // _session_id
-取或设 id。
-
-    session_destroy()  // _session_destroy
-
-    session_set_save_handler(\SessionHandlerInterface $h)  // _session_set_save_handler
-
-    mime_content_type($file)  // `_mime_content_type
-内置表，无 mime 函数时给出扩展名→type；带 sub-replacer 优先。
-
-### 替换 / 供给
+### 公共方法（静态壳与实例实现）
 
     public static function system_wrapper_replace(array $funcs)
-按名覆盖 this handlers → 返回 true。
+按名覆盖系统函数实现（handlers），返回是否成功。
 
-    public function _system_wrapper_replace(array $funcs)（同）
+    public function _system_wrapper_replace(array $funcs)
+`system_wrapper_replace()` 的实例实现。
 
-    public static function system_wrapper_get_providers():array
-取值：缺省按 [$class,$name] 提供 callable 的对像；返回 全数组替换方案。
+    public static function system_wrapper_get_providers(): array
+返回当前全部系统函数提供者（callable 表）。
 
-    public function _system_wrapper_get_providers()（同）
+    public function _system_wrapper_get_providers()
+`system_wrapper_get_providers()` 的实例实现。
+
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+发送原始 HTTP 头（静态壳 → `_header`）。
+
+    public function _header($output, bool $replace = true, int $http_response_code = 0)
+发送 HTTP 头实现（web 环境；遵循 replace/status；可被替换）。
+
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+`setcookie` 封装（静态壳 → `_setcookie`）。
+
+    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+`setcookie` 实现。
+
+    public static function exit($code = 0)
+`exit` 封装（静态壳 → `_exit`）；见注意事项（`__EXIT_EXCEPTION` 时抛异常代替 exit）。
+
+    public function _exit($code = 0)
+`exit` 实现。
+
+    public static function set_exception_handler(callable $exception_handler)
+`set_exception_handler` 封装（静态壳）。
+
+    public function _set_exception_handler(callable $exception_handler)
+`set_exception_handler` 实现。
+
+    public static function register_shutdown_function(callable $callback, ...$args)
+`register_shutdown_function` 封装（静态壳）。
+
+    public function _register_shutdown_function(callable $callback, ...$args)
+`register_shutdown_function` 实现。
+
+    public static function session_start(array $options = [])
+`session_start` 封装（静态壳）。
+
+    public function _session_start(array $options = [])
+`session_start` 实现（带默认 handlers）。
+
+    public static function session_id($session_id = null)
+`session_id` 封装（读/设）。
+
+    public function _session_id($session_id = null)
+`session_id` 实现。
+
+    public static function session_destroy()
+`session_destroy` 封装（静态壳）。
+
+    public function _session_destroy()
+`session_destroy` 实现。
+
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+`session_set_save_handler` 封装（静态壳）。
+
+    public function _session_set_save_handler(\SessionHandlerInterface $handler)
+`session_set_save_handler` 实现。
+
+    public static function mime_content_type($file)
+取文件 MIME（静态壳 → `_mime_content_type`）。
+
+    public function _mime_content_type($file)
+MIME 实现：无 `mime_content_type` 函数时按扩展名查内置表；可被替换。
 
 ### 受保护方法
 
     protected function system_wrapper_call_check(string $func): bool
-是否要为某系统函数走 override（__SYSTEM_WRAPPER_REPLACER 可调或 handler 设过）。
+判断某系统函数是否走 override（`__SYSTEM_WRAPPER_REPLACER` 或已设 handler）。
 
     protected function system_wrapper_call(string $func, array $input_args)
-若 REPLACER 调用之；否则 handler；否则直接(原 PHP)call，缺函数抛 ErrorException。
+统一调用：REPLACER 优先 → handler → 原生函数（缺失抛 `ErrorException`）。
 
     protected function getMimeData(): string
-内置 mime 类型表（heredoc），供 _mime_content_type fallback。
+内置 MIME 类型表（heredoc），供 `_mime_content_type` 兜底。
 
 ## 相关链接
 
