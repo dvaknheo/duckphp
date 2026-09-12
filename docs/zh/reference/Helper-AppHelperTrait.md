@@ -151,6 +151,12 @@ class MyApp extends DuckPhp\DuckPhp
     public static function saveExtOptions(array $options): void
 把扩展选项写入（转发 `ExtOptionsLoader::saveExtOptions`）。
 
+    public static function ProjectThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+抛“项目异常”（转发 `CoreHelper::_ProjectThrowOn`，异常类取 `exception_for_project` / `exception_map`）。
+
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+`ProjectThrowOn` 的简写别名（同走项目异常）。
+
 ## 相关链接
 
 - [DuckPhp\Helper\ControllerHelperTrait](Helper-ControllerHelperTrait.md) — 控制器层助手

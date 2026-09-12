@@ -14,7 +14,8 @@
 
 ### 冲突消解规则（insteadof）
 
-- **Business 优先**（`BusinessHelperTrait` insteadof `ControllerHelperTrait`/`AppHelperTrait`）：`Setting`、`Options`、`Config`、`XpCall`、`FireGlobalEvent`、`OnGlobalEvent`、`PathOfProject`、`PathOfRuntime`。
+- **Business 优先**（`BusinessHelperTrait` insteadof `ControllerHelperTrait`/`AppHelperTrait`）：`Setting`、`AppOptions`、`Config`、`XpCall`、`FireGlobalEvent`、`OnGlobalEvent`。
+- **AppHelperTrait 优先**：`ThrowOn`（insteadof `ControllerHelperTrait`、`BusinessHelperTrait`）。
 - **Controller 优先**（insteadof `AppHelperTrait`）：`header`、`setcookie`、`exit`。
 - **Controller 优先**（insteadof `BusinessHelperTrait`）：`AdminService`、`UserService`。
 
@@ -31,7 +32,7 @@ Helper::exit();                   // Controller 语义（SystemWrapper 可替换
 
 ## 注意事项
 
-- 本类与 `DuckPhpAllInOne` 采用同一套冲突消解：`Setting/Options/Config/XpCall/FireGlobalEvent/OnGlobalEvent/PathOfProject/PathOfRuntime` 取 Business 版；`header/setcookie/exit` 取 Controller 版；`AdminService/UserService` 取 Controller 版。
+- 本类与 `DuckPhpAllInOne` 采用同一套冲突消解：`Setting/AppOptions/Config/XpCall/FireGlobalEvent/OnGlobalEvent` 取 Business 版；`header/setcookie/exit` 取 Controller 版；`AdminService/UserService` 取 Controller 版；`ThrowOn` 取 App 版（insteadof Controller/Business）。
 - 具体每个方法的签名与行为，见四个 `Helper-*Trait` 文档；本类不再重复方法节。
 
 ## 方法列表

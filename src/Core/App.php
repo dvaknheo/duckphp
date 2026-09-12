@@ -59,6 +59,7 @@ class App extends ComponentBase
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
         'use_env_file' => false,
+        'setting'=> [],
 
         'installed' => false,
         'url_install' => 'install',

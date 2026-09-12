@@ -56,10 +56,10 @@ $rows_admin = RouteLister::_()->listAll(true, true, true, false);  // 仅 admin 
 
 ### 公共方法
 
-    public pathInfoFromClassAndMethod($class, $method, $adjuster = null)
+    public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
 根据 控制器全名+方法 → 该路由可写 URL（或欢迎/欢迎方法特殊短文/空 return prefix）。实现去反向 controller_class_adjust。
 
-    public listAll(bool $with_children = true,
+    public function listAll(bool $with_children = true,
                    bool $only_controller = false,
                    bool $only_admin = false,
                    bool $only_user = false): array
@@ -67,22 +67,28 @@ $rows_admin = RouteLister::_()->listAll(true, true, true, false);  // 仅 admin 
 
 ### 受保护方法
 
-    protected doControllerClassAdjust(string $first, string $method): array
+    protected function doControllerClassAdjust(string $first, string $method): array
 还原路径段：uc_method/uc_class(lcfirst of last)/uc_full_class（各段 lcfirst）等。
 
-    protected getAllControllerClasses(): array
-用候选类定 controller 目录，递归扫目录中 `.php`（去 postfix）返回键 class=>absfile 映射。
+    protected function getControllerPathByApp($prefix)
+优先用 App 类文件位置推算控制器目录（`$prefix` 以 `\\` 开头则返回 null；目录不存在返回 null）。
 
-    protected getControllerMethods(string $full_class, ?callable $adjuster = null): array
+    protected function getControllerPathByDetected($prefix)
+回退探测：用 welcome class / `Helper` / `Base` 等候选类反射定位控制器目录（失败返回 null）。
+
+    protected function getAllControllerClasses(): array
+用候选类定 controller 目录（先 `getControllerPathByApp`、后 `getControllerPathByDetected`），递归扫目录中 `.php`（去 postfix）返回键 class=>absfile 映射。
+
+    protected function getControllerMethods(string $full_class, ?callable $adjuster = null): array
 反射 public 非 static 非构造方法，可逆成 URL 并跳过 pathInfo 返回 null 的。
 
-    protected listControllerRows(bool $only_admin, bool $only_user): array
+    protected function listControllerRows(bool $only_admin, bool $only_user): array
 遍历 classes 过滤 接口归属后，为每个方法合成一行记录。
 
-    protected parseRouteMapCallback(string $callback): array
+    protected function parseRouteMapCallback(string $callback): array
 把 route_map 目标 `~Class@method`/`Class@method` 拆 [class,method]。
 
-    protected isSubclassOf(string $class, string $interface): bool
+    protected function isSubclassOf(string $class, string $interface): bool
 反射判断是否实现接口子类（捕获反射异常→false）。
 
 ## 相关链接

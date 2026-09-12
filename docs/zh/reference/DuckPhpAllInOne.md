@@ -26,8 +26,10 @@
 ```php
 use ModelHelperTrait;
 use BusinessHelperTrait, ControllerHelperTrait, AppHelperTrait {
+    AppHelperTrait::ThrowOn insteadof ControllerHelperTrait;
+    AppHelperTrait::ThrowOn insteadof BusinessHelperTrait;
     BusinessHelperTrait::Setting        insteadof ControllerHelperTrait;
-    BusinessHelperTrait::Options        insteadof ControllerHelperTrait;
+    BusinessHelperTrait::AppOptions     insteadof ControllerHelperTrait;
     BusinessHelperTrait::Config         insteadof ControllerHelperTrait;
     BusinessHelperTrait::XpCall         insteadof ControllerHelperTrait;
     BusinessHelperTrait::FireGlobalEvent insteadof ControllerHelperTrait;

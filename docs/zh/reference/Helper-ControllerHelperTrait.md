@@ -11,7 +11,7 @@
 - 可替换系统函数：`header/setcookie/exit`；
 - 异常处理注册：`assignExceptionHandler/setMultiExceptionHandler/setDefaultExceptionHandler/ControllerThrowOn`；
 - 分页：`Pager/PageNo/PageWindow/PageHtml`；
-- 配置/设置：`Setting/Options/Config`；
+- 配置/设置：`Setting/AppOptions/Config`；
 - 事件：`FireGlobalEvent/OnGlobalEvent`；
 - 用户/管理员：`Admin*`/`User*` 系列。
 
@@ -64,7 +64,7 @@ public function action_login()
     public static function Setting($key = null, $default = null)
 读取应用设置（等价 `App::Setting`）。
 
-    public static function Options(string $key, $default = null)
+    public static function AppOptions(string $key, $default = null)
 读取应用 options 中某键。
 
     public static function XpCall($callback, ...$args)
@@ -141,6 +141,9 @@ public function action_login()
 
     public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 `$flag` 为真时抛控制器异常。
+
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+`ControllerThrowOn` 的简写别名（同走控制器异常）。
 
     public static function IsPost()
 当前请求是否为 POST（经 `SuperGlobal` 读 `REQUEST_METHOD`）。

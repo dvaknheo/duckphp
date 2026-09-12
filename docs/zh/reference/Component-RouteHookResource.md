@@ -21,6 +21,7 @@
 
 | 选项 | 默认 | 说明 |
 |---|---|---|
+| `path` | `''` | 项目根路径（相对路径基准）。 |
 | `path_resource` | `'res'` | 资源源目录（默认 `res`）。 |
 | `path_document` | `'public'` | 发布根目录名（clone 目标）。 |
 | `controller_url_prefix` | null | 路由资源 URL 前缀段（可选）。 |
@@ -32,6 +33,7 @@
 
 ```php
 RouteHookResource::_()->init([
+    'path' => '',
     'path_resource' => 'res',
     'controller_resource_prefix' => 'res/',
 ], App::_());
@@ -56,7 +58,10 @@ RouteHookResource::_()->cloneResource(true, $info); // force 覆盖；$info 收�
 
 ### 公共方法
 
-    public static function Hook($path_info) → 实例 `_Hook`
+    public static function Hook($path_info)
+静态钩子入口：转发实例 `_Hook`。
+
+    public function _Hook($path_info)
 路由钩子实现：decode、前缀判定、防越权/php，存在则 content-type输出文件并 return true；否则 false。
 
     public function cloneResource($force = false, &$info = '')

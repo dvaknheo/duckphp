@@ -92,7 +92,7 @@ onRequest()      // on_request 回调
 try{ Runtime::run(); Route::run() || runChildren() }
         // 全 miss → 自身 phaseToCurrent→ _On404()
 catch(Throwable) → runException()（记录 last phase→…→ExceptionManager::CallException）
-finally → phaseToCurrent; Route::runFinallyHooks(); Runtime::clear()
+finally → phaseToCurrent; Route::clear(); Runtime::clear()
 ```
 
 CLI `execute()`：

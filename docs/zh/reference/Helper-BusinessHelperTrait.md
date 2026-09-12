@@ -2,7 +2,7 @@
 
 ## 简介
 
-`BusinessHelperTrait` 是面向 **Business（业务层）** 的静态助手集合。业务层通过它访问：应用设置与路径（`Setting`/`Options`/`PathOfProject`/`PathOfRuntime`）、配置（`Config`）、缓存（`Cache`）、校验（`Validator*`）、事件（`FireGlobalEvent`/`OnGlobalEvent`）、用户/管理员服务（`AdminService`/`UserService`）以及业务异常快速抛出（`BusinessThrowOn`）。
+`BusinessHelperTrait` 是面向 **Business（业务层）** 的静态助手集合。业务层通过它访问：应用设置与路径（`Setting`/`AppOptions`/`PathOfProject`/`PathOfRuntime`）、配置（`Config`）、缓存（`Cache`）、校验（`Validator*`）、事件（`FireGlobalEvent`/`OnGlobalEvent`）、用户/管理员服务（`AdminService`/`UserService`）以及业务异常快速抛出（`BusinessThrowOn`）。
 
 Trait 自带 4 个事件名常量（`$EVENT_REGISTING/$EVENT_REGISTED/$EVENT_LOGINING/$EVENT_LOGINED`），供注册/登录等业务生命周期事件使用。
 
@@ -46,7 +46,7 @@ Base::BusinessThrowOn(!$flag, '业务不允许', 10001);
     public static function Setting($key = null, $default = null)
 读取应用设置（等价 `App::_()->_Setting()`）。
 
-    public static function Options(string $key, $default = null)
+    public static function AppOptions(string $key, $default = null)
 读取应用 options 中某键（未设置返回 `$default`）。
 
     public static function Config($file_basename, $key = null, $default = null)
@@ -57,6 +57,9 @@ Base::BusinessThrowOn(!$flag, '业务不允许', 10001);
 
     public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 `$flag` 为真时抛业务异常（默认业务异常类，可指定 `$exception_class`）。
+
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+`BusinessThrowOn` 的简写别名（同走业务异常）。
 
     public static function Cache($object = null)
 取（或替换）缓存组件实例。

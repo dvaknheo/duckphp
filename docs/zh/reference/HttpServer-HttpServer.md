@@ -79,7 +79,7 @@ php -r 'require "vendor/autoload.php"; \DuckPhp\HttpServer\HttpServer::RunQuickl
 返回后台运行时的进程 PID。
 
     public function close()
-结束后台进程：`posix_kill($this->pid, 9)`；无 PID 时返回 `false`。
+结束后台进程：若存在 Windows 的 `proc_open` 句柄（`$process`）则 `proc_terminate` + `proc_close` 并清零 PID；否则无 PID 返回 `false`；Windows 下用 `taskkill /F /T /PID` 杀进程树；类 Unix 下 `posix_kill($this->pid, 9)`。
 
 ### 受保护方法
 
@@ -96,7 +96,16 @@ php -r 'require "vendor/autoload.php"; \DuckPhp\HttpServer\HttpServer::RunQuickl
 按 `$cli_options` 输出 `--help` 帮助文本与当前参数。
 
     protected function runHttpServer()
-拼装并执行 `php -S host:port -t docroot` 命令；`workers` 设置 `PHP_CLI_SERVER_WORKERS`；`--dry` 仅打印；后台模式执行后记录 `$pid` 并返回。
+拼装并执行 `php -S host:port -t docroot` 命令；`workers` 设置 `PHP_CLI_SERVER_WORKERS`；`--dry` 仅打印；后台模式执行后记录 `$pid` 并返回。Windows 平台直接转 `runHttpServerOnWindows()`（无 POSIX shell）。
+
+    protected static function isWindows(): bool
+判断当前平台是否 Windows（`PHP_OS_FAMILY === 'Windows'`）。
+
+    protected function runHttpServerOnWindows()
+Windows 专用启动：以数组形式 `proc_open()` 启动内置服务器（不经 cmd.exe）；后台模式重定向到 NUL、记录真实 PID、`register_shutdown_function` 回收子进程。支持 `--dry`。
+
+    protected function serverEnvironment(): array
+为服务器子进程准备环境变量：把 `workers` 转成 `PHP_CLI_SERVER_WORKERS` 环境变量（Windows 下不能像 POSIX 那样写在命令前）。
 
 ## 相关链接
 

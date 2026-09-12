@@ -21,7 +21,7 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
 - 使用 Trait：`KernelTrait`
 - 用 `as` 改名再 override：`initComponents`→`Kernel_initComponents`、`prepareServe`→…、`initComponentsOfRoot`→…、`Inner`、`Dynmic`；然后在自身方法里调用 `Kernel_xxx()` 保持父骨架行为。
 - 常量：`VERSION=1.4.1` 、 `EXT_SKIP_INIT=-1`、`EXT_DISABLE=0`、`EXT_DEFAULT=1`、`EXT_FOLLOW_APP=2`、`EXT_RENEW=3`。
-- 公共属性：`$options`、`$setting`(从配置文件装载)、加上 Kernel 内核态字段。
+- 公共属性：`$options`、`$setting`（由 `options['setting']` 起，叠加可选 `.env` 与设置文件合并而成）、加上 Kernel 内核态字段。
 
 ## 选项
 
@@ -44,8 +44,10 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
 | `setting_file_ignore_exists` | `true` | 设置文件缺失时是否忽略（并不抛错）。 |
 | `setting_file_enable` | `true` | 是否加载设置文件。 |
 | `use_env_file` | `false` | 为真则在 loadSetting 一并读根 `.env`(INI) 合并。 |
+| `setting` | `[]` | 直接以数组形式给出的应用设置（setting）初值；作为 `loadSetting()` 的起点，随后再合并 `.env`（可选）与设置文件。 |
 | `installed` | `false` | 应用是否“已安装”（false 会触发安装跳转）。 |
 | `url_install` | `'install'` | 未安装时跳到的安装 URL。 |
+| `exception_map` | `[]` | 异常类映射表（`原异常类 => 替代异常类`）；`ProjectThrowOn/BusinessThrowOn/ControllerThrowOn` 抛异常前会先按它替换类名。 |
 
 ## 使用方式
 
@@ -132,9 +134,11 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
     'setting_file_ignore_exists' => true,
     'setting_file_enable' => true,
     'use_env_file' => false,
+    'setting' => [],
 
     'installed' => false,
     'url_install' => 'install',
+    'exception_map' => [],
     ];
 ```
 

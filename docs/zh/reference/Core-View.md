@@ -28,6 +28,7 @@
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
+| `path` | `''` | 项目根路径（组件层对“相对路径”的基准）。 |
 | `path_view` | `'view'` | 视图目录相对名（相对 `path`；可绝对则用之）。`getViewFile()` 用它拼 `{$path}/{$path_view}/{$file}.php`。 |
 | `view_skip_notice_error` | `true` | 渲染时是否临时屏蔽 `E_NOTICE` 噪声。为 true 时 `_Show` 会临时去掉 E_NOTICE 再到结束恢复。 |
 
@@ -95,6 +96,7 @@ $viewOptions = [
 
 ```php
     public $options = [
+        'path' => '',
         'path_view' => 'view',
         'view_skip_notice_error' => true,
     ];

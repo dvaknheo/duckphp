@@ -32,6 +32,7 @@
 | `html_handler` | 传入则 `_H` 使用它而不是默认 `htmlspecialchars`。 |
 | `lang_handler` | 见 `App::lang`——`L/Hl/LangText` 经由它。 |
 | `exception_for_business/controller/project` | `Business/ControllerThrowOn` 未指定时使用。 |
+| `exception_map` | 抛异常前的类名映射（`原类 => 替换类`）；三个 `*ThrowOn` 均会先查它。 |
 | debug(`App::_IsDebug()`) | 决定 Debug 输出族、IsDebug、Json 美化等。 |
 
 ## 使用方式
@@ -141,6 +142,12 @@ debug 时把 message+context 记（Logger::debug）。
     public static function PhaseCall($phase, $callback, ...$args)
 在给定 Phase 下执行并对后返回，随后切回原 Phase。
 
+    public static function ChildCall($phase, $callback, ...$args)
+在指定“子应用 Phase”下执行回调，随后切回原 Phase。
+
+    public static function ProjectThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+若 `$flag` 真则抛“项目异常”（类取 `exception_for_project`，并过 `exception_map` 映射）。
+
     public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 若 $flag 真则丢 business 异常（或 exception_class）。
 
@@ -202,6 +209,12 @@ header json + echo。
 
     public function _PhaseCall($phase, $callback, ...$args)
 phase 切换回调后可逆实现。
+
+    public function _ChildCall($child_app, $callback, ...$args)
+切到指定子应用（`App::toThisChild`）执行回调后切回原 Phase。
+
+    public function _ProjectThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+project 异常路径（默认 `exception_for_project`，并过 `exception_map`）。
 
     public function _BusinessThrowOn(bool $flag, string $msg, int $code = 0, $exception_class = null)
 impls;business 异常路径。

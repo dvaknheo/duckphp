@@ -2,9 +2,9 @@
 
 ## 简介
 
-`UserActionInterface` 是「用户会话动作」的契约接口：实现方（如 `GlobalUser`，工程内也可以是 `UserAction` 类）向框架提供当前用户的身份查询（`id/name/data`）、站点 URL（`urlForRegist/urlForLogin/urlForLogout/urlForHome`）、视图合并（`mergeViewData/_Show`）、权限与服务（`canAccess/log/batchGetUsernames/service/localService`）。
+`UserActionInterface` 是「用户会话动作」的契约接口：实现方（如 `GlobalUser`，工程内也可以是 `UserAction` 类）向框架提供当前用户的身份查询（`id/name/data`）、站点 URL（`urlForRegister/urlForLogin/urlForLogout/urlForHome`）、视图合并（`mergeViewData/_Show`）、权限与服务（`canAccess/log/batchGetUsernames/service/localService`）。
 
-与管理员侧 `AdminActionInterface` 相比，用户侧多了“注册 URL（`urlForRegist`）”与“批量取用户名（`batchGetUsernames`）”，没有 `isSuper`。
+与管理员侧 `AdminActionInterface` 相比，用户侧多了“注册 URL（`urlForRegister`）”与“批量取用户名（`batchGetUsernames`）”，没有 `isSuper`。
 
 ## 类信息
 
@@ -28,7 +28,7 @@ class UserAction implements UserActionInterface
     public function data(bool $check_login = true): array { /* … */ }
     public function service() { /* 跨 Phase 代理 */ }
     public function localService() { /* 返回 UserServiceInterface */ }
-    public function urlForRegist(?string $url_back = null, ?array $ext = null): string { /* … */ }
+    public function urlForRegister(?string $url_back = null, ?array $ext = null): string { /* … */ }
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string { /* … */ }
     public function urlForLogout(?string $url_back = null, ?array $ext = null): string { /* … */ }
     public function urlForHome(?string $url_back = null, ?array $ext = null): string { /* … */ }
@@ -64,7 +64,7 @@ class UserAction implements UserActionInterface
     public function localService()
 返回本地（当前 Phase）用户服务（`UserServiceInterface`）。
 
-    public function urlForRegist(?string $url_back = null, ?array $ext = null): string
+    public function urlForRegister(?string $url_back = null, ?array $ext = null): string
 注册页 URL。
 
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
