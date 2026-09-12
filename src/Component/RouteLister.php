@@ -101,6 +101,8 @@ class RouteLister extends ComponentBase
         if (!is_dir($path)) {
             return null;
         }
+        $path = rtrim($path,'/\\').DIRECTORY_SEPARATOR;
+
         return $path;
     }
     protected function getControllerPathByDetected($prefix)
