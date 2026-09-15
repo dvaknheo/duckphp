@@ -200,7 +200,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     ///////////////
     protected function getLoginBusiness()
     {
-        return $this->run_callback_by_key('user_callback_for_login_service');
+        return $this->run_callback_by_key('admin_callback_for_login_service');
     }
 
     /**
