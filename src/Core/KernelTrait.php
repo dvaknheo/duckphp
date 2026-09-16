@@ -101,9 +101,13 @@ trait KernelTrait
     /**
      * @return static
      */
-    public static function Root()
+    public static function Root($switch_phase = false)
     {
-        return  PhaseContainer::_()->getClassOfContainer(self::class, self::$ROOT_PHASE);
+        $root = PhaseContainer::_()->getClassOfContainer(self::class, self::$ROOT_PHASE);
+        if ($switch_phase) {
+            App::Phase(self::$ROOT_PHASE);
+        }
+        return $root;
     }
     /**
      * Summary of Phase
