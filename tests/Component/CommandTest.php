@@ -224,6 +224,22 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         } else {
             DuckPhp::_()->options['lang_handler'] = $old_handler;
         }
+        // getCommandsByClasses: 对 console_command_classes 取值形态的防御（与 Console 执行侧取法对齐）
+        $rm3 = new \ReflectionMethod(Command::class, 'getCommandsByClasses');
+        if (PHP_VERSION_ID < 80100) {
+            $rm3->setAccessible(true);
+        }
+        $descs = $rm3->invoke(Command::_(), [
+            Console_Command::class => true,        // true → 默认前缀 command_
+            Console_Command3::class => false,      // false → 跳过
+            Console_Command2::class => null,       // null/未设值 → 跳过，不得抛 TypeError
+        ]);
+        $this->assertSame('create new item', $descs['new']);   // true 分支命中
+        $this->assertArrayNotHasKey('hello', $descs);          // false 分支跳过
+        $this->assertArrayNotHasKey('new2', $descs);           // null 分支跳过
+        // 字符串前缀分支
+        $descs = $rm3->invoke(Command::_(), [Console_Command2::class => 'prefix_']);
+        $this->assertSame('', $descs['new2']);                 // 'prefix_' 命中 prefix_new2
         //////////////////////
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End();return;

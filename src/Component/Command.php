@@ -170,7 +170,7 @@ EOT;
 
         foreach ($classes as $namespace => $v) {
             $tip = ($namespace === '') ? '*Default commands*' : $namespace;
-            $str .= "\e[32;7m{$tip}\033[0m \n"; //::{$v['class']}
+            $str .= "\e[32;7m{$tip}\033[0m \n";
 
             /////////////////
             $descs = $this->getCommandsByClasses($v);
@@ -187,18 +187,13 @@ EOT;
     }
     /**
      * @param array<string, mixed> $classes
-     * @param array<string, mixed> $classes
-     * @param array<string, mixed> $classes
-     */
-    /**
-     * @param array<string, mixed> $classes
      * @return array<string, mixed>
      */
     protected function getCommandsByClasses(array $classes): array
     {
         $ret = [];
         foreach ($classes as $class => $method_prefix) {
-            if ($method_prefix === false) {
+            if (!isset($method_prefix) || $method_prefix === false) {
                 continue;
             }
             if ($method_prefix === true) {

@@ -65,7 +65,7 @@
 - 行尾：跟随原文件（不强求统一）。
 - **`src/` 禁止非 ASCII 字符（硬性规则）**：所有 PHP 源码的注释、字符串、标点一律用 ASCII 英文；不得出现中文、全角标点（`（）！，：；` 等）、全角空格或 emoji。`docs/` 下的中文文档不受此限。
   - 原因：框架源码统一英文注释，保证 PHP 7.4 / 8.4 与各终端下的编码一致性（历史上清理过一轮，新增代码如 `HttpServer` 的 `workers` 注释曾再次引入）。
-  - 检查命令：`bash scripts/check-non-ascii.sh`（等价于 `grep -rnP '[^\x00-\x7F]' src/ --include='*.php'`）。
+  - 检查命令：`bash scripts/check-non-ascii.sh`（等价于 `grep -rnP '[^\x00-\x7F]' src/ --include='*.php'`）。**必须在 WSL 下跑**（Windows 侧没有 bash）。
   - 判定：输出 **`Total non-ASCII lines: 0`** 才算通过——该脚本**不设置失败退出码**，不要只看 `$LASTEXITCODE`。
   - 命中后：把命中行改写成英文 ASCII 注释，再重跑确认清零。
 - **不虚构**：源码没写的机制不要编；源码里的“怪癖/不一致”（如某方法赋值顺序特殊、某接口参数拼写 `$contetxt`）要如实在“注意事项”里说明，并注明“以源码为准”。
@@ -144,6 +144,34 @@ for f in sorted(files):
 
 > ⚠️ **本会话环境注意**：DSH 沙箱里 `$env:TEMP` 指向私有临时目录，与 `write` 工具写的 `%TEMP%` 不是同一个；跑脚本请给**绝对路径**（如 `python "C:\Users\<你>\AppData\Local\Temp\drift.py" doced`），否则报 `No such file or directory`。
 
+### 运行环境：测试与 `bash` 脚本走 WSL（硬性）
+
+**PHPUnit 与 `scripts/*.sh` 一律在 WSL 下执行**，不要在 Windows 侧直接跑 `php vendor/bin/phpunit`。
+
+**默认只跑与改动相关的「单个测试文件」**——`phpunit.xml` 开了 `processIsolation="true"`，跑一个目录或全量都很慢（实测单文件约 2 秒，`tests/Component` 整目录约 36 秒，全量更久），没必要不要跑。
+
+```powershell
+# 建议先设一次，避免 wsl.exe 输出 UTF-16 乱码（否则中文/结果全成方块）
+$env:WSL_UTF8=1
+
+# 改哪个类就测哪个类的测试文件（秒级）
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"
+
+# 需要时按方法名再收窄
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage --filter testAll tests/Component/CommandTest.php"
+
+# 硬性规则脚本
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash scripts/check-non-ascii.sh"
+
+# 只在「大改 / 要交差」时才跑目录或全量（很慢，建议放后台）
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component"
+```
+
+- 测试文件与被测类的对应：`src/A/B.php` → `tests/A/BTest.php`（如 `src/Component/Command.php` → `tests/Component/CommandTest.php`）。
+- 本机环境实测：WSL（Debian）**PHP 8.2.3, NTS**，`php -m` 含 **redis** 扩展；Windows 侧 PHP **没有 redis 扩展**，于是 `RedisCacheTest` / `RedisManagerTest` 会报 `Error: Class 'Redis' not found`——**那是环境假失败，不是代码问题**（WSL 下 `tests/Component` 实测 `OK (17 tests, 123 assertions)`）。
+- 项目路径在 WSL 下是 `/mnt/e/ProjectGoat/DNMVCS`。
+- `drift.py` 也可在 WSL 下用 `python3` 跑（如 `wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData/Local/Temp/drift.py doced"`），结果与 Windows 侧一致。
+
 ## 6. 标准工作流
 
 1. **找漂移**
@@ -154,7 +182,9 @@ for f in sorted(files):
 2. **逐个改动文件更新文档**（按第 3 节模板）：
    - 新增方法 → 在方法列表按**可见性分组**补条目（签名 + 一句说明）；新增选项 → 选项表与「全部选项」块都补；类声明变化（`implements`/`extends`/`use`）→ 改「类信息」；行为变化 → 改对应方法说明与「注意事项」。
    - 删/改名 → 同步删除或改名，并在说明里注明（如 `urlForRegist` → `urlForRegister`、`user_url_regist` → `user_url_register`）。
-3. **校验**：重跑 `drift.py` 确认 `missing-*` 为空；再抽查新段落。若本次也改了 `src/` 代码，**必须再跑** `bash scripts/check-non-ascii.sh` 并确认输出 `Total non-ASCII lines: 0`（见第 4 节的硬性规则）。
+3. **校验**：重跑 `drift.py` 确认 `missing-*` 为空；再抽查新段落。若本次也改了 `src/`（或 `tests/`）代码：
+   - **测试一律在 WSL 下跑，且按「单个测试文件」快速验证**（见第 5 节末的“运行环境”说明）：改 `src/A/B.php` 就测 `tests/A/BTest.php`，如 `wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"`；全量很慢，没必要时别跑；
+   - **必须再跑** `bash scripts/check-non-ascii.sh` 并确认输出 `Total non-ASCII lines: 0`（见第 4 节的硬性规则）。
 4. **登记**：勾掉/更新本指南第 8 节的“状态与待办”（若有新增文档，也在第 8 节记一句改动清单即可）。
 5. **提交**：只 add 相关路径
    ```powershell
@@ -189,6 +219,7 @@ for f in sorted(files):
 | `git add docs/zh/reference` 带入 `.obsidian/` | 该目录下有未跟踪的 Obsidian 配置（`app.json`/`appearance.json`/`core-plugins.json`/`workspace.json`），会被一并提交。提交前 `git status --short` 复核，误入则 `git rm -r --cached` + `git commit --amend --no-edit`（`--cached` 不会删磁盘文件）。 |
 | `$env:TEMP` 与 `%TEMP%` 不是同一个目录 | DSH 沙箱把 `$env:TEMP` 指到私有临时目录，`write` 工具写的 `%TEMP%\drift.py` 在那里找不到；用绝对路径调用。 |
 | 把“代码残留”当成“源码怪癖”写进文档 | 例：`Command::getCommandListInfo()` 里 `$phase` 读了不用（重构遗留）。**先判断是不是能清理的残留**：能清就清源码 + 不改文档；确实是刻意为之的行为（如 `Root($switch_phase)` 内部硬编码 `App::Phase`）才写进「注意事项」，并注明“以源码为准”。 |
+| 在 Windows 侧直接跑 `phpunit` | Windows PHP 没有 `redis` 扩展，`RedisCacheTest`/`RedisManagerTest` 会报 `Class 'Redis' not found` 的**环境假失败**。测试与 `scripts/*.sh` 一律走 WSL（见第 5 节末），并先 `$env:WSL_UTF8=1` 免乱码。 |
 
 ## 8. 当前状态与待办
 
@@ -200,7 +231,13 @@ for f in sorted(files):
   - 后续把 7 篇旧式排版（`Component-DbManager`/`Pager`/`RouteHookPathInfoCompat`/`RouteHookRewrite`/`RouteHookRouteMap`、`Core-SuperGlobal`/`SystemWrapper`）与 4 篇合并表格行（`Ext-CallableView`、`Ext-RouteHookWebInstaller`、`GlobalAdmin`、`GlobalUser`）统一为规范格式——`drift` 因此从 11 处假报收敛到 0。
   - **最近一轮“`doced`（= `3ece976b`）→ HEAD”的增量同步**（3 个提交 `f9160a03`/`2e5340b4`/`fb1bdcf2`）：`git diff --name-only doced HEAD -- src` 只有 6 个文件，其中 3 个是**纯格式化**（`Component/RouteLister.php` 的 `rtrim($path,'/\\')` 加空格、`Core/App.php` 的 `'setting'=>[]`→`'setting' => []`、`GlobalAdmin/GlobalAdmin.php` 的 `getLoginBusiness()` 里 `user_callback_for_login_service`→`admin_callback_for_login_service`——**文档早已写作 `admin_callback_for_login_service`，这次是源码向文档对齐**），因此只需改 2 篇：
     - `Component-Command.md`：命令收集钩子 `getCommandsOfThis($method_prefix, $phase)` → **`__consoleCommands()`**（无参、内部固定 `command_` 前缀）；`getCommandsByClasses(array $classes)`、`getCommandsByClass(string $class, string $method_prefix)` 均**去掉 `$phase` 形参**；新增「注意事项」两条（钩子接管规则；值形态是**对上游 `Console` 执行侧的防御性对齐**，不是本类自创语义）。
-    - **顺带清掉源码残留**：`Command::getCommandListInfo()` 里 `$phase = Console::_()->options['console_command_phase'][$namespace]` 在 `fb1bdcf2` 重构后已成死代码（读了不用），直接删除——**文档不该把这类残留当“怪癖”记下来，能清就清源码**。
+    - **顺带清掉源码残留 + 补防御缺口**（同一次重构的遗留，见提交 `96cfbd56`、`15f6cff6` 之后的补丁）：
+      - 删掉 `Command::getCommandListInfo()` 里 `$phase = Console::_()->options['console_command_phase'][$namespace]`——`fb1bdcf2` 重构后已成死代码（读了不用）。**文档不该把这类残留当“怪癖”记下来，能清就清源码**。
+      - `getCommandsByClasses()` 的取值防御与上游 `Console` 对齐：原先只判 `=== false`，而 `Console` 判的是 `!isset($method_prefix) || $method_prefix === false`；本文件是 `declare(strict_types=1)`，故 `cmd` 里给某类配 `null` 前缀（`Console` 会跳过）时这里会抛 `TypeError`。补 `!isset(...)` 后两边取法逐条一致。
+      - 补回归测试 `tests/Component/CommandTest.php`：`getCommandsByClasses()` 覆盖 `true` / `false` / `null` / 字符串四种取值形态。修复前该测试**确实复现** `TypeError: Argument 2 passed to DuckPhp\Component\Command::getCommandsByClass() must be of the type string, null given`，修复后通过。
+      - 另清掉两处无害残留：`getCommandsByClasses()` 上方重复且失效的空 docblock（三行一样的 `@param array<string, mixed> $classes`）、`getCommandListInfo()` 里 `//::{$v['class']}` 注释。
+      - 教训：**文档里的“怪癖”要先分清是「能清的代码残留」还是「刻意行为」**——前者清源码（并顺手补测试），后者才写进「注意事项」。
+      - 校验（全部在 WSL 下）：`php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php` → `OK (1 test, 14 assertions)`；`bash scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`；`drift.py doced` 仍全 `ok`。
     - `Core-KernelTrait.md`：`Root()` → **`Root($switch_phase = false)`**（为真时顺带 `App::Phase(根 Phase)`，用于“子应用里取根实例并切回根”）；补第 7 条注意事项（返回实例本身不改当前 Phase；切阶段那步硬编码在 `App` 上）。
     - 收尾：`drift.py doced` 与 `drift.py --all` 均 **0 `missing-*`/`extra-option`**（仅剩 12 处示例方法 `extra-method`，属正常）。
 - **待办（本工作范围外）**：
@@ -212,11 +249,17 @@ for f in sorted(files):
 ## 9. 快速自检（冒烟）
 
 ```powershell
+$env:WSL_UTF8=1   # 一次即可，避免 wsl 输出乱码
+
 # 1) 全量漂移：改完文档后应无 missing-*（extra 只会是示例方法）
 python %TEMP%\drift.py --all
 
 # 2) 编码抽查：把下面脚本存成 %TEMP%\enc.py 后运行
 python %TEMP%\enc.py
+
+# 3) 本次改了 src/ 或 tests/ 时（一律走 WSL，按单个测试文件跑，见第 5 节末）：
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash scripts/check-non-ascii.sh"   # 期望 Total non-ASCII lines: 0
 ```
 
 ```python

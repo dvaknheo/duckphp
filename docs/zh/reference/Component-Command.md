@@ -46,7 +46,7 @@ help 用 `Command::command_help()` 里收集 `Console` 各注册类的方法名�
 ## 注意事项
 
 1. 命令收集是**按类独立**的：某命令类只要定义了 `__consoleCommands()`，其返回值就整体接管该类的命令表——`console_command_classes` 里给它配的“方法前缀”不再生效（该方法内部固定用 `command_` 前缀）。
-2. `getCommandsByClasses()` 对 `console_command_classes` 取值形态的处理是**对上游 `Console` 的防御性对齐**：`false` 跳过、`true` 视作 `command_`、字符串当前缀，与 `Console` 执行命令时的取法一致（见 [Core-Console](Core-Console.md) 的 `console_command_classes` 说明），不是本类自创的语义。
+2. `getCommandsByClasses()` 对 `console_command_classes` 取值形态的处理是**对上游 `Console` 的防御性对齐**（与 `Console` 执行命令时的取法逐条一致）：`false` 或 `null`/未设值 → 跳过；`true` → 用默认前缀 `command_`；字符串 → 该串即前缀。不是本类自创的语义，见 [Core-Console](Core-Console.md) 的 `console_command_classes` 说明。
 
 ## 方法列表
 
