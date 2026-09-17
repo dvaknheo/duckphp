@@ -169,8 +169,6 @@ EOT;
         $classes = Console::_()->options['console_command_classes'];
 
         foreach ($classes as $namespace => $v) {
-            $phase = Console::_()->options['console_command_phase'][$namespace];
-
             $tip = ($namespace === '') ? '*Default commands*' : $namespace;
             $str .= "\e[32;7m{$tip}\033[0m \n"; //::{$v['class']}
 

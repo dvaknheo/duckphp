@@ -45,9 +45,8 @@ help 用 `Command::command_help()` 里收集 `Console` 各注册类的方法名�
 
 ## 注意事项
 
-1. 扩展钩子名是**双下划线**的 `__consoleCommands()`（无参数）。哈希里传 `console_command_classes` 的“方法前缀”只在类**未**定义该钩子时才生效——定义了钩子的类一律由它自己决定命令集（内部固定用 `command_` 前缀）。
-2. `getCommandListInfo()` 里仍会读一次 `Console::$options['console_command_phase'][$namespace]`，但该值自本轮改动后**已不再参与**命令收集（`getCommandsByClasses()` 不再接收 phase）——列 help 时不切 Phase，以源码为准。
-3. `getCommandsByClasses()` 的值语义：`false` = 跳过该类；`true` = 用默认前缀 `command_`；字符串 = 用该串当前缀。
+1. 命令收集是**按类独立**的：某命令类只要定义了 `__consoleCommands()`，其返回值就整体接管该类的命令表——`console_command_classes` 里给它配的“方法前缀”不再生效（该方法内部固定用 `command_` 前缀）。
+2. `getCommandsByClasses()` 对 `console_command_classes` 取值形态的处理是**对上游 `Console` 的防御性对齐**：`false` 跳过、`true` 视作 `command_`、字符串当前缀，与 `Console` 执行命令时的取法一致（见 [Core-Console](Core-Console.md) 的 `console_command_classes` 说明），不是本类自创的语义。
 
 ## 方法列表
 

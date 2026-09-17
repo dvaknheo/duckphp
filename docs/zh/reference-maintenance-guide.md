@@ -188,6 +188,7 @@ for f in sorted(files):
 | 在 `src/` 里写了中文/全角字符 | 违反第 4 节的硬性规则；`src/` 注释一律英文 ASCII。改完 `src/` 后跑 `bash scripts/check-non-ascii.sh`，确认 `Total non-ASCII lines: 0`。 |
 | `git add docs/zh/reference` 带入 `.obsidian/` | 该目录下有未跟踪的 Obsidian 配置（`app.json`/`appearance.json`/`core-plugins.json`/`workspace.json`），会被一并提交。提交前 `git status --short` 复核，误入则 `git rm -r --cached` + `git commit --amend --no-edit`（`--cached` 不会删磁盘文件）。 |
 | `$env:TEMP` 与 `%TEMP%` 不是同一个目录 | DSH 沙箱把 `$env:TEMP` 指到私有临时目录，`write` 工具写的 `%TEMP%\drift.py` 在那里找不到；用绝对路径调用。 |
+| 把“代码残留”当成“源码怪癖”写进文档 | 例：`Command::getCommandListInfo()` 里 `$phase` 读了不用（重构遗留）。**先判断是不是能清理的残留**：能清就清源码 + 不改文档；确实是刻意为之的行为（如 `Root($switch_phase)` 内部硬编码 `App::Phase`）才写进「注意事项」，并注明“以源码为准”。 |
 
 ## 8. 当前状态与待办
 
@@ -198,7 +199,8 @@ for f in sorted(files):
     - **更新 20 篇**：GlobalAdmin/GlobalUser 主文档（接口、事件常量、新选项、`login/logout/register`、会话优先、`_Show` 细节），`UserActionInterface`（`urlForRegist`→`urlForRegister`），`UserException`（改继承 `\Exception`），`Core-CoreHelper`（`ChildCall/ProjectThrowOn`、`exception_map`），`Core-Route`（`runFinallyHooks`→`clear`），`Core-App`（`setting`/`exception_map` 选项），`Core-KernelTrait`（finally 改调 `Route::clear()`），`DuckPhp`（`use_user_view/use_admin_view` 改为手动开启），`DuckPhpAllInOne` 与 `Foundation-Helper`（insteadof 清单），`Component-RouteLister`、`Component-RouteHookResource`、`Core-View`、`Helper-App/Business/ControllerHelperTrait`。
   - 后续把 7 篇旧式排版（`Component-DbManager`/`Pager`/`RouteHookPathInfoCompat`/`RouteHookRewrite`/`RouteHookRouteMap`、`Core-SuperGlobal`/`SystemWrapper`）与 4 篇合并表格行（`Ext-CallableView`、`Ext-RouteHookWebInstaller`、`GlobalAdmin`、`GlobalUser`）统一为规范格式——`drift` 因此从 11 处假报收敛到 0。
   - **最近一轮“`doced`（= `3ece976b`）→ HEAD”的增量同步**（3 个提交 `f9160a03`/`2e5340b4`/`fb1bdcf2`）：`git diff --name-only doced HEAD -- src` 只有 6 个文件，其中 3 个是**纯格式化**（`Component/RouteLister.php` 的 `rtrim($path,'/\\')` 加空格、`Core/App.php` 的 `'setting'=>[]`→`'setting' => []`、`GlobalAdmin/GlobalAdmin.php` 的 `getLoginBusiness()` 里 `user_callback_for_login_service`→`admin_callback_for_login_service`——**文档早已写作 `admin_callback_for_login_service`，这次是源码向文档对齐**），因此只需改 2 篇：
-    - `Component-Command.md`：命令收集钩子 `getCommandsOfThis($method_prefix, $phase)` → **`__consoleCommands()`**（无参、内部固定 `command_` 前缀）；`getCommandsByClasses(array $classes)`、`getCommandsByClass(string $class, string $method_prefix)` 均**去掉 `$phase` 形参**；值语义写明 `false`=跳过 / `true`=`command_` / 字符串=前缀；新增「注意事项」记录 `getCommandListInfo()` 仍读 `console_command_phase` 但已不参与收集。
+    - `Component-Command.md`：命令收集钩子 `getCommandsOfThis($method_prefix, $phase)` → **`__consoleCommands()`**（无参、内部固定 `command_` 前缀）；`getCommandsByClasses(array $classes)`、`getCommandsByClass(string $class, string $method_prefix)` 均**去掉 `$phase` 形参**；新增「注意事项」两条（钩子接管规则；值形态是**对上游 `Console` 执行侧的防御性对齐**，不是本类自创语义）。
+    - **顺带清掉源码残留**：`Command::getCommandListInfo()` 里 `$phase = Console::_()->options['console_command_phase'][$namespace]` 在 `fb1bdcf2` 重构后已成死代码（读了不用），直接删除——**文档不该把这类残留当“怪癖”记下来，能清就清源码**。
     - `Core-KernelTrait.md`：`Root()` → **`Root($switch_phase = false)`**（为真时顺带 `App::Phase(根 Phase)`，用于“子应用里取根实例并切回根”）；补第 7 条注意事项（返回实例本身不改当前 Phase；切阶段那步硬编码在 `App` 上）。
     - 收尾：`drift.py doced` 与 `drift.py --all` 均 **0 `missing-*`/`extra-option`**（仅剩 12 处示例方法 `extra-method`，属正常）。
 - **待办（本工作范围外）**：
