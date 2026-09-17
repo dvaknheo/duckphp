@@ -41,7 +41,13 @@ php xx debug --off
 
 ## 实现说明（命令描述从哪里来）
 
-help 用 `Command::command_help()` 里收集 `Console` 各注册类的方法名（可选 per class `getCommandsOfThis`），逐个从 `@command_desc`/doc 首行取描述；命名空间为空的是 `*Default*`。
+help 用 `Command::command_help()` 里收集 `Console` 各注册类的方法名（可选 per class `__consoleCommands()`），逐个从 `@command_desc`/doc 首行取描述；命名空间为空的是 `*Default*`。
+
+## 注意事项
+
+1. 扩展钩子名是**双下划线**的 `__consoleCommands()`（无参数）。哈希里传 `console_command_classes` 的“方法前缀”只在类**未**定义该钩子时才生效——定义了钩子的类一律由它自己决定命令集（内部固定用 `command_` 前缀）。
+2. `getCommandListInfo()` 里仍会读一次 `Console::$options['console_command_phase'][$namespace]`，但该值自本轮改动后**已不再参与**命令收集（`getCommandsByClasses()` 不再接收 phase）——列 help 时不切 Phase，以源码为准。
+3. `getCommandsByClasses()` 的值语义：`false` = 跳过该类；`true` = 用默认前缀 `command_`；字符串 = 用该串当前缀。
 
 ## 方法列表
 
@@ -70,19 +76,19 @@ CLI 里“抓取”：向 __SUPERGLOBAL_CONTEXT (或全局) 写 REQUEST_URI/PATH
 
 ### 公共方法（供类扩展/描述）
 
-    public function getCommandsOfThis($method_prefix, $phase)
-若某命令类自己提供此方法，框架用反射类方法名提取命令列表。
+    public function __consoleCommands()
+以 `command_` 前缀反射本类方法，返回 `[命令名 => 描述]`；命令类只要定义此方法，`getCommandsByClass()` 就直接采用它的返回值（不再走传入的前缀与反射）。
 
 ### 受保护方法
 
     protected function getCommandListInfo(): string
 历遍 Console classes，打印每个 namespace（默认 `*Default*`）->组命令（去前缀+pad）。
 
-    protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
-把多 class 映射并（filter false）聚合各自命令。
+    protected function getCommandsByClasses(array $classes): array
+把多 class 映射聚合成命令表：值为 `false` 跳过、为 `true` 视作 `command_`、其余按值当前缀（不再接收 phase 参数）。
 
-    protected function getCommandsByClass(string $class, string $method_prefix, string $phase): array
-单个命令类：若有 getCommandsOfThis 则走；否则调用反射提取。
+    protected function getCommandsByClass(string $class, string $method_prefix): array
+单个命令类：若该类定义了 `__consoleCommands()` 则直接调用它；否则按 `$method_prefix` 反射提取。
 
     protected function getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix): array
 反射全部方法，前缀过滤出 command 名，取 @command_desc（或 doc 首行）作为描述，并翻译。

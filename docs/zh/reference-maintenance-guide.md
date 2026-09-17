@@ -133,12 +133,16 @@ for f in sorted(files):
     miss, extra = sorted(s - d), sorted(d - s)
     so = src_opts(f)
     omiss = sorted(so - doc_opts(md)) if so is not None else []
-    tagline = 'UPDATE' if (miss or omiss) else 'ok'
-    print('%-6s %-50s missing-method=%s missing-option=%s' % (tagline, f, miss, omiss))
-    # extra 多为「使用方式」示例里自定义的方法，通常无需处理
+    oextra = sorted(doc_opts(md) - so) if so is not None else []
+    tagline = 'UPDATE' if (miss or omiss or oextra) else 'ok'
+    print('%-6s %-50s missing-method=%s missing-option=%s extra-option=%s' % (tagline, f, miss, omiss, oextra))
+    if extra:
+        print('        extra-method=%s' % (extra,))  # 多为「使用方式」示例里自定义的方法，通常无需处理
 ```
 
-**判读**：`missing-method` / `missing-option` 非空 = 文档确实缺内容，必须补；`extra`（脚本不打印，可自行加）通常是示例代码里的自定义方法，忽略。同一键合并成一行（如 `| \`a\` / \`b\` |`）会被 doc_opts 漏读 → 假报 `missing-option`，拆成单键行即可。
+**判读**：`missing-method` / `missing-option` / `extra-option` 非空 = 文档确实缺内容或写多了选项，必须处理；`extra-method`（现由脚本一并打印）通常是「使用方式」示例里的自定义方法，忽略。同一键合并成一行（如 `| \`a\` / \`b\` |`）会被 doc_opts 漏读 → 假报 `missing-option`，拆成单键行即可。
+
+> ⚠️ **本会话环境注意**：DSH 沙箱里 `$env:TEMP` 指向私有临时目录，与 `write` 工具写的 `%TEMP%` 不是同一个；跑脚本请给**绝对路径**（如 `python "C:\Users\<你>\AppData\Local\Temp\drift.py" doced`），否则报 `No such file or directory`。
 
 ## 6. 标准工作流
 
@@ -157,7 +161,13 @@ for f in sorted(files):
    git add docs/zh/reference
    git commit -m "docs: sync reference with src (<tag>..HEAD)"
    ```
-   ⚠️ 仓库根有一批与本工作无关的未跟踪目录（`.obsidian/`、`vendor-bak/`、`bin/*.php`、`reasonix.toml` 等），**不要 `git add .`**。
+   ⚠️ 仓库根有一批与本工作无关的未跟踪目录（`.obsidian/`、`vendor-bak/`、`bin/*.php`、`reasonix.toml` 等），**不要 `git add .`**。还有更隐蔽的一处：`docs/zh/reference/` 和 `docs/zh/guide/` **各自下面都有一个未跟踪的 `.obsidian/`**（Obsidian 配置），`git add docs/zh/reference` 会把它们一并带走。提交前务必复核：
+   ```powershell
+   git add docs/zh/reference docs/zh/reference-maintenance-guide.md
+   git status --short                 # 确认没有 .obsidian/ 等无关项
+   git show --stat HEAD               # 提交后再看一眼文件清单
+   # 若已被带入：git rm -r --cached docs/zh/reference/.obsidian; git commit --amend --no-edit
+   ```
 
 ## 7. 常见陷阱（都已踩过）
 
@@ -176,6 +186,8 @@ for f in sorted(files):
 | 行号会漂移 | 用**文本锚点**（唯一子串）定位替换，别依赖旧行号。 |
 | 同一批多文件编辑 | 一个编辑失败会导致该批后续编辑被跳过；锚点不确定时先 `read` 出确切文本，或把不确定的编辑放到本批最后。 |
 | 在 `src/` 里写了中文/全角字符 | 违反第 4 节的硬性规则；`src/` 注释一律英文 ASCII。改完 `src/` 后跑 `bash scripts/check-non-ascii.sh`，确认 `Total non-ASCII lines: 0`。 |
+| `git add docs/zh/reference` 带入 `.obsidian/` | 该目录下有未跟踪的 Obsidian 配置（`app.json`/`appearance.json`/`core-plugins.json`/`workspace.json`），会被一并提交。提交前 `git status --short` 复核，误入则 `git rm -r --cached` + `git commit --amend --no-edit`（`--cached` 不会删磁盘文件）。 |
+| `$env:TEMP` 与 `%TEMP%` 不是同一个目录 | DSH 沙箱把 `$env:TEMP` 指到私有临时目录，`write` 工具写的 `%TEMP%\drift.py` 在那里找不到；用绝对路径调用。 |
 
 ## 8. 当前状态与待办
 
@@ -185,6 +197,10 @@ for f in sorted(files):
     - **新增 8 篇**：`GlobalAdmin-AdminLoginActionInterface.md`、`GlobalAdmin-AdminLoginServiceInterface.md`、`GlobalAdmin-AdminSessionInterface.md`、`GlobalAdmin-AdminSessionTrait.md`、`GlobalUser-UserLoginActionInterface.md`、`GlobalUser-UserLoginServiceInterface.md`、`GlobalUser-UserSessionInterface.md`、`GlobalUser-UserSessionTrait.md`；
     - **更新 20 篇**：GlobalAdmin/GlobalUser 主文档（接口、事件常量、新选项、`login/logout/register`、会话优先、`_Show` 细节），`UserActionInterface`（`urlForRegist`→`urlForRegister`），`UserException`（改继承 `\Exception`），`Core-CoreHelper`（`ChildCall/ProjectThrowOn`、`exception_map`），`Core-Route`（`runFinallyHooks`→`clear`），`Core-App`（`setting`/`exception_map` 选项），`Core-KernelTrait`（finally 改调 `Route::clear()`），`DuckPhp`（`use_user_view/use_admin_view` 改为手动开启），`DuckPhpAllInOne` 与 `Foundation-Helper`（insteadof 清单），`Component-RouteLister`、`Component-RouteHookResource`、`Core-View`、`Helper-App/Business/ControllerHelperTrait`。
   - 后续把 7 篇旧式排版（`Component-DbManager`/`Pager`/`RouteHookPathInfoCompat`/`RouteHookRewrite`/`RouteHookRouteMap`、`Core-SuperGlobal`/`SystemWrapper`）与 4 篇合并表格行（`Ext-CallableView`、`Ext-RouteHookWebInstaller`、`GlobalAdmin`、`GlobalUser`）统一为规范格式——`drift` 因此从 11 处假报收敛到 0。
+  - **最近一轮“`doced`（= `3ece976b`）→ HEAD”的增量同步**（3 个提交 `f9160a03`/`2e5340b4`/`fb1bdcf2`）：`git diff --name-only doced HEAD -- src` 只有 6 个文件，其中 3 个是**纯格式化**（`Component/RouteLister.php` 的 `rtrim($path,'/\\')` 加空格、`Core/App.php` 的 `'setting'=>[]`→`'setting' => []`、`GlobalAdmin/GlobalAdmin.php` 的 `getLoginBusiness()` 里 `user_callback_for_login_service`→`admin_callback_for_login_service`——**文档早已写作 `admin_callback_for_login_service`，这次是源码向文档对齐**），因此只需改 2 篇：
+    - `Component-Command.md`：命令收集钩子 `getCommandsOfThis($method_prefix, $phase)` → **`__consoleCommands()`**（无参、内部固定 `command_` 前缀）；`getCommandsByClasses(array $classes)`、`getCommandsByClass(string $class, string $method_prefix)` 均**去掉 `$phase` 形参**；值语义写明 `false`=跳过 / `true`=`command_` / 字符串=前缀；新增「注意事项」记录 `getCommandListInfo()` 仍读 `console_command_phase` 但已不参与收集。
+    - `Core-KernelTrait.md`：`Root()` → **`Root($switch_phase = false)`**（为真时顺带 `App::Phase(根 Phase)`，用于“子应用里取根实例并切回根”）；补第 7 条注意事项（返回实例本身不改当前 Phase；切阶段那步硬编码在 `App` 上）。
+    - 收尾：`drift.py doced` 与 `drift.py --all` 均 **0 `missing-*`/`extra-option`**（仅剩 12 处示例方法 `extra-method`，属正常）。
 - **待办（本工作范围外）**：
   - `docs/zh/reference/index.md` 目录页与各篇文件名/说明的核对（含上面 8 篇新文档尚未登记进目录页）；
   - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页（内容过时且行文损坏，建议改为由脚本生成）；
@@ -213,7 +229,7 @@ for p in glob.glob('docs/zh/reference/*.md'):
 print('non-utf8:', bad if bad else 'none')
 ```
 
-> 提示：本仓库的历史 tag `ref-lastdoc` 是上一轮文档同步的基线；做下一次同步时，把上面命令中的 `<tag>` 换成“上次同步时的 commit/tag”即可。
+> 提示：文档同步基线有两个——历史 tag `ref-lastdoc`（更早那轮），以及分支 **`doced`（= `3ece976b`，2026 那轮“文档更新结束”）**，后者是**最近一次同步的基线**。做下一次同步时把命令中的 `<tag>` 换成当前基线；同步完成后，用当时的 HEAD 更新这里的记录（如 `git branch -f doced HEAD` 或新开标签）。
 
 ## 10. 扫描器报 missing 时怎么判读（判假报 vs 真缺）
 

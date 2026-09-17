@@ -111,6 +111,7 @@ try{ return Console::run(); } catch(Throwable){ runException(); return true; }
 4. `run()` 语义：Root CLI 且 `cli_enable` 才会走 execute；否则 Web。强制“CLI 也进 serve”用 `cli_enable=false`。
 5. 覆盖注意：要让某个钩子生效记得 `parent::`（若想要父骨架逻辑）按需调用。
 6. 需访问静态入口：`RunQuickly/Root/Phase/FromCurrentParent/SwitchRootPhase` 已在 `public static` 提供。
+7. `Root($switch_phase = false)` 取的是根 Phase 中登记的实例，**不会**因为取值而改变当前 Phase；只有显式传真值才会顺带切回根 Phase（子应用里「拿根实例并切回根」一步到位的用法）。切阶段那一步内部写的是 `App::Phase(self::$ROOT_PHASE)`（硬编码在 `App` 上），而返回的实例是 `self::class` 在根 Phase 的登记项——以源码为准。
 
 ## 全部选项
 
@@ -148,8 +149,8 @@ try{ return Console::run(); } catch(Throwable){ runException(); return true; }
     public static function RunQuickly(array $options = [], ?callable $after_init = null): bool
 一键：`static::_()->init($options)`（可选 after init 回调）后，root 且 cli_enable → execute()，否则 serve()
 
-    public static function Root()
-返回当前类名在根 Phase 中的实例（没有时为 null）
+    public static function Root($switch_phase = false)
+返回当前类在根 Phase 中的实例（没有时为 null）；`$switch_phase` 为真时顺带把当前 Phase 切回根 Phase
 
     public static function Phase($new = null)
 Phase 静态口：不传返回当前 Phase 名；传串则切换（返回旧值）
