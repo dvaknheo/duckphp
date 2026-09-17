@@ -161,7 +161,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         
         PhaseContainer::RestAllContainerForTesting();
         MyKernelTrait::_(new MyKernelTrait())->init([]);
-        
+        KernelTestApp::Root(true);
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;

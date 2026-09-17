@@ -175,7 +175,7 @@ EOT;
             $str .= "\e[32;7m{$tip}\033[0m \n"; //::{$v['class']}
 
             /////////////////
-            $descs = $this->getCommandsByClasses($v, 'command_', $phase);
+            $descs = $this->getCommandsByClasses($v);
 
             ksort($descs);
 
@@ -196,15 +196,17 @@ EOT;
      * @param array<string, mixed> $classes
      * @return array<string, mixed>
      */
-    protected function getCommandsByClasses(array $classes, string $method_prefix, string $phase): array
+    protected function getCommandsByClasses(array $classes): array
     {
         $ret = [];
-        foreach ($classes as $class => $v) {
-            if ($v === false) {
+        foreach ($classes as $class => $method_prefix) {
+            if ($method_prefix === false) {
                 continue;
             }
-            $method_prefix = ($v === true) ? $method_prefix : $v;
-            $desc = $this->getCommandsByClass($class, $method_prefix, $phase);
+            if ($method_prefix === true) {
+                $method_prefix = 'command_';
+            }
+            $desc = $this->getCommandsByClass($class, $method_prefix);
             $ret = array_merge($desc, $ret);
         }
         return $ret;
@@ -212,19 +214,22 @@ EOT;
     /**
      * @return array<string, mixed>
      */
-    protected function getCommandsByClass(string $class, string $method_prefix, string $phase): array
+    protected function getCommandsByClass(string $class, string $method_prefix): array
     {
         // @phpstan-ignore-next-line
         $ref = new \ReflectionClass($class);
-        if ($ref->hasMethod('getCommandsOfThis')) {
-            return (new $class)->getCommandsOfThis($method_prefix, $phase);
+        if ($ref->hasMethod('__consoleCommands')) {
+            return (new $class)->__consoleCommands();
         }
         return $this->getCommandsByClassReflection($ref, $method_prefix);
     }
-    public function getCommandsOfThis($method_prefix, $phase)
+    /**
+     * @return array
+     */
+    public function __consoleCommands()
     {
         $class = new \ReflectionClass($this);
-        $ret = $this->getCommandsByClassReflection($class, $method_prefix);
+        $ret = $this->getCommandsByClassReflection($class, 'command_');
         return $ret;
     }
     /**
