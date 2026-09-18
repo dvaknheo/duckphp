@@ -338,7 +338,7 @@ EOT;
     }
     public function isAbsPath($path)
     {
-        $is_abs = preg_match('#^(?:/|[a-zA-Z]:[\\\\/]|\\\\{2})#', $path ?? '') > 0;
+        $is_abs = preg_match('#^(?:/|[a-zA-Z]:[\\\\/]|\\\\{2})#', (string) $path) > 0;
         return $is_abs;
     }
     public function slashDir($path)

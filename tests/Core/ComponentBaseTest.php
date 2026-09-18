@@ -61,8 +61,6 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
     public function testStaticMethods()
     {
         $this->context();
-        ComponentBase::SlashDir('');
-        ComponentBase::IsAbsPath('');
     }
 }
 

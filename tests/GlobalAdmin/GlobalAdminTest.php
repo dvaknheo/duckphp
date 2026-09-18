@@ -5,6 +5,7 @@ use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
 use DuckPhp\DuckPhp;
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Foundation\SingletonTrait;
 
@@ -61,6 +62,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
 
         // show() 分支：渲染视图
         ob_start();
+        App::_()->options['use_admin_view_header_footer'] = true;
         Helper::Admin()->_Show([], $path.'view/block');
         ob_get_clean();
 

@@ -6,6 +6,7 @@ use DuckPhp\GlobalUser\UserActionInterface;
 use DuckPhp\GlobalUser\UserServiceInterface;
 use DuckPhp\GlobalUser\UserException;
 use DuckPhp\DuckPhp;
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Foundation\SingletonTrait;
 
@@ -67,6 +68,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
 
         // show() 分支：渲染视图
         ob_start();
+        App::_()->options['use_user_view_header_footer'] = true;
         Helper::User()->_Show([], $path.'view/block');
         ob_get_clean();
 

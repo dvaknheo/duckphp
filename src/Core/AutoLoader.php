@@ -142,7 +142,7 @@ class AutoLoader
 
             $is_abs = $this->isAbsPath($file);
             if (!$is_abs) {
-                $file = $this->slahDir($this->options['path']).$file;
+                $file = $this->slashDir($this->options['path']).$file;
             }
             if (!is_file($file)) {
                 continue;
