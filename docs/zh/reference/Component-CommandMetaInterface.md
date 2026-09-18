@@ -39,7 +39,8 @@ class MyCommand implements CommandMetaInterface
 1. **有它就整体接管**：`Command::getCommandsByClass()` 先 `hasMethod('__commandMeta')`，命中就**直接返回它的结果**——`console_command_classes` 里给该类配的“方法前缀”不再参与，方法上的 `@command_desc` 也不再解析。内部固定用 `command_` 前缀（即 `Command::__commandMeta()` 自己的实现就是按 `command_` 反射本类）。
 2. **键是「命令名」不是方法名**：`Command` 只用返回的键当命令词，所以键名自己去掉 `command_` 前缀；键里也不要带命名空间（命名空间由 `Console` 的命令注册表决定）。
 3. **返回 `array<string, mixed>`**：值是描述字符串，取值处会经 `translateCommandDesc()`/`langText()`，因此 `[[key|fallback]]` 占位符可以照用。
-4. **用「无构造实例化」调用**：`Command` 走的是 `(new $class)->__commandMeta()`（不传构造参数、不调用单例工厂），别在方法里依赖构造函数。注意这里和 `PermissionMenu` 的同类钩子不同：`Command` 用的是 `new`，会执行构造函数。
+4. **本接口是「建议」，不是硬性要求**：`Command::getCommandsByClass()` 靠 `hasMethod('__commandMeta')` 鸭子类型识别——**不 `implements` 本接口、只要方法同名同签名一样生效**。实现它的意义是让契约显式（静态分析/调用方一眼看清），不是运行时校验。
+5. **实例化方式**：`Command` 走的是 `(new $class)->__commandMeta()`（**会执行构造函数**，不调用单例工厂、不传构造参数），所以别在构造函数里做重活或依赖它被跳过；作为对比，[PermissionMenu](Ext-PermissionMenu.md) 的同类钩子 `__permissionMenuMeta()` 走 `ReflectionClass::newInstanceWithoutConstructor()`，**不执行构造函数**——两者刻意不同（命令类通常是轻量单例，控制器类不应在构菜单时被构造）。
 
 ## 方法列表
 

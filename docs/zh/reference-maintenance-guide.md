@@ -68,7 +68,7 @@
   - 检查命令：`bash scripts/check-non-ascii.sh`（等价于 `grep -rnP '[^\x00-\x7F]' src/ --include='*.php'`）。**必须在 WSL 下跑**（Windows 侧没有 bash）。
   - 判定：输出 **`Total non-ASCII lines: 0`** 才算通过——该脚本**不设置失败退出码**，不要只看 `$LASTEXITCODE`。
   - 命中后：把命中行改写成英文 ASCII 注释，再重跑确认清零。
-- **不虚构**：源码没写的机制不要编；源码里的“怪癖/不一致”（如某方法赋值顺序特殊、某接口参数拼写 `$contetxt`）要如实在“注意事项”里说明，并注明“以源码为准”。
+- **不虚构**：源码没写的机制不要编；源码里的“怪癖/不一致”要如实在“注意事项”里说明，并注明意图（如 `RouteLister::listAll()` 的 `only_admin/only_user` 会强制打开 `only_controller`、`PermissionMenu` 里未加注释的方法名带 `action_` 前缀）。**但先分清是「能清的代码残留/笔误」还是「刻意行为」**——前者改源码（并顺手补测试），后者才写进文档；判断不了就去问作者一句，别替源码下结论。
 
 ## 5. 工具
 
@@ -223,7 +223,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 3. **校验**：重跑 `drift.py` 确认 `missing-*` 为空；再抽查新段落。若本次也改了 `src/`（或 `tests/`）代码：
    - **测试一律在 WSL 下跑，且按「单个测试文件」快速验证**（见第 5 节末的“运行环境”说明）：改 `src/A/B.php` 就测 `tests/A/BTest.php`，如 `wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"`；全量很慢，没必要时别跑；
    - **必须再跑** `bash scripts/check-non-ascii.sh` 并确认输出 `Total non-ASCII lines: 0`（见第 4 节的硬性规则）。
-4. **登记**：勾掉/更新本指南第 8 节的“状态与待办”（若有新增文档，也在第 8 节记一句改动清单即可）。
+4. **登记**：更新第 8 节的「现状」——**一两句结论**即可（本次同步了哪些、校验结果如何）。**不要把逐文件清单、源码修复过程、调试经过堆进第 8 节**：那些属于 commit message 与对应文档，第 8 节只回答「现在什么状态」和「还欠什么」，保持它短到能一次看完。有长期价值的**教训**请写进第 7 节的陷阱表。
 5. **提交**：只 add 相关路径
    ```powershell
    git add docs/zh/reference
@@ -253,63 +253,34 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 | `python -c` 被安全护栏拦 | 本环境下 `python -c` 后接其它命令会被拒绝；把脚本**存成 `.py` 文件再跑**。 |
 | 行号会漂移 | 用**文本锚点**（唯一子串）定位替换，别依赖旧行号。 |
 | 同一批多文件编辑 | 一个编辑失败会导致该批后续编辑被跳过；锚点不确定时先 `read` 出确切文本，或把不确定的编辑放到本批最后。 |
-| 在 `src/` 里写了中文/全角字符 | 违反第 4 节的硬性规则；`src/` 注释一律英文 ASCII。改完 `src/` 后跑 `bash scripts/check-non-ascii.sh`，确认 `Total non-ASCII lines: 0`。 |
+| 在 `src/` 里写了中文/全角字符 | 违反第 4 节的硬性规则；`src/` 注释一律英文 ASCII。改完 `src/` 后跑 `bash scripts/check-non-ascii.sh`，确认 `Total non-ASCII lines: 0`。最常见的来源是从中文文档里**复制粘贴**：全角箭头 `→`（`PermissionMenu.php` 就带进来 4 行）、全角括号/逗号/空格。 |
+| 源码文件里接口名与文件名不一致 | 如 `CommandMetaInterface.php` 里曾声明成 `interface CommandDescInterface`。按**文件名 + 实际用法**（方法名 `__commandMeta()`、调用处）判断哪个是笔误，改源码统一，再同步文档 H1／交叉引用／`index.md`；**不要在文档里长期挂一条“命名不一致”的告警**当挡箭牌。 |
+| 给不可达代码加 `@codeCoverageIgnore` | php-code-coverage 只认**整条注释恰好等于** `// @codeCoverageIgnore`，而且**忽略的是注释所在行**——所以要贴在 `catch (...)` 行与 `return` 行**各自的行尾**（本仓库 `Core/Logger.php`、`Core/App.php` 就是这么写的），写成「注释单独占上一行」无效；要忽略一段区间才用 `// @codeCoverageIgnoreStart` / `End`。 |
+| 回归测试没验证过“抓得住 bug” | 写完断言后，**把 bug 临时改回去跑一遍**，确认断言真的失败（顺手把失败输出贴进记录），再还原源码。没做这步的回归测试等于没写——`GlobalUserTest` 那次就是这么证明的。 |
 | `git add docs/zh/reference` 带入 `.obsidian/` | 该目录下有未跟踪的 Obsidian 配置（`app.json`/`appearance.json`/`core-plugins.json`/`workspace.json`），会被一并提交。提交前 `git status --short` 复核，误入则 `git rm -r --cached` + `git commit --amend --no-edit`（`--cached` 不会删磁盘文件）。 |
 | `$env:TEMP` 与 `%TEMP%` 不是同一个目录 | DSH 沙箱把 `$env:TEMP` 指到私有临时目录，`write` 工具写的 `%TEMP%\drift.py` 在那里找不到；用绝对路径调用。 |
 | 把“代码残留”当成“源码怪癖”写进文档 | 例：`Command::getCommandListInfo()` 里 `$phase` 读了不用（重构遗留）。**先判断是不是能清理的残留**：能清就清源码 + 不改文档；确实是刻意为之的行为（如 `Root($switch_phase)` 内部硬编码 `App::Phase`）才写进「注意事项」，并注明“以源码为准”。 |
 | 在 Windows 侧直接跑 `phpunit` | Windows PHP 没有 `redis` 扩展，`RedisCacheTest`/`RedisManagerTest` 会报 `Class 'Redis' not found` 的**环境假失败**。测试与 `scripts/*.sh` 一律走 WSL（见第 5 节末），并先 `$env:WSL_UTF8=1` 免乱码。 |
+| 改公共名字（方法名／选项键／参数名）没改干净 | 一次性覆盖 `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`：先 `grep -rn "<旧名>" src tests docs` 列全，改完再 grep 残留 = 0。别漏调用处（`Ext/SqlDumper` 在调 `Db::quoteInsertArray()`）。**产物不用动**：`docker/test-php84/test_reports/`、`test_coveragedumps/`、`tests/data_for_tests/*.txt` 都是跑测试生成的。另外文档里可能故意保留「由旧名 X 更名」的历史说明，`sed` 批量替换时要先排除这类句子。 |
+| `ZAllDemoTest` 报 `Failed: <路由> => A(B)` | 该用例把 demo 各路由的**输出字节长度**跟 `tests/data_for_tests/ZAllDemoTest.config.php` 里的期望值硬比，而 `files` 路由会 dump App 的公共方法表与调用栈行号——**源码一动（加/删方法、行号漂移）长度就变**。改完 `src/` 后若只有它红：把 config 里的期望值改成括号里的 B 即可（实际内容同时被写到 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可直接 diff 看差异）。**别先怀疑自己的改动**——先 `git stash push -- src` 跑一遍确认是否本来就在红。 |
 
 ## 8. 当前状态与待办
 
-- **已完成**
-  - 110 篇逐类文档全部按本指南规范重写；`drift` 全量扫描 **0 不一致**。
-  - 一次“`ref-lastdoc` → HEAD”的增量同步：
-    - **新增 8 篇**：`GlobalAdmin-AdminLoginActionInterface.md`、`GlobalAdmin-AdminLoginServiceInterface.md`、`GlobalAdmin-AdminSessionInterface.md`、`GlobalAdmin-AdminSessionTrait.md`、`GlobalUser-UserLoginActionInterface.md`、`GlobalUser-UserLoginServiceInterface.md`、`GlobalUser-UserSessionInterface.md`、`GlobalUser-UserSessionTrait.md`；
-    - **更新 20 篇**：GlobalAdmin/GlobalUser 主文档（接口、事件常量、新选项、`login/logout/register`、会话优先、`_Show` 细节），`UserActionInterface`（`urlForRegist`→`urlForRegister`），`UserException`（改继承 `\Exception`），`Core-CoreHelper`（`ChildCall/ProjectThrowOn`、`exception_map`），`Core-Route`（`runFinallyHooks`→`clear`），`Core-App`（`setting`/`exception_map` 选项），`Core-KernelTrait`（finally 改调 `Route::clear()`），`DuckPhp`（`use_user_view/use_admin_view` 改为手动开启），`DuckPhpAllInOne` 与 `Foundation-Helper`（insteadof 清单），`Component-RouteLister`、`Component-RouteHookResource`、`Core-View`、`Helper-App/Business/ControllerHelperTrait`。
-  - 后续把 7 篇旧式排版（`Component-DbManager`/`Pager`/`RouteHookPathInfoCompat`/`RouteHookRewrite`/`RouteHookRouteMap`、`Core-SuperGlobal`/`SystemWrapper`）与 4 篇合并表格行（`Ext-CallableView`、`Ext-RouteHookWebInstaller`、`GlobalAdmin`、`GlobalUser`）统一为规范格式——`drift` 因此从 11 处假报收敛到 0。
-  - **最近一轮“`doced`（= `3ece976b`）→ HEAD”的增量同步**（3 个提交 `f9160a03`/`2e5340b4`/`fb1bdcf2`）：`git diff --name-only doced HEAD -- src` 只有 6 个文件，其中 3 个是**纯格式化**（`Component/RouteLister.php` 的 `rtrim($path,'/\\')` 加空格、`Core/App.php` 的 `'setting'=>[]`→`'setting' => []`、`GlobalAdmin/GlobalAdmin.php` 的 `getLoginBusiness()` 里 `user_callback_for_login_service`→`admin_callback_for_login_service`——**文档早已写作 `admin_callback_for_login_service`，这次是源码向文档对齐**），因此只需改 2 篇：
-    - `Component-Command.md`：命令收集钩子 `getCommandsOfThis($method_prefix, $phase)` → **`__consoleCommands()`**（无参、内部固定 `command_` 前缀）；`getCommandsByClasses(array $classes)`、`getCommandsByClass(string $class, string $method_prefix)` 均**去掉 `$phase` 形参**；新增「注意事项」两条（钩子接管规则；值形态是**对上游 `Console` 执行侧的防御性对齐**，不是本类自创语义）。
-    - **顺带清掉源码残留 + 补防御缺口**（同一次重构的遗留，见提交 `96cfbd56`、`15f6cff6` 之后的补丁）：
-      - 删掉 `Command::getCommandListInfo()` 里 `$phase = Console::_()->options['console_command_phase'][$namespace]`——`fb1bdcf2` 重构后已成死代码（读了不用）。**文档不该把这类残留当“怪癖”记下来，能清就清源码**。
-      - `getCommandsByClasses()` 的取值防御与上游 `Console` 对齐：原先只判 `=== false`，而 `Console` 判的是 `!isset($method_prefix) || $method_prefix === false`；本文件是 `declare(strict_types=1)`，故 `cmd` 里给某类配 `null` 前缀（`Console` 会跳过）时这里会抛 `TypeError`。补 `!isset(...)` 后两边取法逐条一致。
-      - 补回归测试 `tests/Component/CommandTest.php`：`getCommandsByClasses()` 覆盖 `true` / `false` / `null` / 字符串四种取值形态。修复前该测试**确实复现** `TypeError: Argument 2 passed to DuckPhp\Component\Command::getCommandsByClass() must be of the type string, null given`，修复后通过。
-      - 另清掉两处无害残留：`getCommandsByClasses()` 上方重复且失效的空 docblock（三行一样的 `@param array<string, mixed> $classes`）、`getCommandListInfo()` 里 `//::{$v['class']}` 注释。
-      - 教训：**文档里的“怪癖”要先分清是「能清的代码残留」还是「刻意行为」**——前者清源码（并顺手补测试），后者才写进「注意事项」。
-      - 校验（全部在 WSL 下）：`php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php` → `OK (1 test, 14 assertions)`；`bash scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`；`drift.py doced` 仍全 `ok`。
-    - `Core-KernelTrait.md`：`Root()` → **`Root($switch_phase = false)`**（为真时顺带 `App::Phase(根 Phase)`，用于“子应用里取根实例并切回根”）；补第 7 条注意事项（返回实例本身不改当前 Phase；切阶段那步硬编码在 `App` 上）。
-    - 收尾：`drift.py doced` 与 `drift.py --all` 均 **0 `missing-*`/`extra-option`**（仅剩 12 处示例方法 `extra-method`，属正常）。
-  - **新类 `Ext/PermissionMenu` 的测试 + 由测试暴露出的源码问题（已全部处理）**（`tests/Ext/PermissionMenuTest.php`，骨架由作者提供，本次补齐；数据目录 `tests/data_for_tests/Ext/PermissionMenu/`）：
-    - 数据目录：`System/PermissionMenuApp.php`（根应用，显式声明 `permission_menu_tree_for_admin` 与 `controller_url_prefix`——这两个键不在 App 默认 `$options` 里）、`System/ChildMenuApp.php`（子应用，自己还带一个孙应用）、`System/GrandMenuApp.php`、`System/LeafMenuApp.php`（孙应用，用来验证“从子 Phase 调 `loadAll()` 也会下钻”）、`Controller/*.php`（6 个控制器：注释模式、`__permissionMenuMeta()` 模式、抛异常与返回 null 两种兜底、`@menu_directory_url` 模式）、`config/menu*.json|*.config.php`。
-      - ⚠️ 控制器**必须 `implements AdminControllerInterface`**：`getRoutes()` 走的是 `RouteLister::listAll(false, true, true)`（only_admin），普通控制器根本不会出现在菜单里。
-    - 覆盖面：`build()` 的注释解析、`\` 多层目录拆分、权重排序、`#url` 权限前缀、`@menu_directory_url`；`loadAdminPermissionMenu()` 的 force / json / php 数组 / php 非数组 / 文件不存在五条分支；`buildAndSaveToConfigJsonFile()`（写完断言后 `unlink`，不给仓库留垃圾）；`loadAll()/mergeAppsMenus()`（子应用递归、`ignore_phase` 自我跳过、非子应用项跳过）；`walkTree/resolveUrls` 与两个树转换。
-    - 结果（WSL）：`OK (1 test, 110 assertions)`；`tests/Ext` 全目录 `OK (27 tests, 235 assertions)`；`bash scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`。
-    - 覆盖率：**298/298 行（100%）**。
-    - **测试暴露出的源码问题 1~3：真 bug，已修**（`src/Ext/PermissionMenu.php`）：
-      - `mergeNode()` 对路径**最后一段不改名** → 叶子目录叫 `Admin\System`，且两个控制器声明同一个 `@menu_directory` 时**不合并**、并列成两个同名目录。修法：`if ($isLast) { $node['name'] = $name; $tree[] = $node; }`。修后 `Admin\System` → `Admin/` → `System/`，两个控制器的条目合进同一个 `System`。
-      - `splitSubLevels()` 里 `unset($child['directory'], $child['icon'])` 把**方法级 `@menu_icon` 一起删了**。`directory` 才是临时字段，`icon` 是输出节点的一部分；改成只 unset 临时字段，方法级 icon 现在能到输出树（侧边栏转换读的就是 `$node['icon']`）。
-      - `mergeAppsMenus()` 无条件 `loadAdminPermissionMenu()` → **从根 Phase 调 `loadAll()` 时根菜单被合并两次**；同时 `$child_phase === $ignore_phase → continue` 会把被忽略应用的**整棵子树**都跳过（从子 Phase 调用时，孙应用的菜单全丢）。修法：把判断挪到函数开头（`if ($current_phase !== $ignore_phase)` 才加载本应用菜单），并删掉子循环里的 `continue`——被忽略的应用自身不重复加载，但它的子应用照常下钻。测试用 `LeafMenuApp` 专门锁这条。
-    - **问题 4：注释值只取第一个 token（用户裁定按“到行末”实现，已改）**：
-      - `parseAnnotatedLine()` 现在返回 `?string`：**值取到行末并 trim**（不再是 `[name, tailParam]` 数组），所以 `@menu_action User List` 的名字就是 `User List`、`@menu_icon fa fa-folder` 也能用。
-      - `parseMultiAnnotatedLine()` 的第二个值同理（`preg_split('/\s+/', $line, 2)` 后 trim 尾部）：`@menu_permission #edit Edit User` → 名字 `Edit User`。
-      - 注意 `@menu_directory` 的**值**也变成“到行末”，所以它不会误吞 `@menu_directory_url`（正则要求 tag 后紧跟空白，`_url` 不会命中）。
-    - **问题 5：文档写了却没人实现的 `[url]`（用户裁定改为新注解，已实现）**：
-      - `@menu_directory` 不再有 `[url]` 第二参数（值=整个名字）；新增 **`@menu_directory_url Url`**，类级与方法级都支持——类级设本控制器目录节点的 url（**优先于**由首个方法推导的 `.../#`），方法级设该 `@menu_directory` 生成的分组目录 url。同一目录多条 `@menu_directory_url` 时**第一条生效**（`$dirUrls` 里 `!isset` 判重）。
-      - 留给测试夹具 `HandbookController`（类级 url）与 `AdminController::action_list`（方法级 url）锁住；`build()` 的 docblock 已同步改写。
-    - **问题 6：`getClassDoc()` 里不可达的 `catch`（用户裁定加注解，已加）**：
-      - 按本仓库既有风格（`Core/Logger.php`、`Core/App.php`）在两行末尾加 `// @codeCoverageIgnore`；注意 php-code-coverage 只认**整条注释恰好等于** `// @codeCoverageIgnore`，且**忽略的是注释所在行**——所以尾部注释要贴在 `catch` 行与 `return` 行各自行尾，不能用「注释在上一行」的写法。加完覆盖率 100%。
-    - **仍然是行为、不是 bug**：未加注释的方法名**带 `action_` 前缀**（名字就是方法名本身）。
-    - 顺带：`src/Ext/PermissionMenu.php` 原有 **4 行注释含全角 `→`**（`check-non-ascii.sh` 报 4 行），违反第 4 节硬性规则，本次一并改成 ASCII `->` / `:`。
-  - **第三轮：参考文档按 `drift.py --all` 归零**（`doced` 之后 src 又走了不少，本次一次性对齐）：
-    - **新增 3 篇**：`Ext-PermissionMenu.md`（25 个方法 = 9 公开 + 16 受保护，另含「注释一览」表与 12 条注意事项）、`Ext-PermissionMenuMetaInterface.md`、`Component-CommandMetaInterface.md`。
-      - 命名坑（已修）：`src/Component/CommandMetaInterface.php` 里最初把接口声明成了 `CommandDescInterface`（与文件名、与 `__commandMeta()` 方法名都不一致），现已改名 `CommandMetaInterface`；文档 H1 / 交叉引用 / `index.md` 同步跟进。**同一文件里接口名与文件名不一致时，先按文件名与用法判断哪个是笔误，再统一**。
-    - **更新 7 篇**：`Component-Command`（`__consoleCommands()` → **`__commandMeta()`**，4 处）、`Core-App`（补公开的 `isAbsPath()`/`slashDir()`）、`Core-AutoLoader`（补受保护 `isAbsPath()` + 公开 `slashDir()`）、`Core-ComponentBase`（**删**过期的 `IsAbsPath()`/`SlashDir()`，并指向新位置）、`Core-Logger`（**删**已不存在的 `path` 选项，含「全部选项」块与示例）、`DuckPhp`（补 `initComponentsOfExt()`；`initComponentsOfInner()` 的描述里删掉早已搬到 Ext 的 provider 部分）、`GlobalAdmin-GlobalAdmin`/`GlobalUser-GlobalUser`（各补 `*_default_exception_class` 选项行）。
-    - `docs/zh/reference/index.md` 已登记这 3 篇新文档（Component 段与扩展段各就位）。
-    - 校验：`drift.py --all` **0 不一致**（只剩示例方法类 `extra-method`）；`enc` 检查 117 篇全 UTF-8。
-    - 顺带发现、**已修的源码 bug**：
-      - `GlobalUser::id()/name()` 原先读的是 `$this->options['admin_default_exception_class']`，而该键不在 `GlobalUser` 的 `$options` 白名单里（`ComponentBase::init()` 会按白名单裁键）→ 自己声明的 `user_default_exception_class` 是**死选项**，未登录抛的永远是 `UserException`。已把两处改成 `user_default_exception_class`（与 `GlobalAdmin` 的 `admin_default_exception_class` 行为对齐）。
-      - 回归测试写在 `tests/GlobalUser/GlobalUserTest.php`：把该选项设成 `MyUserDefaultException`（`extends UserException`）后断言 `id(true)`/`name(true)` 抛出的**正是**这个类；**已实测**：把 bug 改回去，该断言会失败（`Expected MyUserDefaultException, Actual DuckPhp\GlobalUser\UserException`），改回来即通过。校验：`tests/GlobalUser` `OK (2 tests, 29 assertions)`、`tests/GlobalAdmin` `OK (2 tests, 25 assertions)`、`tests/Foundation` `OK (15 tests, 25 assertions)`、`tests/Helper` `OK (4 tests, 4 assertions)`；`GlobalUser.php` 覆盖率 99/99 行；`check-non-ascii.sh` → 0。
-      - 文档随之回到正常描述（`GlobalUser-GlobalUser.md` 的 `user_default_exception_class` 行已去掉“暂时改不动行为”的告警）。
+- **现状**（每轮只更新这一段；历轮细节看 `git log` 与各篇文档，**不要在这里堆流水账**）
+  - `docs/zh/reference/` 共 **117 篇**：113 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板；`drift.py --all` **0 不一致**（`missing-*` / `extra-option` 全空，`extra-method` 只剩示例代码里的自定义方法）。
+  - `enc` 检查 117 篇全 UTF-8；站内链接 0 死链。同步基线见第 9 节末的提示（最近一次基线是分支 `doced`）。
+  - 测试基线（WSL）：全量 `php vendor/bin/phpunit --no-coverage` → `OK (91 tests, 514 assertions)`；带覆盖率跑完看 `test_reports/index.html` → `Test Lines: 4812/4812 (100.00%)`。
+  - 最近几轮（每轮一句话，细节在 commit message 与对应文档里）：
+    1. `doced` → HEAD 增量同步：`Component-Command`（命令收集钩子改名、两个收集方法去掉 `$phase` 形参）、`Core-KernelTrait`（`Root($switch_phase = false)`）。
+    2. 新类 `Ext/PermissionMenu`：补齐测试 `tests/Ext/PermissionMenuTest.php`（覆盖率 298/298），修掉测试暴露的 6 个源码问题（3 个真 bug、2 处语义调整、1 处不可达 `catch` 加 `@codeCoverageIgnore`）。
+    3. 参考文档按 `drift.py --all` 归零：**新增 3 篇**（`Ext-PermissionMenu`、`Ext-PermissionMenuMetaInterface`、`Component-CommandMetaInterface`），**更新 7 篇**（`Component-Command`、`Core-App`、`Core-AutoLoader`、`Core-ComponentBase`、`Core-Logger`、`DuckPhp`、`GlobalAdmin`/`GlobalUser`），`index.md` 补登 11 条。
+    4. `GlobalUser::id()/name()` 读错了选项键（读成 `admin_default_exception_class`，白名单里没有 ⇒ 死选项）→ 改为 `user_default_exception_class`；`tests/GlobalUser/GlobalUserTest.php` 加了回归测试。
+    5. **清怪癖一轮**（作者裁定，见第 7 节新增的陷阱行）：修拼写 `$contetxt`→`$context`、`qoute*`→`quote*`、`user_callback_for_url_for_regist`→`..._register`；`AdminException` 改为 `extends \Exception`（并在 `Core-DuckPhpSystemException` 文档里立下「只用于框架内部系统错误，外部异常别继承」的规矩）；`Db::execute()` 的 rowCount 语义修正（成功=受影响行数、失败=0）；`HttpServer::init()` 补置 `is_inited`；`App::getOverrideableFile()/getConfigFile()` 新增 `$must_exist` 区分「读文件要存在」与「写入要一个尚不存在的候选路径」，不存在时返回 `null` 而不是空串。
+       - 顺带修掉一处**本就红的**用例：`ZAllDemoTest` 的 `files` 期望长度 10347 是过期的（`App::isAbsPath/slashDir` 加进方法表后应为 10429），已更新 `tests/data_for_tests/ZAllDemoTest.config.php`（详见第 7 节那一行）。
 - **待办（本工作范围外）**：
+  - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
+  - `Helper/BusinessHelperTrait`、`Helper/ControllerHelperTrait` 的事件常量名仍拼作 `registing`/`registed`（公共属性值，改动会影响工程侧，待裁定）；
+  - `docs/zh/guide/external-auth.md` 里还有一批旧键名（`user_callback_get_id/name/data/service`）未校（属下面的教程校对）；
   - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含 3 篇新类文档与早期那 8 篇 GlobalAdmin/GlobalUser 接口文档），剩下的是**逐条核对说明文字**是否仍准确；
   - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页（内容过时且行文损坏，建议改为由脚本生成）；
   - `docs/zh/guide/` 教程与 reference 的交叉引用校对。

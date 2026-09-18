@@ -32,12 +32,12 @@ $db->execute($sql);
 
         $array=[];
         $db->quoteIn($array);
-        $db->qouteInsertArray($array);
+        $db->quoteInsertArray($array);
         $array=[1,2,3];
         $db->quoteIn($array);
         $db->quoteSetArray($array);
         $db->quoteAndArray($array);
-        $db->qouteInsertArray($array);
+        $db->quoteInsertArray($array);
         $me=$db->findData('Users', 'aa', 'username');
                 
         $table_name='Users';
@@ -57,7 +57,7 @@ $db->execute($sql);
 $sql= 'DROP TABLE IF EXISTS Users';
 $db->execute($sql);
         //$db->pdo=null;
-        $db->qouteInsertArray($array);
+        $db->quoteInsertArray($array);
         
         $sql="Select * from users";
         $db->_SqlForPager($sql,1,5);
@@ -67,7 +67,7 @@ $db->execute($sql);
         /*
         $db->quoteIn($array);
         $db->quoteSetArray($array);
-        $db->qouteInsertArray($array);
+        $db->quoteInsertArray($array);
         $db->findData($table_name, $id, $key='id');
         $db->insertData($table_name, $data, $return_last_id=true);
         $db->updateData($table_name, $id, $data, $key='id');

@@ -168,7 +168,7 @@ class UserApp extends DuckPhp
         'user_url_login' => '/login',
         'user_url_logout' => '/logout',
         'user_url_home' => '/',
-        'user_url_regist' => '/regist',
+        'user_url_register' => '/regist',
         
         'namespace' => __NAMESPACE__,
         'controller_url_prefix' => '',

@@ -2,11 +2,11 @@
 
 ## 简介
 
-`DbAdvanceTrait` 是为 `Db` 连接的“便捷数据操作”补充的方法集合，被 `DuckPhp\Db\Db` 以 `use DbAdvanceTrait` 组合。它依赖宿主类已具备的能力：`quote()`（引用）、`qouteScheme()`（标识符外壳）、`$pdo`（PDO 实例）、`fetch()`/`execute()`/`fetchAll()`（基础读写）。
+`DbAdvanceTrait` 是为 `Db` 连接的“便捷数据操作”补充的方法集合，被 `DuckPhp\Db\Db` 以 `use DbAdvanceTrait` 组合。它依赖宿主类已具备的能力：`quote()`（引用）、`quoteScheme()`（标识符外壳）、`$pdo`（PDO 实例）、`fetch()`/`execute()`/`fetchAll()`（基础读写）。
 
 主要内容分两类：
 
-- **SQL 片段生成**：`quoteIn()`、`quoteSetArray()`、`quoteAndArray()`、`qouteInsertArray()`（注意本方法名里 “quote” 拼作 “qoute”，为源码原样）；
+- **SQL 片段生成**：`quoteIn()`、`quoteSetArray()`、`quoteAndArray()`、`quoteInsertArray()`；
 - **表级便捷操作**：`findData()`、`insertData()`、`updateData()`、`deleteData()`（默认软删除 `is_deleted=1`）；
 - 分页/计数辅助：`_SqlForPager()`、`_SqlForCountSimply()`。
 
@@ -38,7 +38,7 @@ $cnt = $db->fetchColumn($db->_SqlForCountSimply('select * from log'));
 $in   = $db->quoteIn([1, 2, 3]);          // '1','2','3'（空数组返回 NULL）
 $set  = $db->quoteSetArray(['name' => 'a', 'age' => 1]);   // `name`='a',`age`='1'
 $and  = $db->quoteAndArray(['a' => 1]);   // `a`='1'
-$ins  = $db->qouteInsertArray(['name' => 'a', 'age' => 1]); // (`name`,`age`)VALUES('a','1')
+$ins  = $db->quoteInsertArray(['name' => 'a', 'age' => 1]); // (`name`,`age`)VALUES('a','1')
 ```
 
 ## 注意事项
@@ -63,7 +63,7 @@ $ins  = $db->qouteInsertArray(['name' => 'a', 'age' => 1]); // (`name`,`age`)VAL
     public function quoteAndArray(array $array): string
 生成 WHERE 片段：`标识符=引用值 and 标识符=引用值…`（源码以 `and` 连接，无前导空格）。
 
-    public function qouteInsertArray(array $array): string
+    public function quoteInsertArray(array $array): string
 生成 INSERT 值片段：`(`key`,`key`)VALUES('v','v')`；空数组返回空串。
 
     public function findData($table_name, $id, $key = 'id')

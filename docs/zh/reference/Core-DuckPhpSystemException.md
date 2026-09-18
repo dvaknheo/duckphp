@@ -4,7 +4,15 @@
 
 系统抛出的、携带 ThrowOn 能力的通用异常基类。
 
-`DuckPhpSystemException extends Exception`（PHP 标准异常），并用 `ThrowOnTrait` 提供静态遍历“满足则抛”的入口。框架内部在各处用它的子类直接抛异常来描述问题（如“Phase 重名”“不可 init 基类”等），同时业务可将自己的异常类继承它，或用其 Trait 获得 `ThrowOn` 一次性守卫式抛法。
+`DuckPhpSystemException extends Exception`（PHP 标准异常），并用 `ThrowOnTrait` 提供静态遍历“满足则抛”的入口。框架内部在各处用它的子类直接抛异常来描述问题（如“Phase 重名”“不可 init 基类”等）。
+
+> ⚠️ **只用于框架内部系统级错误，外部/业务异常不要继承它。**
+> 判断依据应该是「这是框架自己出的问题」还是「工程的业务/权限问题」：
+> - 框架内部机制出错（Phase 名冲突、直接 init 基类、缺 provider…）→ 抛 `DuckPhpSystemException`（或框架内部的子类）；
+> - 工程侧的业务/权限/登录异常 → 继承 `\Exception` 自己定义，例如 [AdminException](GlobalAdmin-AdminException.md)、[UserException](GlobalUser-UserException.md) 都是**直接继承 `\Exception`** 的。
+>
+> 原因：捕获 `DuckPhpSystemException` 等于「框架坏了」的兜底信号，业务异常混进来会让上层无法区分「该提示用户」还是「该报障」。
+> 想要 `ThrowOn()` 那种守卫式抛法不必继承本类——像 `AdminException` 那样 `use DuckPhp\Core\ThrowOnTrait;` 即可。
 
 ## 类信息
 
@@ -21,11 +29,14 @@ use DuckPhp\Core\DuckPhpSystemException;
 DuckPhpSystemException::ThrowOn($user == null, 'not logged in');
 ```
 
-自定义更专业异常时直接子类化：
+要在工程里定义**自己的业务异常**，请继承 `\Exception`（而不是本类），需要守卫式抛法就再 `use ThrowOnTrait`：
 
 ```php
-class MyBizException extends DuckPhpSystemException
+use DuckPhp\Core\ThrowOnTrait;
+
+class MyBizException extends \Exception
 {
+    use ThrowOnTrait;
 }
 ```
 

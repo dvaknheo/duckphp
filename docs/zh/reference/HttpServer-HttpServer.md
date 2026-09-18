@@ -67,10 +67,10 @@ php -r 'require "vendor/autoload.php"; \DuckPhp\HttpServer\HttpServer::RunQuickl
 快捷启动：`static::_()->init($options)->run()`。
 
     public function init(array $options, ?object $context = null)
-合并选项、解析 CLI 参数并计算 docroot，返回自身（`$context` 不使用）。
+合并选项、解析 CLI 参数并计算 docroot，置 `is_inited = true` 后返回自身（`$context` 不使用）。
 
     public function isInited(): bool
-返回 `$is_inited`（源码中 `init()` 未置真，行为以源码为准）。
+返回是否已 `init()`。
 
     public function run()
 启动入口：打印欢迎语；`--help` 时输出帮助；否则运行内置服务器。

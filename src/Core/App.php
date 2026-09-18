@@ -346,17 +346,33 @@ EOT;
         $path = ($path !== '') ? rtrim($path, '/\\').DIRECTORY_SEPARATOR : '';
         return $path;
     }
-    public function getOverrideableFile($path_sub, $file, $use_override = true)
+    /**
+     * Phase aware file lookup ("overrideable" files).
+     *
+     * Two different needs, told apart by $must_exist:
+     * - $must_exist = false: return a path to use, the last candidate path even when
+     *   nothing exists yet (writing a config/log/install file uses this).
+     * - $must_exist = true: only report what really exists, null when nothing matched
+     *   (reading a file uses this, instead of a bogus path).
+     *
+     * @param string $path_sub sub path ('' means project root) or an absolute dir
+     * @param string $file file name, or an absolute file
+     * @param bool $use_override kept for the historical signature
+     * @param bool $must_exist see above
+     * @return string|null
+     */
+    public function getOverrideableFile($path_sub, $file, $use_override = true, $must_exist = false)
     {
         if ($this->isAbsPath($file)) {
             return $file;
         }
         if ($this->isAbsPath($path_sub)) {
-            return $this->slashDir($path_sub) . $file;
+            $full_file = $this->slashDir($path_sub) . $file;
+            return ($must_exist && !file_exists($full_file)) ? null : $full_file;
         }
         $current_phase = $this->getThisPhaseName();
 
-        $full_file = '';
+        $full_file = null;
         $phase_block = explode(':', $current_phase);
         foreach ($phase_block as $i => $v) {
             $phase = implode(':', array_slice($phase_block, 0, $i + 1));
@@ -376,6 +392,11 @@ EOT;
         }
 
         self::Phase($current_phase);
+
+        if ($must_exist) {
+            // $full_file is the last candidate, it does not exist
+            return file_exists((string) $full_file) ? $full_file : null;
+        }
 
         return $full_file;
     }
@@ -405,9 +426,13 @@ EOT;
         $path_runtime = $this->slashDir(static::Root()->options['path_runtime']);
         return $this->isAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
-    public function getConfigFile(string $file): string
+    /**
+     * @param bool $must_exist true: return null when the config file does not exist
+     * @return string|null
+     */
+    public function getConfigFile(string $file, bool $must_exist = false)
     {
-        return $this->getOverrideableFile($this->options['path_config'], $file);
+        return $this->getOverrideableFile($this->options['path_config'], $file, true, $must_exist);
     }
 
     ///////

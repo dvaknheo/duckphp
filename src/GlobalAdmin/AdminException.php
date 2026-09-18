@@ -6,9 +6,10 @@
 
 namespace DuckPhp\GlobalAdmin;
 
-use DuckPhp\Core\DuckPhpSystemException;
+use DuckPhp\Core\ThrowOnTrait;
+use Exception;
 
-class AdminException extends DuckPhpSystemException
+class AdminException extends Exception
 {
-    //
+    use ThrowOnTrait;
 }

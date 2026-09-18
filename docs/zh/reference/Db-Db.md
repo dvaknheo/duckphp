@@ -5,7 +5,7 @@
 `Db` 是 DuckPHP 默认的数据库连接对象，实现 `DbInterface` 并组合 `DbAdvanceTrait`。它直接封装一个 PDO 实例（属性 `$pdo`），对外提供：
 
 - 连接管理：`init()`/`check_connect()`/`close()`/`PDO()`；
-- 安全引用与拼 SQL 辅助：`quote()`/`qouteScheme()`/`buildQueryString()`/`doTableNameMacro()`；
+- 安全引用与拼 SQL 辅助：`quote()`/`quoteScheme()`/`buildQueryString()`/`doTableNameMacro()`；
 - 查询：`fetch*` 系列（关联数组 / 单列 / 对象）；
 - 执行与结果：`execute()`/`rowCount()`/`lastInsertId()`；
 - 查询前钩子：`setBeforeQueryHandler()`；
@@ -78,9 +78,9 @@ $frag   = $db->buildQueryString(
 
 - `quote()` 对数组会递归逐项引用并返回逗号串；对非字符串非数组值原样返回。
 - `buildQueryString()`：单个数组参数时把 `:key` 占位符替换为引用后的值；多参数时依次替换 SQL 中的 `?`；无参数时原样返回 SQL。
-- `qouteScheme()` 依 `driver` 加标识符外壳：`sqlite` 用双引号、`mysql` 用反引号、`pgsql` 用单引号、其它原样。
+- `quoteScheme()` 依 `driver` 加标识符外壳：`sqlite` 用双引号、`mysql` 用反引号、`pgsql` 用单引号、其它原样。
 - `exec()` 为内部统一执行点：先触发 `beforeQueryHandler`，再做表名宏替换、`prepare` + `execute`，并记录 `$this->success`。
-- 查看 `execute()` 源码时注意其 `rowCount` 赋值顺序较特殊（`$this->rowCount = $this->success ? 0 : $sth->rowCount();`），`execute()` 返回的是是否成功；请以 `src/Db/Db.php` 为准理解行为。
+- 查看 `execute()` 时注意：它返回的是**是否成功**（`$this->success`），而 `rowCount()` 给的是**受影响行数**——成功时取 `$sth->rowCount()`，失败时归 0（失败不去碰 statement）。
 - `fetchAll/fetch/fetchColumn` 用 `\PDO::FETCH_ASSOC`；`fetchObject/fetchObjectAll` 使用 `setObjectResultClass()` 设置的结果类（默认 `\stdClass`）。
 
 ## 方法列表
@@ -102,7 +102,7 @@ $frag   = $db->buildQueryString(
     public function quote($string)
 安全引用：数组逐元素递归引用后用 `,` 连接；字符串走 `$pdo->quote()`；其它类型原样返回。
 
-    public function qouteScheme($name)
+    public function quoteScheme($name)
 按驱动给标识符加外壳：`sqlite` 双引号、`mysql` 反引号、`pgsql` 单引号、默认原样。
 
     public function buildQueryString($sql, ...$args)
@@ -133,7 +133,7 @@ $frag   = $db->buildQueryString(
 执行并返回 `$resultClass` 对象数组（`\PDO::FETCH_CLASS`）。
 
     public function execute($sql, ...$args)
-执行 SQL 并返回是否成功（`$this->success`）；内部同时记录 `rowCount`（赋值顺序见注意事项）。
+执行 SQL 并返回是否成功（`$this->success`）；内部同时记录 `rowCount`（成功=受影响行数，失败=0）。
 
     public function rowCount(): int
 返回最近一次执行记录的受影响行数。

@@ -13,6 +13,6 @@ interface ComponentInterface
     /**
      * @param array<string, mixed> $options
      */
-    public function init(array $options, ?object $contetxt = null);/*return this */
+    public function init(array $options, ?object $context = null);/*return this */
     public function isInited():bool;
 }

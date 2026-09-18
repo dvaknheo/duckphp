@@ -31,7 +31,7 @@ trait DbAdvanceTrait
     {
         $a = array();
         foreach ($array as $k => $v) {
-            $a[] = $this->qouteScheme($k)."=".$this->pdo->quote((string)$v);
+            $a[] = $this->quoteScheme($k)."=".$this->pdo->quote((string)$v);
         }
         return implode(',', $a);
     }
@@ -42,14 +42,14 @@ trait DbAdvanceTrait
     {
         $a = array();
         foreach ($array as $k => $v) {
-            $a[] = $this->qouteScheme($k)."=".$this->pdo->quote((string)$v);
+            $a[] = $this->quoteScheme($k)."=".$this->pdo->quote((string)$v);
         }
         return implode('and ', $a);
     }
     /**
      * @param array<string, mixed> $array
      */
-    public function qouteInsertArray(array $array): string
+    public function quoteInsertArray(array $array): string
     {
         if (empty($array)) {
             return '';
@@ -74,13 +74,13 @@ trait DbAdvanceTrait
 
     public function findData($table_name, $id, $key = 'id')
     {
-        $sql = "select * from ".$this->qouteScheme($table_name)." where {$key}=? limit 1";
+        $sql = "select * from ".$this->quoteScheme($table_name)." where {$key}=? limit 1";
         return $this->fetch($sql, $id);
     }
 
     public function insertData($table_name, $data, $return_last_id = true)
     {
-        $sql = "insert into ".$this->qouteScheme($table_name)." ".$this->qouteInsertArray($data);
+        $sql = "insert into ".$this->quoteScheme($table_name)." ".$this->quoteInsertArray($data);
 
         $ret = $this->execute($sql);
         if (!$return_last_id) {
@@ -92,10 +92,10 @@ trait DbAdvanceTrait
     public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
     {
         if ($key_delete) {
-            $sql = "update ".$this->qouteScheme($table_name)." set {$key_delete}=1 where {$key}=?"; //sqlite do not support limit 1
+            $sql = "update ".$this->quoteScheme($table_name)." set {$key_delete}=1 where {$key}=?"; //sqlite do not support limit 1
             return $this->execute($sql, $id);
         } else {
-            $sql = "delete from ".$this->qouteScheme($table_name)." where {$key}=?";//sqlite do not support limit 1
+            $sql = "delete from ".$this->quoteScheme($table_name)." where {$key}=?";//sqlite do not support limit 1
             return $this->execute($sql, $id);
         }
     }
@@ -106,7 +106,7 @@ trait DbAdvanceTrait
             unset($data[$key]);
         }
         $frag = $this->quoteSetArray($data);
-        $sql = "update ".$this->qouteScheme($table_name)." set ".$frag." where {$key}=?";
+        $sql = "update ".$this->quoteScheme($table_name)." set ".$frag." where {$key}=?";
         $ret = $this->execute($sql, $id);
         return $ret;
     }

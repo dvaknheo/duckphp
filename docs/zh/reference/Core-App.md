@@ -107,10 +107,11 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
 
 1. 不要在运行时直接改 `$setting`→依赖 `Setting()`；需改由文件/覆改内核使一致。
 2. 维护(`is_maintain` 或 Setting 里的 `duckphp_is_maintain=true`)会让你看到维护页而不是正常业务。
-3. `haltInitInBaseClass()` 抛 `DuckPhpSystemException` 而是继承；不要直接对 Base `App::_()->init()`。
-4. `installed=false` 时请求会 302 到 `url_install`（看 `checkInstallToPage`），上线请设成 true。
-5. `_On404/_OnDefaultException/_OnDevErrorHandler` 均会调 `onBeforeOutput()`（如有 View page），可提前把资源 header 等放 `onBeforeOutput()`。
-6. `_DEPRECATED` 提示仅在 debug+inited 才输出；undefined 会回触 dev handler。
+3. `haltInitInBaseClass()` 抛 `DuckPhpSystemException`；**这是刻意的**——用来阻止直接对 Base `App::_()->init()`（[DuckPhp](DuckPhp.md) 里把它覆盖成空实现，所以 DuckPhp 可以初始化）。
+4. `getOverrideableFile()` 有两种用途，用 `$must_exist` 区分：读文件传 `true`（不存在给你 `null`，别再拿返回值当存在性判断），要一个「尚不存在的落盘路径」传 `false`（返回最后一个候选路径）。
+5. `installed=false` 时请求会 302 到 `url_install`（看 `checkInstallToPage`），上线请设成 true。
+6. `_On404/_OnDefaultException/_OnDevErrorHandler` 均会调 `onBeforeOutput()`（如有 View page），可提前把资源 header 等放 `onBeforeOutput()`。
+7. `_DEPRECATED` 提示仅在 debug+inited 才输出；undefined 会回触 dev handler。
 
 ## 全部选项
 
@@ -193,11 +194,11 @@ debug = setting(duckphp_is_debug) ∨ 根 options is_debug ∨ 本 options is_de
     public function slashDir($path)
 把路径尾部统一成目录分隔符结尾（`''` 原样返回，否则 `rtrim('/\\')` 后补 `DIRECTORY_SEPARATOR`）。
 
-    public function getOverrideableFile($path_sub, $file, $use_override = true)
-Phase 感知可覆盖文件查找：按当前 phase 深度找 path_sub/子目录中 file，存在即命中并返回其路径
+    public function getOverrideableFile($path_sub, $file, $use_override = true, $must_exist = false)
+Phase 感知文件查找：从当前 phase 起逐层回退找 `path_sub/子目录/file`，命中即返回；`$must_exist=true` 时**只认真实存在**的文件（都没有则返回 `null`），`false` 时返回最后一个候选路径（可尚不存在，供写入用）
 
-    public function getConfigFile(string $file): string
-取 config 下某文件（基底 path_config + getOverrideableFile）
+    public function getConfigFile(string $file, bool $must_exist = false)
+取 config 下某文件（基底 `path_config` + `getOverrideableFile`）；`$must_exist=true` 且文件不存在时返回 `null`
 
     public function getRuntimePath(): string
 返回运行期绝对目录（path_runtime 相对则拼根 path）

@@ -6,7 +6,7 @@
 
 典型接入方式：在应用选项中配置 `user_callback_for_id/name/data/local_service`（以及若干 `user_url_*`/`user_callback_for_url_for_*`）指向工程实现；控制器侧经 `Helper`（`User()/UserId()/…`）或直接 `GlobalUser::_()` 使用。`Foundation\Controller\UserControllerBase` 与之配套使用。
 
-与 `GlobalAdmin` 的差异：面向“前台登录用户”场景，URL 含注册（`user_url_regist`/`urlForRegist`），服务含批量取用户名（`batchGetUsernames`），没有“超级管理员”。
+与 `GlobalAdmin` 的差异：面向“前台登录用户”场景，URL 含注册（`user_url_register` / `urlForRegister()`），服务含批量取用户名（`batchGetUsernames`），没有“超级管理员”。
 
 ## 类信息
 
@@ -50,7 +50,7 @@ const EVENT_SERVICE_USER_LOGOUTED    = 'SERVICE_USER_LOGOUTED';
 | `user_callback_for_session` | `null` | 用户会话实现回调（返回 `UserSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
 | `user_loginout_auto_redirect` | `true` | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
 | `user_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `user_url_home`）。 |
-| `user_callback_for_url_for_regist` | `null` | 生成注册 URL 的回调（键名仍为 `..._regist`，源码原样）。 |
+| `user_callback_for_url_for_register` | `null` | 生成注册 URL 的回调（键名与 `urlForRegister()` 拼写一致）。 |
 | `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
 | `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
 | `user_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `UserException::class`）；只在会话模式（配了 `user_callback_for_session`）下的 `id()/name()` 里生效。 |

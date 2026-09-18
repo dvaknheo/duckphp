@@ -158,13 +158,13 @@ class SqlDumper extends ComponentBase
     protected function getDataSql(string $table): string
     {
         $ret = '';
-        $sql = "SELECT * FROM ".DbManager::DbForRead()->qouteScheme($table);
+        $sql = "SELECT * FROM ".DbManager::DbForRead()->quoteScheme($table);
         $data = DbManager::DbForRead()->fetchAll($sql);
         //if (empty($data)) {
         //    return '';
         //}
         foreach ($data as $line) {
-            $sql = "INSERT INTO ".DbManager::DbForRead()->qouteScheme($table)." ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
+            $sql = "INSERT INTO ".DbManager::DbForRead()->quoteScheme($table)." ".DbManager::DbForRead()->quoteInsertArray($line) .";\n";
             $sql = $this->replacePrefixToPlaceholder($sql);
             $ret .= $sql;
         }

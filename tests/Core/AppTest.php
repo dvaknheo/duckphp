@@ -180,6 +180,12 @@ PhaseContainer::RestAllContainerForTesting();
         // getConfigFile delegates to getOverrideableFile with path_config
         $config_file = AppTestApp::_()->getConfigFile('test.conf');
         $this->assertIsString($config_file);
+        // $must_exist tells the two needs apart: reading wants null when nothing matched,
+        // writing wants a (not yet existing) candidate path
+        $this->assertNull(AppTestApp::_()->getOverrideableFile('view', 'no_such_view_xyz.php', true, true));
+        $this->assertNull(AppTestApp::_()->getConfigFile('no_such_config_xyz.conf', true));
+        $this->assertIsString(AppTestApp::_()->getOverrideableFile('view', 'no_such_view_xyz.php', true, false));
+        $this->assertIsString(AppTestApp::_()->getOverrideableFile('view', 'view.php', true, true));
         ////]]]]
         
         ////[[[[

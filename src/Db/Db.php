@@ -72,7 +72,7 @@ class Db implements DbInterface
         $this->check_connect();
         return $this->pdo->quote($string);
     }
-    public function qouteScheme($name)
+    public function quoteScheme($name)
     {
         switch ($this->driver) {
             case 'sqlite':
@@ -158,9 +158,8 @@ class Db implements DbInterface
     public function execute($sql, ...$args)
     {
         $sth = $this->exec($sql, ...$args);
-        if (!$this->success) {
-        }
-        $this->rowCount = $this->success ? 0 : $sth->rowCount();
+        // affected rows on success, 0 when the statement failed
+        $this->rowCount = $this->success ? $sth->rowCount() : 0;
         return $this->success;
     }
     public function rowCount(): int

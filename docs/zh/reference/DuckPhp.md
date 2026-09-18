@@ -165,7 +165,7 @@ DuckPhp::Setting('shop_name','demo');
 扩展装载：先走父类 `initComponentsByClasseOptions()` 处理 `ext` 表，再按 `admin_provider`/`user_provider` 把 GlobalAdmin/GlobalUser 指向工程自有实现（用 `PhaseProxy::CreatePhaseProxy()` 包一层挂到当前 Phase）
 
     protected function haltInitInBaseClass(): void
-空：DuckPhp 本身已允许开放（父 App 使用禁止直接初始化 base）
+**空实现是刻意的**：父类 `App` 在这个钩子里抛异常，用来阻止「直接 init 基类 App」；DuckPhp 是可用的入口类，所以覆盖成空以放行
 
     protected function isLocalDatabase(): bool
 判断是否需要独立的 DB（local_database 真，或显式 database_driver 与当前 Manager 推导驱动不同）

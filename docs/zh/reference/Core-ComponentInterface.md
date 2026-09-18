@@ -43,7 +43,7 @@ class MyComponent implements ComponentInterface
 
 ## 注意事项
 
-- 接口的 `init(array $options, ?object $contetxt = null)` 中参数名写作 `$contetxt`，这是源码中的原样拼写；实现类（如 `ComponentBase`）使用的是 `$context`，PHP 对参数名不做强制一致，不影响实现。
+- `init()` 的第二个参数在各处统一写作 `$context`（实现类如 `ComponentBase` 同名；早期版本接口里曾拼作 `$contetxt`，已修正）。
 - 本接口不含 `reInit()`；`reInit()` 是 `ComponentBase` 在接口之上额外提供的便利方法。
 
 ## 方法列表
@@ -53,8 +53,8 @@ class MyComponent implements ComponentInterface
     public static function _($new_object = null)
 单例式静态入口：返回（或创建）当前组件实例；传入对象时一般用于替换/登记实例。
 
-    public function init(array $options, ?object $contetxt = null)
-组件初始化入口，按约定返回 `$this` 以便链式调用；`$contetxt` 为上下文（通常是所属 App）。
+    public function init(array $options, ?object $context = null)
+组件初始化入口，按约定返回 `$this` 以便链式调用；`$context` 为上下文（通常是所属 App）。
 
     public function isInited(): bool
 返回该组件是否已完成初始化。

@@ -66,7 +66,15 @@ $db->execute($sql);
         $sql="delete from Users where id=?";
         $db->execute($sql,$id);
         var_dump($ret);
-        $db->rowCount();
+        // execute() reports the affected rows of a successful statement
+        \PHPUnit\Framework\Assert::assertSame(1, $db->rowCount());
+        // and 0 when the statement fails (silent PDO mode: a constraint violation returns false instead of throwing)
+        $pdo = $db->PDO();
+        $error_mode = $pdo->getAttribute(\PDO::ATTR_ERRMODE);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
+        \PHPUnit\Framework\Assert::assertFalse($db->execute('insert into Users (username, password) values (?, ?)', null, 'x'));
+        \PHPUnit\Framework\Assert::assertSame(0, $db->rowCount());
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, $error_mode);
         
         ////[[[[
         $sql="select * from Users limit 1";

@@ -52,7 +52,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         'user_loginout_auto_redirect' => true,
 
         'user_callback_for_url_for_home' => null,
-        'user_callback_for_url_for_regist' => null,
+        'user_callback_for_url_for_register' => null,
         'user_callback_for_url_for_login' => null,
         'user_callback_for_url_for_logout' => null,
         'user_default_exception_class' => null,
@@ -134,7 +134,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
      */
     public function urlForRegister(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_for_url_for_regist', 'user_url_register', $url_back, $ext);
+        return $this->go_url('user_callback_for_url_for_register', 'user_url_register', $url_back, $ext);
     }
     /**
      * @param array<string, mixed> $ext

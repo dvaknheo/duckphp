@@ -108,6 +108,8 @@ class HttpServer
         $this->port = $this->args['port'] ?? $this->port;
         $this->docroot = $this->args['docroot'] ?? $this->docroot;
 
+        $this->is_inited = true;
+
         return $this;
     }
     public function isInited(): bool
