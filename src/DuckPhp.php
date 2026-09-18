@@ -128,17 +128,22 @@ class DuckPhp extends App
             $this->createLocalObject(RedisManager::class);
             RedisManager::_()->init($this->options, $this);
         }
+    }
+    protected function initComponentsOfExt($classes, $default): void
+    {
+        parent::initComponentsByClasseOptions($classes, $default);
         if ($this->options['admin_provider']) {
             $class = $this->options['admin_provider'];
-            $object = $class::_()->init($this->options, $this);
+            $object = $class::_();
             GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }
         if ($this->options['user_provider']) {
             $class = $this->options['user_provider'];
-            $object = $class::_()->init($this->options, $this);
+            $object = $class::_();
             GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
         }
     }
+
     protected function haltInitInBaseClass(): void
     {
         // Just Keep Blank
