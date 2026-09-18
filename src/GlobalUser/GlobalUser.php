@@ -55,6 +55,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         'user_callback_for_url_for_regist' => null,
         'user_callback_for_url_for_login' => null,
         'user_callback_for_url_for_logout' => null,
+        'user_default_exception_class' => null,
     ];
     protected function run_callback_by_key(string $key, ...$args)
     {
@@ -79,7 +80,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     {
         if (isset($this->options['user_callback_for_session'])) {
             $id = $this->getSession()->getCurrentUserId();
-            CoreHelper::ControllerThrowOn($check_login && !$id, "id(): NoLogin", -1, UserException::class);
+            $exception_class = $this->options['admin_default_exception_class'] ?? UserException::class;
+            CoreHelper::ControllerThrowOn($check_login && !$id, "id(): NoLogin", -1, $exception_class);
             return $id ?? 0;
         }
         if (isset($this->options['user_callback_for_id'])) {
@@ -91,7 +93,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     {
         if (isset($this->options['user_callback_for_session'])) {
             $name = $this->getSession()->getCurrentUserName();
-            CoreHelper::ControllerThrowOn($check_login && !$name, "name() NoLogin 2", -2, UserException::class);
+            $exception_class = $this->options['admin_default_exception_class'] ?? UserException::class;
+            CoreHelper::ControllerThrowOn($check_login && !$name, "name() NoLogin 2", -2, $exception_class);
             return $name;
         }
         if (isset($this->options['user_callback_for_name'])) {

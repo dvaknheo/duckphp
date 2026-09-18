@@ -53,6 +53,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,
         'admin_callback_for_url_for_logout' => null,
+        'admin_default_exception_class' =>null,
     ];
     protected function run_callback_by_key(string $key, ...$args)
     {
@@ -77,7 +78,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     {
         if (isset($this->options['admin_callback_for_session'])) {
             $id = $this->getSession()->getCurrentAdminId();
-            CoreHelper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, AdminException::class);
+            $exception_class = $this->options['admin_default_exception_class'] ?? AdminException::class;
+            CoreHelper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, $exception_class);
             return $id ?? 0;
         }
         if (isset($this->options['admin_callback_for_id'])) {
@@ -89,7 +91,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     {
         if (isset($this->options['admin_callback_for_session'])) {
             $name = $this->getSession()->getCurrentAdminName();
-            CoreHelper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, AdminException::class);
+            $exception_class = $this->options['admin_default_exception_class'] ?? AdminException::class;
+            CoreHelper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, $exception_class);
             return $name;
         }
         if (isset($this->options['admin_callback_for_name'])) {
