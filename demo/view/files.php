@@ -35,13 +35,31 @@
 <fieldset>
     <legend>到 View 层级的调用堆栈</legend>
     <pre>
-<?php debug_print_backtrace(2);?>
+<?php 
+ob_start();
+debug_print_backtrace(2);
+$data = ob_get_clean();
+$path = dirname(dirname(__DIR__));
+$data = str_replace($path,'', $data);
+
+echo $data;
+?>
     </pre>
 </fieldset>
 <fieldset>
 <legend>到 View 层级的包含文件</legend>
 <pre>
-<?php $t=get_included_files();sort($t); var_export($t);?>
+<?php
+$t=get_included_files();sort($t); 
+$path = dirname(dirname(__DIR__));
+
+$data = var_export($t, true);
+$data = str_replace($path,'', $data);
+$data = preg_replace('#\/vendor.*?\.php#','vendor', $data);
+$data = preg_replace('/^  \d\d => \'vendor.*\r?\n/m','', $data);
+echo $data;
+?>
+* 已经忽略 vendor 目录
 </pre>
 </fieldset>
 <fieldset>

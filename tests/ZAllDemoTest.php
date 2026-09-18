@@ -26,13 +26,15 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             $data =str_replace(realpath(__DIR__.'/../'),'',$data);
             if($k === 'files'){
                 // 裁剪动态内容（执行时间/内存、调用堆栈、包含文件），使 php74/php84 输出一致
-                $data = $this->normalizeFilesContent($data);
+                //$data = $this->normalizeFilesContent($data);
+                $t = strlen($data);
+                file_put_contents(__DIR__.'/data_for_tests/ZAllDemoTest-'.$t.'.txt', $data);
             }
             
             $l=strlen($data);
             if($l!==$len){
                 if($k ==='rpc.php' && $l==0){ // :( ugly. I don't know why.
-                    continue;
+                    //continue;
                 }
                 echo "Failed: $k => $len($l) \n";
                 if ($config['echo_failed_content']) {
@@ -63,29 +65,12 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
      */
     protected function normalizeFilesContent($data)
     {
-        $lines = explode("\n", $data);
-        $ret = [];
-        $skip = false;
-        foreach ($lines as $line) {
-            if (strpos($line, '<fieldset>') !== false) {
-                $skip = false;
-            }
-            if (!$skip && strpos($line, '<legend>') !== false && (
-                strpos($line, '执行时间') !== false ||
-                strpos($line, '全部单例') !== false ||
-                strpos($line, '调用堆栈') !== false ||
-                strpos($line, '包含文件') !== false
-            )) {
-                $skip = true;
-            }
-            if ($skip) {
-                if (strpos($line, '</fieldset>') !== false) {
-                    $skip = false;
-                }
-                continue;
-            }
-            $ret[] = $line;
-        }
-        return implode("\n", $ret);
+        $path = dirname(__DIR__);
+        $data = str_replace($path,'', $data);
+        $data = preg_replace('#\/vendor.*?\.php#','vendor', $data);
+        $data = preg_replace('/^  \d\d => \'vendor.*\r?\n/m','', $data);
+
+        return $data;
+
     }
 }

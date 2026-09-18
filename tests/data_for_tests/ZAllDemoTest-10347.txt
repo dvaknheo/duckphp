@@ -1,0 +1,329 @@
+<!doctype html><html><body>
+<fieldset>
+<legend>执行时间</legend>
+<div>
+    执行耗时：<strong>0.035417</strong> 秒
+    &nbsp;|&nbsp;
+    内存消耗：<strong>396,792</strong> 字节
+</div>
+</fieldset>
+<fieldset>
+<legend>全部单例</legend>
+<pre>
+-- begin dump---<pre> 
+current:;
+default:#public;
+publics:
+    DuckPhp\Core\Console;
+    DuckPhp\Component\DbManager;
+    DuckPhp\Component\RedisManager;
+    DuckPhp\GlobalAdmin\GlobalAdmin;
+    DuckPhp\GlobalUser\GlobalUser;
+    DuckPhp\Component\GlobalEvent;
+    DuckPhp\Core\SystemWrapper;
+    DuckPhp\Core\Logger;
+    DuckPhp\Core\CoreHelper;
+contains:
+    : 
+         812e78def9d48c0d01e1308744c6c9c2 ProjectNameTemplate\System\App ;
+         812e78def9d48c0d01e1308744c6c9c2 DuckPhp\Core\App (ProjectNameTemplate\System\App) ;
+         c6e679f699a3622298c991672abdb376 DuckPhp\Core\ExceptionManager ;
+         97bb8e482a7cf8678bc43291c65db288 DuckPhp\Core\View ;
+         c4b4cbbd3560863c7e39b2db5c5dc2f8 DuckPhp\Core\Route ;
+         3cc001aa300ec5ff086b6169d5781133 DuckPhp\Component\Configer ;
+         7dbd7af9dc03f9ffb7f610d058c0b010 DuckPhp\Component\Lang ;
+         5b33e5e3fd2708e1addbc2e744d067c2 DuckPhp\Component\RouteHookRewrite ;
+         85dfb1b9d29b1598b3df7ed1074c1964 DuckPhp\Component\RouteHookRouteMap ;
+         24d5789e7e6df3860c40a93c8ddc91e2 DuckPhp\Component\RouteHookResource ;
+         f4319235e011d4737bbc5a05c3dcdb71 DbTestApp ;
+         62e617009246609e71f0a61632a3fec1 DuckPhp\Core\SuperGlobal ;
+         db69d3f9f870cebd3d7978cf5ec2326a DuckPhp\Core\Runtime ;
+    #public: 
+        *faf99a53b0f922da30cb5d1a68460420 DuckPhp\Core\Console ;
+        *18ee246fd8c5de1d4c0fbbb6df345ed1 DuckPhp\Component\DbManager ;
+        *5a5e5e97e5917a2854efc2b16c2f8767 DuckPhp\Component\RedisManager ;
+        *2f910b64da5844dc7aa4550c2f509144 DuckPhp\Core\SystemWrapper ;
+        *429c9dc4ece32cc4809d871b17978b7a DuckPhp\Core\Logger ;
+        *cd27bea0d0706aff6246e77ace92adba DuckPhp\Core\CoreHelper ;
+    :DbTestApp: 
+         f4319235e011d4737bbc5a05c3dcdb71 DuckPhp\Core\App (DbTestApp) ;
+         f4319235e011d4737bbc5a05c3dcdb71 DbTestApp ;
+         cfeffcf0f9fb4c3dabc1c65dcf327c64 DuckPhp\Core\ExceptionManager ;
+         67cfca9bb9879e429ddab9b7c5ac87f0 DuckPhp\Core\View (DuckPhp\Ext\CallableView) ;
+         25a4f131bbea08df8a67161031b0154c DuckPhp\Core\Route ;
+         1f44bd74afa2aa9831ec0fb9aa64d6f8 DuckPhp\Component\Configer ;
+        *794d95fa14f1f01496aa5017d4d6aecc DuckPhp\Component\DbManager ;
+         70851e7cd6c7f481fecf57a823d45a52 DuckPhp\Component\Lang ;
+         e159b90bad812acf73f87b3998991632 DuckPhp\Component\RouteHookRewrite ;
+         b9a1b76b19c94658f208cc20154b1668 DuckPhp\Component\RouteHookRouteMap ;
+         71f1cba13b90476f7178a584c032ad8f DuckPhp\Component\RouteHookResource ;
+         67cfca9bb9879e429ddab9b7c5ac87f0 DuckPhp\Ext\CallableView ;
+
+        * is public
+--end--- </pre> 
+</pre>
+</fieldset>
+
+
+<fieldset>
+<legend>应用的选项</legend>
+<pre>
+array (
+  'is_debug' => true,
+  'path' => '/demo/',
+  'namespace' => 'ProjectNameTemplate',
+  'error_404' => '_sys/error_404',
+  'error_500' => '_sys/error_500',
+  'exception_for_project' => 'ProjectNameTemplate\\System\\ProjectException',
+  'exception_for_business' => 'ProjectNameTemplate\\System\\BusinessException',
+  'exception_for_controller' => 'ProjectNameTemplate\\System\\ControllerException',
+  'exception_reporter' => 'ProjectNameTemplate\\Controller\\ExceptionReporter',
+  'controller_method_prefix' => 'action_',
+)</pre>
+</fieldset>
+<fieldset>
+<legend>全部选项</legend>
+<pre>
+array (
+  'is_debug' => true,
+  'path' => '/demo/',
+  'namespace' => 'ProjectNameTemplate',
+  'name' => '',
+  'app' => 
+  array (
+    'DbTestApp' => 
+    array (
+      'controller_url_prefix' => 'db_test/',
+      '__phase__' => ':DbTestApp',
+    ),
+  ),
+  'cmd' => 
+  array (
+    'DuckPhp\\Component\\Command' => true,
+  ),
+  'data' => 
+  array (
+  ),
+  'ext' => 
+  array (
+    'DuckPhp\\Component\\Lang' => true,
+    'DuckPhp\\Component\\RouteHookRewrite' => true,
+    'DuckPhp\\Component\\RouteHookRouteMap' => true,
+    'DuckPhp\\Component\\RouteHookResource' => true,
+    'DuckPhp\\Component\\RouteHookPathInfoCompat' => 'path_info_compact_enable',
+  ),
+  'cli_enable' => true,
+  'skip_exception_check' => false,
+  'use_exit_exception' => true,
+  'override_from' => NULL,
+  'override_class' => NULL,
+  'app_children_allow_mix_mode' => true,
+  'on_init' => NULL,
+  'on_inited' => NULL,
+  'on_request' => NULL,
+  'path_runtime' => 'runtime',
+  'path_config' => 'config',
+  'default_exception_do_log' => true,
+  'close_resource_at_output' => false,
+  'html_handler' => NULL,
+  'lang_handler' => NULL,
+  'is_maintain' => false,
+  'error_404' => '_sys/error_404',
+  'error_500' => '_sys/error_500',
+  'error_debug' => NULL,
+  'error_maintain' => NULL,
+  'setting_file' => 'config/DuckPhpSettings.config.php',
+  'setting_file_ignore_exists' => true,
+  'setting_file_enable' => true,
+  'use_env_file' => false,
+  'setting' => 
+  array (
+  ),
+  'installed' => false,
+  'url_install' => 'install',
+  'exception_map' => 
+  array (
+  ),
+  'data_file_enable' => false,
+  'session_prefix' => NULL,
+  'table_prefix' => NULL,
+  'admin_provider' => '',
+  'user_provider' => '',
+  'database_driver' => '',
+  'cli_command_with_common' => true,
+  'duckcoverage_test_lister' => NULL,
+  'lang_default' => NULL,
+  'lang_final' => NULL,
+  'local_database' => false,
+  'local_redis' => false,
+  'exception_for_project' => 'ProjectNameTemplate\\System\\ProjectException',
+  'exception_for_business' => 'ProjectNameTemplate\\System\\BusinessException',
+  'exception_for_controller' => 'ProjectNameTemplate\\System\\ControllerException',
+  'exception_reporter' => 'ProjectNameTemplate\\Controller\\ExceptionReporter',
+  'controller_method_prefix' => 'action_',
+)</pre>
+合计 53个
+</fieldset>
+<fieldset>
+    <legend>到 View 层级的调用堆栈</legend>
+    <pre>
+#0 /src/Core/View.php(79): include()
+#1 /src/Core/App.php(391): DuckPhp\Core\View->_Show()
+#2 /src/DuckPhp.php(164): DuckPhp\Core\App->_Show()
+#3 /src/Helper/ControllerHelperTrait.php(89): DuckPhp\DuckPhp->_Show()
+#4 /demo/src/Controller/MainController.php(22): ProjectNameTemplate\Controller\Helper::Show()
+#5 /src/Core/Route.php(200): ProjectNameTemplate\Controller\MainController->action_files()
+#6 /src/Core/Route.php(111): DuckPhp\Core\Route->defaultRunRouteCallback()
+#7 /src/Core/KernelTrait.php(483): DuckPhp\Core\Route->run()
+#8 /src/Core/KernelTrait.php(98): DuckPhp\Core\App->serve()
+#9 /demo/public/index.php(28): DuckPhp\Core\App::RunQuickly()
+    </pre>
+</fieldset>
+<fieldset>
+<legend>到 View 层级的包含文件</legend>
+<pre>
+array (
+  0 => '/demo/config/DuckPhpSettings.config.php',
+  1 => '/demo/public/dbtest.php',
+  2 => '/demo/public/index.php',
+  3 => '/demo/src/Controller/Base.php',
+  4 => '/demo/src/Controller/Helper.php',
+  5 => '/demo/src/Controller/MainController.php',
+  6 => '/demo/src/System/App.php',
+  7 => '/demo/view/files.php',
+  8 => '/src/Component/Configer.php',
+  9 => '/src/Component/DbManager.php',
+  10 => '/src/Component/Lang.php',
+  11 => '/src/Component/RedisManager.php',
+  12 => '/src/Component/RouteHookResource.php',
+  13 => '/src/Component/RouteHookRewrite.php',
+  14 => '/src/Component/RouteHookRouteMap.php',
+  15 => '/src/Core/App.php',
+  16 => '/src/Core/AutoLoader.php',
+  17 => '/src/Core/ComponentBase.php',
+  18 => '/src/Core/Console.php',
+  19 => '/src/Core/CoreHelper.php',
+  20 => '/src/Core/ExceptionManager.php',
+  21 => '/src/Core/Functions.php',
+  22 => '/src/Core/KernelTrait.php',
+  23 => '/src/Core/Logger.php',
+  24 => '/src/Core/PhaseContainer.php',
+  25 => '/src/Core/Route.php',
+  26 => '/src/Core/Runtime.php',
+  27 => '/src/Core/SingletonExTrait.php',
+  28 => '/src/Core/SuperGlobal.php',
+  29 => '/src/Core/SystemWrapper.php',
+  30 => '/src/Core/View.php',
+  31 => '/src/DuckPhp.php',
+  32 => '/src/Ext/CallableView.php',
+  33 => '/src/Foundation/ModelTrait.php',
+  34 => '/src/Foundation/SingletonTrait.php',
+  35 => '/src/Helper/ControllerHelperTrait.php',
+)* 已经忽略 vendor 目录
+</pre>
+</fieldset>
+<fieldset>
+<legend>DuckPhp 类的公开方法列表</legend>
+<pre>
+array (
+  0 => 'FromCurrentParent',
+  1 => 'IsDebug',
+  2 => 'IsRealDebug',
+  3 => 'On404',
+  4 => 'OnDefaultException',
+  5 => 'OnDevErrorHandler',
+  6 => 'Phase',
+  7 => 'Platform',
+  8 => 'Root',
+  9 => 'RunQuickly',
+  10 => 'Setting',
+  11 => 'SwitchRootPhase',
+  12 => 'checkInstallToPage',
+  13 => 'context',
+  14 => 'execute',
+  15 => 'getConfigFile',
+  16 => 'getLastPhase',
+  17 => 'getOverrideableFile',
+  18 => 'getProjectPath',
+  19 => 'getRuntimePath',
+  20 => 'getThisClassName',
+  21 => 'getThisCommandPrefix',
+  22 => 'getThisParent',
+  23 => 'getThisPhaseName',
+  24 => 'init',
+  25 => 'isCli',
+  26 => 'isInited',
+  27 => 'isRoot',
+  28 => 'lang',
+  29 => 'langText',
+  30 => 'onBeforeOutput',
+  31 => 'phaseToCurrent',
+  32 => 'reInit',
+  33 => 'regConsoleCommand',
+  34 => 'run',
+  35 => 'serve',
+  36 => 'skip404Handler',
+  37 => 'toChildPhase',
+  38 => 'toThisChild',
+  39 => 'version',
+)</pre>
+</fieldset>
+<fieldset>
+<legend>DuckPhp 类全部方法列表</legend>
+<pre>
+array (
+  0 => '_Show',
+  1 => 'lang',
+  2 => '__construct',
+  3 => 'version',
+  4 => 'Setting',
+  5 => '_Setting',
+  6 => '_On404',
+  7 => '_OnDefaultException',
+  8 => '_OnDevErrorHandler',
+  9 => 'getOverrideableFile',
+  10 => 'skip404Handler',
+  11 => 'onBeforeOutput',
+  12 => 'getRuntimePath',
+  13 => 'getConfigFile',
+  14 => 'Platform',
+  15 => '_Platform',
+  16 => 'IsDebug',
+  17 => '_IsDebug',
+  18 => 'IsRealDebug',
+  19 => '_IsRealDebug',
+  20 => 'checkInstallToPage',
+  21 => 'langText',
+  22 => 'context',
+  23 => 'init',
+  24 => 'reInit',
+  25 => 'isInited',
+  26 => '_',
+  27 => 'RunQuickly',
+  28 => 'Root',
+  29 => 'Phase',
+  30 => 'FromCurrentParent',
+  31 => 'SwitchRootPhase',
+  32 => '_Phase',
+  33 => 'isRoot',
+  34 => 'isCli',
+  35 => 'getLastPhase',
+  36 => 'getThisClassName',
+  37 => 'getThisParent',
+  38 => 'toThisChild',
+  39 => 'getThisPhaseName',
+  40 => 'getThisCommandPrefix',
+  41 => 'regConsoleCommand',
+  42 => 'getProjectPath',
+  43 => 'toChildPhase',
+  44 => 'run',
+  45 => 'serve',
+  46 => 'execute',
+  47 => 'phaseToCurrent',
+  48 => 'On404',
+  49 => 'OnDefaultException',
+  50 => 'OnDevErrorHandler',
+)</pre>
+</fieldset>
+
+</body></html>
