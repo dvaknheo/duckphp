@@ -211,15 +211,15 @@ EOT;
     {
         // @phpstan-ignore-next-line
         $ref = new \ReflectionClass($class);
-        if ($ref->hasMethod('__consoleCommands')) {
-            return (new $class)->__consoleCommands();
+        if ($ref->hasMethod('__commandMeta')) {
+            return (new $class)->__commandMeta();
         }
         return $this->getCommandsByClassReflection($ref, $method_prefix);
     }
     /**
      * @return array
      */
-    public function __consoleCommands()
+    public function __commandMeta()
     {
         $class = new \ReflectionClass($this);
         $ret = $this->getCommandsByClassReflection($class, 'command_');
