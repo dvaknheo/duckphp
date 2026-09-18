@@ -4,9 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\Component;
+namespace DuckPhp\Ext;
 
-interface PermissionMenuDescInterface
+interface PermissionMenuMetaInterface
 {
     public function __permissionMenuMeta() : array;
 }
