@@ -126,7 +126,8 @@ class PermissionMenu extends ComponentBase
      *
      * Class-level annotations:
      * - @menu_directory Name     Top-level group, supports \ split for multi-level directories.
-     *                           The name runs to the end of the line (blanks allowed, trimmed)
+     *                           The name runs to the end of the line (blanks allowed, trimmed).
+     *                           Omitted: the controller class basename is used (see getDefaultDirectoryName)
      * - @menu_directory_url Url  Optional: url of that directory node;
      *                           defaults to the first method's dirname + '/#', e.g. Admin/index -> Admin/#
      * - @menu_icon IconName        Directory icon (blanks allowed, trimmed)
@@ -202,7 +203,7 @@ class PermissionMenu extends ComponentBase
             // Generate directory node, attach children under it
             if (!empty($childItems)) {
                 $items[] = [
-                    'name' => $dirAnno ?? 'NoName',
+                    'name' => $dirAnno ?? $this->getDefaultDirectoryName($controller),
                     'url' => $dirUrl,
                     'icon' => $dirIcon,
                     'type' => 0,
@@ -218,6 +219,19 @@ class PermissionMenu extends ComponentBase
         // 4. Sort (same-level sort, weight is only effective within same level)
         $this->sortTree($tree);
         return $tree;
+    }
+
+    /**
+     * Directory name used when the controller has no @menu_directory annotation:
+     * the basename of the controller class name (e.g. ...\Controller\AdminController -> AdminController).
+     * Falls back to 'NoName' when there is no class name at all.
+     *
+     * @param string $controller Controller class name
+     */
+    protected function getDefaultDirectoryName(string $controller): string
+    {
+        $name = basename(str_replace('\\', '/', $controller));
+        return ($name === '') ? 'NoName' : $name;
     }
 
     /**
@@ -483,6 +497,9 @@ class PermissionMenu extends ComponentBase
 
     /**
      * Complete relative urls in tree to absolute urls (add mount prefix)
+     *
+     * Nodes without a url (null or '') keep having no url: the prefix alone is not a page.
+     *
      * @param array &$tree Tree structure (by reference, modifies original tree)
      * @param string $prefix Mount prefix, e.g. /admin/
      * @return array Completed tree
@@ -490,8 +507,12 @@ class PermissionMenu extends ComponentBase
     public function resolveUrls(array &$tree, string $prefix): array
     {
         $this->walkTree($tree, function (&$node, int $depth) use ($prefix) {
-            $url = (string) ($node['url'] ?? '');
-            $node['url'] = $prefix . $url;
+            $url = $node['url'] ?? null;
+            if ($url === null || $url === '') {
+                $node['url'] = null;
+                return;
+            }
+            $node['url'] = $prefix . (string) $url;
         });
         return $tree;
     }

@@ -277,6 +277,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
     4. `GlobalUser::id()/name()` 读错了选项键（读成 `admin_default_exception_class`，白名单里没有 ⇒ 死选项）→ 改为 `user_default_exception_class`；`tests/GlobalUser/GlobalUserTest.php` 加了回归测试。
     5. **清怪癖一轮**（作者裁定，见第 7 节新增的陷阱行）：修拼写 `$contetxt`→`$context`、`qoute*`→`quote*`、`user_callback_for_url_for_regist`→`..._register`；`AdminException` 改为 `extends \Exception`（并在 `Core-DuckPhpSystemException` 文档里立下「只用于框架内部系统错误，外部异常别继承」的规矩）；`Db::execute()` 的 rowCount 语义修正（成功=受影响行数、失败=0）；`HttpServer::init()` 补置 `is_inited`；`App::getOverrideableFile()/getConfigFile()` 新增 `$must_exist` 区分「读文件要存在」与「写入要一个尚不存在的候选路径」，不存在时返回 `null` 而不是空串。
        - 顺带修掉一处**本就红的**用例：`ZAllDemoTest` 的 `files` 期望长度 10347 是过期的（`App::isAbsPath/slashDir` 加进方法表后应为 10429），已更新 `tests/data_for_tests/ZAllDemoTest.config.php`（详见第 7 节那一行）。
+    6. `PermissionMenu` 复查（作者逐条裁定）：**特性**照旧但文档改写成「刻意行为」的语气——未注释方法名带 `action_` 前缀（便于反查代码）、权限点不带图标（权限标记非导航项）、`permissionMenuTreeToSideMenuTree()` 只留可导航节点、同目录多条 `@menu_directory_url` 只用第一条；**新变更**：控制器没写 `@menu_directory` 时目录名改用**类名 basename**（新增 `getDefaultDirectoryName()`，只有类名为空才回落 `NoName`）；**修 bug**：`resolveUrls()` 不再把 `url: null` 的节点变成光秃秃的前缀（`'/admin/'`），而是保持没有 url。
 - **待办（本工作范围外）**：
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
   - `Helper/BusinessHelperTrait`、`Helper/ControllerHelperTrait` 的事件常量名仍拼作 `registing`/`registed`（公共属性值，改动会影响工程侧，待裁定）；

@@ -133,15 +133,16 @@ class MyApp extends \DuckPhp\DuckPhp
 1. **只收后台控制器**：`getRoutes()` 走 `RouteLister::listAll(false, true, true)`（等价于 `only_admin`），所以控制器必须 `implements AdminControllerInterface`，普通控制器不会出现在菜单里。
 2. **两种模式互斥**：控制器只要有 `__permissionMenuMeta()` 且返回非 null 数组，注释就完全不解析；该方法抛异常或返回 null 时**回退注释模式**（用「无构造实例化」调用它，所以别在里面依赖构造好的属性）。
 3. **注释值取到行末并 trim**：`@menu_action User List` 的名字就是 `User List`；值里不要再塞第二个参数。类级 `@menu_directory` 与 `@menu_directory_url` 是两个独立 tag，不会互相误吞。
-4. **未加注释的方法**也会成为 `type=2` 动作，名字就是方法名（含 `controller_method_prefix`，如 `action_orders`），且权重被强制归 0。
+4. **未加注释的方法**也会成为 `type=2` 动作，名字就是方法名（含 `controller_method_prefix`，如 `action_orders`），且权重被强制归 0。（**特性**：菜单名与方法名一致，方便从菜单反查代码，所以前缀不剥。）
 5. **`\` 分层与合并**：`@menu_directory Admin\System` 会拆成 `Admin/` → `System/` 两级，叶子名只取最后一段；同名同层目录会**合并成一个节点**（合并时以先创建者的 `url`/`icon` 为准）。方法级 `@menu_directory` 生成的分组目录挂在**顶层**，不在所在控制器的目录里。
-6. **`@menu_directory_url` 去重**：同一个目标目录出现多条时**第一条生效**。
-7. **权重只作用于同层**，`sortTree()` 之后每层按 `weight` 降序重排，并把 `weight` 字段从输出里删掉。
-8. **url 的前缀**：`loadAdminPermissionMenu()` 读配置文件时会用 `resolveUrls($tree, '/'.controller_url_prefix)` 给**所有节点**补挂载前缀；而 `build()` / `loadAdminPermissionMenu(true)` 产出的是**相对 url**，需要时自己调 `resolveUrls()`（`buildAndSaveToConfigJsonFile()` 正是落盘相对 url，方便以后换前缀）。
-9. **`loadAll()` 的 Phase 语义**：先加载**当前 Phase** 的菜单，再回到根 Phase 递归合并各子应用，最后还原原来的 Phase。从**根** Phase 调用时根菜单只加载一次（不会重复）；从**子** Phase 调用时该子应用自身不重复加载，但它的子应用仍会被合并进来。`app` 里切不进去的项（如值为 `false`、或没登记过 `__phase__`）会被跳过。
-10. **权限点没有图标**（`icon` 恒为 `null`）；`permissionMenuTreeToSideMenuTree()` 会丢掉 `type > 1`（动作与权限点）以及**没有子节点的空目录**，`type` 缺省按目录（`0`）处理。
-11. `recordsetToTree()` / `treeToRecordset()` 与菜单本身无关，是配套的「扁平表 ↔ 树」工具：缺 `id` 字段的记录会被丢掉，`pid` 指向不存在的 `id` 时该记录当根节点处理。
-12. `getClassDoc()` 里对 `ReflectionClass` 的那个 `catch (\Throwable)` 是不可达的防御分支（前面已经 `class_exists()` 判过），不影响行为。
+6. **控制器没写 `@menu_directory` 时**，目录名取**控制器类名的 basename**（`...\Controller\AdminController` → `AdminController`）；只有类名本身为空（如 `build()` 收到 `controller => ''` 的假路由）才回落成 `NoName`。见 `getDefaultDirectoryName()`。
+7. **`@menu_directory_url` 去重**：同一个目标目录出现多条时**只用第一条**（一条目录配一次 url 就够）。
+8. **权重只作用于同层**，`sortTree()` 之后每层按 `weight` 降序重排，并把 `weight` 字段从输出里删掉。
+9. **url 的前缀**：`loadAdminPermissionMenu()` 读配置文件时会用 `resolveUrls($tree, '/'.controller_url_prefix)` 给有 url 的节点补挂载前缀；而 `build()` / `loadAdminPermissionMenu(true)` 产出的是**相对 url**，需要时自己调 `resolveUrls()`（`buildAndSaveToConfigJsonFile()` 正是落盘相对 url，方便以后换前缀）。
+10. **`loadAll()` 的 Phase 语义**：先加载**当前 Phase** 的菜单，再回到根 Phase 递归合并各子应用，最后还原原来的 Phase。从**根** Phase 调用时根菜单只加载一次（不会重复）；从**子** Phase 调用时该子应用自身不重复加载，但它的子应用仍会被合并进来。`app` 里切不进去的项（如值为 `false`、或没登记过 `__phase__`）会被跳过。
+11. **权限点不带图标**（**特性**：它是权限标记而不是导航项，`@menu_icon` 对它无效，输出的 `icon` 恒为 `null`）；`permissionMenuTreeToSideMenuTree()` 只保留能导航的节点（**特性**：丢掉 `type > 1` 的动作与权限点、以及**没有子节点的空目录**，`type` 缺省按目录 `0` 处理）。
+12. `recordsetToTree()` / `treeToRecordset()` 与菜单本身无关，是配套的「扁平表 ↔ 树」工具：缺 `id` 字段的记录会被丢掉，`pid` 指向不存在的 `id` 时该记录当根节点处理。
+13. `getClassDoc()` 里对 `ReflectionClass` 的那个 `catch (\Throwable)` 是不可达的防御分支（前面已经 `class_exists()` 判过），不影响行为。
 
 ## 方法列表
 
@@ -160,7 +161,7 @@ class MyApp extends \DuckPhp\DuckPhp
 核心方法：把路由行按控制器分组，逐个解析 `__permissionMenuMeta()` 或注释，生成「目录 → 菜单/动作/权限点」节点，再做 `\` 分层拆分与同层权重排序。
 
     public function resolveUrls(array &$tree, string $prefix): array
-给树里每个节点的 `url` 加上挂载前缀（原地修改并返回同一棵树），缺 `url` 的节点按空串处理。
+给树里有 `url` 的节点加上挂载前缀（原地修改并返回同一棵树）；`url` 为 `null` 或 `''` 的节点**继续保持没有 url**（光一个前缀不是有效页面）。
 
     public function walkTree(array &$nodes, callable $callback): array
 深度优先遍历整棵树，对每个节点调用 `$callback(&$node, $depth)`（根节点 depth=0，回调可直接改节点），原地修改并返回同一棵树。
@@ -184,6 +185,9 @@ class MyApp extends \DuckPhp\DuckPhp
 
     protected function getRoutes(bool $trim_url = false)
 取 `RouteLister::listAll(false, true, true)`；`$trim_url` 为真时按 `App::_()->options['controller_url_prefix']` 的长度把 url 裁成相对路径。
+
+    protected function getDefaultDirectoryName(string $controller): string
+控制器没写 `@menu_directory` 时的目录名：取类名 basename（`...\Controller\AdminController` → `AdminController`）；类名为空才返回 `NoName`。
 
     protected function getClassMenuMeta(string $controller): ?array
 控制器若有 `__permissionMenuMeta()` 就无构造实例化并调用它；类不存在、没有该方法、抛异常或返回 null 时返回 `null`（表示回退注释模式）。

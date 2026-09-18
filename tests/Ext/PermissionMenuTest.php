@@ -70,14 +70,19 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
             ['controller' => '', 'method' => 'index', 'url' => ''],
             ['controller' => 'No\\Such\\ClassController', 'method' => 'action_x', 'url' => 'x'],
         ]);
-        // both controllers end up in the same fallback directory (no @menu_directory)
-        $this->assertCount(1, $unknown);
-        $this->assertSame('NoName', $unknown[0]['name']);
-        $this->assertSame('', $unknown[0]['url']);
-        $this->assertSame(0, $unknown[0]['type']);
-        $child_names = array_column($unknown[0]['children'], 'name');
-        sort($child_names);
-        $this->assertSame(['action_x', 'index'], $child_names);
+        // no @menu_directory: the directory is named after the controller class basename,
+        // and only a nameless class falls back to NoName
+        $unknown_names = array_column($unknown, 'name');
+        sort($unknown_names);
+        $this->assertSame(['ClassController', 'NoName'], $unknown_names);
+        $no_name = $this->findNode($unknown, 'NoName');
+        $this->assertSame('', $no_name['url']);
+        $this->assertSame(0, $no_name['type']);
+        $this->assertSame(['index'], array_column($no_name['children'], 'name'));
+        $unknown_dir = $this->findNode($unknown, 'ClassController');
+        // the url comes from the first method's dirname + '/#'; 'x' has no '/', so it stays ''
+        $this->assertSame('', $unknown_dir['url']);
+        $this->assertSame(['action_x'], array_column($unknown_dir['children'], 'name'));
 
         ////////////////////////////////////////////////////////////////////
         // 3) build() from the real routes of the test app
@@ -90,8 +95,11 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         $tree = $menu->build($routes);
         // __permissionMenuMeta() controllers put their items at the top level,
         // the others create a directory per @menu_directory (Admin\System), and
-        // controllers without class annotations fall back to the NoName directory.
-        $this->assertSame(['Admin', 'Handbook', 'Meta Action', 'Meta Menu', 'NoName', 'Users'], $this->topNames($tree));
+        // controllers without class annotations get their class basename as directory
+        $this->assertSame(
+            ['Admin', 'BadMetaController', 'Handbook', 'Meta Action', 'Meta Menu', 'NullMetaController', 'Users'],
+            $this->topNames($tree)
+        );
         // same level sort by @menu_weight (desc), weights are stripped on output
         $this->assertSame('Handbook', $tree[0]['name']);
         // @menu_directory_url gives the directory its own url
@@ -162,28 +170,34 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->findNode($tree, 'Meta Action')['url']);
 
         // BadMetaController throws and NullMetaController returns null: both fall back
-        // to annotation mode, in the NoName directory
-        $no_name = $this->findNode($tree, 'NoName');
-        $this->assertSame('BadMeta/#', $no_name['url']);
-        $no_name_children = array_column($no_name['children'], 'name');
-        sort($no_name_children);
-        $this->assertSame(['Bad Meta Item', 'Null Meta Item'], $no_name_children);
+        // to annotation mode, each in its own basename-named directory
+        $bad = $this->findNode($tree, 'BadMetaController');
+        $this->assertSame('BadMeta/#', $bad['url']);
+        $this->assertSame(['Bad Meta Item'], array_column($bad['children'], 'name'));
+        $null_meta = $this->findNode($tree, 'NullMetaController');
+        $this->assertSame('NullMeta/#', $null_meta['url']);
+        $this->assertSame(['Null Meta Item'], array_column($null_meta['children'], 'name'));
 
         ////////////////////////////////////////////////////////////////////
         // 4) resolveUrls / walkTree
         ////////////////////////////////////////////////////////////////////
         $walked = [
             ['name' => 'A', 'url' => 'a', 'children' => [['name' => 'B', 'url' => 'b']]],
+            ['name' => 'NoUrl', 'url' => null],
+            ['name' => 'MissingUrlKey'],
         ];
         $depths = [];
         $menu->walkTree($walked, function (&$node, int $depth) use (&$depths) {
             $depths[] = $node['name'] . ':' . $depth;
         });
-        $this->assertSame(['A:0', 'B:1'], $depths);
+        $this->assertSame(['A:0', 'B:1', 'NoUrl:0', 'MissingUrlKey:0'], $depths);
 
         $menu->resolveUrls($walked, '/admin/');
         $this->assertSame('/admin/a', $walked[0]['url']);
         $this->assertSame('/admin/b', $walked[0]['children'][0]['url']);
+        // a node without a url keeps having none (the bare prefix is not a page)
+        $this->assertNull($walked[1]['url']);
+        $this->assertNull($walked[2]['url']);
 
         ////////////////////////////////////////////////////////////////////
         // 5) loadAdminPermissionMenu()
@@ -200,6 +214,8 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Dashboard', $tree_json[0]['name']);
         $this->assertSame('/Dash/index', $tree_json[0]['url']);
         $this->assertSame('/Dash/sub', $tree_json[0]['children'][0]['url']);
+        // "Empty Directory" has url null in the json: it stays null after resolveUrls
+        $this->assertNull($this->findNode($tree_json, 'Empty Directory')['url']);
 
         // php config file returning an array
         PermissionMenuApp::_()->options['permission_menu_tree_for_admin'] = 'menu_array.config.php';
