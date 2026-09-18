@@ -92,7 +92,7 @@ class DuckPhp extends App
         $my_components = [
             DbManager::class => self::EXT_DEFAULT,
             RedisManager::class => self::EXT_DEFAULT,
-            GlobalAdmin::class => self::EXT_SKIP_INIT,
+            GlobalAdmin::class => self::EXT_DISABLE,
             GlobalUser::class => self::EXT_DISABLE,
             GlobalEvent::class => self::EXT_DISABLE,
         ];
