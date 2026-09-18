@@ -83,7 +83,7 @@ $component = MyComponent::_()->init([
 - `init()` 的返回值为当前实例，可链式调用；接口/调用方常以 `ClassName::_()->init($options, $context)` 形式使用。
 - `isInited()` 在 `init_once` 场景外并不阻止重复 `init()`；需要幂等初始化请自行把子类 `init_once` 属性设为 `true`。
 - 传入的 `$context` 为 `null` 时跳过 `initContext()`（`App` 等自身作为上下文时会传入实例）。
-- `IsAbsPath()` / `SlashDir()` 为受保护静态工具，供子类在拼接/判断路径时使用；
+- 本类**不提供路径工具**：早期版本的静态 `IsAbsPath()` / `SlashDir()` 已移除，路径判断与拼接现在在 [DuckPhp\Core\App](Core-App.md)（`isAbsPath()` / `slashDir()`），[DuckPhp\Core\AutoLoader](Core-AutoLoader.md) 里另有一份自用的 `isAbsPath()` / `slashDir()`。
 
 ## 方法列表
 
@@ -111,12 +111,6 @@ $component = MyComponent::_()->init([
 
     protected function initContext(object $context): void
 子类覆盖点：接收并处理上下文（通常是所属 App）。基类为空实现。
-
-    protected static function IsAbsPath($path)
-判断路径是否为绝对路径（`/` 开头、盘符如 `C:\`、或 `\\` 开头）。
-
-    protected static function SlashDir($path)
-把路径尾部统一为目录分隔符结尾（非空时 `rtrim` 后补 `DIRECTORY_SEPARATOR`）。
 
 ## 相关链接
 

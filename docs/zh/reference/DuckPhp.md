@@ -159,7 +159,10 @@ DuckPhp::Setting('shop_name','demo');
 父类完成后为本“根默认”补上 DbManager/RedisManager(EXT_DEFAULT)、GlobalAdmin(SKIP_INIT)、GlobalUser/GlobalEvent(disable)；开启时 init ExtOptionsLoader，并对 Db/Redis init 后回填 database_driver
 
     protected function initComponentsOfInner($components, $default): void
-父内部装载基础上：子若 data_file_enable 引入外部；默认注册 Command/Configer；并在 local_database/local_redis=真(或驱动不符)时 createLocalObject 自有 Db/Redis；最后设置 user/admin provider
+父内部装载基础上：子若 data_file_enable 引入外部；默认注册 Command/Configer；并在 local_database/local_redis=真(或驱动不符)时 createLocalObject 自有 Db/Redis
+
+    protected function initComponentsOfExt($classes, $default): void
+扩展装载：先走父类 `initComponentsByClasseOptions()` 处理 `ext` 表，再按 `admin_provider`/`user_provider` 把 GlobalAdmin/GlobalUser 指向工程自有实现（用 `PhaseProxy::CreatePhaseProxy()` 包一层挂到当前 Phase）
 
     protected function haltInitInBaseClass(): void
 空：DuckPhp 本身已允许开放（父 App 使用禁止直接初始化 base）

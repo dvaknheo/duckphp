@@ -53,6 +53,7 @@ const EVENT_SERVICE_USER_LOGOUTED    = 'SERVICE_USER_LOGOUTED';
 | `user_callback_for_url_for_regist` | `null` | 生成注册 URL 的回调（键名仍为 `..._regist`，源码原样）。 |
 | `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
 | `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
+| `user_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `UserException::class`）；只在会话模式（配了 `user_callback_for_session`）下的 `id()/name()` 里生效。 |
 
 ## 使用方式
 

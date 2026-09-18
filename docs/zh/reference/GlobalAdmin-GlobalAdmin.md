@@ -49,6 +49,7 @@ const EVENT_SERVICE_ADMIN_LOGOUTED    = 'SERVICE_ADMIN_LOGOUTED';
 | `admin_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
 | `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
 | `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
+| `admin_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `AdminException::class`）；只在会话模式（配了 `admin_callback_for_session`）下的 `id()/name()` 里生效。 |
 
 ## 使用方式
 

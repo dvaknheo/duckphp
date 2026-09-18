@@ -51,6 +51,7 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 |---|---|
 | [DuckPhp\Component\Cache](Component-Cache.md) | 缓存组件基类，提供空实现。 |
 | [DuckPhp\Component\Command](Component-Command.md) | 框架默认 CLI 命令集合。 |
+| [DuckPhp\Component\CommandMetaInterface](Component-CommandMetaInterface.md) | 命令表元数据接口（`__commandMeta()`），让命令类自己返回命令表。 |
 | [DuckPhp\Component\Configer](Component-Configer.md) | 配置读取组件，从 `config/` 目录加载 PHP 配置。 |
 | [DuckPhp\Component\DbManager](Component-DbManager.md) | 数据库管理组件，支持多库与读写分离。 |
 | [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md) | 额外选项加载组件，支持 `DuckPhpApps.config.php`。 |
@@ -91,6 +92,8 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) | 门面自动加载组件。 |
 | [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md) | 门面基类。 |
 | [DuckPhp\Ext\MyMiddlewareManager](Ext-MyMiddlewareManager.md) | 中间件管理组件。 |
+| [DuckPhp\Ext\PermissionMenu](Ext-PermissionMenu.md) | 后台权限菜单树构建器，按注释或元数据生成菜单并支持跨子应用合并。 |
+| [DuckPhp\Ext\PermissionMenuMetaInterface](Ext-PermissionMenuMetaInterface.md) | 权限菜单元数据接口（`__permissionMenuMeta()`）。 |
 | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 简易 API 服务器路由钩子。 |
 | [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) | 多目录基准模式路由钩子。 |
 | [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) | 函数模式路由钩子。 |
@@ -177,6 +180,10 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) | 管理员操作接口。 |
 | [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) | 管理员控制器接口（标记）。 |
 | [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | 管理员服务接口。 |
+| [DuckPhp\GlobalAdmin\AdminLoginActionInterface](GlobalAdmin-AdminLoginActionInterface.md) | 管理员登录动作接口。 |
+| [DuckPhp\GlobalAdmin\AdminLoginServiceInterface](GlobalAdmin-AdminLoginServiceInterface.md) | 管理员登录服务接口。 |
+| [DuckPhp\GlobalAdmin\AdminSessionInterface](GlobalAdmin-AdminSessionInterface.md) | 管理员会话接口。 |
+| [DuckPhp\GlobalAdmin\AdminSessionTrait](GlobalAdmin-AdminSessionTrait.md) | 管理员会话 Trait（基于 SessionTrait 的实现）。 |
 | [DuckPhp\GlobalAdmin\AdminException](GlobalAdmin-AdminException.md) | 管理员异常。 |
 
 ### GlobalUser
@@ -187,4 +194,8 @@ DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项
 | [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) | 用户操作接口。 |
 | [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 用户控制器接口（标记）。 |
 | [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | 用户服务接口。 |
+| [DuckPhp\GlobalUser\UserLoginActionInterface](GlobalUser-UserLoginActionInterface.md) | 用户登录动作接口。 |
+| [DuckPhp\GlobalUser\UserLoginServiceInterface](GlobalUser-UserLoginServiceInterface.md) | 用户登录服务接口。 |
+| [DuckPhp\GlobalUser\UserSessionInterface](GlobalUser-UserSessionInterface.md) | 用户会话接口。 |
+| [DuckPhp\GlobalUser\UserSessionTrait](GlobalUser-UserSessionTrait.md) | 用户会话 Trait（基于 SessionTrait 的实现）。 |
 | [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md) | 用户异常。 |

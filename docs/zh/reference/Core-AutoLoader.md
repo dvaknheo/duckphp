@@ -156,7 +156,13 @@ spl 回调外壳：转发给 `_Autoload($class)`。
     public static function DuckPhpSystemAutoLoader(string $class): void
 独立精简回调：只处理 `DuckPhp\` 前缀，映射到 `<framework>/src/<…>.php` 后 include_once（供框架无 vendor 自加载）。
 
+    public function slashDir($path)
+把路径尾部统一成目录分隔符结尾（`''` 原样返回，否则 `rtrim('/\\')` 后补 `DIRECTORY_SEPARATOR`）。
+
 ### 受保护方法
+
+    protected function isAbsPath($path)
+判断路径是否为绝对路径：`/` 开头、盘符（如 `C:\`、`C:/`）、或 `\\` 开头；参数可为 null。
 
     protected function getNamespacePath(string $sub_path, string $main_path): string
 把相对/绝对子路径解析为目录路径：相对则基于 main_path 返回绝对并补目录分隔符。

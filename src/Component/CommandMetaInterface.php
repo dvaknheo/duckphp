@@ -6,7 +6,7 @@
 
 namespace DuckPhp\Component;
 
-interface CommandDescInterface
+interface CommandMetaInterface
 {
     public function __commandMeta() : array;
 }

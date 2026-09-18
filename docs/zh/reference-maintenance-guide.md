@@ -140,7 +140,7 @@ for f in sorted(files):
         print('        extra-method=%s' % (extra,))  # 多为「使用方式」示例里自定义的方法，通常无需处理
 ```
 
-**判读**：`missing-method` / `missing-option` / `extra-option` 非空 = 文档确实缺内容或写多了选项，必须处理；`extra-method`（现由脚本一并打印）通常是「使用方式」示例里的自定义方法，忽略。同一键合并成一行（如 `| \`a\` / \`b\` |`）会被 doc_opts 漏读 → 假报 `missing-option`，拆成单键行即可。
+**判读**：`missing-method` / `missing-option` / `extra-option` 非空 = 文档确实缺内容或写多了选项，必须处理。`extra-method` 一般是「使用方式」示例里自定义的方法，**但不一定**——它同样可能是**真过期条目**（文档还写着源码里已经没有的方法）。实测踩到过：`Core-ComponentBase.md` 里留着 `IsAbsPath()`/`SlashDir()` 两个条目，而这两个方法早已从 `ComponentBase` 移到 `App`（改名 `isAbsPath()`/`slashDir()`）与 `AutoLoader`，`extra-method` 正是唯一线索。**每次都要扫一眼 extras**，别一律当示例忽略。同一键合并成一行（如 `| \`a\` / \`b\` |`）会被 doc_opts 漏读 → 假报 `missing-option`，拆成单键行即可。
 
 > ⚠️ **本会话环境注意**：DSH 沙箱里 `$env:TEMP` 指向私有临时目录，与 `write` 工具写的 `%TEMP%` 不是同一个；跑脚本请给**绝对路径**（如 `python "C:\Users\<你>\AppData\Local\Temp\drift.py" doced`），否则报 `No such file or directory`。
 
@@ -171,6 +171,44 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-covera
 - 本机环境实测：WSL（Debian）**PHP 8.2.3, NTS**，`php -m` 含 **redis** 扩展；Windows 侧 PHP **没有 redis 扩展**，于是 `RedisCacheTest` / `RedisManagerTest` 会报 `Error: Class 'Redis' not found`——**那是环境假失败，不是代码问题**（WSL 下 `tests/Component` 实测 `OK (17 tests, 123 assertions)`）。
 - 项目路径在 WSL 下是 `/mnt/e/ProjectGoat/DNMVCS`。
 - `drift.py` 也可在 WSL 下用 `python3` 跑（如 `wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData/Local/Temp/drift.py doced"`），结果与 Windows 侧一致。
+
+### 看覆盖率：`test_coveragedumps/` 里那个类的 dump（硬性：必须带 `XDEBUG_MODE=coverage`）
+
+写完 / 改完测试后，用覆盖率确认“这个类的可执行行都跑到了”：
+
+```powershell
+$env:WSL_UTF8=1
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php"
+```
+
+- **必须给 `XDEBUG_MODE=coverage`**：不给的话 dump 里每一行的命中数都是 0，看起来像“一行都没跑到”。
+- dump 的文件名就是类路径：`test_coveragedumps/Ext/PermissionMenu.php`（该目录已被 `.gitignore`，不要提交）。
+- dump 是序列化的 `CodeCoverage` 大对象、含二进制字节：**别 `cat`/`head`/`grep` 它**（刷屏、乱码，`grep` 只会回一句 `binary file matches`）。用脚本只打印“没执行的行”：
+
+```python
+# cov.py —— 读 dump 并打印未执行的可执行行
+import re, sys
+
+txt = open(sys.argv[1], encoding='utf-8', errors='replace').read()
+m = re.search(r'lineCoverage";a:\d+:\{s:\d+:"([^"]+)";a:\d+:\{(.*?)\}\}s:74:', txt, re.S)
+if not m:
+    print('cannot parse dump: %s' % sys.argv[1]); sys.exit(1)
+src_file, body = m.group(1), m.group(2)
+hits = {int(l): int(c) for l, c in re.findall(r'i:(\d+);a:(\d+):', body)}
+uncovered = sorted(l for l, c in hits.items() if c == 0)
+print('%s' % src_file)
+print('lines: %d/%d covered, %d not executed' % (len(hits) - len(uncovered), len(hits), len(uncovered)))
+lines = open(src_file, encoding='utf-8', errors='replace').read().splitlines()
+for l in uncovered:
+    print('  %4d | %s' % (l, lines[l - 1].strip()))
+```
+
+```powershell
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData/Local/Temp/cov.py test_coveragedumps/Ext/PermissionMenu.php"
+```
+
+- 判读：`0 not executed` 才算 100%。剩下的通常只有**不可达的防御代码**（典型：前面已 `class_exists()` 判过、`new \ReflectionClass()` 不可能抛的 `catch`）。**不要为了凑覆盖率写假调用**：要么留着并在第 8 节记一句，要么给源码那两行加 `@codeCoverageIgnore`。
+- 要看逐行标红的 HTML 报告：`wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bin/phpunit tests/support.php"` → `test_reports/<路径>.php.html`（等于全量跑一遍，慢，非必要不用）。
 
 ## 6. 标准工作流
 
@@ -240,8 +278,39 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-covera
       - 校验（全部在 WSL 下）：`php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php` → `OK (1 test, 14 assertions)`；`bash scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`；`drift.py doced` 仍全 `ok`。
     - `Core-KernelTrait.md`：`Root()` → **`Root($switch_phase = false)`**（为真时顺带 `App::Phase(根 Phase)`，用于“子应用里取根实例并切回根”）；补第 7 条注意事项（返回实例本身不改当前 Phase；切阶段那步硬编码在 `App` 上）。
     - 收尾：`drift.py doced` 与 `drift.py --all` 均 **0 `missing-*`/`extra-option`**（仅剩 12 处示例方法 `extra-method`，属正常）。
+  - **新类 `Ext/PermissionMenu` 的测试 + 由测试暴露出的源码问题（已全部处理）**（`tests/Ext/PermissionMenuTest.php`，骨架由作者提供，本次补齐；数据目录 `tests/data_for_tests/Ext/PermissionMenu/`）：
+    - 数据目录：`System/PermissionMenuApp.php`（根应用，显式声明 `permission_menu_tree_for_admin` 与 `controller_url_prefix`——这两个键不在 App 默认 `$options` 里）、`System/ChildMenuApp.php`（子应用，自己还带一个孙应用）、`System/GrandMenuApp.php`、`System/LeafMenuApp.php`（孙应用，用来验证“从子 Phase 调 `loadAll()` 也会下钻”）、`Controller/*.php`（6 个控制器：注释模式、`__permissionMenuMeta()` 模式、抛异常与返回 null 两种兜底、`@menu_directory_url` 模式）、`config/menu*.json|*.config.php`。
+      - ⚠️ 控制器**必须 `implements AdminControllerInterface`**：`getRoutes()` 走的是 `RouteLister::listAll(false, true, true)`（only_admin），普通控制器根本不会出现在菜单里。
+    - 覆盖面：`build()` 的注释解析、`\` 多层目录拆分、权重排序、`#url` 权限前缀、`@menu_directory_url`；`loadAdminPermissionMenu()` 的 force / json / php 数组 / php 非数组 / 文件不存在五条分支；`buildAndSaveToConfigJsonFile()`（写完断言后 `unlink`，不给仓库留垃圾）；`loadAll()/mergeAppsMenus()`（子应用递归、`ignore_phase` 自我跳过、非子应用项跳过）；`walkTree/resolveUrls` 与两个树转换。
+    - 结果（WSL）：`OK (1 test, 110 assertions)`；`tests/Ext` 全目录 `OK (27 tests, 235 assertions)`；`bash scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`。
+    - 覆盖率：**298/298 行（100%）**。
+    - **测试暴露出的源码问题 1~3：真 bug，已修**（`src/Ext/PermissionMenu.php`）：
+      - `mergeNode()` 对路径**最后一段不改名** → 叶子目录叫 `Admin\System`，且两个控制器声明同一个 `@menu_directory` 时**不合并**、并列成两个同名目录。修法：`if ($isLast) { $node['name'] = $name; $tree[] = $node; }`。修后 `Admin\System` → `Admin/` → `System/`，两个控制器的条目合进同一个 `System`。
+      - `splitSubLevels()` 里 `unset($child['directory'], $child['icon'])` 把**方法级 `@menu_icon` 一起删了**。`directory` 才是临时字段，`icon` 是输出节点的一部分；改成只 unset 临时字段，方法级 icon 现在能到输出树（侧边栏转换读的就是 `$node['icon']`）。
+      - `mergeAppsMenus()` 无条件 `loadAdminPermissionMenu()` → **从根 Phase 调 `loadAll()` 时根菜单被合并两次**；同时 `$child_phase === $ignore_phase → continue` 会把被忽略应用的**整棵子树**都跳过（从子 Phase 调用时，孙应用的菜单全丢）。修法：把判断挪到函数开头（`if ($current_phase !== $ignore_phase)` 才加载本应用菜单），并删掉子循环里的 `continue`——被忽略的应用自身不重复加载，但它的子应用照常下钻。测试用 `LeafMenuApp` 专门锁这条。
+    - **问题 4：注释值只取第一个 token（用户裁定按“到行末”实现，已改）**：
+      - `parseAnnotatedLine()` 现在返回 `?string`：**值取到行末并 trim**（不再是 `[name, tailParam]` 数组），所以 `@menu_action User List` 的名字就是 `User List`、`@menu_icon fa fa-folder` 也能用。
+      - `parseMultiAnnotatedLine()` 的第二个值同理（`preg_split('/\s+/', $line, 2)` 后 trim 尾部）：`@menu_permission #edit Edit User` → 名字 `Edit User`。
+      - 注意 `@menu_directory` 的**值**也变成“到行末”，所以它不会误吞 `@menu_directory_url`（正则要求 tag 后紧跟空白，`_url` 不会命中）。
+    - **问题 5：文档写了却没人实现的 `[url]`（用户裁定改为新注解，已实现）**：
+      - `@menu_directory` 不再有 `[url]` 第二参数（值=整个名字）；新增 **`@menu_directory_url Url`**，类级与方法级都支持——类级设本控制器目录节点的 url（**优先于**由首个方法推导的 `.../#`），方法级设该 `@menu_directory` 生成的分组目录 url。同一目录多条 `@menu_directory_url` 时**第一条生效**（`$dirUrls` 里 `!isset` 判重）。
+      - 留给测试夹具 `HandbookController`（类级 url）与 `AdminController::action_list`（方法级 url）锁住；`build()` 的 docblock 已同步改写。
+    - **问题 6：`getClassDoc()` 里不可达的 `catch`（用户裁定加注解，已加）**：
+      - 按本仓库既有风格（`Core/Logger.php`、`Core/App.php`）在两行末尾加 `// @codeCoverageIgnore`；注意 php-code-coverage 只认**整条注释恰好等于** `// @codeCoverageIgnore`，且**忽略的是注释所在行**——所以尾部注释要贴在 `catch` 行与 `return` 行各自行尾，不能用「注释在上一行」的写法。加完覆盖率 100%。
+    - **仍然是行为、不是 bug**：未加注释的方法名**带 `action_` 前缀**（名字就是方法名本身）。
+    - 顺带：`src/Ext/PermissionMenu.php` 原有 **4 行注释含全角 `→`**（`check-non-ascii.sh` 报 4 行），违反第 4 节硬性规则，本次一并改成 ASCII `->` / `:`。
+  - **第三轮：参考文档按 `drift.py --all` 归零**（`doced` 之后 src 又走了不少，本次一次性对齐）：
+    - **新增 3 篇**：`Ext-PermissionMenu.md`（25 个方法 = 9 公开 + 16 受保护，另含「注释一览」表与 12 条注意事项）、`Ext-PermissionMenuMetaInterface.md`、`Component-CommandMetaInterface.md`。
+      - 命名坑（已修）：`src/Component/CommandMetaInterface.php` 里最初把接口声明成了 `CommandDescInterface`（与文件名、与 `__commandMeta()` 方法名都不一致），现已改名 `CommandMetaInterface`；文档 H1 / 交叉引用 / `index.md` 同步跟进。**同一文件里接口名与文件名不一致时，先按文件名与用法判断哪个是笔误，再统一**。
+    - **更新 7 篇**：`Component-Command`（`__consoleCommands()` → **`__commandMeta()`**，4 处）、`Core-App`（补公开的 `isAbsPath()`/`slashDir()`）、`Core-AutoLoader`（补受保护 `isAbsPath()` + 公开 `slashDir()`）、`Core-ComponentBase`（**删**过期的 `IsAbsPath()`/`SlashDir()`，并指向新位置）、`Core-Logger`（**删**已不存在的 `path` 选项，含「全部选项」块与示例）、`DuckPhp`（补 `initComponentsOfExt()`；`initComponentsOfInner()` 的描述里删掉早已搬到 Ext 的 provider 部分）、`GlobalAdmin-GlobalAdmin`/`GlobalUser-GlobalUser`（各补 `*_default_exception_class` 选项行）。
+    - `docs/zh/reference/index.md` 已登记这 3 篇新文档（Component 段与扩展段各就位）。
+    - 校验：`drift.py --all` **0 不一致**（只剩示例方法类 `extra-method`）；`enc` 检查 117 篇全 UTF-8。
+    - 顺带发现、**已修的源码 bug**：
+      - `GlobalUser::id()/name()` 原先读的是 `$this->options['admin_default_exception_class']`，而该键不在 `GlobalUser` 的 `$options` 白名单里（`ComponentBase::init()` 会按白名单裁键）→ 自己声明的 `user_default_exception_class` 是**死选项**，未登录抛的永远是 `UserException`。已把两处改成 `user_default_exception_class`（与 `GlobalAdmin` 的 `admin_default_exception_class` 行为对齐）。
+      - 回归测试写在 `tests/GlobalUser/GlobalUserTest.php`：把该选项设成 `MyUserDefaultException`（`extends UserException`）后断言 `id(true)`/`name(true)` 抛出的**正是**这个类；**已实测**：把 bug 改回去，该断言会失败（`Expected MyUserDefaultException, Actual DuckPhp\GlobalUser\UserException`），改回来即通过。校验：`tests/GlobalUser` `OK (2 tests, 29 assertions)`、`tests/GlobalAdmin` `OK (2 tests, 25 assertions)`、`tests/Foundation` `OK (15 tests, 25 assertions)`、`tests/Helper` `OK (4 tests, 4 assertions)`；`GlobalUser.php` 覆盖率 99/99 行；`check-non-ascii.sh` → 0。
+      - 文档随之回到正常描述（`GlobalUser-GlobalUser.md` 的 `user_default_exception_class` 行已去掉“暂时改不动行为”的告警）。
 - **待办（本工作范围外）**：
-  - `docs/zh/reference/index.md` 目录页与各篇文件名/说明的核对（含上面 8 篇新文档尚未登记进目录页）；
+  - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含 3 篇新类文档与早期那 8 篇 GlobalAdmin/GlobalUser 接口文档），剩下的是**逐条核对说明文字**是否仍准确；
   - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页（内容过时且行文损坏，建议改为由脚本生成）；
   - `docs/zh/guide/` 教程与 reference 的交叉引用校对。
 - **生成器已知缺陷（如需修复）**：`scripts/gen-reference.php verify` 对含 trait 别名 override 的大文件（`Core/App.php`）会漏列方法；修好前请以 `drift.py` 为准。

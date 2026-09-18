@@ -187,6 +187,12 @@ debug = setting(duckphp_is_debug) ∨ 根 options is_debug ∨ 本 options is_de
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
 调试错误处理：非 debug return；装配 errno/…/shortfile，用 error_debug 或内建 
 
+    public function isAbsPath($path)
+判断路径是否为绝对路径：`/` 开头、盘符（如 `C:\`、`C:/`）、或 `\\` 开头；参数先转字符串。
+
+    public function slashDir($path)
+把路径尾部统一成目录分隔符结尾（`''` 原样返回，否则 `rtrim('/\\')` 后补 `DIRECTORY_SEPARATOR`）。
+
     public function getOverrideableFile($path_sub, $file, $use_override = true)
 Phase 感知可覆盖文件查找：按当前 phase 深度找 path_sub/子目录中 file，存在即命中并返回其路径
 

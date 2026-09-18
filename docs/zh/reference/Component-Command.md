@@ -41,11 +41,11 @@ php xx debug --off
 
 ## 实现说明（命令描述从哪里来）
 
-help 用 `Command::command_help()` 里收集 `Console` 各注册类的方法名（可选 per class `__consoleCommands()`），逐个从 `@command_desc`/doc 首行取描述；命名空间为空的是 `*Default*`。
+help 用 `Command::command_help()` 里收集 `Console` 各注册类的方法名（可选 per class `__commandMeta()`），逐个从 `@command_desc`/doc 首行取描述；命名空间为空的是 `*Default*`。
 
 ## 注意事项
 
-1. 命令收集是**按类独立**的：某命令类只要定义了 `__consoleCommands()`，其返回值就整体接管该类的命令表——`console_command_classes` 里给它配的“方法前缀”不再生效（该方法内部固定用 `command_` 前缀）。
+1. 命令收集是**按类独立**的：某命令类只要定义了 `__commandMeta()`（见 [CommandMetaInterface](Component-CommandMetaInterface.md)），其返回值就整体接管该类的命令表——`console_command_classes` 里给它配的“方法前缀”不再生效（该方法内部固定用 `command_` 前缀）。
 2. `getCommandsByClasses()` 对 `console_command_classes` 取值形态的处理是**对上游 `Console` 的防御性对齐**（与 `Console` 执行命令时的取法逐条一致）：`false` 或 `null`/未设值 → 跳过；`true` → 用默认前缀 `command_`；字符串 → 该串即前缀。不是本类自创的语义，见 [Core-Console](Core-Console.md) 的 `console_command_classes` 说明。
 
 ## 方法列表
@@ -75,8 +75,8 @@ CLI 里“抓取”：向 __SUPERGLOBAL_CONTEXT (或全局) 写 REQUEST_URI/PATH
 
 ### 公共方法（供类扩展/描述）
 
-    public function __consoleCommands()
-以 `command_` 前缀反射本类方法，返回 `[命令名 => 描述]`；命令类只要定义此方法，`getCommandsByClass()` 就直接采用它的返回值（不再走传入的前缀与反射）。
+    public function __commandMeta()
+以 `command_` 前缀反射本类方法，返回 `[命令名 => 描述]`；命令类只要定义此方法（即实现 [CommandMetaInterface](Component-CommandMetaInterface.md)），`getCommandsByClass()` 就直接采用它的返回值（不再走传入的前缀与反射）。
 
 ### 受保护方法
 
@@ -87,7 +87,7 @@ CLI 里“抓取”：向 __SUPERGLOBAL_CONTEXT (或全局) 写 REQUEST_URI/PATH
 把多 class 映射聚合成命令表：值为 `false` 跳过、为 `true` 视作 `command_`、其余按值当前缀（不再接收 phase 参数）。
 
     protected function getCommandsByClass(string $class, string $method_prefix): array
-单个命令类：若该类定义了 `__consoleCommands()` 则直接调用它；否则按 `$method_prefix` 反射提取。
+单个命令类：若该类定义了 `__commandMeta()` 则直接调用它；否则按 `$method_prefix` 反射提取。
 
     protected function getCommandsByClassReflection(\ReflectionClass $ref, string $method_prefix): array
 反射全部方法，前缀过滤出 command 名，取 @command_desc（或 doc 首行）作为描述，并翻译。
@@ -98,6 +98,7 @@ CLI 里“抓取”：向 __SUPERGLOBAL_CONTEXT (或全局) 写 REQUEST_URI/PATH
 ## 相关链接
 
 - [DuckPhp\Core\Console](Core-Console.md) —— 命令执行主机
+- [DuckPhp\Component\CommandMetaInterface](Component-CommandMetaInterface.md) —— 命令表元数据接口（`__commandMeta()`）
 - [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) —— command_run 起服务
 - [DuckPhp\Component\RouteLister](Component-RouteLister.md) —— command_routes 用
 - [DuckPhp\Core\App](Core-App.md)/langText —— 版本/lang 翻译来源

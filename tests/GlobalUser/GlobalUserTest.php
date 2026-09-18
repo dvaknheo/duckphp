@@ -133,6 +133,25 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
             \PHPUnit\Framework\Assert::assertTrue(true);
         }
 
+        // user_default_exception_class must be honored: id()/name() have to read the
+        // "user_" key (they used to read admin_default_exception_class by mistake)
+        MyUser::_()->options['user_default_exception_class'] = MyUserDefaultException::class;
+        MyUserSession::_()->unsetCurrentUser();
+        try {
+            Helper::User()->id(true);
+            \PHPUnit\Framework\Assert::fail("id() should throw MyUserDefaultException");
+        } catch (\Exception $ex) {
+            \PHPUnit\Framework\Assert::assertEquals(MyUserDefaultException::class, get_class($ex));
+        }
+        try {
+            Helper::User()->name(true);
+            \PHPUnit\Framework\Assert::fail("name() should throw MyUserDefaultException");
+        } catch (\Exception $ex) {
+            \PHPUnit\Framework\Assert::assertEquals(MyUserDefaultException::class, get_class($ex));
+        }
+        // back to the default exception class
+        MyUser::_()->options['user_default_exception_class'] = null;
+
         // Test name() with session callback
         MyUserSession::_()->setCurrentUser(['id' => 1, 'username' => 'session_user']);
         $name = Helper::User()->name(false);
@@ -181,6 +200,9 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
 
         \LibCoverage\LibCoverage::End();
     }
+}
+class MyUserDefaultException extends UserException
+{
 }
 class MyUser extends GlobalUser
 {
