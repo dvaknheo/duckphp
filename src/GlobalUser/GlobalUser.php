@@ -203,7 +203,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
-        View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
+        if (App::_()->options['use_user_view_header_footer'] ?? false) {
+            View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
+        }
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;
         $ret = View::_()->_Show($data, $view);
         App::Phase($old_phase);
