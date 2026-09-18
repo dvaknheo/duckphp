@@ -20,12 +20,12 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
     const DEBUG = 'debug';
 
     public $options = [
-        'path' => '',
         'path_log' => 'runtime',
         'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         'log_prefix' => 'DuckPhpLog',
     ];
     protected $init_once = true;
+
     /**
      * @param array<string, mixed> $context
      */
@@ -38,10 +38,11 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
             return date($m[1]);
         }, $this->options['log_file_template']);
 
-        $full_file = static::SlashDir($this->options['path_log']);
-        if (!static::IsAbsPath($full_file)) {
-            $full_file = static::SlashDir($this->options['path']).$full_file;
-        }
+        $path_base = (string) App::Root()->options['path'];
+        $full_file = App::_()->isAbsPath($this->options['path_log']);
+        $is_abs = App::_()->isAbsPath($full_file);
+        $full_file = $is_abs ? $full_file : $path_base . $full_file;
+
         $full_file .= $file;
         $prefix = $this->options['log_prefix'];
 
@@ -52,11 +53,11 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         $message = str_replace(array_keys($a), array_values($a), $message);
         $date = date('Y-m-d H:i:s');
         $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $message = ($my_server['PATH_INFO'] ?? '') .' : '.$message;
-        $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
+        $message = ($my_server['PATH_INFO'] ?? '') . ' : ' . $message;
+        $message = "[{$level}][{$prefix}][$date]: " . $message . "\n";
 
         try {
-            $type = $full_file ? 3:0;
+            $type = $full_file ? 3 : 0;
             $ret = error_log($message, $type, $full_file);
         } catch (\Throwable $ex) { // @codeCoverageIgnore
             return false;  // @codeCoverageIgnore

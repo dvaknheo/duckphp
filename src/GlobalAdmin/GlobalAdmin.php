@@ -53,7 +53,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,
         'admin_callback_for_url_for_logout' => null,
-        'admin_default_exception_class' =>null,
+        'admin_default_exception_class' => null,
     ];
     protected function run_callback_by_key(string $key, ...$args)
     {
@@ -194,7 +194,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
-        if (App::_()->options['use_admin_view_header_footer']??false) {
+        if (App::_()->options['use_admin_view_header_footer'] ?? false) {
             View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
         }
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;

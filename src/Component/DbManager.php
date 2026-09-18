@@ -163,9 +163,9 @@ class DbManager extends ComponentBase
         // fix
         [$driver,$file] = explode(":", $db_config['dsn']);
         if ($driver === 'sqlite') {
-            if (!static::IsAbsPath($file)) {
-                $path_runtime = App::Root()->options['path'];
-                $db_config['dsn'] = 'sqlite:'.$path_runtime.$file;
+            if (!App::_()->isAbsPath($file)) {
+                $path = App::_()->getProjectPath();
+                $db_config['dsn'] = 'sqlite:'.$path.$file;
             }
         }
 

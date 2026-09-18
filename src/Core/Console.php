@@ -175,10 +175,9 @@ class Console extends ComponentBase
 
             $input = (string)fgets($fp_in);
             if ($this->options['console_readlines_logfile']) {
-                $path = static::SlashDir(App::Root()->options['path']);
-                $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
+                $path_runtime = App::_()->getRuntimePath();
                 $file = $this->options['console_readlines_logfile'];
-                $file = static::IsAbsPath($file)?$file:$path_runtime.$file;
+                $file = App::_()->isAbsPath($file)?$file:$path_runtime.$file;
 
                 file_put_contents($file, $input, FILE_APPEND);
             }

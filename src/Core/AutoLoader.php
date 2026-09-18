@@ -86,24 +86,23 @@ class AutoLoader
 
         return $this;
     }
+    protected function isAbsPath($path)
+    {
+        $is_abs = preg_match('#^(?:/|[a-zA-Z]:[\\\\/]|\\\\{2})#', $path ?? '') > 0;
+        return $is_abs;
+    }
+    public function slashDir($path)
+    {
+        $path = ($path !== '') ? rtrim($path, '/\\').DIRECTORY_SEPARATOR : '';
+        return $path;
+    }
     protected function getNamespacePath(string $sub_path, string $main_path): string
     {
-        $is_abs_path = false;
-        if (DIRECTORY_SEPARATOR === '/') {
-            //Linux
-            if (substr($sub_path, 0, 1) === '/') {
-                $is_abs_path = true;
-            }
-        } else { // @codeCoverageIgnoreStart
-            // Windows
-            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $sub_path)) {
-                $is_abs_path = true;
-            }
-        }   // @codeCoverageIgnoreEnd
+        $is_abs_path = $this->isAbsPath($sub_path);
         if ($is_abs_path) {
-            return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+            return $this->slashDir($sub_path);
         } else {
-            return $main_path.rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+            return $main_path.$this->slashDir($sub_path);
         }
     }
     public function isInited(): bool
@@ -141,9 +140,9 @@ class AutoLoader
             $relative_class = substr($class, strlen($prefix));
             $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
-            $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($file, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $file);
+            $is_abs = $this->isAbsPath($file);
             if (!$is_abs) {
-                $file = rtrim($this->options['path'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file;
+                $file = $this->slahDir($this->options['path']).$file;
             }
             if (!is_file($file)) {
                 continue;

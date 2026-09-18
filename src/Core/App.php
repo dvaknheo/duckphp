@@ -167,7 +167,7 @@ EOT;
     protected function dealWithSettingFile(): void
     {
         $path = $this->options['setting_file'];
-        $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($path, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path);
+        $is_abs = $this->isAbsPath($path);
         if ($is_abs) {
             $full_file = $this->options['setting_file'];
         } else {
@@ -336,14 +336,23 @@ EOT;
             throw new DuckPhpSystemException("DO NOT INIT class " . static::class . "!");
         }
     }
-
+    public function isAbsPath($path)
+    {
+        $is_abs = preg_match('#^(?:/|[a-zA-Z]:[\\\\/]|\\\\{2})#', $path ?? '') > 0;
+        return $is_abs;
+    }
+    public function slashDir($path)
+    {
+        $path = ($path !== '') ? rtrim($path, '/\\').DIRECTORY_SEPARATOR : '';
+        return $path;
+    }
     public function getOverrideableFile($path_sub, $file, $use_override = true)
     {
-        if (static::IsAbsPath($file)) {
+        if ($this->isAbsPath($file)) {
             return $file;
         }
-        if (static::IsAbsPath($path_sub)) {
-            return static::SlashDir($path_sub) . $file;
+        if ($this->isAbsPath($path_sub)) {
+            return $this->slashDir($path_sub) . $file;
         }
         $current_phase = $this->getThisPhaseName();
 
@@ -393,8 +402,8 @@ EOT;
     public function getRuntimePath(): string
     {
         $path = $this->getProjectPath();
-        $path_runtime = static::SlashDir(static::Root()->options['path_runtime']);
-        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
+        $path_runtime = $this->slashDir(static::Root()->options['path_runtime']);
+        return $this->isAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
     public function getConfigFile(string $file): string
     {

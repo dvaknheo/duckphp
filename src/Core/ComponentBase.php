@@ -75,15 +75,4 @@ class ComponentBase // implements ComponentInterface
     {
         // $this->context_class = get_class($context);
     }
-    //helper
-    protected static function IsAbsPath($path)
-    {
-        $is_abs = preg_match('#^(?:/|[a-zA-Z]:[\\\\/]|\\\\{2})#', $path ?? '') > 0;
-        return $is_abs;
-    }
-    protected static function SlashDir($path)
-    {
-        $path = ($path !== '') ? rtrim($path, '/\\').DIRECTORY_SEPARATOR : '';
-        return $path;
-    }
 }
