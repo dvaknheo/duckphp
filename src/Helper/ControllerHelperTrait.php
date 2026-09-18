@@ -25,8 +25,8 @@ trait ControllerHelperTrait
 {
     use SingletonExTrait;
 
-    public static $EVENT_ACTION_REGISTING = 'action_registing';
-    public static $EVENT_ACTION_REGISTED = 'action_registed';
+    public static $EVENT_ACTION_REGISTERING = 'action_registering';
+    public static $EVENT_ACTION_REGISTERED = 'action_registered';
 
     public static $EVENT_ACTION_LOGINING = 'action_logining';
     public static $EVENT_ACTION_LOGINED = 'action_logined';

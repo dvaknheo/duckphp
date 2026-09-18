@@ -20,8 +20,8 @@ trait BusinessHelperTrait
 {
     use SingletonExTrait;
 
-    public static $EVENT_REGISTING = 'registing';
-    public static $EVENT_REGISTED = 'registed';
+    public static $EVENT_REGISTERING = 'registering';
+    public static $EVENT_REGISTERED = 'registered';
 
     public static $EVENT_LOGINING = 'logining';
     public static $EVENT_LOGINED = 'logined';

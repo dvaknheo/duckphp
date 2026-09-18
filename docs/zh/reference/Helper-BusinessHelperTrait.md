@@ -4,14 +4,14 @@
 
 `BusinessHelperTrait` 是面向 **Business（业务层）** 的静态助手集合。业务层通过它访问：应用设置与路径（`Setting`/`AppOptions`/`PathOfProject`/`PathOfRuntime`）、配置（`Config`）、缓存（`Cache`）、校验（`Validator*`）、事件（`FireGlobalEvent`/`OnGlobalEvent`）、用户/管理员服务（`AdminService`/`UserService`）以及业务异常快速抛出（`BusinessThrowOn`）。
 
-Trait 自带 4 个事件名常量（`$EVENT_REGISTING/$EVENT_REGISTED/$EVENT_LOGINING/$EVENT_LOGINED`），供注册/登录等业务生命周期事件使用。
+Trait 自带 4 个事件名常量（`$EVENT_REGISTERING/$EVENT_REGISTERED/$EVENT_LOGINING/$EVENT_LOGINED`），供注册/登录等业务生命周期事件使用。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\Helper`
 - 声明：`trait BusinessHelperTrait`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
-- 事件名常量：`$EVENT_REGISTING = 'registing'`、`$EVENT_REGISTED = 'registed'`、`$EVENT_LOGINING = 'logining'`、`$EVENT_LOGINED = 'logined'`
+- 事件名常量：`$EVENT_REGISTERING = 'registering'`、`$EVENT_REGISTERED = 'registered'`、`$EVENT_LOGINING = 'logining'`、`$EVENT_LOGINED = 'logined'`
 
 ## 使用方式
 
@@ -38,6 +38,7 @@ Base::BusinessThrowOn(!$flag, '业务不允许', 10001);
 - `Setting`/`Options` 读取的是 App 的设置与选项；`PathOfProject`/`PathOfRuntime` 来自 App 的项目/运行时路径。
 - `Validator*` 三个方法分别是 `filter`/`check`/`valid` 的口径：`ValidatorFilter` 返回过滤后数据、`ValidatorCheck` 失败抛异常、`ValidatorValid` 返回错误数组。
 - `AdminService`/`UserService` 分别取 `GlobalAdmin`/`GlobalUser` 的 service，供业务层做认证服务调用。
+- 事件常量拼写已修正：`$EVENT_REGISTERING = 'registering'`、`$EVENT_REGISTERED = 'registered'`（旧名为 `REGISTING`/`registed`，工程侧若有监听旧名的代码需一并改）。登录侧沿用框架既有写法 `$EVENT_LOGINING/$EVENT_LOGINED`（与 `GlobalUser` 的 `EVENT_*_LOGINING/LOGINED` 一致），未改。
 
 ## 方法列表
 

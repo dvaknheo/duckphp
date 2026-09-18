@@ -22,7 +22,7 @@ Trait 自带 6 个“动作级”事件常量（`$EVENT_ACTION_*`），供控制
 - 命名空间：`DuckPhp\Helper`
 - 声明：`trait ControllerHelperTrait`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
-- 事件常量：`$EVENT_ACTION_REGISTING/REGISTED/LOGINING/LOGINED/LOGOUTING/LOGOUTED`
+- 事件常量：`$EVENT_ACTION_REGISTERING/REGISTERED/LOGINING/LOGINED/LOGOUTING/LOGOUTED`（值为 `action_registering`、`action_registered`、`action_logining`、`action_logined`、`action_logouting`、`action_logouted`）
 
 ## 使用方式
 
@@ -56,6 +56,7 @@ public function action_login()
 - `Admin/AdminId/AdminName/User/UserId/UserName` 对应 `GlobalAdmin`/`GlobalUser` 的动作接口与登录查询；`AdminService/UserService` 取 service。
 - `PageHtml($total, $options)` 由 `Pager` 生成 HTML 分页条。
 - 控制器里建议用 `Show302/Show404` 而非直接 `exit`（更可测）；需直出时可 `exit()`（经 SystemWrapper）。
+- 事件常量拼写已修正：`$EVENT_ACTION_REGISTERING = 'action_registering'`、`$EVENT_ACTION_REGISTERED = 'action_registered'`（旧名为 `REGISTING`/`action_registing` 等，工程侧若有监听旧名的代码需一并改）。登录/登出侧沿用框架既有写法 `action_logining/action_logined/action_logouting/action_logouted`（与 `GlobalAdmin`/`GlobalUser` 的 `EVENT_*_LOGINING/LOGINED/LOGOUTING/LOGOUTED` 一致），未改。
 
 ## 方法列表
 
