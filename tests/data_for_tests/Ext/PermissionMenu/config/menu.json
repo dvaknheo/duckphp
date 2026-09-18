@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Dashboard",
+        "url": "Dash/index",
+        "icon": "home",
+        "type": 1,
+        "children": [
+            {
+                "name": "Sub Item",
+                "url": "Dash/sub",
+                "icon": null,
+                "type": 1
+            }
+        ]
+    },
+    {
+        "name": "Empty Directory",
+        "url": null,
+        "type": 0,
+        "children": []
+    },
+    {
+        "name": "Action Only",
+        "url": "dash/action",
+        "icon": "bolt",
+        "type": 2
+    },
+    {
+        "name": "Perm Only",
+        "url": "dash/perm",
+        "type": 3
+    }
+]

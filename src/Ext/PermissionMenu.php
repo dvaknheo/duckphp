@@ -54,6 +54,15 @@ class PermissionMenu extends ComponentBase
     {
         return  App::_()->options['permission_menu_tree_for_admin'] ?? null;
     }
+    /**
+     * Load the permission menu of the whole app tree.
+     *
+     * The menu of the app of the current phase is loaded first, then the root app and
+     * every child app menu are merged in (without loading the current app's menu twice).
+     *
+     * @param bool $force_build true: always build from routes, ignore the menu config file
+     * @return array
+     */
     public function loadAll(bool $force_build = false)
     {
         $current_phase = App::Phase();
@@ -66,10 +75,13 @@ class PermissionMenu extends ComponentBase
         return $tree;
     }
     /**
-     * Recursively merge child apps' menus (starting from root)
+     * Recursively merge the app tree's menus (starting from root)
+     *
+     * The menu of $ignore_phase is skipped here because loadAll() already loaded it,
+     * but its child apps are still merged (they were not loaded yet).
      *
      * @param array &$tree Tree to merge into
-     * @param string $ignore_phase Phase to ignore (current phase)
+     * @param string $ignore_phase Phase to ignore (the phase loadAll() started from)
      */
     protected function mergeAppsMenus(array &$tree, string $ignore_phase, bool $force_build): void
     {
@@ -77,15 +89,13 @@ class PermissionMenu extends ComponentBase
         $current_phase = App::Phase();
         $child_apps = $app->options['app'] ?? [];
 
-        $item = $this->loadAdminPermissionMenu($force_build);
-        $tree = array_merge($tree, $item);
+        if ($current_phase !== $ignore_phase) {
+            $item = $this->loadAdminPermissionMenu($force_build);
+            $tree = array_merge($tree, $item);
+        }
         foreach ($child_apps as $class => $app_options) {
             $child_app = $app->toThisChild($class);
             if ($child_app === null) {
-                continue;
-            }
-            $child_phase = App::Phase();
-            if ($child_phase === $ignore_phase) {
                 continue;
             }
             $this->mergeAppsMenus($tree, $ignore_phase, $force_build);
@@ -108,26 +118,33 @@ class PermissionMenu extends ComponentBase
     }
     ////////////////////////////////////////////////////////
     /**
-     * Build menu tree: RouteLister scans routes, generates Group→Directory→Menu/Action tree via annotations
+     * Build menu tree: RouteLister scans routes, generates Group -> Directory -> Menu/Action tree via annotations
      *
      * Supports two modes:
      * 1. Annotation mode: Write annotations directly on controller classes and methods
      * 2. __permissionMenuMeta mode: If class provides public static function __permissionMenuMeta() returning menu metadata
      *
      * Class-level annotations:
-     * - @menu_directory Name [url]   Top-level group, supports \ split for multi-level directories
-     *                           url is optional: defaults to first method's dirname + '/#', e.g. Admin/index → Admin/#
-     * - @menu_icon IconName        Directory icon
+     * - @menu_directory Name     Top-level group, supports \ split for multi-level directories.
+     *                           The name runs to the end of the line (blanks allowed, trimmed)
+     * - @menu_directory_url Url  Optional: url of that directory node;
+     *                           defaults to the first method's dirname + '/#', e.g. Admin/index -> Admin/#
+     * - @menu_icon IconName        Directory icon (blanks allowed, trimmed)
      * - @menu_weight N           Layer weight, larger = higher priority
      *
      * Method-level annotations:
      * - @menu_directory Name Optional Top-level group, supports \ split for multi-level directories, inserts into corresponding directory
+     * - @menu_directory_url Url Optional Url of that directory node
      * - @menu_icon IconName     Sets icon for menu/action node
      * - @menu Name               Menu (type=1), url takes full route path
      * - @menu_action Name        Action (type=2)
      * - @menu_permission #url Name   Special (type=3), #url is prefixed with method url
      * - @menu_weight N           Layer weight
      * - Public method with no annotation   Treated as Action (type=2), name is method name
+     *
+     * Every annotation value runs to the end of the line and is trimmed, so names/icons
+     * may contain blanks ("@menu_action User List" is named "User List").
+     * Directory urls given by @menu_directory_url are completed by resolveUrls() later.
      *
      * Post-processing: split sub-levels, sort
      *
@@ -156,8 +173,9 @@ class PermissionMenu extends ComponentBase
 
             // Annotation mode
             $classDoc = $this->getClassDoc($controller);
-            // Class-level directory, icon, weight annotations
+            // Class-level directory, url, icon, weight annotations
             $dirAnno = $this->parseAnnotatedLine($classDoc, 'menu_directory');
+            $dirUrlAnno = $this->parseAnnotatedLine($classDoc, 'menu_directory_url');
             $dirIcon = $this->parseAnnotatedLine($classDoc, 'menu_icon');
             $dirWeight = $this->parseWeight($classDoc);
 
@@ -176,13 +194,17 @@ class PermissionMenu extends ComponentBase
                     $dirUrl = substr($firstUrl, 0, $pos + 1) . '#';
                 }
             }
+            // @menu_directory_url wins over the url derived from the first method
+            if ($dirUrlAnno !== null) {
+                $dirUrl = $dirUrlAnno;
+            }
 
             // Generate directory node, attach children under it
             if (!empty($childItems)) {
                 $items[] = [
-                    'name' => $dirAnno ? $dirAnno[0] : 'NoName',
+                    'name' => $dirAnno ?? 'NoName',
                     'url' => $dirUrl,
-                    'icon' => $dirIcon ? $dirIcon[0] : null,
+                    'icon' => $dirIcon,
                     'type' => 0,
                     'weight' => $dirWeight,
                     'children' => $childItems,
@@ -261,18 +283,20 @@ class PermissionMenu extends ComponentBase
         $mDoc = $this->getMethodDoc($controller, $method);
         $weight = $this->parseWeight($mDoc);
 
-        // Method's @menu_directory annotation (if exists, recorded for splitSubLevels)
+        // Method's @menu_directory / @menu_directory_url annotations (recorded for splitSubLevels)
         $methodDir = $this->parseAnnotatedLine($mDoc, 'menu_directory');
+        $methodDirUrl = $this->parseAnnotatedLine($mDoc, 'menu_directory_url');
         // Method's @menu_icon annotation
         $methodIcon = $this->parseAnnotatedLine($mDoc, 'menu_icon');
 
         // @menu first, then @menu_action, default action
         $menuAnno = $this->parseAnnotatedLine($mDoc, 'menu');
+        $actionAnno = $this->parseAnnotatedLine($mDoc, 'menu_action');
         if ($menuAnno !== null) {
-            $name = $menuAnno[0];
+            $name = $menuAnno;
             $type = 1;
-        } elseif ($actionAnno = $this->parseAnnotatedLine($mDoc, 'menu_action')) {
-            $name = $actionAnno[0];
+        } elseif ($actionAnno !== null) {
+            $name = $actionAnno;
             $type = 2;
         } else {
             $name = $method;
@@ -284,8 +308,9 @@ class PermissionMenu extends ComponentBase
             'url' => $url,
             'type' => $type,
             'weight' => $weight,
-            'directory' => $methodDir ? $methodDir[0] : '',
-            'icon' => $methodIcon ? $methodIcon[0] : null,
+            'directory' => $methodDir ?? '',
+            'directory_url' => $methodDirUrl,
+            'icon' => $methodIcon,
         ];
 
         // @menu_permission #url Name (may have multiple, put at end)
@@ -303,7 +328,8 @@ class PermissionMenu extends ComponentBase
                 'url' => $permUrl,
                 'type' => 3,
                 'weight' => $weight,
-                'directory' => $methodDir ? $methodDir[0] : '',
+                'directory' => $methodDir ?? '',
+                'directory_url' => $methodDirUrl,
                 'icon' => null,
             ];
         }
@@ -313,6 +339,9 @@ class PermissionMenu extends ComponentBase
 
     /**
      * Parse multi-line same-type annotations (e.g. multiple @menu_permission)
+     *
+     * Each line is split into "first token" and "the rest of the line, trimmed",
+     * so the second value may contain blanks ("@menu_permission #edit Edit User").
      *
      * @param string $doc docblock
      * @param string $tag annotation name
@@ -325,9 +354,9 @@ class PermissionMenu extends ComponentBase
             return $results;
         }
         foreach ($matches[1] as $match) {
-            $parts = preg_split('/\s+/', trim($match));
-            $first = (string) array_shift($parts);
-            $second = (string) ($parts[0] ?? '');
+            $parts = preg_split('/\s+/', trim($match), 2);
+            $first = (string) ($parts[0] ?? '');
+            $second = trim((string) ($parts[1] ?? ''));
             $results[] = [$first, $second];
         }
         return $results;
@@ -347,11 +376,18 @@ class PermissionMenu extends ComponentBase
             // Clean children's temporary fields, separate children with directory
             $normalChildren = [];
             $dirChildren = [];
+            $dirUrls = [];
             foreach ($node['children'] ?? [] as $child) {
                 $dir = $child['directory'] ?? '';
-                unset($child['directory'], $child['icon']);
+                $dirUrl = $child['directory_url'] ?? null;
+                // 'directory' and 'directory_url' are temporary fields, the rest is output
+                unset($child['directory'], $child['directory_url']);
                 if ($dir !== '') {
                     $dirChildren[$dir][] = $child;
+                    if ($dirUrl !== null && !isset($dirUrls[$dir])) {
+                        // first @menu_directory_url of that directory wins
+                        $dirUrls[$dir] = $dirUrl;
+                    }
                 } else {
                     $normalChildren[] = $child;
                 }
@@ -367,7 +403,7 @@ class PermissionMenu extends ComponentBase
                 $dirParts = explode('\\', $dirName);
                 $dirNode = [
                     'name' => $dirParts[count($dirParts) - 1],
-                    'url' => null,
+                    'url' => $dirUrls[$dirName] ?? null,
                     'type' => 0,
                     'children' => $children,
                 ];
@@ -405,6 +441,8 @@ class PermissionMenu extends ComponentBase
 
         // Not found, create new node
         if ($isLast) {
+            // $node may carry the full "A\B" path as its name; the leaf is only $name
+            $node['name'] = $name;
             $tree[] = $node;
         } else {
             $tree[] = [
@@ -468,8 +506,8 @@ class PermissionMenu extends ComponentBase
         }
         try {
             return (string) (new \ReflectionClass($class))->getDocComment();
-        } catch (\Throwable $e) {
-            return '';
+        } catch (\Throwable $e) { // @codeCoverageIgnore
+            return ''; // @codeCoverageIgnore
         }
     }
 
@@ -489,20 +527,21 @@ class PermissionMenu extends ComponentBase
     }
 
     /**
-     * Parse @tag Name [param] line: returns [Name, tailParam], null if no annotation
-     * @return array{0: string, 1: string}|null
+     * Parse "@tag Value" line: the value runs to the end of the line and is trimmed,
+     * so it may contain blanks ("@menu_action User List" -> "User List").
+     *
+     * @return string|null null when the annotation is missing or has an empty value
      */
-    protected function parseAnnotatedLine(string $doc, string $tag): ?array
+    protected function parseAnnotatedLine(string $doc, string $tag): ?string
     {
         if (!preg_match('/@' . $tag . '\s+([^*\n]+)/', $doc, $m)) {
             return null;
         }
-        $parts = preg_split('/\s+/', trim($m[1]));
-        $name = (string) array_shift($parts);
-        if ($name === '') {
+        $value = trim($m[1]);
+        if ($value === '') {
             return null;
         }
-        return [$name, (string) ($parts[0] ?? '')];
+        return $value;
     }
 
     /**
@@ -568,11 +607,11 @@ class PermissionMenu extends ComponentBase
                 $children = $this->permissionMenuTreeToSideMenuTree($children);
             }
 
-            // type > 1 → skip
+            // type > 1: skip
             if ($type > 1) {
                 continue;
             }
-            // type=0 with empty children → skip
+            // type=0 with empty children: skip
             if ($isDirectory && empty($children)) {
                 continue;
             }

@@ -1,0 +1,8 @@
+[
+    {
+        "name": "Child Menu",
+        "url": "child/index",
+        "icon": "child",
+        "type": 1
+    }
+]
