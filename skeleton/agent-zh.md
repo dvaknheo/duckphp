@@ -686,15 +686,21 @@ Helper::AdminService()->checkAccess(...);
 
 ### 配置
 
-在提供用户功能的 App（通常是子 App）的选项中注册实现类：
+在提供用户功能的 App（通常是子 App）的选项中接上实现：
 
 ```php
 // 子 App 的 options 中配置
 $options = [
-    'class_user' => MyUserAction::class,
-    // 'class_admin' => MyAdminAction::class,
+    // 方式一：整体替换默认组件——框架会把该类实例包成相位代理后装进 GlobalUser::_()
+    'user_provider'  => MyUserProvider::class,
+    // 'admin_provider' => MyAdminProvider::class,
+
+    // 方式二：保留默认组件，只逐项提供回调（登录/登出流程、视图头尾等默认行为都还在）
+    // 'user_callback_for_session'       => [MyUserSession::class, '_'],   // 返回会话对象
+    // 'user_callback_for_login_service' => [MyUserService::class, '_'],   // 返回登录服务对象
+    // 'user_callback_for_id'            => [MyUserAction::class, 'id'],
 ];
 ```
 
-实现类需要实现 `UserActionInterface`（用户操作 + URL 生成）和 `UserServiceInterface`（数据查询），完整说明见用户指南 `docs/zh/guide/external-auth.md`。
+实现类通常实现 `UserActionInterface`（用户操作与 `urlFor*` 地址生成）与 `UserServiceInterface`（数据查询）；会话用 `UserSessionInterface`（框架提供 `UserSessionTrait` 可直接 `use`），登录流程用 `UserLoginActionInterface` / `UserLoginServiceInterface`。逐项选项表见参考手册 `docs/zh/reference/GlobalUser-GlobalUser.md` 与 `docs/zh/reference/GlobalAdmin-GlobalAdmin.md`，完整说明见用户指南 `docs/zh/guide/external-auth.md`。
 

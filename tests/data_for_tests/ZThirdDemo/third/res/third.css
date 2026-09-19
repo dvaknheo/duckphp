@@ -1,0 +1,2 @@
+/* third party app's own resource - shadowed by <main app>/res/shop/third.css */
+.child-owned-third-css { color: red; }

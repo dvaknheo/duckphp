@@ -1,0 +1,3 @@
+/* the main app shadows the third party app's res/third.css by putting a file of
+   the same name under res/<child app name>/ */
+.parent-overridden-third-css { color: purple; }

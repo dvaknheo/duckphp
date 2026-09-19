@@ -102,8 +102,12 @@
 
 - [x] **Q1 写作顺序**：先做第二卷 8–24（章序与章号已定，见上方「第二卷」小节；Q2 的拆解顺序也随之确定）
 - [x] **Q2 长章拆解**：`layers.md` 已拆完（581 → 226 行）；`architecture.md` 内容被第 32/17/8 章吸收后**已删除**；`components.md` 被第 33 章吸收后**已删除**
-- [ ] **Q3 `skeleton/` 的失真内容**（`agent-zh.md` 的 `class_user`、`RULES.md` 的方法前缀默认值）怎么处理
-- [ ] **Q4 新发现的源码残留**：`DuckPhp::_Show()` 里 `$view === '' ? … : $view;` 这个没赋值的死表达式清不清
+- [x] **Q3 `skeleton/` 的失真内容** —— 已修（本轮）：
+  - `skeleton/agent-zh.md` 的 `class_user`/`class_admin` → 改为真实选项 `user_provider`/`admin_provider` + `user_callback_for_*` 回调写法，并补上真实接口名（`UserActionInterface`/`UserServiceInterface`/`UserSessionInterface`/`UserLoginActionInterface`/`UserLoginServiceInterface`）；
+  - `skeleton/RULES.md`：方法前缀默认值由错写的 `action_` 改成 **空串**（并注明 1.3.6 起的变化）、`/Main/index` 示例改为「默认被拒（E009），需 `controller_welcome_class_visible`」、关键约定表补一行；
+  - 顺带查出并修掉**更大的失真**：`skeleton/src/System/ProjectException.php` 与 `demo/src/System/ProjectException.php` 只 `use ExceptionTrait` **没有 `extends \Exception`** ⇒ 抛它时致命错误；现已 `extends \Exception`（并加回归测试，见下）；
+  - `skeleton/src/System/App.php` 里 `cmd` 选项的注释示例由 `[CommandAction::class]` 改成 `[CommandAction::class => true]`（真实形态是「类名 => 方法前缀/true」）。
+- [x] **Q4 新发现的源码残留** —— 已确认修好并**补了防回归测试**：`DuckPhp::_Show()` 里的死表达式已在提交 `9635a77b`（"文档推进"）中删除，现在 `App::_Show()` 是 `$view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;`（正确赋值）。本轮在 `tests/DuckPhpTest.php` 加了断言：把 `Route::_()->calling_path` 设为 `block` 后调 `_Show($data, '')` 必须渲染出 `view/block.php`——把 bug 改回去跑，测试会以 `ValueError: Path cannot be empty` 变红（已实测），再还原。
 
 ## 每轮收尾自检（每卷结束时勾一遍；下表为**M5 收尾**时的实测值）
 
@@ -111,5 +115,21 @@
 - [x] 新增/修改的 md 全是 UTF-8（无 GBK）（`docs/zh` 逐字节校验通过）
 - [x] 本卷新写的章都 ≤400 行（第四卷 10 章 **80–206 行**；附录 B/C/D 117–288 行；全书 41 章 7001 行）
 - [x] 改过的示例都在 WSL 里实跑通过（各卷示例仍挂在 `demo/`、`ZAllDemo`、`ZThirdDemo` 上；第四卷新增片段均为现有资产的真实引用或明确标注 ⚠️ 示意）
-- [x] 全量 `php vendor/bin/phpunit --no-coverage` 通过（当前基线 `OK (92 tests, 556 assertions)`）
+- [x] 全量 `php vendor/bin/phpunit --no-coverage` 通过（当前基线 `OK (93 tests, 565 assertions)`——Q3/Q4 各补了回归断言后的新基线；原基线为 `92/556`）
 - [x] 本文件的复选框与状态图例已更新
+
+---
+
+## 全部里程碑状态
+
+| 里程碑 | 状态 |
+|---|---|
+| M0 一页总目录 + 站点首页瘦身 + 附录 A + `ZThirdDemo` | ✅ |
+| M1 第三卷 25–31 | ✅ |
+| M2 第二卷 8–24 | ✅ |
+| M3 第一卷 1–7 | ✅ |
+| M4 第四卷 32–41 + 附录 B/C/D | ✅ |
+| M5 收尾（删被吸收旧文、参考手册侧迁入、全量校验） | ✅ |
+| Q1–Q4 待决策 | ✅ 全部已定并落地 |
+
+> **用户指南重写任务至此完成**：`docs/zh/guide/` = `index.md` + 41 章 + 4 附录；`docs/zh` 站内链接 0 死链、全 UTF-8；全量测试绿。后续维护请看 [用户指南维护指南](guide-maintenance-guide.md) 与 [参考手册维护指南](reference-maintenance-guide.md)。

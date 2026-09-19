@@ -93,7 +93,7 @@ Model 层 (纯无状态)
 | 类型 | 命名规则 | 示例 | 说明 |
 |------|---------|------|------|
 | 控制器类 | `{Name}Controller` | `UserController` | 路由入口，处理输入/输出 |
-| 控制器方法 | `{action_prefix}{method}` | `{action_prefix}index()` | 路由方法前缀 |
+| 控制器方法 | `{action_prefix}{method}` | `{action_prefix}index()` | 路由方法前缀（**默认是空串**） |
 | CLI 子方法 | `command_{method}` | `command_hello()` | 命令行方法前缀 |
 | 动作类 | `{Name}Action` | `UserAction` | 控制器通用功能复用 |
 | Session 类 | `Session` | `Session` | 状态容器 |
@@ -102,7 +102,7 @@ Model 层 (纯无状态)
 | Model 类 | `{Name}Model` | `UserModel` | 数据访问 |
 | 异常类 | `{Name}Exception` | `ProjectException` | 异常层级 |
 
-{action_prefix} 在应用选项 `controller_method_prefix` 里设置， DuckPhp 1.3.6 版本起默认值得由 `action_` 改为 ``
+{action_prefix} 由应用选项 `controller_method_prefix` 决定：**DuckPHP 1.3.6 起默认值已由 `action_` 改为空串**，也就是 URL 段名就是方法名（`/user/profile` → `userController::profile()`）。本骨架的 `src/System/App.php` 里把它配成 `'action_'`，所以控制器方法写作 `action_index()`；不配就是 `index()`。
 
 ### 核心原则
 
@@ -184,7 +184,8 @@ URL 路径格式：
 映射到控制器类的方法：
 
 ```
-/Main/index        → 命名空间\Controller\MainController::index()
+/                  → 命名空间\Controller\MainController::index()
+/Main/index        → 同上（但欢迎类默认不允许显式写，会被拒；见下 `controller_welcome_class_visible`）
 /user/profile      → 命名空间\Controller\userController::profile()
 /admin/user/list   → 命名空间\Controller\admin\userController::list()
 ```
@@ -195,8 +196,9 @@ URL 路径格式：
 | 约定 | 默认值 | 说明 |
 |---|---|---|
 | 控制器类后缀 | `Controller` | `FooController` |
-| 方法前缀 | `action_` | `action_index()` |
+| 方法前缀 | 空串（`''`） | 方法名就是 URL 段名；配 `controller_method_prefix => 'action_'` 后是 `action_index()` |
 | 欢迎页类 | `Main` | `/` 或 `/index` 路由到 |
 | 欢迎页方法 | `index` | 控制器默认方法 |
+| 欢迎类能否显式写进 URL | `false` | 默认 `/Main/xxx` 会被拒（错误码 E009），要允许就置 `controller_welcome_class_visible => true` |
 | 命名空间 | 自动检测 | 项目中 `Controller` 段 |
 | 类名大小写调整 | 空 | 默认不会把 URL 中的 `user` 转成 `User`，需要配置 `controller_class_adjust` |

@@ -7,7 +7,7 @@ namespace ProjectNameTemplate\System;
 
 use DuckPhp\Foundation\ExceptionTrait;
 
-class ProjectException
+class ProjectException extends \Exception
 {
     use ExceptionTrait;
 }

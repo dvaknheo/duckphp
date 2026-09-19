@@ -29,7 +29,7 @@ class App extends DuckPhp
         //'controller_method_prefix' => '',                    // method prefix for controllers
         // 'controller_resource_prefix' => '',                         // used by `__res()` helper
 
-        // 'cmd' => [CommandAction::class],          // add to enable `php ./cli.php hello`
+        // 'cmd' => [CommandAction::class => true],    // enable `php ./cli.php hello` (key = command class, value = method prefix or true)
         // 'cli_command_with_common' => true,                          // also show built-in CLI commands
 
         // 'exception_reporter' => ExceptionReporter::class,        // turn on to use the custom reporter

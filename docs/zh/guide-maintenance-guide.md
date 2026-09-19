@@ -241,3 +241,17 @@ python3 <tmp>/drift.py --all
 - **`docs/en/` 不受影响**：英文侧有自己同名的副本文件（`docs/en/guide/appendix-options.md` 等），本次只删了 `docs/zh` 侧的。
 - 校验：`docs/zh` 站内链接 **1622 条 0 死链**；`docs/zh` 全 UTF-8；`docs/zh/guide/` 现在正好是 `index.md` + 41 章 + 4 附录。
 - **仍然留着的两件事**（都不是文档问题，等作者定）：Checklist 的 **Q3**（`skeleton/` 里 `agent-zh.md`/`RULES.md` 的失真内容）与 **Q4**（`DuckPhp::_Show()` 里那个没赋值的死表达式）。
+
+## 13. 收尾：Q3 / Q4 修复记录
+
+**Q4——`_Show()` 的死表达式：源码其实已经修好，本轮只补了防回归测试。**
+- `DuckPhp::_Show()` 里那句没赋值的 `$view === '' ? Route::_()->getRouteCallingPath() : $view;` 已在提交 `9635a77b`（"文档推进"）中删除；现在 `App::_Show()` 写的是 `$view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;`（正确赋值），`GlobalUser::_Show()`/`GlobalAdmin::_Show()` 同样都已赋值。
+- 在 `tests/DuckPhpTest.php` 的 `_Show()` 三分支测试后加了一条断言：把 `Route::_()->calling_path` 设为 `block`，再调 `DuckPhp::_()->_Show($data, '')`，必须渲染出 `view/block.php` 的内容。**把 bug 改回去跑一遍确认它会红**（报 `ValueError: Path cannot be empty`），再还原——这是本仓库对回归测试的硬要求。
+
+**Q3——`skeleton/`（模板工程）的失真内容：已修，并顺带修掉一个更严重的 bug。**
+- `skeleton/agent-zh.md`：`'class_user' => MyUserAction::class`（以及注释里的 `class_admin`）是**已不存在的旧选项**；改为真实写法——整体替换用 `user_provider`/`admin_provider`（框架会把实例包成相位代理装进 `GlobalUser::_()`/`GlobalAdmin::_()`），逐项接入用 `user_callback_for_*`，并补上真实接口名（`UserActionInterface`/`UserServiceInterface`/`UserSessionInterface`/`UserLoginActionInterface`/`UserLoginServiceInterface`）。
+- `skeleton/RULES.md`：方法前缀默认值从错的 `action_` 改成 **空串**（并写明 DuckPHP 1.3.6 起由 `action_` 改为空、本骨架的 `App.php` 里仍配着 `'action_'`）；`/Main/index` 那条示例改为「默认会被拒（E009），要允许得置 `controller_welcome_class_visible => true`」，关键约定表同步补一行。
+- `skeleton/src/System/App.php`：`cmd` 选项的注释示例 `[CommandAction::class]` → `[CommandAction::class => true]`（真实形态是「类名 => 方法前缀或 `true`」；`Console::getCommandCallback()` 是按 `$class => $method_prefix` 遍历的，列表形式会失效）。
+- **顺带查出并修掉的真 bug**：`skeleton/src/System/ProjectException.php` 与 `demo/src/System/ProjectException.php` 都只 `use ExceptionTrait`（该 trait 只带来 `ThrowOnTrait`），**没有 `extends \Exception`** ⇒ `Helper::BusinessThrowOn()` 抛它时会"无法抛出非 Throwable"致命错误。两处都改成 `class ProjectException extends \Exception`。
+- 回归测试：`tests/Foundation/ExceptionTraitTest.php` 新增 `testProjectExceptionClassesAreThrowable()`，直接加载这两个真实文件并断言 `is_subclass_of(..., \Throwable::class)` 且能真的 `throw`。**把 `extends \Exception` 去掉跑一遍，测试会红**（已实测），再还原。
+- 校验：`src/` 未被改动（`git diff -- src` 为空）；`bash scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`；全量测试 **`OK (93 tests, 565 assertions)`**（比原基线 `92/556` 多 1 个测试方法 + 9 个断言，即这两条回归测试）。

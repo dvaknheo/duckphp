@@ -136,6 +136,15 @@ PhaseContainer::RestAllContainerForTesting();
         }
         Route::_()->calling_class = '';
         //////////////////////
+        // 回归测试：$view 为空串时必须回落到「当前路由调用路径」当视图名
+        // （此处曾是没赋值的死表达式：`$view === '' ? Route::_()->getRouteCallingPath() : $view;`）
+        Route::_()->calling_path = 'block';
+        ob_start();
+        DuckPhp::_()->_Show(['A' => 'b'], '');
+        $out_fallback = ob_get_clean();
+        $this->assertStringContainsString('Block', $out_fallback);
+        Route::_()->calling_path = '';
+        //////////////////////
 
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);

@@ -1,0 +1,2 @@
+/* third party app's own resource - not shadowed, so this is what gets served */
+.child-owned-native-css { color: green; }
