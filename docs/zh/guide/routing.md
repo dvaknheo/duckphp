@@ -224,6 +224,6 @@ $options['path_info_compact_class_key'] = "";
 
 ## 相关类参考
 
-- [DuckPhp\\Core\\Route](ref/Core-Route.md)
-- [DuckPhp\\Component\\RouteHookRouteMap](ref/Component-RouteHookRouteMap.md)
-- [DuckPhp\\Component\\RouteHookPathInfoCompat](ref/Component-RouteHookPathInfoCompat.md)
+- [DuckPhp\\Core\\Route](../reference/Core-Route.md)
+- [DuckPhp\\Component\\RouteHookRouteMap](../reference/Component-RouteHookRouteMap.md)
+- [DuckPhp\\Component\\RouteHookPathInfoCompat](../reference/Component-RouteHookPathInfoCompat.md)

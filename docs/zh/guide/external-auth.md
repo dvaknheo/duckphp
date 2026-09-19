@@ -260,7 +260,7 @@ if (Helper::Admin()->isSuper()) {
 
 各接口的完整方法列表和详细说明，请参见参考手册：
 
-- [DuckPhp\GlobalUser\UserActionInterface](reference/GlobalUser-UserActionInterface.md)
-- [DuckPhp\GlobalUser\UserServiceInterface](reference/GlobalUser-UserServiceInterface.md)
-- [DuckPhp\GlobalAdmin\AdminActionInterface](reference/GlobalAdmin-AdminActionInterface.md)
-- [DuckPhp\GlobalAdmin\AdminServiceInterface](reference/GlobalAdmin-AdminServiceInterface.md)
+- [DuckPhp\GlobalUser\UserActionInterface](../reference/GlobalUser-UserActionInterface.md)
+- [DuckPhp\GlobalUser\UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)
+- [DuckPhp\GlobalAdmin\AdminActionInterface](../reference/GlobalAdmin-AdminActionInterface.md)
+- [DuckPhp\GlobalAdmin\AdminServiceInterface](../reference/GlobalAdmin-AdminServiceInterface.md)

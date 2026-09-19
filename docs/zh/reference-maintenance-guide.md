@@ -263,6 +263,9 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 | 在 Windows 侧直接跑 `phpunit` | Windows PHP 没有 `redis` 扩展，`RedisCacheTest`/`RedisManagerTest` 会报 `Class 'Redis' not found` 的**环境假失败**。测试与 `scripts/*.sh` 一律走 WSL（见第 5 节末），并先 `$env:WSL_UTF8=1` 免乱码。 |
 | 改公共名字（方法名／选项键／参数名）没改干净 | 一次性覆盖 `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`：先 `grep -rn "<旧名>" src tests docs` 列全，改完再 grep 残留 = 0。别漏调用处（`Ext/SqlDumper` 在调 `Db::quoteInsertArray()`）。**产物不用动**：`docker/test-php84/test_reports/`、`test_coveragedumps/`、`tests/data_for_tests/*.txt` 都是跑测试生成的。另外文档里可能故意保留「由旧名 X 更名」的历史说明，`sed` 批量替换时要先排除这类句子。 |
 | `ZAllDemoTest` 报 `Failed: <路由> => A(B)` | 该用例把 demo 各路由的**输出字节长度**跟 `tests/data_for_tests/ZAllDemoTest.config.php` 里的期望值硬比，而 `files` 路由会 dump App 的公共方法表与调用栈行号——**源码一动（加/删方法、行号漂移）长度就变**。改完 `src/` 后若只有它红：把 config 里的期望值改成括号里的 B 即可（实际内容同时被写到 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可直接 diff 看差异）。**别先怀疑自己的改动**——先 `git stash push -- src` 跑一遍确认是否本来就在红。 |
+| 旧指南里的 API／示例可能早就失效 | 实测：`docs/zh/guide/advanced-phase.md` 里 3 处 `App::Root()->getOverridingClass()`（源码里**没有**这个方法）；`helper.md` 的 `assignRewrite('article/123', …)` 少了前导 `/`，钩子内部拿 `'/'.$path_info` 比较 → 永不命中；`Configer` 读的是 `config/<名>.php`（不是 `<名>.config.php`）。**改写旧章前先核对源码，别原样搬旧示例**。 |
+| 指南里的示例没实跑过 | 本仓约定：新指南的示例必须能跑。第三卷（26–32 章）全部挂在 `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php`（36 断言）上，改示例就重跑它；第一/二卷的兜底是 `demo/` 与 `tests/data_for_tests/ZAllDemo`。 |
+| 多应用相关的斜杠坑（写示例时必踩） | ① `RouteHookRewrite::assignRewrite()` 的**键必须带前导 `/`**；② `controller_resource_prefix`：根应用写 `'/res/'`、子应用写 `'res/'`（前缀按 `'/'.controller_url_prefix.controller_resource_prefix` 拼，子应用的挂载前缀已带尾斜杠，再带前导斜杠就变成 `//`）；③ 相位名不是类名（子应用是 `:<name>`，不是 `\X\System\App`）。 |
 
 ## 8. 当前状态与待办
 
@@ -279,6 +282,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
        - 顺带修掉一处**本就红的**用例：`ZAllDemoTest` 的 `files` 期望长度 10347 是过期的（`App::isAbsPath/slashDir` 加进方法表后应为 10429），已更新 `tests/data_for_tests/ZAllDemoTest.config.php`（详见第 7 节那一行）。
     6. `PermissionMenu` 复查（作者逐条裁定）：**特性**照旧但文档改写成「刻意行为」的语气——未注释方法名带 `action_` 前缀（便于反查代码）、权限点不带图标（权限标记非导航项）、`permissionMenuTreeToSideMenuTree()` 只留可导航节点、同目录多条 `@menu_directory_url` 只用第一条；**新变更**：控制器没写 `@menu_directory` 时目录名改用**类名 basename**（新增 `getDefaultDirectoryName()`，只有类名为空才回落 `NoName`）；**修 bug**：`resolveUrls()` 不再把 `url: null` 的节点变成光秃秃的前缀（`'/admin/'`），而是保持没有 url。
     7. 事件常量拼写收尾：`BusinessHelperTrait::$EVENT_REGISTING/REGISTED` 与 `ControllerHelperTrait::$EVENT_ACTION_REGISTING/REGISTED` → **`REGISTERING/REGISTERED`**（值同改 `registering`/`registered`、`action_registering`/`action_registered`）。全仓 grep 确认这两个常量**只有定义、没有任何派发/监听点**，所以改值无内部影响（工程侧监听旧名需自行跟进，已在两篇文档的注意事项里注明）。登录/登出侧 `LOGINING/LOGINED/LOGOUTING/LOGOUTED` 保持原样——那是与 `GlobalUser`/`GlobalAdmin` 常量一致的框架既有写法。
+    8. **用户指南重写启动，第三卷（使用第三方应用）已落稿**：新增示例工程 `tests/data_for_tests/ZThirdDemo`（主应用 + `third/` 里被挂的第三方应用，含视图/配置/资源/控制器四类覆盖、跨相位调用、事件总线、安装流程）与 `tests/ZThirdDemoTest.php`（36 断言；全量 **92 tests / 556 assertions** 全绿）；指南侧：一页总目录 `docs/zh/guide/index.md`、附录 A 术语表 `appendix-glossary.md`、改写第 26 章 `advanced-phase.md`、新写 27–32 章（`mount-app`/`static-resources`/`component-sharing`/`overriding`/`installer`/`case-multi-app`，均 ≤400 行）；`docs/zh/index.md` 瘦身为指路页。**下一轮（M2）是第二卷 8–25 章的改写与补齐**，计划与开放问题见对话记录。
 - **待办（本工作范围外）**：
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
   - `docs/zh/guide/external-auth.md` 里还有一批旧键名（`user_callback_get_id/name/data/service`）未校（属下面的教程校对）；

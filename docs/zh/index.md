@@ -4,27 +4,16 @@
 
 [English](../en/index.md) | 中文
 
-## 目录
+## 从这里开始
 
-- [框架架构总览](guide/architecture.md)
-- [安装与快速开始](guide/install.md)
-- [项目结构与编码规则](guide/project-structure.md)
-- [Helper 助手类](guide/helper.md)
-- [应用配置](guide/configuration.md)
-- [路由系统](guide/routing.md)
-- [四层架构（Controller/Business/Model/View）](guide/layers.md)
-- [Model（模型层）使用指南](guide/model.md)
-- [数据库](guide/database.md)
-- [异常处理](guide/exception.md)
-- [生命周期与事件](guide/lifecycle.md)
-- [外部用户与管理员系统](guide/external-auth.md)
-- [组件与扩展](guide/components.md)
-- [命令行工具](guide/cli.md)
-- [部署](guide/deployment.md)
-- [附录：全局函数参考](guide/appendix-global-functions.md)
-- [附录：应用选项参考](guide/appendix-options.md)
-- [高级主题：相位与子应用](guide/advanced-phase.md)
+| 入口 | 什么时候看 |
+|---|---|
+| [**用户指南**](guide/index.md) | 想学会用它。四卷递进：入门 → 单一应用 → 使用第三方应用 → 高级话题 |
+| [**参考手册**](reference/index.md) | 想查「某个类有什么方法、某个选项是什么」；全局函数与应用选项也在这里 |
+| [**参考手册维护指南**](reference-maintenance-guide.md) | 负责维护文档的人/AI：格式基线、漂移扫描、校验流程 |
 
-## 参考手册
+- 第一次接触： [用户指南 · 第一卷 入门](guide/index.md)
+- 要把现成的外部应用挂进本项目： [用户指南 · 第三卷 使用第三方应用](guide/index.md)
+- 从 Laravel / Yii2 / CodeIgniter 过来：用户指南附录 C「迁移对照」（⏳ 撰写中）
 
-- [中文参考手册](reference/index.md)
+> 本页只做指路，章节目录不再复制一份 —— 完整目录见 [用户指南首页](guide/index.md)。
