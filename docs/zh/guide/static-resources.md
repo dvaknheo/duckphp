@@ -51,6 +51,9 @@ GET /shop/res/third.css      → 父应用 res/shop/third.css（覆盖了子应�
 > - 根应用写 `'/res/'`（带**前导**斜杠）——因为请求的 path_info 自带前导 `/`，而根应用的 `controller_url_prefix` 是空串；
 > - 子应用写 `'res/'`（**不带**前导斜杠）——因为它的 `controller_url_prefix`（`'shop/'`）已经以 `/` 结尾，再带一个就拼成 `/shop//res/` 而永远匹配不上。
 
+> ⚠️ **这里的 URL 在三种环境下都成立**：nginx/Apache（rewrite 把所有请求交给 `index.php`）、进程内调用（`ZThirdDemoTest` 就是直接 `serve()` 断言的）、以及**带 router 脚本的** `php -S`（写法见[第 7 章 §二](deployment.md)）。
+> 唯一例外是**不带 router 的** `php -S … -t public`（含框架的 `bin/cli.php run`）：内置服务器不把带后缀的 URI 交给 `index.php`，所以 `/res/main.css` 会 404 —— 开发时要么用 router 脚本，要么把资源放进 `public/` 让服务器直出。
+
 ## 多应用下的资源组织
 
 推荐按应用分目录，避免同名冲突：

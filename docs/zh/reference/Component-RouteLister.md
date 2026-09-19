@@ -29,7 +29,7 @@
 
 | 选项 | 默认 | 说明 |
 |---|---|---|
-| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。
+| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
 
 补充：它不承担“哪些方法被路由”（判断基于 controller_class_postfix/method_prefix, controller_class_base 检查依 Route），它只是索引其 path；欢迎/Helper/Base也被试优先定位目录。
 

@@ -46,16 +46,16 @@ EOT;
      */
     public function command_run()
     {
-        $options = Console::_()->getCliParameters();
-        $options['http_app_class'] = get_class($this->context());
-        $options['path'] = $this->context()->options['path'];
-        if (!empty($options['http_server'])) {
+        $cli_options = Console::_()->getCliParameters();
+        $cli_options['http_app_class'] = get_class($this->context());
+        $cli_options['path'] = $this->context()->options['path'];
+        if (!empty($cli_options['http_server'])) {
             /** @var string */
-            $class = str_replace('/', '\\', $options['http_server']);
+            $class = str_replace('/', '\\', $cli_options['http_server']);
             HttpServer::_($class::_());
         }
         $this->context()->options['cli_enable'] = false;
-        HttpServer::RunQuickly($options);
+        HttpServer::RunQuickly($cli_options);
         $this->context()->options['cli_enable'] = true;
     }
     /**

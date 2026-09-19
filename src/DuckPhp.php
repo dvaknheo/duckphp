@@ -40,14 +40,10 @@ class DuckPhp extends App
             RouteHookPathInfoCompat::class => 'path_info_compact_enable',
         ],
 
-        'session_prefix' => null,
-        'table_prefix' => null,
-
         'admin_provider' => '',
         'user_provider' => '',
         'database_driver' => '',
         'cli_command_with_common' => true,
-        'duckcoverage_test_lister' => null,
 
         'lang_default' => null,
         'lang_final' => null,
@@ -86,6 +82,29 @@ class DuckPhp extends App
         // 'path_info_compact_class_key' => '',
 
         //*/
+    ];
+    /**
+     * Hidden options: read by the framework, but intentionally NOT declared in $options.
+     *
+     * Listed here only so tooling/docs can show them (see scripts/scan-options.py).
+     * The value written here is the effective fallback used at the read site.
+     */
+    protected $hidden_options = [
+        'session_prefix' => '',
+        'table_prefix' => '',
+
+        'use_user_view' => false,
+        'use_admin_view' => false,
+        'use_user_view_header_footer' => false,
+        'use_admin_view_header_footer' => false,
+        'exception_for_business'    => \Exception::class,
+        'exception_for_controller'  => \Exception::class,
+        'duckphp_all_in_one_wrap_header_foot'   => false, // DuckPhpAllInOne::embedMe() sets it to true
+
+        'permission_menu_tree_for_admin'    => null,
+
+        // @used-by dvaknheo/duckcoverage : used by that composer package for coverage testing (no reader inside this repo)
+        'duckcoverage_test_lister' => null,
     ];
     protected function initComponentsOfRoot($components, $default): void
     {
@@ -157,12 +176,10 @@ class DuckPhp extends App
     public function _Show(array $data, string $view = '')
     {
         if (($this->options['use_user_view'] ?? false) && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
-            $view === '' ? Route::_()->getRouteCallingPath() : $view;
             GlobalUser::_()->_Show($data, $view);
             return;
         }
         if (($this->options['use_admin_view'] ?? false) && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
-            $view === '' ? Route::_()->getRouteCallingPath() : $view;
             GlobalAdmin::_()->_Show($data, $view);
             return;
         }

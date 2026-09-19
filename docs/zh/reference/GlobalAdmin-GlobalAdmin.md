@@ -76,6 +76,7 @@ $admin->_Show($data, 'admin/index');      // 带后台头尾的渲染
 - `service()` 与 `localService()`：后者直接返回本 Phase 的服务；前者用 `PhaseProxy::CreatePhaseProxy` 包装，便于跨子应用 Phase 调用。
 - URL 生成优先回调；无回调时 `__url($options['admin_url_*'])`。
 - `_Show()` 会临时切到 `App::getLastPhase()`；头尾模板仅在 `admin_view_file_header/footer` 非空时解析；`$view` 为空时使用当前路由路径。
+- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`use_admin_view_header_footer`——为真时才把 `admin_view_file_header/footer` 设为视图的 head/foot（配合入口类的 `use_admin_view` 使用，缺省 `false`）。
 - `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, …)`。
 - 组件经 `ComponentBase` 的 `_()` 取实例；`Foundation\Controller\AdminControllerBase`/`GlobalAdmin` 配套见 F 批相关文档。
 

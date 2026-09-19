@@ -18,6 +18,15 @@ class HttpServer
         // 'dry'
         //'background' =>true,
     ];
+    /**
+     * Hidden options: read by this class, but intentionally NOT declared in $options.
+     *
+     * 'background' can be given here, or by the CLI switch -b/--background (which sets it to true).
+     * Listed here only so tooling/docs can show it (see scripts/scan-options.py).
+     */
+    protected $hidden_options = [
+        'background' => false,
+    ];
     protected $cli_options = [
         'help' => [
             'short' => 'h',

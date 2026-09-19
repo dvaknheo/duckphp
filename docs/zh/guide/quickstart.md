@@ -1,194 +1,37 @@
-# 快速入门
+# 4 第一个页面
 
-本章通过完整示例演示 DuckPHP 的典型用法。
+> 目标：做一个「便签列表」页，把**路由 → 控制器 → 业务 → 模型 → 视图**这条链走通一遍，之后所有功能都是它的变体。
+> 前置：[第 3 章 目录结构与编码规则](project-structure.md)。预计 25 分钟。
+> 示例写法在仓库里都有同类实现：`skeleton/src/`（脚手架）与 `tests/data_for_tests/ZAllDemo/src/`（有测试兜底的四层示例）。
 
-## 示例：博客展示页面
-
-### 1. 项目结构
+## 做完是什么样
 
 ```
-myblog/
-├── composer.json
-├── config/
-│   └── DuckPhpSettings.config.php
-├── public/
-│   └── index.php
-├── src/
-│   ├── Controller/
-│   │   ├── Base.php
-│   │   └── MainController.php
-│   ├── Business/
-│   │   └── BlogBusiness.php
-│   ├── Model/
-│   │   └── BlogModel.php
-│   └── System/
-│       └── App.php
-├── view/
-│   ├── _sys/
-│   │   ├── error_404.php
-│   │   └── error_500.php
-│   └── main.php
-└── runtime/
+GET /Note/index     →  便签列表页
+GET /Note/show?id=1 →  单条便签
 ```
 
-### 2. 入口文件
+## 步骤 1：建库建表
 
-```php
-<?php
-// public/index.php
-require_once __DIR__.'/../vendor/autoload.php';
+SQLite 最省事（换 MySQL 只是改 DSN）：
 
-$options = [
-    'is_debug' => true,
-];
-\MyBlog\System\App::RunQuickly($options);
+```sql
+CREATE TABLE note (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  body TEXT,
+  created_at TIMESTAMP
+);
+INSERT INTO note (title, body, created_at) VALUES ('第一条便签', '你好，DuckPHP', datetime('now'));
 ```
 
-### 3. 应用配置
-
-```php
-<?php
-// src/System/App.php
-namespace MyBlog\System;
-
-use DuckPhp\DuckPhp;
-
-class App extends DuckPhp
-{
-    public $options = [
-        'path' => __DIR__ . '/../../',
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_500',
-    ];
-}
+```bash
+sqlite3 runtime/app.db < schema.sql
 ```
 
-### 4. 控制器
+## 步骤 2：把数据库告诉框架
 
-```php
-<?php
-// src/Controller/Base.php
-namespace MyBlog\Controller;
-
-use DuckPhp\Foundation\ControllerTrait;
-
-class Base
-{
-    use ControllerTrait;
-}
-```
-
-```php
-<?php
-// src/Controller/MainController.php
-namespace MyBlog\Controller;
-
-use MyBlog\Business\BlogBusiness;
-use DuckPhp\Foundation\Controller\Helper;
-
-class MainController extends Base
-{
-    public function action_index()
-    {
-        $data = BlogBusiness::_()->getIndexData();
-        Helper::Show(get_defined_vars(), 'main');
-    }
-    
-    public function action_post()
-    {
-        $id = Helper::GET('id');
-        $post = BlogBusiness::_()->getPost($id);
-        if (!$post) {
-            Helper::Show404();
-            return;
-        }
-        Helper::Show(get_defined_vars(), 'post');
-    }
-}
-```
-
-### 5. 业务层
-
-```php
-<?php
-// src/Business/BlogBusiness.php
-namespace MyBlog\Business;
-
-use DuckPhp\Foundation\BusinessTrait;
-use MyBlog\Model\BlogModel;
-
-class BlogBusiness
-{
-    use BusinessTrait;
-    
-    public function getIndexData()
-    {
-        $title = "我的博客";
-        $posts = BlogModel::_()->getRecentPosts();
-        return [
-            'title' => $title,
-            'posts' => $posts,
-        ];
-    }
-    
-    public function getPost($id)
-    {
-        return BlogModel::_()->find($id);
-    }
-}
-```
-
-### 6. 模型层
-
-```php
-<?php
-// src/Model/BlogModel.php
-namespace MyBlog\Model;
-
-use DuckPhp\Foundation\Model\Base;
-
-class BlogModel extends Base
-{
-    protected $table_name = 'posts';
-    
-    public function getRecentPosts($limit = 10)
-    {
-        return $this->fetchAll(
-            "SELECT * FROM `'TABLE'` ORDER BY created_at DESC LIMIT ?",
-            $limit
-        );
-    }
-}
-```
-
-### 7. 视图
-
-```php
-<?php
-// view/main.php
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title><?= __h($title) ?></title>
-</head>
-<body>
-    <h1><?= __h($title) ?></h1>
-    
-    <?php foreach ($posts as $post): ?>
-        <article>
-            <h2><a href="<?= __url('post?id=' . $post['id']) ?>">
-                <?= __h($post['title']) ?>
-            </a></h2>
-            <p><?= __h(mb_substr($post['content'], 0, 200)) ?>...</p>
-            <small><?= $post['created_at'] ?></small>
-        </article>
-    <?php endforeach; ?>
-</body>
-</html>
-```
-
-### 8. 配置文件
+敏感信息放设置文件（为什么放这里见[第 5 章](configuration.md)）：
 
 ```php
 <?php
@@ -196,76 +39,188 @@ class BlogModel extends Base
 return [
     'database_list' => [
         [
-            'dsn' => 'sqlite:' . __DIR__ . '/../runtime/blog.db',
-            'username' => '',
-            'password' => '',
-            'driver_options' => [],
+            'dsn' => 'sqlite:' . __DIR__ . '/../runtime/app.db',
+            // MySQL：'dsn' => 'mysql:host=127.0.0.1;dbname=demo;charset=utf8mb4;', 'username' => …, 'password' => …,
         ],
     ],
 ];
 ```
 
-> **注意**：即使使用 SQLite，`username` 和 `password` 键也必须存在，否则 `DuckPhp\Db\Db::check_connect()` 会抛出 `Undefined array key "username"` 错误。
+> `DbManager` 默认会从**设置**里取 `database_list`（选项 `database_list_reload_by_setting` 默认为真），所以只写在这里就够。
 
-### 9. 运行
-
-```bash
-# 启动开发服务器
-php -S localhost:8080 -t public
-
-# 或使用框架命令行
-php vendor/bin/duckphp run
-```
-
-访问 `http://localhost:8080/`，看到博客首页。
-
-## 完整示例（单一文件）
-
-如果你想要最小化体验，可以参考 `template/public/demo.php`，它是单一文件包含所有内容的示例：
+## 步骤 3：模型（Model）—— 只管数据
 
 ```php
-// demo.php 核心结构
-namespace {
-    // 自动加载
-}
+<?php declare(strict_types=1);
+namespace MyProj\Model;
 
-namespace MySpace\System {
-    class App extends \DuckPhp\DuckPhp { }
-}
+use DuckPhp\Foundation\Model\Base;
 
-namespace MySpace\Controller {
-    class MainController {
-        use \DuckPhp\Foundation\ControllerTrait;
-        public function action_index() { ... }
+class NoteModel extends Base
+{
+    // 类名 NoteModel → 表名 note（去掉 Model 再小写）；表名不同就 protected $table_name = 'notes';
+    public function getRecent(int $limit = 20): array
+    {
+        $limit = (int) $limit;
+        return static::Db()->fetchAll('SELECT * FROM `' . $this->table() . "` ORDER BY id DESC LIMIT $limit");
     }
-}
-
-namespace MySpace\Business {
-    class MyBusiness {
-        use \DuckPhp\Foundation\BusinessTrait;
+    public function findOne(int $id): ?array
+    {
+        $row = static::Db()->fetch('SELECT * FROM `' . $this->table() . '` WHERE id = ?', $id);
+        return $row ?: null;
     }
-}
-
-namespace MySpace\Model {
-    class MyModel {
-        use \DuckPhp\Foundation\ModelTrait;
-    }
-}
-
-namespace {
-    \MySpace\System\App::RunQuickly($options);
 }
 ```
 
-## 快捷开发命令
+要点：
+
+- `static::Db()` 来自 `Foundation\Model\Base`（不用再引 Helper）；读写分离时用 `DbForRead()` / `DbForWrite()`。
+- `$this->table()` 给出「表前缀 + 表名」；`$this->prepare($sql)` 还能把 SQL 里的 `` `'TABLE'` `` 占位换成真实表名。
+- Model 里**不写业务判断、不抛异常**（铁律，见上一章）。
+
+## 步骤 4：业务（Business）—— 放规则
+
+```php
+<?php declare(strict_types=1);
+namespace MyProj\Business;
+
+use DuckPhp\Foundation\SingletonTrait;
+use MyProj\Model\NoteModel;
+
+class NoteBusiness
+{
+    use SingletonTrait;
+
+    public function recentNotes(int $limit = 20): array
+    {
+        return NoteModel::_()->getRecent($limit);
+    }
+    public function noteOr404(int $id): array
+    {
+        $note = NoteModel::_()->findOne($id);
+        Helper::BusinessThrowOn(!$note, '便签不存在', 404);   // 业务层的条件抛（第 19 章）
+        return $note;
+    }
+}
+```
+
+`Helper` 是业务层自己的助手（`src/Business/Helper.php`，内部 `use DuckPhp\Helper\BusinessHelperTrait;`），脚手架自带。
+
+## 步骤 5：控制器（Controller）—— 收输入、出输出
+
+```php
+<?php declare(strict_types=1);
+namespace MyProj\Controller;
+
+use MyProj\Business\NoteBusiness;
+
+class NoteController extends Base
+{
+    public function index()
+    {
+        $limit = (int) Helper::GET('limit', 20);          // 输入只在这层碰
+        $list  = NoteBusiness::_()->recentNotes($limit);  // 逻辑交给业务层
+        Helper::Show(get_defined_vars(), 'note/index');   // 输出：渲染视图
+    }
+    public function show()
+    {
+        $note = NoteBusiness::_()->noteOr404((int) Helper::GET('id'));
+        Helper::Show(get_defined_vars(), 'note/show');
+    }
+}
+```
+
+输出一共四种（第 10 章「控制器」（⏳ 撰写中）会展开）：`Helper::Show($data, 'view')` 渲染视图、`Helper::ShowJson($data)` 出 JSON、`Helper::Show302($url)` 跳转、`Helper::Show404()` 出 404。
+
+## 步骤 6：视图（View）—— 只做展示
+
+```php
+<?php // view/note/index.php ?>
+<!doctype html>
+<html><head><meta charset="utf-8"><title>便签</title></head><body>
+<h1>便签（<?= count($list) ?> 条）</h1>
+<ul>
+<?php foreach ($list as $note): ?>
+    <li>
+        <a href="<?= __url('Note/show?id=' . $note['id']) ?>"><?= __h($note['title']) ?></a>
+        <small><?= __h($note['created_at']) ?></small>
+    </li>
+<?php endforeach; ?>
+</ul>
+</body></html>
+```
+
+视图里只用全局函数：`__h()` 转义、`__url()` 生成 URL、`__res()` 生成资源 URL、`__l()` 翻译。
+
+## 步骤 7：跑起来
 
 ```bash
-# 创建新项目
-php vendor/bin/duckphp new
-
-# 启动开发服务器
-php vendor/bin/duckphp run
-
-# 查看帮助
-php vendor/bin/duckphp help
+php -S 127.0.0.1:8080 -t public
 ```
+
+| 访问 | 结果 |
+|---|---|
+| `http://127.0.0.1:8080/Note/index` | 列表页 |
+| `http://127.0.0.1:8080/Note/show?id=1` | 详情页 |
+| `http://127.0.0.1:8080/` | 走 `MainController::index()`（欢迎页控制器，第 9 章） |
+
+> URL 里的 `Note` 大小写要与类名一致（默认不做大小写宽松处理）。
+
+## 加个「新建便签」练手
+
+```php
+// Controller：只搬运输入与输出
+public function add()
+{
+    if (Helper::POST('title')) {
+        NoteBusiness::_()->create(Helper::POST());
+        Helper::Show302('Note/index');
+    }
+    Helper::Show([], 'note/add');
+}
+
+// Business：规则与校验放这里
+public function create(array $post): int
+{
+    Helper::BusinessThrowOn(trim((string) ($post['title'] ?? '')) === '', '标题不能为空', 1001);
+    return NoteModel::_()->create($post);
+}
+```
+
+表单校验的完整做法（过滤器 + 错误数组）见[第 16 章](validator.md)；这里只求把链路走通。
+
+## 单文件版（不建工程也能跑）
+
+只验证「框架能跑」时，`demo/public/helloworld.php` 是最小可运行例子（`ZAllDemoTest` 会请求它并比对输出）：
+
+```php
+<?php declare(strict_types=1);
+require_once __DIR__ . '/../vendor/autoload.php';
+
+class MainController          // 单文件示例：控制器写在同一文件里，所以把控制器命名空间设为根
+{
+    public function index() { echo 'hello world'; }
+}
+
+\DuckPhp\DuckPhp::RunQuickly([
+    'is_debug' => true,
+    'namespace_controller' => '\\',
+]);
+```
+
+## 常见错误
+
+| 现象 | 原因 | 改法 |
+|---|---|---|
+| `/Note/index` 404 | 方法带了 `action_` 前缀而选项里没配 | 方法名去掉前缀，或配 `'controller_method_prefix' => 'action_'` |
+| `Class "MyProj\Model\NoteModel" not found` | 命名空间与目录不匹配 | `src/Model/NoteModel.php` + `namespace MyProj\Model;` |
+| 视图里 `$list` 未定义 | 没把变量传进去 | `Helper::Show(get_defined_vars(), 'note/index')` |
+| 列表页报 SQL 错误 | 表没建 / DSN 指到别处 | 检查 `runtime/app.db` 与设置文件里的路径 |
+| 页面乱码 | 视图没声明编码 | HTML 里加 `<meta charset="utf-8">` |
+| 便签存在却报「便签不存在」 | `Helper::GET('id')` 拿到的不是数字 | 强转 `(int)`，并在 Business 层校验 |
+
+## 下一步
+
+- [第 5 章 配置与设置](configuration.md)：把 `App.php` 的选项与 `config/` 的设置彻底分清。
+- [第 8 章 请求生命周期与钩子点](lifecycle.md)：刚才这一次请求，框架内部都做了什么。
+- 第 10 章「控制器」、第 11 章「视图与模板」（两章均 ⏳ 撰写中）：这两层的完整能力。

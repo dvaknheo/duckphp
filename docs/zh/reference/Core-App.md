@@ -36,6 +36,7 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
 | `html_handler` | `null` | （预留/扩展用）任意 html 处理器回调。 |
 | `lang_handler` | `null` | 传入后 `lang()`/`langText()` 将优先走它，而不再 fallback 简易替换。 |
 | `is_maintain` | `false` | 维护标记。命中时 `prepareServe()` 渲维护页（`error_maintain`）。 |
+| `skip_404` | `false` | 跳过 404 展示（`skip404Handler()` 会置真）。 |
 | `error_404` | `null` | 404 时用（路径或可调用）。null → 内置 404 占位/开发信息。 |
 | `error_500` | `null` | 异常默认总页（路径或可调用）。null → debug 下详细、非 debug 精简。 |
 | `error_debug` | `null` | 开发期错误视图/可调用。null → 内置 fieldset 回执。 |

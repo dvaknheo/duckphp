@@ -11,6 +11,7 @@
 | [**用户指南**](guide/index.md) | 想学会用它。四卷递进：入门 → 单一应用 → 使用第三方应用 → 高级话题 |
 | [**参考手册**](reference/index.md) | 想查「某个类有什么方法、某个选项是什么」；全局函数与应用选项也在这里 |
 | [**参考手册维护指南**](reference-maintenance-guide.md) | 负责维护文档的人/AI：格式基线、漂移扫描、校验流程 |
+| [**用户指南重写 · 交接与维护指南**](guide-maintenance-guide.md) | 接手「用户指南重写」的人/AI：写作模板、校验命令、已知坑；进度与待办见 [进度 Checklist](guide-rewrite-checklist.md) |
 
 - 第一次接触： [用户指南 · 第一卷 入门](guide/index.md)
 - 要把现成的外部应用挂进本项目： [用户指南 · 第三卷 使用第三方应用](guide/index.md)

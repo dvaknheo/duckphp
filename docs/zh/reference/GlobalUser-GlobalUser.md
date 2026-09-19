@@ -81,6 +81,7 @@ $user->_Show($data, 'user/center');       // 带用户页头尾的渲染
 - `service()` 与 `localService()`：前者经 `PhaseProxy` 包装成可跨 Phase 调用的代理；后者返回当前 Phase 的服务。
 - URL 生成优先 callback；无 callback 时 `__url($options['user_url_*'])`。
 - `_Show()` 会临时切到 `App::getLastPhase()`；头尾模板仅在 `user_view_file_header/footer` 非空时解析；`$view` 为空时使用当前路由路径。
+- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`use_user_view_header_footer`——为真时才把 `user_view_file_header/footer` 设为视图的 head/foot（配合入口类的 `use_user_view` 使用，缺省 `false`）。
 - `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, …)`。
 - 组件经 `ComponentBase` 的 `_()` 取实例。
 

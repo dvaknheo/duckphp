@@ -1,709 +1,681 @@
 # 应用选项（按类分组）
 
-DuckPhp 的选项通过 `$options` 属性传入，最终合并到 `DuckPhp\Core\App::$options` 中。
-以下按来源类分组列出所有选项，默认值为源码中的初始值。
+> 本页由 `scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
+
+选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**221** 个选项（同名选项在不同类各自声明，合计 255 处；另有 12 个隐藏选项见文末）。
+
+想按名字找？看 [应用选项（按字母顺序索引）](options-index.md)；选项机制见 [应用选项总览](options.md)。
 
 ---
 
-> **说明**：加粗选项表示。`DuckPhp\DuckPhp` 。`DuckPhp\Core\App` 默认提供的选项；未加粗选项通常来自特定组件，需要手动启用对应组件或通过 `ext` 选项加载。
-
----
-
-## 入口类选项
+## 入口类
 
 ### DuckPhp\DuckPhp
 
-`DuckPhp` 。`common_options` 中定义了框架默认加载组件与通用选项。
+DuckPhp\Core\App 的子类，本身不定义复杂的业务，而是
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `ext_options_file_enable` | `true` | `DuckPhp\DuckPhp` | 是否启用 `DuckPhpApps.config.php` 额外选项文件。|
-| `ext_options_file` | `'config/DuckPhpApps.config.php'` | `DuckPhp\DuckPhp` | 额外选项文件路径。|
-| `ext` | `[]` | `DuckPhp\DuckPhp` | 默认加载的扩展组件映射。|
-| `session_prefix` | `null` | `DuckPhp\DuckPhp` | Session 前缀。|
-| `table_prefix` | `null` | `DuckPhp\DuckPhp` | 数据库表前缀。|
-| `path_info_compact_enable` | `false` | `DuckPhp\DuckPhp` | 是否启用。PATH_INFO 兼容模式。|
-| `class_admin` | `''` | `DuckPhp\DuckPhp` | 管理员类名，设置后自动启用全局管理员。|
-| `class_user` | `''` | `DuckPhp\DuckPhp` | 用户类名，设置后自动启用全局用户。|
-| `database_driver` | `''` | `DuckPhp\DuckPhp` | 数据库驱动类型（。`mysql`、`sqlite`）。|
-| `cli_command_with_app` | `true` | `DuckPhp\DuckPhp` | 是否将当前应用类加入 CLI 命令类列表。|
-| `cli_command_with_common` | `true` | `DuckPhp\DuckPhp` | 是否将默认命令类加入 CLI 命令类列表。|
-| `cli_command_with_fast_installer` | `true` | `DuckPhp\DuckPhp` | 是否将安装器加入 CLI 命令类列表。|
-| `allow_require_ext_app` | `true` | `DuckPhp\DuckPhp` | 是否允许 `require` 命令安装外部子应用。|
-| `lang_default` | `null` | `DuckPhp\DuckPhp` | 默认语言，与 `Lang` 组件共享。|
-| `lang_final` | `null` | `DuckPhp\DuckPhp` | 最终语言，与 `Lang` 组件共享。|
+类文档：[DuckPhp\DuckPhp](DuckPhp.md)
 
----
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `data_file_enable` | `false` | 是否打开“数据属性/外部扩展 options 文件”机制。开启后会在对应初始化阶段调用 `ExtOptionsLoader` 读取额外定义（如多应用共用配置）。 |
+| `ext` | `[...]` | 本类默认启用的扩展钩子映射。值为源码 `ext` 五项：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`(=那个开关值)。 |
+| `admin_provider` | `''` | 自定义管理员提供者类名；非空时会在内部阶段实例化并交给 `GlobalAdmin`。 |
+| `user_provider` | `''` | 自定义用户提供者类名；非空时同理交给 `GlobalUser`（可用 `PhaseProxy` 包装）。 |
+| `database_driver` | `''` | 数据库驱动标签（如 `mysql`）。初始化后会把 `DbManager` 得到的真实驱动回填到该 options 供上层读取。 |
+| `cli_command_with_common` | `true` | 是否把内置默认 CLI 命令集（`DuckPhp\Component\Command`）登记进当前应用的命令列表。 |
+| `lang_default` | `null` | 多语言默认语言（与 Lang 组件共享；不做进一步检测的兜底）。 |
+| `lang_final` | `null` | 最终语言；设置后不再自动检测、直接以它为准。 |
+| `local_database` | `false` | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不计入公共容器共享，互不干扰）。 |
+| `local_redis` | `false` | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
 
-## 核心选项
-
-### DuckPhp\Core\KernelTrait
-
-`kernel_options` 定义了应用初始化所需的核心选项。
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `null` | `DuckPhp\Core\KernelTrait` | 项目根路径。|
-| `override_class` | `null` | `DuckPhp\Core\KernelTrait` | 重载类名，存在则切换到该类初始化。|
-| `override_class_from` | `null` | `DuckPhp\Core\KernelTrait` | 切换前保存的。`override_class`。|
-| `cli_enable` | `true` | `DuckPhp\Core\KernelTrait` | 是否启用命令行模式。|
-| `is_debug` | `false` | `DuckPhp\Core\KernelTrait` | 是否调试模式。|
-| `ext` | `[]` | `DuckPhp\Core\KernelTrait` | 扩展组件映射。|
-| `app` | `[]` | `DuckPhp\Core\KernelTrait` | 子应用映射，键为类名，值为对应选项。|
-| `skip_404` | `false` | `DuckPhp\Core\KernelTrait` | 是否跳过 404 处理。|
-| `skip_exception_check` | `false` | `DuckPhp\Core\KernelTrait` | 是否跳过异常检查，用于配合其他框架。|
-| `on_init` | `null` | `DuckPhp\Core\KernelTrait` | 初始化完成后回调。|
-| `namespace` | `null` | `DuckPhp\Core\KernelTrait` | 项目命名空间。|
-| `setting_file` | `'config/DuckPhpSettings.config.php'` | `DuckPhp\Core\KernelTrait` | 设置文件路径。|
-| `setting_file_ignore_exists` | `true` | `DuckPhp\Core\KernelTrait` | 设置文件不存在时是否忽略。|
-| `setting_file_enable` | `true` | `DuckPhp\Core\KernelTrait` | 是否启用设置文件。|
-| `use_env_file` | `false` | `DuckPhp\Core\KernelTrait` | 是否加载 `.env` 文件。|
-| `exception_reporter` | `null` | `DuckPhp\Core\KernelTrait` | 异常报告类。|
-| `exception_for_project` | `null` | `DuckPhp\Core\KernelTrait` | 异常报告仅针对的异常类。|
-| `options_file` | `'config/DuckPhpOptions.config.php'` | `DuckPhp\Core\KernelTrait` | 选项文件路径。|
-| `options_file_enable` | `false` | `DuckPhp\Core\KernelTrait` | 是否启用选项文件。|
-| `path_installed_options` | `'config'` | `DuckPhp\Core\KernelTrait` | 已安装选项文件所在目录。|
-| `installed_options_file` | `'DuckPhpInstalled.config.php'` | `DuckPhp\Core\KernelTrait` | 已安装选项文件名。|
-| `installed_options_enable` | `false` | `DuckPhp\Core\KernelTrait` | 是否启用已安装选项文件。|
-| `cli_command_classes` | `[]` | `DuckPhp\Core\KernelTrait` | CLI 命令类列表。|
-| `cli_command_prefix` | `null` | `DuckPhp\Core\KernelTrait` | CLI 命令命名空间前缀。|
-| `cli_command_method_prefix` | `'command_'` | `DuckPhp\Core\KernelTrait` | CLI 命令方法前缀。|
+## 核心
 
 ### DuckPhp\Core\App
 
-`core_options` 定义。`App` 核心组件所需的选项。
+DuckPhp\Core\App
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path_runtime` | `'runtime'` | `DuckPhp\Core\App` | 运行目录路径。|
-| `alias` | `null` | `DuckPhp\Core\App` | 子应用别名，用于视图等资源路径调整。|
-| `default_exception_do_log` | `true` | `DuckPhp\Core\App` | 发生异常时是否记录日志。|
-| `close_resource_at_output` | `false` | `DuckPhp\Core\App` | 输出时是否关闭资源（第三方扩展参考）。|
-| `html_handler` | `null` | `DuckPhp\Core\App` | HTML 编码函数回调。|
-| `lang_handler` | `null` | `DuckPhp\Core\App` | 语言处理回调。|
-| `error_404` | `null` | `DuckPhp\Core\App` | 404 错误处理视图或回调。|
-| `error_500` | `null` | `DuckPhp\Core\App` | 500 错误处理视图或回调。|
+类文档：[DuckPhp\Core\App](Core-App.md)
 
----
-
-## 核心组件选项
-
-### DuckPhp\Core\Route
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `namespace` | `''` | `DuckPhp\Core\Route` | 项目命名空间。|
-| `namespace_controller` | `'Controller'` | `DuckPhp\Core\Route` | 控制器命名空间。|
-| `controller_path_ext` | `''` | `DuckPhp\Core\Route` | 控制器路径后缀。|
-| `controller_welcome_class` | `'Main'` | `DuckPhp\Core\Route` | 默认欢迎控制器类名。|
-| `controller_welcome_class_visible` | `false` | `DuckPhp\Core\Route` | 是否允许 URL 中显示欢迎控制器名。|
-| `controller_welcome_method` | `'index'` | `DuckPhp\Core\Route` | 默认欢迎方法名。|
-| `controller_class_adjust` | `''` | `DuckPhp\Core\Route` | 控制器类名调整规则。|
-| `controller_class_base` | `''` | `DuckPhp\Core\Route` | 控制器基类限制。|
-| `controller_class_postfix` | `'Controller'` | `DuckPhp\Core\Route` | 控制器类名后缀。|
-| `controller_method_prefix` | `'action_'` | `DuckPhp\Core\Route` | 控制器方法前缀。|
-| `controller_prefix_post` | `'do_'` | `DuckPhp\Core\Route` | POST 请求方法额外前缀。|
-| `controller_class_map` | `[]` | `DuckPhp\Core\Route` | 控制器类映射表。|
-| `controller_resource_prefix` | `''` | `DuckPhp\Core\Route` | 资源 URL 前缀。|
-| `controller_url_prefix` | `''` | `DuckPhp\Core\Route` | 控制。URL 前缀。|
-| `controller_fix_mistake_path_info` | `true` | `DuckPhp\Core\Route` | 是否修复缺失。PATH_INFO。|
-
-### DuckPhp\Core\Runtime
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `use_output_buffer` | `false` | `DuckPhp\Core\Runtime` | 是否启用输出缓冲。|
-| `path_runtime` | `'runtime'` | `DuckPhp\Core\Runtime` | 运行目录路径。|
-
-### DuckPhp\Core\Logger
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Core\Logger` | 项目路径。|
-| `path_log` | `'runtime'` | `DuckPhp\Core\Logger` | 日志目录路径。|
-| `log_file_template` | `'log_%Y-%m-%d_%H-%i.log'` | `DuckPhp\Core\Logger` | 日志文件名模板。|
-| `log_prefix` | `'DuckPhpLog'` | `DuckPhp\Core\Logger` | 日志前缀。|
-
-### DuckPhp\Core\View
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Core\View` | 项目路径。|
-| `path_view` | `'view'` | `DuckPhp\Core\View` | 视图目录路径。|
-| `view_skip_notice_error` | `true` | `DuckPhp\Core\View` | 渲染视图时是否忽。notice 错误。|
-
-### DuckPhp\Core\SuperGlobal
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `superglobal_auto_define` | `false` | `DuckPhp\Core\SuperGlobal` | 初始化时是否定义 `__SUPERGLOBAL_CONTEXT` 宏。|
-
-### DuckPhp\Core\Console
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `cli_command_group` | `[]` | `DuckPhp\Core\Console` | 命令分组注册信息。|
-| `cli_command_default` | `'help'` | `DuckPhp\Core\Console` | 默认命令。|
-| `cli_readlines_logfile` | `''` | `DuckPhp\Core\Console` | `readLines` 输入日志文件。|
-
-### DuckPhp\Core\ExceptionManager
-
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `handle_all_dev_error` | `true` | `DuckPhp\Core\ExceptionManager` | 是否捕获开发错误。|
-| `handle_all_exception` | `true` | `DuckPhp\Core\ExceptionManager` | 是否捕获全部异常。|
-| `system_exception_handler` | `null` | `DuckPhp\Core\ExceptionManager` | 系统异常处理回调。|
-| `handle_exception_on_init` | `true` | `DuckPhp\Core\ExceptionManager` | 初始化时是否启动异常处理。|
-| `default_exception_handler` | `null` | `DuckPhp\Core\ExceptionManager` | 默认异常处理回调。|
-| `dev_error_handler` | `null` | `DuckPhp\Core\ExceptionManager` | 开发错误处理回调。|
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path_runtime` | `'runtime'` | 运行期相对项目根目录（或绝对路径）。`getRuntimePath()` 返回。 |
+| `path_config` | `'config'` | 配置文件目录（`getConfigFile()` 基于它+Phase覆盖查找）。 |
+| `default_exception_do_log` | `true` | 默认异常处理器是否写日志。 |
+| `close_resource_at_output` | `false` | 输出结束是否统一关闭/回收资源（默认关闭）。 |
+| `html_handler` | `null` | （预留/扩展用）任意 html 处理器回调。 |
+| `lang_handler` | `null` | 传入后 `lang()`/`langText()` 将优先走它，而不再 fallback 简易替换。 |
+| `is_maintain` | `false` | 维护标记。命中时 `prepareServe()` 渲维护页（`error_maintain`）。 |
+| `skip_404` | `false` | 跳过 404 展示（`skip404Handler()` 会置真）。 |
+| `error_404` | `null` | 404 时用（路径或可调用）。null → 内置 404 占位/开发信息。 |
+| `error_500` | `null` | 异常默认总页（路径或可调用）。null → debug 下详细、非 debug 精简。 |
+| `error_debug` | `null` | 开发期错误视图/可调用。null → 内置 fieldset 回执。 |
+| `error_maintain` | `null` | 维护页视图/可调用。null → 内置 “Maintaining.”。 |
+| `setting_file` | `'config/DuckPhpSettings.config.php'` | Setting 文件（相对根或绝对）。 |
+| `setting_file_ignore_exists` | `true` | 设置文件缺失时是否忽略（并不抛错）。 |
+| `setting_file_enable` | `true` | 是否加载设置文件。 |
+| `use_env_file` | `false` | 为真则在 loadSetting 一并读根 `.env`(INI) 合并。 |
+| `setting` | `[]` | 直接以数组形式给出的应用设置（setting）初值；作为 `loadSetting()` 的起点，随后再合并 `.env`（可选）与设置文件。 |
+| `installed` | `false` | 应用是否“已安装”（false 会触发安装跳转）。 |
+| `url_install` | `'install'` | 未安装时跳到的安装 URL。 |
+| `exception_map` | `[]` | 异常类映射表（`原异常类 => 替代异常类`）；`ProjectThrowOn/BusinessThrowOn/ControllerThrowOn` 抛异常前会先按它替换类名。 |
 
 ### DuckPhp\Core\AutoLoader
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Core\AutoLoader` | 项目路径。|
-| `namespace` | `''` | `DuckPhp\Core\AutoLoader` | 应用命名空间。|
-| `path_namespace` | `'app'` | `DuckPhp\Core\AutoLoader` | 应用代码目录。|
-| `skip_app_autoload` | `false` | `DuckPhp\Core\AutoLoader` | 是否跳过应用命名空间自动加载。|
-| `autoload_cache_in_cli` | `false` | `DuckPhp\Core\AutoLoader` | CLI 下是否缓存类文件。|
-| `autoload_path_namespace_map` | `[]` | `DuckPhp\Core\AutoLoader` | 命名空间与路径映射。|
-| `psr-4` | `[]` | `DuckPhp\Core\AutoLoader` | PSR-4 映射。|
+Core\AutoLoader 提供一套很轻的“命名空间 → 目录”自动加载
 
----
+类文档：[DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
 
-## 自带组件选项
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 项目根目录。缺省尝试 `realpath(getcwd().'/../')`。用于把相对路径归一。 |
+| `namespace` | `''` | 应用主命名空间（如 `App`）。非空且 `skip_app_autoload` 为假时，会把 `namespace` 指到 `path_namespace`。 |
+| `path_namespace` | `'app'` | 应用目录（主命名空间对应目录），可绝对；相对则相对 `path`。默认把 `app/` → `${namespace}\`。 |
+| `skip_app_autoload` | `false` | 为真则不再自动把主 namespace 映射到 app 目录。 |
+| `autoload_cache_in_cli` | `false` | 为真时 CLI 模式 `run()` 里会先 `cacheClasses()`（opcache 预编译）。 |
+| `autoload_path_namespace_map` | `[]` | 额外 `path => namespace` 映射（不会翻转方向）。 |
+| `psr-4` | `[]` | PSR-4 风格映射：`namespace => path`（初始化时翻转成 path=>namespace 装入 `namespace_paths`）。 |
+
+### DuckPhp\Core\Console
+
+DuckPHP 对 CLI 的命令处理根
+
+类文档：[DuckPhp\Core\Console](Core-Console.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `console_command_classes` | `[]` | 命令注册表：`namespace => [ className => 方法前缀 ]`。前缀 `true` 会解释为 `command_`。 |
+| `console_command_phase` | `[]` | `namespace => phase` 的映射，运行某命名空间命令前先切到对应 Phase。 |
+| `console_command_default` | `'help'` | 无尾部位置参数时（仍给 `--` 一个命令串）用作默认命令词。 |
+| `console_readlines_logfile` | `''` | 若给路径：`readLines` 在每次输入回显后把它写入该文件（相对 `path_runtime`）；相对实际 `path_runtime`。 |
+
+### DuckPhp\Core\ExceptionManager
+
+ExceptionManager（class ExceptionManager…
+
+类文档：[DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `handle_all_dev_error` | `true` | 是否接管 PHP 错误处理器（dev path）。 |
+| `handle_all_exception` | `true` | 是否接管全局异常处理器。 |
+| `system_exception_handler` | `null` | 自定义异常安装回调 `function(callable $handler)`，可替代内建 set_exception_handler（极端/跨运行时用）。 |
+| `handle_exception_on_init` | `true` | init 时立即 run 接管。 |
+| `default_exception_handler` | `null` | 未匹配的自定义回退（通常填 App::OnDefaultException）。 |
+| `dev_error_handler` | `null` | dev错误回调（通常 App::OnDevErrorHandler）。 |
+| `exception_reporter` | `null` | 项目级“异常报告类”（要有静态 OnException），会在 init 时 assign。 |
+| `exception_for_project` | `null` | project 主异常类名；给了 exception_reporter 时作为 assign 目标基类。 |
+
+### DuckPhp\Core\KernelTrait
+
+KernelTrait 把“一个应用是什么、怎么跑”这件事写在一个 Trait…
+
+类文档：[DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `is_debug` | `false` | 调试开关字段（源码注释：“no use, just align”，仅占位对齐；真正取舍请用 App::IsDebug() 等汇总逻辑）。 |
+| `path` | `null` | 项目根目录。显式缺省时按 `SCRIPT_FILENAME`…上下两层推导后在 `initOptions()` 中补成绝对路径并以 `/` 结尾。 |
+| `namespace` | `null` | 项目默认命名空间。缺省由当前实现类反推（`getDefaultProjectNameSpace`）。 |
+| `name` | `''` | 该应用的短名；用于子应用 Phase 命名。 |
+| `app` | `[]` | 子应用声明表。形如 `[类 => ['namespace'=>…,'controller_url_prefix'=>…, …]]`；`initChildren()` 会把它们逐个做成独立子 Phase。 |
+| `cmd` | `[]` | 当前应用要注册的 CLI 命令类映射（`类 => "默认方法前缀"`）。由 Console 消费。 |
+| `data` | `[]` | 预留数据槽（源码注释“no use in, just align”）。 |
+| `ext` | `[]` | 层内要初始化的扩展组件列表：`类 => true|数组|'@方法'|EXT_* 常量`。在初始化阶段按 `initOptions→…→initComponents…OfExt` 生效。 |
+| `cli_enable` | `true` | CLI 环境下是否进入命令处理（`execute()`）。为 `false` 即使 CLI 也走 Web。 |
+| `skip_exception_check` | `false` | 为 `true` 时 `runException` 直接把异常再次抛出，不再进入框架统一的异常分发。 |
+| `use_exit_exception` | `true` | 是否定义全局 `__EXIT_EXCEPTION`（为 `ExitException::class`）以让 exit 语义可捕获。 |
+| `override_from` | `null` | 记“自己被谁改写覆盖”的类名。`override_class` 流程使用。 |
+| `override_class` | `null` | 若给出，`init()` 时用此类接管当前初始化（构造后以 `override_from=get_class(原)` 重入 init）。 |
+| `app_children_allow_mix_mode` | `true` | 允许子应用简写：用表键当 `controller_url_prefix`、值内含 `'class'` 指定真实子应用类。false 则要求结构化写法。 |
+| `on_init` | `null` | (`callable`) 初始化中 `onInit()` 阶段被调。 |
+| `on_inited` | `null` | (`callable`) 全部初始化完毕 `onInited()` 阶段被调。 |
+| `on_request` | `null` | (`callable`) 每次 `serve()` 开头被调。 |
+
+### DuckPhp\Core\Logger
+
+Logger（PSR-3 注释，非 implements，尽力对齐接口）适合“…
+
+类文档：[DuckPhp\Core\Logger](Core-Logger.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path_log` | `'runtime'` | 日志目录（可绝对，可相对根）。 |
+| `log_file_template` | `'log_%Y-%m-%d_%H_%i.log'` | 日志文件名模板；`%X` 由 `date(X)` 展开。 |
+| `log_prefix` | `'DuckPhpLog'` | 写到行的前缀标识。 |
+
+### DuckPhp\Core\Route
+
+DuckPHP 的默认路由核心
+
+类文档：[DuckPhp\Core\Route](Core-Route.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `namespace` | `''` | 项目命名空间（不含 `\\`）。控制器最终全名 = `namespace + namespace_controller + 路径类名 + controller_class_postfix`。 |
+| `namespace_controller` | `'Controller'` | 控制器所在子命名空间；以 `\\` 开头表示绝对子命名空间（不需拼上 `namespace`）。 |
+| `controller_path_ext` | `''` | 路径扩展名过滤（如 `.html`）。设置后只有路径带此后缀才通过匹配，匹配成功后该后缀会被剔除。留空表示不校验。 |
+| `controller_welcome_class` | `'Main'` | “欢迎控制器”：URL 很短 / 路径块为空时使用的控制器类名段。 |
+| `controller_welcome_class_visible` | `false` | 是否允许路径真正显式写 `Main/…` 这一段。`false` 时显式出现欢迎控制器名会判 `E009` 并 404。 |
+| `controller_welcome_method` | `'index'` | 当 URL 末尾“方法段”为空时作为默认方法名。 |
+| `controller_class_adjust` | `''` | 类名/方法名**归一化规则**。字符串可含多个分号分隔指令：`uc_class`（路径最后一块 ucfirst）、`uc_method`（方法名 ucfirst）、`uc_full_class`（每段都 ucfirst）。也支持给它传数组。 |
+| `controller_class_base` | `''` | 控制器基类约束。设置后目标控制器必须 `is_subclass_of` 该基类，否则 `E004`。字符串里可用 `~` 占位并在判断时替换为控制器命名空间前缀。 |
+| `controller_class_postfix` | `'Controller'` | 类名后缀（读路径得到的块再补上它）。 |
+| `controller_method_prefix` | `''` | 方法名前缀。留空意味着读到的路径方法段原样成为要调用的方法；很多宿主（如 `DuckPhp` 应用）把它配成 `action_`。 |
+| `controller_prefix_post` | `'do_'` | POST 专用次级前缀。POST 请求时先尝试 `prefix + do_ + 方法名`（即 `action_do_*`），命中才替换调用。留空则不启用该逻辑。 |
+| `controller_class_map` | `[]` | 控制器类名映射表：`旧全名 => 新全名`。可静态配置；也可运行时用 `replaceController()` 写入。 |
+| `controller_resource_prefix` | `''` | 静态资源前缀。供 `_Res()/Res()` 生成资源 URL（可为 `https://cdn…` / `//cdn…` / 相对 `res/`）。 |
+| `controller_url_prefix` | `''` | URL 路径前缀。会被参与 URL 校验与生成（见 `pathToClassAndMethod()` 与 `getUrlBasePath()`）。 |
+| `controller_fix_mistake_path_info` | `true` | 当没有 PATH_INFO 且脚本即 `/index.php` 时，自动从 `REQUEST_URI` 的 path 补齐并回写 PATH_INFO。 |
+
+### DuckPhp\Core\Runtime
+
+Runtime（class Runtime extends Component…
+
+类文档：[DuckPhp\Core\Runtime](Core-Runtime.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `use_output_buffer` | `false` | 是否开启整体输出缓冲；开启时 run() 开始一个 ob、clear() 负责 flush。 |
+
+### DuckPhp\Core\SuperGlobal
+
+SuperGlobal 提供在不污染全局符号的前提下操作 HTTP 超全局的手段
+
+类文档：[DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `superglobal_auto_define` | `false` | init 时若为真：自动 `DefineSuperGlobalContext()` 并 `_LoadSuperGlobalAll()`（把当前超全局快照入属性）。 |
+
+### DuckPhp\Core\View
+
+DuckPHP 的默认视图实现（class View extends Comp…
+
+类文档：[DuckPhp\Core\View](Core-View.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 项目根路径（组件层对“相对路径”的基准）。 |
+| `path_view` | `'view'` | 视图目录相对名（相对 `path`；可绝对则用之）。`getViewFile()` 用它拼 `{$path}/{$path_view}/{$file}.php`。 |
+| `view_skip_notice_error` | `true` | 渲染时是否临时屏蔽 `E_NOTICE` 噪声。为 true 时 `_Show` 会临时去掉 E_NOTICE 再到结束恢复。 |
+
+## 自带组件
 
 ### DuckPhp\Component\Configer
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Component\Configer` | 项目路径。|
-| `path_config` | `'config'` | `DuckPhp\Component\Configer` | 配置文件目录。|
+Configer extends ComponentBase 负责把 {fil…
+
+类文档：[DuckPhp\Component\Configer](Component-Configer.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 项目根路径（相对路径基准）。 |
+| `path_config` | `'config'` | 配置目录名（相对 `path`，可给绝对覆盖）。 |
 
 ### DuckPhp\Component\DbManager
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `database_driver` | `''` | `DuckPhp\Component\DbManager` | 数据库驱动类型。|
-| `database` | `null` | `DuckPhp\Component\DbManager` | 单一数据库配置。|
-| `database_list` | `null` | `DuckPhp\Component\DbManager` | 多数据库配置列表。|
-| `database_list_reload_by_setting` | `true` | `DuckPhp\Component\DbManager` | 是否从设置文件重新加载数据库配置。|
-| `database_list_try_single` | `true` | `DuckPhp\Component\DbManager` | 是否尝试将单库配置转为列表。|
-| `database_log_sql_query` | `false` | `DuckPhp\Component\DbManager` | 是否记录 SQL 查询。|
-| `database_log_sql_level` | `'debug'` | `DuckPhp\Component\DbManager` | 记录 SQL 的日志级别。|
-| `database_class` | `''` | `DuckPhp\Component\DbManager` | 自定义数据库类名，为空使。`DuckPhp\Db\Db`。|
+DbManager extends ComponentBase 是 DuckP…
 
-### DuckPhp\Component\RedisManager
+类文档：[DuckPhp\Component\DbManager](Component-DbManager.md)
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `redis` | `null` | `DuckPhp\Component\RedisManager` | 单一 Redis 配置。|
-| `redis_list` | `null` | `DuckPhp\Component\RedisManager` | 。Redis 配置列表。|
-| `redis_list_reload_by_setting` | `true` | `DuckPhp\Component\RedisManager` | 是否从设置文件重新加。Redis 配置。|
-| `redis_list_try_single` | `true` | `DuckPhp\Component\RedisManager` | 是否尝试将单 Redis 配置转为列表。|
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `database_driver` | `''` | 驱动返回（init/setting 推导并回填）。 |
+| `database` | `null` | 单个连接配置（dsn/…）便捷。 |
+| `database_list` | `null` | 连接配置列表(数组)。给此项优先。 |
+| `database_list_reload_by_setting` | `true` | 未显式 configuration 时（不提供 database）允许从 setting 取 database_list。 |
+| `database_list_try_single` | `true` | database_list 空时可回退 单 `database`/`setting.database` 包数组。 |
+| `database_log_sql_query` | `false` | 是否对每条 SQL 写日志。 |
+| `database_log_sql_level` | `'debug'` | 上面 SQL 日志级别。 |
+| `database_class` | `''` | 自定义连接类空则 `Db`。 |
 
-### DuckPhp\Component\RedisCache
+### DuckPhp\Component\ExtOptionsLoader
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `redis_cache_skip_replace` | `false` | `DuckPhp\Component\RedisCache` | 是否跳过替换默认 `Cache` 组件。|
-| `redis_cache_prefix` | `''` | `DuckPhp\Component\RedisCache` | Redis 缓存键前缀。|
+ExtOptionsLoader处理一类“要记得、要能在下次跑时仍生效”的动态…
 
-### DuckPhp\Component\Pager
+类文档：[DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md)
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `url` | `null` | `DuckPhp\Component\Pager` | 基础 URL。|
-| `current` | `null` | `DuckPhp\Component\Pager` | 当前页码。|
-| `page_size` | `30` | `DuckPhp\Component\Pager` | 每页大小。|
-| `page_key` | `'page'` | `DuckPhp\Component\Pager` | 页码 URL 参数名。|
-| `rewrite` | `null` | `DuckPhp\Component\Pager` | URL 重写回调。|
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `data_file_enable` | `true` | 是否启用持久外置 options 文件机制（调用装配的上层再决定）。 |
+| `data_file_json_file` | `'DuckPhpData.config.json'` | 数据文件名（相对 root runtime 或绝对）。 |
+| `data_file_bump_allowed` | `true` | bump 时是否允许把段写回 app options。 |
+| `data_file_bump_keys` | `['installed' => true, 'redis' => true, 'database' => true, 'local_redis' => true, 'local_database' => true]` | 允许直接整体回写的这些键。 |
+| `data_file_bump_prefix_keys` | `['redis_' => true, 'database_' => true]` | 这些前缀下的任意键会被回写。 |
 
 ### DuckPhp\Component\Lang
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `lang_final` | `null` | `DuckPhp\Component\Lang` | 最终语言，设置后跳过自动检测。|
-| `lang_default` | `null` | `DuckPhp\Component\Lang` | 默认回退语言。|
-| `lang_detect_mode` | `['url', 'cookie', 'header', 'cli', 'default']` | `DuckPhp\Component\Lang` | 语言检测顺序。|
-| `lang_follow_root` | `true` | `DuckPhp\Component\Lang` | 子应用是否跟随根应用语言。|
-| `lang_url_param` | `'lang'` | `DuckPhp\Component\Lang` | URL 语言参数名。|
-| `lang_cookie_name` | `'lang'` | `DuckPhp\Component\Lang` | Cookie 语言键名。|
-| `lang_file_path` | `'lang/'` | `DuckPhp\Component\Lang` | 语言文件目录（相对于 `config/`）。|
-| `lang_simple_mode_only_sentences` | `[]` | `DuckPhp\Component\Lang` | 简单模式下的翻译句子数组。|
+Lang extends ComponentBase 提供简单而完整的界面翻译
 
-### DuckPhp\Component\RouteHookCheckStatus
+类文档：[DuckPhp\Component\Lang](Component-Lang.md)
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `error_maintain` | `null` | `DuckPhp\Component\RouteHookCheckStatus` | 维护页面视图或回调。|
-| `error_need_install` | `null` | `DuckPhp\Component\RouteHookCheckStatus` | 未安装提示页面视图或回调。|
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `lang_final` | `null` | 最终语言，设就别再探测；非根子层 follow root 会取根值。 |
+| `lang_default` | `null` | 兜底：别的方式都不中时返回它。 |
+| `lang_detect_mode` | `['url', 'cookie','header', 'cli','default']` | 探测顺序与可用入口名单。 |
+| `lang_follow_root` | `true` | 子应用时候跟随根 Final。 |
+| `lang_url_param` | `'lang'` | url 探测参数名（例如 `?lang=zh_CN`）。 |
+| `lang_cookie_name` | `'lang'` | cookie 名。 |
+| `lang_file_path` | `'lang/'` | 语言目录（相对配置，实际由 Configer 拼 `{path}.php`）。 |
+| `lang_simple_mode_only_sentences` | `[]` | 简单模式句子集：语言=>[key=>sentence]。非空则不读配置直接用它。 |
+
+### DuckPhp\Component\Pager
+
+Pager extends ComponentBase implements …
+
+类文档：[DuckPhp\Component\Pager](Component-Pager.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `url` | `null` | 手工给分页基底 URL（空则 requestUri）。可含 `{page}` 占位符替换。 |
+| `current` | `null` | 手动指定当前页；缺省由 GET {page_key} 得。 |
+| `page_size` | `30` | 每页条数。 |
+| `page_key` | `'page'` | 当前页 URL 参数名。 |
+| `rewrite` | `null` | （callable）自定义写 URL 的回调当作 getUrl 分支；否则走 defaultGetUrl。 |
+
+### DuckPhp\Component\RedisCache
+
+RedisCache extends ComponentBase（注释 ali…
+
+类文档：[DuckPhp\Component\RedisCache](Component-RedisCache.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `redis_cache_skip_replace` | `false` | 若 true 不 replace 全局 Cache（由自己取舍）。 |
+| `redis_cache_prefix` | `''` | 本缓存键前缀。 |
+
+### DuckPhp\Component\RedisManager
+
+RedisManager extends ComponentBase 是 Du…
+
+类文档：[DuckPhp\Component\RedisManager](Component-RedisManager.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `redis` | `null` | 单条连接（对象/数组 host,port,…）。 |
+| `redis_list` | `null` | 多条配置数组（每项 `['host'=>…,'port'=>…,'auth'=>…,'select'=>…]`）。 |
+| `redis_list_reload_by_setting` | `true` | 未给主机要时允许由 setting (`redis_list`/`redis`) 提供。 |
+| `redis_list_try_single` | `true` | 列表缺时按单条 redis 包装。 |
 
 ### DuckPhp\Component\RouteHookPathInfoCompat
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path_info_compact_enable` | `true` | `DuckPhp\Component\RouteHookPathInfoCompat` | 是否启用兼容模式。|
-| `path_info_compact_action_key` | `'_r'` | `DuckPhp\Component\RouteHookPathInfoCompat` | 替代 PATH_INFO 。action 参数键。|
-| `path_info_compact_class_key` | `''` | `DuckPhp\Component\RouteHookPathInfoCompat` | 替代 PATH_INFO 。class 参数键。|
+RouteHookPathInfoCompat extends Compone…
+
+类文档：[DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path_info_compact_enable` | `true` | 开关（init 才装 hook/url handler）。 |
+| `path_info_compact_action_key` | `'_r'` | 动作路由所在的 query 键。 |
+| `path_info_compact_class_key` | `''` | 可选“模块（类路径段）”所在 query 键；留空则整路径都放 action键。 |
 
 ### DuckPhp\Component\RouteHookResource
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Component\RouteHookResource` | 项目路径。|
-| `path_resource` | `'res'` | `DuckPhp\Component\RouteHookResource` | 资源目录。|
-| `path_document` | `'public'` | `DuckPhp\Component\RouteHookResource` | 文档根目录。|
-| `controller_url_prefix` | `''` | `DuckPhp\Component\RouteHookResource` | 控制。URL 前缀。|
-| `controller_resource_prefix` | `''` | `DuckPhp\Component\RouteHookResource` | 资源 URL 前缀。|
+RouteHookResource extends ComponentBase…
+
+类文档：[DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 项目根路径（相对路径基准）。 |
+| `path_resource` | `'res'` | 资源源目录（默认 `res`）。 |
+| `path_document` | `'public'` | 发布根目录名（clone 目标）。 |
+| `controller_url_prefix` | `null` | 路由资源 URL 前缀段（可选）。 |
+| `controller_resource_prefix` | `''` | 访问前缀（例如 `res/` 或 `//cdn/…`）；决定 hook/clone 行为。 |
 
 ### DuckPhp\Component\RouteHookRewrite
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `controller_url_prefix` | `''` | `DuckPhp\Component\RouteHookRewrite` | 控制。URL 前缀。|
-| `rewrite_map` | `[]` | `DuckPhp\Component\RouteHookRewrite` | 重写映射表。|
+RouteHookRewrite extends ComponentBase …
+
+类文档：[DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `controller_url_prefix` | `''` | 可选 url 前缀（命中前去掉、重写后会补回）。 |
+| `rewrite_map` | `[]` | 映射表 `匹配模板 => 内部url`；模板以 `~` 开头时被当正则。 |
 
 ### DuckPhp\Component\RouteHookRouteMap
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `controller_url_prefix` | `''` | `DuckPhp\Component\RouteHookRouteMap` | 控制。URL 前缀。|
-| `route_map_important` | `[]` | `DuckPhp\Component\RouteHookRouteMap` | 在默认路由前执行的路由映射。|
-| `route_map` | `[]` | `DuckPhp\Component\RouteHookRouteMap` | 在默认路由失败后执行的路由映射。|
+RouteHookRouteMap extends ComponentBase…
 
----
+类文档：[DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 
-## 扩展选项
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `controller_url_prefix` | `''` | 匹配前可统一去掉 url 前缀。 |
+| `route_map_important` | `[]` | 重要组（先探）。 |
+| `route_map` | `[]` | 普通组（后探）。 |
+
+### DuckPhp\Component\RouteLister
+
+RouteLister extends ComponentBase 提供“把系…
+
+类文档：[DuckPhp\Component\RouteLister](Component-RouteLister.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
+
+### DuckPhp\Component\Validator
+
+DuckPHP 的数据验证组件，采用“字段 => 规则字符串”的声明式写法
+
+类文档：[DuckPhp\Component\Validator](Component-Validator.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `validator_exception_class` | `\Exception::class` | `check()`/`filter()` 校验失败时抛出的异常类（必须可被 `new` 且接受一个字符串消息）。 |
+| `validator_skip_empty` | `true` | 非 `required` 字段值为空（`null` 或 `''`）时是否跳过其余规则。 |
+
+## 可选扩展
 
 ### DuckPhp\Ext\CallableView
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `callable_view_head` | `null` | `DuckPhp\Ext\CallableView` | 页眉回调函数。|
-| `callable_view_foot` | `null` | `DuckPhp\Ext\CallableView` | 页脚回调函数。|
-| `callable_view_class` | `null` | `DuckPhp\Ext\CallableView` | 视图回调限定类名。|
-| `callable_view_is_object_call` | `true` | `DuckPhp\Ext\CallableView` | 是否以对象方式调用。|
-| `callable_view_prefix` | `null` | `DuckPhp\Ext\CallableView` | 视图方法前缀。|
-| `callable_view_skip_replace` | `false` | `DuckPhp\Ext\CallableView` | 是否跳过替换默认 `View` 组件。|
+Core\View 的扩展
+
+类文档：[DuckPhp\Ext\CallableView](Ext-CallableView.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `callable_view_head` | `null` | head 视图回调名（缺省用父类 `head_file`）。 |
+| `callable_view_foot` | `null` | foot 视图回调名（缺省用父类 `foot_file`）。 |
+| `callable_view_class` | `null` | 提供视图回调的类（可为类名字符串或对象）。 |
+| `callable_view_is_object_call` | `true` | 类名为字符串且可 `_()` 时转为单例实例，否则 `new`。 |
+| `callable_view_prefix` | `null` | 视图名加工前缀（如 `view_`，与 `/`→`_` 替换）。 |
+| `callable_view_skip_replace` | `false` | 为 `true` 时不把自身替换成全局 `View` 单例。 |
 
 ### DuckPhp\Ext\DuckPhpInstaller
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Ext\DuckPhpInstaller` | 项目路径。|
-| `namespace` | `''` | `DuckPhp\Ext\DuckPhpInstaller` | 项目命名空间。|
-| `force` | `false` | `DuckPhp\Ext\DuckPhpInstaller` | 是否强制覆盖现有文件。|
-| `autoloader` | `'vendor/autoload.php'` | `DuckPhp\Ext\DuckPhpInstaller` | 自动加载文件路径。|
-| `verbose` | `false` | `DuckPhp\Ext\DuckPhpInstaller` | 是否显示详情。|
-| `help` | `false` | `DuckPhp\Ext\DuckPhpInstaller` | 是否显示帮助。|
+bin/duckphp 背后的命令行安装器，提供三个 CLI 命令
+
+类文档：[DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 目标路径（`new` 的落盘目录 / 覆盖）。 |
+| `namespace` | `''` | 新工程的命名空间（缺省自动探测/询问）。 |
+| `force` | `false` | 目标已存在文件时是否强制覆盖。 |
+| `autoloader` | `'vendor/autoload.php'` | 使用的 autoload 路径。 |
+| `verbose` | `false` | 是否打印过程信息。 |
+| `help` | `false` | 帮助开关。 |
 
 ### DuckPhp\Ext\EmptyView
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `empty_view_key_view` | `'view'` | `DuckPhp\Ext\EmptyView` | `_Show` 。`$data` 中保存视图名的键。|
-| `empty_view_key_wellcome_class` | `'Main/'` | `DuckPhp\Ext\EmptyView` | 该前缀的视图名会被裁剪。|
-| `empty_view_trim_view_wellcome` | `true` | `DuckPhp\Ext\EmptyView` | 是否裁剪欢迎类前缀。|
-| `empty_view_skip_replace` | `false` | `DuckPhp\Ext\EmptyView` | 是否跳过替换默认 `View` 组件。|
+Core\View 的扩展
+
+类文档：[DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `empty_view_key_view` | `'view'` | 装配进数据的“视图键名”。 |
+| `empty_view_key_wellcome_class` | `'Main/'` | 欢迎视图前缀（配合 trim 用）。 |
+| `empty_view_trim_view_wellcome` | `true` | 是否去掉视图名的欢迎前缀。 |
+| `empty_view_skip_replace` | `false` | 为 `true` 时不替换全局 `View::_()`。 |
 
 ### DuckPhp\Ext\JsonRpcExt
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `jsonrpc_namespace` | `'JsonRpc'` | `DuckPhp\Ext\JsonRpcExt` | 客户端类命名空间。|
-| `jsonrpc_backend` | `'https://127.0.0.1'` | `DuckPhp\Ext\JsonRpcExt` | JsonRpc 后端地址。|
-| `jsonrpc_is_debug` | `false` | `DuckPhp\Ext\JsonRpcExt` | 是否调试。|
-| `jsonrpc_enable_autoload` | `true` | `DuckPhp\Ext\JsonRpcExt` | 是否启用客户端类自动加载。|
-| `jsonrpc_check_token_handler` | `null` | `DuckPhp\Ext\JsonRpcExt` | Token 处理回调。|
-| `jsonrpc_wrap_auto_adjust` | `true` | `DuckPhp\Ext\JsonRpcExt` | 是否自动调整封装。|
-| `jsonrpc_service_interface` | `''` | `DuckPhp\Ext\JsonRpcExt` | 服务接口或基类限制。|
-| `jsonrpc_service_namespace` | `''` | `DuckPhp\Ext\JsonRpcExt` | 服务限定命名空间。|
-| `jsonrpc_timeout` | `5` | `DuckPhp\Ext\JsonRpcExt` | 请求超时秒数。|
+JSON-RPC 扩展的总控
+
+类文档：[DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `jsonrpc_namespace` | `'JsonRpc'` | 客户端自动加载的命名空间前缀。 |
+| `jsonrpc_backend` | `'https:` | 服务端地址（也可传 `[base, real_host]` 以使用 `CURLOPT_CONNECT_TO`）。 |
+| `jsonrpc_is_debug` | `false` | 失败时是否在异常消息中带原始返回。 |
+| `jsonrpc_enable_autoload` | `true` | 是否注册客户端类自动加载。 |
+| `jsonrpc_check_token_handler` | `null` | 可选：给 curl 会话加 token 的回调。 |
+| `jsonrpc_wrap_auto_adjust` | `true` | （保留配置）自动调整包装行为。 |
+| `jsonrpc_service_interface` | `''` | 服务端校验：服务类需是该接口的子类才接受。 |
+| `jsonrpc_service_namespace` | `''` | 服务类命名空间（客户端/服务端两侧补全用）。 |
+| `jsonrpc_timeout` | `5` | curl 超时秒数。 |
 
 ### DuckPhp\Ext\JsonView
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `json_view_skip_replace` | `false` | `DuckPhp\Ext\JsonView` | 是否跳过替换默认 `View` 组件。|
-| `json_view_skip_vars` | `[]` | `DuckPhp\Ext\JsonView` | 输出 JSON 时排除的变量名。|
+Core\View 的扩展
+
+类文档：[DuckPhp\Ext\JsonView](Ext-JsonView.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `json_view_skip_replace` | `false` | 为 `true` 时不替换全局 `View::_()`。 |
+| `json_view_skip_vars` | `[]` | 输出前需要从 `$data` 中剔除的键列表。 |
 
 ### DuckPhp\Ext\MiniRoute
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `namespace` | `''` | `DuckPhp\Ext\MiniRoute` | 项目命名空间。|
-| `namespace_controller` | `'Controller'` | `DuckPhp\Ext\MiniRoute` | 控制器命名空间。|
-| `controller_path_ext` | `''` | `DuckPhp\Ext\MiniRoute` | 控制器路径后缀。|
-| `controller_welcome_class` | `'Main'` | `DuckPhp\Ext\MiniRoute` | 默认欢迎控制器类名。|
-| `controller_welcome_class_visible` | `false` | `DuckPhp\Ext\MiniRoute` | 是否允许 URL 中显示欢迎控制器名。|
-| `controller_welcome_method` | `'index'` | `DuckPhp\Ext\MiniRoute` | 默认欢迎方法名。|
-| `controller_class_postfix` | `''` | `DuckPhp\Ext\MiniRoute` | 控制器类名后缀。|
-| `controller_method_prefix` | `''` | `DuckPhp\Ext\MiniRoute` | 控制器方法前缀。|
-| `controller_class_map` | `[]` | `DuckPhp\Ext\MiniRoute` | 控制器类映射表。|
-| `controller_resource_prefix` | `''` | `DuckPhp\Ext\MiniRoute` | 资源 URL 前缀。|
-| `controller_url_prefix` | `''` | `DuckPhp\Ext\MiniRoute` | 控制。URL 前缀。|
+极简版 MVC 路由（Core\Route 的子集）
+
+类文档：[DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `namespace` | `''` | 应用命名空间。 |
+| `namespace_controller` | `'Controller'` | 控制器子命名空间。 |
+| `controller_path_ext` | `''` | 路径后缀要求（如 `.php`，为空不校验）。 |
+| `controller_welcome_class` | `'Main'` | 欢迎控制器（空路径时用）。 |
+| `controller_welcome_class_visible` | `false` | 欢迎类是否允许通过 URL 显式访问。 |
+| `controller_welcome_method` | `'index'` | 欢迎方法。 |
+| `controller_class_postfix` | `''` | 控制器类后缀。 |
+| `controller_method_prefix` | `''` | 方法名前缀（如 `action_`）。 |
+| `controller_class_map` | `[]` | 类名映射（替换）。 |
+| `controller_resource_prefix` | `''` | 资源前缀（保留）。 |
+| `controller_url_prefix` | `''` | URL 前缀（剥除）。 |
 
 ### DuckPhp\Ext\Misc
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Ext\Misc` | 项目路径。|
-| `path_lib` | `'lib'` | `DuckPhp\Ext\Misc` | Import 库目录路径。|
+Misc 收集若干“杂项”工具
+
+类文档：[DuckPhp\Ext\Misc](Ext-Misc.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 项目根路径（拼接相对 `path_lib` 用）。 |
+| `path_lib` | `'lib'` | 库目录；以 `/` 开头视为绝对目录，否则拼在 `path` 下。 |
 
 ### DuckPhp\Ext\MyFacadesAutoLoader
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `facades_namespace` | `'MyFacades'` | `DuckPhp\Ext\MyFacadesAutoLoader` | 门面类命名空间。|
-| `facades_map` | `[]` | `DuckPhp\Ext\MyFacadesAutoLoader` | 门面映射表。|
-| `facades_enable_autoload` | `true` | `DuckPhp\Ext\MyFacadesAutoLoader` | 是否启用门面自动加载。|
+MyFacadesAutoLoader 实现“Facade（门面）命名空间自动…
+
+类文档：[DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `facades_namespace` | `'MyFacades'` | 门面类命名空间（会 trim 反斜杠）。 |
+| `facades_map` | `[]` | 门面类名 → 真实类名的映射。 |
+| `facades_enable_autoload` | `true` | 是否注册 `spl_autoload`（关闭则需自行触发）。 |
 
 ### DuckPhp\Ext\MyMiddlewareManager
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `middleware` | `[]` | `DuckPhp\Ext\MyMiddlewareManager` | 中间件回调列表。|
+中间件管理器扩展
+
+类文档：[DuckPhp\Ext\MyMiddlewareManager](Ext-MyMiddlewareManager.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `middleware` | `[]` | 中间件列表（自外向内执行）。每项可为 callable，或字符串 `Class@method`（`_()` 单例）/ `Class->method`（`new`）。 |
 
 ### DuckPhp\Ext\RouteHookApiServer
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `namespace` | `''` | `DuckPhp\Ext\RouteHookApiServer` | 项目命名空间。|
-| `api_server_base_class` | `''` | `DuckPhp\Ext\RouteHookApiServer` | 限定 API 基类或接口。|
-| `api_server_namespace` | `'Api'` | `DuckPhp\Ext\RouteHookApiServer` | API 类命名空间。|
-| `api_server_class_postfix` | `''` | `DuckPhp\Ext\RouteHookApiServer` | API 类名后缀。|
-| `api_server_use_singletonex` | `false` | `DuckPhp\Ext\RouteHookApiServer` | 是否使用可变单例模式。|
-| `api_server_404_as_exception` | `false` | `DuckPhp\Ext\RouteHookApiServer` | 404 是否抛出异常。|
+“API 服务器”路由扩展
+
+类文档：[DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `namespace` | `''` | 应用命名空间（拼相对子命名空间用）。 |
+| `api_server_base_class` | `''` | 服务类基类约束（支持 `~` 占位前缀；服务类须为其子类）。 |
+| `api_server_namespace` | `'Api'` | 服务类所在命名空间。 |
+| `api_server_class_postfix` | `''` | 服务类名后缀。 |
+| `api_server_use_singletonex` | `false` | 为 `true` 时经 `_()` 取单例（且动作名为 `G` 时拒绝）。 |
+| `api_server_404_as_exception` | `false` | 未命中时是否抛 `ReflectionException("404")`。 |
 
 ### DuckPhp\Ext\RouteHookDirectoryMode
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `mode_dir_basepath` | `''` | `DuckPhp\Ext\RouteHookDirectoryMode` | 目录模式的基准路径。|
+RouteHookDirectoryMode 实现“目录/文件模式”路由
+
+类文档：[DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `mode_dir_basepath` | `''` | 站点根目录（用于把文件路径折算成控制器路径）。 |
 
 ### DuckPhp\Ext\RouteHookFunctionRoute
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `function_route` | `false` | `DuckPhp\Ext\RouteHookFunctionRoute` | 是否启用函数模式路由。|
-| `function_route_method_prefix` | `'action_'` | `DuckPhp\Ext\RouteHookFunctionRoute` | 函数模式路由方法前缀。|
-| `function_route_404_to_index` | `false` | `DuckPhp\Ext\RouteHookFunctionRoute` | 404 是否。`index` 函数执行。|
+“函数式路由”扩展
 
-### DuckPhp\Ext\StrictCheck
+类文档：[DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md)
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `namespace` | `''` | `DuckPhp\Ext\StrictCheck` | 项目命名空间。|
-| `namespace_controller` | `'Controller'` | `DuckPhp\Ext\StrictCheck` | 控制器命名空间。|
-| `namespace_business` | `''` | `DuckPhp\Ext\StrictCheck` | 业务类命名空间。|
-| `namespace_model` | `''` | `DuckPhp\Ext\StrictCheck` | 模型类命名空间。|
-| `controller_base_class` | `null` | `DuckPhp\Ext\StrictCheck` | 控制器基类。|
-| `is_debug` | `false` | `DuckPhp\Ext\StrictCheck` | 是否启用严格检查。|
-| `strict_check_context_class` | `null` | `DuckPhp\Ext\StrictCheck` | 指定上下文类。|
-| `strict_check_enable` | `true` | `DuckPhp\Ext\StrictCheck` | 是否启用严格检查模式。|
-| `postfix_batch_business` | `'BatchBusiness'` | `DuckPhp\Ext\StrictCheck` | 批量业务类后缀。|
-| `postfix_business_lib` | `'Lib'` | `DuckPhp\Ext\StrictCheck` | 业务库类后缀。|
-| `postfix_ex_model` | `'ExModel'` | `DuckPhp\Ext\StrictCheck` | 混合模型后缀。|
-| `postfix_model` | `'Model'` | `DuckPhp\Ext\StrictCheck` | 模型后缀。|
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `function_route` | `false` | 是否启用（保留开关位）。 |
+| `function_route_method_prefix` | `'action_'` | 回调名前缀。 |
+| `function_route_404_to_index` | `false` | 未命中时是否回退调用 `{prefix}index`。 |
 
----
+### DuckPhp\Ext\RouteHookWebInstaller
 
-## 数据库选项
+**网页安装向导**
 
-`DuckPhp\Db\Db` 本身通过 `init($config)` 接收配置而非 `$options`，常用配置键如下。
+类文档：[DuckPhp\Ext\RouteHookWebInstaller](Ext-RouteHookWebInstaller.md)
 
-| 配置。| 说明 |
-|---|---|
-| `dsn` | PDO DSN 字符串。|
-| `username` | 数据库用户名。|
-| `password` | 数据库密码。|
-
-详细说明、[Db-Db.md](Db-Db.md)。
-
----
-
-## SQL 导出选项
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `web_installer_use_database` | `true` | 安装流程是否包含数据库。 |
+| `web_installer_use_redis` | `true` | 安装流程是否包含 Redis。 |
+| `web_installer_database_drivers` | `['sqlite' => true, 'pgsql' => true, 'duckdb' => false]` | 可选的数据库驱动。 |
+| `web_installer_view` | `''` | 自定义安装视图文件（空用内置视图）。 |
+| `web_installer_view_block_custom` | `null` | 自定义区块模板（视图内嵌）。 |
+| `web_installer_force` | `false` | 是否强制重装（先清表）。 |
+| `web_installer_check_custom_callback` | `null` | 自定义“环境检查”回调。 |
+| `web_installer_do_custom_callback` | `null` | 自定义“安装执行”回调。 |
+| `web_installer_render_custom_callback` | `null` | 自定义“渲染”回调。 |
+| `web_installer_default_sentences` | `[]` | 界面文案覆盖（空则用内置英文默认文案 `builtin_default_sentences`）。 |
 
 ### DuckPhp\Ext\SqlDumper
 
-| 选项 | 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `path` | `''` | `DuckPhp\Ext\SqlDumper` | 项目路径。|
-| `path_sql_dump` | `'config'` | `DuckPhp\Ext\SqlDumper` | SQL 导出目录。|
-| `sql_dump_file` | `'install.sql'` | `DuckPhp\Ext\SqlDumper` | SQL 导出文件名。|
-| `sql_dump_include_tables` | `[]` | `DuckPhp\Ext\SqlDumper` | 显式包含的表。|
-| `sql_dump_exclude_tables` | `[]` | `DuckPhp\Ext\SqlDumper` | 排除的表。|
-| `sql_dump_data_tables` | `[]` | `DuckPhp\Ext\SqlDumper` | 需要导出数据的表。|
-| `sql_dump_include_tables_all` | `false` | `DuckPhp\Ext\SqlDumper` | 是否导出所有表。|
-| `sql_dump_include_tables_by_model` | `true` | `DuckPhp\Ext\SqlDumper` | 是否通过模型扫描表。|
-| `sql_dump_install_replace_prefix` | `true` | `DuckPhp\Ext\SqlDumper` | 安装时是否替换表前缀。|
-| `sql_dump_prefix` | `''` | `DuckPhp\Ext\SqlDumper` | SQL 中的表前缀。|
-| `sql_dump_debug_show_sql` | `false` | `DuckPhp\Ext\SqlDumper` | 是否显示执行。SQL。|
+数据库“结构/数据导出与安装”扩展
 
----
+类文档：[DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md)
 
-## HTTP 服务器选项
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 项目根路径（配合 `path_sql_dump` 定位导出目录）。 |
+| `path_sql_dump` | `'config'` | SQL 文件存放子目录。 |
+| `sql_dump_include_tables` | `[]` | 显式包含的表（支持 `@` 占位替换为表前缀）。 |
+| `sql_dump_exclude_tables` | `[]` | 排除的表。 |
+| `sql_dump_data_tables` | `[]` | 需要导出数据的表（写进 `.data.sql`）。 |
+| `sql_dump_include_tables_all` | `false` | 为 `true` 时导出数据库全部表（忽略 by_model）。 |
+| `sql_dump_include_tables_by_model` | `true` | 按工程 Model 类（`namespace\Model\Base` 同目录下类）自动搜集表。 |
+| `sql_dump_debug_show_sql` | `false` | 执行 SQL 时打印每条语句。 |
+
+### DuckPhp\Ext\SqlDumperSupporter
+
+SqlDumper 的驱动适配基类
+
+类文档：[DuckPhp\Ext\SqlDumperSupporter](Ext-SqlDumperSupporter.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `database_driver_SqlDumperSupporter_map` | `[...]` | 驱动名 → 适配子类映射。 |
+
+## HTTP 服务器
 
 ### DuckPhp\HttpServer\HttpServer
 
-| 选项 | 默认。| 来源、| 说明 |
+DuckPHP 内置的“用 PHP 内置服务器跑项目”的启动器
+
+类文档：[DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `host` | `'127.0.0.1'` | 监听地址；也可被 CLI 参数 `--host`/`-H` 覆盖。 |
+| `port` | `'8080'` | 监听端口；也可被 CLI 参数 `--port`/`-P` 覆盖。 |
+| `path` | `''` | 项目根路径，与 `path_document` 拼成 docroot。 |
+| `path_document` | `'public'` | 文档目录名；实际 docroot = `path/path_document`。 |
+| `workers` | `null` | 非空时用 `PHP_CLI_SERVER_WORKERS=N` 启动多进程内置服务器。 |
+
+## 全局管理
+
+### DuckPhp\GlobalAdmin\GlobalAdmin
+
+DuckPHP 的「全局管理员组件」
+
+类文档：[DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `admin_url_home` | `null` | 后台首页 URL（未配回调时用 `__url()` 生成）。 |
+| `admin_url_login` | `null` | 后台登录 URL。 |
+| `admin_url_logout` | `null` | 后台退出 URL。 |
+| `admin_view_file_header` | `null` | 后台页头视图文件（渲染时并入 `__view_data.header`）。 |
+| `admin_view_file_footer` | `null` | 后台页脚视图文件（渲染时并入 `__view_data.footer`）。 |
+| `admin_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 数组时，是否先把类名转成 `类名::_()` 单例实例。 |
+| `admin_callback_for_id` | `null` | 取当前管理员 id 的回调。 |
+| `admin_callback_for_name` | `null` | 取当前管理员名的回调。 |
+| `admin_callback_for_data` | `null` | 取当前管理员数据（数组）的回调。 |
+| `admin_callback_for_local_service` | `null` | 返回本地 `AdminServiceInterface` 实现的回调。 |
+| `admin_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
+| `admin_callback_for_login_service` | `null` | 登录服务回调（`login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
+| `admin_callback_for_session` | `null` | 管理员会话实现回调（返回 `AdminSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
+| `admin_loginout_auto_redirect` | `true` | `login()/logout()` 完成后是否自动 302（登录跳 home、退出跳 login）。 |
+| `admin_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
+| `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
+| `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
+| `admin_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `AdminException::class`）；只在会话模式（配了 `admin_callback_for_session`）下的 `id()/name()` 里生效。 |
+
+## 全局管理
+
+### DuckPhp\GlobalUser\GlobalUser
+
+DuckPHP 的「全局用户组件」
+
+类文档：[DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `user_url_home` | `null` | 站内首页 URL（未配回调时用 `__url()` 生成）。 |
+| `user_url_register` | `null` | 注册 URL（键名由旧 `user_url_regist` 更名）。 |
+| `user_url_login` | `null` | 登录 URL。 |
+| `user_url_logout` | `null` | 退出 URL。 |
+| `user_view_file_header` | `null` | 用户页头视图文件。 |
+| `user_view_file_footer` | `null` | 用户页脚视图文件。 |
+| `user_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 时是否先把类名转成 `类名::_()` 单例实例。 |
+| `user_callback_for_id` | `null` | 取当前用户 id 的回调。 |
+| `user_callback_for_name` | `null` | 取当前用户名的回调。 |
+| `user_callback_for_data` | `null` | 取当前用户数据（数组）的回调。 |
+| `user_callback_for_local_service` | `null` | 返回本地 `UserServiceInterface` 实现的回调。 |
+| `user_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
+| `user_callback_for_login_service` | `null` | 登录服务回调（`register()/login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
+| `user_callback_for_session` | `null` | 用户会话实现回调（返回 `UserSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
+| `user_loginout_auto_redirect` | `true` | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
+| `user_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `user_url_home`）。 |
+| `user_callback_for_url_for_register` | `null` | 生成注册 URL 的回调（键名与 `urlForRegister()` 拼写一致）。 |
+| `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
+| `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
+| `user_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `UserException::class`）；只在会话模式（配了 `user_callback_for_session`）下的 `id()/name()` 里生效。 |
+
+## 隐藏选项
+
+框架会读、但**故意不写进 `$options`** 的键（源码里集中在 `$hidden_options` 表）。它们可以像普通选项一样在 `init()`/`$options` 里给出，只是不出现在上面的正式选项里。
+
+| 选项 | 默认值 | 出处 | 说明 |
 |---|---|---|---|
-| `host` | `'127.0.0.1'` | `DuckPhp\HttpServer\HttpServer` | 服务器监听地址。|
-| `port` | `'8080'` | `DuckPhp\HttpServer\HttpServer` | 服务器监听端口。|
-| `path` | `''` | `DuckPhp\HttpServer\HttpServer` | 项目路径。|
-| `path_document` | `'public'` | `DuckPhp\HttpServer\HttpServer` | 文档根目录。|
+| `session_prefix` | `''` | Foundation\SessionTrait | 会话名的前缀（根应用的设置也走这里）。 |
+| `table_prefix` | `''` | Ext\SqlDumper / Ext\RouteHookWebInstaller | 数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。 |
+| `use_user_view` | `false` | DuckPhp::_Show() | 为 true 时，前台控制器（`UserControllerInterface`）的 `_Show()` 交给 `GlobalUser::_Show()` 渲染。 |
+| `use_admin_view` | `false` | DuckPhp::_Show() | 同上，后台控制器（`AdminControllerInterface`）交给 `GlobalAdmin::_Show()`。 |
+| `use_user_view_header_footer` | `false` | GlobalUser::_Show() | 是否把 `user_view_file_header/footer` 套到视图上（配合 `use_user_view`）。 |
+| `use_admin_view_header_footer` | `false` | GlobalAdmin::_Show() | 是否把 `admin_view_file_header/footer` 套到视图上（配合 `use_admin_view`）。 |
+| `exception_for_business` | `\Exception::class` | CoreHelper::_BusinessThrowOn() | `BusinessThrowOn()` 未显式指定时的异常类。 |
+| `exception_for_controller` | `\Exception::class` | CoreHelper::_ControllerThrowOn() | `ControllerThrowOn()` 未显式指定时的异常类。 |
+| `duckphp_all_in_one_wrap_header_foot` | `false` | DuckPhpAllInOne::onInited() | AllInOne 入口是否给 `_Show()` 包 head/foot 视图（该类自己会置 true）。 |
+| `permission_menu_tree_for_admin` | `null` | Ext\PermissionMenu::getMenuJsonFileConfig() | 后台权限菜单树的配置文件（相对 `path_config`）。 |
+| `duckcoverage_test_lister` | `null` | 外部包 dvaknheo/duckcoverage | 配合该 composer 包做覆盖测试使用，框架自身不读。 |
+| `background` | `false` | HttpServer::run*() | 内置服务器是否后台运行；CLI 开关 `-b/--background` 会把它置 true。 |
 
-`HttpServer` 同时支持以下命令行参数：
+## 相关链接
 
-| 参数 | 说明 |
-|---|---|
-| `--host` / `-H` | 监听地址。|
-| `--port` / `-P` | 监听端口。|
-| `--docroot` / `-t` | 文档根目录。|
-| `--dry` | 仅显示命令，不执行。|
-| `--background` / `-b` | 后台运行。|
-| `--help` / `-h` | 显示帮助。|
-
----
-
-## 助手。Foundation 选项
-
-`DuckPhp\Helper` 。`DuckPhp\Foundation` 命名空间下的类通常不直接声。`$options`，而是依赖当前应用。`App::$options`。具体方法参考对应文档：
-
-- `Helper` 助手：[Helper-AppHelperTrait.md](Helper-AppHelperTrait.md)、[Helper-BusinessHelperTrait.md](Helper-BusinessHelperTrait.md)、[Helper-ControllerHelperTrait.md](Helper-ControllerHelperTrait.md)、[Helper-ModelHelperTrait.md](Helper-ModelHelperTrait.md)
-- `Foundation` 助手：[Foundation-Helper.md](Foundation-Helper.md)
-
----
-
-## 全局管理选项
-
-`DuckPhp\GlobalAdmin` 。`DuckPhp\GlobalUser` 命名空间下的类不直接声明额外选项，通过 `DuckPhp\DuckPhp` 。`class_admin` 。`class_user` 选项启用。详细说明参考：
-
-- [GlobalAdmin-GlobalAdmin.md](GlobalAdmin-GlobalAdmin.md)
-- [GlobalUser-GlobalUser.md](GlobalUser-GlobalUser.md)
-
----
-
-## 按字母顺序索。
-
-| 选项。| 默认。| 来源、| 说明 |
-|---|---|---|---|
-| `alias` | `null` | [DuckPhp\Core\App](Core-App.md) | 子应用别名，用于视图等资源路径调整。|
-| `allow_require_ext_app` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否允许 `require` 命令安装外部子应用。|
-| `api_server_404_as_exception` | `false` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 404 是否抛出异常。|
-| `api_server_base_class` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 限定 API 基类或接口。|
-| `api_server_class_postfix` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | API 类名后缀。|
-| `api_server_namespace` | `'Api'` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | API 类命名空间。|
-| `api_server_use_singletonex` | `false` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 是否使用可变单例模式。|
-| `app` | `[]` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 子应用映射，键为类名，值为对应选项。|
-| `autoload_cache_in_cli` | `false` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | CLI 下是否缓存类文件。|
-| `autoload_path_namespace_map` | `[]` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 命名空间与路径映射。|
-| `autoloader` | `'vendor/autoload.php'` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 自动加载文件路径。|
-| `callable_view_class` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 视图回调限定类名。|
-| `callable_view_foot` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 页脚回调函数。|
-| `callable_view_head` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 页眉回调函数。|
-| `callable_view_is_object_call` | `true` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 是否以对象方式调用。|
-| `callable_view_prefix` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 视图方法前缀。|
-| `callable_view_skip_replace` | `false` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 是否跳过替换默认 `View` 组件。|
-| `class_admin` | `''` | [DuckPhp\DuckPhp](DuckPhp.md) | 管理员类名，设置后自动启用全局管理员。|
-| `class_user` | `''` | [DuckPhp\DuckPhp](DuckPhp.md) | 用户类名，设置后自动启用全局用户。|
-| `cli_command_classes` | `[]` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | CLI 命令类列表。|
-| `cli_command_default` | `'help'` | [DuckPhp\Core\Console](Core-Console.md) | 默认命令。|
-| `cli_command_group` | `[]` | [DuckPhp\Core\Console](Core-Console.md) | 命令分组注册信息。|
-| `cli_command_method_prefix` | `'command_'` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | CLI 命令方法前缀。|
-| `cli_command_prefix` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | CLI 命令命名空间前缀。|
-| `cli_command_with_app` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否将当前应用类加入 CLI 命令类列表。|
-| `cli_command_with_common` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否将默认命令类加入 CLI 命令类列表。|
-| `cli_command_with_fast_installer` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否将安装器加入 CLI 命令类列表。|
-| `cli_enable` | `true` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否启用命令行模式。|
-| `cli_readlines_logfile` | `''` | [DuckPhp\Core\Console](Core-Console.md) | `readLines` 输入日志文件。|
-| `close_resource_at_output` | `false` | [DuckPhp\Core\App](Core-App.md) | 输出时是否关闭资源（第三方扩展参考）。|
-| `controller_base_class` | `null` | DuckPhp\Ext\StrictCheck | 控制器基类。|
-| `controller_class_adjust` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 控制器类名调整规则。|
-| `controller_class_base` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 控制器基类限制。|
-| `controller_class_map` | `[]` | [DuckPhp\Core\Route](Core-Route.md) | 控制器类映射表。|
-| `controller_class_map` | `[]` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制器类映射表。|
-| `controller_class_postfix` | `'Controller'` | [DuckPhp\Core\Route](Core-Route.md) | 控制器类名后缀。|
-| `controller_class_postfix` | `''` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制器类名后缀。|
-| `controller_fix_mistake_path_info` | `true` | [DuckPhp\Core\Route](Core-Route.md) | 是否修复缺失。PATH_INFO。|
-| `controller_method_prefix` | `'action_'` | [DuckPhp\Core\Route](Core-Route.md) | 控制器方法前缀。|
-| `controller_method_prefix` | `''` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制器方法前缀。|
-| `controller_path_ext` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 控制器路径后缀。|
-| `controller_path_ext` | `''` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制器路径后缀。|
-| `controller_prefix_post` | `'do_'` | [DuckPhp\Core\Route](Core-Route.md) | POST 请求方法额外前缀。|
-| `controller_resource_prefix` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 资源 URL 前缀。|
-| `controller_resource_prefix` | `''` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 资源 URL 前缀。|
-| `controller_resource_prefix` | `''` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 资源 URL 前缀。|
-| `controller_url_prefix` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 控制。URL 前缀。|
-| `controller_url_prefix` | `''` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 控制。URL 前缀。|
-| `controller_url_prefix` | `''` | [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md) | 控制。URL 前缀。|
-| `controller_url_prefix` | `''` | [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md) | 控制。URL 前缀。|
-| `controller_url_prefix` | `''` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制。URL 前缀。|
-| `controller_welcome_class` | `'Main'` | [DuckPhp\Core\Route](Core-Route.md) | 默认欢迎控制器类名。|
-| `controller_welcome_class` | `'Main'` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 默认欢迎控制器类名。|
-| `controller_welcome_class_visible` | `false` | [DuckPhp\Core\Route](Core-Route.md) | 是否允许 URL 中显示欢迎控制器名。|
-| `controller_welcome_class_visible` | `false` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 是否允许 URL 中显示欢迎控制器名。|
-| `controller_welcome_method` | `'index'` | [DuckPhp\Core\Route](Core-Route.md) | 默认欢迎方法名。|
-| `controller_welcome_method` | `'index'` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 默认欢迎方法名。|
-| `current` | `null` | [DuckPhp\Component\Pager](Component-Pager.md) | 当前页码。|
-| `database` | `null` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 单一数据库配置。|
-| `database_class` | `''` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 自定义数据库类名，为空使。`DuckPhp\Db\Db`。|
-| `database_driver` | `''` | [DuckPhp\DuckPhp](DuckPhp.md) | 数据库驱动类型（。`mysql`、`sqlite`）。|
-| `database_driver` | `''` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 数据库驱动类型。|
-| `database_list` | `null` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 多数据库配置列表。|
-| `database_list_reload_by_setting` | `true` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 是否从设置文件重新加载数据库配置。|
-| `database_list_try_single` | `true` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 是否尝试将单库配置转为列表。|
-| `database_log_sql_level` | `'debug'` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 记录 SQL 的日志级别。|
-| `database_log_sql_query` | `false` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 是否记录 SQL 查询。|
-| `default_exception_do_log` | `true` | [DuckPhp\Core\App](Core-App.md) | 发生异常时是否记录日志。|
-| `default_exception_handler` | `null` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 默认异常处理回调。|
-| `dev_error_handler` | `null` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 开发错误处理回调。|
-| `empty_view_key_view` | `'view'` | [DuckPhp\Ext\EmptyView](Ext-EmptyView.md) | `_Show` 。`$data` 中保存视图名的键。|
-| `empty_view_key_wellcome_class` | `'Main/'` | [DuckPhp\Ext\EmptyView](Ext-EmptyView.md) | 该前缀的视图名会被裁剪。|
-| `empty_view_skip_replace` | `false` | [DuckPhp\Ext\EmptyView](Ext-EmptyView.md) | 是否跳过替换默认 `View` 组件。|
-| `empty_view_trim_view_wellcome` | `true` | [DuckPhp\Ext\EmptyView](Ext-EmptyView.md) | 是否裁剪欢迎类前缀。|
-| `error_404` | `null` | [DuckPhp\Core\App](Core-App.md) | 404 错误处理视图或回调。|
-| `error_500` | `null` | [DuckPhp\Core\App](Core-App.md) | 500 错误处理视图或回调。|
-| `error_maintain` | `null` | [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookPathInfoCompat.md) | 维护页面视图或回调。|
-| `error_need_install` | `null` | [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookPathInfoCompat.md) | 未安装提示页面视图或回调。|
-| `exception_for_project` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 异常报告仅针对的异常类。|
-| `exception_reporter` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 异常报告类。|
-| `ext` | `[]` | [DuckPhp\DuckPhp](DuckPhp.md) | 默认加载的扩展组件映射。|
-| `ext` | `[]` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 扩展组件映射。|
-| `ext_options_file` | `'config/DuckPhpApps.config.php'` | [DuckPhp\DuckPhp](DuckPhp.md) | 额外选项文件路径。|
-| `ext_options_file_enable` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否启用 `DuckPhpApps.config.php` 额外选项文件。|
-| `facades_enable_autoload` | `true` | [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) | 是否启用门面自动加载。|
-| `facades_map` | `[]` | [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) | 门面映射表。|
-| `facades_namespace` | `'MyFacades'` | [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) | 门面类命名空间。|
-| `force` | `false` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 是否强制覆盖现有文件。|
-| `function_route` | `false` | [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) | 是否启用函数模式路由。|
-| `function_route_404_to_index` | `false` | [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) | 404 是否。`index` 函数执行。|
-| `function_route_method_prefix` | `'action_'` | [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) | 函数模式路由方法前缀。|
-| `handle_all_dev_error` | `true` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 是否捕获开发错误。|
-| `handle_all_exception` | `true` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 是否捕获全部异常。|
-| `handle_exception_on_init` | `true` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 初始化时是否启动异常处理。|
-| `help` | `false` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 是否显示帮助。|
-| `host` | `'127.0.0.1'` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 服务器监听地址。|
-| `html_handler` | `null` | [DuckPhp\Core\App](Core-App.md) | HTML 编码函数回调。|
-| `installed_options_enable` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否启用已安装选项文件。|
-| `installed_options_file` | `'DuckPhpInstalled.config.php'` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 已安装选项文件名。|
-| `is_debug` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否调试模式。|
-| `is_debug` | `false` | DuckPhp\Ext\StrictCheck | 是否启用严格检查。|
-| `json_view_skip_replace` | `false` | [DuckPhp\Ext\JsonView](Ext-JsonView.md) | 是否跳过替换默认 `View` 组件。|
-| `json_view_skip_vars` | `[]` | [DuckPhp\Ext\JsonView](Ext-JsonView.md) | 输出 JSON 时排除的变量名。|
-| `jsonrpc_backend` | `'https://127.0.0.1'` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | JsonRpc 后端地址。|
-| `jsonrpc_check_token_handler` | `null` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | Token 处理回调。|
-| `jsonrpc_enable_autoload` | `true` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | 是否启用客户端类自动加载。|
-| `jsonrpc_is_debug` | `false` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | 是否调试。|
-| `jsonrpc_namespace` | `'JsonRpc'` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | 客户端类命名空间。|
-| `jsonrpc_service_interface` | `''` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | 服务接口或基类限制。|
-| `jsonrpc_service_namespace` | `''` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | 服务限定命名空间。|
-| `jsonrpc_timeout` | `5` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | 请求超时秒数。|
-| `jsonrpc_wrap_auto_adjust` | `true` | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | 是否自动调整封装。|
-| `lang_cookie_name` | `'lang'` | [DuckPhp\Component\Lang](Component-Lang.md) | Cookie 语言键名。|
-| `lang_default` | `null` | [DuckPhp\DuckPhp](DuckPhp.md) | 默认语言，与 `Lang` 组件共享。|
-| `lang_default` | `null` | [DuckPhp\Component\Lang](Component-Lang.md) | 默认回退语言。|
-| `lang_detect_mode` | `['url', 'cookie', 'header', 'cli', 'default']` | [DuckPhp\Component\Lang](Component-Lang.md) | 语言检测顺序。|
-| `lang_file_path` | `'lang/'` | [DuckPhp\Component\Lang](Component-Lang.md) | 语言文件目录（相对于 `config/`）。|
-| `lang_final` | `null` | [DuckPhp\DuckPhp](DuckPhp.md) | 最终语言，与 `Lang` 组件共享。|
-| `lang_final` | `null` | [DuckPhp\Component\Lang](Component-Lang.md) | 最终语言，设置后跳过自动检测。|
-| `lang_follow_root` | `true` | [DuckPhp\Component\Lang](Component-Lang.md) | 子应用是否跟随根应用语言。|
-| `lang_handler` | `null` | [DuckPhp\Core\App](Core-App.md) | 语言处理回调。|
-| `lang_simple_mode_only_sentences` | `[]` | [DuckPhp\Component\Lang](Component-Lang.md) | 简单模式下的翻译句子数组。|
-| `lang_url_param` | `'lang'` | [DuckPhp\Component\Lang](Component-Lang.md) | URL 语言参数名。|
-| `log_file_template` | `'log_%Y-%m-%d_%H-%i.log'` | [DuckPhp\Core\Logger](Core-Logger.md) | 日志文件名模板。|
-| `log_prefix` | `'DuckPhpLog'` | [DuckPhp\Core\Logger](Core-Logger.md) | 日志前缀。|
-| `middleware` | `[]` | [DuckPhp\Ext\MyMiddlewareManager](Ext-MyMiddlewareManager.md) | 中间件回调列表。|
-| `mode_dir_basepath` | `''` | [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) | 目录模式的基准路径。|
-| `namespace` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 项目命名空间。|
-| `namespace` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 项目命名空间。|
-| `namespace` | `''` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 应用命名空间。|
-| `namespace` | `''` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 项目命名空间。|
-| `namespace` | `''` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 项目命名空间。|
-| `namespace` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 项目命名空间。|
-| `namespace` | `''` | DuckPhp\Ext\StrictCheck | 项目命名空间。|
-| `namespace_business` | `''` | DuckPhp\Ext\StrictCheck | 业务类命名空间。|
-| `namespace_controller` | `'Controller'` | [DuckPhp\Core\Route](Core-Route.md) | 控制器命名空间。|
-| `namespace_controller` | `'Controller'` | [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制器命名空间。|
-| `namespace_controller` | `'Controller'` | DuckPhp\Ext\StrictCheck | 控制器命名空间。|
-| `namespace_model` | `''` | DuckPhp\Ext\StrictCheck | 模型类命名空间。|
-| `on_init` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 初始化完成后回调。|
-| `options_file` | `'config/DuckPhpOptions.config.php'` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 选项文件路径。|
-| `options_file_enable` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否启用选项文件。|
-| `override_class` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 重载类名，存在则切换到该类初始化。|
-| `override_class_from` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 切换前保存的。`override_class`。|
-| `page_key` | `'page'` | [DuckPhp\Component\Pager](Component-Pager.md) | 页码 URL 参数名。|
-| `page_size` | `30` | [DuckPhp\Component\Pager](Component-Pager.md) | 每页大小。|
-| `path` | `null` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 项目根路径。|
-| `path` | `''` | [DuckPhp\Core\Logger](Core-Logger.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\Core\View](Core-View.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\Component\Configer](Component-Configer.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\Ext\Misc](Ext-Misc.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 项目路径。|
-| `path` | `''` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 项目路径。|
-| `path_config` | `'config'` | [DuckPhp\Component\Configer](Component-Configer.md) | 配置文件目录。|
-| `path_document` | `'public'` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 文档根目录。|
-| `path_document` | `'public'` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 文档根目录。|
-| `path_info_compact_action_key` | `'_r'` | [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 替代 PATH_INFO 。action 参数键。|
-| `path_info_compact_class_key` | `''` | [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 替代 PATH_INFO 。class 参数键。|
-| `path_info_compact_enable` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否启用。PATH_INFO 兼容模式。|
-| `path_info_compact_enable` | `true` | [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 是否启用兼容模式。|
-| `path_installed_options` | `'config'` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 已安装选项文件所在目录。|
-| `path_lib` | `'lib'` | [DuckPhp\Ext\Misc](Ext-Misc.md) | Import 库目录路径。|
-| `path_log` | `'runtime'` | [DuckPhp\Core\Logger](Core-Logger.md) | 日志目录路径。|
-| `path_namespace` | `'app'` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 应用代码目录。|
-| `path_resource` | `'res'` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 资源目录。|
-| `path_runtime` | `'runtime'` | [DuckPhp\Core\App](Core-App.md) | 运行目录路径。|
-| `path_runtime` | `'runtime'` | [DuckPhp\Core\Runtime](Core-Runtime.md) | 运行目录路径。|
-| `path_sql_dump` | `'config'` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | SQL 导出目录。|
-| `path_view` | `'view'` | [DuckPhp\Core\View](Core-View.md) | 视图目录路径。|
-| `port` | `'8080'` | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 服务器监听端口。|
-| `postfix_batch_business` | `'BatchBusiness'` | DuckPhp\Ext\StrictCheck | 批量业务类后缀。|
-| `postfix_business_lib` | `'Lib'` | DuckPhp\Ext\StrictCheck | 业务库类后缀。|
-| `postfix_ex_model` | `'ExModel'` | DuckPhp\Ext\StrictCheck | 混合模型后缀。|
-| `postfix_model` | `'Model'` | DuckPhp\Ext\StrictCheck | 模型后缀。|
-| `psr-4` | `[]` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | PSR-4 映射。|
-| `redis` | `null` | [DuckPhp\Component\RedisManager](Component-RedisManager.md) | 单一 Redis 配置。|
-| `redis_cache_prefix` | `''` | [DuckPhp\Component\RedisCache](Component-RedisCache.md) | Redis 缓存键前缀。|
-| `redis_cache_skip_replace` | `false` | [DuckPhp\Component\RedisCache](Component-RedisCache.md) | 是否跳过替换默认 `Cache` 组件。|
-| `redis_list` | `null` | [DuckPhp\Component\RedisManager](Component-RedisManager.md) | 。Redis 配置列表。|
-| `redis_list_reload_by_setting` | `true` | [DuckPhp\Component\RedisManager](Component-RedisManager.md) | 是否从设置文件重新加。Redis 配置。|
-| `redis_list_try_single` | `true` | [DuckPhp\Component\RedisManager](Component-RedisManager.md) | 是否尝试将单 Redis 配置转为列表。|
-| `rewrite` | `null` | [DuckPhp\Component\Pager](Component-Pager.md) | URL 重写回调。|
-| `rewrite_map` | `[]` | [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md) | 重写映射表。|
-| `route_map` | `[]` | [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md) | 在默认路由失败后执行的路由映射。|
-| `route_map_important` | `[]` | [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md) | 在默认路由前执行的路由映射。|
-| `session_prefix` | `null` | [DuckPhp\DuckPhp](DuckPhp.md) | Session 前缀。|
-| `setting_file` | `'config/DuckPhpSettings.config.php'` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 设置文件路径。|
-| `setting_file_enable` | `true` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否启用设置文件。|
-| `setting_file_ignore_exists` | `true` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 设置文件不存在时是否忽略。|
-| `skip_404` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否跳过 404 处理。|
-| `skip_app_autoload` | `false` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 是否跳过应用命名空间自动加载。|
-| `skip_exception_check` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否跳过异常检查，用于配合其他框架。|
-| `sql_dump_data_tables` | `[]` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 需要导出数据的表。|
-| `sql_dump_debug_show_sql` | `false` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 是否显示执行。SQL。|
-| `sql_dump_exclude_tables` | `[]` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 排除的表。|
-| `sql_dump_file` | `'install.sql'` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | SQL 导出文件名。|
-| `sql_dump_include_tables` | `[]` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 显式包含的表。|
-| `sql_dump_include_tables_all` | `false` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 是否导出所有表。|
-| `sql_dump_include_tables_by_model` | `true` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 是否通过模型扫描表。|
-| `sql_dump_install_replace_prefix` | `true` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | 安装时是否替换表前缀。|
-| `sql_dump_prefix` | `''` | [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) | SQL 中的表前缀。|
-| `strict_check_context_class` | `null` | DuckPhp\Ext\StrictCheck | 指定上下文类。|
-| `strict_check_enable` | `true` | DuckPhp\Ext\StrictCheck | 是否启用严格检查模式。|
-| `superglobal_auto_define` | `false` | [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) | 初始化时是否定义 `__SUPERGLOBAL_CONTEXT` 宏。|
-| `system_exception_handler` | `null` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 系统异常处理回调。|
-| `table_prefix` | `null` | [DuckPhp\DuckPhp](DuckPhp.md) | 数据库表前缀。|
-| `url` | `null` | [DuckPhp\Component\Pager](Component-Pager.md) | 基础 URL。|
-| `use_env_file` | `false` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 是否加载 `.env` 文件。|
-| `use_output_buffer` | `false` | [DuckPhp\Core\Runtime](Core-Runtime.md) | 是否启用输出缓冲。|
-| `verbose` | `false` | [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 是否显示详情。|
-| `view_skip_notice_error` | `true` | [DuckPhp\Core\View](Core-View.md) | 渲染视图时是否忽。notice 错误。|
-
----
-
-> 查看所有选项的按字母顺序索引：[options-index.md](options-index.md)
+- [应用选项（按字母顺序索引）](options-index.md)
+- [应用选项总览（首页）](options.md)
+- [应用设置 Setting](setting.md)

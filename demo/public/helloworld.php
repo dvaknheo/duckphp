@@ -28,6 +28,6 @@ $options = [
 ];
 try{
 \DuckPhp\DuckPhp::RunQuickly($options);
-}catch(\Thowable $e){
+}catch(\Throwable $e){
 
 }

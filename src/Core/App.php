@@ -50,6 +50,7 @@ class App extends ComponentBase
 
         //// error handler ////
         'is_maintain' => false,
+        'skip_404' => false,
         'error_404' => null,            //'_sys/error-404',
         'error_500' => null,            //'_sys/error-500',
         'error_debug' => null,          //'_sys/error-debug',
@@ -75,6 +76,15 @@ class App extends ComponentBase
         // 'superglobal_auto_define' => false,
         //*/
     ];
+    /**
+     * Options that the framework reads but does not declare as real options.
+     *
+     * Documentation only: they are NOT merged into $options (subclasses only list them so
+     * tooling/docs can show them), and they are NOT cleared in __construct() below.
+     */
+    protected $hidden_options = [
+        //subclasses list the hidden options here;
+    ];
     protected $common_options = [];
     protected $this_class = '';
     public $setting = [];
@@ -85,6 +95,7 @@ class App extends ComponentBase
         $this->kernel_options = []; // not use again;
         $this->core_options = []; // not use again;
         $this->common_options = []; // not use again;
+        // $this->hidden_options is kept: it is metadata for docs/tooling, not a consumed option table
         $this->this_class = static::class;
     }
     public function version()

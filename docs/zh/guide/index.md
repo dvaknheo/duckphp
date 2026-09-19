@@ -20,13 +20,13 @@
 
 | 章 | 标题 | 一句话 |
 |---|---|---|
-| 1 | ⏳ DuckPHP 是什么 | 设计取舍与心智模型：单文件可跑、相位隔离、四层 + Helper |
-| 2 | [安装与最小示例](install.md) | composer 安装、脚手架建工程、三行跑起一个页面 |
+| 1 | [DuckPHP 是什么](intro.md) | 设计取舍与心智模型：单文件可跑、相位隔离、四层 + Helper |
+| 2 | [安装与最小示例](install.md) | 两条安装路线、3 个文件跑起第一个页面 |
 | 3 | [目录结构与编码规则](project-structure.md) | 目录约定、命名规范、四层调用铁律 |
-| 4 | [第一个页面](quickstart.md) | 路由 → 控制器 → 视图 走通一遍 |
-| 5 | [配置与设置](configuration.md) | `options` 与 `setting` 的区别、配置文件与环境区分 |
-| 6 | ⏳ 调试、日志与 CLI 初体验 | 错误页、`is_debug`、日志分级、`php xx help` |
-| 7 | [上线最小清单](deployment.md) | Web 服务器、文档根、目录权限、`installed` |
+| 4 | [第一个页面](quickstart.md) | 路由 → 控制器 → 业务 → 模型 → 视图 走通一遍 |
+| 5 | [配置与设置](configuration.md) | `options` 与 `settings` 的区别、环境区分 |
+| 6 | [调试、日志与 CLI 初体验](debugging.md) | 错误页、`is_debug`、日志分级、`php bin/cli.php` |
+| 7 | [上线最小清单](deployment.md) | 文档根、nginx/apache、目录权限、生产选项与检查清单 |
 
 ## 第二卷 · 单一应用
 
@@ -95,3 +95,7 @@
 | D ⏳ FAQ 与排错索引 | 按症状查 |
 
 > **全局函数参考**与**应用选项参考**已归入参考手册，见 [参考手册首页](../reference/index.md)。
+
+---
+
+> 维护/接手本指南（进度 checklist、写作模板、校验命令、已知坑）：[用户指南重写 · 交接与维护指南](../guide-maintenance-guide.md)
