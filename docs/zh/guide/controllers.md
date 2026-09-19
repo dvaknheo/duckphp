@@ -55,26 +55,26 @@ class MainController extends Base
 
 ### 3. 输入的获取
 
-| 想拿什么 | 写法 | 说明 |
-|---|---|---|
-| GET 参数 | `Helper::GET('id')` / `Helper::GET()`（全部） | 底层是 `SuperGlobal`，可被测试替换 |
-| POST 参数 | `Helper::POST('name')` | 同上 |
-| GET+POST 合并 | `Helper::REQUEST('q')` | 按 PHP 的 `$_REQUEST` 语义 |
-| Cookie / Server | `Helper::COOKIE('k')` / `Helper::SERVER('HTTP_HOST')` | |
-| **路由参数** | `Helper::Parameter('id')` | 路由映射里 `{id}`、`*` 通配、正则捕获组匹配出来的参数（[第 9 章](routing.md)） |
-| 判断请求类型 | `Helper::IsPost()` / `Helper::IsAjax()` | |
-| 当前路由信息 | `Helper::getRouteCallingClass()` / `Helper::getRouteCallingMethod()` / `Helper::PathInfo()` | 排错与日志常用 |
+| 想拿什么            | 写法                                                                                          | 说明                                                    |
+| --------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| GET 参数          | `Helper::GET('id')` / `Helper::GET()`（全部）                                                   | 底层是 `SuperGlobal`，可被测试替换                              |
+| POST 参数         | `Helper::POST('name')`                                                                      | 同上                                                    |
+| GET+POST 合并     | `Helper::REQUEST('q')`                                                                      | 按 PHP 的 `$_REQUEST` 语义                                |
+| Cookie / Server | `Helper::COOKIE('k')` / `Helper::SERVER('HTTP_HOST')`                                       |                                                       |
+| **路由参数**        | `Helper::Parameter('id')`                                                                   | 路由映射里 `{id}`、`*` 通配、正则捕获组匹配出来的参数（[第 9 章](routing.md)） |
+| 判断请求类型          | `Helper::IsPost()` / `Helper::IsAjax()`                                                     |                                                       |
+| 当前路由信息          | `Helper::getRouteCallingClass()` / `Helper::getRouteCallingMethod()` / `Helper::PathInfo()` | 排错与日志常用                                               |
 
 > 别在控制器里直接读 `$_GET`/`$_POST`：`SuperGlobal` 包装的存在意义是「命令行、测试、常驻进程下也能替换数据源」。
 
 ### 4. 输出的四种方式
 
-| 方式 | 写法 | 适用 |
-|---|---|---|
-| **① 视图** | `Helper::Show($data, $view)` | 常规 HTML 页面；`$view` 省略时用当前路由路径当视图名 |
-| **② 渲染成字符串** | `$html = Helper::Render('mail/body', $data);` | 邮件正文、片段缓存、二次加工后再输出 |
-| **③ JSON** | `Helper::ShowJson($data)`（可带 `$flags`） | 接口 |
-| **④ 直接输出** | `echo` / `Helper::header()` / `Helper::exit()` | 极简接口、流式输出、健康检查 |
+| 方式           | 写法                                             | 适用                                |
+| ------------ | ---------------------------------------------- | --------------------------------- |
+| **① 视图**     | `Helper::Show($data, $view)`                   | 常规 HTML 页面；`$view` 省略时用当前路由路径当视图名 |
+| **② 渲染成字符串** | `$html = Helper::Render('mail/body', $data);`  | 邮件正文、片段缓存、二次加工后再输出                |
+| **③ JSON**   | `Helper::ShowJson($data)`（可带 `$flags`）         | 接口                                |
+| **④ 直接输出**   | `echo` / `Helper::header()` / `Helper::exit()` | 极简接口、流式输出、健康检查                    |
 
 另外两个「出口」动作：
 
@@ -185,16 +185,16 @@ Mailer::_()->send($user['email'], '欢迎', $body);
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `Helper::Show('main', $data)` 视图找不到 / 白屏 | 参数顺序反了：真实签名是 `Show($data = [], $view = '')` | 数据在前、视图名在后；惯用 `Show(get_defined_vars(), 'main')` |
-| 视图里 `$var` 未定义 | 变量没进 `Show()` 的数据里 | 用 `get_defined_vars()` 或 `assignViewData()` 显式给 |
-| 改了 `controller_method_prefix` 后全部 404 | URL 不变，但方法名要加前缀 | 方法名加前缀（如 `action_index`），或把前缀配回 `''` |
-| `Helper::Parameter('id')` 拿不到 `?id=1` | 它只给**路由捕获**的参数 | 查询串用 `Helper::GET('id')` |
-| 控制器里 `DemoModel::_()->...` 查库 | 越界：跳过了业务层 | 挪进 Business（[第 8 章](layers.md)） |
-| `Helper::Show302('/user/login')` 部署到子目录后跳错 | 手写绝对路径 | 用 `Helper::Url('user/login')` |
-| 在 `echo` 之后又 `Helper::header()` 报「已发送输出」 | 输出已经开始 | 先发头再输出；或用 `Runtime` 的输出缓冲（[第 17 章](lifecycle.md)） |
-| 控制器方法里 `exit()` 导致测试/CLI 中断 | 直接结束进程 | 用 `Helper::exit()`（可替换的系统包装）或正常 `return` |
+| 现象                                         | 原因                                          | 改法                                                |
+| ------------------------------------------ | ------------------------------------------- | ------------------------------------------------- |
+| `Helper::Show('main', $data)` 视图找不到 / 白屏   | 参数顺序反了：真实签名是 `Show($data = [], $view = '')` | 数据在前、视图名在后；惯用 `Show(get_defined_vars(), 'main')`  |
+| 视图里 `$var` 未定义                             | 变量没进 `Show()` 的数据里                          | 用 `get_defined_vars()` 或 `assignViewData()` 显式给   |
+| 改了 `controller_method_prefix` 后全部 404      | URL 不变，但方法名要加前缀                             | 方法名加前缀（如 `action_index`），或把前缀配回 `''`              |
+| `Helper::Parameter('id')` 拿不到 `?id=1`      | 它只给**路由捕获**的参数                              | 查询串用 `Helper::GET('id')`                          |
+| 控制器里 `DemoModel::_()->...` 查库              | 越界：跳过了业务层                                   | 挪进 Business（[第 8 章](layers.md)）                   |
+| `Helper::Show302('/user/login')` 部署到子目录后跳错 | 手写绝对路径                                      | 用 `Helper::Url('user/login')`                     |
+| 在 `echo` 之后又 `Helper::header()` 报「已发送输出」   | 输出已经开始                                      | 先发头再输出；或用 `Runtime` 的输出缓冲（[第 17 章](lifecycle.md)） |
+| 控制器方法里 `exit()` 导致测试/CLI 中断                | 直接结束进程                                      | 用 `Helper::exit()`（可替换的系统包装）或正常 `return`          |
 
 ## 下一步
 

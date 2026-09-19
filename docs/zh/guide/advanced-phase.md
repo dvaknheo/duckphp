@@ -58,17 +58,17 @@ App::_()->options['app'][ThirdApp::class]['controller_url_prefix']; // 'shop/'
 
 ## 相位 API 一览
 
-| 想做什么 | 怎么写 |
-|---|---|
-| 查当前相位 | `App::Phase()` |
-| 切到子应用（并拿到它） | `App::_()->toThisChild(ThirdApp::class)`（不存在返回 `null`） |
-| 按类切子相位 | `App::_()->toChildPhase(ThirdApp::class)`（返回 bool） |
-| 从子应用切回父 | `ThirdApp::FromCurrentParent()`（不在子相位时返回 `null`） |
-| 取根实例并切回根 | `App::Root(true)`；只取值不切相位用 `App::Root()` |
-| 重设根相位名 | `App::SwitchRootPhase($phase)` |
-| 当前应用的相位名 | `App::_()->getThisPhaseName()` |
-| 当前应用的 CLI 命令前缀 | `App::_()->getThisCommandPrefix()`（相位名里的 `/` 换成 `-`） |
-| 看容器里都有什么 | `PhaseContainer::_()->dumpAllObject()` |
+| 想做什么           | 怎么写                                                    |
+| -------------- | ------------------------------------------------------ |
+| 查当前相位          | `App::Phase()`                                         |
+| 切到子应用（并拿到它）    | `App::_()->toThisChild(ThirdApp::class)`（不存在返回 `null`） |
+| 按类切子相位         | `App::_()->toChildPhase(ThirdApp::class)`（返回 bool）     |
+| 从子应用切回父        | `ThirdApp::FromCurrentParent()`（不在子相位时返回 `null`）       |
+| 取根实例并切回根       | `App::Root(true)`；只取值不切相位用 `App::Root()`               |
+| 重设根相位名         | `App::SwitchRootPhase($phase)`                         |
+| 当前应用的相位名       | `App::_()->getThisPhaseName()`                         |
+| 当前应用的 CLI 命令前缀 | `App::_()->getThisCommandPrefix()`（相位名里的 `/` 换成 `-`）   |
+| 看容器里都有什么       | `PhaseContainer::_()->dumpAllObject()`                 |
 
 ## 子应用的声明：`app` 选项
 
@@ -152,14 +152,14 @@ $cmd_prefix = App::_()->getThisCommandPrefix();  // CLI 命令前缀
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `App::Phase('ZThirdDemo\Third\System\ThirdApp')` 后行为不变 | 相位名不是类名 | 用 `App::_()->toThisChild(ThirdApp::class)`，或读 `options['app'][类]['__phase__']` |
-| 后面所有代码都跑到子应用里去了 | 切了相位没切回来 | 记住 `$phase = App::Phase();` … `App::Phase($phase);` |
-| 子应用里 `App::_()` 不是主应用 | 它就是**当前（子）应用** | 要根应用用 `App::Root()` |
-| `Call to undefined method ...::getOverridingClass()` | 这是早期版本的 API | 用 `getThisClassName()` / `getThisPhaseName()` |
-| 子应用 404、路由前缀重复 | `controller_url_prefix` 少了或多了 `/` | 子应用前缀写 `'shop/'`（带尾斜杠），URL 才是 `/shop/` 与 `/shop/list` |
-| 子应用的类找不到 | 没给它的命名空间加自动加载映射 | 见上面的 `assignPathNamespace()`（Composer 包则自带） |
+| 现象                                                     | 原因                                | 改法                                                                             |
+| ------------------------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------ |
+| `App::Phase('ZThirdDemo\Third\System\ThirdApp')` 后行为不变 | 相位名不是类名                           | 用 `App::_()->toThisChild(ThirdApp::class)`，或读 `options['app'][类]['__phase__']` |
+| 后面所有代码都跑到子应用里去了                                        | 切了相位没切回来                          | 记住 `$phase = App::Phase();` … `App::Phase($phase);`                            |
+| 子应用里 `App::_()` 不是主应用                                  | 它就是**当前（子）应用**                    | 要根应用用 `App::Root()`                                                            |
+| `Call to undefined method ...::getOverridingClass()`   | 这是早期版本的 API                       | 用 `getThisClassName()` / `getThisPhaseName()`                                  |
+| 子应用 404、路由前缀重复                                         | `controller_url_prefix` 少了或多了 `/` | 子应用前缀写 `'shop/'`（带尾斜杠），URL 才是 `/shop/` 与 `/shop/list`                          |
+| 子应用的类找不到                                               | 没给它的命名空间加自动加载映射                   | 见上面的 `assignPathNamespace()`（Composer 包则自带）                                    |
 
 ## 常见问题
 

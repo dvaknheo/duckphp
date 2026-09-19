@@ -145,16 +145,16 @@ php cli.php run --http_server=MyProj/Http/MyServer
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 端口被占用 / 起不来 | 上一个后台服务器没关掉 | `HttpServer::_()->close()`；或换端口；`ps aux \| grep "php -S"` 找残留 |
-| 测试偶发失败、报连接拒绝 | `background` 起了但没等它 ready | 起完 `sleep(1)`（仓库现状就是这么做的），或重试探测端口 |
-| RPC 示例卡住/超时 | 没开 `workers` | 设 `workers`（≥2） |
-| 后台模式没有任何输出 | 输出被重定向到 `/dev/null` | 调试时用前台模式或 `--dry` |
-| `close()` 返回 `false` | 当前进程没有 PID 可关 | 确认是在**起服务器的那个进程**里 close；别跨进程关 |
-| Windows 下起服务器报"系统找不到指定的路径" | 旧版用 shell 起，cmd.exe 无法解析 `& echo $!` | 现版本 Windows 走 `proc_open` 分支；升级到当前代码即可 |
-| 长跑脚本里响应"攒着不发" | 开了 `use_output_buffer` 但没走到 `Runtime::clear()` | 保证请求收尾逻辑（`Route::clear()`/`Runtime::clear()`）被执行 |
-| 把内置服务器放到生产 | 它不是生产级服务器 | 上 php-fpm/nginx（[第 7 章](deployment.md)） |
+| 现象                         | 原因                                             | 改法                                                            |
+| -------------------------- | ---------------------------------------------- | ------------------------------------------------------------- |
+| 端口被占用 / 起不来                | 上一个后台服务器没关掉                                    | `HttpServer::_()->close()`；或换端口；`ps aux \| grep "php -S"` 找残留 |
+| 测试偶发失败、报连接拒绝               | `background` 起了但没等它 ready                      | 起完 `sleep(1)`（仓库现状就是这么做的），或重试探测端口                             |
+| RPC 示例卡住/超时                | 没开 `workers`                                   | 设 `workers`（≥2）                                               |
+| 后台模式没有任何输出                 | 输出被重定向到 `/dev/null`                            | 调试时用前台模式或 `--dry`                                             |
+| `close()` 返回 `false`       | 当前进程没有 PID 可关                                  | 确认是在**起服务器的那个进程**里 close；别跨进程关                                |
+| Windows 下起服务器报"系统找不到指定的路径" | 旧版用 shell 起，cmd.exe 无法解析 `& echo $!`           | 现版本 Windows 走 `proc_open` 分支；升级到当前代码即可                        |
+| 长跑脚本里响应"攒着不发"              | 开了 `use_output_buffer` 但没走到 `Runtime::clear()` | 保证请求收尾逻辑（`Route::clear()`/`Runtime::clear()`）被执行              |
+| 把内置服务器放到生产                 | 它不是生产级服务器                                      | 上 php-fpm/nginx（[第 7 章](deployment.md)）                       |
 
 ## 下一步
 

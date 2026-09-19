@@ -83,12 +83,12 @@ CLI 或测试里想伪造请求路径：`Route::_()->PathInfo('about/me')`。
 
 `__url()`（= `Helper::Url()` = `Route::_()->Url()`）不是字符串拼接，规则如下（`defaultUrlHandler()`）：
 
-| 传入 | 结果 |
-|---|---|
-| `'/other/app.php'`（以 `/` 开头） | **原样返回**（跨应用/绝对路径用这种） |
-| `''` | 当前 basepath（部署在子目录时就是那个子目录） |
-| `'?page=2'` / `'#top'` | 当前路径 + 该后缀 |
-| `'about/me'` | basepath + `/about/me` |
+| 传入                           | 结果                          |
+| ---------------------------- | --------------------------- |
+| `'/other/app.php'`（以 `/` 开头） | **原样返回**（跨应用/绝对路径用这种）       |
+| `''`                         | 当前 basepath（部署在子目录时就是那个子目录） |
+| `'?page=2'` / `'#top'`       | 当前路径 + 该后缀                  |
+| `'about/me'`                 | basepath + `/about/me`      |
 
 所以「站内另一个页面」写 `__url('about/me')`；要原样输出绝对路径写 `__url('/res/logo.png')`，或更明确的 `__res('logo.png')`（[第 27 章](static-resources.md)）。
 
@@ -202,16 +202,16 @@ Helper::Show302(Helper::Url('user/login'));
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `assignRewrite('legacy', …)` 怎么都不生效 | 键少了前导 `/`，钩子拿 `'/'.$path_info` 比较 | 写成 `'/legacy'` |
-| 访问 `/about` 报类不存在 | 单段路径被当成**欢迎类的方法**，不是控制器 | 控制器至少两段：`/about/me`；单段需求改用 `route_map` |
-| `/Main/index` 被拒绝（E009） | `controller_welcome_class_visible` 默认 `false` | 用 `/` 访问欢迎页；确实需要显式路径就设为 `true` |
-| 路由映射里写 `Class::method` 不生效 | `::` 形式**不支持** | 用 `Class@method`（`::_()`）或 `Class->method`（`new`） |
-| 普通 `route_map` 里的规则抢不过默认路由 | 位置不同：important 在默认路由**之前**，普通 map 是**兜底** | 需要优先匹配就放进 `route_map_important` |
-| 子应用里访问得到 404、错误码 E001 | URL 没带子应用的 `controller_url_prefix` | URL 加上前缀，或调整子应用配置（[第 26 章](mount-app.md)） |
-| 部署到子目录后所有站内链接 404 | 手写了 `/xxx` 绝对路径 | 一律用 `__url()`/`Helper::Url()` 生成 |
-| 开了 `_r=` 兼容模式，原 PATH_INFO 路由全失效 | 兼容模式下路径改从查询串取 | 只在没有 PATH_INFO 的服务器上开（[第 7 章](deployment.md)） |
+| 现象                                  | 原因                                            | 改法                                                |
+| ----------------------------------- | --------------------------------------------- | ------------------------------------------------- |
+| `assignRewrite('legacy', …)` 怎么都不生效 | 键少了前导 `/`，钩子拿 `'/'.$path_info` 比较             | 写成 `'/legacy'`                                    |
+| 访问 `/about` 报类不存在                   | 单段路径被当成**欢迎类的方法**，不是控制器                       | 控制器至少两段：`/about/me`；单段需求改用 `route_map`            |
+| `/Main/index` 被拒绝（E009）             | `controller_welcome_class_visible` 默认 `false` | 用 `/` 访问欢迎页；确实需要显式路径就设为 `true`                    |
+| 路由映射里写 `Class::method` 不生效          | `::` 形式**不支持**                                | 用 `Class@method`（`::_()`）或 `Class->method`（`new`） |
+| 普通 `route_map` 里的规则抢不过默认路由          | 位置不同：important 在默认路由**之前**，普通 map 是**兜底**     | 需要优先匹配就放进 `route_map_important`                   |
+| 子应用里访问得到 404、错误码 E001               | URL 没带子应用的 `controller_url_prefix`            | URL 加上前缀，或调整子应用配置（[第 26 章](mount-app.md)）         |
+| 部署到子目录后所有站内链接 404                   | 手写了 `/xxx` 绝对路径                               | 一律用 `__url()`/`Helper::Url()` 生成                  |
+| 开了 `_r=` 兼容模式，原 PATH_INFO 路由全失效     | 兼容模式下路径改从查询串取                                 | 只在没有 PATH_INFO 的服务器上开（[第 7 章](deployment.md)）     |
 
 ## 下一步
 

@@ -107,13 +107,14 @@ GET /install
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 每个页面都跳到安装页 | `installed` 还是 `false` | 置 `true`，或把守卫放在你真正想拦的入口 |
-| `checkInstall()` 之后代码还在跑 | 你在测试里替换了 `exit` | 那是测试行为；生产是真空退出，别依赖「后面不执行」 |
-| 向导页 404 | 扩展没装，或 `url_install` 与访问地址不一致 | 确认 `ext` 里有 `RouteHookWebInstaller`，地址与 `url_install` 一致 |
-| 向导写不进配置 | `config/` 不可写，或 `web_installer_force=false` 且文件已存在 | 给写权限；要覆盖就 `force=true` |
-| 想换成自己的安装页 | 不想用内置向导 | 用 `web_installer_view` 或 `web_installer_render_custom_callback` |
+| 现象                       | 原因                                                 | 改法                                                              |
+| ------------------------ | -------------------------------------------------- | --------------------------------------------------------------- |
+| 每个页面都跳到安装页               | `installed` 还是 `false`                             | 置 `true`，或把守卫放在你真正想拦的入口                                         |
+| `checkInstall()` 之后代码还在跑 | 你在测试里替换了 `exit`                                    | 那是测试行为；生产是真空退出，别依赖「后面不执行」                                       |
+| 向导页 404                  | 扩展没装，或 `url_install` 与访问地址不一致                      | 确认 `ext` 里有 `RouteHookWebInstaller`，地址与 `url_install` 一致        |
+| 向导写不进配置                  | `config/` 不可写，或 `web_installer_force=false` 且文件已存在 | 给写权限；要覆盖就 `force=true`                                          |
+| 想换成自己的安装页                | 不想用内置向导                                            | 用 `web_installer_view` 或 `web_installer_render_custom_callback` |
+|                          |                                                    |                                                                 |
 
 ## 相关参考
 

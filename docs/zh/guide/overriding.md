@@ -6,13 +6,13 @@
 
 ## 五个层次，一张总表
 
-| 层次 | 手段 | 覆盖谁 | 本卷示例位置 |
-|---|---|---|---|
-| **文件级** | 父应用按「子应用 name」建同名子目录 | 子应用的视图 / 配置 / 资源 | `view/shop/index.php`、`config/shop/greet.php`、`res/shop/third.css` |
-| **类级** | `controller_class_map`（可从父应用注入给子应用） | 某个控制器类的实现 | `src/Override/ShopControllerOverride.php` |
-| **路由级** | `RouteHookRewrite` / `RouteHookRouteMap` | URL 的指向 | `MainApp::onInit()` 里的 `/legacy-shop` |
-| **视图级** | `use_admin_view` / `use_user_view` + 头尾视图选项 | `_Show()` 的渲染方式 | 第 16 章 |
-| **组件级** | `ext` 表（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*`） | 组件与扩展的装配 | 第 33 章 |
+| 层次      | 手段                                              | 覆盖谁              | 本卷示例位置                                                             |
+| ------- | ----------------------------------------------- | ---------------- | ------------------------------------------------------------------ |
+| **文件级** | 父应用按「子应用 name」建同名子目录                            | 子应用的视图 / 配置 / 资源 | `view/shop/index.php`、`config/shop/greet.php`、`res/shop/third.css` |
+| **类级**  | `controller_class_map`（可从父应用注入给子应用）             | 某个控制器类的实现        | `src/Override/ShopControllerOverride.php`                          |
+| **路由级** | `RouteHookRewrite` / `RouteHookRouteMap`        | URL 的指向          | `MainApp::onInit()` 里的 `/legacy-shop`                              |
+| **视图级** | `use_admin_view` / `use_user_view` + 头尾视图选项     | `_Show()` 的渲染方式  | 第 16 章                                                             |
+| **组件级** | `ext` 表（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*`） | 组件与扩展的装配         | 第 33 章                                                             |
 
 ## 文件级覆盖：先讲清「谁赢」
 
@@ -28,11 +28,11 @@
 
 三个 `path_sub` 的对应关系：
 
-| 覆盖什么 | 放在父应用的 | 覆盖子应用的 |
-|---|---|---|
-| 视图 | `view/<name>/<视图名>.php` | `view/<视图名>.php` |
+| 覆盖什么                          | 放在父应用的                  | 覆盖子应用的           |
+| ----------------------------- | ----------------------- | ---------------- |
+| 视图                            | `view/<name>/<视图名>.php` | `view/<视图名>.php` |
 | 配置（`Configer`，文件名为 `<名>.php`） | `config/<name>/<名>.php` | `config/<名>.php` |
-| 资源（`RouteHookResource`） | `res/<name>/<文件>` | `res/<文件>` |
+| 资源（`RouteHookResource`）       | `res/<name>/<文件>`       | `res/<文件>`       |
 
 实测（ZThirdDemo，子应用 `name => 'shop'`）：
 

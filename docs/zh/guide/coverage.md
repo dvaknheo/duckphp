@@ -137,16 +137,16 @@ composer run-script fulltest
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| Windows 侧跑测试报 `Class 'Redis' not found` | Windows PHP 无 redis 扩展 | 一律在 WSL / 容器里跑（[第 23 章](testing.md)） |
-| 覆盖率数字全是 0 | 没设 `XDEBUG_MODE=coverage`，或跑的是 `--no-coverage` 且没跑 `CodeCovar` 套件 | 见 §2；报告需要 dump + `showAllReport()` 两步 |
-| `@codeCoverageIgnore` 没生效 | 注释不是整行恰好、或没贴在目标行尾 | 贴到目标行尾（§3） |
-| 全量测试偶发失败 | `ZAllDemoTest` 起内置服务器占固定端口 9802，与其它实例/残留进程冲突 | 确认没有并行跑；必要时改为顺序执行 |
-| 改了 `src/` 后 `ZAllDemoTest` 的 `files` 变红 | 它比的是输出**字节长度**（含选项表与方法表） | 改 `tests/data_for_tests/ZAllDemoTest.config.php` 里对应期望值（dump 存成 `ZAllDemoTest-<长度>.txt`） |
-| `gen-reference.php verify` 报「多了方法」 | 大文件的 trait 别名 override 让脚本漏列（已知缺陷） | 以漂移扫描为准，不要照着删文档 |
-| docker 目录下找不到 `start-docker.sh`（php74） | 脚本**只在 `docker/test-php84/`** 里 | 用 8.4 的那套脚本，或直接用 `docker-compose` 起 php74 |
-| `tests/support.php` 跑不起来 | 没先跑过任何测试（没有 dump 可汇总）或 bootstrap 失败 | 先跑至少一个测试文件 |
+| 现象                                      | 原因                                                                | 改法                                                                                       |
+| --------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Windows 侧跑测试报 `Class 'Redis' not found` | Windows PHP 无 redis 扩展                                            | 一律在 WSL / 容器里跑（[第 23 章](testing.md)）                                                     |
+| 覆盖率数字全是 0                               | 没设 `XDEBUG_MODE=coverage`，或跑的是 `--no-coverage` 且没跑 `CodeCovar` 套件 | 见 §2；报告需要 dump + `showAllReport()` 两步                                                    |
+| `@codeCoverageIgnore` 没生效               | 注释不是整行恰好、或没贴在目标行尾                                                 | 贴到目标行尾（§3）                                                                               |
+| 全量测试偶发失败                                | `ZAllDemoTest` 起内置服务器占固定端口 9802，与其它实例/残留进程冲突                      | 确认没有并行跑；必要时改为顺序执行                                                                        |
+| 改了 `src/` 后 `ZAllDemoTest` 的 `files` 变红 | 它比的是输出**字节长度**（含选项表与方法表）                                          | 改 `tests/data_for_tests/ZAllDemoTest.config.php` 里对应期望值（dump 存成 `ZAllDemoTest-<长度>.txt`） |
+| `gen-reference.php verify` 报「多了方法」      | 大文件的 trait 别名 override 让脚本漏列（已知缺陷）                                | 以漂移扫描为准，不要照着删文档                                                                          |
+| docker 目录下找不到 `start-docker.sh`（php74）  | 脚本**只在 `docker/test-php84/`** 里                                   | 用 8.4 的那套脚本，或直接用 `docker-compose` 起 php74                                                |
+| `tests/support.php` 跑不起来                | 没先跑过任何测试（没有 dump 可汇总）或 bootstrap 失败                               | 先跑至少一个测试文件                                                                               |
 
 ## 下一步
 

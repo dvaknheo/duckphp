@@ -44,28 +44,28 @@
 
 ## 核心类
 
-| 类 | 说明 |
-|---|---|
-| [DuckPhp\Core\App](Core-App.md) | DuckPhp\Core\App |
-| [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | Core\AutoLoader 提供一套很轻的“命名空间 → 目录”自动加载 |
-| [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) | DuckPHP 框架中绝大多数组件的基类 |
-| [DuckPhp\Core\ComponentInterface](Core-ComponentInterface.md) | DuckPHP 组件的契约接口，规定了“框架内一个组件必须具备哪些公开入口” |
-| [DuckPhp\Core\Console](Core-Console.md) | DuckPHP 对 CLI 的命令处理根 |
-| [DuckPhp\Core\CoreHelper](Core-CoreHelper.md) | 框架把“常用小功能”收纳为一组**静态便捷方法**的门面 |
-| [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md) | 系统抛出的、携带 ThrowOn 能力的通用异常基类 |
-| [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | ExceptionManager（class ExceptionManager… |
-| [DuckPhp\Core\ExitException](Core-ExitException.md) | 直接 exit/die |
-| [DuckPhp\Core\Functions](Core-Functions.md) | src/Core/Functions.php 定义了一组以双下划线 __ 开头… |
-| [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | KernelTrait 把“一个应用是什么、怎么跑”这件事写在一个 Trait… |
-| [DuckPhp\Core\Logger](Core-Logger.md) | Logger（PSR-3 注释，非 implements，尽力对齐接口）适合“… |
-| [DuckPhp\Core\PhaseContainer](Core-PhaseContainer.md) | DuckPHP 框架的“Phase 容器”，也是 SingletonExTra… |
-| [DuckPhp\Core\Route](Core-Route.md) | DuckPHP 的默认路由核心 |
-| [DuckPhp\Core\Runtime](Core-Runtime.md) | Runtime（class Runtime extends Component… |
-| [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md) | DuckPHP 里“单例式访问”的常见来源 Trait |
-| [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) | SuperGlobal 提供在不污染全局符号的前提下操作 HTTP 超全局的手段 |
-| [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md) | SystemWrapper 把常见“副作用型”系统函数放到一处，便于 |
-| [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md) | ThrowOnTrait 提供静态条件抛出异常方法 |
-| [DuckPhp\Core\View](Core-View.md) | DuckPHP 的默认视图实现（class View extends Comp… |
+| 类                                                                     | 说明                                       |
+| --------------------------------------------------------------------- | ---------------------------------------- |
+| [DuckPhp\Core\App](Core-App.md)                                       | DuckPhp\Core\App                         |
+| [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)                         | Core\AutoLoader 提供一套很轻的“命名空间 → 目录”自动加载   |
+| [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)                   | DuckPHP 框架中绝大多数组件的基类                     |
+| [DuckPhp\Core\ComponentInterface](Core-ComponentInterface.md)         | DuckPHP 组件的契约接口，规定了“框架内一个组件必须具备哪些公开入口”   |
+| [DuckPhp\Core\Console](Core-Console.md)                               | DuckPHP 对 CLI 的命令处理根                     |
+| [DuckPhp\Core\CoreHelper](Core-CoreHelper.md)                         | 框架把“常用小功能”收纳为一组**静态便捷方法**的门面             |
+| [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md) | 系统抛出的、携带 ThrowOn 能力的通用异常基类               |
+| [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)             | ExceptionManager（class ExceptionManager… |
+| [DuckPhp\Core\ExitException](Core-ExitException.md)                   | 直接 exit/die                              |
+| [DuckPhp\Core\Functions](Core-Functions.md)                           | src/Core/Functions.php 定义了一组以双下划线 __ 开头… |
+| [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)                       | KernelTrait 把“一个应用是什么、怎么跑”这件事写在一个 Trait… |
+| [DuckPhp\Core\Logger](Core-Logger.md)                                 | Logger（PSR-3 注释，非 implements，尽力对齐接口）适合“… |
+| [DuckPhp\Core\PhaseContainer](Core-PhaseContainer.md)                 | DuckPHP 框架的“Phase 容器”，也是 SingletonExTra… |
+| [DuckPhp\Core\Route](Core-Route.md)                                   | DuckPHP 的默认路由核心                          |
+| [DuckPhp\Core\Runtime](Core-Runtime.md)                               | Runtime（class Runtime extends Component… |
+| [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md)             | DuckPHP 里“单例式访问”的常见来源 Trait              |
+| [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)                       | SuperGlobal 提供在不污染全局符号的前提下操作 HTTP 超全局的手段 |
+| [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)                   | SystemWrapper 把常见“副作用型”系统函数放到一处，便于       |
+| [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md)                     | ThrowOnTrait 提供静态条件抛出异常方法                |
+| [DuckPhp\Core\View](Core-View.md)                                     | DuckPHP 的默认视图实现（class View extends Comp… |
 
 ## 组件
 

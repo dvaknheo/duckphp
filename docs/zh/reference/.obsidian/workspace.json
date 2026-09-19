@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Core-KernelTrait.md",
+                "file": "Component-DbManager.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Core-KernelTrait"
+              "title": "Component-DbManager"
             }
           }
         ]
@@ -187,29 +187,31 @@
   },
   "active": "98bacea4f388ff08",
   "lastOpenFiles": [
+    "Component-Cache.md",
+    "GlobalAdmin-GlobalAdmin.md",
+    "setting.md",
+    "options-index.md",
+    "options-by-class.md",
+    "options.md",
+    "index.md",
+    "Component-ExtOptionsLoader.md",
+    "Core-KernelTrait.md",
     "DuckPhp.md",
     "DuckPhpAllInOne.md",
     "Db-DbInterface.md",
     "GlobalAdmin-AdminControllerInterface.md",
     "GlobalAdmin-AdminServiceInterface.md",
-    "options-index.md",
-    "options-by-class.md",
-    "options.md",
-    "index.md",
     "Helper-AppHelperTrait.md",
     "Helper-ControllerHelperTrait.md",
     "Helper-ModelHelperTrait.md",
     "HttpServer-HttpServer.md",
     "HttpServer-HttpServerInterface.md",
     "Core-App.md",
-    "Component-Cache.md",
     "Component-RedisManager.md",
     "Component-PagerInterface.md",
     "Component-Lang.md",
     "Foundation-ZCallTrait.md",
     "Foundation-ExceptionReporterTrait.md",
-    "Component-Validator.md",
-    "Component-RedisCache.md",
-    "Component-ExtOptionsLoader.md"
+    "Component-Validator.md"
   ]
 }

@@ -50,12 +50,12 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 
 [DuckPhp\Core\ThrowOnTrait](../reference/Core-ThrowOnTrait.md) 提供静态守卫：`XxxException::ThrowOn($flag, $message, $code)`——`$flag` 为真就抛。Helper 侧按层封装（[CoreHelper](../reference/Core-CoreHelper.md)）：
 
-| 写法 | 抛出的异常类由谁定 |
-|---|---|
+| 写法                                               | 抛出的异常类由谁定                                      |
+| ------------------------------------------------ | ---------------------------------------------- |
 | `Helper::ControllerThrowOn($flag, 'msg', $code)` | 选项 `exception_for_controller`（缺省 `\Exception`） |
-| `Helper::BusinessThrowOn($flag, 'msg', $code)` | 选项 `exception_for_business`（缺省 `\Exception`） |
-| `Helper::ProjectThrowOn($flag, 'msg', $code)` | 选项 `exception_for_project`（缺省 `\Exception`） |
-| `MyException::ThrowOn($flag, 'msg', $code)` | 就是 `MyException` 自己 |
+| `Helper::BusinessThrowOn($flag, 'msg', $code)`   | 选项 `exception_for_business`（缺省 `\Exception`）   |
+| `Helper::ProjectThrowOn($flag, 'msg', $code)`    | 选项 `exception_for_project`（缺省 `\Exception`）    |
+| `MyException::ThrowOn($flag, 'msg', $code)`      | 就是 `MyException` 自己                            |
 
 三个 `exception_for_*` 都是**隐藏选项**（`src/DuckPhp.php` 第 100–101 行只列了 business/controller；project 走 `ExceptionManager` 的同名选项），可在 App 选项里覆盖。另有 `exception_map` 可做异常类名映射（[CoreHelper](../reference/Core-CoreHelper.md)）。
 
