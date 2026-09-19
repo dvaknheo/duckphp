@@ -1,7 +1,7 @@
-# 5 配置与设置
+# 1-5 配置与设置
 
 > 解决什么问题：分清「应用选项（options）」与「应用设置（settings）」—— 哪些写在 `App.php`，哪些写在 `config/`，改一个键到底影响谁。
-> 前置：[第 2 章](install.md)。预计 15 分钟。
+> 前置：[第 1-2 章](install.md)。预计 15 分钟。
 
 ## 两者一句话区别
 
@@ -9,9 +9,9 @@
 |---|---|---|
 | 写在哪 | 应用类 `public $options`（可再被 `init()`/`RunQuickly()` 传入的覆盖） | `config/DuckPhpSettings.config.php`、`.env`、或选项 `setting` 里给的数组 |
 | 装什么 | 框架与组件的**行为开关**（路径、错误页、路由规则、扩展列表…） | **敏感/环境相关**的键值（数据库、Redis 密码…） |
-| 谁读 | 各组件在自己的 `init()` 里按自己的白名单取 | 根应用 `_Setting()`；组件**显式**去读（如 `DbManager` 读 `database_list`） |
+| 谁读 | 各组件在自己的 `init()` 里按自己的白名单取 | 根应用 `_Setting()`；组件**显式**去读（如 [`DbManager`](../reference/Component-DbManager.md) 读 `database_list`） |
 | 作用域 | 每个应用一套（子应用可在 `app` 选项里注入不同的值） | **只有根应用**加载，读的也是根应用的（`static::Root()->setting`） |
-| 怎么查 | `App::_()->options`（可 dump 出全部） | `App::_Setting()`（无参返回整个数组）、`Setting('key', $default)` |
+| 怎么查 | [`App::_()->options`](../reference/Core-App.md)（可 dump 出全部） | `App::_Setting()`（无参返回整个数组）、`Setting('key', $default)` |
 
 ## 应用选项
 
@@ -43,9 +43,9 @@ KernelTrait::$kernel_options → App::$core_options → 入口类的 $common_opt
 \MyProj\System\App::RunQuickly(['is_debug' => true, 'path_info_compact_enable' => true]);
 ```
 
-> ⚠️ **应用层的选项不做白名单过滤**，写错键名不会有任何提示；但**组件层的选项是白名单**（`ComponentBase::init()` 里 `array_intersect_key`），给某组件塞它没声明的键会被**静默丢弃**。这是「改了没反应」的最常见原因。
+> ⚠️ **应用层的选项不做白名单过滤**，写错键名不会有任何提示；但**组件层的选项是白名单**（[`ComponentBase::init()`](../reference/Core-ComponentBase.md) 里 `array_intersect_key`），给某组件塞它没声明的键会被**静默丢弃**。这是「改了没反应」的最常见原因。
 >
-> 例：`GlobalUser` 自己声明的是 `user_default_exception_class`；你去设 `admin_default_exception_class` 是无效的（那是 `GlobalAdmin` 的键）。
+> 例：[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 自己声明的是 `user_default_exception_class`；你去设 `admin_default_exception_class` 是无效的（那是 [`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md) 的键）。
 
 查选项的三种方式：
 
@@ -97,7 +97,7 @@ return [
 **关键认知**：设置**不会**自动变成「所有组件的选项」。只有**显式去读设置**的地方才会受它影响，目前已内建支持的有：
 
 - `DbManager`：`database_list_reload_by_setting`（默认真）→ 设置里的 `database_list` 生效；
-- `RedisManager`：同理的 `redis_list`；
+- [`RedisManager`](../reference/Component-RedisManager.md)：同理的 `redis_list`；
 - `App` 自己：上面那三个 `duckphp_*`；
 - 你自己写的组件/业务：用 `Setting('key', $default)` 主动读。
 
@@ -122,7 +122,7 @@ class App extends DuckPhp
 \MyProj\System\App::RunQuickly(['is_debug' => true]);
 ```
 
-生产清单（第 7 章有完整版）：`is_debug=false`、错误页就位、敏感信息只在设置文件/`.env` 里、`runtime/` 可写。
+生产清单（第 1-7 章有完整版）：`is_debug=false`、错误页就位、敏感信息只在设置文件/`.env` 里、`runtime/` 可写。
 
 ## 常见错误
 
@@ -136,6 +136,6 @@ class App extends DuckPhp
 
 ## 下一步
 
-- [第 6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 打开后能看见什么。
-- [第 7 章 上线最小清单](deployment.md)：生产环境该怎么配。
+- [第 1-6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 打开后能看见什么。
+- [第 1-7 章 上线最小清单](deployment.md)：生产环境该怎么配。
 - 参考手册：[DuckPhp\Core\App](../reference/Core-App.md)（全部核心选项）、[options 速查](../reference/options.md)

@@ -1,7 +1,7 @@
-# 6 调试、日志与 CLI 初体验
+# 1-6 调试、日志与 CLI 初体验
 
 > 解决什么问题：出错时怎么最快看到真相；日志写哪、怎么写；以及两个立刻能用的命令行入口。
-> 前置：[第 5 章](configuration.md)。预计 15 分钟。
+> 前置：[第 1-5 章](configuration.md)。预计 15 分钟。
 
 ## 一、先打开调试开关
 
@@ -10,12 +10,12 @@
 \MyProj\System\App::RunQuickly(['is_debug' => true]);
 ```
 
-调试模式的判定是「**设置里的 `duckphp_is_debug` 或根应用的 `is_debug` 选项**」（`App::IsDebug()`），所以本机用设置文件打开也行。打开后：
+调试模式的判定是「**设置里的 `duckphp_is_debug` 或根应用的 `is_debug` 选项**」（[`App::IsDebug()`](../reference/Core-App.md)），所以本机用设置文件打开也行。打开后：
 
 | 变化 | 说明 |
 |---|---|
 | 异常页显示堆栈 | 走 `error_debug` 视图（没配就由框架内建渲染：异常类、消息、文件行号、完整调用栈） |
-| 开发期警告升级 | `_OnDevErrorHandler` 把 PHP 的 notice/warning 变成可见错误（第 18 章） |
+| 开发期警告升级 | `_OnDevErrorHandler` 把 PHP 的 notice/warning 变成可见错误（第 2-11 章） |
 | 404 页附带路由信息 | 会打印 route error（例如「can't Reflection class (…)」这类提示），比干巴巴的 404 好定位 |
 
 错误页的四个选项（都是**视图名**，相对 `path_view`）：
@@ -31,7 +31,7 @@
 
 ## 二、日志
 
-日志组件是 `Logger`（PSR-3 风格的八个级别）：
+日志组件是 [`Logger`](../reference/Core-Logger.md)（PSR-3 风格的八个级别）：
 
 ```php
 use DuckPhp\Core\Logger;
@@ -57,7 +57,7 @@ Logger::_()->error('db failed: ' . $e->getMessage());
 两个要知道的行为：
 
 - **框架默认会记录未捕获异常**（选项 `default_exception_do_log` 默认 `true`）：`_OnDefaultException()` 里把异常写进日志 —— 线上出 500 时先来 `runtime/` 找日志。
-- **写不进去不会炸**：`Logger::log()` 内部 try/catch，失败返回 `false`。所以看到「日志目录不可写」时页面是正常的，只是日志没了（第 7 章的上线清单要检查 `runtime/` 可写）。
+- **写不进去不会炸**：`Logger::log()` 内部 try/catch，失败返回 `false`。所以看到「日志目录不可写」时页面是正常的，只是日志没了（第 1-7 章的上线清单要检查 `runtime/` 可写）。
 
 ## 三、CLI 初体验：两个入口
 
@@ -79,9 +79,9 @@ php vendor/bin/duckphp show     # 看当前安装情况
 php vendor/bin/duckphp help
 ```
 
-自定义命令就是在控制器层/命令类里写 `command_xxx()` 方法（第 22 章）；子应用的命令要加相位前缀（`php bin/cli.php shop-help`）。
+自定义命令就是在控制器层/命令类里写 `command_xxx()` 方法（第 2-15 章）；子应用的命令要加相位前缀（`php bin/cli.php shop-help`）。
 
-> `debug` 命令会去改写「额外选项文件」（`ExtOptionsLoader`，文件 `DuckPhpApps.config.php`），所以需要先开 `data_file_enable`，并把 `is_debug` 放进 `data_file_bump_keys`；否则它只会提示你去配。
+> `debug` 命令会去改写「额外选项文件」（[`ExtOptionsLoader`](../reference/Component-ExtOptionsLoader.md)，文件 `DuckPhpApps.config.php`），所以需要先开 `data_file_enable`，并把 `is_debug` 放进 `data_file_bump_keys`；否则它只会提示你去配。
 
 ## 四、出问题时的四板斧
 
@@ -113,10 +113,10 @@ var_dump(\DuckPhp\Core\App::_Setting());
 | 自定义错误页不生效 | 选项里写的是**文件路径**而不是视图名 | 写相对 `view/` 的视图名，如 `'_sys/error_404'` |
 | `php bin/cli.php run` 打不开 | 端口被占 / 文档根不对 | 换端口 `--port=9000`；文档根由 `path_document` 决定（默认 `public`） |
 | CLI 里命令找不到 | 命令属于某个子应用 | 加相位前缀（`shop-help`），见第 23/26 章 |
-| 调试页显示的信息太多，想给用户看简洁版 | 生产应关 `is_debug` 并配 `error_500` | 见第 7 章上线清单 |
+| 调试页显示的信息太多，想给用户看简洁版 | 生产应关 `is_debug` 并配 `error_500` | 见第 1-7 章上线清单 |
 
 ## 下一步
 
-- [第 7 章 上线最小清单](deployment.md)：把调试开关关回去，并检查该检查的。
-- [第 18 章 异常与错误处理](exception.md)：异常分层与自定义处理。
-- [第 22 章 命令行与定时任务](cli.md)：命令类、参数解析、crontab。
+- [第 1-7 章 上线最小清单](deployment.md)：把调试开关关回去，并检查该检查的。
+- [第 2-11 章 异常与错误处理](exception.md)：异常分层与自定义处理。
+- [第 2-15 章 命令行与定时任务](cli.md)：命令类、参数解析、crontab。

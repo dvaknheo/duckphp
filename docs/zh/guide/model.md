@@ -1,7 +1,7 @@
-# 13 模型层
+# 2-6 模型层
 
-> 解决什么问题：模型里到底该写什么、`ModelTrait` 白送了什么、为什么它的 CRUD 方法是 `protected`、表名怎么推导、模型该向业务层暴露什么。
-> 前置：[第 8 章 四层架构与调用规范](layers.md)、[第 12 章 数据库](database.md)。预计 20 分钟。
+> 解决什么问题：模型里到底该写什么、[`ModelTrait`](../reference/Foundation-ModelTrait.md) 白送了什么、为什么它的 CRUD 方法是 `protected`、表名怎么推导、模型该向业务层暴露什么。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-5 章 数据库](database.md)。预计 20 分钟。
 > 示例：`demo/src/Model/`（`Base.php` / `DemoModel.php`）、`demo/public/dbtest.php`（完整可跑：模型 + 分页 + 增删改查）、`tests/data_for_tests/ZAllDemo/src/Model/`。
 
 ```bash
@@ -68,7 +68,7 @@ class TestModel
 
 ### 1. 模型的定位：只做数据访问
 
-模型层是四层里最窄的一层：**把表变成方法**，不判断业务、不抛业务异常、不读请求上下文——业务规则属于 Business（[第 8 章](layers.md)的越界矩阵）。
+模型层是四层里最窄的一层：**把表变成方法**，不判断业务、不抛业务异常、不读请求上下文——业务规则属于 Business（[第 2-1 章](layers.md)的越界矩阵）。
 
 ```php
 // ✅ 模型：只回答「数据是什么」
@@ -85,7 +85,7 @@ public function findByStatus(string $status): array
 | 路线 | 写法 | 适用 |
 |---|---|---|
 | **用 `ModelTrait`** | `use ModelTrait;` | 常规单表模型：表名宏、读写分流、分页都接好了 |
-| **直接用 `Db`** | 自己的类里调 `Helper::Db()` / `Helper::DbForRead()` | 跨多表复杂查询、报表、要精细控制 SQL 的场景 |
+| **直接用 [`Db`](../reference/Db-Db.md)** | 自己的类里调 `Helper::Db()` / `Helper::DbForRead()` | 跨多表复杂查询、报表、要精细控制 SQL 的场景 |
 
 两条可以混用：`demo/src/Model/DemoModel.php` 既继承了带 `ModelTrait` 的 `Base`，也在方法里直接 `Helper::Db()->fetch(...)`。
 
@@ -106,7 +106,7 @@ public function findByStatus(string $status): array
 | `update($id, $data, $key)` | protected | 按主键更新 |
 | `execute($sql, ...$args)` | protected | 写操作（走**写**连接） |
 | `fetchAll` / `fetch` / `fetchColumn` / `fetchObject` / `fetchObjectAll` | protected | 读操作（走**读**连接，自动绑定表名宏） |
-| `::_()`（来自 `SingletonExTrait`） | public | 可变单例，可被覆盖（[第 29 章](overriding.md)） |
+| `::_()`（来自 [`SingletonExTrait`](../reference/Core-SingletonExTrait.md)） | public | 可变单例，可被覆盖（[第 3-5 章](overriding.md)） |
 
 表名推导（`getTableNameByClass()`）：类名去掉结尾的 `Model` 再转小写——`NoteModel` → `note`、`UserProfileModel` → `userprofile`。对不上就在构造函数里显式设 `$this->table_name`。
 
@@ -150,11 +150,11 @@ class NoteModel extends Base
 | `Helper::SqlForCountSimply($sql)` | 把 SQL 转成计数 SQL |
 | `Helper::DatabaseDriver()` | 当前驱动名（写驱动分支时用） |
 
-工程侧的 `Model\Helper`（`demo/src/Model/Helper.php`）就是 `use ModelHelperTrait;` 一行。
+工程侧的 `Model\Helper`（`demo/src/Model/Helper.php`）就是 [`use ModelHelperTrait;`](../reference/Helper-ModelHelperTrait.md) 一行。
 
 ### 6. 跨库/多连接
 
-模型层没有「跨库模型」这种东西——要访问第二个库就按 tag 取连接（[第 12 章](database.md)）：
+模型层没有「跨库模型」这种东西——要访问第二个库就按 tag 取连接（[第 2-5 章](database.md)）：
 
 ```php
 class LogModel extends Base
@@ -178,7 +178,7 @@ class LogModel extends Base
 // Business 里
 $total = NoteModel::_()->countByUser($userId);
 $rows  = NoteModel::_()->listByUser($userId, $page);
-// 视图层配合分页：Helper::PageHtml($total)（第 12 章）
+// 视图层配合分页：Helper::PageHtml($total)（第 2-5 章）
 ```
 
 ## 常见写法
@@ -234,7 +234,7 @@ try {
     $pdo->commit();
 } catch (\Throwable $ex) {
     $pdo->rollBack();
-    throw $ex;                 // 交给异常机制（第 18 章）
+    throw $ex;                 // 交给异常机制（第 2-11 章）
 }
 ```
 
@@ -249,11 +249,11 @@ try {
 | Business 里出现 `Helper::Db()` 裸 SQL | 越界：绕过模型层 | 把 SQL 收进模型，业务只调模型方法 |
 | 读连接查不到刚写的数据 | 读写分离延迟，`fetch*` 默认走读连接 | 需要强一致时显式用写连接 |
 | 模型变成几百行「上帝类」 | 一张表堆了太多业务语义 | 判断逻辑回 Business，按业务拆方法 |
-| 覆盖模型类后没生效 | 用了 `new NoteModel()` 而不是 `NoteModel::_()` | 一律 `::_()`（覆盖依赖容器，[第 29 章](overriding.md)） |
+| 覆盖模型类后没生效 | 用了 `new NoteModel()` 而不是 `NoteModel::_()` | 一律 `::_()`（覆盖依赖容器，[第 3-5 章](overriding.md)） |
 
 ## 下一步
 
-- [第 15 章 表单与数据验证](validator.md)：入库前的校验放在业务层。
-- [第 18 章 异常与错误处理](exception.md)：数据层错误怎么变成用户看得懂的响应。
-- [第 29 章 重写与覆盖](overriding.md)：模型/控制器的覆盖与替换。
+- [第 2-8 章 表单与数据验证](validator.md)：入库前的校验放在业务层。
+- [第 2-11 章 异常与错误处理](exception.md)：数据层错误怎么变成用户看得懂的响应。
+- [第 3-5 章 重写与覆盖](overriding.md)：模型/控制器的覆盖与替换。
 - 参考手册：[DuckPhp\Foundation\ModelTrait](../reference/Foundation-ModelTrait.md)、[DuckPhp\Helper\ModelHelperTrait](../reference/Helper-ModelHelperTrait.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)。

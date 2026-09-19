@@ -1,7 +1,7 @@
-# 9 路由进阶
+# 2-2 路由进阶
 
 > 解决什么问题：URL 是怎么变成「某个控制器方法」的；参数从哪来；怎么重写旧链接、怎么把 URL 绑到指定类@方法；以及多应用前缀是怎么参与匹配的。
-> 前置：[第 8 章 四层架构与调用规范](layers.md)。预计 20 分钟。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)。预计 20 分钟。
 > 示例：`demo/public/demo.php`（真实路由：URL `about/me` → `aboutController::me()`）。跑法：
 
 ```bash
@@ -40,7 +40,7 @@ namespace MySpace\Controller
 
 ### 1. URL → 类@方法的默认规则
 
-`Route::pathToClassAndMethod()` 与 `adjustClassBaseName()` 的行为可以用一张表说清（`namespace_controller` 默认 `Controller`，`controller_class_postfix` 默认 `Controller`，`controller_welcome_class` 默认 `Main`，`controller_welcome_method` 默认 `index`）：
+[`Route::pathToClassAndMethod()`](../reference/Core-Route.md) 与 `adjustClassBaseName()` 的行为可以用一张表说清（`namespace_controller` 默认 `Controller`，`controller_class_postfix` 默认 `Controller`，`controller_welcome_class` 默认 `Main`，`controller_welcome_method` 默认 `index`）：
 
 | URL（PATH_INFO） | 拆法 | 落到 |
 |---|---|---|
@@ -68,14 +68,14 @@ $options = [
 ];
 ```
 
-`controller_class_map` 也可以在运行期用 `Helper::replaceController($old, $new)` 追加——它是覆盖机制的基石之一（[第 29 章](overriding.md)）。
+`controller_class_map` 也可以在运行期用 `Helper::replaceController($old, $new)` 追加——它是覆盖机制的基石之一（[第 3-5 章](overriding.md)）。
 
 ### 2. PATH_INFO 从哪来
 
 框架统一从 `Route::PathInfo()` 读，实际来源是 `$_SERVER['PATH_INFO']`。两个现实问题它替你处理了：
 
-- **Nginx/PHP-FPM 默认没有 PATH_INFO**：改用 `?_r=about/me` 形式传递，打开 `RouteHookPathInfoCompat` 扩展即可（见「常见写法 ②」）。
-- **PHP 内置服务器**：`controller_fix_mistake_path_info`（默认 `true`）会在 `SCRIPT_NAME === '/index.php'` 且 PATH_INFO 为空时，从 `REQUEST_URI` 里补出路径——这是 `php -S` 下能直接跑的原因（[第 7 章](deployment.md)）。
+- **Nginx/PHP-FPM 默认没有 PATH_INFO**：改用 `?_r=about/me` 形式传递，打开 [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) 扩展即可（见「常见写法 ②」）。
+- **PHP 内置服务器**：`controller_fix_mistake_path_info`（默认 `true`）会在 `SCRIPT_NAME === '/index.php'` 且 PATH_INFO 为空时，从 `REQUEST_URI` 里补出路径——这是 `php -S` 下能直接跑的原因（[第 1-7 章](deployment.md)）。
 
 CLI 或测试里想伪造请求路径：`Route::_()->PathInfo('about/me')`。
 
@@ -90,7 +90,7 @@ CLI 或测试里想伪造请求路径：`Route::_()->PathInfo('about/me')`。
 | `'?page=2'` / `'#top'`       | 当前路径 + 该后缀                  |
 | `'about/me'`                 | basepath + `/about/me`      |
 
-所以「站内另一个页面」写 `__url('about/me')`；要原样输出绝对路径写 `__url('/res/logo.png')`，或更明确的 `__res('logo.png')`（[第 27 章](static-resources.md)）。
+所以「站内另一个页面」写 `__url('about/me')`；要原样输出绝对路径写 `__url('/res/logo.png')`，或更明确的 `__res('logo.png')`（[第 3-3 章](static-resources.md)）。
 
 想完全接管 URL 生成（接 CDN、自定义规则）：`Route::_()->url_handler` 是可替换的回调，设了之后 `Url()` 直接调它。
 
@@ -110,7 +110,7 @@ $options = [
 Helper::assignRewrite('/promo', 'activity/index');
 ```
 
-> ⚠️ **键必须带前导 `/`**。钩子内部拿 `'/'.$path_info` 与模板比较，写成 `'legacy-shop'` 永远匹配不上——旧文档里就有这个错，排错先看这里。
+> ⚠️ **键必须带前导 `/`**。钩子内部拿 `'/'.$path_info` 与模板比较，写成 `'legacy-shop'` 永远匹配不上——重写不生效时先看这里。
 
 ### 5. 路由映射：`RouteHookRouteMap`
 
@@ -141,11 +141,11 @@ $options = [
 
 回调写法（`adjustCallback()`）：`Class@method`（用 `::_()` 单例）、`Class->method`（用 `new`）、或任意 callable；**`Class::method` 这种静态字符串不支持**。
 
-`route_map_important` 挂在 pre 链（`prepend-inner`），`route_map` 挂在 post 链（`append-outter`）——位置与短路语义见[第 17 章](lifecycle.md)。
+`route_map_important` 挂在 pre 链（`prepend-inner`），`route_map` 挂在 post 链（`append-outter`）——位置与短路语义见[第 2-10 章](lifecycle.md)。
 
 ### 6. 多应用前缀：`controller_url_prefix`
 
-子应用挂载时会带自己的 `controller_url_prefix`（[第 26 章](mount-app.md)）。匹配规则是「**前缀必须完全对上**」：`pathToClassAndMethod()` 先比前缀，不匹配就直接失败并把原因写进 `route_error`（`E001`），父应用才有机会把请求交给其它子应用。
+子应用挂载时会带自己的 `controller_url_prefix`（[第 3-2 章](mount-app.md)）。匹配规则是「**前缀必须完全对上**」：`pathToClassAndMethod()` 先比前缀，不匹配就直接失败并把原因写进 `route_error`（`E001`），父应用才有机会把请求交给其它子应用。
 
 同一个应用里也可以设它，效果是「这个应用的所有 URL 都强制带该前缀」。
 
@@ -209,13 +209,13 @@ Helper::Show302(Helper::Url('user/login'));
 | `/Main/index` 被拒绝（E009）             | `controller_welcome_class_visible` 默认 `false` | 用 `/` 访问欢迎页；确实需要显式路径就设为 `true`                    |
 | 路由映射里写 `Class::method` 不生效          | `::` 形式**不支持**                                | 用 `Class@method`（`::_()`）或 `Class->method`（`new`） |
 | 普通 `route_map` 里的规则抢不过默认路由          | 位置不同：important 在默认路由**之前**，普通 map 是**兜底**     | 需要优先匹配就放进 `route_map_important`                   |
-| 子应用里访问得到 404、错误码 E001               | URL 没带子应用的 `controller_url_prefix`            | URL 加上前缀，或调整子应用配置（[第 26 章](mount-app.md)）         |
+| 子应用里访问得到 404、错误码 E001               | URL 没带子应用的 `controller_url_prefix`            | URL 加上前缀，或调整子应用配置（[第 3-2 章](mount-app.md)）         |
 | 部署到子目录后所有站内链接 404                   | 手写了 `/xxx` 绝对路径                               | 一律用 `__url()`/`Helper::Url()` 生成                  |
-| 开了 `_r=` 兼容模式，原 PATH_INFO 路由全失效     | 兼容模式下路径改从查询串取                                 | 只在没有 PATH_INFO 的服务器上开（[第 7 章](deployment.md)）     |
+| 开了 `_r=` 兼容模式，原 PATH_INFO 路由全失效     | 兼容模式下路径改从查询串取                                 | 只在没有 PATH_INFO 的服务器上开（[第 1-7 章](deployment.md)）     |
 
 ## 下一步
 
-- [第 10 章 控制器](controllers.md)：路由命中之后，控制器里怎么写。
-- [第 17 章 请求生命周期与钩子点](lifecycle.md)：钩子位置、短路语义，以及完整的「谁先命中」顺序。
-- [第 29 章 重写与覆盖](overriding.md)：`controller_class_map` 背后的整套覆盖机制。
+- [第 2-3 章 控制器](controllers.md)：路由命中之后，控制器里怎么写。
+- [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：钩子位置、短路语义，以及完整的「谁先命中」顺序。
+- [第 3-5 章 重写与覆盖](overriding.md)：`controller_class_map` 背后的整套覆盖机制。
 - 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)、[DuckPhp\Component\RouteHookRewrite](../reference/Component-RouteHookRewrite.md)、[DuckPhp\Component\RouteHookRouteMap](../reference/Component-RouteHookRouteMap.md)、[DuckPhp\Component\RouteHookPathInfoCompat](../reference/Component-RouteHookPathInfoCompat.md)。

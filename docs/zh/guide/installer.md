@@ -1,15 +1,15 @@
-# 30 安装器与 Web 安装流程
+# 3-6 安装器与 Web 安装流程
 
 > 解决什么问题：「安装」在 DuckPHP 里其实是三件不同的事 —— 建项目、判安装状态、跑安装向导。这章把它们分清。
-> 前置：[第 2 章 安装与最小示例](install.md)、[第 26 章](mount-app.md)。预计 10 分钟。
+> 前置：[第 1-2 章 安装与最小示例](install.md)、[第 3-2 章](mount-app.md)。预计 10 分钟。
 
 ## 三种「安装」，别混
 
 | # | 是什么 | 用什么 |
 |---|---|---|
-| ① | **建一个新项目**（脚手架） | `vendor/bin/duckphp new`（`DuckPhpInstaller`），模板来自仓库的 `skeleton/` |
+| ① | **建一个新项目**（脚手架） | `vendor/bin/duckphp new`（[`DuckPhpInstaller`](../reference/Ext-DuckPhpInstaller.md)），模板来自仓库的 `skeleton/` |
 | ② | **应用自身的安装状态** | 选项 `installed` + `url_install`，用 `Helper::checkInstall()` 做守卫 |
-| ③ | **在浏览器里跑安装向导** | 扩展 `RouteHookWebInstaller`，它接管安装 URL 并渲染向导 |
+| ③ | **在浏览器里跑安装向导** | 扩展 [`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md)，它接管安装 URL 并渲染向导 |
 
 ## ① 用脚手架建项目
 
@@ -64,7 +64,7 @@ public function checkInstallToPage(?string $url_install = null): void
 | `installed = false` | 输出一次 `location: …/install` 头 + 调用一次 `exit`（请求就此结束） |
 | `installed = true` | 什么都不做，继续往下走 |
 
-> ⚠️ **不要在 `SystemWrapper` 里替换掉 `exit` 之后又依赖「后面的代码不会执行」**：测试里我们把 `exit` 换成了空函数，于是 `checkInstall()` 之后的行**照样执行**（`ZThirdDemoTest` 正是据此断言的）。生产里 `exit` 是真的退出。
+> ⚠️ **不要在 [`SystemWrapper`](../reference/Core-SystemWrapper.md) 里替换掉 `exit` 之后又依赖「后面的代码不会执行」**：测试里我们把 `exit` 换成了空函数，于是 `checkInstall()` 之后的行**照样执行**（`ZThirdDemoTest` 正是据此断言的）。生产里 `exit` 是真的退出。
 
 ## ③ Web 安装向导
 
@@ -95,7 +95,7 @@ GET /install
   └─ 未安装 → 采集数据库/Redis 参数 → 写配置 → 置 installed
 ```
 
-三个回调分别对应「能否安装 / 怎么安装 / 怎么显示」，只填你需要的那一个即可；文案走 `Lang`，所以向导是多语言的（第 21 章）。
+三个回调分别对应「能否安装 / 怎么安装 / 怎么显示」，只填你需要的那一个即可；文案走 [`Lang`](../reference/Component-Lang.md)，所以向导是多语言的（第 2-14 章）。
 
 ## 上线检查清单
 
@@ -103,7 +103,7 @@ GET /install
 - [ ] 安装向导要么卸载扩展、要么在 Web 层按 IP/鉴权挡住（它能写配置，属敏感入口）。
 - [ ] 脚手架自带的一次性示例文件（`SomeAction`、`testController`、`DemoBusiness`…）删掉，别把示例带上线。
 - [ ] `runtime/` 可写；`config/` 不要在 Web 根下暴露。
-- [ ] 文档根指向 `public/`（第 7 章）。
+- [ ] 文档根指向 `public/`（第 1-7 章）。
 
 ## 常见错误
 
@@ -120,4 +120,4 @@ GET /install
 
 - [DuckPhp\Ext\DuckPhpInstaller](../reference/Ext-DuckPhpInstaller.md)、[DuckPhp\Ext\RouteHookWebInstaller](../reference/Ext-RouteHookWebInstaller.md)
 - [DuckPhp\Core\App](../reference/Core-App.md) 的 `checkInstallToPage()`、`installed`、`url_install`
-- 第 7 章[上线最小清单](deployment.md)
+- 第 1-7 章[上线最小清单](deployment.md)

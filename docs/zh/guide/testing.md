@@ -1,7 +1,7 @@
-# 23 测试
+# 2-16 测试
 
 > 解决什么问题：给自己的应用写测试该放哪、怎么在不起服务器的情况下测业务、端到端怎么测、覆盖率怎么跑，以及本仓库测试基建的两个硬约束（WSL、`data_for_tests` 约定）。
-> 前置：[第 8 章 四层架构与调用规范](layers.md)、[第 13 章 模型层](model.md)。预计 20 分钟。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-6 章 模型层](model.md)。预计 20 分钟。
 > 示例：`tests/bootstrap.php`、`tests/ZThirdDemoTest.php`（端到端冒烟）、`tests/data_for_tests/`（示例数据目录）。
 
 ```bash
@@ -11,7 +11,7 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-cov
 
 ## 最小示例
 
-给业务层写测试**不需要服务器、不需要路由**——四层架构的直接好处（[第 8 章](layers.md)）：
+给业务层写测试**不需要服务器、不需要路由**——四层架构的直接好处（[第 2-1 章](layers.md)）：
 
 ```php
 namespace tests;
@@ -32,7 +32,7 @@ class NoteBusinessTest extends \PHPUnit\Framework\TestCase
 | 样板 | 干什么 | 适合抄的场景 |
 |---|---|---|
 | `tests/ZThirdDemoTest.php` | 一次 `init`、多次 `serve()`，断言「覆盖生效 / 没覆盖时回落」 | 多应用、覆盖、安装流程 |
-| `tests/ZAllDemoTest.php` | 起 `HttpServer` + `curl` 各入口，比对输出字节长度 | 多入口冒烟（见「常见错误」里的注意点） |
+| `tests/ZAllDemoTest.php` | 起 [`HttpServer`](../reference/HttpServer-HttpServer.md) + `curl` 各入口，比对输出字节长度 | 多入口冒烟（见「常见错误」里的注意点） |
 
 ## 机制说明
 
@@ -56,9 +56,9 @@ tests/
 
 | 手段 | 解决什么 |
 |---|---|
-| `system_wrapper_replace()` | 替换 `header()`/`setcookie()`/`exit()` 等系统调用，让「输出/跳转」可断言（[第 14 章](helper.md)） |
-| `Route::_()->PathInfo('note/show')` | 不起 HTTP 也能把「当前请求路径」设成任意值，直接测路由与控制器（[第 9 章](routing.md)） |
-| `SuperGlobal` / `Runtime` 等组件的可替换单例 | GET/POST/Session 都能喂假数据；`Runtime` 还能开输出缓冲 |
+| `system_wrapper_replace()` | 替换 `header()`/`setcookie()`/`exit()` 等系统调用，让「输出/跳转」可断言（[第 2-7 章](helper.md)） |
+| [`Route::_()->PathInfo('note/show')`](../reference/Core-Route.md) | 不起 HTTP 也能把「当前请求路径」设成任意值，直接测路由与控制器（[第 2-2 章](routing.md)） |
+| [`SuperGlobal`](../reference/Core-SuperGlobal.md) / [`Runtime`](../reference/Core-Runtime.md) 等组件的可替换单例 | GET/POST/Session 都能喂假数据；`Runtime` 还能开输出缓冲 |
 
 ```php
 // 让 exit() 变成异常，从而断言"跳转确实发生了"
@@ -85,7 +85,7 @@ Helper::system_wrapper_replace([
 
 ### 4. 测试纪律：回归测试要「证明抓得住 bug」
 
-写完断言后，**把 bug 临时改回源码跑一遍**，确认测试真的变红，再还原。没做这一步的回归测试等于没写——本仓库修 `GlobalUser` 死选项、`PermissionMenu` 合并 bug 时都是这么验证的。
+写完断言后，**把 bug 临时改回源码跑一遍**，确认测试真的变红，再还原。没做这一步的回归测试等于没写——本仓库修 [`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 死选项、[`PermissionMenu`](../reference/Ext-PermissionMenu.md) 合并 bug 时都是这么验证的。
 
 另外两条：
 
@@ -146,6 +146,6 @@ $this->assertSame('...', $this->fetch($app, '/shop/index'));
 
 ## 下一步
 
-- [第 24 章 安全与性能清单](security-performance.md)：上线前逐项自查。
+- [第 2-17 章 安全与性能清单](security-performance.md)：上线前逐项自查。
 - [参考手册维护指南](../reference-maintenance-guide.md)：`docs/zh/reference/` 与覆盖率流水线的完整流程。
 - 参考手册：[DuckPhp\HttpServer\HttpServer](../reference/HttpServer-HttpServer.md)、[DuckPhp\Core\Runtime](../reference/Core-Runtime.md)。

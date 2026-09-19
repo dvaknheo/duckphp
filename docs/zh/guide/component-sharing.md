@@ -1,15 +1,15 @@
-# 28 组件共享与应用间通信
+# 3-4 组件共享与应用间通信
 
 > 解决什么问题：多个应用之间，哪些东西该共用一份（数据库、日志、缓存），哪些必须各用各的（视图、语言、配置）；应用之间怎么互相调用、怎么广播事件、共享数据放哪。
-> 前置：[第 25 章](advanced-phase.md)、[第 26 章](mount-app.md)。预计 20 分钟。
+> 前置：[第 3-1 章](advanced-phase.md)、[第 3-2 章](mount-app.md)。预计 20 分钟。
 > 示例：`tests/data_for_tests/ZThirdDemo` 的 `/visit`、`/proxy`、`/orders` 三个动作，以及 `ZThirdDemoTest` 的对应断言。
 
 ## 一份还是各一份：先认清两种归宿
 
 | 归宿 | 谁属于它 | 表现 |
 |---|---|---|
-| **共享**（public） | 根应用在**根相位**初始化的公共组件：`Logger`、`SystemWrapper`、`CoreHelper`、`Console`、`DbManager`、`RedisManager`（打开时还有 `GlobalAdmin`/`GlobalUser`/`GlobalEvent`） | 在**任何**相位里 `::_()` 都拿到同一个实例 |
-| **每应用一份** | 各应用自己 `init` 的组件与扩展：`Route`、`View`、`Lang`、`Configer`、自定义扩展… | 每个相位里各有一个实例（选项也可以不同） |
+| **共享**（public） | 根应用在**根相位**初始化的公共组件：`Logger`、[`SystemWrapper`](../reference/Core-SystemWrapper.md)、[`CoreHelper`](../reference/Core-CoreHelper.md)、[`Console`](../reference/Core-Console.md)、[`DbManager`](../reference/Component-DbManager.md)、[`RedisManager`](../reference/Component-RedisManager.md)（打开时还有 [`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)/[`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalEvent`](../reference/Component-GlobalEvent.md)） | 在**任何**相位里 `::_()` 都拿到同一个实例 |
+| **每应用一份** | 各应用自己 `init` 的组件与扩展：[`Route`](../reference/Core-Route.md)、[`View`](../reference/Core-View.md)、[`Lang`](../reference/Component-Lang.md)、[`Configer`](../reference/Component-Configer.md)、自定义扩展… | 每个相位里各有一个实例（选项也可以不同） |
 
 实测（`ZThirdDemoTest.php`）：
 
@@ -66,7 +66,7 @@ $proxy = PhaseProxy::CreatePhaseProxy($child_phase, ShopBusiness::class);
 $ret = $proxy->placeOrder(2002);      // 在 :shop 相位里执行，回来后相位不变
 ```
 
-`PhaseProxy::__call()` 会临时切到目标相位、调用、再切回。它适合「调一次就走」的场景。
+[`PhaseProxy::__call()`](../reference/Component-PhaseProxy.md) 会临时切到目标相位、调用、再切回。它适合「调一次就走」的场景。
 
 > ⚠️ 传**类名**时它用 `new` 造对象（**不是**那个相位的 `::_()` 单例）。要操作相位里的单例，就传对象：`PhaseProxy::CreatePhaseProxy($phase, ShopBusiness::_())`，或者干脆用姿势 ①。
 
@@ -106,17 +106,17 @@ API 一览：
 | `all()` | 看所有监听（排错用） |
 | `remove($event, $phase = null, $callback = null)` | 取消监听 |
 
-命名约定：事件名用「进行中 / 已完成」后缀（`registering` / `registered`、`logining` / `logined`），与框架内置事件一致（第 19 章）。
+命名约定：事件名用「进行中 / 已完成」后缀（`registering` / `registered`、`logining` / `logined`），与框架内置事件一致（第 2-12 章）。
 
 ## 共享数据放哪：一张决策表
 
 | 数据 | 放哪 | 说明 |
 |---|---|---|
-| 只读配置（各应用自己一份） | 各应用的 `config/<name>.php` | 第 29 章讲的按相位覆盖也在这里生效 |
-| 全局设置（密码、环境） | `DuckPhpSettings.config.php` / `.env` → `Setting()` | 第 5 章 |
-| **运行期可改写**的选项（如 `is_debug`） | `ExtOptionsLoader`（`data_file_enable`） | 它的文件是 `DuckPhpApps.config.php`，`data_file_bump_allowed`/`data_file_bump_keys` 决定哪些键可写回 |
-| 请求级临时数据 | `Runtime` | 随请求清空 |
-| 跨请求的共享状态 | `Cache` / `RedisCache`，或业务自己的表 | 多应用多点部署时唯一可靠的共享方式 |
+| 只读配置（各应用自己一份） | 各应用的 `config/<name>.php` | 第 3-5 章讲的按相位覆盖也在这里生效 |
+| 全局设置（密码、环境） | `DuckPhpSettings.config.php` / `.env` → `Setting()` | 第 1-5 章 |
+| **运行期可改写**的选项（如 `is_debug`） | [`ExtOptionsLoader`](../reference/Component-ExtOptionsLoader.md)（`data_file_enable`） | 它的文件是 `DuckPhpApps.config.php`，`data_file_bump_allowed`/`data_file_bump_keys` 决定哪些键可写回 |
+| 请求级临时数据 | [`Runtime`](../reference/Core-Runtime.md) | 随请求清空 |
+| 跨请求的共享状态 | [`Cache`](../reference/Component-Cache.md) / [`RedisCache`](../reference/Component-RedisCache.md)，或业务自己的表 | 多应用多点部署时唯一可靠的共享方式 |
 
 ## 常见错误
 
@@ -126,9 +126,9 @@ API 一览：
 | 事件回调里 `::_()` 拿错实例 | `fire()` 会把相位切到「注册时的相位」再执行回调 | 注册时就选对相位（`globalOn` 的第二个参数） |
 | `PhaseProxy` 调用的对象没有相位里的状态 | 传类名时它 `new` 了一个新对象 | 传对象，或用 `toThisChild()` 切相位 |
 | 子应用改了 `options` 影响到了主应用 | 你改的是**共享实例**的选项 | 共享组件是同一个对象；要隔离就 `local_*` 或 `createLocalObject()` |
-| 两个应用各写各的日志文件 | 它们用的是同一个 `Logger`（共享） | 日志路径来自 `path_log`，想让子应用分文件就给它独立选项或独立 Logger |
+| 两个应用各写各的日志文件 | 它们用的是同一个 `Logger`（共享） | 日志路径来自 `path_log`，想让子应用分文件就给它独立选项或独立 [Logger](../reference/Core-Logger.md) |
 
 ## 下一步
 
-- [第 29 章 重写与覆盖](overriding.md)：不改对方代码换掉它的行为。
-- [第 31 章 综合实战：前台 + 后台 + API](case-multi-app.md)：本卷所有机制的合体。
+- [第 3-5 章 重写与覆盖](overriding.md)：不改对方代码换掉它的行为。
+- [第 3-7 章 综合实战：前台 + 后台 + API](case-multi-app.md)：本卷所有机制的合体。

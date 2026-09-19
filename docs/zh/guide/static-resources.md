@@ -1,7 +1,7 @@
-# 27 静态资源与文档根
+# 3-3 静态资源与文档根
 
 > 解决什么问题：CSS/JS/图片这些静态文件放在哪、URL 长什么样、多个应用怎么不打架、上线时怎么交给 Web 服务器。
-> 前置：[第 26 章 把外部应用挂进来](mount-app.md)。预计 12 分钟。
+> 前置：[第 3-2 章 把外部应用挂进来](mount-app.md)。预计 12 分钟。
 > 示例：`tests/data_for_tests/ZThirdDemo`（主应用 `res/main.css`、第三方应用 `res/third.css` 与 `res/native.css`）。
 
 ## 两条路：Web 服务器直出 vs 框架代发
@@ -9,7 +9,7 @@
 | 方式 | 谁发文件 | 什么时候用 |
 |---|---|---|
 | **文档根直出** | nginx/Apache 直接读 `public/` 下的文件 | 生产环境（性能最好）。资源放在 `path_document`（默认 `public/`）里，或部署时拷进去 |
-| **框架代发** | `RouteHookResource` 收到请求后读文件并输出 | 开发时不想配 rewrite；或资源要放在 `public/` 之外按应用分目录 |
+| **框架代发** | [`RouteHookResource`](../reference/Component-RouteHookResource.md) 收到请求后读文件并输出 | 开发时不想配 rewrite；或资源要放在 `public/` 之外按应用分目录 |
 
 框架代发靠两个选项：
 
@@ -44,14 +44,14 @@ URL  /<前缀>/<文件>   →   <应用 path>/<path_resource>/<文件>
 ```
 GET /res/main.css            → 主应用的 res/main.css
 GET /shop/res/native.css     → 子应用的 third/res/native.css
-GET /shop/res/third.css      → 父应用 res/shop/third.css（覆盖了子应用的同名资源，见第 29 章）
+GET /shop/res/third.css      → 父应用 res/shop/third.css（覆盖了子应用的同名资源，见第 3-5 章）
 ```
 
 > ⚠️ **这里的斜杠很坑，务必按这两条写**：
 > - 根应用写 `'/res/'`（带**前导**斜杠）——因为请求的 path_info 自带前导 `/`，而根应用的 `controller_url_prefix` 是空串；
 > - 子应用写 `'res/'`（**不带**前导斜杠）——因为它的 `controller_url_prefix`（`'shop/'`）已经以 `/` 结尾，再带一个就拼成 `/shop//res/` 而永远匹配不上。
 
-> ⚠️ **这里的 URL 在三种环境下都成立**：nginx/Apache（rewrite 把所有请求交给 `index.php`）、进程内调用（`ZThirdDemoTest` 就是直接 `serve()` 断言的）、以及**带 router 脚本的** `php -S`（写法见[第 7 章 §二](deployment.md)）。
+> ⚠️ **这里的 URL 在三种环境下都成立**：nginx/Apache（rewrite 把所有请求交给 `index.php`）、进程内调用（`ZThirdDemoTest` 就是直接 `serve()` 断言的）、以及**带 router 脚本的** `php -S`（写法见[第 1-7 章 §二](deployment.md)）。
 > 唯一例外是**不带 router 的** `php -S … -t public`（含框架的 `bin/cli.php run`）：内置服务器不把带后缀的 URI 交给 `index.php`，所以 `/res/main.css` 会 404 —— 开发时要么用 router 脚本，要么把资源放进 `public/` 让服务器直出。
 
 ## 多应用下的资源组织
@@ -62,7 +62,7 @@ GET /shop/res/third.css      → 父应用 res/shop/third.css（覆盖了子应�
 public/                 ← 文档根（生产直出、cloneResource 的目标）
 res/                    ← 主应用资源源目录
 ├── main.css
-└── shop/               ← ★ 与被挂应用 name 同名的目录 = 覆盖它的资源（第 29 章）
+└── shop/               ← ★ 与被挂应用 name 同名的目录 = 覆盖它的资源（第 3-5 章）
     └── third.css
 third/res/              ← 第三方应用自己的资源
 ├── third.css
@@ -89,13 +89,13 @@ RouteHookResource::_()->cloneResource(true);    // force=true：强制覆盖
 
 ```php
 __res('main.css');                 // 按 controller_resource_prefix 生成资源 URL
-Helper::Res('main.css');           // 等价写法（第 14 章）
+Helper::Res('main.css');           // 等价写法（第 2-7 章）
 __url('shop/');                    // 生成普通 URL
 ```
 
 ## 与内置 HTTP 服务一起用
 
-`HttpServer`（第 36 章）的文档根是 `path_document`：
+[`HttpServer`](../reference/HttpServer-HttpServer.md)（第 4-5 章）的文档根是 `path_document`：
 
 ```php
 HttpServer::RunQuickly([
@@ -110,14 +110,14 @@ HttpServer::RunQuickly([
 
 | 现象                   | 原因                                                        | 改法                                                |
 | -------------------- | --------------------------------------------------------- | ------------------------------------------------- |
-| 资源 404，文件明明存在        | 前缀斜杠不对（多一个 / 或少一个 /）                                      | 根应用 `'/res/'`、子应用 `'res/'`；用第 29 章的方法确认命中了哪个文件    |
+| 资源 404，文件明明存在        | 前缀斜杠不对（多一个 / 或少一个 /）                                      | 根应用 `'/res/'`、子应用 `'res/'`；用第 3-5 章的方法确认命中了哪个文件    |
 | 子应用资源 404，主应用正常      | 子应用没配 `controller_resource_prefix`（默认是 `''`，等于所有路径都可能是资源） | 给每个应用显式配资源前缀                                      |
 | 想发 `.php` 或 `../` 路径 | 被安全检查拒绝                                                   | 别这么干；动态内容走控制器                                     |
 | 生产上资源都 404           | 没把 `res/` 部署到 docroot                                     | 用 `cloneResource()`，或在构建脚本里 `cp -r res/* public/` |
-| 两个应用资源同名被互相覆盖        | 共用一个前缀目录                                                  | 按应用分前缀；覆盖是有意为之时才用同名（第 29 章）                       |
+| 两个应用资源同名被互相覆盖        | 共用一个前缀目录                                                  | 按应用分前缀；覆盖是有意为之时才用同名（第 3-5 章）                       |
 
 ## 相关参考
 
 - [DuckPhp\Component\RouteHookResource](../reference/Component-RouteHookResource.md)（含 `cloneResource()` 细节）
-- [第 16 章 会话与用户/管理员体系](external-auth.md) 的 `use_admin_view` / `use_user_view`
-- [第 29 章 重写与覆盖](overriding.md)：`res/<name>/` 覆盖规则
+- [第 2-9 章 会话与用户/管理员体系](external-auth.md) 的 `use_admin_view` / `use_user_view`
+- [第 3-5 章 重写与覆盖](overriding.md)：`res/<name>/` 覆盖规则

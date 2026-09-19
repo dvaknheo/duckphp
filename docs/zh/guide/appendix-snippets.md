@@ -6,7 +6,7 @@
 
 ## 1. CRUD（模型层）
 
-来自 `demo/public/dbtest.php`（可跑）与[第 13 章](../guide/model.md)。
+来自 `demo/public/dbtest.php`（可跑）与[第 2-6 章](../guide/model.md)。
 
 ```php
 namespace MyProj\Model;
@@ -37,11 +37,11 @@ class NoteModel extends Base
 }
 ```
 
-要点：`` `'TABLE'` `` 是表名宏（自动加 `table_prefix`）；`ModelTrait` 的 CRUD 是 `protected`，所以要自己开 public 方法（[第 13 章](../guide/model.md)）。
+要点：`` `'TABLE'` `` 是表名宏（自动加 `table_prefix`）；[`ModelTrait`](../reference/Foundation-ModelTrait.md) 的 CRUD 是 `protected`，所以要自己开 public 方法（[第 2-6 章](../guide/model.md)）。
 
 ## 2. 分页（列表 + 分页条）
 
-来自 `demo/public/dbtest.php`（可跑）与[第 12 章](../guide/database.md)。
+来自 `demo/public/dbtest.php`（可跑）与[第 2-5 章](../guide/database.md)。
 
 ```php
 // 模型里
@@ -63,7 +63,7 @@ Helper::Show(get_defined_vars(), 'note/list');
 
 ## 3. 表单提交 + 校验 + 回显
 
-见[第 10 章](../guide/controllers.md)与[第 15 章](../guide/validator.md)。
+见[第 2-3 章](../guide/controllers.md)与[第 2-8 章](../guide/validator.md)。
 
 ```php
 public function create()
@@ -86,7 +86,7 @@ public function create()
 
 ## 4. JSON 接口
 
-见[第 10 章](../guide/controllers.md)。
+见[第 2-3 章](../guide/controllers.md)。
 
 ```php
 public function list()
@@ -97,11 +97,11 @@ public function list()
 }
 ```
 
-> 想统一包装成功/失败格式，用路由钩子包一层，或写个 `ApiControllerBase`（[第 17 章](../guide/lifecycle.md)）。
+> 想统一包装成功/失败格式，用路由钩子包一层，或写个 `ApiControllerBase`（[第 2-10 章](../guide/lifecycle.md)）。
 
 ## 5. 登录 / 登出 / 当前用户
 
-配置见[第 16 章](../guide/external-auth.md)（`GlobalUser` 用**回调**把实现外包给工程类）。
+配置见[第 2-9 章](../guide/external-auth.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
 
 ```php
 // System/App.php 的选项
@@ -120,7 +120,7 @@ Helper::Show(get_defined_vars(), 'user/center');
 Helper::Show302(Helper::Url('user/logout'));   // 登出走后者的路由
 ```
 
-⚠️ 旧文档里的 `user_callback_get_id/name/data/service` **已失效**，现在是 `user_callback_for_id/name/data/local_service`。
+⚠️ 用户体系的回调键是 `user_callback_for_id` / `user_callback_for_name` / `user_callback_for_data` / `user_callback_for_local_service`（admin 侧把 `user` 换成 `admin`）。
 
 ## 6. 权限判断（后台 + 资源归属）
 
@@ -137,11 +137,11 @@ public function edit(int $noteId, int $userId): array
 }
 ```
 
-后台菜单靠控制器注释生成（`@menu_directory` 等），见[第 16 章](../guide/external-auth.md)与 [Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)。
+后台菜单靠控制器注释生成（`@menu_directory` 等），见[第 2-9 章](../guide/external-auth.md)与 [Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)。
 
 ## 7. 缓存热点数据
 
-见[第 20 章](../guide/cache.md)。
+见[第 2-13 章](../guide/cache.md)。
 
 ```php
 public function hotProducts(): array
@@ -158,7 +158,7 @@ public function hotProducts(): array
 
 ## 8. 事务
 
-见[第 12 章](../guide/database.md)。
+见[第 2-5 章](../guide/database.md)。
 
 ```php
 $pdo = Helper::Db()->PDO();
@@ -169,13 +169,13 @@ try {
     $pdo->commit();
 } catch (\Throwable $ex) {
     $pdo->rollBack();
-    throw $ex;                    // 交给异常机制（第 18 章）
+    throw $ex;                    // 交给异常机制（第 2-11 章）
 }
 ```
 
 ## 9. 跨应用调用（多应用项目）
 
-见[第 28 章](../guide/component-sharing.md)、[第 25 章](../guide/advanced-phase.md)。
+见[第 3-4 章](../guide/component-sharing.md)、[第 3-1 章](../guide/advanced-phase.md)。
 
 ```php
 // 方式一：切相位调用（同一个进程里）
@@ -192,7 +192,7 @@ Helper::FireGlobalEvent('order.created', $orderId);
 
 ## 10. 统一给响应加东西（钩子）
 
-见[第 17 章](../guide/lifecycle.md)。
+见[第 2-10 章](../guide/lifecycle.md)。
 
 ```php
 // src/System/App.php 的 onInited() 里
@@ -204,7 +204,7 @@ Helper::addRouteHook(function (string $path_info) {
 
 ## 11. 强制 HTTPS ⚠️
 
-框架不提供，自己写 pre 钩子（[第 24 章](../guide/security-performance.md)）：
+框架不提供，自己写 pre 钩子（[第 2-17 章](../guide/security-performance.md)）：
 
 ```php
 Helper::addRouteHook(function (string $path_info) {
@@ -216,7 +216,7 @@ Helper::addRouteHook(function (string $path_info) {
 
 ## 12. CSRF 令牌 ⚠️
 
-框架**不提供**，需要自己实现（[第 24 章](../guide/security-performance.md)）：
+框架**不提供**，需要自己实现（[第 2-17 章](../guide/security-performance.md)）：
 
 ```php
 // 发令牌（控制器里）
@@ -233,7 +233,7 @@ Helper::BusinessThrowOn(
 
 ## 13. 文件上传 ⚠️
 
-取数据用 `Helper::FILES()`，**校验与落盘要自己写**（[第 24 章](../guide/security-performance.md)）：
+取数据用 `Helper::FILES()`，**校验与落盘要自己写**（[第 2-17 章](../guide/security-performance.md)）：
 
 ```php
 $file = Helper::FILES('avatar');
@@ -247,7 +247,7 @@ move_uploaded_file($file['tmp_name'], Helper::PathOfRuntime() . 'upload/' . $nam
 
 ## 14. 定时任务
 
-见[第 22 章](../guide/cli.md)。
+见[第 2-15 章](../guide/cli.md)。
 
 ```php
 class JobCommands
@@ -267,7 +267,7 @@ class JobCommands
 
 ## 15. 迁移/建表
 
-`demo/public/dbtest.php` 里的做法（可跑）：把建表 SQL 写在模型的 `init()` 里，由安装流程或控制器构造时调一次；需要导出 SQL 用 `Ext\SqlDumper`（[第 12 章](../guide/database.md)、[第 30 章](../guide/installer.md)）。
+`demo/public/dbtest.php` 里的做法（可跑）：把建表 SQL 写在模型的 `init()` 里，由安装流程或控制器构造时调一次；需要导出 SQL 用 [`Ext\SqlDumper`](../reference/Ext-SqlDumper.md)（[第 2-5 章](../guide/database.md)、[第 3-6 章](../guide/installer.md)）。
 
 ```php
 public function init()
@@ -285,4 +285,4 @@ EOT;
 
 ---
 
-> 找不到你要的片段？先看[第 40 章 排错手册](../guide/troubleshooting.md)的「症状 → 排查路径」，再去 `docs/zh/reference/` 查具体类。想补片段：按「能跑 + 标明出处」的原则加进来（本仓库约定：示例只用现有资产）。
+> 找不到你要的片段？先看[第 4-9 章 排错手册](../guide/troubleshooting.md)的「症状 → 排查路径」，再去 `docs/zh/reference/` 查具体类。想补片段：按「能跑 + 标明出处」的原则加进来（本仓库约定：示例只用现有资产）。

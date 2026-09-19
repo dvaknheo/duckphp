@@ -1,7 +1,7 @@
-# 38 测试基建与覆盖率流水线
+# 4-7 测试基建与覆盖率流水线
 
 > 解决什么问题：这套仓库的测试怎么跑、覆盖率报告是怎么来的（`test_coveragedumps/`、`test_reports/`）、多 PHP 版本怎么验、以及几个生成器脚本是干什么的。
-> 前置：[第 23 章 测试](testing.md)（给应用写测试）；本章讲**框架仓库自己的流水线**。预计 20 分钟。
+> 前置：[第 2-16 章 测试](testing.md)（给应用写测试）；本章讲**框架仓库自己的流水线**。预计 20 分钟。
 > 相关：`docs/zh/reference-maintenance-guide.md` §5（覆盖率与文档一致性流程的完整命令）。
 
 ```bash
@@ -80,14 +80,14 @@ XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php
 | `docker/test-php84/` | PHP 8.4 的 Dockerfile + compose + `start-docker.sh`/`exec-docker.sh`/`stop-docker.sh`/`end-docker.sh` |
 | `composer-test-php84.json` | 8.4 环境下的 composer 脚本：`fulltest`（cs-fixer + phpstan + phpunit + genoptions）、`singletest`、`genoptions` |
 
-容器化的意义：**redis 扩展**、不同 PHP 版本的语法差异（本框架支持 `>=7.4`）都要在真实环境里验一遍。Windows 侧跑会在 redis 相关用例上假失败（详见[第 23 章](testing.md)）。
+容器化的意义：**redis 扩展**、不同 PHP 版本的语法差异（本框架支持 `>=7.4`）都要在真实环境里验一遍。Windows 侧跑会在 redis 相关用例上假失败（详见[第 2-16 章](testing.md)）。
 
 ### 5. 生成器与闸门脚本
 
 | 脚本 | 用途 |
 |---|---|
 | `docs/scripts/gen-reference.php` | 参考手册工具：`facts`（打印源码解析结果）、`skeleton`（生成文档骨架）、`verify`（比对方法/选项） |
-| `docs/scripts/gen-route.php` | 极简骨架生成（Route 风格） |
+| `docs/scripts/gen-route.php` | 极简骨架生成（[Route](../reference/Core-Route.md) 风格） |
 | `docs/scripts/gen-options-docs.php` | 由源码生成选项文档（`options*.md`） |
 | `docs/scripts/scan-options.py` | 扫描 `$options`/`$hidden_options`，报「读了没声明」的键与拼写变体 |
 | `tests/genoptions.php` | 生成选项相关的校验数据（composer 脚本 `genoptions`） |
@@ -139,7 +139,7 @@ composer run-script fulltest
 
 | 现象                                      | 原因                                                                | 改法                                                                                       |
 | --------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Windows 侧跑测试报 `Class 'Redis' not found` | Windows PHP 无 redis 扩展                                            | 一律在 WSL / 容器里跑（[第 23 章](testing.md)）                                                     |
+| Windows 侧跑测试报 `Class 'Redis' not found` | Windows PHP 无 redis 扩展                                            | 一律在 WSL / 容器里跑（[第 2-16 章](testing.md)）                                                     |
 | 覆盖率数字全是 0                               | 没设 `XDEBUG_MODE=coverage`，或跑的是 `--no-coverage` 且没跑 `CodeCovar` 套件 | 见 §2；报告需要 dump + `showAllReport()` 两步                                                    |
 | `@codeCoverageIgnore` 没生效               | 注释不是整行恰好、或没贴在目标行尾                                                 | 贴到目标行尾（§3）                                                                               |
 | 全量测试偶发失败                                | `ZAllDemoTest` 起内置服务器占固定端口 9802，与其它实例/残留进程冲突                      | 确认没有并行跑；必要时改为顺序执行                                                                        |
@@ -150,7 +150,7 @@ composer run-script fulltest
 
 ## 下一步
 
-- [第 39 章 文档与参考手册维护](doc-maintenance.md)：这套脚本怎么用在文档上。
-- [第 40 章 性能调优与排错手册](troubleshooting.md)：测试全绿但线上出问题的排查路径。
+- [第 4-8 章 文档与参考手册维护](doc-maintenance.md)：这套脚本怎么用在文档上。
+- [第 4-9 章 性能调优与排错手册](troubleshooting.md)：测试全绿但线上出问题的排查路径。
 - 维护指南：[参考手册维护指南](../reference-maintenance-guide.md)（§5 覆盖率流程、§10 漂移判读）、[用户指南维护指南](../guide-maintenance-guide.md)。
 - 参考手册：[DuckPhp\HttpServer\HttpServer](../reference/HttpServer-HttpServer.md)。

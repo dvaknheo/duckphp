@@ -1,7 +1,7 @@
-# 11 视图与模板
+# 2-4 视图与模板
 
 > 解决什么问题：视图文件放在哪、怎么被找到；页眉页脚（布局）怎么加；数据怎么传进来；输出怎么转义；以及不用 PHP 文件写视图的几种办法。
-> 前置：[第 8 章 四层架构与调用规范](layers.md)、[第 10 章 控制器](controllers.md)。预计 20 分钟。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-3 章 控制器](controllers.md)。预计 20 分钟。
 > 示例：`tests/data_for_tests/ZAllDemo/view/main.php`（最小视图）、`demo/view/`（含错误页 `_sys/`）、`tests/data_for_tests/ZThirdDemo/view/shop/index.php`（被覆盖的视图）。
 
 ```bash
@@ -33,11 +33,11 @@ public function index()
 
 ### 1. 视图文件怎么定位
 
-`View::getViewFile()` 的逻辑很短：
+[`View::getViewFile()`](../reference/Core-View.md) 的逻辑很短：
 
 1. 视图名没有 `.php` 后缀就补上（`main` → `main.php`）；
 2. 交给 `getOverrideableFile($options['path_view'], $file)` 去找——`path_view` 默认 `'view'`（相对项目根）；
-3. 这个查找是**按相位逐层回退**的：子应用的视图可以被父应用在 `view/<子应用名>/xxx.php` 处覆盖（[第 29 章](overriding.md)）。
+3. 这个查找是**按相位逐层回退**的：子应用的视图可以被父应用在 `view/<子应用名>/xxx.php` 处覆盖（[第 3-5 章](overriding.md)）。
 
 视图名从哪来：
 
@@ -94,8 +94,8 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 |---|---|
 | `__h($str)` | HTML 转义（防 XSS）——输出用户数据时一律用它 |
 | `__url('note/show')` | 站内 URL（部署到子目录也不会错） |
-| `__res('app.css')` | 静态资源 URL（[第 27 章](static-resources.md)） |
-| `__l('hello')` / `__hl('hello')` | 翻译 / 翻译+转义（[第 21 章](i18n.md)） |
+| `__res('app.css')` | 静态资源 URL（[第 3-3 章](static-resources.md)） |
+| `__l('hello')` / `__hl('hello')` | 翻译 / 翻译+转义（[第 2-14 章](i18n.md)） |
 | `__json($data)` | JSON 编码后输出 |
 
 ```php
@@ -104,7 +104,7 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 <img src="<?= __res('img/logo.png') ?>">
 ```
 
-视图里**只用 Helper 与全局函数**，不要查库、不要调 Business——那是[第 8 章](layers.md)的越界矩阵里明确禁止的。
+视图里**只用 Helper 与全局函数**，不要查库、不要调 Business——那是[第 2-1 章](layers.md)的越界矩阵里明确禁止的。
 
 ### 5. 不用 PHP 文件写视图：三种替换引擎
 
@@ -112,9 +112,9 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 
 | 扩展 | 视图长什么样 | 关键选项 |
 |---|---|---|
-| `Ext\CallableView` | **函数/方法**：`Views::main_view($data)` | `callable_view_class`、`callable_view_head/foot`、`callable_view_is_object_call`、`callable_view_prefix` |
-| `Ext\EmptyView` | 视图名即要输出的字符串（占位/降级） | `empty_view_key_view`、`empty_view_key_wellcome_class`、`empty_view_trim_view_wellcome` |
-| `Ext\JsonView` | 把数据直接 JSON 输出 | `json_view_skip_vars` |
+| [`Ext\CallableView`](../reference/Ext-CallableView.md) | **函数/方法**：`Views::main_view($data)` | `callable_view_class`、`callable_view_head/foot`、`callable_view_is_object_call`、`callable_view_prefix` |
+| [`Ext\EmptyView`](../reference/Ext-EmptyView.md) | 视图名即要输出的字符串（占位/降级） | `empty_view_key_view`、`empty_view_key_wellcome_class`、`empty_view_trim_view_wellcome` |
+| [`Ext\JsonView`](../reference/Ext-JsonView.md) | 把数据直接 JSON 输出 | `json_view_skip_vars` |
 
 `demo/public/demo.php` 用的是第一种：
 
@@ -130,13 +130,13 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 
 ### 6. 视图也能被覆盖
 
-同一个视图名，子应用/父应用可以各有一份；查找会**按相位回退**（`getOverrideableFile()`）。`tests/data_for_tests/ZThirdDemo` 里就有现成的例子：`third/view/shop/index.php` 被主应用的 `view/shop/index.php` 覆盖，规则与排查看[第 29 章](overriding.md)。
+同一个视图名，子应用/父应用可以各有一份；查找会**按相位回退**（`getOverrideableFile()`）。`tests/data_for_tests/ZThirdDemo` 里就有现成的例子：`third/view/shop/index.php` 被主应用的 `view/shop/index.php` 覆盖，规则与排查看[第 3-5 章](overriding.md)。
 
 ## 常见写法
 
 **① 头尾拆分，页面骨架只写一次**（见 §3）。
 
-**② 列表 + 分页**（分页数据来自 `Helper::PageHtml()`，[第 12 章](database.md)）
+**② 列表 + 分页**（分页数据来自 `Helper::PageHtml()`，[第 2-5 章](database.md)）
 
 ```php
 <table>
@@ -163,7 +163,7 @@ Helper::assignViewData(['site_name' => 'MyProj', 'year' => date('Y')]);
 
 **⑤ 错误页就是普通视图**
 
-`demo/view/_sys/error_404.php`、`_sys/error_500.php`、`_sys/error_maintain.php` 都是普通视图文件，由 `error_404`/`error_500`/`error_maintain` 选项指定（[第 18 章](exception.md)）。
+`demo/view/_sys/error_404.php`、`_sys/error_500.php`、`_sys/error_maintain.php` 都是普通视图文件，由 `error_404`/`error_500`/`error_maintain` 选项指定（[第 2-11 章](exception.md)）。
 
 ## 常见错误
 
@@ -180,8 +180,8 @@ Helper::assignViewData(['site_name' => 'MyProj', 'year' => date('Y')]);
 
 ## 下一步
 
-- [第 12 章 数据库](database.md) 与 [第 13 章 模型层](model.md)：把视图要的数据准备好。
-- [第 21 章 国际化与文案](i18n.md)：视图里的 `__l()` / `__hl()`。
-- [第 27 章 静态资源与文档根](static-resources.md)：`__res()` 与资源目录。
-- [第 29 章 重写与覆盖](overriding.md)：视图级覆盖的完整规则。
+- [第 2-5 章 数据库](database.md) 与 [第 2-6 章 模型层](model.md)：把视图要的数据准备好。
+- [第 2-14 章 国际化与文案](i18n.md)：视图里的 `__l()` / `__hl()`。
+- [第 3-3 章 静态资源与文档根](static-resources.md)：`__res()` 与资源目录。
+- [第 3-5 章 重写与覆盖](overriding.md)：视图级覆盖的完整规则。
 - 参考手册：[DuckPhp\Core\View](../reference/Core-View.md)、[DuckPhp\Ext\CallableView](../reference/Ext-CallableView.md)、[DuckPhp\Ext\EmptyView](../reference/Ext-EmptyView.md)、[DuckPhp\Ext\JsonView](../reference/Ext-JsonView.md)。

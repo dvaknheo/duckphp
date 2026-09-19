@@ -1,7 +1,7 @@
-# 18 异常与错误处理
+# 2-11 异常与错误处理
 
 > 解决什么问题：异常怎么分层、条件抛怎么写、错误页怎么配、异常报告器怎么接。
-> 前置：[第 10 章 控制器](controllers.md)、[第 15 章 表单与数据验证](validator.md)。预计 20 分钟。
+> 前置：[第 2-3 章 控制器](controllers.md)、[第 2-8 章 表单与数据验证](validator.md)。预计 20 分钟。
 > 示例：`demo/src/Controller/ExceptionReporter.php`（报告器骨架）、`demo/view/_sys/error_404.php` / `error_500.php` / `error_maintain.php`（错误视图）。
 
 ## 最小示例
@@ -33,7 +33,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 
 ### 异常分层：一条铁律
 
-> ⚠️ **`DuckPhpSystemException` 只表示「框架自己出了问题」**（相位重名、直接 init 基类、缺 provider 等），工程的业务/权限/登录异常请**直接 `extends \Exception`**。想要守卫式抛法不必继承它——`use DuckPhp\Core\ThrowOnTrait;` 即可。详见 [Core-DuckPhpSystemException](../reference/Core-DuckPhpSystemException.md)。
+> ⚠️ **[`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md) 只表示「框架自己出了问题」**（相位重名、直接 init 基类、缺 provider 等），工程的业务/权限/登录异常请**直接 `extends \Exception`**。想要守卫式抛法不必继承它——[`use DuckPhp\Core\ThrowOnTrait;`](../reference/Core-ThrowOnTrait.md) 即可。详见 Core-DuckPhpSystemException。
 
 ```
 \Exception                              ← PHP 内置
@@ -57,7 +57,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 | `Helper::ProjectThrowOn($flag, 'msg', $code)`    | 选项 `exception_for_project`（缺省 `\Exception`）    |
 | `MyException::ThrowOn($flag, 'msg', $code)`      | 就是 `MyException` 自己                            |
 
-三个 `exception_for_*` 都是**隐藏选项**（`src/DuckPhp.php` 第 100–101 行只列了 business/controller；project 走 `ExceptionManager` 的同名选项），可在 App 选项里覆盖。另有 `exception_map` 可做异常类名映射（[CoreHelper](../reference/Core-CoreHelper.md)）。
+三个 `exception_for_*` 都是**隐藏选项**（`src/DuckPhp.php` 第 100–101 行只列了 business/controller；project 走 [`ExceptionManager`](../reference/Core-ExceptionManager.md) 的同名选项），可在 [App](../reference/Core-App.md) 选项里覆盖。另有 `exception_map` 可做异常类名映射（[CoreHelper](../reference/Core-CoreHelper.md)）。
 
 ### 错误视图四选项 + 维护页
 
@@ -192,16 +192,16 @@ ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) { /* 兜底 */ 
 |---|---|---|
 | 业务异常继承了 `DuckPhpSystemException` | 把「框架坏了」和「业务出错」混在一起 | 改 `extends \Exception`；要 `ThrowOn()` 就 `use ThrowOnTrait` |
 | 配了 `exception_reporter` 却没被调用 | 异常类不在当前应用命名空间，或 `exception_for_project` 没配 | 异常类放到 `namespace` 选项对应的命名空间下；或给 `exception_for_project` 配公共基类 |
-| 报告器方法没命中 | 方法名不是 `on{异常类短名}` | 对照 `ExceptionReporterTrait::OnException()` 的拼法 |
+| 报告器方法没命中 | 方法名不是 `on{异常类短名}` | 对照 [`ExceptionReporterTrait::OnException()`](../reference/Foundation-ExceptionReporterTrait.md) 的拼法 |
 | 404 页不出来，只有占位文本 | `error_404` 没配，或应用在 init 完成前就 404 | 配 `'error_404' => '_sys/error_404'`；init 完成前的错误只出占位 |
 | 生产环境泄露了异常详情 | `is_debug` 为真，或视图里没判 `__is_debug()` | 上线置 `false`；错误视图里用 `__is_debug()` 包调试块 |
 | `IsDebug()` 莫名为真 | 根应用或 Setting 里 `duckphp_is_debug` 为真 | 用 `IsRealDebug()` 或检查根/设置 |
 | 维护页不生效 | 只配了 `error_maintain` 没置 `is_maintain` | 同时置 `'is_maintain' => true` 或 Setting `duckphp_is_maintain` |
-| `ExceptionWrapper` 没接住 `\Error` | 它只捕获 `\Exception` | `\Error` 属编程错误，应让它抛出来修 |
+| [`ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md) 没接住 `\Error` | 它只捕获 `\Exception` | `\Error` 属编程错误，应让它抛出来修 |
 
 ## 下一步
 
-- [第 19 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
-- [第 17 章 请求生命周期与钩子点](lifecycle.md)：异常发生在请求时序的哪一环。
-- [第 6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 与日志分级的入门。
+- [第 2-12 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
+- [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：异常发生在请求时序的哪一环。
+- [第 1-6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 与日志分级的入门。
 - 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-ExceptionReporterTrait.md)、[Ext-ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)、[Core-ThrowOnTrait](../reference/Core-ThrowOnTrait.md)

@@ -1,8 +1,8 @@
-# 17 请求生命周期与钩子点
+# 2-10 请求生命周期与钩子点
 
 > 解决什么问题：一次请求从入口到输出，框架在**哪些点**允许你插手；钩子怎么挂、谁先谁后、什么时候该用钩子而不是继承基类。
-> 前置：[第 8 章 四层架构与调用规范](layers.md)、[第 9 章 路由进阶](routing.md)。预计 25 分钟。
-> 分工：本章只讲**时序与钩子**。会话见[第 16 章](external-auth.md)、异常见[第 18 章](exception.md)、事件见[第 19 章](events.md)、调试开关见[第 6 章](debugging.md)。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-2 章 路由进阶](routing.md)。预计 25 分钟。
+> 分工：本章只讲**时序与钩子**。会话见[第 2-9 章](external-auth.md)、异常见[第 2-11 章](exception.md)、事件见[第 2-12 章](events.md)、调试开关见[第 1-6 章](debugging.md)。
 > 示例：`demo/src/System/App.php`（真实的 `onPrepare()`/`onInited()` 覆盖）与 `tests/Ext/MyMiddlewareManagerTest.php`（中间件真实跑法）。
 
 ```bash
@@ -68,10 +68,10 @@ Route::_()->addRouteHook(function (string $path_info) {
 | 4 | **`onPrepare()`** | 组件**还没**装配 | 改选项、挂子应用（`app`） |
 | 5 | `initComponents()` | 组件陆续装配 | 不建议在这里读组件 |
 | 6 | **`onInit()`** | 组件已就绪 | 注册事件/命令/钩子 |
-| 7 | `initChildren()` | 逐个初始化子应用（[第 25 章](advanced-phase.md)） | — |
+| 7 | `initChildren()` | 逐个初始化子应用（[第 3-1 章](advanced-phase.md)） | — |
 | 8 | **`onInited()`** | 全部就绪，`is_inited = true` | 最后的接线窗口 |
 
-注意 `onPrepare()` 在**根应用**里还有一件特殊事：框架的 `App::onPrepare()` 会调用 `loadSetting()` 读设置文件，所以 `Setting()` 的键只在根应用、且只在 `onPrepare()` 之后可用（见[第 5 章](configuration.md)）。
+注意 `onPrepare()` 在**根应用**里还有一件特殊事：框架的 [`App::onPrepare()`](../reference/Core-App.md) 会调用 `loadSetting()` 读设置文件，所以 `Setting()` 的键只在根应用、且只在 `onPrepare()` 之后可用（见[第 1-5 章](configuration.md)）。
 
 ### 2. 请求：`serve()` 的完整时序
 
@@ -86,8 +86,8 @@ serve()
  │    └─ post_run_hook_list    默认路由没命中后的兜底（404 视图、资源等）
  ├─ runChildren()             父应用没命中 → 依次问每个子应用（第三卷）
  ├─ phaseToCurrent()          回到自己的相位
- ├─ !命中 → _On404()          404 处理（可被 error_404 选项替换，见第 18 章）
- ├─ 抛异常 → runException()   交给异常管理器（第 18 章）
+ ├─ !命中 → _On404()          404 处理（可被 error_404 选项替换，见第 2-11 章）
+ ├─ 抛异常 → runException()   交给异常管理器（第 2-11 章）
  └─ finally                   phaseToCurrent() + Route::_()->clear() + Runtime::_()->clear()
                               ↑ Route::clear() 里跑 finally_run_hook_list
 ```
@@ -95,12 +95,12 @@ serve()
 三个容易忽略的点：
 
 - **`onRequest()` 不是「每个进程一次」而是「每个应用一次」**：父应用没命中会把请求交给子应用，子应用的 `serve()` 又会跑一次自己的 `onRequest()`。
-- **`Route::clear()` 在 `finally` 里**，所以 `finally-inner`/`finally-outter` 钩子一定会执行（包括异常路径），适合做收尾、清理、统计上报。
-- **`run()` 是 `serve()` 与 `execute()` 的分流点**：`cli_enable` 为真且是 CLI 时走 `Console::_()->run()`（[第 22 章](cli.md)），Web 走 `serve()`。判断当前形态用 `App::_()->isCli()`，别去猜 `PHP_SAPI`。
+- **[`Route::clear()`](../reference/Core-Route.md) 在 `finally` 里**，所以 `finally-inner`/`finally-outter` 钩子一定会执行（包括异常路径），适合做收尾、清理、统计上报。
+- **`run()` 是 `serve()` 与 `execute()` 的分流点**：`cli_enable` 为真且是 CLI 时走 [`Console::_()->run()`](../reference/Core-Console.md)（[第 2-15 章](cli.md)），Web 走 `serve()`。判断当前形态用 `App::_()->isCli()`，别去猜 `PHP_SAPI`。
 
 ### 3. 输出：`onBeforeOutput()`
 
-`App::_Show()` 与 404/500 的错误视图路径都会先调 `onBeforeOutput()`，再交给 `View` 渲染。它是**输出前最后一个钩子**，适合统一注入变量、埋点、或最后修改响应头。它会**被调用多次**（正常输出一次；错误视图路径各自一次），所以里面别写「只该跑一次」的逻辑。
+`App::_Show()` 与 404/500 的错误视图路径都会先调 `onBeforeOutput()`，再交给 [`View`](../reference/Core-View.md) 渲染。它是**输出前最后一个钩子**，适合统一注入变量、埋点、或最后修改响应头。它会**被调用多次**（正常输出一次；错误视图路径各自一次），所以里面别写「只该跑一次」的逻辑。
 
 ### 4. 路由钩子的六个位置与短路语义
 
@@ -152,14 +152,14 @@ RouteHookManager::_()->dump();                           // ★ 排查：把三�
 
 | 钩子 | 位置 | 作用 |
 |---|---|---|
-| `RouteHookPathInfoCompat` | `prepend-outter` | PATH_INFO 兼容（`?_r=` 形式，[第 9 章](routing.md)） |
-| `RouteHookRewrite` | `prepend-outter` | URL 重写 |
-| `RouteHookRouteMap` | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底） |
-| `RouteHookApiServer`（扩展） | `prepend-inner` | API 服务 |
-| `RouteHookWebInstaller`（扩展） | `prepend-inner` | Web 安装流程（[第 30 章](installer.md)） |
-| `RouteHookFunctionRoute`（扩展） | `append-inner` | 函数式路由 |
-| `RouteHookDirectoryMode`（扩展） | `prepend-outter` | 目录模式（多入口） |
-| `RouteHookResource` | `append-outter` | 静态资源代发（[第 27 章](static-resources.md)） |
+| [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | `prepend-outter` | PATH_INFO 兼容（`?_r=` 形式，[第 2-2 章](routing.md)） |
+| [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) | `prepend-outter` | URL 重写 |
+| [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底） |
+| [`RouteHookApiServer`](../reference/Ext-RouteHookApiServer.md)（扩展） | `prepend-inner` | API 服务 |
+| [`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md)（扩展） | `prepend-inner` | Web 安装流程（[第 3-6 章](installer.md)） |
+| [`RouteHookFunctionRoute`](../reference/Ext-RouteHookFunctionRoute.md)（扩展） | `append-inner` | 函数式路由 |
+| [`RouteHookDirectoryMode`](../reference/Ext-RouteHookDirectoryMode.md)（扩展） | `prepend-outter` | 目录模式（多入口） |
+| [`RouteHookResource`](../reference/Component-RouteHookResource.md) | `append-outter` | 静态资源代发（[第 3-3 章](static-resources.md)） |
 
 ### 7. 兼容性扩展：洋葱中间件（`Ext\MyMiddlewareManager`）
 
@@ -184,7 +184,7 @@ $options = [
 
 中间件的签名是 `handle($request, \Closure $next)`：`$request` 由管理器给你（默认是个空 `\stdClass`，可以用子类改成自己的请求对象），`$next($request)` 就是「继续往里走」，返回值是内层的结果。
 
-挂上之后，插在内置钩子的最内层（`RouteHookManager::_()->attachPreRun()->append()`），洋葱顺序实测如下（`tests/Ext/MyMiddlewareManagerTest.php` 里的 X/Y/Z 三个中间件）：
+挂上之后，插在内置钩子的最内层（[`RouteHookManager::_()->attachPreRun()->append()`](../reference/Ext-RouteHookManager.md)），洋葱顺序实测如下（`tests/Ext/MyMiddlewareManagerTest.php` 里的 X/Y/Z 三个中间件）：
 
 ```
 P1>  P2>  CTRL#1  P2<  P1<        ← 列表第一个最外层；控制器只执行一次
@@ -201,13 +201,13 @@ P1>  P2>  CTRL#1  P2<  P1<        ← 列表第一个最外层；控制器只执
 |---|---|
 | 请求前后做对称处理（计时、日志、统一加响应头） | 洋葱中间件（它的强项） |
 | **拦截请求**（鉴权不通过就直接返回/跳转） | **路由钩子**：`prepend-outter` 里返回 `true` |
-| 更细的接管（换请求/响应对象、自己的收尾） | 继承 `MyMiddlewareManager` 覆盖 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`onPostMiddleware()` |
+| 更细的接管（换请求/响应对象、自己的收尾） | 继承 [`MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 覆盖 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`onPostMiddleware()` |
 
 细节见参考手册 [DuckPhp\Ext\MyMiddlewareManager](../reference/Ext-MyMiddlewareManager.md)。
 
 ### 8. 附：`Ext\HookChain`（命中即停的链）
 
-`DuckPhp\Ext\HookChain` 是一个小工具类：把一串回调装成对象，`__invoke()` 时按顺序执行、**遇到返回真值的就断**，并实现 `ArrayAccess` 可直接当数组读写。
+[`DuckPhp\Ext\HookChain`](../reference/Ext-HookChain.md) 是一个小工具类：把一串回调装成对象，`__invoke()` 时按顺序执行、**遇到返回真值的就断**，并实现 `ArrayAccess` 可直接当数组读写。
 
 ```php
 use DuckPhp\Ext\HookChain;
@@ -228,9 +228,9 @@ HookChain::Hook($target, $callback3);   // 便捷：把已有回调/null 与新�
 |---|---|---|
 | 某几个 URL 特例处理、拦截 | 路由钩子（pre） | 有短路语义，能真正拦住 |
 | 请求前后的对称逻辑 | 中间件（兼容扩展） | 洋葱结构天生适合「前/后」 |
-| 改某个控制器的行为 | 覆盖控制器类 / `controller_class_map`（[第 29 章](overriding.md)） | 精确到类，配置即生效 |
-| 广播「发生了某事」 | 全局事件（[第 19 章](events.md)） | 一对多、无返回值、可跨相位 |
-| 换掉框架某个能力 | 覆盖扩展 / 替换单例 | 从装配层解决（[第 34 章 替换框架行为](replace-behavior.md)） |
+| 改某个控制器的行为 | 覆盖控制器类 / `controller_class_map`（[第 3-5 章](overriding.md)） | 精确到类，配置即生效 |
+| 广播「发生了某事」 | 全局事件（[第 2-12 章](events.md)） | 一对多、无返回值、可跨相位 |
+| 换掉框架某个能力 | 覆盖扩展 / 替换单例 | 从装配层解决（[第 4-3 章 替换框架行为](replace-behavior.md)） |
 | 统一给所有控制器加东西 | **先想钩子**，其次才是继承基类 | 继承会把「可变的能力」变成「不可变的血缘」 |
 
 ## 常见写法
@@ -275,7 +275,7 @@ echo RouteHookManager::_()->dump();   // 三个链表全打印
 
 | 现象 | 原因 | 改法 |
 |---|---|---|
-| 覆盖 `onBeforeRun()`/`onAfterRun()` 完全不生效 | 这两个方法**不存在**（旧文档遗留） | 实际可用的是 `onAfterCreatePhases()`、`onPrepare()`、`onInit()`、`onInited()`、`onRequest()`、`onBeforeOutput()` |
+| 覆盖 `onBeforeRun()`/`onAfterRun()` 完全不生效 | 这两个方法**不存在**（框架里没有这两个钩子） | 实际可用的是 `onAfterCreatePhases()`、`onPrepare()`、`onInit()`、`onInited()`、`onRequest()`、`onBeforeOutput()` |
 | 中间件里 `return` 了响应，页面却是 404 或控制器照跑 | 短路对中间件无效（见 §7 的坑） | 拦截改用路由钩子并 `return true`；中间件只做前后置装饰 |
 | 钩子里 `return;` 却发现控制器还是执行了 | pre 钩子必须返回**真值**才算命中 | 明确写 `return true;` |
 | 钩子被挂了两次、日志出现两遍 | 重复调用 `addRouteHook()` | 用第三个参数 `$once = true`（默认已开），或先 `RouteHookManager::_()->removeAll()` |
@@ -286,8 +286,8 @@ echo RouteHookManager::_()->dump();   // 三个链表全打印
 
 ## 下一步
 
-- [第 18 章 异常与错误处理](exception.md)：`_On404()`/`runException()` 之后的完整流程。
-- [第 19 章 事件系统](events.md)：广播式的介入点，和钩子的分工。
-- [第 22 章 命令行与定时任务](cli.md)：`execute()` 这条支线。
-- [第 25 章 应用树与相位基础](advanced-phase.md)：`runChildren()` 背后的多应用机制。
+- [第 2-11 章 异常与错误处理](exception.md)：`_On404()`/`runException()` 之后的完整流程。
+- [第 2-12 章 事件系统](events.md)：广播式的介入点，和钩子的分工。
+- [第 2-15 章 命令行与定时任务](cli.md)：`execute()` 这条支线。
+- [第 3-1 章 应用树与相位基础](advanced-phase.md)：`runChildren()` 背后的多应用机制。
 - 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)、[DuckPhp\Core\KernelTrait](../reference/Core-KernelTrait.md)、[DuckPhp\Ext\RouteHookManager](../reference/Ext-RouteHookManager.md)、[DuckPhp\Ext\MyMiddlewareManager](../reference/Ext-MyMiddlewareManager.md)。

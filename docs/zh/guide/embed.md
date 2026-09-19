@@ -1,7 +1,7 @@
-# 35 无 Composer·单文件·内嵌
+# 4-4 无 Composer·单文件·内嵌
 
 > 解决什么问题：手上**没有 Composer**、或只想在别的项目里**塞一两个页面**时，怎么让 DuckPHP 跑起来。
-> 前置：[第 2 章 安装与最小示例](install.md)、[第 7 章 上线最小清单](deployment.md)。预计 15 分钟。
+> 前置：[第 1-2 章 安装与最小示例](install.md)、[第 1-7 章 上线最小清单](deployment.md)。预计 15 分钟。
 > 示例全部来自 `demo/public/`（`helloworld.php`、`just-route.php`、`traditional.php`）与 `src/DuckPhpAllInOne.php`，可用 `php -S 127.0.0.1:8080 -t demo/public` 起服务后逐个访问。
 
 ## 最小示例
@@ -53,15 +53,15 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
 \ProjectNameTemplate\System\App::RunQuickly($options);
 ```
 
-先 `class_exists()` 探测：Composer 在就用 Composer 的 autoload（路径 A 不需要），不在才回落到框架自带的 AutoLoader。这是「无 Composer 内嵌」的**标准探测姿势**。
+先 `class_exists()` 探测：Composer 在就用 Composer 的 autoload（路径 A 不需要），不在才回落到框架自带的 [AutoLoader](../reference/Core-AutoLoader.md)。这是「无 Composer 内嵌」的**标准探测姿势**。
 
 > 参考手册：[DuckPhp\Core\AutoLoader](../reference/Core-AutoLoader.md) 列出了全部选项（`path` / `namespace` / `path_namespace` / `psr-4` / `autoload_path_namespace_map`）与 `assignPathNamespace()` / `clear()` 等方法。
 
 ### `DuckPhpAllInOne`：一个类就是整个应用
 
-[src/DuckPhpAllInOne.php](../../src/DuckPhpAllInOne.php) 里的 `DuckPhp\DuckPhpAllInOne` 把**应用入口、控制器、视图回调、四组 Helper** 全部塞进一个类：
+[src/DuckPhpAllInOne.php](../../src/DuckPhpAllInOne.php) 里的 [`DuckPhp\DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 把**应用入口、控制器、视图回调、四组 Helper** 全部塞进一个类：
 
-- `use` 了 `ModelHelperTrait`、`BusinessHelperTrait`、`ControllerHelperTrait`、`AppHelperTrait` 四个 Helper Trait，并用一长串 `insteadof` 解决同名方法冲突（`ThrowOn`、`Setting`、`Config`、`header`、`setcookie` 等，见源码第 19–36 行）。所以在它的 `action_*` 方法里能直接 `$this->Db()`、`$this->Setting()`、`$this->Show()`。
+- `use` 了 [`ModelHelperTrait`](../reference/Helper-ModelHelperTrait.md)、[`BusinessHelperTrait`](../reference/Helper-BusinessHelperTrait.md)、[`ControllerHelperTrait`](../reference/Helper-ControllerHelperTrait.md)、[`AppHelperTrait`](../reference/Helper-AppHelperTrait.md) 四个 Helper Trait，并用一长串 `insteadof` 解决同名方法冲突（`ThrowOn`、`Setting`、`Config`、`header`、`setcookie` 等，见源码第 19–36 行）。所以在它的 `action_*` 方法里能直接 [`$this->Db()`](../reference/Db-Db.md)、`$this->Setting()`、`$this->Show()`。
 - 构造函数里调 `embedMe()`（第 39–57 行）注入一组默认选项：
 
 | 选项 | 注入值 | 作用 |
@@ -72,7 +72,7 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
 | `controller_class_postfix` | `''` | 类名不再追加 `Controller` 后缀 |
 | `controller_method_prefix` | `'action_'` | 只有 `action_*` 方法才是动作 |
 | `cli_enable` | `true` | 同时是 CLI 入口 |
-| `path_info_compact_enable` | `true` | 无 PATH_INFO 也能跑（[第 9 章](routing.md)） |
+| `path_info_compact_enable` | `true` | 无 PATH_INFO 也能跑（[第 2-2 章](routing.md)） |
 | `duckphp_all_in_one_wrap_header_foot` | `true` | `_Show()` 时自动包 `view_head` / `view_foot` |
 
 - 视图不走视图文件，而是**类方法**：`viewToCallback()`（第 86–93 行）把视图名里的 `/` 换成 `_`，找 `view_<名字>` 方法；找到就当作可调用视图，找不到才回落到父类的文件视图。`_Show()`（第 94–109 行）按「head → 正文 → foot」顺序调用。所以子类只要写 `view_hello($data)` 就等于定义了 `hello` 视图。
@@ -84,7 +84,7 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
 
 **1. 老项目里只加一两个页面** —— `demo/public/helloworld.php` 的姿态：在原有项目的 `public/` 里丢一个 php 文件，`namespace_controller` 指到根命名空间，控制器类就写在同一个文件里。原项目继续用原项目的加载方式，互不影响。
 
-**2. 只要路由，不要别的** —— `demo/public/just-route.php` 的姿态：连 `DuckPhp` 应用类都不用，直接 `Route::RunQuickly($options)`：
+**2. 只要路由，不要别的** —— `demo/public/just-route.php` 的姿态：连 [`DuckPhp`](../reference/DuckPhp.md) 应用类都不用，直接 [`Route::RunQuickly($options)`](../reference/Core-Route.md)：
 
 ```php
 use DuckPhp\Core\Route;
@@ -104,7 +104,7 @@ if (!$flag) {
 
 只用到 [DuckPhp\Core\Route](../reference/Core-Route.md) 一个类：路由解析、控制器调用、404 返回 `false` 都归它。适合「只想借用路由」的场景。
 
-**3. 全函数模式 + 视图数据外置** —— `demo/public/traditional.php` 的姿态：动作是 `action_*` 函数而不是类方法，配合 `Ext\RouteHookFunctionRoute` 扩展；视图也不走 View 组件，而是用 `Ext\EmptyView` 把数据存下来，由文件末尾的**原生 PHP 模板**自己 `extract()` 渲染：
+**3. 全函数模式 + 视图数据外置** —— `demo/public/traditional.php` 的姿态：动作是 `action_*` 函数而不是类方法，配合 [`Ext\RouteHookFunctionRoute`](../reference/Ext-RouteHookFunctionRoute.md) 扩展；视图也不走 [View](../reference/Core-View.md) 组件，而是用 [`Ext\EmptyView`](../reference/Ext-EmptyView.md) 把数据存下来，由文件末尾的**原生 PHP 模板**自己 `extract()` 渲染：
 
 ```php
 $options['namespace'] = '\\';
@@ -133,7 +133,7 @@ class Tiny extends \DuckPhp\DuckPhpAllInOne
 Tiny::RunQuickly([]);
 ```
 
-访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。父类选项如 `use_user_view`（[第 16 章](external-auth.md) 的用户控制器视图）在子类里照常可用。
+访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。父类选项如 `use_user_view`（[第 2-9 章](external-auth.md) 的用户控制器视图）在子类里照常可用。
 
 ## 常见错误
 
@@ -148,6 +148,6 @@ Tiny::RunQuickly([]);
 
 ## 下一步
 
-- [第 36 章 常驻进程与内嵌 HTTP](http-server.md)：把这里的单文件再用内置服务器包一层。
-- [第 37 章 多入口·多域名·多 SAPI](multi-entry.md)：单文件姿态之上，同一套 `src/` 怎么被多个入口复用。
+- [第 4-5 章 常驻进程与内嵌 HTTP](http-server.md)：把这里的单文件再用内置服务器包一层。
+- [第 4-6 章 多入口·多域名·多 SAPI](multi-entry.md)：单文件姿态之上，同一套 `src/` 怎么被多个入口复用。
 - 参考手册：[DuckPhp\Core\AutoLoader](../reference/Core-AutoLoader.md)、[DuckPhp\DuckPhpAllInOne](../reference/DuckPhpAllInOne.md)、[DuckPhp\Core\Route](../reference/Core-Route.md)

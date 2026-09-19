@@ -1,7 +1,7 @@
-# 3 目录结构与编码规则
+# 1-3 目录结构与编码规则
 
 > 解决什么问题：把项目摆成「框架期望的样子」，并知道哪些文件能改、哪些不能改，各类文件该怎么命名。
-> 前置：[第 2 章](install.md)。预计 12 分钟。
+> 前置：[第 1-2 章](install.md)。预计 12 分钟。
 > 本章结构与 `skeleton/`（脚手架实际生成的工程）一致。
 
 ## 标准结构
@@ -13,7 +13,7 @@ project/
 ├── bin/
 │   └── cli.php            ← CLI 入口。同样是「加载 + 启动」，勿改
 ├── config/
-│   └── DuckPhpSettings.config.php   ← 设置文件：数据库/Redis 等敏感信息（第 5 章）
+│   └── DuckPhpSettings.config.php   ← 设置文件：数据库/Redis 等敏感信息（第 1-5 章）
 ├── src/
 │   ├── System/
 │   │   └── App.php        ← 应用类：项目的配置中枢（选项都写这里）
@@ -63,7 +63,7 @@ project/
 两条容易踩的细节：
 
 - **`controller_method_prefix` 默认是空串**：方法名直接当 URL 段。想用 `action_` 前缀就显式配 `'controller_method_prefix' => 'action_'`（很多老文档/示例还写着 `action_`，那是早期默认值）。
-- **URL 大小写敏感**：默认不会把 `/note/list` 自动转成 `/Note/list`；要宽松匹配就配 `controller_class_adjust`（第 9 章）。
+- **URL 大小写敏感**：默认不会把 `/note/list` 自动转成 `/Note/list`；要宽松匹配就配 `controller_class_adjust`（第 2-2 章）。
 
 ## 层级调用铁律
 
@@ -82,8 +82,8 @@ View          只做展示（只用全局函数）
 |---|---|---|
 | Controller / Action | 同层 Action、Business、Helper、Session | **Model、Service**（必须经 Business） |
 | Business / Service | Model、Helper | Session、`$_GET`/`$_POST`/`$_SERVER`/`$_FILES` |
-| Model | 仅数据访问（`Db`/`ModelTrait`） | 业务逻辑、抛异常 |
-| View | 全局函数 `__h()` / `__url()` / `__res()` / `__l()` | 框架类（尽量不要） |
+| Model | 仅数据访问（[`Db`](../reference/Db-Db.md)/[`ModelTrait`](../reference/Foundation-ModelTrait.md)） | 业务逻辑、抛异常 |
+| [View](../reference/Core-View.md) | 全局函数 `__h()` / `__url()` / `__res()` / `__l()` | 框架类（尽量不要） |
 | 自定义 Helper | System 层、框架、第三方库 | 任何业务层（Controller/Action/Business/Service/Model） |
 
 **违规示例**（这些写法会让代码无法在 CLI / 测试里复用）：
@@ -117,7 +117,7 @@ class NoteModel extends Base
 }
 ```
 
-正确的抛异常方式：Controller 层用 `Helper::ControllerThrowOn(...)`，Business 层用 `Helper::BusinessThrowOn(...)`（第 18 章）。
+正确的抛异常方式：Controller 层用 `Helper::ControllerThrowOn(...)`，Business 层用 `Helper::BusinessThrowOn(...)`（第 2-11 章）。
 
 ## 常见错误
 
@@ -131,6 +131,6 @@ class NoteModel extends Base
 
 ## 下一步
 
-- [第 4 章 第一个页面](quickstart.md)：按这套结构写出第一个完整功能。
-- [第 8 章 四层架构与调用规范](layers.md)：为什么这样分层、越界后会出现什么后果。
-- [第 5 章 配置与设置](configuration.md)：`App.php` 里的 options 与 `config/` 里的 settings 有何区别。
+- [第 1-4 章 第一个页面](quickstart.md)：按这套结构写出第一个完整功能。
+- [第 2-1 章 四层架构与调用规范](layers.md)：为什么这样分层、越界后会出现什么后果。
+- [第 1-5 章 配置与设置](configuration.md)：`App.php` 里的 options 与 `config/` 里的 settings 有何区别。

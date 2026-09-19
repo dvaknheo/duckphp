@@ -1,7 +1,7 @@
-# 36 常驻进程与内嵌 HTTP
+# 4-5 常驻进程与内嵌 HTTP
 
 > 解决什么问题：框架自带的 HTTP 服务器（`DuckPhp\HttpServer\HttpServer`）怎么起、怎么停、为什么它能跑通 RPC 回环；以及"一个进程处理多个请求"时哪些状态会残留。
-> 前置：[第 17 章 请求生命周期与钩子点](lifecycle.md)、[第 37 章 多入口·多域名·多 SAPI](multi-entry.md)。预计 20 分钟。
+> 前置：[第 2-10 章 请求生命周期与钩子点](lifecycle.md)、[第 4-6 章 多入口·多域名·多 SAPI](multi-entry.md)。预计 20 分钟。
 > 示例：`tests/data_for_tests/ZAllDemoTest.config.php`（真起服务器 + curl 各入口的冒烟测试）、`demo/public/rpc.php`（多 worker 才能跑的回环示例）。
 
 ```bash
@@ -76,7 +76,7 @@ php cli.php run -H 0.0.0.0 -P 9000 -t public --dry     # 先看看它要执行�
 
 ### 4. 与 CLI 的关系：`php cli.php run`
 
-内置命令 `run`（`Command::command_run()`）做的事就是：
+内置命令 `run`（[`Command::command_run()`](../reference/Component-Command.md)）做的事就是：
 
 1. 取 CLI 参数当服务器选项（还会把当前应用类塞进 `http_app_class`）；
 2. 如果参数里指定了别的 `http_server` 类，就换掉 `HttpServer` 单例；
@@ -88,7 +88,7 @@ php cli.php run -H 0.0.0.0 -P 9000 -t public --dry     # 先看看它要执行�
 
 内置服务器在多 worker 模式下每个请求仍是独立的 PHP 进程（`php -S` 的模型），所以**框架单例不会跨请求存活**。真正需要注意残留的是这两种情况：
 
-- **你自己写的常驻脚本**（比如 while 循环里反复 `RunQuickly()`，或把框架嵌进别的常驻进程）：单例、`Runtime` 状态、数据库连接都会留着。要清就显式来做：`Route::_()->clear()`、`Runtime::_()->clear()`、`PhaseContainer::_()->RestAllContainerForTesting()`（[第 32 章](container-phases.md)）；
+- **你自己写的常驻脚本**（比如 while 循环里反复 `RunQuickly()`，或把框架嵌进别的常驻进程）：单例、[`Runtime`](../reference/Core-Runtime.md) 状态、数据库连接都会留着。要清就显式来做：[`Route::_()->clear()`](../reference/Core-Route.md)、`Runtime::_()->clear()`、[`PhaseContainer::_()->RestAllContainerForTesting()`](../reference/Core-PhaseContainer.md)（[第 4-1 章](container-phases.md)）；
 - **开了输出缓冲**（`use_output_buffer = true`）：`Runtime` 会 `ob_start()`，请求结束必须走到 `Runtime::_()->clear()` 才把缓冲刷出去；长跑脚本里别忘了这一步，否则响应会"攒着不发"。
 
 几个相关的运行期查询：
@@ -101,7 +101,7 @@ Runtime::_()->isOutputed(); // 是否已经输出过
 
 ### 6. 生产别用它
 
-内置服务器是**单进程（或少量 worker）的玩具服务器**：没有进程管理、没有超时/限流、不支持 HTTPS、并发能力有限。生产用 php-fpm + nginx（[第 7 章](deployment.md)、[第 24 章](security-performance.md)）。需要常驻高性能方案（RoadRunner/Swoole/FrankenPHP）时，框架**不内置**，需要你自己把 `RunQuickly` 接进它们的生命周期，并特别注意上一条的"状态残留"。
+内置服务器是**单进程（或少量 worker）的玩具服务器**：没有进程管理、没有超时/限流、不支持 HTTPS、并发能力有限。生产用 php-fpm + nginx（[第 1-7 章](deployment.md)、[第 2-17 章](security-performance.md)）。需要常驻高性能方案（RoadRunner/Swoole/FrankenPHP）时，框架**不内置**，需要你自己把 `RunQuickly` 接进它们的生命周期，并特别注意上一条的"状态残留"。
 
 ## 常见写法
 
@@ -135,7 +135,7 @@ php cli.php run --dry
 ['workers' => 4]     // 没有多 worker，回环请求会死等
 ```
 
-**⑤ 让某个入口换用别的 HttpServer 实现**
+**⑤ 让某个入口换用别的 [HttpServer](../reference/HttpServer-HttpServer.md) 实现**
 
 ```bash
 php cli.php run --http_server=MyProj/Http/MyServer
@@ -152,13 +152,13 @@ php cli.php run --http_server=MyProj/Http/MyServer
 | RPC 示例卡住/超时                | 没开 `workers`                                   | 设 `workers`（≥2）                                               |
 | 后台模式没有任何输出                 | 输出被重定向到 `/dev/null`                            | 调试时用前台模式或 `--dry`                                             |
 | `close()` 返回 `false`       | 当前进程没有 PID 可关                                  | 确认是在**起服务器的那个进程**里 close；别跨进程关                                |
-| Windows 下起服务器报"系统找不到指定的路径" | 旧版用 shell 起，cmd.exe 无法解析 `& echo $!`           | 现版本 Windows 走 `proc_open` 分支；升级到当前代码即可                        |
+| Windows 下起服务器报"系统找不到指定的路径" | 早先用 shell 起，cmd.exe 无法解析 `& echo $!`           | 现版本 Windows 走 `proc_open` 分支；升级到当前代码即可                        |
 | 长跑脚本里响应"攒着不发"              | 开了 `use_output_buffer` 但没走到 `Runtime::clear()` | 保证请求收尾逻辑（`Route::clear()`/`Runtime::clear()`）被执行              |
-| 把内置服务器放到生产                 | 它不是生产级服务器                                      | 上 php-fpm/nginx（[第 7 章](deployment.md)）                       |
+| 把内置服务器放到生产                 | 它不是生产级服务器                                      | 上 php-fpm/nginx（[第 1-7 章](deployment.md)）                       |
 
 ## 下一步
 
-- [第 37 章 多入口·多域名·多 SAPI](multi-entry.md)：同一个代码库的多种入口。
-- [第 38 章 测试基建与覆盖率流水线](coverage.md)：起服务器做端到端冒烟的那套流程。
-- [第 40 章 性能调优与排错手册](troubleshooting.md)：端口/进程类问题的排查路径。
+- [第 4-6 章 多入口·多域名·多 SAPI](multi-entry.md)：同一个代码库的多种入口。
+- [第 4-7 章 测试基建与覆盖率流水线](coverage.md)：起服务器做端到端冒烟的那套流程。
+- [第 4-9 章 性能调优与排错手册](troubleshooting.md)：端口/进程类问题的排查路径。
 - 参考手册：[DuckPhp\HttpServer\HttpServer](../reference/HttpServer-HttpServer.md)、[DuckPhp\Component\Command](../reference/Component-Command.md)、[DuckPhp\Core\Runtime](../reference/Core-Runtime.md)。

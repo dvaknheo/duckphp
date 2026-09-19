@@ -1,7 +1,7 @@
-# 31 综合实战：前台 + 后台 + API
+# 3-7 综合实战：前台 + 后台 + API
 
 > 目标：把第三卷的机制拼成一个真实架构 —— 一个进程里跑三个应用，资源共享得明白、边界划得清楚、第三方后台不改一行代码就能改造。
-> 前置：本卷第 25–30 章。预计 40 分钟（照抄骨架 + 改名字）。
+> 前置：本卷第 3-1–3-6 章。预计 40 分钟（照抄骨架 + 改名字）。
 > 起点：`tests/data_for_tests/ZThirdDemo`（两应用版，已验证）；本章把它扩成三应用。
 
 ## 目标架构
@@ -57,14 +57,14 @@ class MainApp extends DuckPhp
         'namespace' => 'MyProj',
 
         'controller_url_prefix' => '',
-        'controller_resource_prefix' => '/res/',      // 第 27 章的斜杠规则
+        'controller_resource_prefix' => '/res/',      // 第 3-3 章的斜杠规则
 
-        'installed' => false,                         // 第 30 章
+        'installed' => false,                         // 第 3-6 章
         'url_install' => 'install',
 
         'ext' => [
-            GlobalEvent::class => true,               // 事件总线默认关（第 28 章）
-            PermissionMenu::class => true,            // 后台菜单（第 16 章）
+            GlobalEvent::class => true,               // 事件总线默认关（第 3-4 章）
+            PermissionMenu::class => true,            // 后台菜单（第 2-9 章）
         ],
 
         'app' => [
@@ -74,7 +74,7 @@ class MainApp extends DuckPhp
                 'controller_resource_prefix' => 'res/',
                 'local_database' => true,                       // 后台用独立库
                 'database_list' => [['dsn' => 'sqlite:' . __DIR__ . '/../../runtime/admin.db']],
-                'controller_class_map' => [                     // 第 29 章：换掉它的控制器实现
+                'controller_class_map' => [                     // 第 3-5 章：换掉它的控制器实现
                     \MyProj\Admin\Controller\MainController::class => \MyProj\Override\AdminMainController::class,
                 ],
             ],
@@ -82,7 +82,7 @@ class MainApp extends DuckPhp
                 'name' => 'api',
                 'controller_url_prefix' => 'api/',
                 'controller_resource_prefix' => 'res/',
-                'ext' => [JsonView::class => true],             // API 只出 JSON（第 11 章）
+                'ext' => [JsonView::class => true],             // API 只出 JSON（第 2-4 章）
             ],
         ],
     ];
@@ -90,7 +90,7 @@ class MainApp extends DuckPhp
     protected function onInited(): void
     {
         parent::onInited();
-        // 后台下的单，前台要收到通知（第 28 章）
+        // 后台下的单，前台要收到通知（第 3-4 章）
         GlobalEvent::_()->globalOn('admin.order.paid', '', function ($order_id) {
             // 记流水、发消息、清缓存…
         });
@@ -104,9 +104,9 @@ class MainApp extends DuckPhp
 |---|---|---|---|---|
 | 代码（框架与公共库） | 共享 | 共享 | 共享 | 同一个 vendor |
 | 数据库连接 | 共享一份 | 独立一份 | 共享一份 | 后台加 `local_database => true` |
-| Redis | 共享 | 共享 | 共享 | 什么都不用做（`RedisManager` 是公共组件） |
+| Redis | 共享 | 共享 | 共享 | 什么都不用做（[`RedisManager`](../reference/Component-RedisManager.md) 是公共组件） |
 | 日志 | 共享 | 共享 | 共享 | 默认共享；要分开就各自 `path_log` |
-| 语言/文案 | 各自一份 | 各自一份 | 各自一份 | 默认就是各自一份（第 28 章实测） |
+| 语言/文案 | 各自一份 | 各自一份 | 各自一份 | 默认就是各自一份（第 3-4 章实测） |
 | 路由/视图/配置 | 各自一份 | 各自一份 | 各自一份 | 默认行为 |
 
 ### 4. 覆盖清单（集中写在一处，别散落）
@@ -133,7 +133,7 @@ class AdminMainController extends Base implements \DuckPhp\GlobalAdmin\AdminCont
 ```
 
 ```php
-// 生成菜单（第 16 章 + Ext-PermissionMenu）
+// 生成菜单（第 2-9 章 + Ext-PermissionMenu）
 PermissionMenu::_()->buildAndSaveToConfigJsonFile();   // 一次：把注释扫成菜单配置
 $tree = PermissionMenu::_()->loadAll();                // 每次请求：含所有子应用的菜单合并
 $side = PermissionMenu::_()->permissionMenuTreeToSideMenuTree($tree);
@@ -146,15 +146,15 @@ $side = PermissionMenu::_()->permissionMenuTreeToSideMenuTree($tree);
 Helper::checkInstall();
 ```
 
-- `installed=true` 后，安装入口要么关掉扩展要么加鉴权（第 30 章）。
-- 生产直出资源：`RouteHookResource::_()->cloneResource()`，或构建脚本 `cp -r res/* public/`。
+- `installed=true` 后，安装入口要么关掉扩展要么加鉴权（第 3-6 章）。
+- 生产直出资源：[`RouteHookResource::_()->cloneResource()`](../reference/Component-RouteHookResource.md)，或构建脚本 `cp -r res/* public/`。
 - 文档根指 `public/`；`admin/`、`api/` 的源码目录不要在 Web 根下。
 
 ### 7. CLI 命令按应用分组
 
 ```bash
 php bin/cli.php help            # 前台与公共命令
-php bin/cli.php admin-help      # 后台应用的命令（相位名前缀，第 22 章）
+php bin/cli.php admin-help      # 后台应用的命令（相位名前缀，第 2-15 章）
 php bin/cli.php api-help        # API 应用的命令
 ```
 
@@ -182,25 +182,25 @@ private function request(string $path_info): string
 // 事件：后台下单 → 前台监听器收到
 ```
 
-要连 HTTP 层一起验（含真实 header/静态文件），再用 `ZAllDemoTest` 那套：起内置服务器 + `curl` 各路由比对输出（第 38 章，M4 落稿）。
+要连 HTTP 层一起验（含真实 header/静态文件），再用 `ZAllDemoTest` 那套：起内置服务器 + `curl` 各路由比对输出（第 4-7 章，M4 落稿）。
 
 ## 排错速查
 
 | 现象 | 先查这里 |
 |---|---|
-| 子应用 404 | 前缀是否带尾斜杠；`path`/命名空间映射是否对（第 26 章） |
-| 视图不是期望的那份 | `getOverrideableFile('view','index.php',true,true)` 看命中谁；覆盖目录名是否等于子应用 `name`（第 29 章） |
-| 资源 404 | 前缀斜杠规则：根 `'/res/'`、子应用 `'res/'`（第 27 章） |
-| 事件收不到 | `GlobalEvent` 是否打开；`fire` 在哪个相位注册（第 28 章） |
-| 后台连了前台的库 | 忘了 `local_database => true`（第 28 章） |
-| 命令提示找不到 | 命令属于子应用 → 加相位前缀（第 22 章） |
-| 一直跳安装页 | `installed` 还是 `false`（第 30 章） |
+| 子应用 404 | 前缀是否带尾斜杠；`path`/命名空间映射是否对（第 3-2 章） |
+| 视图不是期望的那份 | `getOverrideableFile('view','index.php',true,true)` 看命中谁；覆盖目录名是否等于子应用 `name`（第 3-5 章） |
+| 资源 404 | 前缀斜杠规则：根 `'/res/'`、子应用 `'res/'`（第 3-3 章） |
+| 事件收不到 | [`GlobalEvent`](../reference/Component-GlobalEvent.md) 是否打开；`fire` 在哪个相位注册（第 3-4 章） |
+| 后台连了前台的库 | 忘了 `local_database => true`（第 3-4 章） |
+| 命令提示找不到 | 命令属于子应用 → 加相位前缀（第 2-15 章） |
+| 一直跳安装页 | `installed` 还是 `false`（第 3-6 章） |
 
 ## 收尾
 
-把这套结构（目录、前缀、共享决策、覆盖清单、冒烟清单）写进项目的 README，让下一个人不用重新推一遍；第三卷的 26–31 章就是他需要读的全部背景。
+把这套结构（目录、前缀、共享决策、覆盖清单、冒烟清单）写进项目的 README，让下一个人不用重新推一遍；第三卷的 3-2–3-7 章就是他需要读的全部背景。
 
 ## 相关参考
 
-- [第 25 章](advanced-phase.md) 相位 · [第 26 章](mount-app.md) 挂载 · [第 27 章](static-resources.md) 资源 · [第 28 章](component-sharing.md) 共享与通信 · [第 29 章](overriding.md) 覆盖 · [第 30 章](installer.md) 安装
+- [第 3-1 章](advanced-phase.md) 相位 · [第 3-2 章](mount-app.md) 挂载 · [第 3-3 章](static-resources.md) 资源 · [第 3-4 章](component-sharing.md) 共享与通信 · [第 3-5 章](overriding.md) 覆盖 · [第 3-6 章](installer.md) 安装
 - [Ext-PermissionMenu](../reference/Ext-PermissionMenu.md) · [GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md) · [GlobalUser](../reference/GlobalUser-GlobalUser.md)

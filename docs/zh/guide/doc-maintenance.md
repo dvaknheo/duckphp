@@ -1,7 +1,7 @@
-# 39 文档与参考手册维护
+# 4-8 文档与参考手册维护
 
 > 解决什么问题：改了源码之后，怎么让 `docs/zh/reference/`（117+ 篇逐类文档）和 `docs/zh/guide/`（本指南）不变成谎话；以及本仓库把这件事做成了哪几道自动闸门。
-> 前置：[第 38 章 测试基建与覆盖率流水线](coverage.md)。预计 20 分钟。
+> 前置：[第 4-7 章 测试基建与覆盖率流水线](coverage.md)。预计 20 分钟。
 > 两份权威手册（本章是它们的「导读」，细节以它们为准）：
 > [参考手册维护指南](../reference-maintenance-guide.md)、[用户指南维护指南](../guide-maintenance-guide.md)、[用户指南重写 Checklist](../guide-rewrite-checklist.md)。
 
@@ -113,7 +113,7 @@ python3 docs/scripts/check-doc-links.py docs        # 全仓（docs/old、docs/e
 
 **③ 源码里发现「读了没声明」的选项**
 
-跑 `docs/scripts/scan-options.py` 看告警。两种处置：要么在 `$options` 里正式声明它，要么把它列进 `$hidden_options` 并把读取点写成 `?? 默认值`（并想清楚「用户还能不能设置它」——见 `DuckPhp`/`App` 里 `$hidden_options` 的注释）。
+跑 `docs/scripts/scan-options.py` 看告警。两种处置：要么在 `$options` 里正式声明它，要么把它列进 `$hidden_options` 并把读取点写成 `?? 默认值`（并想清楚「用户还能不能设置它」——见 [`DuckPhp`](../reference/DuckPhp.md)/[`App`](../reference/Core-App.md) 里 `$hidden_options` 的注释）。
 
 **④ 文档里发现链接指向不存在的页**
 
@@ -155,6 +155,6 @@ PY
 
 ## 下一步
 
-- [第 40 章 性能调优与排错手册](troubleshooting.md)：症状 → 排查路径。
-- [第 41 章 设计取舍与已知坑](design-notes.md)：哪些行为是刻意的、哪些是坑。
+- [第 4-9 章 性能调优与排错手册](troubleshooting.md)：症状 → 排查路径。
+- [第 4-10 章 设计取舍与已知坑](design-notes.md)：哪些行为是刻意的、哪些是坑。
 - 维护指南：[参考手册维护指南](../reference-maintenance-guide.md)、[用户指南维护指南](../guide-maintenance-guide.md)。

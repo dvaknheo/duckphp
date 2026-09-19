@@ -1,7 +1,7 @@
-# 8 四层架构与调用规范
+# 2-1 四层架构与调用规范
 
-> 解决什么问题：DuckPHP 把「谁可以调谁」当成**约定**而不是建议——这一章给你第二卷的总图和铁律，后面 9–16 章都是往这张图上挂东西。
-> 前置：[第 3 章 目录结构与编码规则](project-structure.md)、[第 4 章 第一个页面](quickstart.md)。预计 20 分钟。
+> 解决什么问题：DuckPHP 把「谁可以调谁」当成**约定**而不是建议——这一章给你第二卷的总图和铁律，后面 2-2–2-9 章都是往这张图上挂东西。
+> 前置：[第 1-3 章 目录结构与编码规则](project-structure.md)、[第 1-4 章 第一个页面](quickstart.md)。预计 20 分钟。
 > 示例：`demo/public/demo.php`（单文件五层示范，能直接跑）与 `tests/data_for_tests/ZAllDemo`（多文件骨架）。跑法：
 
 ```bash
@@ -9,7 +9,7 @@ php -S 127.0.0.1:8080 -t demo/public
 # 浏览器打开 http://127.0.0.1:8080/demo.php
 ```
 
-**本卷地图**——第二卷（8–24 章）就是往本章这张图上挂东西：
+**本卷地图**——第二卷（2-1–2-17 章）就是往本章这张图上挂东西：
 
 | 阶段 | 章 | 讲什么 |
 |---|---|---|
@@ -102,8 +102,8 @@ HTTP 请求 → 路由 → MainController::index()
 |---|---|---|---|
 | **Controller** | 请求的入口与出口 | 取输入、调 Business、把数据交给视图、跳转、404 | 写业务规则、直接查数据库、拼 SQL |
 | **Business** | 业务逻辑编排 | 调 Model、调 Service、条件抛业务异常 | 读写 `$_GET`/`$_POST`/`$_SERVER`/Session，依赖当前请求 |
-| **Model** | 数据访问 | 调 Db、按表做 CRUD、返回数组/对象 | 写业务判断、抛业务异常、调 Business |
-| **View** | 显示 | 用 Helper 与全局函数输出、读控制器给的数据 | 查数据库、调 Business、写业务逻辑 |
+| **Model** | 数据访问 | 调 [Db](../reference/Db-Db.md)、按表做 CRUD、返回数组/对象 | 写业务判断、抛业务异常、调 Business |
+| **[View](../reference/Core-View.md)** | 显示 | 用 Helper 与全局函数输出、读控制器给的数据 | 查数据库、调 Business、写业务逻辑 |
 | **System** | 接线（不属于四层） | 配置、注册事件/命令、装配应用类 | 混进业务代码里被四层反向依赖 |
 
 > **编码规则**：`Controller`、`Business`、`Model`、`View` 四层里，除 Helper 与全局函数外，**不要直接 `use` `DuckPhp\*` 的框架类**；框架相关的调用集中在 `System` 层，或由 `Helper` 代劳。这条规则的意义在第三卷会体现：包装配（`ext`、覆盖、相位）全都发生在 `System` 层，业务代码因此可以整片复用。
@@ -130,8 +130,8 @@ HTTP 请求 → 路由 → MainController::index()
 
 这不是洁癖，有三个很具体的后果：
 
-1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 22 章](cli.md)）、定时任务、测试（[第 23 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
-2. **多应用/相位下会被共享或复制**：第三卷的应用树里，子应用与父应用可能各自持有一份组件（[第 28 章](component-sharing.md)），带状态的业务类会随相位漂移，出现「同一个请求里两份状态」。
+1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 2-15 章](cli.md)）、定时任务、测试（[第 2-16 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
+2. **多应用/相位下会被共享或复制**：第三卷的应用树里，子应用与父应用可能各自持有一份组件（[第 3-4 章](component-sharing.md)），带状态的业务类会随相位漂移，出现「同一个请求里两份状态」。
 3. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
 
 所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`、`Helper::Session()` 之类），Business 的入参一律显式传。
@@ -142,12 +142,12 @@ HTTP 请求 → 路由 → MainController::index()
 
 | 层 | 工程侧的类（`YourProjectName\<层>\Helper`） | 背后的 trait | 典型方法 |
 |---|---|---|---|
-| Controller | `Controller\Helper` | `DuckPhp\Helper\ControllerHelperTrait` | `Show()`、`ShowJson()`、`Show302()`、`GET()`、`POST()` |
-| Business | `Business\Helper` | `DuckPhp\Helper\BusinessHelperTrait` | `Setting()`、`Config()`、`BusinessThrowOn()`、`XpCall()` |
-| Model | `Model\Helper` | `DuckPhp\Helper\ModelHelperTrait` | 模型侧便捷方法 |
-| 应用/接线 | `System\Helper` | `DuckPhp\Helper\AppHelperTrait` | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
+| Controller | `Controller\Helper` | [`DuckPhp\Helper\ControllerHelperTrait`](../reference/Helper-ControllerHelperTrait.md) | `Show()`、`ShowJson()`、`Show302()`、`GET()`、`POST()` |
+| Business | `Business\Helper` | [`DuckPhp\Helper\BusinessHelperTrait`](../reference/Helper-BusinessHelperTrait.md) | `Setting()`、`Config()`、`BusinessThrowOn()`、`XpCall()` |
+| Model | `Model\Helper` | [`DuckPhp\Helper\ModelHelperTrait`](../reference/Helper-ModelHelperTrait.md) | 模型侧便捷方法 |
+| 应用/接线 | `System\Helper` | [`DuckPhp\Helper\AppHelperTrait`](../reference/Helper-AppHelperTrait.md) | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
 
-这些 `Xxx\Helper` 类本身极短（`tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` 只有 `use` 两行 + 一个空类），也可以直接用框架现成的 `DuckPhp\Foundation\Controller\Helper` 等类。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
+这些 `Xxx\Helper` 类本身极短（`tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` 只有 `use` 两行 + 一个空类），也可以直接用框架现成的 [`DuckPhp\Foundation\Controller\Helper`](../reference/Foundation-Controller-Helper.md) 等类。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 
 视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](../reference/Core-Functions.md)）：
 
@@ -155,17 +155,17 @@ HTTP 请求 → 路由 → MainController::index()
 | ------------------------------------------ | ----------------------------------------- |
 | `__h($str)`                                | HTML 转义输出（防 XSS 的第一道）                     |
 | `__url($url)` / `__domain()`               | 生成站内 URL / 域名前缀                           |
-| `__res($url)`                              | 生成静态资源 URL（[第 27 章](static-resources.md)） |
+| `__res($url)`                              | 生成静态资源 URL（[第 3-3 章](static-resources.md)） |
 | `__json($data)`                            | JSON 编码                                   |
-| `__l($str)` / `__langtext()` / `__hl()`    | 多语言与转义组合（[第 21 章](i18n.md)）               |
-| `__logger()`、`__debug_log()`、`__var_log()` | 日志（[第 6 章](debugging.md)）                 |
+| `__l($str)` / `__langtext()` / `__hl()`    | 多语言与转义组合（[第 2-14 章](i18n.md)）               |
+| `__logger()`、`__debug_log()`、`__var_log()` | 日志（[第 1-6 章](debugging.md)）                 |
 
 ### 5. 框架其实不强制这套约定
 
 要说清楚：DuckPHP **没有**运行时拦截器去阻止你在控制器里 `new DemoModel()`。违反约定的代价不是报错，而是这些能力悄悄失效——
 
-- 覆盖（[第 29 章](overriding.md)）失效：覆盖靠「替换类/替换文件」，越界直连的调用链绕过了替换点；
-- 多应用（[第 25 章](advanced-phase.md)）失效：跨相位直连拿到的是别的相位（或根相位）的实例；
+- 覆盖（[第 3-5 章](overriding.md)）失效：覆盖靠「替换类/替换文件」，越界直连的调用链绕过了替换点；
+- 多应用（[第 3-1 章](advanced-phase.md)）失效：跨相位直连拿到的是别的相位（或根相位）的实例；
 - 测试与 CLI 复用困难（第 22、23 章）；
 - 业务规则出现第二份实现：一边在 Business 里校验，一边在控制器里也校验。
 
@@ -202,7 +202,7 @@ new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 ```
 
 **⑤ 跨相位调用（第三卷的内容，这里先立规矩）**
-真要跨应用取东西，用 [第 25 章](advanced-phase.md) 的相位 API 或相位代理，而不是 `new` 另一个应用的类。
+真要跨应用取东西，用 [第 3-1 章](advanced-phase.md) 的相位 API 或相位代理，而不是 `new` 另一个应用的类。
 
 ## 常见错误
 
@@ -212,15 +212,15 @@ new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 | Business 里 `$_GET['id']` 报「未定义」          | Business 读了请求上下文，CLI/测试下没有这些超全局              | 由控制器取值后**当参数传进** Business                                        |
 | 视图里查库，页面变得很慢或数据不一致                       | 视图里又跑了一次业务                                   | 数据由控制器准备，视图只渲染                                                   |
 | `Helper::Show('main', $data)` 页面白屏或视图找不到 | 参数顺序写反了：真实签名是 `Show($data = [], $view = '')` | 改成 `Helper::Show($data, 'main')`；用 `get_defined_vars()` 传当前变量最省事 |
-| 覆盖类/覆盖文件后没生效                             | 调用链上有 `new`、或直接从别的相位取实例                      | 全程用 `::_()`，跨相位用相位 API（第 25 章）                                   |
-| 控制器里 `use DuckPhp\Core\App;` 越写越多        | 框架细节渗进了业务层                                   | 框架调用收进 System 层或对应层的 Helper                                      |
+| 覆盖类/覆盖文件后没生效                             | 调用链上有 `new`、或直接从别的相位取实例                      | 全程用 `::_()`，跨相位用相位 API（第 3-1 章）                                   |
+| 控制器里 [`use DuckPhp\Core\App;`](../reference/Core-App.md) 越写越多        | 框架细节渗进了业务层                                   | 框架调用收进 System 层或对应层的 Helper                                      |
 | 同一个业务规则在控制器和 Business 里各写一份              | 边界没守住，规则有了第二实现                               | 规则只留在 Business，控制器只做参数整形                                         |
-| Model 里抛业务异常、写权限判断                       | 模型层做了业务层的活                                   | 判断留在 Business；Model 只返回数据（异常处理见[第 18 章](exception.md)）           |
+| Model 里抛业务异常、写权限判断                       | 模型层做了业务层的活                                   | 判断留在 Business；Model 只返回数据（异常处理见[第 2-11 章](exception.md)）           |
 
 ## 下一步
 
-- [第 9 章 路由进阶](routing.md)：先弄清请求是怎么落到某个控制器方法的。
-- [第 10 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
-- [第 11 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
-- [第 12 章 数据库](database.md) 与 [第 13 章 模型层](model.md)：模型层这一列往下的全部内容。
+- [第 2-2 章 路由进阶](routing.md)：先弄清请求是怎么落到某个控制器方法的。
+- [第 2-3 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
+- [第 2-4 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
+- [第 2-5 章 数据库](database.md) 与 [第 2-6 章 模型层](model.md)：模型层这一列往下的全部内容。
 - 参考手册：[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)、[DuckPhp\Helper\ControllerHelperTrait](../reference/Helper-ControllerHelperTrait.md)、[DuckPhp\Helper\BusinessHelperTrait](../reference/Helper-BusinessHelperTrait.md)。

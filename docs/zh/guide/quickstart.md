@@ -1,7 +1,7 @@
-# 4 第一个页面
+# 1-4 第一个页面
 
 > 目标：做一个「便签列表」页，把**路由 → 控制器 → 业务 → 模型 → 视图**这条链走通一遍，之后所有功能都是它的变体。
-> 前置：[第 3 章 目录结构与编码规则](project-structure.md)。预计 25 分钟。
+> 前置：[第 1-3 章 目录结构与编码规则](project-structure.md)。预计 25 分钟。
 > 示例写法在仓库里都有同类实现：`skeleton/src/`（脚手架）与 `tests/data_for_tests/ZAllDemo/src/`（有测试兜底的四层示例）。
 
 ## 做完是什么样
@@ -31,7 +31,7 @@ sqlite3 runtime/app.db < schema.sql
 
 ## 步骤 2：把数据库告诉框架
 
-敏感信息放设置文件（为什么放这里见[第 5 章](configuration.md)）：
+敏感信息放设置文件（为什么放这里见[第 1-5 章](configuration.md)）：
 
 ```php
 <?php
@@ -46,7 +46,7 @@ return [
 ];
 ```
 
-> `DbManager` 默认会从**设置**里取 `database_list`（选项 `database_list_reload_by_setting` 默认为真），所以只写在这里就够。
+> [`DbManager`](../reference/Component-DbManager.md) 默认会从**设置**里取 `database_list`（选项 `database_list_reload_by_setting` 默认为真），所以只写在这里就够。
 
 ## 步骤 3：模型（Model）—— 只管数据
 
@@ -74,7 +74,7 @@ class NoteModel extends Base
 
 要点：
 
-- `static::Db()` 来自 `Foundation\Model\Base`（不用再引 Helper）；读写分离时用 `DbForRead()` / `DbForWrite()`。
+- [`static::Db()`](../reference/Db-Db.md) 来自 `Foundation\Model\Base`（不用再引 Helper）；读写分离时用 `DbForRead()` / `DbForWrite()`。
 - `$this->table()` 给出「表前缀 + 表名」；`$this->prepare($sql)` 还能把 SQL 里的 `` `'TABLE'` `` 占位换成真实表名。
 - Model 里**不写业务判断、不抛异常**（铁律，见上一章）。
 
@@ -98,13 +98,13 @@ class NoteBusiness
     public function noteOr404(int $id): array
     {
         $note = NoteModel::_()->findOne($id);
-        Helper::BusinessThrowOn(!$note, '便签不存在', 404);   // 业务层的条件抛（第 18 章）
+        Helper::BusinessThrowOn(!$note, '便签不存在', 404);   // 业务层的条件抛（第 2-11 章）
         return $note;
     }
 }
 ```
 
-`Helper` 是业务层自己的助手（`src/Business/Helper.php`，内部 `use DuckPhp\Helper\BusinessHelperTrait;`），脚手架自带。
+`Helper` 是业务层自己的助手（`src/Business/Helper.php`，内部 [`use DuckPhp\Helper\BusinessHelperTrait;`](../reference/Helper-BusinessHelperTrait.md)），脚手架自带。
 
 ## 步骤 5：控制器（Controller）—— 收输入、出输出
 
@@ -130,7 +130,7 @@ class NoteController extends Base
 }
 ```
 
-输出一共四种（[第 10 章](controllers.md)会展开）：`Helper::Show($data, 'view')` 渲染视图、`Helper::ShowJson($data)` 出 JSON、`Helper::Show302($url)` 跳转、`Helper::Show404()` 出 404。
+输出一共四种（[第 2-3 章](controllers.md)会展开）：`Helper::Show($data, 'view')` 渲染视图、`Helper::ShowJson($data)` 出 JSON、`Helper::Show302($url)` 跳转、`Helper::Show404()` 出 404。
 
 ## 步骤 6：视图（View）—— 只做展示
 
@@ -162,7 +162,7 @@ php -S 127.0.0.1:8080 -t public
 |---|---|
 | `http://127.0.0.1:8080/Note/index` | 列表页 |
 | `http://127.0.0.1:8080/Note/show?id=1` | 详情页 |
-| `http://127.0.0.1:8080/` | 走 `MainController::index()`（欢迎页控制器，第 9 章） |
+| `http://127.0.0.1:8080/` | 走 `MainController::index()`（欢迎页控制器，第 2-2 章） |
 
 > URL 里的 `Note` 大小写要与类名一致（默认不做大小写宽松处理）。
 
@@ -187,7 +187,7 @@ public function create(array $post): int
 }
 ```
 
-表单校验的完整做法（过滤器 + 错误数组）见[第 15 章](validator.md)；这里只求把链路走通。
+表单校验的完整做法（过滤器 + 错误数组）见[第 2-8 章](validator.md)；这里只求把链路走通。
 
 ## 单文件版（不建工程也能跑）
 
@@ -221,6 +221,6 @@ class MainController          // 单文件示例：控制器写在同一文件�
 
 ## 下一步
 
-- [第 5 章 配置与设置](configuration.md)：把 `App.php` 的选项与 `config/` 的设置彻底分清。
-- [第 10 章 控制器](controllers.md)、[第 11 章 视图与模板](views.md)：这两层的完整能力。
-- [第 17 章 请求生命周期与钩子点](lifecycle.md)：刚才这一次请求，框架内部都做了什么（想让框架在中间插一手时回来看）。
+- [第 1-5 章 配置与设置](configuration.md)：把 `App.php` 的选项与 `config/` 的设置彻底分清。
+- [第 2-3 章 控制器](controllers.md)、[第 2-4 章 视图与模板](views.md)：这两层的完整能力。
+- [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：刚才这一次请求，框架内部都做了什么（想让框架在中间插一手时回来看）。

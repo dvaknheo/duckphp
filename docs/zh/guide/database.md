@@ -1,7 +1,7 @@
-# 12 数据库
+# 2-5 数据库
 
 > 解决什么问题：怎么配数据库连接、多库与读写分离怎么用、事务怎么写、分页与 SQL 导出怎么做、SQL 里的表名前缀宏是什么。
-> 前置：[第 5 章 配置与设置](configuration.md)、[第 8 章 四层架构与调用规范](layers.md)。预计 20 分钟。
+> 前置：[第 1-5 章 配置与设置](configuration.md)、[第 2-1 章 四层架构与调用规范](layers.md)。预计 20 分钟。
 > 示例：`demo/public/dbtest.php`（真跑得起来的 SQLite 增删改查 + 分页，244 行，数据库文件 `demo/runtime/dbtest.sqlite`）。
 
 ```bash
@@ -53,7 +53,7 @@ class TestModel
 }
 ```
 
-三个要点：连接用 `database` 选项配、SQL 里用 `` `'TABLE'` `` 宏代替真表名、读写走 `fetch*` / `execute`（模型层的封装见[第 13 章](model.md)）。
+三个要点：连接用 `database` 选项配、SQL 里用 `` `'TABLE'` `` 宏代替真表名、读写走 `fetch*` / `execute`（模型层的封装见[第 2-6 章](model.md)）。
 
 ## 机制说明
 
@@ -66,12 +66,12 @@ class TestModel
 | `database_list_try_single` | `true` | 只给了 `database` 时，自动当成一条 |
 | `database_list_reload_by_setting` | `true` | 允许用 `Setting()` 里的 `database_list`/`database` 覆盖选项 |
 | `database_driver` | `''` | 驱动名（`sqlite`/`mysql`/`pgsql`），一般由 DSN 推断 |
-| `database_class` | `''` | 换掉 `Db` 实现类 |
+| `database_class` | `''` | 换掉 [`Db`](../reference/Db-Db.md) 实现类 |
 | `database_log_sql_query` | `false` | 是否把 SQL 写日志 |
 | `database_log_sql_level` | `'debug'` | 上面那条日志的级别 |
-| `local_database` | `false` | 子应用是否**独占**一套连接（[第 28 章](component-sharing.md)） |
+| `local_database` | `false` | 子应用是否**独占**一套连接（[第 3-4 章](component-sharing.md)） |
 
-`DbManager` 是连接管理器（`TAG_WRITE = 0` 写、`TAG_READ = 1` 读），`Db` 是执行器：
+[`DbManager`](../reference/Component-DbManager.md) 是连接管理器（`TAG_WRITE = 0` 写、`TAG_READ = 1` 读），`Db` 是执行器：
 
 ```php
 Helper::Db();               // 写连接
@@ -96,7 +96,7 @@ $options = [
 ];
 ```
 
-约定：**读走读连接、写走写连接**——模型层的 `fetch*` / `execute` 已经这么分流（[第 13 章](model.md)）。
+约定：**读走读连接、写走写连接**——模型层的 `fetch*` / `execute` 已经这么分流（[第 2-6 章](model.md)）。
 
 ### 3. 执行 SQL：`Db` 的方法
 
@@ -128,11 +128,11 @@ $sql = "select * from `'TABLE'` where id=?";
 // table_prefix='app_'、模型表名 note → select * from `app_note` where id=?
 ```
 
-宏的字面量是 `` `'TABLE'` ``（含反引号），`ModelTrait::prepare()` 负责替换（[第 13 章](model.md)），底层是 `Db::doTableNameMacro()`。
+宏的字面量是 `` `'TABLE'` ``（含反引号），[`ModelTrait::prepare()`](../reference/Foundation-ModelTrait.md) 负责替换（[第 2-6 章](model.md)），底层是 `Db::doTableNameMacro()`。
 
 ### 5. 增删改的便捷方法
 
-`Db` 上有一组「按数组拼 SQL」的工具（`DbAdvanceTrait`），适合写通用模型：
+`Db` 上有一组「按数组拼 SQL」的工具（[`DbAdvanceTrait`](../reference/Db-DbAdvanceTrait.md)），适合写通用模型：
 
 ```php
 $db = Helper::Db();
@@ -162,7 +162,7 @@ try {
     $pdo->commit();
 } catch (\Throwable $ex) {
     $pdo->rollBack();
-    throw $ex;                 // 交给异常机制（第 18 章）
+    throw $ex;                 // 交给异常机制（第 2-11 章）
 }
 ```
 
@@ -170,7 +170,7 @@ try {
 
 ### 7. 分页
 
-分页由 `Pager` 组件 + SQL 工具配合（`demo/public/dbtest.php` 是完整例子）：
+分页由 [`Pager`](../reference/Component-Pager.md) 组件 + SQL 工具配合（`demo/public/dbtest.php` 是完整例子）：
 
 ```php
 $sql   = "select * from `'TABLE'` order by id desc";
@@ -183,14 +183,14 @@ $pager = Helper::PageHtml($total);                                              
 
 ### 8. SQL 导出
 
-需要把表结构/数据导出成 SQL（安装器、备份）时用 `Ext\SqlDumper`，驱动细节由 `SqlDumperSupporter*` 提供：
+需要把表结构/数据导出成 SQL（安装器、备份）时用 [`Ext\SqlDumper`](../reference/Ext-SqlDumper.md)，驱动细节由 [`SqlDumperSupporter*`](../reference/Ext-SqlDumperSupporter.md) 提供：
 
 | 类 | 支持 |
 |---|---|
 | `Ext\SqlDumper` | 通用导出器（表前缀被写成 `{prefix}` 占位） |
-| `Ext\SqlDumperSupporterByMysql` / `ByPgsql` / `BySqlite` | 各驱动方言 |
+| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / `ByPgsql` / `BySqlite` | 各驱动方言 |
 
-导出的 SQL 里用 `{prefix}` 表示表前缀，Web 安装流程（[第 30 章](installer.md)）执行时会换成实际前缀。
+导出的 SQL 里用 `{prefix}` 表示表前缀，Web 安装流程（[第 3-6 章](installer.md)）执行时会换成实际前缀。
 
 ## 常见写法
 
@@ -215,7 +215,7 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 
 **④ 生产/开发用不同库：靠 Setting 覆盖**
 
-`database_list_reload_by_setting` 默认为真，所以密码、DSN 这类环境相关项可以放进 `DuckPhpSettings.config.php` 或 `.env`（[第 5 章](configuration.md)）。
+`database_list_reload_by_setting` 默认为真，所以密码、DSN 这类环境相关项可以放进 `DuckPhpSettings.config.php` 或 `.env`（[第 1-5 章](configuration.md)）。
 
 **⑤ 建表/初始化数据写成模型的 `install()`**
 
@@ -229,14 +229,14 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 | 表名带前缀却查不到表 | SQL 里手写死了表名，或宏写法不对 | 用 `` `'TABLE'` ``（带反引号）；确认 `table_prefix` |
 | `execute()` 返回 `0`，以为「没执行」 | 语义是**成功返回受影响行数、失败 0** | 结合异常判断；`UPDATE` 无字段变化也会是 0 |
 | 读库里查不到刚写入的数据 | 读写分离的复制延迟 | 写后立即读的场景显式用 `Helper::Db()`（写连接） |
-| SQLite 报 `unable to open database file` | 目录不可写（`runtime/` 权限） | 修目录权限（[第 7 章](deployment.md)） |
+| SQLite 报 `unable to open database file` | 目录不可写（`runtime/` 权限） | 修目录权限（[第 1-7 章](deployment.md)） |
 | 事务没生效 | 事务与写操作不在同一连接 | 同一连接上完成；读写分离时特别注意 |
 | 用户输入直接进了 SQL | 拼串 | 一律占位符；标识符用 `quoteScheme()` |
 | 分页总数不对 | 计数时用了带 `limit` 的 SQL | 用 `Helper::SqlForCountSimply($sql)` 生成计数 SQL |
 
 ## 下一步
 
-- [第 13 章 模型层](model.md)：把这一章的能力封装成模型，业务层只看模型。
-- [第 15 章 表单与数据验证](validator.md)：数据入库前的校验。
-- [第 30 章 安装器与 Web 安装流程](installer.md)：`SqlDumper` 与 `{prefix}` 的实际用法。
+- [第 2-6 章 模型层](model.md)：把这一章的能力封装成模型，业务层只看模型。
+- [第 2-8 章 表单与数据验证](validator.md)：数据入库前的校验。
+- [第 3-6 章 安装器与 Web 安装流程](installer.md)：`SqlDumper` 与 `{prefix}` 的实际用法。
 - 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Ext\SqlDumper](../reference/Ext-SqlDumper.md)。

@@ -1,7 +1,7 @@
-# 22 命令行与定时任务
+# 2-15 命令行与定时任务
 
 > 解决什么问题：怎么给应用加命令、内置命令有哪些、命令怎么和「相位/子应用」对上号、以及怎么把它挂进 crontab。
-> 前置：[第 17 章 请求生命周期与钩子点](lifecycle.md)（`execute()` 那条支线）。预计 20 分钟。
+> 前置：[第 2-10 章 请求生命周期与钩子点](lifecycle.md)（`execute()` 那条支线）。预计 20 分钟。
 > 示例：`demo/cli.php`（工程 CLI 入口）+ `demo/src/System/App.php` 的 `command_hello()`。可直接跑：
 
 ```bash
@@ -65,10 +65,10 @@ RunQuickly() → init() → 分流：
    否则                              → serve()   → 路由
 ```
 
-所以 CLI 下**初始化一样完整**：`onPrepare()`/`onInit()`/`onInited()` 都会跑（[第 17 章](lifecycle.md)），设置、组件、单例容器都在。区别只在最后交给 `Console` 而不是 `Route`。
+所以 CLI 下**初始化一样完整**：`onPrepare()`/`onInit()`/`onInited()` 都会跑（[第 2-10 章](lifecycle.md)），设置、组件、单例容器都在。区别只在最后交给 [`Console`](../reference/Core-Console.md) 而不是 [`Route`](../reference/Core-Route.md)。
 
 - 想让 CLI 也走 Web 流程（在命令行里「请求」一个路径）：`'cli_enable' => false`；
-- 内置 `run` 命令反过来：它把 `cli_enable` 置回 `false` 再起内置 HTTP 服务器（`Command::command_run()`）。
+- 内置 `run` 命令反过来：它把 `cli_enable` 置回 `false` 再起内置 HTTP 服务器（[`Command::command_run()`](../reference/Component-Command.md)）。
 
 ### 2. 命令从哪来
 
@@ -134,7 +134,7 @@ class MyCommands implements \DuckPhp\Component\CommandMetaInterface
 }
 ```
 
-没实现 `CommandMetaInterface` 时，框架用反射读 `command_` 方法 + `@command_desc`（[参考页](../reference/Component-CommandMetaInterface.md)）。
+没实现 [`CommandMetaInterface`](../reference/Component-CommandMetaInterface.md) 时，框架用反射读 `command_` 方法 + `@command_desc`（参考页）。
 
 ### 5. 定时任务：crontab 里就是普通命令
 
@@ -194,14 +194,14 @@ php cli.php call MyProj/Controller/NoteCommands@reindex --verbose=1
 
 **⑤ 长任务注意收尾**
 
-命令行下 `echo` 即时可见；开了 `use_output_buffer`（[第 17 章](lifecycle.md)）时更要用 `Helper::exit()` 而不是 `exit`，保证收尾逻辑一致。
+命令行下 `echo` 即时可见；开了 `use_output_buffer`（[第 2-10 章](lifecycle.md)）时更要用 `Helper::exit()` 而不是 `exit`，保证收尾逻辑一致。
 
 ## 常见错误
 
 | 现象 | 原因 | 改法 |
 |---|---|---|
 | `(xxx)Command Not Found In All` | 命令没注册，或方法名没有 `command_` 前缀 | `regConsoleCommand()` 注册；方法名用 `command_`（或注册时指定前缀） |
-| 命令方法写在 App 类里却找不到 | 应用类自己的 `command_` 方法**不会**自动注册 | 在 `onInited()` 里 `$this->regConsoleCommand(static::class)`，或单独建命令类 |
+| 命令方法写在 [App](../reference/Core-App.md) 类里却找不到 | 应用类自己的 `command_` 方法**不会**自动注册 | 在 `onInited()` 里 `$this->regConsoleCommand(static::class)`，或单独建命令类 |
 | `--key=value` 取不到 | 选项键名不带 `--` | 用 `$params['key']`（`$params['--']` 是位置参数） |
 | 子应用命令调不到 | 少了命令组前缀 | 用 `子应用名:命令`，或自定义前缀映射 |
 | crontab 里报找不到项目 | 没 `cd` 到项目目录，`path` 推导失败 | `cd /srv/myproj && php cli.php …`，或显式传 `'path'` |
@@ -211,7 +211,7 @@ php cli.php call MyProj/Controller/NoteCommands@reindex --verbose=1
 
 ## 下一步
 
-- [第 23 章 测试](testing.md)：命令行也是「不起服务器就能测业务」的入口。
-- [第 25 章 应用树与相位基础](advanced-phase.md)：命令组前缀背后的相位机制。
-- [第 30 章 安装器与 Web 安装流程](installer.md)：`bin/duckphp new` 与 Web 安装页。
+- [第 2-16 章 测试](testing.md)：命令行也是「不起服务器就能测业务」的入口。
+- [第 3-1 章 应用树与相位基础](advanced-phase.md)：命令组前缀背后的相位机制。
+- [第 3-6 章 安装器与 Web 安装流程](installer.md)：`bin/duckphp new` 与 Web 安装页。
 - 参考手册：[DuckPhp\Component\Command](../reference/Component-Command.md)、[DuckPhp\Component\CommandMetaInterface](../reference/Component-CommandMetaInterface.md)、[DuckPhp\Core\Console](../reference/Core-Console.md)。
