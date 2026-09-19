@@ -37,7 +37,7 @@ class MainController extends Base
 ### 1. 控制器只做三件事
 
 1. **取输入**：从请求里拿参数（`Helper::GET()`/`POST()`/`REQUEST()`、路由参数 `Helper::Parameter()`）；
-2. **调业务**：把参数整理好交给 Business（[第 11 章之后的各章](model.md)都在这条线上）；
+2. **调业务**：把参数整理好交给 Business（后面几章都在讲这条线：[第 12 章 数据库](database.md)、[第 13 章 模型层](model.md)、[第 14 章 Helper](helper.md)）；
 3. **出输出**：把结果交给视图 / JSON / 重定向。
 
 业务规则、SQL、权限判断都不属于这一层（越界的后果见[第 8 章](layers.md)的越界矩阵）。

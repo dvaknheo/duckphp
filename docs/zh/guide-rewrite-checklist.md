@@ -12,8 +12,8 @@
 - [x] **M1** 第三卷 25–31（7 章，含示例被测试兜底）
 - [x] **M2** 第二卷 8–24（17 章：11 篇改写 + 6 篇新写）
 - [x] **M3** 第一卷 1–7（2 篇新写 + 5 篇改写）
-- [ ] **M4** 第四卷 32–41 + 附录 B/C/D；并配合参考手册侧两页迁入后的链接收尾
-- [ ] **M5** 收尾：删掉被吸收的 `architecture.md` / `components.md` 与 guide 侧两篇附录；`reference/index.md` 登记；全量校验
+- [x] **M4** 第四卷 32–41 + 附录 B/C/D（已全部落稿；参考手册侧仅剩 `GlobalFunctions.md` 未建，见下）
+- [x] **M5** 收尾：删掉被吸收的 `architecture.md` / `components.md` 与 guide 侧两篇附录；`reference/index.md` 登记；全量校验（**本轮完成**，见下）
 
 ---
 
@@ -66,50 +66,50 @@
 - [x] 31 综合实战：前台 + 后台 + API —— `case-multi-app.md`
 - [x] 示例工程 `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php`（36 断言）
 
-## 第四卷 · 高级话题
+## 第四卷 · 高级话题 —— ✅ 已完成
 
-- [ ] 32 容器与相位内部机制 —— `container-phases.md` ⏳（吸收 `architecture.md` 组件层）
-- [ ] 33 开发组件与扩展 —— `custom-component.md` ⏳（吸收 `components.md` 扩展节）
-- [ ] 34 替换框架行为 —— `replace-behavior.md` ⏳
-- [ ] 35 无 Composer·单文件·内嵌 —— `embed.md` ⏳
-- [ ] 36 常驻进程与内嵌 HTTP —— `http-server.md` ⏳
-- [ ] 37 多入口·多域名·多 SAPI —— `multi-entry.md` ⏳
-- [ ] 38 测试基建与覆盖率流水线 —— `coverage.md` ⏳
-- [ ] 39 文档与参考手册维护 —— `doc-maintenance.md` ⏳（链到两份维护指南）
-- [ ] 40 性能调优与排错手册 —— `troubleshooting.md` ⏳
-- [ ] 41 设计取舍与已知坑 —— `design-notes.md` ⏳
+- [x] 32 容器与相位内部机制 —— `container-phases.md`（126 行：`PhaseContainer` 分桶/查找、`EXT_*` 五值、`#public` 桶、`Dump()` 排错）
+- [x] 33 开发组件与扩展 —— `custom-component.md`（161 行：组件 vs 扩展、`$options` 白名单、`initOptions/initContext`、替换点）
+- [x] 34 替换框架行为 —— `replace-behavior.md`（181 行：五种替换层次、`override_class`/`controller_class_map`/`SingletionExTrait::_($new)`、`SystemWrapper` 十个可替换函数、优先级与排查）
+- [x] 35 无 Composer·单文件·内嵌 —— `embed.md`（153 行：`AutoLoader` 用法、根 `autoload.php`、`DuckPhpAllInOne`、真实单文件入口）
+- [x] 36 常驻进程与内嵌 HTTP —— `http-server.md`（164 行：`HttpServer` 选项/短参数/起停、`php -S` 本质、workers 与 RPC 回环、状态残留、生产别用）
+- [x] 37 多入口·多域名·多 SAPI —— `multi-entry.md`（152 行：`demo/public/*` 各入口、分流点、多站点、子目录部署）
+- [x] 38 测试基建与覆盖率流水线 —— `coverage.md`（154 行：phpunit.xml/bootstrap/support.php 三段、LibCoverage、`test_coveragedumps/`、docker 双版本、生成器脚本）
+- [x] 39 文档与参考手册维护 —— `doc-maintenance.md`（158 行：三层文档结构、漂移扫描、改名同步清单、0 死链约定、不提交清单）
+- [x] 40 性能调优与排错手册 —— `troubleshooting.md`（206 行：工具箱 + A–J 十类症状表 + 排查方法本身的坑）
+- [x] 41 设计取舍与已知坑 —— `design-notes.md`（80 行：刻意设计 11 条 vs 已知坑 13 条 + 「是不是 bug」判断流程 + 改框架纪律）
 
-## 附录
+## 附录 —— ✅ 已完成
 
 - [x] A 术语表 —— `appendix-glossary.md`
-- [ ] B 代码片段库 —— `appendix-snippets.md` ⏳
-- [ ] C 从 Yii2 / CodeIgniter / Laravel 迁移 —— `appendix-migration.md` ⏳
-- [ ] D FAQ 与排错索引 —— `appendix-faq.md` ⏳
-
----
+- [x] B 代码片段库 —— `appendix-snippets.md`（288 行：CRUD/分页/表单校验/JSON/登录/权限/缓存/事务/跨应用/钩子/HTTPS/CSRF/上传/定时任务/建表，⚠️ 标注了示意片段）
+- [x] C 从 Yii2 / CodeIgniter / Laravel 迁移 —— `appendix-migration.md`（123 行：概念对照大表 + 一个功能的写法对照 + 迁移步骤 + 易踩差异）
+- [x] D FAQ 与排错索引 —— `appendix-faq.md`（117 行：分主题 FAQ 30+ 条 + 症状索引表 + 「还是找不到」的路径）
 
 ## 参考手册侧（作者在新对话完成，本任务只等结果）
 
-- [ ] 建 `docs/zh/reference/GlobalFunctions.md`（内容取自 `docs/zh/guide/appendix-global-functions.md`）
-- [ ] 重建 `docs/zh/reference/options.md` / `options-by-class.md` / `options-index.md`（顺手消灭其中的 `class_admin`/`class_user`、`FastInstaller` 残留；内容取自 `docs/zh/guide/appendix-options.md`）
-- [ ] 两页建好后，在本任务侧收尾：
-  - [ ] 删除 `docs/zh/guide/appendix-global-functions.md` 与 `docs/zh/guide/appendix-options.md`
-    （原文可取：`git show <提交>:docs/zh/guide/appendix-options.md`）
-  - [ ] 把 `docs/zh/guide/configuration.md` 的附录链接改成精确目标
-  - [ ] 把 `docs/zh/guide/index.md` 底部那行「已归入参考手册」补成精确链接
+- [x] 全局函数参考：**不新建 `GlobalFunctions.md`**，由现成的 `docs/zh/reference/Core-Functions.md`（208 行，含全集签名表）承接（作者裁定）
+- [x] 重建 `docs/zh/reference/options.md` / `options-by-class.md` / `options-index.md`（已由作者侧完成；本轮复查 `class_admin`/`class_user`/`FastInstaller` 残留 **= 0**）
+- [x] M5 收尾（本轮完成）：
+  - [x] 删除 `docs/zh/guide/appendix-global-functions.md` 与 `docs/zh/guide/appendix-options.md`（原文可用 `git show <提交>:docs/zh/guide/appendix-options.md` 取回）
+  - [x] 把指向它们的链接改到参考手册：`helper.md`、`layers.md` → `../reference/Core-Functions.md`
+  - [x] `docs/zh/guide/index.md` 底部那行改成精确链接（Core-Functions / options 三页）
+  - [x] `configuration.md` 里本来就没有附录链接（原文假设有，实际无需改）
+  - [x] 删除已被吸收的 `docs/zh/guide/architecture.md`（532 行）与 `components.md`
+  - [x] `reference/index.md` 已登记 `Core-Functions.md`（无需新增登记项）
 
 ## 待决策（勾掉即已定，定完请写进交接指南对应节）
 
 - [x] **Q1 写作顺序**：先做第二卷 8–24（章序与章号已定，见上方「第二卷」小节；Q2 的拆解顺序也随之确定）
-- [ ] **Q2 长章拆解**：`layers.md` ✅ **已拆完**（581 → 226 行；控制器/视图内容已独立成第 10、11 章）；剩下 `architecture.md`（532 行）拆给「第 1 章 + 第 32 章 + 第 17 章时序图」后删除——**待办**
+- [x] **Q2 长章拆解**：`layers.md` 已拆完（581 → 226 行）；`architecture.md` 内容被第 32/17/8 章吸收后**已删除**；`components.md` 被第 33 章吸收后**已删除**
 - [ ] **Q3 `skeleton/` 的失真内容**（`agent-zh.md` 的 `class_user`、`RULES.md` 的方法前缀默认值）怎么处理
 - [ ] **Q4 新发现的源码残留**：`DuckPhp::_Show()` 里 `$view === '' ? … : $view;` 这个没赋值的死表达式清不清
 
-## 每轮收尾自检（每卷结束时勾一遍；下表为**第二卷收尾**时的实测值）
+## 每轮收尾自检（每卷结束时勾一遍；下表为**M5 收尾**时的实测值）
 
-- [x] `python3 scripts/check-doc-links.py docs` → `docs/zh` 0 坏链（第二卷收尾实测：**1281 条 0 死链**；`docs/old/`、`docs/en/index.md` 的历史死链不属本任务）
+- [x] `python3 scripts/check-doc-links.py docs` → `docs/zh` 0 坏链（M5 收尾实测：**1622 条 0 死链**；`docs/old/`、`docs/en/index.md` 的历史死链不属本任务，`docs/en/` 有自己的同名副本不受本次删除影响）
 - [x] 新增/修改的 md 全是 UTF-8（无 GBK）（`docs/zh` 逐字节校验通过）
-- [x] 本卷新写的章都 ≤400 行（第二卷 17 章 **123–293 行**）
-- [x] 改过的示例都在 WSL 里实跑通过（第三卷 → `tests/ZThirdDemoTest.php`；第一/二卷的兜底是 `demo/`；第二卷另实测了 `php demo/cli.php help|routes|DbTestApp:version`、并用临时脚本验证 `regConsoleCommand()` 注册命令与 `Console` 参数解析）
+- [x] 本卷新写的章都 ≤400 行（第四卷 10 章 **80–206 行**；附录 B/C/D 117–288 行；全书 41 章 7001 行）
+- [x] 改过的示例都在 WSL 里实跑通过（各卷示例仍挂在 `demo/`、`ZAllDemo`、`ZThirdDemo` 上；第四卷新增片段均为现有资产的真实引用或明确标注 ⚠️ 示意）
 - [x] 全量 `php vendor/bin/phpunit --no-coverage` 通过（当前基线 `OK (92 tests, 556 assertions)`）
 - [x] 本文件的复选框与状态图例已更新

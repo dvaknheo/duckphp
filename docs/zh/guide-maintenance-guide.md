@@ -25,7 +25,7 @@
 1. **一页总目录** = `docs/zh/guide/index.md`；`docs/zh/index.md` 只做指路，不复制章表。
 2. **示例只用现有代码**：`demo/`、`tests/data_for_tests/ZAllDemo`、`tests/data_for_tests/ZThirdDemo`；不新建示例工程（`ZThirdDemo` 是唯一获准新增的）。
 3. **新写的章 ≤400 行**；改写章暂不限，但明显超长的要拆（见 Checklist 的 Q2）。
-4. **附录**：`appendix-global-functions.md` 与 `appendix-options.md` **迁入参考手册**（由作者在新对话建那两页），指南侧只留指向参考手册的说明。
+4. **附录**：原先指南侧的 `appendix-global-functions.md` 与 `appendix-options.md` **已删除**——全局函数参考由 `docs/zh/reference/Core-Functions.md` 承接，应用选项参考由 `reference/options.md` / `options-by-class.md` / `options-index.md` 承接；指南里只留指向参考手册的链接。
 5. **不写**「升级与破坏性变更」章/附录。
 6. **先不管 `skeleton/`**（不改它的文件；其 `agent-zh.md`/`RULES.md` 有失真内容，见 Checklist 的 Q3）。
 
@@ -216,3 +216,28 @@ python3 <tmp>/drift.py --all
   2. `demo/public/dbtest.php` 的 `cli_command_prefix` 与 `bin/duckphp` 的 `cli_command_classes` 在 `src/` 里**没有任何读取点**（死选项）；
   3. `demo/src/Model/CrossModelEx.php` 只有 `foo()` 空壳，名字却暗示"跨库模型"（第 13 章已写明「不要从名字推断用法」）；
   4. `demo/src/Business/CommonService.php`、`demo/src/Controller/CommonAction.php` 也都是空壳样板（第 8 章已按"占位样板"表述，没有把它们说成现成功能）。
+
+## 11. 本轮（第四卷 + 附录 B/C/D）交付记录
+
+- 章节（10 篇，全部 ≤400 行）：`container-phases.md`(126)、`custom-component.md`(161)、`replace-behavior.md`(181)、`embed.md`(153)、`http-server.md`(164)、`multi-entry.md`(152)、`coverage.md`(154)、`doc-maintenance.md`(158)、`troubleshooting.md`(206)、`design-notes.md`(80)。
+- 附录：`appendix-snippets.md`(288)、`appendix-migration.md`(123)、`appendix-faq.md`(117)。**全书 41 章 + 4 附录至此全部落稿**。
+- 内容来源与吸收：
+  - 第 32/33 章吸收 `architecture.md`（`PhaseContainer` 分桶/查找、组件初始化模板、`EXT_*` 语义）与 `components.md`（组件默认启用 vs 扩展默认关闭）；
+  - 第 17 章吸收 `architecture.md` 的时序；第 8 章吸收其四层部分 ⇒ `architecture.md` / `components.md` 已是"可删"状态（删除动作归 M5）；
+  - **纠错**：`architecture.md` 里写的公共桶名 `@public@` 是错的，源码是 `#public`（`KernelTrait`）；相位名也不是类名（是 `:<name>`）——第 32 章按源码写，M5 删旧文时不会被带偏。
+- 分工与执行：3 个子代理并行（32/33、35/37 各成一个；34/36 的那个跑了 25 分钟无产出，被**主动中断**后由主代理接手写），其余 7 篇（34/36/38/39/40/41 + 附录 B/C/D）由主代理完成。教训补充：子代理长时间零产出时，**先 interrupt 再自己写**，别让它和你抢同一个文件。
+- 校验：`docs/zh` 站内链接 **1613 条 0 死链**；10 章 H1 与总目录逐一对齐；全量 `php vendor/bin/phpunit --no-coverage` → `OK (92 tests, 556 assertions)`。
+- 本轮"如实标注"的三处（避免把示意当现成功能）：第 33 章的 `HelloBanner` 组件、附录 B 里标 ⚠️ 的 HTTPS/CSRF/上传片段、第 34 章"谁赢"优先级表（属经验总结而非源码常量）。
+- **M5 收尾见下一节。**
+
+## 12. M5 收尾记录（本轮完成：指南全书交付）
+
+- **全局函数参考不新建页**（作者裁定）：由现成的 `docs/zh/reference/Core-Functions.md`（208 行，含 17 个函数的全集签名表与分组讲解）承接。
+- **删除的被吸收文件**（都还在 git 历史里，需要时 `git show` / `git checkout` 取回）：
+  - `docs/zh/guide/architecture.md`（532 行）—— 内容分别进了第 32 章（容器/相位/组件初始化）、第 17 章（时序）、第 8 章（四层）；
+  - `docs/zh/guide/components.md` —— 进了第 33 章（组件与扩展）；
+  - `docs/zh/guide/appendix-global-functions.md`、`docs/zh/guide/appendix-options.md` —— 由参考手册的 `Core-Functions.md` 与 `options*.md` 承接。
+- **链接改向**（删文件前先改，保证校验始终 0 死链）：`helper.md`、`layers.md` 里的「全局函数参考」→ `../reference/Core-Functions.md`；`index.md` 底部那行改成三个精确链接（Core-Functions / options / options-by-class / options-index）。`configuration.md` 里本来没有附录链接，无需改。
+- **`docs/en/` 不受影响**：英文侧有自己同名的副本文件（`docs/en/guide/appendix-options.md` 等），本次只删了 `docs/zh` 侧的。
+- 校验：`docs/zh` 站内链接 **1622 条 0 死链**；`docs/zh` 全 UTF-8；`docs/zh/guide/` 现在正好是 `index.md` + 41 章 + 4 附录。
+- **仍然留着的两件事**（都不是文档问题，等作者定）：Checklist 的 **Q3**（`skeleton/` 里 `agent-zh.md`/`RULES.md` 的失真内容）与 **Q4**（`DuckPhp::_Show()` 里那个没赋值的死表达式）。

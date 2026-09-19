@@ -149,7 +149,7 @@ HTTP 请求 → 路由 → MainController::index()
 
 这些 `Xxx\Helper` 类本身极短（`tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` 只有 `use` 两行 + 一个空类），也可以直接用框架现成的 `DuckPhp\Foundation\Controller\Helper` 等类。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 
-视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](appendix-global-functions.md)）：
+视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](../reference/Core-Functions.md)）：
 
 | 函数 | 用途 |
 |---|---|

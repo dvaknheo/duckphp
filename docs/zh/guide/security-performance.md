@@ -201,5 +201,5 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 
 - [第 7 章 上线最小清单](deployment.md)：部署、文档根、目录权限——本章的前置。
 - [第 18 章 异常与错误处理](exception.md)：错误页与异常报告的完整机制。
-- 第 40 章「性能调优与排错手册」（⏳ 撰写中）：症状 → 排查路径。
+- [第 40 章 性能调优与排错手册](troubleshooting.md)：症状 → 排查路径。
 - 参考手册：[DuckPhp\Core\App](../reference/Core-App.md)、[options 速查](../reference/options.md)、[DuckPhp\Core\Logger](../reference/Core-Logger.md)。

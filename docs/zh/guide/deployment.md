@@ -161,4 +161,4 @@ class App extends DuckPhp
 ## 下一步
 
 - 第一卷到此结束。接着看[第二卷 · 单一应用](../guide/index.md)：从[第 8 章 四层架构与调用规范](layers.md) 起，一路读到第 24 章。
-- 相关：[第 30 章 安装器与 Web 安装流程](installer.md)、第 37 章「多入口·多域名·多 SAPI」（⏳ 撰写中）
+- 相关：[第 30 章 安装器与 Web 安装流程](installer.md)、[第 37 章 多入口·多域名·多 SAPI](multi-entry.md)

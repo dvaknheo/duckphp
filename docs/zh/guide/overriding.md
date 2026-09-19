@@ -119,7 +119,7 @@ MainApp::_()->options['use_user_view']  = true;    // 交给 GlobalUser（带前
 ],
 ```
 
-`EXT_*` 常量与四种取值形态见第 33 章「开发组件与扩展」（⏳ M4 落稿）与 [参考手册](../reference/Core-KernelTrait.md)。
+`EXT_*` 常量与取值形态见[第 33 章 开发组件与扩展](custom-component.md)与 [参考手册](../reference/Core-KernelTrait.md)。
 
 ## 优先级与冲突排查
 
@@ -137,4 +137,4 @@ MainApp::_()->options['use_user_view']  = true;    // 交给 GlobalUser（带前
 ## 下一步
 
 - [第 30 章 安装器与 Web 安装流程](installer.md)
-- 第 33 章「开发组件与扩展」（⏳ M4 落稿）：`ext` 表与 `EXT_*` 常量
+- [第 33 章 开发组件与扩展](custom-component.md)：`ext` 表与 `EXT_*` 常量
