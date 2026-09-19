@@ -77,7 +77,7 @@
 | 为什么 Windows 下测试失败？ | Windows PHP 没有 redis 扩展等环境差异 | [第 23 章](../guide/testing.md) |
 | 覆盖率数据在哪？ | 单类 dump 在 `test_coveragedumps/`，报告在 `test_reports/index.html` | [第 38 章](../guide/coverage.md) |
 | 改了源码，文档要同步改哪些？ | 参考页（方法/选项表）+ 指南相关章 + 必要的维护记录 | [第 39 章](../guide/doc-maintenance.md) |
-| 站内链接怎么保证不坏？ | `python3 scripts/check-doc-links.py docs/zh`，未写的章不挂链接 | [第 39 章](../guide/doc-maintenance.md) |
+| 站内链接怎么保证不坏？ | `python3 docs/scripts/check-doc-links.py docs/zh`，未写的章不挂链接 | [第 39 章](../guide/doc-maintenance.md) |
 
 ## 二、按症状索引
 

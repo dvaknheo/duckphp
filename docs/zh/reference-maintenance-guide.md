@@ -65,17 +65,19 @@
 - 行尾：跟随原文件（不强求统一）。
 - **`src/` 禁止非 ASCII 字符（硬性规则）**：所有 PHP 源码的注释、字符串、标点一律用 ASCII 英文；不得出现中文、全角标点（`（）！，：；` 等）、全角空格或 emoji。`docs/` 下的中文文档不受此限。
   - 原因：框架源码统一英文注释，保证 PHP 7.4 / 8.4 与各终端下的编码一致性（历史上清理过一轮，新增代码如 `HttpServer` 的 `workers` 注释曾再次引入）。
-  - 检查命令：`bash scripts/check-non-ascii.sh`（等价于 `grep -rnP '[^\x00-\x7F]' src/ --include='*.php'`）。**必须在 WSL 下跑**（Windows 侧没有 bash）。
+  - 检查命令：`bash docs/scripts/check-non-ascii.sh`（等价于 `grep -rnP '[^\x00-\x7F]' src/ --include='*.php'`）。**必须在 WSL 下跑**（Windows 侧没有 bash）。
   - 判定：输出 **`Total non-ASCII lines: 0`** 才算通过——该脚本**不设置失败退出码**，不要只看 `$LASTEXITCODE`。
   - 命中后：把命中行改写成英文 ASCII 注释，再重跑确认清零。
 - **不虚构**：源码没写的机制不要编；源码里的“怪癖/不一致”要如实在“注意事项”里说明，并注明意图（如 `RouteLister::listAll()` 的 `only_admin/only_user` 会强制打开 `only_controller`、`PermissionMenu` 里未加注释的方法名带 `action_` 前缀）。**但先分清是「能清的代码残留/笔误」还是「刻意行为」**——前者改源码（并顺手补测试），后者才写进文档；判断不了就去问作者一句，别替源码下结论。
 
 ## 5. 工具
 
+> **所有工具脚本都在 `docs/scripts/` 下**（不是 `scripts/`）：它们只服务文档生成与校验，**跟文档一起提交**；命令一律从仓库根目录执行。以后新增文档工具也放这里。
+
 | 工具 | 用途 |
 |---|---|
-| `scripts/gen-reference.php` | `facts <src-rel>` 打印解析结果；`skeleton [--out DIR] [--file REL]` 生成骨架；`verify --file <md>` 比对方法/选项 |
-| `scripts/gen-route.php` | 极简版骨架生成（Route 风格，只抓声明/方法行/options 原文） |
+| `docs/scripts/gen-reference.php` | `facts <src-rel>` 打印解析结果；`skeleton [--out DIR] [--file REL]` 生成骨架；`verify --file <md>` 比对方法/选项 |
+| `docs/scripts/gen-route.php` | 极简版骨架生成（Route 风格，只抓声明/方法行/options 原文） |
 
 > ⚠️ **`gen-reference.php verify` 不可全信**：对 `Core/App.php` 这类“`use KernelTrait { … as … }` 并 override”的大文件，它可能漏列方法，从而把正确文档误报为“多了方法”。判定一致性请以下面第 6 节的**漂移扫描**为准。
 
@@ -146,7 +148,7 @@ for f in sorted(files):
 
 ### 运行环境：测试与 `bash` 脚本走 WSL（硬性）
 
-**PHPUnit 与 `scripts/*.sh` 一律在 WSL 下执行**，不要在 Windows 侧直接跑 `php vendor/bin/phpunit`。
+**PHPUnit 与 `docs/scripts/*.sh` 一律在 WSL 下执行**，不要在 Windows 侧直接跑 `php vendor/bin/phpunit`。
 
 **默认只跑与改动相关的「单个测试文件」**——`phpunit.xml` 开了 `processIsolation="true"`，跑一个目录或全量都很慢（实测单文件约 2 秒，`tests/Component` 整目录约 36 秒，全量更久），没必要不要跑。
 
@@ -161,7 +163,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-covera
 wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage --filter testAll tests/Component/CommandTest.php"
 
 # 硬性规则脚本
-wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash scripts/check-non-ascii.sh"
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash docs/scripts/check-non-ascii.sh"
 
 # 只在「大改 / 要交差」时才跑目录或全量（很慢，建议放后台）
 wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component"
@@ -222,7 +224,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
    - 删/改名 → 同步删除或改名，并在说明里注明（如 `urlForRegist` → `urlForRegister`、`user_url_regist` → `user_url_register`）。
 3. **校验**：重跑 `drift.py` 确认 `missing-*` 为空；再抽查新段落。若本次也改了 `src/`（或 `tests/`）代码：
    - **测试一律在 WSL 下跑，且按「单个测试文件」快速验证**（见第 5 节末的“运行环境”说明）：改 `src/A/B.php` 就测 `tests/A/BTest.php`，如 `wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"`；全量很慢，没必要时别跑；
-   - **必须再跑** `bash scripts/check-non-ascii.sh` 并确认输出 `Total non-ASCII lines: 0`（见第 4 节的硬性规则）。
+   - **必须再跑** `bash docs/scripts/check-non-ascii.sh` 并确认输出 `Total non-ASCII lines: 0`（见第 4 节的硬性规则）。
 4. **登记**：更新第 8 节的「现状」——**一两句结论**即可（本次同步了哪些、校验结果如何）。**不要把逐文件清单、源码修复过程、调试经过堆进第 8 节**：那些属于 commit message 与对应文档，第 8 节只回答「现在什么状态」和「还欠什么」，保持它短到能一次看完。有长期价值的**教训**请写进第 7 节的陷阱表。
 5. **提交**：只 add 相关路径
    ```powershell
@@ -253,14 +255,14 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 | `python -c` 被安全护栏拦 | 本环境下 `python -c` 后接其它命令会被拒绝；把脚本**存成 `.py` 文件再跑**。 |
 | 行号会漂移 | 用**文本锚点**（唯一子串）定位替换，别依赖旧行号。 |
 | 同一批多文件编辑 | 一个编辑失败会导致该批后续编辑被跳过；锚点不确定时先 `read` 出确切文本，或把不确定的编辑放到本批最后。 |
-| 在 `src/` 里写了中文/全角字符 | 违反第 4 节的硬性规则；`src/` 注释一律英文 ASCII。改完 `src/` 后跑 `bash scripts/check-non-ascii.sh`，确认 `Total non-ASCII lines: 0`。最常见的来源是从中文文档里**复制粘贴**：全角箭头 `→`（`PermissionMenu.php` 就带进来 4 行）、全角括号/逗号/空格。 |
+| 在 `src/` 里写了中文/全角字符 | 违反第 4 节的硬性规则；`src/` 注释一律英文 ASCII。改完 `src/` 后跑 `bash docs/scripts/check-non-ascii.sh`，确认 `Total non-ASCII lines: 0`。最常见的来源是从中文文档里**复制粘贴**：全角箭头 `→`（`PermissionMenu.php` 就带进来 4 行）、全角括号/逗号/空格。 |
 | 源码文件里接口名与文件名不一致 | 如 `CommandMetaInterface.php` 里曾声明成 `interface CommandDescInterface`。按**文件名 + 实际用法**（方法名 `__commandMeta()`、调用处）判断哪个是笔误，改源码统一，再同步文档 H1／交叉引用／`index.md`；**不要在文档里长期挂一条“命名不一致”的告警**当挡箭牌。 |
 | 给不可达代码加 `@codeCoverageIgnore` | php-code-coverage 只认**整条注释恰好等于** `// @codeCoverageIgnore`，而且**忽略的是注释所在行**——所以要贴在 `catch (...)` 行与 `return` 行**各自的行尾**（本仓库 `Core/Logger.php`、`Core/App.php` 就是这么写的），写成「注释单独占上一行」无效；要忽略一段区间才用 `// @codeCoverageIgnoreStart` / `End`。 |
 | 回归测试没验证过“抓得住 bug” | 写完断言后，**把 bug 临时改回去跑一遍**，确认断言真的失败（顺手把失败输出贴进记录），再还原源码。没做这步的回归测试等于没写——`GlobalUserTest` 那次就是这么证明的。 |
 | `git add docs/zh/reference` 带入 `.obsidian/` | 该目录下有未跟踪的 Obsidian 配置（`app.json`/`appearance.json`/`core-plugins.json`/`workspace.json`），会被一并提交。提交前 `git status --short` 复核，误入则 `git rm -r --cached` + `git commit --amend --no-edit`（`--cached` 不会删磁盘文件）。 |
 | `$env:TEMP` 与 `%TEMP%` 不是同一个目录 | DSH 沙箱把 `$env:TEMP` 指到私有临时目录，`write` 工具写的 `%TEMP%\drift.py` 在那里找不到；用绝对路径调用。 |
 | 把“代码残留”当成“源码怪癖”写进文档 | 例：`Command::getCommandListInfo()` 里 `$phase` 读了不用（重构遗留）。**先判断是不是能清理的残留**：能清就清源码 + 不改文档；确实是刻意为之的行为（如 `Root($switch_phase)` 内部硬编码 `App::Phase`）才写进「注意事项」，并注明“以源码为准”。 |
-| 在 Windows 侧直接跑 `phpunit` | Windows PHP 没有 `redis` 扩展，`RedisCacheTest`/`RedisManagerTest` 会报 `Class 'Redis' not found` 的**环境假失败**。测试与 `scripts/*.sh` 一律走 WSL（见第 5 节末），并先 `$env:WSL_UTF8=1` 免乱码。 |
+| 在 Windows 侧直接跑 `phpunit` | Windows PHP 没有 `redis` 扩展，`RedisCacheTest`/`RedisManagerTest` 会报 `Class 'Redis' not found` 的**环境假失败**。测试与 `docs/scripts/*.sh` 一律走 WSL（见第 5 节末），并先 `$env:WSL_UTF8=1` 免乱码。 |
 | 改公共名字（方法名／选项键／参数名）没改干净 | 一次性覆盖 `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`：先 `grep -rn "<旧名>" src tests docs` 列全，改完再 grep 残留 = 0。别漏调用处（`Ext/SqlDumper` 在调 `Db::quoteInsertArray()`）。**产物不用动**：`docker/test-php84/test_reports/`、`test_coveragedumps/`、`tests/data_for_tests/*.txt` 都是跑测试生成的。另外文档里可能故意保留「由旧名 X 更名」的历史说明，`sed` 批量替换时要先排除这类句子。 |
 | `ZAllDemoTest` 报 `Failed: <路由> => A(B)` | 该用例把 demo 各路由的**输出字节长度**跟 `tests/data_for_tests/ZAllDemoTest.config.php` 里的期望值硬比，而 `files` 路由会 dump App 的**选项表**（「应用的选项」「全部选项」两个 fieldset，含 `合计 N个`）、方法表、包含文件表与**调用栈行号**——**源码一动（加/删方法或选项、行号漂移、`$options` 与 `$hidden_options` 之间搬家）长度就变**。改完 `src/` 后若只有它红：把 config 里的期望值改成括号里的 B 即可（实际内容同时被写到 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可直接 `diff` 新旧两份 dump 看差在哪，尾部的 `执行耗时/内存消耗` 数字位数也会让长度抖 ±1）。**别先怀疑自己的改动**——先确认自己没碰 `src/`，再 `git stash push -- src` 跑一遍确认是否本来就在红；跟别的会话并行改同一个工作区时，这个数字会互相打架（当前基线见第 8/9 节）。 |
 | 旧指南里的 API／示例可能早就失效 | 实测：`docs/zh/guide/advanced-phase.md` 里 3 处 `App::Root()->getOverridingClass()`（源码里**没有**这个方法）；`helper.md` 的 `assignRewrite('article/123', …)` 少了前导 `/`，钩子内部拿 `'/'.$path_info` 比较 → 永不命中；`Configer` 读的是 `config/<名>.php`（不是 `<名>.config.php`）。**改写旧章前先核对源码，别原样搬旧示例**。 |
@@ -300,7 +302,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
   - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含 3 篇新类文档与早期那 8 篇 GlobalAdmin/GlobalUser 接口文档），剩下的是**逐条核对说明文字**是否仍准确；
   - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页（内容过时且行文损坏，建议改为由脚本生成）；
   - `docs/zh/guide/` 教程与 reference 的交叉引用校对。
-- **生成器已知缺陷（如需修复）**：`scripts/gen-reference.php verify` 对含 trait 别名 override 的大文件（`Core/App.php`）会漏列方法；修好前请以 `drift.py` 为准。
+- **生成器已知缺陷（如需修复）**：`docs/scripts/gen-reference.php verify` 对含 trait 别名 override 的大文件（`Core/App.php`）会漏列方法；修好前请以 `drift.py` 为准。
 
 ## 9. 快速自检（冒烟）
 
@@ -315,7 +317,7 @@ python %TEMP%\enc.py
 
 # 3) 本次改了 src/ 或 tests/ 时（一律走 WSL，按单个测试文件跑，见第 5 节末）：
 wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"
-wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash scripts/check-non-ascii.sh"   # 期望 Total non-ASCII lines: 0
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash docs/scripts/check-non-ascii.sh"   # 期望 Total non-ASCII lines: 0
 ```
 
 ```python

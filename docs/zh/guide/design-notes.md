@@ -67,7 +67,7 @@ var_dump(array_key_exists('我的选项', App::_()->options));  // 选项有没�
 
 | 纪律 | 说明 |
 |---|---|
-| `src/` 必须纯 ASCII | 改完跑 `bash scripts/check-non-ascii.sh`，期望 `Total non-ASCII lines: 0`（中文只出现在 `docs/`） |
+| `src/` 必须纯 ASCII | 改完跑 `bash docs/scripts/check-non-ascii.sh`，期望 `Total non-ASCII lines: 0`（中文只出现在 `docs/`） |
 | 改了 `src/` 就跑测试 | 日常跑单个文件；提交前全量（[第 38 章](coverage.md)） |
 | 公共名字改动要全仓同步 | `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`，改完 `grep` 残留 = 0 |
 | 重命名要连"清理语句"一起改 | 例如 `App::__construct()` 里对选项表的处理语句，改名不彻底会留下隐形行为差异 |

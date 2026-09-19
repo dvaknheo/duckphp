@@ -70,7 +70,7 @@ $this->options = array_replace_recursive($this->options, $options);
 
 约定：
 
-- 想要全量机器可读清单：`php scripts/gen-options-docs.php --json`，或人类可读的 `python3 scripts/scan-options.py`；
+- 想要全量机器可读清单：`php docs/scripts/gen-options-docs.php --json`，或人类可读的 `python3 docs/scripts/scan-options.py`；
 - 扫描器会核对隐藏表的默认值与源码兜底是否一致、有没有人真的读它、以及是否被构造流程清空；
 - 隐藏表里那行 `// @used-by <包名>` 表示**该项由外部包读取**（本仓库里没有读取点，扫描器因此不再告警）。
 

@@ -111,7 +111,7 @@
 
 ## 每轮收尾自检（每卷结束时勾一遍；下表为**M5 收尾**时的实测值）
 
-- [x] `python3 scripts/check-doc-links.py docs` → `docs/zh` 0 坏链（M5 收尾实测：**1622 条 0 死链**；`docs/old/`、`docs/en/index.md` 的历史死链不属本任务，`docs/en/` 有自己的同名副本不受本次删除影响）
+- [x] `python3 docs/scripts/check-doc-links.py docs` → `docs/zh` 0 坏链（M5 收尾实测：**1622 条 0 死链**；`docs/old/`、`docs/en/index.md` 的历史死链不属本任务，`docs/en/` 有自己的同名副本不受本次删除影响）
 - [x] 新增/修改的 md 全是 UTF-8（无 GBK）（`docs/zh` 逐字节校验通过）
 - [x] 本卷新写的章都 ≤400 行（第四卷 10 章 **80–206 行**；附录 B/C/D 117–288 行；全书 41 章 7001 行）
 - [x] 改过的示例都在 WSL 里实跑通过（各卷示例仍挂在 `demo/`、`ZAllDemo`、`ZThirdDemo` 上；第四卷新增片段均为现有资产的真实引用或明确标注 ⚠️ 示意）

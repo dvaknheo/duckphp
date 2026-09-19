@@ -19,7 +19,8 @@
 | `rpc.php` | JSON-RPC 双端：`JsonRpcExt` 既做服务端分发（`onRpcCall`）又做客户端（`JsonRpc\` 命名空间自动加载） |
 | `dbtest.php` | 模型/分页/CRUD 全链路 + 作为子应用被 `App.php` 挂到 `/db_test/`（见 `demo/src/System/App.php` 的 `onPrepare()`） |
 | `doc.php` | 文档阅读器：读取 `docs/` 下的 md/svg 经 marked.js 渲染（演示「非框架页面」共存） |
-| `i.php` | 一行 `phpinfo()`（同上，占位/调试页） |
+
+> `i.php` 之类的 `phpinfo()` 文件只是本地探针，不属于示例入口，这里不列。
 
 这些入口**共用同一个 `demo/src/`**：`index.php` 走完整分层，`demo.php` 把五层写在一个文件里，`dbtest.php` 既是独立入口又被挂为子应用——「一库多入口」不是特例，是默认能力。
 

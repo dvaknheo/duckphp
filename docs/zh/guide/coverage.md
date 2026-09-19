@@ -86,13 +86,15 @@ XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php
 
 | 脚本 | 用途 |
 |---|---|
-| `scripts/gen-reference.php` | 参考手册工具：`facts`（打印源码解析结果）、`skeleton`（生成文档骨架）、`verify`（比对方法/选项） |
-| `scripts/gen-route.php` | 极简骨架生成（Route 风格） |
-| `scripts/gen-options-docs.php` | 由源码生成选项文档（`options*.md`） |
-| `scripts/scan-options.py` | 扫描 `$options`/`$hidden_options`，报「读了没声明」的键与拼写变体 |
+| `docs/scripts/gen-reference.php` | 参考手册工具：`facts`（打印源码解析结果）、`skeleton`（生成文档骨架）、`verify`（比对方法/选项） |
+| `docs/scripts/gen-route.php` | 极简骨架生成（Route 风格） |
+| `docs/scripts/gen-options-docs.php` | 由源码生成选项文档（`options*.md`） |
+| `docs/scripts/scan-options.py` | 扫描 `$options`/`$hidden_options`，报「读了没声明」的键与拼写变体 |
 | `tests/genoptions.php` | 生成选项相关的校验数据（composer 脚本 `genoptions`） |
-| `scripts/check-doc-links.py` | 站内 md 链接校验（0 死链是本仓库的硬指标） |
-| `scripts/check-non-ascii.sh` | `src/` 纯 ASCII 校验（改 `src/` 后必跑） |
+| `docs/scripts/check-doc-links.py` | 站内 md 链接校验（0 死链是本仓库的硬指标） |
+| `docs/scripts/check-non-ascii.sh` | `src/` 纯 ASCII 校验（改 `src/` 后必跑） |
+
+> 这些脚本统一放在 **`docs/scripts/`** 下、跟文档一起提交：它们只服务文档生成与校验（不是框架运行时的一部分），放在 `docs/` 里能让「文档改动 + 生成器改动」同一次提交、同一个位置找到。命令一律从**仓库根目录**执行（如 `python3 docs/scripts/check-doc-links.py docs/zh`）。
 
 `composer run-script fulltest`（在 8.4 容器/环境里）把 **php-cs-fixer → phpstan → phpunit → genoptions** 串起来，是提交前最完整的闸门。
 
@@ -122,9 +124,9 @@ php vendor/bin/phpunit tests/support.php        # CodeCovar 套件：汇总已�
 **④ 改完文档做三项自检**
 
 ```bash
-python3 scripts/check-doc-links.py docs/zh      # 期望 broken: 0
-bash scripts/check-non-ascii.sh                 # 改过 src/ 时期望 Total non-ASCII lines: 0
-python3 scripts/scan-options.py                 # 选项表相关校验
+python3 docs/scripts/check-doc-links.py docs/zh      # 期望 broken: 0
+bash docs/scripts/check-non-ascii.sh                 # 改过 src/ 时期望 Total non-ASCII lines: 0
+python3 docs/scripts/scan-options.py                 # 选项表相关校验
 ```
 
 **⑤ 提交前的完整闸门（8.4 环境）**

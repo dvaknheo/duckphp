@@ -22,16 +22,16 @@
  * When such a page does not exist yet, a skeleton with the markers is created.
  *
  * Usage:
- *   php scripts/gen-options-docs.php            write the pages
- *   php scripts/gen-options-docs.php --check    verify only; exit 1 when something is stale
- *   php scripts/gen-options-docs.php --json     dump the gathered facts
+ *   php docs/scripts/gen-options-docs.php            write the pages
+ *   php docs/scripts/gen-options-docs.php --check    verify only; exit 1 when something is stale
+ *   php docs/scripts/gen-options-docs.php --json     dump the gathered facts
  *
  * Note: no timestamps are written anywhere, so re-running is byte-identical (idempotent).
- * English comments on purpose (same style as scripts/gen-reference.php); the generated
+ * English comments on purpose (same style as docs/scripts/gen-reference.php); the generated
  * pages themselves are Chinese.
  */
 
-const ROOT = __DIR__ . '/..';
+const ROOT = __DIR__ . '/../..';
 const SRC_DIR = ROOT . '/src';
 const REF_DIR = ROOT . '/docs/zh/reference';
 
@@ -90,7 +90,7 @@ const LAYERS = [
 /** the 5 App options that drive the setting mechanism, in source order */
 const SETTING_OPTIONS = ['setting', 'setting_file', 'setting_file_enable', 'setting_file_ignore_exists', 'use_env_file'];
 
-const GEN_NOTE = '> 本页由 `scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。';
+const GEN_NOTE = '> 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。';
 
 // ---------------------------------------------------------------------------
 // small helpers

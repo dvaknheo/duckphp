@@ -57,6 +57,7 @@
 | `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php` | 第三卷 25–31 | `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` |
 | `tests/data_for_tests/ZAllDemo` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由） | 同上换文件名；它是「起内置服务器 + curl 各路由比字节长度」的重型冒烟，改 `src/` 后长度会变（见 §5） |
 | `demo/`（`public/` 多入口 + `src/System/AppWithAllOptions.php`） | 第一卷、第二卷 | `php -S 127.0.0.1:8080 -t demo/public` 后访问各入口 |
+| `docs/scripts/`（7 个文档工具） | 全卷校验/生成 | `python3 docs/scripts/check-doc-links.py docs/zh`、`bash docs/scripts/check-non-ascii.sh` 等；**脚本随文档一起提交**，都从仓库根目录跑 |
 
 **约定：新写的章里每一段示例代码，都要能在上述资产里指出出处，或已在对话中实跑过。** 第三卷的 7 章就是这么做的——每条章内结论都对应 `ZThirdDemoTest` 里的一条断言。
 
@@ -66,7 +67,7 @@
 $env:WSL_UTF8=1      # 一次即可，避免 wsl 输出乱码
 
 # ① 全仓 md 相对链接是否都存在（含新章、TOC、迁入页）
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 scripts/check-doc-links.py docs"
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-doc-links.py docs"
 
 # ② 新文件编码（GBK 会被报出来）
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 - <<'EOF'
@@ -90,7 +91,7 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-cov
 
 当前基线：全量 `OK (92 tests, 556 assertions)`；`docs/zh` 相对链接 **0 坏链**；`docs/` 下只有归档目录 `docs/old/` 还有历史坏链（不属本轮范围）。校验结果请登记到 [Checklist](guide-rewrite-checklist.md) 的「每轮收尾自检」。
 
-`scripts/check-doc-links.py`（本轮新增；扫 `docs/**/*.md` 的相对链接，忽略外链与锚点，恒退出 0——读打印的 `broken: N`）：
+`docs/scripts/check-doc-links.py`（本轮新增；扫 `docs/**/*.md` 的相对链接，忽略外链与锚点，恒退出 0——读打印的 `broken: N`）：
 
 ```python
 import glob, io, os, re, sys
@@ -122,16 +123,16 @@ for p, t in bad:
 | 旧章里的 API 可能早就不存在 | 实测：`advanced-phase.md` 有 3 处 `App::Root()->getOverridingClass()`（源码里没有）；`helper.md` 的 `assignRewrite('article/123', …)` 少了前导 `/` 因而永不命中；`Configer` 读 `config/<名>.php` 而不是 `<名>.config.php`。**改写前先核对源码。** |
 | 多应用的斜杠坑 | ① `RouteHookRewrite::assignRewrite()` 的**键要带前导 `/`**；② `controller_resource_prefix`：根应用 `'/res/'`、子应用 `'res/'`（前缀按 `'/'.controller_url_prefix.controller_resource_prefix` 拼，子应用的挂载前缀已带尾斜杠）；③ 相位名不是类名（子应用是 `:<name>`）。 |
 | `ZAllDemoTest` 的字节长度比对 | 它把 demo 各路由输出长度与 `tests/data_for_tests/ZAllDemoTest.config.php` 硬比，`files` 路由会 dump **选项表**（`合计 N个`）+ 方法表 + 包含文件 + 调用栈行号，**源码一动就变**（把选项在 `$options` 与 `$hidden_options` 之间搬家同样会变）。只有它红时：把期望值改成括号里的实际值（新 dump 会存成 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可 `diff` 新旧两份看差在哪）；先确认这轮没碰 `src/`，再用 `git stash push -- src` 验证是不是本来就红。**当前基线 10360**（第一卷收尾时对齐）。 |
-| 测试一律走 WSL | Windows 侧 PHP 没有 redis 扩展会假失败；`scripts/*.sh` 也要在 WSL 跑。 |
+| 测试一律走 WSL | Windows 侧 PHP 没有 redis 扩展会假失败；`docs/scripts/*.sh` 也要在 WSL 跑。 |
 | 别 `git add .` | 仓库有未跟踪的 `.obsidian/`（`docs/zh/guide/` 与 `docs/zh/reference/` 各一个）、测试产物 `*/log_*.log`、`ZAllDemoTest-*.txt` 等。提交前 `git status --short` 复核。 |
-| 中文文档不受 ASCII 限制 | `src/` 才必须纯 ASCII（改 `src/` 后跑 `scripts/check-non-ascii.sh`）；`docs/` 是中文，正常写。 |
+| 中文文档不受 ASCII 限制 | `src/` 才必须纯 ASCII（改 `src/` 后跑 `docs/scripts/check-non-ascii.sh`）；`docs/` 是中文，正常写。 |
 
 ## 6. 下一轮的起手动作
 
 ```powershell
 $env:WSL_UTF8=1
 # 1) 基线复核：链接是否仍 0 坏链；reference 是否仍 0 不一致（这轮没动 reference 可跳过）
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 scripts/check-doc-links.py docs"
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-doc-links.py docs"
 python3 <tmp>/drift.py --all
 
 # 2) 按 Checklist 的 M2 顺序推进（章号已重排：第二卷 8–24，中间件并入 17，见 Checklist 第二卷小节）：
@@ -152,7 +153,7 @@ python3 <tmp>/drift.py --all
 - 示例工程：`tests/data_for_tests/ZThirdDemo`（主应用 `src/` + 被挂的 `third/` 第三方应用；四个覆盖点：视图 `view/shop/index.php`、配置 `config/shop/greet.php`、资源 `res/shop/third.css`、控制器 `src/Override/ShopControllerOverride.php`；另有事件总线与两种跨相位调用）。
 - 测试：`tests/ZThirdDemoTest.php`，**36 断言**；一次 `init` 多次 `serve()`，逐条断言「有覆盖」与「没覆盖时回落子应用自己那份」。
 - 指南：一页总目录 `docs/zh/guide/index.md`、附录 A `appendix-glossary.md`、改写 25、新写 26–31（行数 174/125/120/134/140/122/206，均 ≤400）。
-- 其他：`docs/zh/index.md` 瘦身成指路页；顺手修掉 `docs/zh/guide/routing.md`(3 处) 与 `external-auth.md`(4 处) 的相对路径坏链；新增 `scripts/check-doc-links.py`。
+- 其他：`docs/zh/index.md` 瘦身成指路页；顺手修掉 `docs/zh/guide/routing.md`(3 处) 与 `external-auth.md`(4 处) 的相对路径坏链；新增 `docs/scripts/check-doc-links.py`。
 
 ## 8. 本轮（第一卷）交付记录
 
@@ -197,7 +198,7 @@ python3 <tmp>/drift.py --all
 - 第二次：`第 N 章`（N ≥ 19）全体 −1 共 17 个文件；第三卷 7 篇的 H1 章号 −1（`# 26 → # 25` … `# 32 → # 31`）；总目录删掉中间件那一行并重排三张表；checklist 与两份维护指南里的章数/范围（`42 章`→`41 章`、`26–32`→`25–31`、`33–42`→`32–41`、`8–25`→`8–24`、`18–25`→`18–24`）。
 - **两次都用了单遍替换**（Python `re.subn` + 回调映射，绝不顺序 `sed`——那会链式误改，比如 `14→8` 之后 `8→17` 又把它改走）。
 
-**校验方式**（下次改章号照抄）：脚本扫 `docs/zh/guide/*.md` 里所有「章号 + 链接」形式的引用（链接文字里带 `第 N 章`、目标指向某篇），用「文件名 → 章号」表反查 → **0 处不一致**；总目录解析出的每一行章号也与文件名对得上；另外 `python3 scripts/check-doc-links.py docs/zh` 仍 0 死链。
+**校验方式**（下次改章号照抄）：脚本扫 `docs/zh/guide/*.md` 里所有「章号 + 链接」形式的引用（链接文字里带 `第 N 章`、目标指向某篇），用「文件名 → 章号」表反查 → **0 处不一致**；总目录解析出的每一行章号也与文件名对得上；另外 `python3 docs/scripts/check-doc-links.py docs/zh` 仍 0 死链。
 
 ## 10. 本轮（第二卷）交付记录
 
@@ -254,4 +255,4 @@ python3 <tmp>/drift.py --all
 - `skeleton/src/System/App.php`：`cmd` 选项的注释示例 `[CommandAction::class]` → `[CommandAction::class => true]`（真实形态是「类名 => 方法前缀或 `true`」；`Console::getCommandCallback()` 是按 `$class => $method_prefix` 遍历的，列表形式会失效）。
 - **顺带查出并修掉的真 bug**：`skeleton/src/System/ProjectException.php` 与 `demo/src/System/ProjectException.php` 都只 `use ExceptionTrait`（该 trait 只带来 `ThrowOnTrait`），**没有 `extends \Exception`** ⇒ `Helper::BusinessThrowOn()` 抛它时会"无法抛出非 Throwable"致命错误。两处都改成 `class ProjectException extends \Exception`。
 - 回归测试：`tests/Foundation/ExceptionTraitTest.php` 新增 `testProjectExceptionClassesAreThrowable()`，直接加载这两个真实文件并断言 `is_subclass_of(..., \Throwable::class)` 且能真的 `throw`。**把 `extends \Exception` 去掉跑一遍，测试会红**（已实测），再还原。
-- 校验：`src/` 未被改动（`git diff -- src` 为空）；`bash scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`；全量测试 **`OK (93 tests, 565 assertions)`**（比原基线 `92/556` 多 1 个测试方法 + 9 个断言，即这两条回归测试）。
+- 校验：`src/` 未被改动（`git diff -- src` 为空）；`bash docs/scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`；全量测试 **`OK (93 tests, 565 assertions)`**（比原基线 `92/556` 多 1 个测试方法 + 9 个断言，即这两条回归测试）。

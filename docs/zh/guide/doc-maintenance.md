@@ -10,8 +10,8 @@
 改完一个类的源码后，最小的一套自检：
 
 ```bash
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 scripts/check-doc-links.py docs/zh"   # 期望 broken: 0
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash scripts/check-non-ascii.sh"              # src/ 改过就跑，期望 0
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-doc-links.py docs/zh"   # 期望 broken: 0
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash docs/scripts/check-non-ascii.sh"              # src/ 改过就跑，期望 0
 # 漂移扫描：把 drift.py 存到临时目录后运行（脚本见维护指南 §5）
 python3 <tmp>/drift.py --all
 ```
@@ -40,6 +40,8 @@ docs/zh/*maintenance-guide* ← 两份维护指南 + 进度 checklist（"怎么�
 
 ### 2. 一致性闸门：漂移扫描
 
+> **工具脚本统一放在 `docs/scripts/` 下、跟文档一起提交**：它们只服务文档生成与校验（不属于框架运行时），放在 `docs/` 里便于「文档改动 + 生成器改动」同一次提交。本章与两份维护指南里的命令都从**仓库根目录**执行。
+
 `reference/` 的逐类页与源码之间靠**集合比对**兜底（维护指南 §5 给了完整脚本，存成 `%TEMP%\drift.py` 运行）：
 
 - `missing-method`：源码有、文档没有 → **必须补**；
@@ -49,7 +51,7 @@ docs/zh/*maintenance-guide* ← 两份维护指南 + 进度 checklist（"怎么�
 
 本仓库当前状态是 **0 不一致**（`missing-*` 全空）。
 
-> ⚠️ `scripts/gen-reference.php verify` 对「`use Trait { … as … }` 并 override」的大文件会**漏列方法**，从而误报「多了方法」。判一致性以漂移扫描为准。
+> ⚠️ `docs/scripts/gen-reference.php verify` 对「`use Trait { … as … }` 并 override」的大文件会**漏列方法**，从而误报「多了方法」。判一致性以漂移扫描为准。
 
 ### 3. 新增/改名/改选项时的同步清单
 
@@ -58,7 +60,7 @@ docs/zh/*maintenance-guide* ← 两份维护指南 + 进度 checklist（"怎么�
 1. 按模板写 `docs/zh/reference/<Ns>-<类名>.md`（H1 = 全限定类名；简介 / 类信息 / 选项表 / 使用方式 / 注意事项 / 方法列表）；
 2. 在 `docs/zh/reference/index.md` 登记一行；
 3. 如果它属于某主题，在对应指南章里加一句「怎么用」并链接过去；
-4. 若新增了选项，跑 `scripts/gen-options-docs.php` 或手改 `options.md` / `options-by-class.md` / `options-index.md`。
+4. 若新增了选项，跑 `docs/scripts/gen-options-docs.php` 或手改 `options.md` / `options-by-class.md` / `options-index.md`。
 
 **改公共名字（方法名 / 选项键 / 参数名）**：
 
@@ -68,15 +70,15 @@ grep -rn "<旧名>" src tests docs | wc -l      # 先列全，改完再 grep = 0
 
 - 覆盖 `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`；
 - **例外**：文档里可能**故意**保留「由旧名 X 更名」的历史说明（例如 `user_callback_get_*` → `user_callback_for_*`），批量替换时要排除这类句子；
-- `src/` 里不许出现中文/全角字符——最常见的来源是从中文文档复制粘贴（全角箭头 `→`、全角括号）。改完跑 `scripts/check-non-ascii.sh`，期望 `Total non-ASCII lines: 0`。
+- `src/` 里不许出现中文/全角字符——最常见的来源是从中文文档复制粘贴（全角箭头 `→`、全角括号）。改完跑 `docs/scripts/check-non-ascii.sh`，期望 `Total non-ASCII lines: 0`。
 
 **改章号/章序**（本指南重排第二卷时踩过）：交叉引用必须**单遍替换 + 回调映射**（Python `re.subn`），用 `sed` 顺序替换会链式误改（`14→8` 之后 `8→17` 又把它改走）。改完用「文件名 → 章号」表反查所有「第 N 章 + 链接」是否一致。
 
 ### 4. 站内链接：0 死链是硬指标
 
 ```bash
-python3 scripts/check-doc-links.py docs/zh     # 期望 checked N, broken: 0
-python3 scripts/check-doc-links.py docs        # 全仓（docs/old、docs/en 有历史死链，属已知）
+python3 docs/scripts/check-doc-links.py docs/zh     # 期望 checked N, broken: 0
+python3 docs/scripts/check-doc-links.py docs        # 全仓（docs/old、docs/en 有历史死链，属已知）
 ```
 
 约定：**没写的章不挂链接**——在总目录里用 `⏳ + 纯文本`，写完再换成链接。这样链接校验永远为零死链。
@@ -107,11 +109,11 @@ python3 scripts/check-doc-links.py docs        # 全仓（docs/old、docs/en 有
 
 **② 新增一个选项**
 
-参考页的「选项」表加一行（键 / 默认值 / 说明），再跑 `scripts/gen-options-docs.php` 更新汇总页；如果这个选项在指南某章会被用到，在该章补一句。
+参考页的「选项」表加一行（键 / 默认值 / 说明），再跑 `docs/scripts/gen-options-docs.php` 更新汇总页；如果这个选项在指南某章会被用到，在该章补一句。
 
 **③ 源码里发现「读了没声明」的选项**
 
-跑 `scripts/scan-options.py` 看告警。两种处置：要么在 `$options` 里正式声明它，要么把它列进 `$hidden_options` 并把读取点写成 `?? 默认值`（并想清楚「用户还能不能设置它」——见 `DuckPhp`/`App` 里 `$hidden_options` 的注释）。
+跑 `docs/scripts/scan-options.py` 看告警。两种处置：要么在 `$options` 里正式声明它，要么把它列进 `$hidden_options` 并把读取点写成 `?? 默认值`（并想清楚「用户还能不能设置它」——见 `DuckPhp`/`App` 里 `$hidden_options` 的注释）。
 
 **④ 文档里发现链接指向不存在的页**
 
@@ -120,8 +122,8 @@ python3 scripts/check-doc-links.py docs        # 全仓（docs/old、docs/en 有
 **⑤ 提交前的文档自检三连**
 
 ```bash
-python3 scripts/check-doc-links.py docs/zh      # 链接：期望 broken: 0
-bash scripts/check-non-ascii.sh                 # 改过 src/ 时：期望 Total non-ASCII lines: 0
+python3 docs/scripts/check-doc-links.py docs/zh      # 链接：期望 broken: 0
+bash docs/scripts/check-non-ascii.sh                 # 改过 src/ 时：期望 Total non-ASCII lines: 0
 python3 - <<'PY'                                # 文档 UTF-8 检查
 import pathlib
 bad = []
@@ -146,7 +148,7 @@ PY
 | 文档里留着**死选项** | 选项被改名/删除，文档没跟 | 漂移扫描的 `extra-option` 就是它；删掉或换成新键名 |
 | `sed` 批量改名改坏了别的句子 | 顺序替换 + 文档里有「由旧名更名」的历史说明 | 单遍替换 + 排除历史说明句；改完 grep 复核 |
 | 链接校验报坏链 | 指向了还没写的章/页 | 未写的用「纯文本 + ⏳」；写完再换链接（§4） |
-| `src/` 里出现中文/全角字符 | 从中文文档粘贴 | `scripts/check-non-ascii.sh` 兜底；改回 ASCII |
+| `src/` 里出现中文/全角字符 | 从中文文档粘贴 | `docs/scripts/check-non-ascii.sh` 兜底；改回 ASCII |
 | 提交里混进 `.obsidian/` 或测试产物 | `git add .` | 提交前 `git status --short` 复核（§5） |
 | 交接文档越来越长、读不动 | 把流水账写进了「现状」段 | 现状段只留结论；细节进 checklist 与轮次记录（§6） |
 | `gen-reference.php verify` 报「多了方法」就照删 | 该脚本对大文件漏列（已知缺陷） | 以漂移扫描为准 |

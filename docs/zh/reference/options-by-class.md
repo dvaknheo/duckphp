@@ -1,6 +1,6 @@
 # 应用选项（按类分组）
 
-> 本页由 `scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
+> 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
 选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**221** 个选项（同名选项在不同类各自声明，合计 255 处；另有 12 个隐藏选项见文末）。
 
