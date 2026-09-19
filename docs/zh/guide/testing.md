@@ -1,228 +1,151 @@
-# 测试
+# 23 测试
 
-DuckPHP 的测试代码位于 `tests/` 目录，采用 PHPUnit 组织。`src/` 下的类与 `tests/` 下的测试文件按“类名 + `Test` 后缀”对应，例如 `src/Core/KernelTrait.php` 对应 `tests/Core/KernelTraitTest.php`。
-
-## 环境要求
-
-- WSL（Windows Subsystem for Linux）
-- Docker 与 docker-compose
-- 工程目录已挂载到 WSL 中
-
-## 推荐测试方式：常驻容器
-
-为了避免每次测试都重新创建 Docker 容器，我们在 `docker/test-php74/` 下提供了一组脚本：
-
-| 脚本 | 作用 |
-|------|------|
-| `start-docker.sh` | 启动后台容器 `duckphp-test`，并自动启动 redis |
-| `exec-docker.sh`  | 在容器内 `/DATA` 目录执行命令 |
-| `stop-docker.sh`  | 停止容器，但不删除 |
-| `end-docker.sh`   | 停止并删除容器 |
-
-### 启动容器
+> 解决什么问题：给自己的应用写测试该放哪、怎么在不起服务器的情况下测业务、端到端怎么测、覆盖率怎么跑，以及本仓库测试基建的两个硬约束（WSL、`data_for_tests` 约定）。
+> 前置：[第 8 章 四层架构与调用规范](layers.md)、[第 13 章 模型层](model.md)。预计 20 分钟。
+> 示例：`tests/bootstrap.php`、`tests/ZThirdDemoTest.php`（端到端冒烟）、`tests/data_for_tests/`（示例数据目录）。
 
 ```bash
-cd <工程目录>/docker/test-php74
-./start-docker.sh
+# 跑单个测试文件（推荐：全量很慢）
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"
 ```
 
-### 执行单类测试
+## 最小示例
 
-以 `KernelTrait` 为例：
-
-```bash
-./exec-docker.sh vendor/bin/phpunit tests/Core/KernelTraitTest.php
-```
-
-`exec-docker.sh` 后面的参数就是要在容器内 `/DATA` 目录下执行的命令。也可以使用镜像里的 composer scripts：
-
-```bash
-./exec-docker.sh composer run-script singletest tests/Core/KernelTraitTest.php
-```
-
-### 刷新覆盖率报告
-
-```bash
-./exec-docker.sh vendor/bin/phpunit tests/support.php
-```
-
-刷新后的报告位于 `test_reports/Core/KernelTrait.php.html`。
-
-### 停止与结束
-
-临时停止（保留容器，下次可继续）：
-
-```bash
-./stop-docker.sh
-```
-
-彻底结束并删除容器：
-
-```bash
-./end-docker.sh
-```
-
-## 完整示例：测试 KernelTrait 并查看覆盖率
-
-```bash
-cd <工程目录>/docker/test-php74
-
-./start-docker.sh
-./exec-docker.sh vendor/bin/phpunit tests/Core/KernelTraitTest.php
-./exec-docker.sh vendor/bin/phpunit tests/support.php
-./end-docker.sh
-```
-
-执行完后，打开 `test_reports/Core/KernelTrait.php.html` 查看覆盖率。如果 Lines 不到 100%，在页面中搜索 `Not Executed` 或 `class="danger"` 标记的行，即可找到未执行到的代码行。
-
-修复时一般只需在对应测试类末尾追加新的测试调用，例如 `tests/Core/KernelTraitTest.php`，不需要修改 `src/` 源码。
-
----
-
-## 修复覆盖测试缺口
-
-当某类的行覆盖率不到 100% 时，可以按以下步骤逐步填补测试缺口。
-
-### 前置条件
-
-- Docker 容器 `duckphp-test` 已启动（`bash docker/test-php74/start-docker.sh`）
-- 如果 `vendor/bin/phpunit` 在容器内丢失，先运行 `docker exec duckphp-test composer install --no-interaction --prefer-dist` 重装
-
-### 步骤概览
-
-```
-跑单个测试 → 生成报告 → grep 挖未覆盖行 → 分析源码 → 补测试 → 循环直到零 danger
-```
-
-### 1. 运行待修复类的测试，确认通过
-
-```bash
-bash ./docker/test-php74/exec-docker.sh \
-    ./vendor/bin/phpunit tests/Core/XxxTest.php
-```
-
-如果测试失败，先修复再继续。**注意：exec-docker.sh 不支持管道/重定向**，所有参数必须是独立参数。
-
-### 2. 生成最新覆盖率报告
-
-```bash
-bash ./docker/test-php74/exec-docker.sh \
-    ./vendor/bin/phpunit tests/support.php
-```
-
-这会跑全部测试，刷新 `test_reports/` 下的 HTML 报告。**单个测试跑不会刷新报告**，必须跑 support.php。
-
-### 3. 用 grep 挖出所有未覆盖行
-
-```bash
-grep -n '<tr class="danger">' \
-    /mnt/e/ProjectGoat/DNMVCS/test_reports/Core/Xxx.php.html
-```
-
-输出示例：
-```
-745: <tr class="danger">...<a name="112">112</a>...
-```
-
-行号对应源码中的行号。grep 返回 **exit code 1**（零匹配）时表示覆盖率达到 100%。
-
-### 4. 对照源码逐行分析缺口
-
-对每个 danger 行号，打开源码文件查看：
-
-```
-read_file src/Core/Xxx.php --offset N-3 --limit 6
-```
-
-两件事要做：
-- **判断缺口原因：** 是整行没执行？还是 if 的某个走向没覆盖？
-- **判断是否源码 bug：** 有些 danger 行是因为源码缺少 `return`，而不是测试没写到。例如 `App::prepareServe()` 的 callable 分支和 null 分支都缺少 `return;`，导致代码继续执行到 `View::Show([], $error_maintain)` 而报错。这种情况要先修源码再补测试。
-
-### 5. 设计并编写填补测试
-
-#### 测试组织结构
-
-所有测试必须放在 `testAll()` 的 `\LibCoverage\LibCoverage::Begin()/::End()` 之间。推荐在 `testAll()` 末尾加 `$this->doCoverageGapTest();`，在辅助方法里写具体测试代码。
+给业务层写测试**不需要服务器、不需要路由**——四层架构的直接好处（[第 8 章](layers.md)）：
 
 ```php
-public function testAll()
+namespace tests;
+
+class NoteBusinessTest extends \PHPUnit\Framework\TestCase
 {
-    \LibCoverage\LibCoverage::Begin(ClassName::class);
-    // ... 既有测试 ...
-    $this->doCoverageGapTest();  // 新增
-    \LibCoverage\LibCoverage::End();
+    public function testCreateRejectsEmptyTitle()
+    {
+        $this->expectException(\MyProj\System\BusinessException::class);
+
+        \MyProj\Business\NoteBusiness::_()->create(['title' => '']);   // 空标题应抛业务异常
+    }
 }
 ```
 
-#### 隔离原则
+端到端（跑真正的路由）则用仓库现成的两个重型样板当模板：
 
-每次测试场景前调用：
+| 样板 | 干什么 | 适合抄的场景 |
+|---|---|---|
+| `tests/ZThirdDemoTest.php` | 一次 `init`、多次 `serve()`，断言「覆盖生效 / 没覆盖时回落」 | 多应用、覆盖、安装流程 |
+| `tests/ZAllDemoTest.php` | 起 `HttpServer` + `curl` 各入口，比对输出字节长度 | 多入口冒烟（见「常见错误」里的注意点） |
 
-```php
-PhaseContainer::RestAllContainerForTesting();
+## 机制说明
+
+### 1. 测试放哪：`tests/` 镜像 `src/`
+
+本仓库的约定（`phpunit.xml` 里 testsuite 就是整个 `./tests/`）：
+
+```
+tests/
+  bootstrap.php          ← 自动加载 + LibCoverage 初始化
+  Core/ Component/ Db/ Ext/ Foundation/ Helper/   ← 与 src/ 同名目录，一个类一个 *Test.php
+  data_for_tests/        ← 测试用的示例工程/配置文件（可以当作"可运行的文档"）
+  ZAllDemoTest.php / ZThirdDemoTest.php           ← 端到端冒烟
 ```
 
-防止 Phase 容器状态残留影响后续测试。
+`tests/bootstrap.php` 做三件事：加载自动加载器（`vendor/autoload.php` 或根 `autoload.php`）、定义 `_lc()` 这个临时调试输出函数、把 `tests/data_for_tests/setting.php` 里的选项喂给 `LibCoverage`。
 
-#### 捕获输出的方法
+**示例工程放 `tests/data_for_tests/`** 是这套测试的关键约定：需要在「真实文件布局」下验证的东西（视图覆盖、多应用、安装流程）都做成一个可运行的小工程放在这里，测试直接引用它。用户的指南示例也因此可以直接指向这些目录（本指南第一/二/三卷的示例就是这么来的）。
+
+### 2. 框架给测试的三件武器
+
+| 手段 | 解决什么 |
+|---|---|
+| `system_wrapper_replace()` | 替换 `header()`/`setcookie()`/`exit()` 等系统调用，让「输出/跳转」可断言（[第 14 章](helper.md)） |
+| `Route::_()->PathInfo('note/show')` | 不起 HTTP 也能把「当前请求路径」设成任意值，直接测路由与控制器（[第 9 章](routing.md)） |
+| `SuperGlobal` / `Runtime` 等组件的可替换单例 | GET/POST/Session 都能喂假数据；`Runtime` 还能开输出缓冲 |
 
 ```php
-ob_start();
-// 执行目标代码
-$output = ob_get_clean();
-$this->assertStringContainsString('期望内容', $output);
+// 让 exit() 变成异常，从而断言"跳转确实发生了"
+Helper::system_wrapper_replace([
+    'exit' => function ($code = 0) { throw new \RuntimeException('exit(' . $code . ')'); },
+]);
 ```
 
-#### 辅助类的放置位置
+### 3. `LibCoverage`：本仓库的覆盖率机制
 
-新辅助类放在测试文件的尾部，同一个 namespace 内，`}` 结束之前。
+每次测试开始/结束会调用：
 
-#### 常见缺口的填补模式
+```php
+\LibCoverage\LibCoverage::Begin(MyClass::class);
+// …跑被测代码…
+\LibCoverage\LibCoverage::End();
+```
 
-| 缺口类型 | 填补方法 |
-|---------|---------|
-| **未调用的公开方法** | 直接调用 + `assert` |
-| **if 的某个分支** | 构造触发该分支的参数走 `init()` |
-| **异常路径** | `try { ...触发... } catch (ExpectedException $e) { assert }` |
-| **Phase 名冲突** | 创建一个带子 app 的父 app，再手动 init 同名子 app |
-| **钩子方法（空实现）** | 子类 override + echo 标记 + ob 捕获断言 |
-| **缺少 namespace 自动推导** | 不传 `namespace` 选项，init 后检查 `options['namespace']` |
-| **`prepareServe()` 维护模式** | 设置 `is_maintain=true` + 三种 `error_maintain`（null/callable/视图名）调用 `serve()` |
-| **`_OnDefaultException` 未 init 时** | 在未 init 的 App 实例上直接调用 `_OnDefaultException(...)`，此时 `is_inited=false` |
-| **`_OnDevErrorHandler` 默认 HTML** | 用 `is_debug=true` + `error_debug` 留 null 的选项 init App，然后调用 `_OnDevErrorHandler(...)` |
-| **`initChildren` class-key mix mode** | `app => ['前缀' => ['class' => ChildClass::class]]` 传入 init |
-| **`getProjectPath()`** | 在已 init 的 root App 上直接调用 |
+- 结果按**类**落到 `test_coveragedumps/<类名>.php`（要看的覆盖率数字就在这里）；
+- 汇总报告在 `test_reports/index.html`（另有 `dashboard.html`）；
+- 跑覆盖率需要 `XDEBUG_MODE=coverage`，且**必须在 WSL 里跑**——完整的命令与 `cov.py` 用法见 [参考手册维护指南 §5](../reference-maintenance-guide.md)。
 
-#### 需注意的源码细节
+**`@codeCoverageIgnore` 的语义**（踩过坑）：php-code-coverage 只认**整条注释恰好等于** `// @codeCoverageIgnore`，而且忽略的是**注释所在的那一行**——所以要贴在 `catch (...)` 行与 `return` 行的行尾，不能单独占一行。
 
-- 有些方法是 **public** 的（如 `_OnDefaultException`, `_OnDevErrorHandler`, `serve()`, `getProjectPath()`），可以直接调
-- 有些方法是 **protected** 的，需要通过公开方法间接调用（如 `init()` 触发 `initChildren()`）
-- 视图渲染需要 `path_view` 指向一个包含有效 .php 文件的目录
-- `_OnDevErrorHandler` 在第一行就检查 `_IsDebug()`，所以必须 `is_debug=true`
+### 4. 测试纪律：回归测试要「证明抓得住 bug」
 
-### 6. 重复 1→5 直到零 danger
+写完断言后，**把 bug 临时改回源码跑一遍**，确认测试真的变红，再还原。没做这一步的回归测试等于没写——本仓库修 `GlobalUser` 死选项、`PermissionMenu` 合并 bug 时都是这么验证的。
 
-每次修改后：
+另外两条：
+
+- `phpunit.xml` 开了 `convertNoticesToExceptions`/`convertWarningsToExceptions`：**测试里的 notice 就是失败**，别用 `@` 压掉问题；
+- `processIsolation="true"`：每个测试文件独立进程，所以文件之间不要共享状态（也意味着启动成本高，全量跑很慢——这就是「日常只跑单个文件」的原因）。
+
+## 常见写法
+
+**① 单文件测试（日常）**
 
 ```bash
-# 1) 跑单个测试确认通过
-bash ./docker/test-php74/exec-docker.sh \
-    ./vendor/bin/phpunit tests/Core/XxxTest.php
-
-# 2) 重新生成报告
-bash ./docker/test-php74/exec-docker.sh \
-    ./vendor/bin/phpunit tests/support.php
-
-# 3) 检查剩余 danger
-grep -n '<tr class="danger">' \
-    /mnt/e/ProjectGoat/DNMVCS/test_reports/Core/Xxx.php.html
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Ext/PermissionMenuTest.php"
 ```
 
-当返回 **exit code 1**（零匹配）时，覆盖率达到 100%。
+**② 带覆盖率跑一个类**
 
-### 输出要求
+```bash
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php"
+# 然后看 test_coveragedumps/ 里对应类的 dump
+```
 
-- 记录每个缺口行号的源码原因和填补方式
-- 记录断言数的变化（如 1 → 8）
-- 如果发现了源码 bug（如缺少 return），一并记录
-- 最终确认报告中 `<tr class="danger">` 数量为 0
+**③ 断言一个控制器在给定路径下的输出**（用输出缓冲截获）
+
+```php
+\DuckPhp\Core\Route::_()->PathInfo('note/show');
+ob_start();
+NoteController::_()->show();
+$html = ob_get_clean();
+$this->assertStringContainsString('便签', $html);
+```
+
+**④ 给示例工程写冒烟：一次 init、多次 serve**
+
+```php
+$app = MyApp::_()->init(['path' => __DIR__ . '/data_for_tests/MyDemo/']);
+// 逐个断言不同请求
+$this->assertSame('...', $this->fetch($app, '/shop/index'));
+```
+
+（`tests/ZThirdDemoTest.php` 是这套写法的完整样板。）
+
+**⑤ 临时调试：`_lc()`**
+
+`tests/bootstrap.php` 里的 `_lc()` 会把「调用位置 + 调用栈」打到 `tests/_lc.log`，比到处 `var_dump` 干净。
+
+## 常见错误
+
+| 现象 | 原因 | 改法 |
+|---|---|---|
+| Windows 侧跑测试大量失败（`Class 'Redis' not found`） | Windows 的 PHP 没有 redis 扩展 | 测试一律走 WSL（`wsl -e bash -lc "…"`） |
+| 全量测试很慢/踩端口 | `processIsolation` + `ZAllDemoTest` 起内置服务器固定端口 9802 | 日常只跑单个文件；端到端测试不要并发跑 |
+| 改完 `src/` 后 `ZAllDemoTest` 的 `files` 路由变红 | 该用例比的是**输出字节长度**，方法表/行号一变长度就变 | 把 `tests/data_for_tests/ZAllDemoTest.config.php` 里的期望值改成实际值（dump 会存成 `ZAllDemoTest-<长度>.txt`） |
+| 加了 `@codeCoverageIgnore` 但没生效 | 注释不是整行、或没贴在要忽略的行尾 | 贴到目标行行尾，注释内容就是 `@codeCoverageIgnore` |
+| 覆盖率看着有，但 dump 里没有 | 忘了 `XDEBUG_MODE=coverage`，或在 Windows 侧跑 | 在 WSL 里带 `XDEBUG_MODE=coverage` 跑 |
+| 测试之间互相污染 | 共享了单例/数据库文件 | 用 `LibCoverage` 的清理钩子（`cleanTestDb()`）或每个测试自建临时数据 |
+| 回归测试「一直绿」 | 没验证过断言能抓住 bug | 临时把 bug 改回去跑一遍，确认变红，再还原 |
+| 断言里出现 notice 导致失败 | `convertNoticesToExceptions` 开着 | 修数据/初始化，别用 `@` 压警告 |
+
+## 下一步
+
+- [第 24 章 安全与性能清单](security-performance.md)：上线前逐项自查。
+- [参考手册维护指南](../reference-maintenance-guide.md)：`docs/zh/reference/` 与覆盖率流水线的完整流程。
+- 参考手册：[DuckPhp\HttpServer\HttpServer](../reference/HttpServer-HttpServer.md)、[DuckPhp\Core\Runtime](../reference/Core-Runtime.md)。

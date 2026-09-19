@@ -1,379 +1,259 @@
-# Model（模型层）使用指南
+# 13 模型层
 
-Model 层是 DuckPHP 的数据访问层，负责与数据库交互。每个 Model 类通常对应一张数据库表。
+> 解决什么问题：模型里到底该写什么、`ModelTrait` 白送了什么、为什么它的 CRUD 方法是 `protected`、表名怎么推导、模型该向业务层暴露什么。
+> 前置：[第 8 章 四层架构与调用规范](layers.md)、[第 12 章 数据库](database.md)。预计 20 分钟。
+> 示例：`demo/src/Model/`（`Base.php` / `DemoModel.php`）、`demo/public/dbtest.php`（完整可跑：模型 + 分页 + 增删改查）、`tests/data_for_tests/ZAllDemo/src/Model/`。
 
-## Model 的定位
-
-```
-Controller（输入输出编排）
-    ↓
-Business（业务逻辑）
-    ↓
-Model（数据访问）  ← 你在这里
-    ↓
-Db（数据库连接）
+```bash
+php -S 127.0.0.1:8080 -t demo/public
+# 打开 http://127.0.0.1:8080/dbtest.php 看模型层跑完整套 CRUD
 ```
 
-Model 层遵循**无状态**原则：不依赖请求上下文，不读写 Session，不接触超全局变量。
+## 最小示例
 
-## 快速开始
-
-### 创建 Model 类
+两层最小骨架（`demo/src/Model/` 的真实文件）：
 
 ```php
-<?php
-namespace MyProject\Model;
+// demo/src/Model/Base.php —— 工程自己的模型基类
+namespace MyProj\Model;
 
-use DuckPhp\Foundation\Model\Base;
+use DuckPhp\Foundation\ModelTrait;
 
-class UserModel extends Base
+class Base
 {
-    // 自动对应表名：user（类名去掉 "Model" 后缀并转小写）
-    // 可通过以下属性覆盖：
-    // protected $table_name = 'my_user';       // 自定义表名
-    // protected $table_prefix = 't_';          // 表前缀
+    use ModelTrait;
 }
 ```
 
-### 在 Business 中调用
-
 ```php
-namespace MyProject\Business;
+// demo/src/Model/DemoModel.php —— 一个具体模型
+namespace MyProj\Model;
 
-use MyProject\Model\UserModel;
-
-class UserBusiness
+class DemoModel extends Base
 {
-    public function getUserDetail($id)
+    public function testdb()
     {
-        $user = UserModel::_()->getUserInfo($id);
-        // ... 业务处理 ...
-        return $user;
+        $sql = "select 1+? as t";
+        return Helper::Db()->fetch($sql, 2);       // 模型里可以直接用 Db
     }
 }
 ```
 
-## 封装数据方法
-
-`Foundation\Model\Base` 提供的内置方法全部为 **protected**，不对外暴露。你需要在子类中封装公共方法：
-
-### 基础 CRUD
+带完整表操作的模型长这样（`demo/public/dbtest.php` 的 `TestModel`，可直接访问该页面实跑）：
 
 ```php
-class UserModel extends Base
+class TestModel
 {
-    // 查询单条
-    public function getUserInfo($id)
+    use ModelTrait;
+    public function __construct()
     {
-        return $this->find($id);
+        $this->table_name = 'test';                // 表名（不含前缀）
     }
-    
-    // 按条件查询
-    public function findByEmail($email)
+    public function getDataList($page, $pagesize)
     {
-        return $this->find(['email' => $email]);
+        $sql = "select * from `'TABLE'` order by id desc";
+        $total = $this->fetchColumn(Helper::SqlForCountSimply($sql));            // 读连接
+        $list  = $this->fetchAll(Helper::SqlForPager($sql, $page, $pagesize));   // 读连接
+        return [$total, $list];
     }
-    
-    // 新增
-    public function addUser(array $data)
+    public function addData($data)
     {
-        return $this->add($data);         // 返回自增 ID
-    }
-    
-    // 更新
-    public function updateUser($id, array $data)
-    {
-        return $this->update($id, $data, 'id'); // 第三个参数为主键名
-    }
-    
-    // 删除
-    public function deleteUser($id)
-    {
-        return $this->delete($id);
-    }
-    
-    // 分页列表
-    public function getUserList(array $where = [], int $page = 1, int $page_size = 10): array
-    {
-        return $this->getList($where, $page, $page_size); // 返回 [$total, $data]
+        $this->execute("insert into `'TABLE'` (content) values(?)", $data['content']); // 写连接
+        return Helper::Db()->lastInsertId();
     }
 }
 ```
 
-### 自定义 SQL 查询
+## 机制说明
+
+### 1. 模型的定位：只做数据访问
+
+模型层是四层里最窄的一层：**把表变成方法**，不判断业务、不抛业务异常、不读请求上下文——业务规则属于 Business（[第 8 章](layers.md)的越界矩阵）。
 
 ```php
-class UserModel extends Base
+// ✅ 模型：只回答「数据是什么」
+public function findByStatus(string $status): array
 {
-    // fetchAll：查询多行
-    public function searchUsers($keyword)
-    {
-        return $this->fetchAll(
-            "SELECT * FROM `'TABLE'` WHERE name LIKE ? OR email LIKE ?",
-            '%' . $keyword . '%',
-            '%' . $keyword . '%'
-        );
-    }
-    
-    // fetch：查询单行
-    public function getLastLoginUser()
-    {
-        return $this->fetch(
-            "SELECT * FROM `'TABLE'` ORDER BY last_login DESC LIMIT 1"
-        );
-    }
-    
-    // fetchColumn：取单个值
-    public function countActiveUsers()
-    {
-        return $this->fetchColumn(
-            "SELECT COUNT(*) FROM `'TABLE'` WHERE status = ?",
-            1
-        );
-    }
-    
-    // execute：执行增删改
-    public function batchUpdateStatus(array $ids, int $status)
-    {
-        $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $params = array_merge([$status], $ids);
-        return $this->execute(
-            "UPDATE `'TABLE'` SET status = ? WHERE id IN ($placeholders)",
-            ...$params
-        );
-    }
-}
-```
-
-> **`'TABLE'` 占位符**：在 SQL 中写 `` `'TABLE'` `` 会自动替换为 `{表前缀}{表名}`（如 `t_user`）。这是模型内置的便捷功能。
-
-### fetchObject / fetchObjectAll
-
-以对象方式获取数据，适合需要类型约束的场景：
-
-```php
-class UserDTO
-{
-    public int $id;
-    public string $name;
-    public string $email;
+    return $this->fetchAll("select * from `'TABLE'` where status=?", $status);
 }
 
-class UserModel extends Base
-{
-    public function getUserAsObject($id): ?UserDTO
-    {
-        return $this->fetchObject(
-            "SELECT id, name, email FROM `'TABLE'` WHERE id = ?",
-            $id,
-            UserDTO::class
-        );
-    }
-    
-    public function getAllUsersAsObject(): array
-    {
-        return $this->fetchObjectAll(
-            "SELECT id, name, email FROM `'TABLE'`",
-            null,
-            UserDTO::class
-        );
-    }
-}
+// ❌ 模型里不该有的：业务判断、权限校验、抛业务异常、读 $_GET
 ```
 
-## Model 高级用法
+### 2. 两条路线
 
-### 多表关联示例
-
-Model 可以调用其他 Model，但推荐通过 Business 层编排多表操作：
-
-```php
-class OrderModel extends Base
-{
-    public function getOrderWithItems($orderId)
-    {
-        $order = $this->find($orderId);
-        if (!$order) {
-            return null;
-        }
-        $order['items'] = OrderItemModel::_()->getItemsByOrder($orderId);
-        return $order;
-    }
-}
-```
-
-### 分页查询
-
-```php
-class ArticleModel extends Base
-{
-    // 第一个 ? 是 WHERE，第二个 ? 是分页条件，第三个 ? 是 COUNT SQL
-    public function getPublishedArticles(int $page = 1, int $size = 10): array
-    {
-        return $this->getList(
-            ['status' => 'published'],  // WHERE 条件
-            $page,                       // 当前页码
-            $size                        // 每页条数
-        );
-        // 返回 [$total, $data]
-    }
-}
-```
-
-分页条件支持多种形式：
-
-```php
-// 关联数组（等值匹配）
-$this->getList(['status' => 1, 'type' => 'article'], $page, $size);
-
-// 纯 SQL WHERE 片段
-$this->getList("status = 1 AND type = 'article'", $page, $size);
-
-// 带参数的 WHERE 片段
-$this->getList("status = ? AND type = ?", $page, $size, [1, 'article']);
-```
-
-### 事务处理
-
-在 Business 层控制事务：
-
-```php
-class OrderBusiness
-{
-    public function createOrder(array $cart, $userId)
-    {
-        $orderModel = OrderModel::_();
-        $itemModel = OrderItemModel::_();
-        
-        // 开启事务（通过 DbForWrite 获取写连接）
-        $db = \DuckPhp\Foundation\Model\Helper::DbForWrite();
-        $db->PDO()->beginTransaction();
-        try {
-            $orderId = $orderModel->addOrder($userId, $cart['total']);
-            foreach ($cart['items'] as $item) {
-                $itemModel->addItem($orderId, $item);
-            }
-            $db->PDO()->commit();
-            return $orderId;
-        } catch (\Throwable $e) {
-            $db->PDO()->rollBack();
-            throw $e;
-        }
-    }
-}
-```
-
-## Foundation\ModelTrait（实例方法，protected）
-
-`DuckPhp\Foundation\ModelTrait` 是集成到 `Base` 类中的核心 Trait，提供所有数据访问方法。这些方法均为 **`protected`**，只能在 Model 子类内部通过 `$this->xxx()` 调用。
-
-### 属性
-
-| 属性 | 类型 | 说明 |
+| 路线 | 写法 | 适用 |
 |---|---|---|
-| `$table_name` | `?string` | 表名，默认从类名推导（`UserModel` → `user`） |
-| `$table_prefix` | `?string` | 表前缀，默认取自 `options['table_prefix']` |
-| `$table_pk` | `string` | 主键名，默认 `'id'` |
+| **用 `ModelTrait`** | `use ModelTrait;` | 常规单表模型：表名宏、读写分流、分页都接好了 |
+| **直接用 `Db`** | 自己的类里调 `Helper::Db()` / `Helper::DbForRead()` | 跨多表复杂查询、报表、要精细控制 SQL 的场景 |
 
-### 数据查询
+两条可以混用：`demo/src/Model/DemoModel.php` 既继承了带 `ModelTrait` 的 `Base`，也在方法里直接 `Helper::Db()->fetch(...)`。
 
-| 方法 | 说明 |
-|---|---|
-| `find($id)` / `find($condition)` | 按主键或条件数组查询单行 |
-| `fetchAll($sql, ...$args)` | 参数化查询多行 |
-| `fetch($sql, ...$args)` | 参数化查询单行 |
-| `fetchColumn($sql, ...$args)` | 取第一行第一列 |
-| `fetchObject($sql, ...$args)` | 查询单行映射为 DTO 对象 |
-| `fetchObjectAll($sql, ...$args)` | 查询多行映射为 DTO 对象数组 |
+不继承 `Base` 也能用 `ModelTrait`（`dbtest.php` 的 `TestModel` 就是这么干的）——它是 trait，不是必须的基类。
 
-### 数据写入
+### 3. `ModelTrait` 给了什么
 
-| 方法 | 说明 |
-|---|---|
-| `add(array $data)` | 插入一行，返回自增 ID |
-| `update($id, array $data, ?string $key = null)` | 按主键更新 |
-| `execute($sql, ...$args)` | 执行任意 SQL（写连接），返回受影响行数 |
+| 成员 | 可见性 | 说明 |
+|---|---|---|
+| `$table_name` | protected 属性 | 表名（不含前缀）；不设就按类名推导 |
+| `$table_prefix` | protected 属性 | 表前缀；不设则取应用选项 `table_prefix` |
+| `$table_pk` | protected 属性 | 主键名，默认 `'id'` |
+| `table()` | **public** | 返回「前缀 + 表名」，如 `app_note` |
+| `prepare($sql)` | **public** | 把 SQL 里的 `` `'TABLE'` `` 宏换成 `table()` |
+| `getList($where, $page, $page_size)` | protected | 返回 `[$total, $data]` |
+| `find($id_or_where)` | protected | 按主键或条件数组查一行 |
+| `add($data)` | protected | 插入，返回自增 id |
+| `update($id, $data, $key)` | protected | 按主键更新 |
+| `execute($sql, ...$args)` | protected | 写操作（走**写**连接） |
+| `fetchAll` / `fetch` / `fetchColumn` / `fetchObject` / `fetchObjectAll` | protected | 读操作（走**读**连接，自动绑定表名宏） |
+| `::_()`（来自 `SingletonExTrait`） | public | 可变单例，可被覆盖（[第 29 章](overriding.md)） |
 
-### 分页与辅助
+表名推导（`getTableNameByClass()`）：类名去掉结尾的 `Model` 再转小写——`NoteModel` → `note`、`UserProfileModel` → `userprofile`。对不上就在构造函数里显式设 `$this->table_name`。
 
-| 方法 | 说明 |
-|---|---|
-| `getList($where, $page, $page_size)` | 分页查询，返回 `[$total, $data]` |
-| `prepare($sql)` | 将 SQL 中 `` `'TABLE'` `` 替换为完整表名 |
-| `table()` | 获取完整表名（前缀 + 名称） |
-
-### 自动表名推导
+### 4. 为什么 CRUD 方法是 `protected`（重要）
 
 ```php
-class UserModel extends Base {}           // 表名: user
-class OrderItemModel extends Base {}       // 表名: order_item
-class AdminLogModel extends Base {}        // 表名: admin_log
+NoteModel::_()->add($data);        // ❌ Call to protected method
 ```
 
-规则：取类名去掉末尾 `Model` 后，驼峰转蛇形。
-
-### 覆盖表名
+这是**刻意设计**：框架只给「在模型内部拼 SQL」的原语，对外暴露什么由你决定。所以每个模型都该写自己的 public 方法：
 
 ```php
-class UserModel extends Base
+class NoteModel extends Base
 {
-    protected $table_name = 'my_user';
-    protected $table_prefix = 't_';
-    // 最终表名: t_my_user
+    public function __construct() { $this->table_name = 'note'; }
+
+    public function create(array $data): int                  // 对外只开这一个入口
+    {
+        return (int)$this->add($data);
+    }
+    public function paginate(int $page, int $size = 10): array
+    {
+        return $this->getList([], $page, $size);              // [total, data]
+    }
+    public function findById(int $id): ?array
+    {
+        return $this->find($id) ?: null;
+    }
 }
 ```
 
-## DuckPhp\Helper\ModelHelperTrait（静态方法，public）
+好处很实际：Business 拿不到 `execute()` 这种万能入口，就没法绕过模型写裸 SQL——边界从「约定」变成了「语言层面的可见性」。
 
-`DuckPhp\Helper\ModelHelperTrait` 提供数据库连接获取和 SQL 辅助的静态方法。这些方法为 **`public static`**，可以在任何地方调用，包括不继承 `Base` 的场景。
+### 5. `ModelHelperTrait`：模型可用的静态工具
 
-### 数据库连接
-
-| 方法 | 说明 |
+| 方法 | 用途 |
 |---|---|
-| `Helper::Db($tag = null)` | 获取指定标签的数据库连接 |
-| `Helper::DbForRead()` | 获取读连接（标签 1） |
-| `Helper::DbForWrite()` | 获取写连接（标签 0） |
+| `Helper::Db($tag)` | 取连接（不传 = 写连接，`1` = 读连接） |
+| `Helper::DbForRead()` / `Helper::DbForWrite()` | 明确的读/写连接 |
+| `Helper::SqlForPager($sql, $page, $size)` | 给 SQL 加分页 |
+| `Helper::SqlForCountSimply($sql)` | 把 SQL 转成计数 SQL |
+| `Helper::DatabaseDriver()` | 当前驱动名（写驱动分支时用） |
 
-### SQL 辅助
+工程侧的 `Model\Helper`（`demo/src/Model/Helper.php`）就是 `use ModelHelperTrait;` 一行。
 
-| 方法 | 说明 |
-|---|---|
-| `Helper::SqlForPager($sql, $page, $size)` | 添加 LIMIT/OFFSET |
-| `Helper::SqlForCountSimply($sql)` | 转为 COUNT(*) 查询 |
+### 6. 跨库/多连接
 
-### 使用示例
+模型层没有「跨库模型」这种东西——要访问第二个库就按 tag 取连接（[第 12 章](database.md)）：
 
 ```php
-use DuckPhp\Foundation\Model\Helper;
+class LogModel extends Base
+{
+    public function __construct() { $this->table_name = 'log'; }
 
-// 读连接
-$rows = Helper::DbForRead()->fetchAll("SELECT * FROM users WHERE status = ?", 1);
-
-// 写连接
-Helper::DbForWrite()->execute("UPDATE users SET name = ? WHERE id = ?", 'foo', 1);
-
-// 分页辅助
-$sql = Helper::SqlForPager("SELECT * FROM users", $pageNo, $pageSize);
-$sql = Helper::SqlForCountSimply("SELECT * FROM users");
+    public function recent(int $n): array
+    {
+        return Helper::Db(1)->fetchAll('select * from `log` order by id desc limit ' . (int)$n);
+    }
+}
 ```
 
-这两个 Trait 的关系：`Base` 类同时使用了 `ModelTrait` 和 `ModelHelperTrait`，因此子类中既可以 `$this->find()`（来自 ModelTrait），也可以 `static::DbForRead()`（继承自 ModelHelperTrait）。
+> 提醒：`demo/src/Model/CrossModelEx.php` 这名字听起来像「跨库模型」，但它的内容只是个 `foo()` 空壳样板——**不要从名字推断用法**，跨库按上面的 tag 写法来。
 
-## 编写规范
+### 7. 和业务层的接口约定
 
-1. **一个 Model 类对应一张表**，类名 = 表名（驼峰转蛇形）+ `Model` 后缀
-   - `user` → `UserModel`
-   - `order_item` → `OrderItemModel`
+模型对外的方法按「业务需要什么」来命名，而不是把表的字段全铺出去：
 
-2. **Model 不调 Model**：一个 Model 调用另一个 Model 虽然技术上可行，但建议通过 Business 层编排
+```php
+// Business 里
+$total = NoteModel::_()->countByUser($userId);
+$rows  = NoteModel::_()->listByUser($userId, $page);
+// 视图层配合分页：Helper::PageHtml($total)（第 12 章）
+```
 
-3. **Model 不做格式转换**：输出格式（如日期格式、金额显示）应在 Business 层或 View 层处理
+## 常见写法
 
-4. **复杂查询封装为命名清晰的方法**：`searchByStatusAndDate()` 比 `fetchAll()` 更可读
+**① 一个模型一张表，方法名说业务**
 
-5. **事务控制在 Business 层**，Model 层只负责单表操作
+```php
+public function countByUser(int $userId): int
+{
+    return (int)$this->fetchColumn("select count(*) from `'TABLE'` where user_id=?", $userId);
+}
+```
 
-## 配置数据库连接
+**② 软删**
 
-参见 [数据库](database.md) 一章。
+```php
+Helper::Db()->deleteData('note', $id);          // DbAdvanceTrait 的软删，默认写 is_deleted
+// 或自己在模型里写：update ... set is_deleted=1 where id=?
+```
+
+**③ 通用查询抽到工程基类，别复制粘贴**
+
+```php
+abstract class Base
+{
+    use ModelTrait;
+
+    public function paginate(int $page, int $size = 10): array
+    {
+        return $this->getList([], $page, $size);       // 所有模型共用
+    }
+}
+```
+
+**④ 只读模型显式走读连接**
+
+```php
+public function hotList(int $n): array
+{
+    return Helper::DbForRead()->fetchAll("select * from `'TABLE'` order by views desc limit " . (int)$n);
+}
+```
+
+**⑤ 事务放业务层，模型只提供原子操作**
+
+```php
+// Business 里
+$pdo = Helper::Db()->PDO();
+$pdo->beginTransaction();
+try {
+    OrderModel::_()->create($order);
+    OrderItemModel::_()->createMany($items);
+    $pdo->commit();
+} catch (\Throwable $ex) {
+    $pdo->rollBack();
+    throw $ex;                 // 交给异常机制（第 18 章）
+}
+```
+
+## 常见错误
+
+| 现象 | 原因 | 改法 |
+|---|---|---|
+| `Call to protected method ...::add()` | `ModelTrait` 的 CRUD 是 protected（刻意设计） | 在模型里写 public 包装方法对外暴露 |
+| 找不到表 | 类名推导不合预期（`UserProfileModel` → `userprofile`） | 构造函数里显式 `$this->table_name = 'user_profile'` |
+| 表名前缀没生效 | SQL 里手写表名，没走 `` `'TABLE'` `` 宏 | 用宏，或调 `$this->prepare($sql)` |
+| 模型里抛业务异常 / 写权限判断 | 越界：那是 Business 的活 | 挪到 Business，模型只返回数据 |
+| Business 里出现 `Helper::Db()` 裸 SQL | 越界：绕过模型层 | 把 SQL 收进模型，业务只调模型方法 |
+| 读连接查不到刚写的数据 | 读写分离延迟，`fetch*` 默认走读连接 | 需要强一致时显式用写连接 |
+| 模型变成几百行「上帝类」 | 一张表堆了太多业务语义 | 判断逻辑回 Business，按业务拆方法 |
+| 覆盖模型类后没生效 | 用了 `new NoteModel()` 而不是 `NoteModel::_()` | 一律 `::_()`（覆盖依赖容器，[第 29 章](overriding.md)） |
+
+## 下一步
+
+- [第 15 章 表单与数据验证](validator.md)：入库前的校验放在业务层。
+- [第 18 章 异常与错误处理](exception.md)：数据层错误怎么变成用户看得懂的响应。
+- [第 29 章 重写与覆盖](overriding.md)：模型/控制器的覆盖与替换。
+- 参考手册：[DuckPhp\Foundation\ModelTrait](../reference/Foundation-ModelTrait.md)、[DuckPhp\Helper\ModelHelperTrait](../reference/Helper-ModelHelperTrait.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)。

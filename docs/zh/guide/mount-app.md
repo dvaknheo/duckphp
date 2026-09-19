@@ -1,7 +1,7 @@
-# 27 把外部应用挂进来
+# 26 把外部应用挂进来
 
 > 解决什么问题：手上有一个**不是你写的** DuckPHP 应用（同事的模块、老项目、`vendor/` 里的包），如何原封不动地挂进当前项目。
-> 前置：[第 26 章 应用树与相位基础](advanced-phase.md)。预计 15 分钟。
+> 前置：[第 25 章 应用树与相位基础](advanced-phase.md)。预计 15 分钟。
 > 示例：`tests/data_for_tests/ZThirdDemo`（主应用 + `third/` 里的第三方应用），跑 `tests/ZThirdDemoTest.php` 可验证。
 
 ## 三步走
@@ -48,9 +48,9 @@ class MainApp extends DuckPhp
 | `path` / `namespace` | 决定它的视图、配置、控制器从哪找 | 它自己声明了就不用管；没声明就在 `app` 里补 |
 | 欢迎页控制器是不是 `Main` | 只有 welcome 类是 `Main` 时它的首页才是 `/shop/`，否则是 `/shop/Xxx/index` | 保持默认，或用 `controller_welcome_class` |
 | `controller_url_prefix` | 少一个尾斜杠就会拼出 `/shopXxx/index` | 写 `'shop/'` |
-| 资源目录 | 它的 `res/` 要能通过 URL 访问 | 配 `controller_resource_prefix`（第 28 章） |
+| 资源目录 | 它的 `res/` 要能通过 URL 访问 | 配 `controller_resource_prefix`（第 27 章） |
 | 数据库 | 它是否该用**独立的**连接 | 注入 `local_database => true` + `database_list` |
-| CLI 命令 | 它的命令会带相位前缀 | `php cli.php shop-<命令>`（第 23 章） |
+| CLI 命令 | 它的命令会带相位前缀 | `php cli.php shop-<命令>`（第 22 章） |
 
 ## 它其实是「一个完整应用」
 
@@ -61,7 +61,7 @@ third/                        ← 它自己的根（path）
 ├── System/ThirdApp.php       ← 它的入口类，继承 DuckPhp
 ├── Controller/MainController.php
 ├── Business/ShopBusiness.php
-├── view/                     ← 它的视图（主应用可以按相位覆盖，见第 30 章）
+├── view/                     ← 它的视图（主应用可以按相位覆盖，见第 29 章）
 ├── config/                   ← 它的配置（同上）
 └── res/                      ← 它的资源（同上）
 ```
@@ -80,7 +80,7 @@ class ThirdApp extends \DuckPhp\DuckPhp
 }
 ```
 
-**不要为了接进来而改它的文件**：需要调整就在 `app` 选项里注入（第 2 步的表），需要改行为就走覆盖（第 30 章）。这样它下次升级你仍然能直接替换目录。
+**不要为了接进来而改它的文件**：需要调整就在 `app` 选项里注入（第 2 步的表），需要改行为就走覆盖（第 29 章）。这样它下次升级你仍然能直接替换目录。
 
 ## 多入口共用一套代码
 
@@ -104,7 +104,7 @@ GET /              → 主应用首页
 GET /shop/         → 第三方应用首页（视图来自它自己，除非被覆盖）
 GET /shop/native   → 它的其它动作
 GET /shop/res/*.css→ 它的静态资源
-GET /legacy-shop   → 主应用写的重写规则指到了它（第 30 章）
+GET /legacy-shop   → 主应用写的重写规则指到了它（第 29 章）
 ```
 
 `ZThirdDemoTest` 就是照这个清单断言的，可以直接照抄成你自己项目的冒烟测试。
@@ -115,11 +115,11 @@ GET /legacy-shop   → 主应用写的重写规则指到了它（第 30 章）
 |---|---|---|
 | 子应用 404，但类都在 | 路由前缀不匹配 | 前缀带尾斜杠；确认 `path` 指向它的根目录 |
 | 找到的是主应用的同名类 | 两个应用用了同一命名空间 | 每个应用一个独立命名空间（相位隔离的是**实例**，不是类） |
-| 它的视图渲染报「变量不存在」 | 它的视图依赖它自己的 `Helper`/数据 | 别只拷视图文件；要么整目录挂，要么按第 30 章「覆盖但不搬走」 |
-| CLI 里 `php cli.php help` 看不到它的命令 | 命令按相位加前缀了 | 用 `php cli.php shop-help`，或看第 23 章的命令前缀规则 |
-| 上线后它的资源 404 | 生产用静态服务器直出，需要把 `res/` 部署到 docroot | 用 `RouteHookResource::_()->cloneResource()`（第 28 章） |
+| 它的视图渲染报「变量不存在」 | 它的视图依赖它自己的 `Helper`/数据 | 别只拷视图文件；要么整目录挂，要么按第 29 章「覆盖但不搬走」 |
+| CLI 里 `php cli.php help` 看不到它的命令 | 命令按相位加前缀了 | 用 `php cli.php shop-help`，或看第 22 章的命令前缀规则 |
+| 上线后它的资源 404 | 生产用静态服务器直出，需要把 `res/` 部署到 docroot | 用 `RouteHookResource::_()->cloneResource()`（第 27 章） |
 
 ## 下一步
 
-- [第 28 章 静态资源与文档根](static-resources.md)
-- [第 30 章 重写与覆盖](overriding.md)：不改它的文件，换掉它的视图/配置/控制器
+- [第 27 章 静态资源与文档根](static-resources.md)
+- [第 29 章 重写与覆盖](overriding.md)：不改它的文件，换掉它的视图/配置/控制器

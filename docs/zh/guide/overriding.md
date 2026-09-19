@@ -1,7 +1,7 @@
-# 30 重写与覆盖
+# 29 重写与覆盖
 
 > 解决什么问题：被挂进来的应用**一行代码都不改**，怎么换掉它的视图、配置、资源、控制器、甚至 URL。
-> 前置：[第 27 章](mount-app.md)、[第 29 章](component-sharing.md)。预计 20 分钟。
+> 前置：[第 26 章](mount-app.md)、[第 28 章](component-sharing.md)。预计 20 分钟。
 > 示例：`tests/data_for_tests/ZThirdDemo` —— 有覆盖与没覆盖两条路径都被 `ZThirdDemoTest.php` 断言过。
 
 ## 五个层次，一张总表
@@ -11,8 +11,8 @@
 | **文件级** | 父应用按「子应用 name」建同名子目录 | 子应用的视图 / 配置 / 资源 | `view/shop/index.php`、`config/shop/greet.php`、`res/shop/third.css` |
 | **类级** | `controller_class_map`（可从父应用注入给子应用） | 某个控制器类的实现 | `src/Override/ShopControllerOverride.php` |
 | **路由级** | `RouteHookRewrite` / `RouteHookRouteMap` | URL 的指向 | `MainApp::onInit()` 里的 `/legacy-shop` |
-| **视图级** | `use_admin_view` / `use_user_view` + 头尾视图选项 | `_Show()` 的渲染方式 | 第 17 章 |
-| **组件级** | `ext` 表（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*`） | 组件与扩展的装配 | 第 34 章 |
+| **视图级** | `use_admin_view` / `use_user_view` + 头尾视图选项 | `_Show()` 的渲染方式 | 第 16 章 |
+| **组件级** | `ext` 表（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*`） | 组件与扩展的装配 | 第 33 章 |
 
 ## 文件级覆盖：先讲清「谁赢」
 
@@ -119,7 +119,7 @@ MainApp::_()->options['use_user_view']  = true;    // 交给 GlobalUser（带前
 ],
 ```
 
-`EXT_*` 常量与四种取值形态见第 34 章「开发组件与扩展」（⏳ M4 落稿）与 [参考手册](../reference/Core-KernelTrait.md)。
+`EXT_*` 常量与四种取值形态见第 33 章「开发组件与扩展」（⏳ M4 落稿）与 [参考手册](../reference/Core-KernelTrait.md)。
 
 ## 优先级与冲突排查
 
@@ -132,9 +132,9 @@ MainApp::_()->options['use_user_view']  = true;    // 交给 GlobalUser（带前
 
 - **别改 `vendor/` 或被挂应用的源码**：覆盖的入口全在父应用的选项与自己的目录里，这样对方升级时你只需要替换目录。
 - **覆盖要留痕**：在父应用里集中写一处注释/清单（哪个文件覆盖了谁的什么），否则一年后没人知道为什么子应用的视图「不对」。
-- **升级后回归**：对方换了视图变量名/配置键，你的覆盖文件不会自动跟进 —— 把第 27 章的冒烟清单（`ZThirdDemoTest` 那几条）纳进 CI。
+- **升级后回归**：对方换了视图变量名/配置键，你的覆盖文件不会自动跟进 —— 把第 26 章的冒烟清单（`ZThirdDemoTest` 那几条）纳进 CI。
 
 ## 下一步
 
-- [第 31 章 安装器与 Web 安装流程](installer.md)
-- 第 34 章「开发组件与扩展」（⏳ M4 落稿）：`ext` 表与 `EXT_*` 常量
+- [第 30 章 安装器与 Web 安装流程](installer.md)
+- 第 33 章「开发组件与扩展」（⏳ M4 落稿）：`ext` 表与 `EXT_*` 常量

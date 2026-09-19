@@ -1,367 +1,207 @@
-# 异常处理
+# 18 异常与错误处理
 
-DuckPHP 提供了一套完整的异常处理机制，包括异常层级、条件抛异常、异常报告和自定义异常处理。
+> 解决什么问题：异常怎么分层、条件抛怎么写、错误页怎么配、异常报告器怎么接。
+> 前置：[第 10 章 控制器](controllers.md)、[第 15 章 表单与数据验证](validator.md)。预计 20 分钟。
+> 示例：`demo/src/Controller/ExceptionReporter.php`（报告器骨架）、`demo/view/_sys/error_404.php` / `error_500.php` / `error_maintain.php`（错误视图）。
 
-## 异常层级
-
-DuckPHP 推荐按以下层级组织异常：
-
-```
-\Exception                              # PHP 内置异常
-  └─ {project}\System\ProjectException     # 项目异常基类
-       ├─ {project}\System\BusinessException    # Business 层异常
-       └─ {project}\System\ControllerException  # Controller 层异常
-```
-
-### 创建异常类
-
-在 `src/System/` 目录下定义项目异常：
+## 最小示例
 
 ```php
-<?php
-// src/System/ProjectException.php
-namespace MyProject\System;
+<?php declare(strict_types=1);
+namespace MyProj\System;
 
-use DuckPhp\Foundation\ExceptionTrait;
+use DuckPhp\Core\ThrowOnTrait;
+use Exception;
 
-class ProjectException
+class ProjectException extends Exception
 {
-    use ExceptionTrait;  // 提供 ThrowOn() 方法
+    use ThrowOnTrait;                       // 提供 ProjectException::ThrowOn(...)
 }
+class BusinessException extends ProjectException {}
+class ControllerException extends ProjectException {}
 ```
 
 ```php
-<?php
-// src/System/BusinessException.php
-namespace MyProject\System;
-
-class BusinessException extends ProjectException
-{
-}
+// Business 层
+Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
+// 等价于：BusinessException::ThrowOn($balance < $amount, '余额不足', 2001);（exception_for_business 配成它时）
 ```
 
-```php
-<?php
-// src/System/ControllerException.php
-namespace MyProject\System;
+异常沿框架的异常管理器（[DuckPhp\Core\ExceptionManager](../reference/Core-ExceptionManager.md)）走一圈：命中已注册处理器 → 执行；否则交给默认出口 `_OnDefaultException()` 出 500 页或调试详情。
 
-class ControllerException extends ProjectException
-{
-}
+## 机制说明
+
+### 异常分层：一条铁律
+
+> ⚠️ **`DuckPhpSystemException` 只表示「框架自己出了问题」**（相位重名、直接 init 基类、缺 provider 等），工程的业务/权限/登录异常请**直接 `extends \Exception`**。想要守卫式抛法不必继承它——`use DuckPhp\Core\ThrowOnTrait;` 即可。详见 [Core-DuckPhpSystemException](../reference/Core-DuckPhpSystemException.md)。
+
+```
+\Exception                              ← PHP 内置
+  ├─ DuckPhp\Core\DuckPhpSystemException   ← 框架内部专用（工程不要继承）
+  │     └─ DuckPhp\Core\ExitException      ← exit 语义（__EXIT_EXCEPTION）
+  └─ MyProj\System\ProjectException        ← 工程异常基类（直接继承 \Exception）
+        ├─ MyProj\System\BusinessException
+        └─ MyProj\System\ControllerException
 ```
 
-### 配置异常类
+框架自带的 [UserException](../reference/GlobalUser-UserException.md) / [AdminException](../reference/GlobalAdmin-AdminException.md) 也是**直接继承 `\Exception`** 的（源码 `src/GlobalUser/UserException.php`、`src/GlobalAdmin/AdminException.php`），可作参照。
 
-在 `App` 中配置各层异常类：
+### 条件抛：ThrowOn 家族
 
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'exception_for_project'    => ProjectException::class,
-        'exception_for_business'   => BusinessException::class,
-        'exception_for_controller' => ControllerException::class,
-        'exception_reporter'       => ExceptionReporter::class,
-    ];
-}
-```
+[DuckPhp\Core\ThrowOnTrait](../reference/Core-ThrowOnTrait.md) 提供静态守卫：`XxxException::ThrowOn($flag, $message, $code)`——`$flag` 为真就抛。Helper 侧按层封装（[CoreHelper](../reference/Core-CoreHelper.md)）：
 
-| 选项 | 默认值 | 说明 |
+| 写法 | 抛出的异常类由谁定 |
+|---|---|
+| `Helper::ControllerThrowOn($flag, 'msg', $code)` | 选项 `exception_for_controller`（缺省 `\Exception`） |
+| `Helper::BusinessThrowOn($flag, 'msg', $code)` | 选项 `exception_for_business`（缺省 `\Exception`） |
+| `Helper::ProjectThrowOn($flag, 'msg', $code)` | 选项 `exception_for_project`（缺省 `\Exception`） |
+| `MyException::ThrowOn($flag, 'msg', $code)` | 就是 `MyException` 自己 |
+
+三个 `exception_for_*` 都是**隐藏选项**（`src/DuckPhp.php` 第 100–101 行只列了 business/controller；project 走 `ExceptionManager` 的同名选项），可在 App 选项里覆盖。另有 `exception_map` 可做异常类名映射（[CoreHelper](../reference/Core-CoreHelper.md)）。
+
+### 错误视图四选项 + 维护页
+
+`DuckPhp\Core\App` 的 `core_options`（源码 `src/Core/App.php` 第 51–57 行）声明了错误出口：
+
+| 选项 | 默认 | 谁触发 |
 |---|---|---|
-| `exception_for_project` | `\Exception::class` | 项目异常基类 |
-| `exception_for_business` | `null`（继承自 `exception_for_project`） | Business 层异常 |
-| `exception_for_controller` | `null`（继承自 `exception_for_project`） | Controller 层异常 |
-| `exception_reporter` | `null` | 异常报告器类名 |
+| `error_404` | `null` | `_On404()`：路由没匹配上 |
+| `error_500` | `null` | `_OnDefaultException()`：未捕获异常 |
+| `error_debug` | `null` | `_OnDevErrorHandler()`：Notice/Deprecated 等开发期错误 |
+| `error_maintain` | `null` | `prepareServe()`：`is_maintain` 或 Setting `duckphp_is_maintain` 命中 |
 
-## 条件抛异常
+值可以是**视图名**（字符串）或**可调用**。`demo/view/_sys/` 下有三个现成视图可抄：
 
-### 在 Controller 层
+- `error_404.php`：`$is_debug = __is_debug();` 为真时附路由错误与回溯；
+- `error_500.php`：非 debug 只输出 `500`，debug 输出异常类/消息/文件/行/追踪（变量 `$ex`/`$class`/`$message`/`$code`/`$trace`/`$file`/`$line`/`$is_debug` 由框架注入）；
+- `error_maintain.php`：维护页。
 
-```php
-use DuckPhp\Foundation\Controller\Helper;
+未配置时框架输出占位文本（404：`404 File Not Found<!-- … -->`；500：`Internal Error<!-- … -->`），debug 下附详情。
 
-class UserController
-{
-    public function action_profile()
-    {
-        $user = UserAction::_()->getCurrentUser();
-        
-        // 条件抛异常：未登录时抛出 ControllerException
-        Helper::ControllerThrowOn(!$user, '请先登录', 403);
-        
-        Helper::Show(get_defined_vars(), 'user/profile');
-    }
-}
-```
+### is_debug 与 IsRealDebug 的差别
 
-### 在 Business 层
+- `App::_()->options['is_debug']`：本应用的选项值；
+- `App::IsDebug()`（`_IsDebug()`，源码 `src/Core/App.php` 第 462–468 行）：**或**上 Setting 里的 `duckphp_is_debug` 与**根应用**的 `is_debug`——任一真即为真；
+- `App::IsRealDebug()`（`_IsRealDebug()`，第 473–476 行）：默认等同 `IsDebug()`，是留给上层「要区分真假 debug 再覆盖」的口子。
 
-```php
-use DuckPhp\Foundation\Business\Helper;
+视图里用全局函数 `__is_debug()`（即 `IsRealDebug()`）决定要不要显示调试块。
 
-class UserBusiness
-{
-    public function login($username, $password)
-    {
-        $user = UserModel::_()->findByUsername($username);
-        
-        // 条件抛异常：用户不存在或密码错误时抛出 BusinessException
-        Helper::BusinessThrowOn(!$user, '用户不存在', 1001);
-        Helper::BusinessThrowOn(!password_verify($password, $user['password']), '密码错误', 1002);
-        
-        return $user;
-    }
-}
-```
+### 异常报告器 ExceptionReporter
 
-### 在异常类上直接抛异常
+配了 `exception_reporter` 选项后，`ExceptionManager` 初始化时（源码 `src/Core/ExceptionManager.php` 第 45–48 行）会把「`exception_for_project`（缺省 `\Exception`）的异常」统一指给报告器的 `OnException()`。[DuckPhp\Foundation\ExceptionReporterTrait](../reference/Foundation-ExceptionReporterTrait.md) 的分发逻辑：
+
+1. 异常类名不在当前应用命名空间下 → `defaultException($ex)`（缺省转 `_OnDefaultException()`）；
+2. 取类短名拼方法名 `on{短名}()`，可调用则执行；
+3. 否则 `defaultException($ex)`。
+
+`demo/src/Controller/ExceptionReporter.php` 是骨架：
 
 ```php
-// 使用 ThrowOn 方法（需要 ExceptionTrait）
-BusinessException::ThrowOn($balance < $amount, '余额不足', 2001);
-```
-
-## 异常报告器
-
-异常报告器负责捕获并处理抛出的异常，可以按异常类型分发到不同的处理方法。
-
-### 创建异常报告器
-
-```php
-<?php
-// src/Controller/ExceptionReporter.php
-namespace MyProject\Controller;
+namespace ProjectNameTemplate\Controller;
 
 use DuckPhp\Foundation\ExceptionReporterTrait;
 
 class ExceptionReporter
 {
     use ExceptionReporterTrait;
-    
-    // 处理 BusinessException
+
     public function onBusinessException($ex)
     {
-        // 记录日志、发送通知等
-        Logger::_()->warning('Business error: ' . $ex->getMessage());
-        
-        // 返回错误响应
-        Helper::ShowJson(['error' => $ex->getMessage(), 'code' => $ex->getCode()]);
+        // 记日志 / 出 JSON / 302 …
     }
-    
-    // 处理 ControllerException
-    public function onControllerException($ex)
+    public static function onControllerException($ex)
     {
-        // 权限错误等
-        Helper::Show302('login');
-    }
-    
-    // 处理其他项目异常（兜底）
-    public function defaultException($ex)
-    {
-        // 调用框架默认处理
-        App::Current()->_OnDefaultException($ex);
+        // 静态方法也可以
     }
 }
 ```
 
-### 异常报告器工作原理
+对应关系：`BusinessException` → `onBusinessException()`、`ControllerException` → `onControllerException()`、`ProjectException` → `onProjectException()`、其它 → `defaultException()`。
 
-`ExceptionReporterTrait` 的 `OnException` 方法按以下逻辑分发：
+### 异常安全包装：Ext\ExceptionWrapper
 
-1. 获取异常类名（如 `MyProject\System\BusinessException`）
-2. 检查异常是否属于当前项目命名空间
-3. 如果不是项目异常，调用 `defaultException()`
-4. 如果是项目异常，提取类名（如 `BusinessException`）
-5. 查找对应的处理方法（如 `onBusinessException()`）
-6. 如果找到则调用，否则调用 `defaultException()`
-
-### 方法命名规则
-
-| 异常类名 | 处理方法 |
-|---------|---------|
-| `BusinessException` | `onBusinessException($ex)` |
-| `ControllerException` | `onControllerException($ex)` |
-| `ProjectException` | `onProjectException($ex)` |
-| 其他（非项目异常） | `defaultException($ex)` |
-
-## 框架默认异常处理
-
-当未配置 `exception_reporter` 或异常未被报告器处理时，框架使用默认处理：
-
-### 调试模式（`is_debug = true`）
-
-- 显示详细的错误信息（异常类、消息、堆栈跟踪）
-- 便于开发和调试
-
-### 生产模式（`is_debug = false`）
-
-- 显示 `error_500` 配置的视图（如 `_sys/error_500`）
-- 记录错误日志（如果启用 `default_exception_do_log`）
-- 不暴露敏感信息
-
-## 配置错误视图
-
-框架通过选项控制不同错误场景的显示内容：
-
-| 选项 | 默认值 | 说明 |
-|------|--------|------|
-| `is_debug` | `false` | 是否启用调试模式 |
-| `error_debug` | `null` | 调试错误视图文件路径（`is_debug=true` 时生效） |
-| `error_500` | `'_sys/error_500'` | 500 错误视图 |
-| `error_404` | `'_sys/error_404'` | 404 错误视图 |
-| `error_maintain` | `null` | 维护模式提示信息（字符串、callable 或视图名） |
-
-### 典型配置
+[DuckPhp\Ext\ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)（源码 `src/Ext/ExceptionWrapper.php`）把对象包一层：经 `__call` 的方法调用被 try/catch 包住——正常返回结果，抛 `\Exception` 时**把异常对象当返回值**交回（不抛）。只捕获 `\Exception`，不捕获 `\Error`。
 
 ```php
-class App extends DuckPhp
+$safe = ExceptionWrapper::Wrap($someClient);
+$ret  = $safe->request('https://…');   // 成功→结果；抛异常→返回 $ex
+$obj  = ExceptionWrapper::Release();    // 取回被包装对象
+```
+
+## 常见写法
+
+### 1. 配置异常体系
+
+```php
+// MyProj\System\App
+public $options = [
+    'exception_for_project'    => ProjectException::class,
+    'exception_for_business'   => BusinessException::class,
+    'exception_for_controller' => ControllerException::class,
+    'exception_reporter'       => ExceptionReporter::class,
+
+    'error_404'      => '_sys/error_404',
+    'error_500'      => '_sys/error_500',
+    'error_debug'    => '_sys/error-debug',
+    'error_maintain' => '_sys/error_maintain',
+];
+```
+
+### 2. 按层条件抛
+
+```php
+// Controller
+Helper::ControllerThrowOn(!$user, '请先登录', 403);
+// Business
+Helper::BusinessThrowOn(!password_verify($password, $user['password']), '密码错误', 1002);
+```
+
+### 3. 在 App 里覆盖默认出口
+
+```php
+public function _OnDefaultException($ex): void
 {
-    public $options = [
-        'is_debug' => true,                     // 上线前改为 false
-        
-        // 开发环境：显示详细错误
-        'error_debug' => '_sys/error-debug.php',
-        
-        // 生产环境：显示友好页面（与 error_debug 互斥）
-        //'error_500' => '_sys/error_500.php',
-        //'error_404' => '_sys/error_404.php',
-    ];
+    Logger::_()->error($ex->getMessage());
+    // 发通知、打点 …
+    parent::_OnDefaultException($ex);
 }
 ```
 
-### 自定义错误页面
-
-在 `view/_sys/` 下放模板文件，框架会在对应错误发生时自动渲染：
-
-```php
-<!-- view/_sys/error_404.php -->
-<h1>页面不存在</h1>
-<p>您访问的页面未找到，请检查地址是否正确。</p>
-```
-
-```php
-<!-- view/_sys/error_500.php -->
-<h1>服务器内部错误</h1>
-<p>请稍后再试。</p>
-```
-
-### error_maintain 维护模式
-
-`error_maintain` 可以设置为字符串、callable 或视图名：
-
-```php
-// 简单文本
-'error_maintain' => '系统维护中，请稍后再试。',
-
-// 渲染视图
-'error_maintain' => '_sys/maintain',
-
-// 回调函数
-'error_maintain' => function () { echo '维护中...'; },
-```
-
-## 自定义异常处理
-
-### 覆盖默认异常处理
-
-在 `App` 中覆盖 `_OnDefaultException` 方法：
-
-```php
-class App extends DuckPhp
-{
-    public function _OnDefaultException($ex): void
-    {
-        // 自定义错误处理逻辑
-        
-        // 记录日志
-        Logger::_()->error($ex->getMessage());
-        
-        // 发送错误通知（如邮件、钉钉）
-        // NotifyService::_()->sendErrorAlert($ex);
-        
-        // 调用父类默认处理
-        parent::_OnDefaultException($ex);
-    }
-}
-```
-
-### 使用 ExceptionManager 注册自定义处理器
+### 4. 用 ExceptionManager 注册处理器
 
 ```php
 use DuckPhp\Core\ExceptionManager;
 
-// 注册特定异常类型的处理器
-ExceptionManager::_()->assignExceptionHandler(
-    ValidationException::class,
-    function ($ex) {
-        // 返回验证错误响应
-        Helper::ShowJson(['errors' => $ex->errors]);
-    }
-);
-
-// 注册多个异常类型的统一处理器
+ExceptionManager::_()->assignExceptionHandler(ValidationException::class, function ($ex) {
+    Helper::ShowJson(['errors' => $ex->errors]);
+});
 ExceptionManager::_()->setMultiExceptionHandler(
     [BusinessException::class, ControllerException::class],
-    function ($ex) {
-        // 统一处理
-    }
+    function ($ex) { /* 统一处理 */ }
 );
-
-// 设置默认异常处理器
-ExceptionManager::_()->setDefaultExceptionHandler(
-    function ($ex) {
-        // 处理所有未被捕获的异常
-    }
-);
+ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) { /* 兜底 */ });
 ```
 
-## 开发错误处理
+### 5. 接管 PHP 错误（开发期）
 
-框架自动捕获 PHP 错误（Notice、Warning 等）并转换为异常：
+`ExceptionManager` 选项（默认全开）：`handle_all_dev_error`（Notice/Deprecated 走 `_OnDevErrorHandler()`，其它级别转 `\ErrorException`）、`handle_all_exception`（未捕获异常进 `_CallException()`）。生产环境通常保持默认；只想关错误接管就把 `handle_all_dev_error` 设为 `false`。
 
-```php
-// 触发一个 Notice
-$undefined = $nonexistent_var;  // 被转换为 ErrorException
-```
+## 常见错误
 
-### 配置开发错误处理
+| 现象 | 原因 | 改法 |
+|---|---|---|
+| 业务异常继承了 `DuckPhpSystemException` | 把「框架坏了」和「业务出错」混在一起 | 改 `extends \Exception`；要 `ThrowOn()` 就 `use ThrowOnTrait` |
+| 配了 `exception_reporter` 却没被调用 | 异常类不在当前应用命名空间，或 `exception_for_project` 没配 | 异常类放到 `namespace` 选项对应的命名空间下；或给 `exception_for_project` 配公共基类 |
+| 报告器方法没命中 | 方法名不是 `on{异常类短名}` | 对照 `ExceptionReporterTrait::OnException()` 的拼法 |
+| 404 页不出来，只有占位文本 | `error_404` 没配，或应用在 init 完成前就 404 | 配 `'error_404' => '_sys/error_404'`；init 完成前的错误只出占位 |
+| 生产环境泄露了异常详情 | `is_debug` 为真，或视图里没判 `__is_debug()` | 上线置 `false`；错误视图里用 `__is_debug()` 包调试块 |
+| `IsDebug()` 莫名为真 | 根应用或 Setting 里 `duckphp_is_debug` 为真 | 用 `IsRealDebug()` 或检查根/设置 |
+| 维护页不生效 | 只配了 `error_maintain` 没置 `is_maintain` | 同时置 `'is_maintain' => true` 或 Setting `duckphp_is_maintain` |
+| `ExceptionWrapper` 没接住 `\Error` | 它只捕获 `\Exception` | `\Error` 属编程错误，应让它抛出来修 |
 
-```php
-$options = [
-    'handle_all_dev_error' => true,   // 是否处理 PHP 错误
-    'handle_all_exception' => true,   // 是否处理未捕获异常
-];
-```
+## 下一步
 
-## 异常处理流程图
-
-```
-抛出异常
-  │
-  ▼
-ExceptionManager._CallException()
-  │
-  ├─ 匹配 exceptionHandlers 中的注册处理器
-  │     └─ 找到匹配 → 执行自定义处理器
-  │
-  └─ 未匹配 → 执行 default_exception_handler
-        │
-        ├─ 配置了 exception_reporter
-        │     └─ ExceptionReporter::OnException()
-        │           ├─ 匹配 on{ExceptionClass}() → 执行
-        │           └─ 未匹配 → defaultException()
-        │
-        └─ 未配置 exception_reporter
-              └─ App::_OnDefaultException()
-                    ├─ 调试模式 → 显示详细错误
-                    └─ 生产模式 → 显示 error_500 视图
-```
-
-## 最佳实践
-
-1. **按层使用对应异常**：Controller 层用 `ControllerException`，Business 层用 `BusinessException`
-2. **使用条件抛异常**：用 `Helper::ControllerThrowOn()` / `Helper::BusinessThrowOn()` 替代 `if + throw`
-3. **异常消息用户友好**：异常消息最终会展示给用户，应使用易懂的语言
-4. **异常代码有含义**：使用有意义的错误代码，便于前端根据 code 做不同处理
-5. **异常报告器做日志**：在 `ExceptionReporter` 中记录异常日志，便于排查问题
-6. **生产环境不暴露细节**：确保 `is_debug = false` 时不会泄露敏感信息
+- [第 19 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
+- [第 17 章 请求生命周期与钩子点](lifecycle.md)：异常发生在请求时序的哪一环。
+- [第 6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 与日志分级的入门。
+- 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-ExceptionReporterTrait.md)、[Ext-ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)、[Core-ThrowOnTrait](../reference/Core-ThrowOnTrait.md)

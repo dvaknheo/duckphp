@@ -96,7 +96,7 @@ Helper::Show(['title' => 'Hello DuckPHP'], 'main/index');
 # 开发用内置服务器（最简单）
 php -S 127.0.0.1:8080 -t public
 
-# 或者用框架自带的常驻 HTTP 服务（第 37 章），同样是内置服务器
+# 或者用框架自带的常驻 HTTP 服务（第 36 章），同样是内置服务器
 php bin/cli.php run                 # 默认 127.0.0.1:8080，文档根 public/
 php bin/cli.php run --port=9000     # 换端口
 ```
@@ -116,7 +116,7 @@ foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../vendor/autoload
 ```
 
 ```bash
-php bin/cli.php help        # 列出所有可用命令（第 23 章）
+php bin/cli.php help        # 列出所有可用命令（第 22 章）
 php bin/cli.php version
 ```
 
@@ -129,7 +129,7 @@ require __DIR__ . '/src/Core/AutoLoader.php';
 spl_autoload_register([\DuckPhp\Core\AutoLoader::class, 'DuckPhpSystemAutoLoader']);
 ```
 
-自己的项目要这么用时，再给工程命名空间加一条映射即可（第 36 章）。
+自己的项目要这么用时，再给工程命名空间加一条映射即可（第 35 章）。
 
 ## 目录一览（细节见第 3 章）
 

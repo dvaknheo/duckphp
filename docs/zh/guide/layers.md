@@ -1,581 +1,226 @@
-# 四层架构（Controller → Business → Model → View）
+# 8 四层架构与调用规范
 
-DuckPHP 采用 **Controller（控制器）→ Business（业务）→ Model（模型）→ View（视图）** 四层架构。
+> 解决什么问题：DuckPHP 把「谁可以调谁」当成**约定**而不是建议——这一章给你第二卷的总图和铁律，后面 9–16 章都是往这张图上挂东西。
+> 前置：[第 3 章 目录结构与编码规则](project-structure.md)、[第 4 章 第一个页面](quickstart.md)。预计 20 分钟。
+> 示例：`demo/public/demo.php`（单文件五层示范，能直接跑）与 `tests/data_for_tests/ZAllDemo`（多文件骨架）。跑法：
 
-### 完整层级总览
-
-```
-Controller 层 (可处理请求上下文)
-  ├── MainController      路由入口，输入输出（调 Business）
-  ├── Helper              静态辅助方法
-  ├── Session             纯状态容器（不调其他类）
-  └── Action              功能复用
-                                │
-Business 层 (纯无状态)           ▼
-  ├── UserBusiness         业务逻辑（调 Model）
-  ├── Service              通用功能（调 Model）
-  └── Helper               静态辅助方法
-                                │
-Model 层 (纯无状态)              ▼
-  └── UserModel            数据访问（单表 CRUD）
-                                │
-View 层                         ▼
-  └── *.php                模板渲染
+```bash
+php -S 127.0.0.1:8080 -t demo/public
+# 浏览器打开 http://127.0.0.1:8080/demo.php
 ```
 
-> **编码规则**：`Controller`、`Business`、`Model` 层除基础代码外，请勿直接调用 `DuckPhp` 命名空间下的类。框架相关调用集中在 `System` 层处理。
+**本卷地图**——第二卷（8–24 章）就是往本章这张图上挂东西：
 
-## 控制器（Controller）
+| 阶段 | 章 | 讲什么 |
+|---|---|---|
+| 规范 | **8** | 本章：四层各管什么、谁不能调谁 |
+| 请求路径 | 9–13 | [路由](routing.md) → [控制器](controllers.md) → [视图](views.md) → [数据库](database.md) → [模型](model.md) |
+| 横切能力 | 14–16 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话与用户体系](external-auth.md) |
+| 框架机制 | 17–19 | [生命周期与钩子](lifecycle.md)、[异常](exception.md)、[事件](events.md) |
+| 进阶 | 20–24 | [缓存](cache.md)、[国际化](i18n.md)、[命令行](cli.md)、[测试](testing.md)、[安全与性能](security-performance.md) |
 
-控制器是 HTTP 请求的入口，负责：
-- 接收用户输入（GET/POST 等）
-- 调用 Business 层处理业务
-- 决定输出（视图/JSON/重定向等）
+## 最小示例
 
-### 基础用法
+四层的全部骨架，就是下面五个片段（取自 `tests/data_for_tests/ZAllDemo`，每个文件都很短，这就是它的全部内容）：
 
 ```php
-<?php
-namespace MyProject\Controller;
-
-use MyProject\Business\MyBusiness;
-use DuckPhp\Foundation\Controller\Helper;
-
-class MyController
-{
-    public function action_index()
-    {
-        // 获取业务数据
-        $data = MyBusiness::_()->getList();
-        
-        // 渲染视图
-        Helper::Show(get_defined_vars(), 'my/index');
-    }
-    
-    public function action_detail()
-    {
-        $id = Helper::GET('id');
-        $item = MyBusiness::_()->getDetail($id);
-        
-        Helper::Show(get_defined_vars());
-        // 视图文件默认为 控制器类名/方法名，即 MyController/action_detail
-    }
-}
+// public/index.php —— 入口只做一件事：把请求交给应用类
+\YourProjectName\System\App::RunQuickly([]);
 ```
 
-### 使用 Foundation Base 类（推荐）
-
 ```php
-<?php
-namespace MyProject\Controller;
+// src/Controller/MainController.php —— 控制器：拿输入、调业务、出输出
+namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\Controller\Base;
+use YourProjectName\Business\DemoBusiness;
 
 class MainController extends Base
 {
-    public function action_index()
+    public function index()
     {
-        Helper::Show(get_defined_vars(), 'main');
+        $var = __h(DemoBusiness::_()->foo());   // 业务给数据，__h() 做 HTML 转义
+        Helper::Show(get_defined_vars(), 'main'); // 交给视图渲染（数据在前、视图名在后）
     }
 }
 ```
-
-继承 `Foundation\Controller\Base` 后，自动获得：
-- `_()` 可变单例调用
-- 控制器 URL 自动替换功能
-- 类名检查（`controller_class_postfix` + `controller_class_base`）
-
-### Helper 方法速查
-
-| 方法 | 说明 |
-|---|---|
-| `Helper::Show($data, $view)` | 渲染视图 |
-| `Helper::Display($view, $data)` | 直接显示视图片段 |
-| `Helper::Render($view, $data)` | 渲染为字符串 |
-| `Helper::GET($key)` | 获取 `$_GET` |
-| `Helper::POST($key)` | 获取 `$_POST` |
-| `Helper::REQUEST($key)` | 获取 `$_REQUEST` |
-| `Helper::SERVER($key)` | 获取 `$_SERVER` |
-| `Helper::COOKIE($key)` | 获取 `$_COOKIE` |
-| `Helper::Url($url)` | 生成 URL |
-| `Helper::Res($url)` | 生成资源 URL |
-| `Helper::ShowJson($data)` | 输出 JSON |
-| `Helper::Show302($url)` | 重定向 |
-| `Helper::Show404()` | 显示 404 |
-| `Helper::header(...)` | 设置 HTTP 头 |
-| `Helper::exit()` | 终止请求 |
-| `Helper::Parameter($key)` | 获取路由参数 |
-| `Helper::PageNo()` | 获取当前页码 |
-| `Helper::PageHtml($total)` | 生成分页 HTML |
-
-### Session 管理（纯状态容器）
-
-Session 属于 Controller 层的职责。推荐的 `Controller\Session` 类只做状态存取，**不调用任何其他类**
-```php
-<?php
-namespace MyProject\Controller;
-
-use DuckPhp\Foundation\SessionTrait;
-
-class Session
-{
-    use SessionTrait;  // 自带惰性 session_start() + get/set/unset
-    
-    const KEY_USER_ID = 'user_id';
-    
-    public function setUserId($id): void
-    {
-        $this->set(static::KEY_USER_ID, $id);
-    }
-    
-    public function getUserId(): int
-    {
-        return (int)$this->get(static::KEY_USER_ID, 0);
-    }
-    
-    public function clearUserId(): void
-    {
-        $this->unset(static::KEY_USER_ID);
-    }
-    
-    public function isLoggedIn(): bool
-    {
-        return $this->getUserId() > 0;
-    }
-}
-```
-
-### Action （Controller 通用功能）
-
-#### 为什么需要 Action
-
-Controller 的路由方法（`action_xxx`）常常需要重复的编排逻辑。例如：
-
-- 多个路由都需要"获取当前登录用户"
-- 登录、注册都需要"验证凭据 → 写入 Session"
-- 多个 Controller 都可能用到同一套编排
-
-把这些通用逻辑提取到 `Controller\UserAction` 等 **Action 类**中，让路由方法保持轻薄。
-
-#### Action 示例
 
 ```php
-<?php
-namespace MyProject\Controller;
+// src/Business/DemoBusiness.php —— 业务：编排逻辑，不碰请求上下文
+namespace YourProjectName\Business;
 
-use MyProject\Business\UserBusiness;
-use MyProject\Controller\Session;
+use YourProjectName\Model\DemoModel;
 
-class UserAction
+class DemoBusiness extends Base
 {
-    // 登录：验证凭据 + 写入 Session
-    public function login(string $username, string $password): array
+    public function foo()
     {
-        $user = UserBusiness::_()->login($username, $password);
-        Session::_()->setUserId($user['id']);
-        return $user;
-    }
-    
-    // 获取当前用户：读 Session → 通过 Business 查数据
-    public function getCurrentUser(): ?array
-    {
-        $id = Session::_()->getUserId();
-        return $id ? UserBusiness::_()->getUser($id) : null;
-    }
-    
-    public function isLoggedIn(): bool
-    {
-        return Session::_()->isLoggedIn();
-    }
-    
-    public function logout(): void
-    {
-        Session::_()->clearUserId();
+        return "<" . DemoModel::_()->foo() . ">";
     }
 }
 ```
-
-何时使用 Action  同一套编排被 **多个路由方法** 或 **多个 Controller** 共用
-
-#### 路由方法委托给 Action
 
 ```php
-class MainController
+// src/Model/DemoModel.php —— 模型：只做数据访问
+namespace YourProjectName\Model;
+
+class DemoModel extends Base
 {
-    public function action_login()
+    public function foo()
     {
-        if (UserAction::_()->isLoggedIn()) {
-            Helper::Show302(''); Helper::exit();
-        }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            try {
-                UserAction::_()->login(
-                    trim(Helper::POST('username', '')),
-                    Helper::POST('password', '')
-                );
-                Helper::Show302(''); Helper::exit();
-            } catch (\Exception $ex) {
-                $error = $ex->getMessage();
-            }
-        }
-        Helper::Show(get_defined_vars(), 'user_login');
-    }
-    
-    public function action_profile()
-    {
-        $user = UserAction::_()->getCurrentUser();
-        if (!$user) { Helper::Show302('login'); Helper::exit(); }
-        Helper::Show(get_defined_vars(), 'user_profile');
-    }
-    
-    public function action_logout()
-    {
-        UserAction::_()->logout();
-        Helper::Show302(''); Helper::exit();
+        return DATE(DATE_ATOM);
     }
 }
 ```
 
-#### 三层职责对照
+```php
+<!-- view/main.php —— 视图：只显示 -->
+<h1><?= $var ?></h1>
+```
 
-| 类 | 定位 | 能调用的对象 | 不能调用的对象 |
+调用链是一条直线，没有回头路：
+
+```
+HTTP 请求 → 路由 → MainController::index()
+                        │  取输入（Helper::GET/POST/Parameter）
+                        ▼
+                  DemoBusiness::foo()      ← 业务编排、校验、拼装
+                        │
+                        ▼
+                  DemoModel::foo()         ← 数据访问（Db）
+                        │
+                        ▼
+                  Helper::Show(数据, 视图)  ← 渲染，结束
+```
+
+想看得更全一点，`demo/public/demo.php` 把五层塞进了一个文件里（应用类 `MySpace\System\App`、控制器 `MySpace\Controller\MainController`、业务 `MySpace\Business\MyBusiness`、模型 `MySpace\Model\MyModel`、可调用视图 `MySpace\View\Views`），适合对照着看「同一件事在四层里分别长什么样」。
+
+## 机制说明
+
+### 1. 五层各自的职责与边界
+
+| 层 | 职责 | 可以做 | **不可以做** |
 |---|---|---|---|
-| `Session` | 状态容器 | 无（纯容器） | — |
-| `UserAction` | Controller 通用功能 | `Session`, `Business`, `Helper` | **❌ Model** |
-| `MainController` | 路由入口 | `Action`, `Business`, `Helper` | — |
+| **Controller** | 请求的入口与出口 | 取输入、调 Business、把数据交给视图、跳转、404 | 写业务规则、直接查数据库、拼 SQL |
+| **Business** | 业务逻辑编排 | 调 Model、调 Service、条件抛业务异常 | 读写 `$_GET`/`$_POST`/`$_SERVER`/Session，依赖当前请求 |
+| **Model** | 数据访问 | 调 Db、按表做 CRUD、返回数组/对象 | 写业务判断、抛业务异常、调 Business |
+| **View** | 显示 | 用 Helper 与全局函数输出、读控制器给的数据 | 查数据库、调 Business、写业务逻辑 |
+| **System** | 接线（不属于四层） | 配置、注册事件/命令、装配应用类 | 混进业务代码里被四层反向依赖 |
 
-#### 调用链
+> **编码规则**：`Controller`、`Business`、`Model`、`View` 四层里，除 Helper 与全局函数外，**不要直接 `use` `DuckPhp\*` 的框架类**；框架相关的调用集中在 `System` 层，或由 `Helper` 代劳。这条规则的意义在第三卷会体现：包装配（`ext`、覆盖、相位）全都发生在 `System` 层，业务代码因此可以整片复用。
 
-```
-注册:
-  MainController::action_register()
-    → UserAction::register()           ← 编排
-        → Business::register()         ← 纯数据验证+入库
-        → Session::setUserId()         ← 存状态
+### 2. 越界矩阵（本章最重要的一张表）
 
-查个人资料:
-  MainController::action_profile()
-    → UserAction::getCurrentUser()     ← 编排
-        → Session::getUserId()         ← 读状态
-        → Business::getUser()          ← 通过 Business 查数据
-```
+左列「调用方」去调右列「被调方」，✅ 允许、⚠️ 有条件、❌ 禁止：
 
-### Setting 和 Config 读取
+| 调用方 ↓ / 被调方 → | Controller | Business | Service | Model | Db | View | Session |
+|---|---|---|---|---|---|---|---|
+| **Controller** | ⚠️ 仅同层复用走 Action | ✅ | ✅ | ❌ | ❌ | ✅（通过 `Helper::Show`） | ⚠️ 只经 Helper |
+| **Business** | ❌ | ⚠️ 同层走 Service | ✅ | ✅ | ❌（经 Model） | ❌ | ❌ |
+| **Service** | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **Model** | ❌ | ❌ | ❌ | ⚠️ 跨库模型例外 | ✅ | ❌ | ❌ |
+| **View** | ❌ | ❌ | ❌ | ❌ | ❌ | — | ❌ |
+| **System** | ⚠️ 只在接线时 | ⚠️ 只在接线时 | ⚠️ | ⚠️ | ✅ | ✅ | ✅ |
 
-```php
-// 从 DuckPhpSettings.config.php 读取设置
-Helper::Setting('database_list');
+三条最容易记错的：
+- **控制器不碰 Db/Model**：一次「顺手查一下」就是越界，因为它绕过了业务规则（校验、权限、事务边界都写在 Business 里）。
+- **业务不碰请求上下文**：`Business` 拿到的一切都应该由参数传进来。理由见下一节。
+- **视图只读不写**：视图里查库或调业务，等于把渲染变成了第二次业务执行。
 
-// 从 config/{name}.php 读取配置
-Helper::Config('app', 'key');
-```
+### 3. 为什么 Business 必须无状态
 
-## 业务层（Business）
+这不是洁癖，有三个很具体的后果：
 
-Business 层是 DuckPHP **特别强调**的中间层，负责业务逻辑的编排。
+1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 22 章](cli.md)）、定时任务、测试（[第 23 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
+2. **多应用/相位下会被共享或复制**：第三卷的应用树里，子应用与父应用可能各自持有一份组件（[第 28 章](component-sharing.md)），带状态的业务类会随相位漂移，出现「同一个请求里两份状态」。
+3. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
 
-### 核心原则：无状态
+所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`、`Helper::Session()` 之类），Business 的入参一律显式传。
 
-Business 层必须是**纯无状态**的 —— 不依赖任何请求上下文、不读写 Session、不操作 `$_GET`/`$_POST`/`$_SERVER` 等超全局变量。
+### 4. Helper 的分层：四层各有一套
 
-当多个 Business 类需要共享同一段逻辑时，提取到 **Service** 类中。
+框架把「能用什么便捷方法」也按层切开了——`Helper` 不是一个大杂烩，而是按层拆成 trait：
 
+| 层 | 工程侧的类（`YourProjectName\<层>\Helper`） | 背后的 trait | 典型方法 |
+|---|---|---|---|
+| Controller | `Controller\Helper` | `DuckPhp\Helper\ControllerHelperTrait` | `Show()`、`ShowJson()`、`Show302()`、`GET()`、`POST()` |
+| Business | `Business\Helper` | `DuckPhp\Helper\BusinessHelperTrait` | `Setting()`、`Config()`、`BusinessThrowOn()`、`XpCall()` |
+| Model | `Model\Helper` | `DuckPhp\Helper\ModelHelperTrait` | 模型侧便捷方法 |
+| 应用/接线 | `System\Helper` | `DuckPhp\Helper\AppHelperTrait` | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
 
-### 正确示例
+这些 `Xxx\Helper` 类本身极短（`tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` 只有 `use` 两行 + 一个空类），也可以直接用框架现成的 `DuckPhp\Foundation\Controller\Helper` 等类。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 
-```php
-<?php
-namespace MyProject\Business;
+视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](appendix-global-functions.md)）：
 
-use DuckPhp\Foundation\Business\Base;
-
-class MyBusiness extends Base
-{
-    public function getList()
-    {
-        // 调用 Model 获取数据
-        $data = MyModel::_()->getAll();
-        
-        // 组装业务逻辑
-        $processed = array_map(function ($item) {
-            $item['display_name'] = strtoupper($item['name']);
-            return $item;
-        }, $data);
-        
-        return $processed;
-    }
-}
-```
-
-作为单例调用：
-
-```php
-MyBusiness::_()->getList();    // 当前相位下的单例
-```
-
-### Business Helper 方法
-
-| 方法 | 说明 |
+| 函数 | 用途 |
 |---|---|
-| `Helper::Setting($key)` | 读取全局设置 |
-| `Helper::Config($file, $key)` | 读取配置文件 |
-| `Helper::BusinessThrowOn($flag, $message)` | 条件抛业务异常 |
-| `Helper::Cache()` | 获取缓存实例 |
-| `Helper::XpCall()` | 安全调用（捕获异常） |
-| `Helper::AdminService()` | 获取管理员服务 |
-| `Helper::UserService()` | 获取用户服务 |
+| `__h($str)` | HTML 转义输出（防 XSS 的第一道） |
+| `__url($url)` / `__domain()` | 生成站内 URL / 域名前缀 |
+| `__res($url)` | 生成静态资源 URL（[第 27 章](static-resources.md)） |
+| `__json($data)` | JSON 编码 |
+| `__l($str)` / `__langtext()` / `__hl()` | 多语言与转义组合（[第 21 章](i18n.md)） |
+| `__logger()`、`__debug_log()`、`__var_log()` | 日志（[第 6 章](debugging.md)） |
 
+### 5. 框架其实不强制这套约定
 
+要说清楚：DuckPHP **没有**运行时拦截器去阻止你在控制器里 `new DemoModel()`。违反约定的代价不是报错，而是这些能力悄悄失效——
 
+- 覆盖（[第 29 章](overriding.md)）失效：覆盖靠「替换类/替换文件」，越界直连的调用链绕过了替换点；
+- 多应用（[第 25 章](advanced-phase.md)）失效：跨相位直连拿到的是别的相位（或根相位）的实例；
+- 测试与 CLI 复用困难（第 22、23 章）；
+- 业务规则出现第二份实现：一边在 Business 里校验，一边在控制器里也校验。
 
+所以这一章的铁律，本质是「为了保住框架那几个杀手锏，请把边界守住」。
+
+## 常见写法
+
+**① Service：给多个 Business 共享的逻辑**
+Service 没有专门的基类或注册机制，就是「放在 `Business/` 目录下、被多个 Business 调用、且不碰请求上下文」的普通类；`demo/src/Business/CommonService.php` 是它的占位样板（目前是空壳，用来告诉你文件该放哪）：
 
 ```php
-<?php
-namespace MyProject\Business;
-
-use MyProject\Model\LogModel;
+namespace MyProj\Business;
 
 class CommonService
 {
-    use \DuckPhp\Foundation\BusinessTrait;
-    
     public function writeAuditLog(string $action, array $data): void
     {
-        LogModel::_()->addLog([
-            'action' => $action,
-            'data' => json_encode($data),
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? '',  // 注意：Service 也不读写 Session
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
+        // 只做一件事：把审计日志写进模型层
     }
 }
 ```
 
-Business 中调用 Service：
+**② Action：给多个 Controller 共享的编排**
+控制器之间要复用的**编排**（不是业务规则）抽成 Action，避免控制器互相继承；同样只是约定位置（`demo/src/Controller/CommonAction.php` 也是空壳样板），关键是 Action **只能调 Business 与 Session，不能直接调 Model**。
+
+**③ System 层只做接线**
+配置、异常/错误页、命令注册、事件注册、以及 `app` 里的子应用声明都写在 `src/System/`：`demo/src/System/App.php` 就是全部接线的样板（选项、异常类、`controller_method_prefix`、`app`）。
+
+**④ 层内复用靠 `::_()` 单例，而不是 `new`**
 
 ```php
-class OrderBusiness
-{
-    public function createOrder(array $cart)
-    {
-        // ... 订单逻辑 ...
-        CommonService::_()->writeAuditLog('order_created', ['order_id' => $id]);
-    }
-}
+DemoBusiness::_()->foo();   // ✅ 当前相位的单例，可被覆盖/替换
+new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 ```
 
-## 模型层（Model）
+**⑤ 跨相位调用（第三卷的内容，这里先立规矩）**
+真要跨应用取东西，用 [第 25 章](advanced-phase.md) 的相位 API 或相位代理，而不是 `new` 另一个应用的类。
 
-### 继承 Foundation\Model\Base（推荐）
+## 常见错误
 
-```php
-<?php
-namespace MyProject\Model;
+| 现象 | 原因 | 改法 |
+|---|---|---|
+| 控制器里出现 `DemoModel::_()` 或 SQL | 越界：跳过了业务层 | 把查询挪进 Business，控制器只调 Business |
+| Business 里 `$_GET['id']` 报「未定义」 | Business 读了请求上下文，CLI/测试下没有这些超全局 | 由控制器取值后**当参数传进** Business |
+| 视图里查库，页面变得很慢或数据不一致 | 视图里又跑了一次业务 | 数据由控制器准备，视图只渲染 |
+| `Helper::Show('main', $data)` 页面白屏或视图找不到 | 参数顺序写反了：真实签名是 `Show($data = [], $view = '')` | 改成 `Helper::Show($data, 'main')`；用 `get_defined_vars()` 传当前变量最省事 |
+| 覆盖类/覆盖文件后没生效 | 调用链上有 `new`、或直接从别的相位取实例 | 全程用 `::_()`，跨相位用相位 API（第 25 章） |
+| 控制器里 `use DuckPhp\Core\App;` 越写越多 | 框架细节渗进了业务层 | 框架调用收进 System 层或对应层的 Helper |
+| 同一个业务规则在控制器和 Business 里各写一份 | 边界没守住，规则有了第二实现 | 规则只留在 Business，控制器只做参数整形 |
+| Model 里抛业务异常、写权限判断 | 模型层做了业务层的活 | 判断留在 Business；Model 只返回数据（异常处理见[第 18 章](exception.md)） |
 
-use DuckPhp\Foundation\Model\Base;
+## 下一步
 
-class DemoModel extends Base
-{
-    // 自动表名：demo（类名去掉 "Model" 后缀并转小写）
-    // 可通过 $table_name 覆盖
-    // 可通过 $table_prefix 指定前缀
-}
-```
-
-### ⚠️ 重要说明：方法可见性
-
-`Foundation\Model\Base`（通过 `ModelTrait`）提供的内置方法**全部为 `protected`**，不能在 Model 外部直接调用。正确的做法是：
-
-1. **在 Model 子类中暴露公共方法**（推荐）
-2. **直接使用 `Helper` 类的 `Db()` 方法操作数据库**
-
-### 方式一：在 Model 中暴露公共方法
-
-```php
-<?php
-namespace MyProject\Model;
-
-use DuckPhp\Foundation\Model\Base;
-
-class DemoModel extends Base
-{
-    // 在模型子类中封装公共方法
-    public function findUser($id)
-    {
-        return $this->find($id);  // find() 是 protected，只能内部调用
-    }
-    
-    public function findUserBy(array $condition)
-    {
-        return $this->find($condition);
-    }
-    
-    public function addUser(array $data)
-    {
-        return $this->add($data);
-    }
-    
-    public function updateUser($id, array $data)
-    {
-        return $this->update($id, $data, 'id');
-    }
-    
-    public function getUserList(array $where = [], int $page = 1, int $page_size = 10): array
-    {
-        return $this->getList($where, $page, $page_size); // 返回 [$total, $data]
-    }
-    
-    // SQL 查询也可以封装
-    public function search($keyword)
-    {
-        return $this->fetchAll(
-            "SELECT * FROM `'TABLE'` WHERE name LIKE ?",
-            '%' . $keyword . '%'
-        );
-    }
-}
-
-// 外部调用
-DemoModel::_()->findUser(1);
-DemoModel::_()->addUser(['name' => 'foo', 'age' => 18]);
-DemoModel::_()->updateUser(1, ['name' => 'bar']);
-[$total, $data] = DemoModel::_()->getUserList([], 1, 10);
-```
-
-### 方式二：直接使用 Helper/Db
-
-```php
-use DuckPhp\Foundation\Model\Helper;
-
-// 读写分离
-$rows = Helper::DbForRead()->fetchAll("SELECT * FROM users WHERE status=?", 1);
-Helper::DbForWrite()->execute("UPDATE users SET name=? WHERE id=?", 'new', 1);
-
-// 分页
-$sql = Helper::SqlForPager("SELECT * FROM users", $page, 10);
-$sql = Helper::SqlForCountSimply("SELECT * FROM users");
-```
-
-### Model 内置方法速查（protected，仅限 Model 内部使用）
-
-| 方法 | 说明 |
-|---|---|
-| `find($id)` / `find($condition)` | 按主键或条件查找 |
-| `add($data)` | 插入数据（关联数组） |
-| `update($id, $data, $pk)` | 更新数据 |
-| `getList($where, $page, $size)` | 分页列表，返回 `[$total, $data]` |
-| `fetchAll($sql, ...$args)` | 查询多行 |
-| `fetch($sql, ...$args)` | 查询单行 |
-| `fetchColumn($sql, ...$args)` | 查询单列值 |
-| `fetchObject($sql, ...$args)` | 查询单行对象 |
-| `fetchObjectAll($sql, ...$args)` | 查询多行对象 |
-| `execute($sql, ...$args)` | 执行 SQL |
-| `prepare($sql)` | 替换 `'TABLE'` 占位符为实际表名 |
-| `table()` | 获取完整表名（前缀 + 名称） |
-
-`'TABLE'` 占位符会自动替换为实际的表名（`$table_prefix . $table_name`）。
-
-### 不继承 Base，直接使用 Db
-
-```php
-use DuckPhp\Foundation\Model\Helper;
-
-// 获取数据库连接
-$db = Helper::DbForRead();    // 读连接
-$db = Helper::DbForWrite();   // 写连接
-
-// 直接 SQL
-$rows = Helper::DbForRead()->fetchAll("SELECT * FROM users WHERE status=?", 1);
-Helper::DbForWrite()->execute("UPDATE users SET name=? WHERE id=?", 'foo', 1);
-
-// 分页 SQL
-$sql = Helper::SqlForPager("SELECT * FROM users", $pageNo, $pageSize);
-$sql = Helper::SqlForCountSimply("SELECT * FROM users"); // 自动转为 COUNT(*)
-```
-
-### Model Helper 方法
-
-| 方法 | 说明 |
-|---|---|
-| `Helper::Db($tag)` | 获取指定数据库连接 |
-| `Helper::DbForRead()` | 获取读连接 |
-| `Helper::DbForWrite()` | 获取写连接 |
-| `Helper::SqlForPager($sql, $page, $size)` | SQL 添加分页 |
-| `Helper::SqlForCountSimply($sql)` | SQL 转为 COUNT 查询 |
-
-## 视图层（View）
-
-视图是普通的 PHP 文件，放在 `view/` 目录下。
-
-### 视图文件位置
-
-```
-view/
-├── main.php                  # MainController/action_index 的视图
-├── my/
-│   └── index.php             # MyController/action_index 的视图
-└── _sys/
-    ├── error_404.php         # 404 错误页
-    └── error_500.php         # 500 错误页
-```
-
-### 视图内容
-
-```php
-<?php
-// view/main.php
-// $data 数组中的变量自动展开为 PHP 变量
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title><?= __h($title) ?></title>
-</head>
-<body>
-    <h1><?= $content ?></h1>
-    <a href="<?= __url('user/login') ?>">登录</a>
-</body>
-</html>
-```
-
-### 页眉页脚
-
-```php
-// 在控制器构造函数中设置
-public function __construct()
-{
-    Helper::setViewHeadFoot('_sys/header', '_sys/footer');
-}
-
-// 或直接赋值
-Helper::assignViewData('site_name', 'MySite');
-```
-
-### 视图渲染方式
-
-| 方法 | 说明 |
-|---|---|
-| `Helper::Show($data, $view)` | 渲染视图（含页眉页脚） |
-| `Helper::Display($view, $data)` | 渲染视图片段（不含页眉页脚） |
-| `Helper::Render($view, $data)` | 渲染为字符串 |
-
-视图文件查找规则：
-1. 如果 `$view` 为空，使用 `{ControllerClass}/{actionMethod}` 自动推断
-2. 如果 `$view` 不以 `.php` 结尾，自动追加
-3. 在多应用嵌套时，子应用可以覆盖父应用的视图
-
-### 切换视图引擎
-
-通过扩展可以切换视图引擎：
-
-```php
-$options = [
-    'ext' => [
-        \DuckPhp\Ext\CallableView::class => true,  // 函数式视图
-        \DuckPhp\Ext\JsonView::class => true,       // JSON 视图
-    ],
-];
-```
-
-- **CallableView**：使用类方法代替视图文件，适合 API 接口或简单项目
-- **JsonView**：所有视图自动输出为 JSON，适合纯 API 项目
+- [第 9 章 路由进阶](routing.md)：先弄清请求是怎么落到某个控制器方法的。
+- [第 10 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
+- [第 11 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
+- [第 12 章 数据库](database.md) 与 [第 13 章 模型层](model.md)：模型层这一列往下的全部内容。
+- 参考手册：[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)、[DuckPhp\Helper\ControllerHelperTrait](../reference/Helper-ControllerHelperTrait.md)、[DuckPhp\Helper\BusinessHelperTrait](../reference/Helper-BusinessHelperTrait.md)。

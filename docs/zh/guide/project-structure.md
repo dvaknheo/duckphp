@@ -117,7 +117,7 @@ class NoteModel extends Base
 }
 ```
 
-正确的抛异常方式：Controller 层用 `Helper::ControllerThrowOn(...)`，Business 层用 `Helper::BusinessThrowOn(...)`（第 19 章）。
+正确的抛异常方式：Controller 层用 `Helper::ControllerThrowOn(...)`，Business 层用 `Helper::BusinessThrowOn(...)`（第 18 章）。
 
 ## 常见错误
 
@@ -132,5 +132,5 @@ class NoteModel extends Base
 ## 下一步
 
 - [第 4 章 第一个页面](quickstart.md)：按这套结构写出第一个完整功能。
-- [第 14 章 四层架构与调用规范](layers.md)：为什么这样分层、越界后会出现什么后果。
+- [第 8 章 四层架构与调用规范](layers.md)：为什么这样分层、越界后会出现什么后果。
 - [第 5 章 配置与设置](configuration.md)：`App.php` 里的 options 与 `config/` 里的 settings 有何区别。

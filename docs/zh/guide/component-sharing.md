@@ -1,7 +1,7 @@
-# 29 组件共享与应用间通信
+# 28 组件共享与应用间通信
 
 > 解决什么问题：多个应用之间，哪些东西该共用一份（数据库、日志、缓存），哪些必须各用各的（视图、语言、配置）；应用之间怎么互相调用、怎么广播事件、共享数据放哪。
-> 前置：[第 26 章](advanced-phase.md)、[第 27 章](mount-app.md)。预计 20 分钟。
+> 前置：[第 25 章](advanced-phase.md)、[第 26 章](mount-app.md)。预计 20 分钟。
 > 示例：`tests/data_for_tests/ZThirdDemo` 的 `/visit`、`/proxy`、`/orders` 三个动作，以及 `ZThirdDemoTest` 的对应断言。
 
 ## 一份还是各一份：先认清两种归宿
@@ -106,13 +106,13 @@ API 一览：
 | `all()` | 看所有监听（排错用） |
 | `remove($event, $phase = null, $callback = null)` | 取消监听 |
 
-命名约定：事件名用「进行中 / 已完成」后缀（`registering` / `registered`、`logining` / `logined`），与框架内置事件一致（第 20 章）。
+命名约定：事件名用「进行中 / 已完成」后缀（`registering` / `registered`、`logining` / `logined`），与框架内置事件一致（第 19 章）。
 
 ## 共享数据放哪：一张决策表
 
 | 数据 | 放哪 | 说明 |
 |---|---|---|
-| 只读配置（各应用自己一份） | 各应用的 `config/<name>.php` | 第 30 章讲的按相位覆盖也在这里生效 |
+| 只读配置（各应用自己一份） | 各应用的 `config/<name>.php` | 第 29 章讲的按相位覆盖也在这里生效 |
 | 全局设置（密码、环境） | `DuckPhpSettings.config.php` / `.env` → `Setting()` | 第 5 章 |
 | **运行期可改写**的选项（如 `is_debug`） | `ExtOptionsLoader`（`data_file_enable`） | 它的文件是 `DuckPhpApps.config.php`，`data_file_bump_allowed`/`data_file_bump_keys` 决定哪些键可写回 |
 | 请求级临时数据 | `Runtime` | 随请求清空 |
@@ -130,5 +130,5 @@ API 一览：
 
 ## 下一步
 
-- [第 30 章 重写与覆盖](overriding.md)：不改对方代码换掉它的行为。
-- [第 32 章 综合实战：前台 + 后台 + API](case-multi-app.md)：本卷所有机制的合体。
+- [第 29 章 重写与覆盖](overriding.md)：不改对方代码换掉它的行为。
+- [第 31 章 综合实战：前台 + 后台 + API](case-multi-app.md)：本卷所有机制的合体。

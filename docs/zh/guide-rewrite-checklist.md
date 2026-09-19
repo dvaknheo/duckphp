@@ -9,10 +9,10 @@
 ## 里程碑
 
 - [x] **M0** 一页总目录 + 站点首页瘦身 + 附录 A 术语表 + `ZThirdDemo` 示例工程与冒烟测试
-- [x] **M1** 第三卷 26–32（7 章，含示例被测试兜底）
-- [ ] **M2** 第二卷 8–25（18 章：12 篇改写 + 6 篇新写）
+- [x] **M1** 第三卷 25–31（7 章，含示例被测试兜底）
+- [x] **M2** 第二卷 8–24（17 章：11 篇改写 + 6 篇新写）
 - [x] **M3** 第一卷 1–7（2 篇新写 + 5 篇改写）
-- [ ] **M4** 第四卷 33–42 + 附录 B/C/D；并配合参考手册侧两页迁入后的链接收尾
+- [ ] **M4** 第四卷 32–41 + 附录 B/C/D；并配合参考手册侧两页迁入后的链接收尾
 - [ ] **M5** 收尾：删掉被吸收的 `architecture.md` / `components.md` 与 guide 侧两篇附录；`reference/index.md` 登记；全量校验
 
 ---
@@ -28,50 +28,56 @@
 - [x] 7 上线最小清单 —— `deployment.md`（含内置服务器 router 写法，实测过）
 - [x] 本卷收尾校验：`docs/zh` 站内链接 **1005 条 0 死链**、`docs/zh` 153 篇 md 全 UTF-8、7 章 **101–226 行**（≤400）、全量 `php vendor/bin/phpunit --no-coverage` → **`OK (92 tests, 556 assertions)`**
 
-## 第二卷 · 单一应用
+## 第二卷 · 单一应用 —— ✅ 已完成
 
-- [ ] 8 请求生命周期与钩子点 —— `lifecycle.md` 📝（拆薄：会话→17、事件→20、调试→6）
-- [ ] 9 路由进阶 —— `routing.md` 📝
-- [ ] 10 控制器 —— `controllers.md` ⏳（从 `layers.md` 抽出）
-- [ ] 11 视图与模板 —— `views.md` ⏳（从 `layers.md` 抽出）
-- [ ] 12 数据库 —— `database.md` 📝
-- [ ] 13 模型层 —— `model.md` 📝
-- [ ] 14 四层架构与调用规范 —— `layers.md` 📝（保留文件名，正文指向 10/11/13）
-- [ ] 15 Helper 与全局函数 —— `helper.md` 📝（含修 `assignRewrite` 的示例）
-- [ ] 16 表单与验证 —— `validator.md` 📝
-- [ ] 17 会话与用户/管理员体系 —— `external-auth.md` 📝（含修旧键名 `user_callback_get_*`）
-- [ ] 18 中间件与钩子链 —— `middleware.md` ⏳（≤400 行）
-- [ ] 19 异常与错误处理 —— `exception.md` 📝（补「系统异常只内部用」）
-- [ ] 20 事件系统 —— `events.md` ⏳（≤400 行）
-- [ ] 21 缓存与 Redis —— `cache.md` ⏳（≤400 行）
-- [ ] 22 国际化与文案 —— `i18n.md` ⏳（≤400 行）
-- [ ] 23 命令行与定时任务 —— `cli.md` 📝
-- [ ] 24 测试 —— `testing.md` 📝
-- [ ] 25 安全与性能清单 —— `security-performance.md` ⏳（≤400 行）
+> 章序按「先立规范 → 再走请求路径 → 再补横切能力 → 最后框架机制与进阶」重排（作者裁定）。
+> 章号变更：旧 14→新 8、旧 8→新 17、旧 15→新 14、旧 16→新 15、旧 17→新 16；9–13 不变。
+> 「中间件与钩子链」**不再单独成章**（中间件只是兼容性扩展，不是主推能力）——已并入第 17 章作为一节，原 18 号位删除，旧 19–25 顺次前移为 18–24（第三卷 25–31、第四卷 32–41，全书共 41 章 + 4 附录）。
+
+- [x] 8 四层架构与调用规范 —— `layers.md`（226 行：本卷导读 + 五层职责 + 越界矩阵 + Helper 分层 + 全局函数表）
+- [x] 9 路由进阶 —— `routing.md`（221 行：默认规则表、PATH_INFO 来源、`__url()` 规则、重写与路由映射、错误码速查）
+- [x] 10 控制器 —— `controllers.md`（204 行：四种输出方式、输入表、`get_defined_vars()` 惯用法、Action）
+- [x] 11 视图与模板 —— `views.md`（187 行：视图定位与相位回退、头→视图→尾、转义、三种替换引擎）
+- [x] 12 数据库 —— `database.md`（242 行：连接选项表、读写分离、`` `'TABLE'` `` 宏、事务、分页、SqlDumper）
+- [x] 13 模型层 —— `model.md`（259 行：`ModelTrait` 成员表、「CRUD 为什么是 protected」、表名推导、跨库 tag 写法）
+- [x] 14 Helper 与全局函数 —— `helper.md`（177 行：四个 trait 分工表、全局函数全表、`assignRewrite` 前导 `/` 已修）
+- [x] 15 表单与验证 —— `validator.md`（180 行：三种口径、`valid/check/filter`、skipEmpty、未知规则即抛）
+- [x] 16 会话与用户/管理员体系 —— `external-auth.md`（228 行：SessionTrait、`user_callback_for_*` 新键名、PermissionMenu、视图开关）
+- [x] 17 请求生命周期与钩子点 —— `lifecycle.md`（293 行：init 六步 + serve 时序 + 钩子六位置 + 内置钩子位置表 + 中间件兼容节 + HookChain + 选型表）
+  - [x] 17 附节「兼容性扩展：洋葱中间件」：`Ext\MyMiddlewareManager` 配置与四种写法 + 实测洋葱输出 + **短路无效的坑**（按作者裁定保持源码现状，当坑写）
+  - [x] 17 附节「钩子链」：`Route::addRouteHook()` 六位置与短路语义、内置钩子位置清单、`RouteHookManager` 增删改排序与 `dump()`、`Ext\HookChain`
+- [x] 18 异常与错误处理 —— `exception.md`（207 行：`DuckPhpSystemException` 只给框架内部用的铁律 + 错误页三分支 + 报告器）
+- [x] 19 事件系统 —— `events.md`（127 行：`GlobalEvent` 相位绑定、`$EVENT_*` 常量全表、与钩子的对比表）
+- [x] 20 缓存与 Redis —— `cache.md`（137 行：`Cache` 空实现降级、`RedisCache` 自动替换、`local_redis`、失效策略）
+- [x] 21 国际化与文案 —— `i18n.md`（123 行：`__l()` 调用链、五级检测顺序、占位翻译与回落链、`lang_handler`）
+- [x] 22 命令行与定时任务 —— `cli.md`（217 行：内置七命令、`regConsoleCommand()`、命令组前缀、参数解析、crontab）
+- [x] 23 测试 —— `testing.md`（151 行：WSL、`data_for_tests` 约定、`system_wrapper_replace`/`PathInfo` 可测性、`LibCoverage` 与 `@codeCoverageIgnore` 语义）
+- [x] 24 安全与性能清单 —— `security-performance.md`（181 行：框架做了/不提供两张表 + 安全清单 16 项 + 性能清单 10 项 + 常见写法）
+- [x] 本卷收尾校验：`docs/zh` 站内链接 **1281 条 0 死链**、17 章全部 **≤400 行**（123–293）、示例全部指向现成 `demo/`／`ZAllDemo`／`ZThirdDemo`、`demo/cli.php help|routes|DbTestApp:version` 实跑过、`regConsoleCommand()` 注册命令用临时脚本实测过
 
 ## 第三卷 · 使用第三方应用 —— ✅ 已完成
 
-- [x] 26 应用树与相位基础 —— `advanced-phase.md`
-- [x] 27 把外部应用挂进来 —— `mount-app.md`
-- [x] 28 静态资源与文档根 —— `static-resources.md`
-- [x] 29 组件共享与应用间通信 —— `component-sharing.md`
-- [x] 30 重写与覆盖 —— `overriding.md`
-- [x] 31 安装器与 Web 安装流程 —— `installer.md`
-- [x] 32 综合实战：前台 + 后台 + API —— `case-multi-app.md`
+- [x] 25 应用树与相位基础 —— `advanced-phase.md`
+- [x] 26 把外部应用挂进来 —— `mount-app.md`
+- [x] 27 静态资源与文档根 —— `static-resources.md`
+- [x] 28 组件共享与应用间通信 —— `component-sharing.md`
+- [x] 29 重写与覆盖 —— `overriding.md`
+- [x] 30 安装器与 Web 安装流程 —— `installer.md`
+- [x] 31 综合实战：前台 + 后台 + API —— `case-multi-app.md`
 - [x] 示例工程 `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php`（36 断言）
 
 ## 第四卷 · 高级话题
 
-- [ ] 33 容器与相位内部机制 —— `container-phases.md` ⏳（吸收 `architecture.md` 组件层）
-- [ ] 34 开发组件与扩展 —— `custom-component.md` ⏳（吸收 `components.md` 扩展节）
-- [ ] 35 替换框架行为 —— `replace-behavior.md` ⏳
-- [ ] 36 无 Composer·单文件·内嵌 —— `embed.md` ⏳
-- [ ] 37 常驻进程与内嵌 HTTP —— `http-server.md` ⏳
-- [ ] 38 多入口·多域名·多 SAPI —— `multi-entry.md` ⏳
-- [ ] 39 测试基建与覆盖率流水线 —— `coverage.md` ⏳
-- [ ] 40 文档与参考手册维护 —— `doc-maintenance.md` ⏳（链到两份维护指南）
-- [ ] 41 性能调优与排错手册 —— `troubleshooting.md` ⏳
-- [ ] 42 设计取舍与已知坑 —— `design-notes.md` ⏳
+- [ ] 32 容器与相位内部机制 —— `container-phases.md` ⏳（吸收 `architecture.md` 组件层）
+- [ ] 33 开发组件与扩展 —— `custom-component.md` ⏳（吸收 `components.md` 扩展节）
+- [ ] 34 替换框架行为 —— `replace-behavior.md` ⏳
+- [ ] 35 无 Composer·单文件·内嵌 —— `embed.md` ⏳
+- [ ] 36 常驻进程与内嵌 HTTP —— `http-server.md` ⏳
+- [ ] 37 多入口·多域名·多 SAPI —— `multi-entry.md` ⏳
+- [ ] 38 测试基建与覆盖率流水线 —— `coverage.md` ⏳
+- [ ] 39 文档与参考手册维护 —— `doc-maintenance.md` ⏳（链到两份维护指南）
+- [ ] 40 性能调优与排错手册 —— `troubleshooting.md` ⏳
+- [ ] 41 设计取舍与已知坑 —— `design-notes.md` ⏳
 
 ## 附录
 
@@ -94,16 +100,16 @@
 
 ## 待决策（勾掉即已定，定完请写进交接指南对应节）
 
-- [ ] **Q1 写作顺序**：先做第二卷 8–25？
-- [ ] **Q2 长章拆解**：`architecture.md`（532 行）拆给「第 1 章 + 第 33 章 + 第 8 章时序图」后删除；`layers.md`（581 行）保留文件名、只留四层规范
+- [x] **Q1 写作顺序**：先做第二卷 8–24（章序与章号已定，见上方「第二卷」小节；Q2 的拆解顺序也随之确定）
+- [ ] **Q2 长章拆解**：`layers.md` ✅ **已拆完**（581 → 226 行；控制器/视图内容已独立成第 10、11 章）；剩下 `architecture.md`（532 行）拆给「第 1 章 + 第 32 章 + 第 17 章时序图」后删除——**待办**
 - [ ] **Q3 `skeleton/` 的失真内容**（`agent-zh.md` 的 `class_user`、`RULES.md` 的方法前缀默认值）怎么处理
 - [ ] **Q4 新发现的源码残留**：`DuckPhp::_Show()` 里 `$view === '' ? … : $view;` 这个没赋值的死表达式清不清
 
-## 每轮收尾自检（每卷结束时勾一遍）
+## 每轮收尾自检（每卷结束时勾一遍；下表为**第二卷收尾**时的实测值）
 
-- [x] `python3 scripts/check-doc-links.py docs` → `docs/zh` 0 坏链（第一卷收尾实测：1005 条 0 死链；`docs/old/`、`docs/en/index.md` 的历史死链不属本任务）
-- [x] 新增/修改的 md 全是 UTF-8（无 GBK）（`docs/zh` 153 篇逐字节校验通过；早前 `reference/index.md` 的 20 字节乱码，已随作者重写该页消失）
-- [x] 本卷新写的章都 ≤400 行（第一卷 101–226 行）
-- [x] 改过的示例都在 WSL 里实跑通过（第三卷 → `tests/ZThirdDemoTest.php` 36 断言；第一/二卷的兜底是 `demo/`，其 `ZAllDemoTest` 的 `files` 期望长度已按当前源码对齐为 **10360**）
+- [x] `python3 scripts/check-doc-links.py docs` → `docs/zh` 0 坏链（第二卷收尾实测：**1281 条 0 死链**；`docs/old/`、`docs/en/index.md` 的历史死链不属本任务）
+- [x] 新增/修改的 md 全是 UTF-8（无 GBK）（`docs/zh` 逐字节校验通过）
+- [x] 本卷新写的章都 ≤400 行（第二卷 17 章 **123–293 行**）
+- [x] 改过的示例都在 WSL 里实跑通过（第三卷 → `tests/ZThirdDemoTest.php`；第一/二卷的兜底是 `demo/`；第二卷另实测了 `php demo/cli.php help|routes|DbTestApp:version`、并用临时脚本验证 `regConsoleCommand()` 注册命令与 `Console` 参数解析）
 - [x] 全量 `php vendor/bin/phpunit --no-coverage` 通过（当前基线 `OK (92 tests, 556 assertions)`）
 - [x] 本文件的复选框与状态图例已更新

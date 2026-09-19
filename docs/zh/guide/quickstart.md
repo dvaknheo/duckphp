@@ -98,7 +98,7 @@ class NoteBusiness
     public function noteOr404(int $id): array
     {
         $note = NoteModel::_()->findOne($id);
-        Helper::BusinessThrowOn(!$note, '便签不存在', 404);   // 业务层的条件抛（第 19 章）
+        Helper::BusinessThrowOn(!$note, '便签不存在', 404);   // 业务层的条件抛（第 18 章）
         return $note;
     }
 }
@@ -130,7 +130,7 @@ class NoteController extends Base
 }
 ```
 
-输出一共四种（第 10 章「控制器」（⏳ 撰写中）会展开）：`Helper::Show($data, 'view')` 渲染视图、`Helper::ShowJson($data)` 出 JSON、`Helper::Show302($url)` 跳转、`Helper::Show404()` 出 404。
+输出一共四种（[第 10 章](controllers.md)会展开）：`Helper::Show($data, 'view')` 渲染视图、`Helper::ShowJson($data)` 出 JSON、`Helper::Show302($url)` 跳转、`Helper::Show404()` 出 404。
 
 ## 步骤 6：视图（View）—— 只做展示
 
@@ -187,7 +187,7 @@ public function create(array $post): int
 }
 ```
 
-表单校验的完整做法（过滤器 + 错误数组）见[第 16 章](validator.md)；这里只求把链路走通。
+表单校验的完整做法（过滤器 + 错误数组）见[第 15 章](validator.md)；这里只求把链路走通。
 
 ## 单文件版（不建工程也能跑）
 
@@ -222,5 +222,5 @@ class MainController          // 单文件示例：控制器写在同一文件�
 ## 下一步
 
 - [第 5 章 配置与设置](configuration.md)：把 `App.php` 的选项与 `config/` 的设置彻底分清。
-- [第 8 章 请求生命周期与钩子点](lifecycle.md)：刚才这一次请求，框架内部都做了什么。
-- 第 10 章「控制器」、第 11 章「视图与模板」（两章均 ⏳ 撰写中）：这两层的完整能力。
+- [第 10 章 控制器](controllers.md)、[第 11 章 视图与模板](views.md)：这两层的完整能力。
+- [第 17 章 请求生命周期与钩子点](lifecycle.md)：刚才这一次请求，框架内部都做了什么（想让框架在中间插一手时回来看）。

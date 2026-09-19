@@ -1,7 +1,7 @@
-# 26 应用树与相位基础
+# 25 应用树与相位基础
 
 > 解决什么问题：一个进程里如何跑起**多个应用**（主应用 + 挂进来的子应用），它们各自的单例、路由、视图怎么互不干扰。
-> 前置：[第 8 章 生命周期](lifecycle.md)、[第 14 章 四层架构](layers.md)。预计 15 分钟。
+> 前置：[第 8 章 四层架构](layers.md)、[第 17 章 生命周期](lifecycle.md)。预计 15 分钟。
 > 本卷全部代码来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑。
 
 ## 心智模型：应用树 + 相位
@@ -72,16 +72,16 @@ App::_()->options['app'][ThirdApp::class]['controller_url_prefix']; // 'shop/'
 
 ## 子应用的声明：`app` 选项
 
-`app` 的值是 `[子应用类 => 选项数组]`。**关键点：这个数组会原样传给子应用的 `init()`**，所以父应用可以在这层「不碰子应用代码」地调它（第 30 章正是靠这一点做覆盖）：
+`app` 的值是 `[子应用类 => 选项数组]`。**关键点：这个数组会原样传给子应用的 `init()`**，所以父应用可以在这层「不碰子应用代码」地调它（第 29 章正是靠这一点做覆盖）：
 
 ```php
 ThirdApp::class => [
     'name' => 'shop',                     // 相位名
     'controller_url_prefix' => 'shop/',   // URL 前缀（会与父应用的前缀拼接）
-    'controller_resource_prefix' => 'res/',// 资源前缀（第 28 章）
+    'controller_resource_prefix' => 'res/',// 资源前缀（第 27 章）
     'local_database' => true,             // 让它用独立的数据库连接
     'database_list' => [['dsn' => 'sqlite:' . __DIR__ . '/shop.db']],
-    'controller_class_map' => [           // 换掉它的控制器实现（第 30 章）
+    'controller_class_map' => [           // 换掉它的控制器实现（第 29 章）
         ThirdMainController::class => MyController::class,
     ],
     'ext' => [JsonView::class => true],   // 给它单独加扩展
@@ -147,7 +147,7 @@ $name = App::_()->getThisPhaseName();     // 例如 ':shop'
 $cmd_prefix = App::_()->getThisCommandPrefix();  // CLI 命令前缀
 
 // 4) CLI：子应用的命令带前缀（phase 名里的 '/' 变成 '-'）
-//   php cli.php shop-<命令>     ← 命令组按相位区分，详见第 23 章
+//   php cli.php shop-<命令>     ← 命令组按相位区分，详见第 22 章
 ```
 
 ## 常见错误
@@ -164,11 +164,11 @@ $cmd_prefix = App::_()->getThisCommandPrefix();  // CLI 命令前缀
 ## 常见问题
 
 - **子应用能再挂子应用吗？** 能，`app` 里继续写即可，相位名会变成 `:shop:sub`。
-- **视图能共享吗？** 默认各自用各自的 `path_view`；但父应用可以在自己的视图目录里**按子应用 name 建子目录覆盖子应用的视图**（第 30 章）。
+- **视图能共享吗？** 默认各自用各自的 `path_view`；但父应用可以在自己的视图目录里**按子应用 name 建子目录覆盖子应用的视图**（第 29 章）。
 - **怎么读主应用的配置？** `App::Root()->options`、`App::_()->getProjectPath()`（见 [参考手册 Core-App](../reference/Core-App.md)）。
-- **子应用的异常谁处理？** 统一交给异常管理器（第 19 章），子应用不自己兜底。
+- **子应用的异常谁处理？** 统一交给异常管理器（第 18 章），子应用不自己兜底。
 
 ## 下一步
 
-- [第 27 章 把外部应用挂进来](mount-app.md)：把上面的机制用在「一个现成的、不是自己写的应用」上。
+- [第 26 章 把外部应用挂进来](mount-app.md)：把上面的机制用在「一个现成的、不是自己写的应用」上。
 - 参考手册：[DuckPhp\Core\App](../reference/Core-App.md)、[DuckPhp\Core\KernelTrait](../reference/Core-KernelTrait.md)、[DuckPhp\Core\PhaseContainer](../reference/Core-PhaseContainer.md)

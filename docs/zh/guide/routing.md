@@ -1,229 +1,221 @@
-# 路由系统
+# 9 路由进阶
 
-DuckPHP 的路由由 `src/Core/Route.php` 实现，遵循**约定优于配置**的设计。
+> 解决什么问题：URL 是怎么变成「某个控制器方法」的；参数从哪来；怎么重写旧链接、怎么把 URL 绑到指定类@方法；以及多应用前缀是怎么参与匹配的。
+> 前置：[第 8 章 四层架构与调用规范](layers.md)。预计 20 分钟。
+> 示例：`demo/public/demo.php`（真实路由：URL `about/me` → `aboutController::me()`）。跑法：
 
-`DuckPhp` 支持很多种 路由方式，默认最常见最基本的就是文件型路由方式了。
-
-## 根路由与欢迎页
-
-DuckPHP 的默认欢迎页控制器是 `MainController`。访问根路径 `/` 时，等价于访问 `/Main/index`，会调用 `MainController::action_index()`。
-
-```
-/                  → 命名空间\Controller\MainController::action_index()
-/index             → 命名空间\Controller\MainController::action_index()
+```bash
+php -S 127.0.0.1:8080 -t demo/public
+# 打开 http://127.0.0.1:8080/demo.php ，点页面里的 “go to about/me”
 ```
 
-同样，访问 `/foo` 时，等价于访问 `/Main/foo`，会调用 `MainController::action_foo()`。
+## 最小示例
 
-```
-/foo               → 命名空间\Controller\MainController::action_foo()
-```
-
-因此，你可以把所有顶层短路由集中放在 `MainController` 中，例如：
-
-```
-/                  → MainController::action_index()
-/api               → MainController::action_api()
-/status            → MainController::action_status()
-```
-
-## 默认路由规则
-
-URL 路径格式：
-
-```
-/{Controller类名}/{action方法名}
-```
-
-映射到控制器类的方法：
-
-```
-/Main/index        → 命名空间\Controller\MainController::action_index()
-/user/profile      → 命名空间\Controller\UserController::action_profile()
-/admin/user/list   → 命名空间\Controller\Admin\UserController::action_list()
-```
-
-### 关键约定
-
-| 约定 | 默认值 | 说明 |
-|---|---|---|
-| 控制器类后缀 | `Controller` | `FooController` |
-| 方法前缀 | `action_` | `action_index()` |
-| 欢迎页类 | `Main` | `/` 或 `/index` 路由到 |
-| 欢迎页方法 | `index` | 控制器默认方法 |
-| 命名空间 | 自动检测 | 项目中 `Controller` 段 |
-| 类名大小写调整 | 空 | 默认不会把 URL 中的 `user` 转成 `User`，需要配置 `controller_class_adjust` |
-
-### URL 中的控制器类名大小写
-
-默认情况下，`controller_class_adjust` 为空，URL 段会原样拼接到类名中。例如：
-
-```
-/user/profile → 命名空间\Controller\userController::action_profile()  # 找不到类，404
-```
-
-若控制器类使用大驼峰命名（如 `UserController`），请在 `App::$options` 中开启自动首字母大写：
+`demo/public/demo.php` 里真实存在的两段代码，构成了最小路由闭环：
 
 ```php
-public $options = [
-    'controller_class_adjust' => 'uc_class',
-];
-```
-
-开启后：
-
-```
-/user/profile → 命名空间\Controller\UserController::action_profile()
-```
-
-### 访问非欢迎控制器的默认方法
-
-默认欢迎类是 `Main`。
-
-```php
-__url('user/index');   // UserController::action_index()
-__url('user/add');     // UserController::action_add()
-```
-
-### POST 方法特殊处理
-
-如果请求是 POST，且存在 `action_do_{方法名}()` 方法，则优先调用它：
-
-```
-POST /user/login
-→ UserController::action_do_login()   # 优先
-→ UserController::action_login()      # 回退
-```
-
-这个特性通过 `controller_prefix_post = 'do_'` 选项控制。
-
-## URL 生成
-
-在控制器或视图中生成 URL：
-
-```php
-__url('')            // 当前控制器基 URL
-__url('user/login')  // /user/login
-__url('?page=2')     // 当前路径 + 查询参数
-__url('#section')    // 当前路径 + 锚点
-__url('/absolute/path') // 绝对路径
-
-// 资源 URL（带 controller_resource_prefix 时）
-__res('css/style.css')  // /res/css/style.css 或 CDN 地址
-```
-如果直接写 `__url('user')`，会被解析为 `MainController::action_user()`，而不是 `UserController::action_index()`。访问子控制器默认页应写完整路径：
-## 高级话题：路由钩子系统
-
-路由过程通过钩子（Hook）串联。钩子执行顺序：
-
-```
-prepend-outter → prepend-inner → 默认路由 → append-inner → append-outter
-```
-
-内置钩子（按注册位置）：
-
-| 钩子 | 位置 | 作用 |
-|---|---|---|
-| `RouteHookCheckStatus` | prepend-outter | 检查维护模式/安装状态 |
-| `RouteHookRewrite` | prepend-outter | URL 重写 |
-| `RouteHookRouteMap` (important) | prepend-inner | 优先路由映射匹配 |
-| `RouteHookRouteMap` (normal) | append-outter | 普通路由映射匹配 |
-| `RouteHookResource` | append-outter | 静态资源处理 |
-
-### 添加自定义钩子
-
-```php
-use DuckPhp\Core\Route;
-
-// 在 App::onInit() 或任意初始化阶段
-Route::_()->addRouteHook(function ($path_info) {
-    if ($path_info === '/special') {
-        echo "Special route handled!";
-        return true; // 返回 true 表示已处理，后续钩子不再执行
-    }
-    return false;
-}, 'prepend-inner');
-```
-
-## URL 重写（Rewrite）
-
-通过 `rewrite_map` 将公开 URL 映射到内部 URL：
-
-```php
-$options = [
-    'rewrite_map' => [
-        'article/123' => 'blog/show?id=123',
-        '~^/u/(\d+)$' => '/user/profile?id=$1',  // 正则模式，以 ~ 开头
-    ],
-];
-```
-
-- 普通模式：精确路径匹配
-- 正则模式：以 `~` 开头，使用正则匹配
-
-## 路由映射（Route Map）
-
-通过 `route_map` 或 `route_map_important` 将 URL 直接绑定到可调用体：
-
-```php
-$options = [
-    'route_map_important' => [
-        '/' => function () { echo "Home"; },
-        '/hello' => '命名空间\Controller\MainController@action_say',  // @ 分隔类和方法
-    ],
-    'route_map' => [
-        '/blog/{id:\d+}' => function ($params) {
-            extract($params);
-            echo "Blog post #$id";
-        },
-        '/page/*' => function ($params) {
-            // * 匹配剩余路径，$params 为路径段数组
-        },
-        '@^/api/(\w+)$' => '~Controller\ApiController@action_$1',  // @ 开头表示正则编译 ~ 替换为控制器命名空间前缀
-    ],
-];
-```
-
-### 路由映射匹配规则
-
-| 模式 | 说明 | 示例 |
-|---|---|---|
-| `/path` | 精确匹配 | `/user/login` |
-| `/path/*` | 前缀匹配，剩余路径作为参数 | `/blog/2024/01` |
-| `@^{regex}$` | 正则匹配（以 `@` 开头） | `@^/api/(\w+)$` |
-| `~Controller\Xxx` | `~` 替换为控制器的命名空间前缀 | `~Controller\MainController` |
-
-
-## 路由参数
-
-路由映射匹配时，可以通过 `Route::Parameter()` 获取参数：
-
-```php
-// 路由映射：'/user/{id:\d+}' => 'Controller\UserController@action_show'
-class UserController
+namespace MySpace\Controller
 {
-    public function action_show()
+    class MainController
     {
-        $id = Route::Parameter('id');  // 获取 id 参数
-        // 或
-        $id = Helper::Parameter('id');
-        // 或
-        $id = Helper::GET('id');
+        public function index()
+        {
+            $url_about = __url('about/me');   // 生成 URL
+            Helper::Show(get_defined_vars(), 'main_view');
+        }
+    }
+    class aboutController
+    {
+        public function me()                  // URL 的最后一段就是方法名
+        {
+            Helper::Show(get_defined_vars()); // 不传视图名 → 用当前路由路径当视图名（about/me）
+        }
     }
 }
 ```
-## 无 `PATH_INFO` 的路由
 
-有时候，你只是做个局部项目，不打算修改 web 服务器配置，你可以使用无 PATH_INFO 的路由。
+访问 `/about/me` 时：`about/me` 被拆成「类路径 `about` + 方法 `me`」→ 类名拼成 `MySpace\Controller\aboutController`（`Controller` 后缀自动加）→ 调 `me()`。不传视图名时，视图名就是路由路径 `about/me`（即视图文件 `view/about/me.php`）。
 
-在选项里取消注释的代码加载以下代码
+## 机制说明
+
+### 1. URL → 类@方法的默认规则
+
+`Route::pathToClassAndMethod()` 与 `adjustClassBaseName()` 的行为可以用一张表说清（`namespace_controller` 默认 `Controller`，`controller_class_postfix` 默认 `Controller`，`controller_welcome_class` 默认 `Main`，`controller_welcome_method` 默认 `index`）：
+
+| URL（PATH_INFO） | 拆法 | 落到 |
+|---|---|---|
+| `/`（空） | 落到欢迎类 | `Controller\MainController::index()` |
+| `/about` | 只有一段 → 该段是**欢迎类的方法** | `Controller\MainController::about()` |
+| `/about/me` | 最后一段是方法，前面是类路径 | `Controller\aboutController::me()` |
+| `/test/done` | 同上 | `Controller\testController::done()` |
+| `/admin/user/list` | 类路径可多层 | `Controller\admin\userController::list()` |
+
+几个开关（写在应用选项里）：
 
 ```php
-$options['path_info_compact_action_key'] = "_r";
-$options['path_info_compact_class_key'] = "";
+$options = [
+    'namespace_controller' => 'Controller',      // 控制器所在子命名空间（默认值）
+    'controller_class_postfix' => 'Controller',  // 类名后缀，默认自动补
+    'controller_method_prefix' => 'action_',     // 方法前缀（demo/src/System/App.php 就是这么配的）
+    'controller_welcome_class' => 'Main',        // 欢迎类
+    'controller_welcome_method' => 'index',      // 欢迎方法
+    'controller_welcome_class_visible' => false, // false 时 /Main/xxx 这类显式写法会被拒绝（E009）
+    'controller_path_ext' => '',                 // 需要 .html 之类后缀时设它（不匹配则 E008）
+    'controller_class_adjust' => '',             // 额外调整，如 'uc_method;uc_class'
+    'controller_class_map' => [                  // 直接换掉某个控制器的实现
+        'MyProj\Controller\UserController' => 'MyProj\Controller\UserControllerV2',
+    ],
+];
+```
 
-## 相关类参考
+`controller_class_map` 也可以在运行期用 `Helper::replaceController($old, $new)` 追加——它是覆盖机制的基石之一（[第 29 章](overriding.md)）。
 
-- [DuckPhp\\Core\\Route](../reference/Core-Route.md)
-- [DuckPhp\\Component\\RouteHookRouteMap](../reference/Component-RouteHookRouteMap.md)
-- [DuckPhp\\Component\\RouteHookPathInfoCompat](../reference/Component-RouteHookPathInfoCompat.md)
+### 2. PATH_INFO 从哪来
+
+框架统一从 `Route::PathInfo()` 读，实际来源是 `$_SERVER['PATH_INFO']`。两个现实问题它替你处理了：
+
+- **Nginx/PHP-FPM 默认没有 PATH_INFO**：改用 `?_r=about/me` 形式传递，打开 `RouteHookPathInfoCompat` 扩展即可（见「常见写法 ②」）。
+- **PHP 内置服务器**：`controller_fix_mistake_path_info`（默认 `true`）会在 `SCRIPT_NAME === '/index.php'` 且 PATH_INFO 为空时，从 `REQUEST_URI` 里补出路径——这是 `php -S` 下能直接跑的原因（[第 7 章](deployment.md)）。
+
+CLI 或测试里想伪造请求路径：`Route::_()->PathInfo('about/me')`。
+
+### 3. URL 生成：`__url()` 的规则
+
+`__url()`（= `Helper::Url()` = `Route::_()->Url()`）不是字符串拼接，规则如下（`defaultUrlHandler()`）：
+
+| 传入 | 结果 |
+|---|---|
+| `'/other/app.php'`（以 `/` 开头） | **原样返回**（跨应用/绝对路径用这种） |
+| `''` | 当前 basepath（部署在子目录时就是那个子目录） |
+| `'?page=2'` / `'#top'` | 当前路径 + 该后缀 |
+| `'about/me'` | basepath + `/about/me` |
+
+所以「站内另一个页面」写 `__url('about/me')`；要原样输出绝对路径写 `__url('/res/logo.png')`，或更明确的 `__res('logo.png')`（[第 27 章](static-resources.md)）。
+
+想完全接管 URL 生成（接 CDN、自定义规则）：`Route::_()->url_handler` 是可替换的回调，设了之后 `Url()` 直接调它。
+
+### 4. 重写：`RouteHookRewrite`
+
+把「用户看到的 URL」映射到「内部路由」，地址栏不变：
+
+```php
+$options = [
+    'ext' => [\DuckPhp\Component\RouteHookRewrite::class => true],
+    'rewrite_map' => [
+        '/legacy-shop' => 'shop/',            // 精确匹配
+        '~^/old/(\d+)$~' => 'article/$1',     // 以 ~ 开头 = 正则模板
+    ],
+];
+// 运行期追加
+Helper::assignRewrite('/promo', 'activity/index');
+```
+
+> ⚠️ **键必须带前导 `/`**。钩子内部拿 `'/'.$path_info` 与模板比较，写成 `'legacy-shop'` 永远匹配不上——旧文档里就有这个错，排错先看这里。
+
+### 5. 路由映射：`RouteHookRouteMap`
+
+想把 URL 直接绑到「类@方法」（不遵守默认命名规则），用路由映射：
+
+```php
+$options = [
+    'ext' => [\DuckPhp\Component\RouteHookRouteMap::class => true],
+    'route_map_important' => [                        // 抢在默认路由之前匹配
+        '/health'            => 'MyProj\Controller\HealthController@check',
+        '/user/{id:\d+}'     => 'MyProj\Controller\UserController@show',
+        '^/api/v(\d+)/ping$' => 'MyProj\Controller\ApiController@ping',
+    ],
+    'route_map' => [                                  // 默认路由没命中时的兜底
+        'legacy*' => 'MyProj\Controller\LegacyController@dispatch',
+    ],
+];
+```
+
+匹配规则（`matchRoute()`）：
+
+| 模式写法 | 含义 |
+|---|---|
+| `health` / `/health` | 精确匹配（前导 `/` 可有可无） |
+| `legacy*` | 前缀通配，剩余路径按 `/` 拆成参数交给回调 |
+| `^/api/v(\d+)/ping$` | 以 `^` 开头 = 正则，捕获组按顺序成为参数 |
+| `/user/{id:\d+}` | `{名:规则}` 占位写法，编译成命名捕获组（`:规则` 可省，默认 `\w+`；`{id?}` 表示可选） |
+
+回调写法（`adjustCallback()`）：`Class@method`（用 `::_()` 单例）、`Class->method`（用 `new`）、或任意 callable；**`Class::method` 这种静态字符串不支持**。
+
+`route_map_important` 挂在 pre 链（`prepend-inner`），`route_map` 挂在 post 链（`append-outter`）——位置与短路语义见[第 17 章](lifecycle.md)。
+
+### 6. 多应用前缀：`controller_url_prefix`
+
+子应用挂载时会带自己的 `controller_url_prefix`（[第 26 章](mount-app.md)）。匹配规则是「**前缀必须完全对上**」：`pathToClassAndMethod()` 先比前缀，不匹配就直接失败并把原因写进 `route_error`（`E001`），父应用才有机会把请求交给其它子应用。
+
+同一个应用里也可以设它，效果是「这个应用的所有 URL 都强制带该前缀」。
+
+### 7. 排错：路由为什么没命中
+
+```php
+Route::_()->getRouteError();          // 最近一次失败原因（E001/E003/E008/E009…）
+Route::_()->getRouteCallingClass();   // 命中的类
+Helper::getRouteCallingMethod();      // 命中的方法（控制器里可用）
+Route::_()->PathInfo();               // 框架实际拿到的路径
+```
+
+错误码速查：`E001` 前缀不匹配、`E003` 控制器类不存在（反射失败）、`E008` 路径后缀不符合 `controller_path_ext`、`E009` 显式写了不可见的欢迎类。
+
+## 常见写法
+
+**① 干净的 URL 用路由映射，兼容旧链接用重写**
+
+```php
+Helper::assignRewrite('/p/42', 'product/show?id=42');                  // 旧链接 → 新路由
+Helper::assignImportantRoute('/product/{id:\d+}', 'MyProj\Controller\ProductController@show');
+Helper::assignRoute('sitemap*', 'MyProj\Controller\SitemapController@dispatch');
+```
+
+**② 没有 PATH_INFO 的服务器：开兼容扩展**
+
+```php
+$options = [
+    'ext' => [\DuckPhp\Component\RouteHookPathInfoCompat::class => 'path_info_compact_enable'],
+    'path_info_compact_enable' => true,
+    'path_info_compact_action_key' => '_r',   // URL 形如 /index.php?_r=about/me
+];
+```
+
+**③ 换掉某个控制器实现而不动原文件**
+
+```php
+Helper::replaceController(
+    \MyProj\Controller\UserController::class,
+    \MyProj\Controller\UserControllerEx::class
+);
+```
+
+**④ URL 一律用生成器，别手写字符串**
+
+```php
+// 视图里
+<a href="<?=__url('about/me')?>">关于</a>
+// 代码里
+Helper::Show302(Helper::Url('user/login'));
+```
+
+部署到子目录时，手写的 `/about/me` 会 404（少了子目录前缀），`__url('about/me')` 会自动带上。
+
+## 常见错误
+
+| 现象 | 原因 | 改法 |
+|---|---|---|
+| `assignRewrite('legacy', …)` 怎么都不生效 | 键少了前导 `/`，钩子拿 `'/'.$path_info` 比较 | 写成 `'/legacy'` |
+| 访问 `/about` 报类不存在 | 单段路径被当成**欢迎类的方法**，不是控制器 | 控制器至少两段：`/about/me`；单段需求改用 `route_map` |
+| `/Main/index` 被拒绝（E009） | `controller_welcome_class_visible` 默认 `false` | 用 `/` 访问欢迎页；确实需要显式路径就设为 `true` |
+| 路由映射里写 `Class::method` 不生效 | `::` 形式**不支持** | 用 `Class@method`（`::_()`）或 `Class->method`（`new`） |
+| 普通 `route_map` 里的规则抢不过默认路由 | 位置不同：important 在默认路由**之前**，普通 map 是**兜底** | 需要优先匹配就放进 `route_map_important` |
+| 子应用里访问得到 404、错误码 E001 | URL 没带子应用的 `controller_url_prefix` | URL 加上前缀，或调整子应用配置（[第 26 章](mount-app.md)） |
+| 部署到子目录后所有站内链接 404 | 手写了 `/xxx` 绝对路径 | 一律用 `__url()`/`Helper::Url()` 生成 |
+| 开了 `_r=` 兼容模式，原 PATH_INFO 路由全失效 | 兼容模式下路径改从查询串取 | 只在没有 PATH_INFO 的服务器上开（[第 7 章](deployment.md)） |
+
+## 下一步
+
+- [第 10 章 控制器](controllers.md)：路由命中之后，控制器里怎么写。
+- [第 17 章 请求生命周期与钩子点](lifecycle.md)：钩子位置、短路语义，以及完整的「谁先命中」顺序。
+- [第 29 章 重写与覆盖](overriding.md)：`controller_class_map` 背后的整套覆盖机制。
+- 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)、[DuckPhp\Component\RouteHookRewrite](../reference/Component-RouteHookRewrite.md)、[DuckPhp\Component\RouteHookRouteMap](../reference/Component-RouteHookRouteMap.md)、[DuckPhp\Component\RouteHookPathInfoCompat](../reference/Component-RouteHookPathInfoCompat.md)。
