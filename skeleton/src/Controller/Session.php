@@ -5,7 +5,7 @@
  */
 namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class Session
 {

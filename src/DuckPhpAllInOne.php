@@ -15,8 +15,16 @@ class DuckPhpAllInOne extends DuckPhp
 {
     public static function __callStatic($method, $args)
     {
-        if (method_exists(Helper::class, $method)) {
-            return Helper::$method(...$args);
+        $classes = [
+            \DuckPhp\Foundation\System\Helper::class,
+            \DuckPhp\Foundation\Controller\Helper::class,
+            \DuckPhp\Foundation\Business\Helper::class,
+            \DuckPhp\Foundation\Model\Helper::class,
+        ];
+        foreach($classes as $class){
+            if (method_exists($class, $method)) {
+                return $class::$method(...$args);
+            }
         }
         trigger_error("Call to undefined method " . static::class . "::$method()", E_USER_ERROR);
     }

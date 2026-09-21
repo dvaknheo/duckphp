@@ -5,14 +5,31 @@
  */
 namespace YourProjectName\Controller;
 
+use DuckPhp\Foundation\ExceptionReporterTrait;
 class AppAction extends Base
 {
+    use ExceptionReporterTrait;
 	public function __construct()
 	{
 		// Must override parent to stop init;
 	}
     
     public function foo()
+    {
+        //
+    }
+    /**
+     * Print a "hello world" message.
+     */
+    public function command_hello()
+    {
+        echo "hello world";
+    }
+    public function onControllerException($ex)
+    {
+        //
+    }
+    public function onBusinessException($ex)
     {
         //
     }

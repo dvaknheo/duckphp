@@ -7,29 +7,21 @@
 
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Helper\AppHelperTrait;
-use DuckPhp\Helper\BusinessHelperTrait;
-use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\Helper\ModelHelperTrait;
-
 class Helper
 {
-    use ModelHelperTrait;
-    use BusinessHelperTrait, ControllerHelperTrait, AppHelperTrait{
-        AppHelperTrait::ThrowOn insteadof ControllerHelperTrait;
-        AppHelperTrait::ThrowOn insteadof BusinessHelperTrait;
-        BusinessHelperTrait::Setting insteadof ControllerHelperTrait;
-        BusinessHelperTrait::AppOptions insteadof ControllerHelperTrait;
-        BusinessHelperTrait::Config insteadof ControllerHelperTrait;
-        BusinessHelperTrait::XpCall insteadof ControllerHelperTrait;
-        BusinessHelperTrait::FireGlobalEvent insteadof ControllerHelperTrait;
-        BusinessHelperTrait::OnGlobalEvent insteadof ControllerHelperTrait;
-        BusinessHelperTrait::OnGlobalEvent insteadof AppHelperTrait;
-        BusinessHelperTrait::FireGlobalEvent insteadof AppHelperTrait;
-        ControllerHelperTrait::header insteadof AppHelperTrait;
-        ControllerHelperTrait::setcookie  insteadof AppHelperTrait;
-        ControllerHelperTrait::exit  insteadof AppHelperTrait;
-        ControllerHelperTrait::AdminService  insteadof BusinessHelperTrait;
-        ControllerHelperTrait::UserService  insteadof BusinessHelperTrait;
+    public static function __callStatic($method, $args)
+    {
+        $classes = [
+            \DuckPhp\Foundation\System\Helper::class,
+            \DuckPhp\Foundation\Controller\Helper::class,
+            \DuckPhp\Foundation\Business\Helper::class,
+            \DuckPhp\Foundation\Model\Helper::class,
+        ];
+        foreach($classes as $class){
+            if (method_exists($class, $method)) {
+                return $class::$method(...$args);
+            }
+        }
+        trigger_error("Call to undefined method " . static::class . "::$method()", E_USER_ERROR);
     }
 }

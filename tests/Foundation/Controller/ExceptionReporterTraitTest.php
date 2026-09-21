@@ -1,8 +1,8 @@
 <?php
-namespace tests\DuckPhp\Foundation;
+namespace tests\DuckPhp\Foundation\Controller;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Foundation\ExceptionReporterTrait;
+use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 use DuckPhp\Ext\ThrowOnTrait;
 
 class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
