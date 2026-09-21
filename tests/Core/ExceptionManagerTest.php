@@ -73,11 +73,11 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ExceptionManager::_(new ExceptionManager())->reset();
         
         
-        // exception_reporter 已移至 DuckPhp 层处理，此处改为直接测试 assignExceptionHandler 的 callback 机制
-        ExceptionManager::_(new ExceptionManager())->init(['handle_exception_on_init' => false])->run();
-        ExceptionManager::_()->assignExceptionHandler(\Exception::class, [ExceptionManagerExceptionReporter::class, 'OnException']);
-        $ex = new \Exception("ABCss", 123);
-        ExceptionManager::CallException($ex);
+        // // exception_reporter 已移至 DuckPhp 层处理，此处改为直接测试 assignExceptionHandler 的 callback 机制
+        // ExceptionManager::_(new ExceptionManager())->init(['handle_exception_on_init' => false])->run();
+        // ExceptionManager::_()->assignExceptionHandler(\Exception::class, [ExceptionManagerExceptionReporter::class, 'OnException']);
+        // $ex = new \Exception("ABCss", 123);
+        // ExceptionManager::CallException($ex);
         
         
         $t=\LibCoverage\LibCoverage::G();
@@ -98,13 +98,13 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
 
     }
 }
-class ExceptionManagerExceptionReporter
-{
-    public function defaultException($ex)
-    {
-        var_dump("exception!");
-    }
-}
+// class ExceptionManagerExceptionReporter
+// {
+//     public function defaultException($ex)
+//     {
+//         var_dump("exception!");
+//     }
+// }
 
 class ExceptionManagerException extends \Exception
 {

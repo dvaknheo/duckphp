@@ -33,8 +33,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     const EVENT_SERVICE_ADMIN_LOGOUTED = 'SERVICE_ADMIN_LOGOUTED';
 
     public $options = [
-        'admin_enable' => true,
-        'admin_need_login_exception_code' => null,
         'admin_loginout_auto_redirect' => true,
 
         'admin_url_home' => null,
@@ -60,10 +58,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if (!$this->options['admin_enable']) {
-            $this->is_inited = false;
-            return $this;
-        }
         if ($context->options['admin_provider_enable'] ?? true) {
             GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
         }
@@ -98,7 +92,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
 
         if (isset($this->options['admin_callback_for_session'])) {
             $id = $this->getSession()->getCurrentAdminId();
-            CoreHelper::ControllerThrowOn($check_login && !$id, "Need Login", $this->options['admin_need_login_exception_code']);
+            CoreHelper::ControllerThrowOn($check_login && !$id, AdminException::MESSAGE_NEED_LOGIN, AdminException::CODE_NEED_LOGIN, AdminException::class);
             return $id ?? 0;
         } elseif (isset($this->options['admin_callback_for_id'])) {
             return $this->run_callback_by_key('admin_callback_for_id', $check_login);
@@ -113,7 +107,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         if (isset($this->options['admin_callback_for_session'])) {
 
             $name = $this->getSession()->getCurrentAdminName();
-            CoreHelper::ControllerThrowOn($check_login && !$name, "Need Login", $this->options['admin_need_login_exception_code']);
+            CoreHelper::ControllerThrowOn($check_login && !$name, AdminException::MESSAGE_NEED_LOGIN, AdminException::CODE_NEED_LOGIN, AdminException::class);
             return $name;
         } elseif (isset($this->options['admin_callback_for_name'])) {
             return $this->run_callback_by_key('admin_callback_for_name', $check_login);

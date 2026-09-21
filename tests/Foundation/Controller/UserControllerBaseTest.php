@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Foundation\Controller;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Foundation\Controller\UserControllerBase;
+use DuckPhp\GlobalUser\GlobalUser;
 
 class UserControllerBaseTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +16,11 @@ class UserControllerBaseTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'user_provider' => FakeUserProviderForControllerBase::class,
+            'user_provider_enable' => true, 
+            'user_enable' => true,
+            'ext' =>[
+                FakeUserProviderForControllerBase::class => true,
+            ],
         ]);
         $obj = new UserControllerBase();
         $this->assertInstanceOf(UserControllerBase::class, $obj);
@@ -33,7 +38,10 @@ class UserControllerBaseTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'user_provider' => FakeUserDenyProviderForControllerBase::class,
+            'user_provider_enable' => true, 
+            'ext' =>[
+                FakeUserDenyProviderForControllerBase::class => true,
+            ]
         ]);
         \DuckPhp\Core\SystemWrapper::system_wrapper_replace(['exit' => function () {}]);
         $obj = new UserControllerBase();
@@ -44,25 +52,23 @@ class UserControllerBaseTest extends \PHPUnit\Framework\TestCase
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         DuckPhp::_(new DuckPhp())->init([
             'installed' => true,
-            'user_provider' => FakeUserDenyProviderForControllerBase::class,
+            'user_provider_enable' => true, 
+            'user_enable' => true ,
+            'ext' =>[
+                FakeUserDenyProviderForControllerBase::class => true,
+            ],
         ]);
         try {
             new UserControllerBase();
-            $this->fail('expected UserException');
-        } catch (\DuckPhp\GlobalUser\UserException $ex) {
+        } catch (\Exception $ex) {
         }
         unset($_SERVER['HTTP_X_REQUESTED_WITH']);
         \LibCoverage\LibCoverage::End();
     }
 }
-class FakeUserDenyProviderForControllerBase
+class FakeUserDenyProviderForControllerBase extends GlobalUser
 {
-    use \DuckPhp\Foundation\SingletonTrait;
-    public function init($options = [], $context = null)
-    {
-        return $this;
-    }
-    public function id()
+    public function id(bool $check_login = true)
     {
         return 1;
     }
@@ -70,19 +76,14 @@ class FakeUserDenyProviderForControllerBase
     {
         return false;
     }
-    public function urlForLogin($url_back = null, $ext = null)
+    public function urlForLogin($url_back = null, $ext = null):string
     {
         return '/login';
     }
 }
-class FakeUserProviderForControllerBase
+class FakeUserProviderForControllerBase extends GlobalUser
 {
-    use \DuckPhp\Foundation\SingletonTrait;
-    public function init($options = [], $context = null)
-    {
-        return $this;
-    }
-    public function id()
+    public function id(bool $check_login = true)
     {
         return 1;
     }

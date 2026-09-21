@@ -32,7 +32,7 @@ class UserControllerBase implements UserControllerInterface
     protected function onLoginedException(UserException $ex)
     {
         if (!Helper::IsAjax()) {
-            Helper::Show302(Helper::Admin()->urlForLogin());
+            Helper::Show302(Helper::User()->urlForLogin());
         } else {
             Helper::ShowJson([
                 'error_code' => $ex->getCode(),

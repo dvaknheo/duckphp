@@ -33,7 +33,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     const EVENT_SERVICE_USER_LOGOUTED = 'SERVICE_USER_LOGOUTED';
 
     public $options = [
-        'user_enable' => false,
+        'user_enable' => true,
         'user_loginout_auto_redirect' => true,
 
         'user_url_home' => null,
@@ -61,10 +61,10 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if (!$this->options['user_enable']) {
-            $this->is_inited = false;
-            return $this;
-        }
+        // if (!$this->options['user_enable']) {
+        //     $this->is_inited = false;
+        //     return $this;
+        // }
         if ($context->options['user_provider_enable'] ?? true) {
             GlobalUser::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
         }
