@@ -5,9 +5,8 @@
  */
 namespace ProjectNameTemplate\Business;
 
-use DuckPhp\Helper\BusinessHelperTrait;
+use DuckPhp\Foundation\Business\Helper as BusinessHelper;
 
-class Helper
+class Helper extends BusinessHelper
 {
-    use BusinessHelperTrait;
 }

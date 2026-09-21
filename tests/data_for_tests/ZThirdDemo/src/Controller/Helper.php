@@ -4,11 +4,8 @@
  */
 namespace ZThirdDemo\Controller;
 
-use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\Foundation\Controller\Helper as ControllerHelper;
 
-class Helper
+class Helper extends ControllerHelper
 {
-    use ControllerHelperTrait;
-    use SingletonTrait;
 }

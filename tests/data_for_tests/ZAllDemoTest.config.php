@@ -14,7 +14,11 @@ return [
         'test/done'          => 95,
         'doc.php'            => 1329,
         ''                   => 1363,
-        'files'              => 10532,
+        // files 页含「已加载文件清单 + 调用栈」，其长度随类文件路径变化：
+        //   master 的类移动（SessionTrait/ModelTrait/ExceptionReporterTrait 分目录）→ 10532
+        //   本次 Helper trait 并进 Foundation\Controller\Helper（路径短 1 字节）→ 10531
+        // 依据：tests/data_for_tests/ZAllDemoTest-10531.txt（测试自己在失败时 dump）。详见 helper-merge-checklist.md
+        'files'              => 10531,
         'demo.php'           => 406,
         'helloworld.php'     => 11,
         'just-route.php'     => 109,

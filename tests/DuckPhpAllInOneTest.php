@@ -42,20 +42,16 @@ class DuckPhpAllInOneTest extends \PHPUnit\Framework\TestCase
             }
         }
 
-        // __callStatic 测试：调用 Helper 的静态方法
-        DuckPhpAllInOne::Setting('path');  // Helper::Setting() 存在
+        // 四层 Helper 并集：AllInOne 直接声明这些静态方法（不再用 __callStatic 魔术转发）
+        DuckPhpAllInOne::Setting('path');  // 并集里的 Setting() 存在
 
-        // __callStatic 测试：调用不存在的静态方法应该报错
-        $errorTriggered = false;
-        set_error_handler(function ($errno, $errstr) use (&$errorTriggered) {
-            if (strpos($errstr, 'Call to undefined method') !== false) {
-                $errorTriggered = true;
-            }
-            return true;
-        });
-        DuckPhpAllInOne::nonExistentMethod();
-        restore_error_handler();
-        Assert::assertTrue($errorTriggered, 'Should trigger error for non-existent method');
+        // 不存在的静态方法必须报错（显式方法集下是 PHP 原生 Error，不再被魔术方法吞掉）
+        try {
+            DuckPhpAllInOne::nonExistentMethod();
+            Assert::fail('调用不存在的静态方法应该报错');
+        } catch (\Error $ex) {
+            Assert::assertStringContainsString('nonExistentMethod', $ex->getMessage());
+        }
 
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
