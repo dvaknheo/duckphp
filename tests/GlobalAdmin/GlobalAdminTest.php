@@ -147,6 +147,28 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         \PHPUnit\Framework\Assert::assertStringContainsString('admin_home', $homeUrl);
         MyAdmin::_()->options['admin_callback_for_url_for_home'] = $old_url_for_home_cb;
 
+        // Test go_url() exception branch (when neither callback nor URL is set)
+        MyAdmin::_()->options['admin_callback_for_url_for_home'] = null;
+        MyAdmin::_()->options['admin_url_home'] = null;
+        try {
+            Helper::Admin()->urlForHome();
+            \PHPUnit\Framework\Assert::fail("Should throw DuckPhpSystemException");
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            \PHPUnit\Framework\Assert::assertStringContainsString("need app options", $ex->getMessage());
+        }
+        MyAdmin::_()->options['admin_url_home'] = 'admin_home'; // restore
+
+        // Test _Show() with __logined_enable_header_footer
+        $old_header = MyAdmin::_()->options['admin_view_file_header'];
+        $old_footer = MyAdmin::_()->options['admin_view_file_footer'];
+        MyAdmin::_()->options['admin_view_file_header'] = $path.'view/block';
+        MyAdmin::_()->options['admin_view_file_footer'] = $path.'view/block';
+        ob_start();
+        Helper::Admin()->_Show(['__logined_enable_header_footer' => true], $path.'view/block');
+        ob_get_clean();
+        MyAdmin::_()->options['admin_view_file_header'] = $old_header;
+        MyAdmin::_()->options['admin_view_file_footer'] = $old_footer;
+
         // Test exception paths: id() and name() when no provider is set
 
         // Unset both id and name callbacks, and session callback

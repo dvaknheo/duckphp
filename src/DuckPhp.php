@@ -166,7 +166,7 @@ class DuckPhp extends App
      */
     public function _Show(array $data, string $view = '')
     {
-        if ($data['__logined_enable_view'] ?? false) {
+        if (!($data['__logined_enable_view'] ?? false)) {
             return parent::_Show($data, $view);
         }
         if (\is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {

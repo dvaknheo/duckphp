@@ -207,7 +207,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         $input['__logined_id'] ??= $this->id(true);
         $input['__logined_name'] ??= $this->name(true);
         $input['__logined_url_logout'] ??= $this->urlForLogout();
-        $input['__logined_header_footer'] ??= true;
+        $input['__logined_enable_header_footer'] ??= true;
         return $input;
     }
     /**
@@ -223,7 +223,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
-        if ($data['__logined_header_footer'] ?? false) {
+        if ($data['__logined_enable_header_footer'] ?? false) {
             View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
         }
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;

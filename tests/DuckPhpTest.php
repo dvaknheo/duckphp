@@ -85,7 +85,7 @@ PhaseContainer::RestAllContainerForTesting();
         $database_list=$data['database_list'];
         DuckPhp::_(new DuckPhp())->init([
                 'database_list'=> $database_list,
-                'app' => [ 
+                'app' => [
                     DuckPhp_Sub::class => [
                         'database_driver'=>'sqlite'
                     ]
@@ -99,15 +99,44 @@ PhaseContainer::RestAllContainerForTesting();
                 'use_user_view' => true,
                 'use_admin_view' => true,
                 'database_list'=> $database_list,
-                'app' => [ 
+                'app' => [
                     DuckPhp_Sub::class => [
                         'database_driver'=>'xx'
                     ]
                 ]
             ]
         );
-        
-        
+
+        // Test exception_reporter with invalid callable (line 134)
+        PhaseContainer::RestAllContainerForTesting();
+        try {
+            DuckPhp::_(new DuckPhp())->init([
+                'installed' => true,
+                'exception_reporter' => 'not_a_valid_callable',
+            ]);
+            $this->fail('Should throw');
+        } catch (\Throwable $ex) {
+        }
+
+        // Test isLocalDatabase() when local_database is true (line 187)
+        PhaseContainer::RestAllContainerForTesting();
+        DuckPhp::_(new DuckPhp())->init([
+            'installed' => true,
+            'local_database' => true,
+        ]);
+
+        // Test isLocalDatabase() when database_driver differs (line 191)
+        PhaseContainer::RestAllContainerForTesting();
+        DuckPhp::_(new DuckPhp())->init([
+            'installed' => true,
+            'database_driver' => 'mysql',
+            'app' => [
+                DuckPhp_Sub::class => [
+                    'database_driver' => 'sqlite',
+                ]
+            ]
+        ]);
+
         DuckPhp::_()->regConsoleCommand('MyClass','prefix_');
         
         __l("xx");
@@ -122,23 +151,27 @@ PhaseContainer::RestAllContainerForTesting();
         $this->assertStringContainsString('Block', $out_show);
         
         // use_user_view 分支：路由调用类实现 UserControllerInterface
+        PhaseContainer::RestAllContainerForTesting();
         DuckPhp::_(new DuckPhp())->init([
-            'user_provider' => FakeUser::class,
-            'admin_provider' => FakeAdmin::class,
-                'use_user_view' => true,
-                'use_admin_view' => true,
-
+            'use_user_view' => true,
+            'use_admin_view' => true,
+            'admin_provider_enable' => true,
+            'user_provider_enable' => true,
+            'ext' => [
+                \DuckPhp\GlobalAdmin\GlobalAdmin::class => true,
+                \DuckPhp\GlobalUser\GlobalUser::class => true,
+            ],
             'path_view' => $path.'view/',
         ]);
         Route::_()->calling_class = FakeUserController::class;
         try {
-            DuckPhp::_()->_Show(['A'=>'b'], $path.'view/block');
+            DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
         } catch (\Throwable $ex) {
         }
         // use_admin_view 分支：路由调用类实现 AdminControllerInterface
         Route::_()->calling_class = FakeAdminController::class;
         try {
-            DuckPhp::_()->_Show(['A'=>'b'], $path.'view/block');
+            DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
         } catch (\Throwable $ex) {
         }
         Route::_()->calling_class = '';

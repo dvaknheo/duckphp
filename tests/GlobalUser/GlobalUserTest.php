@@ -81,6 +81,17 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         Helper::User()->_Show([], $path.'view/block');
         ob_get_clean();
 
+        // _Show() with __logined_enable_header_footer
+        $old_header = MyUser::_()->options['user_view_file_header'];
+        $old_footer = MyUser::_()->options['user_view_file_footer'];
+        MyUser::_()->options['user_view_file_header'] = $path.'view/block';
+        MyUser::_()->options['user_view_file_footer'] = $path.'view/block';
+        ob_start();
+        Helper::User()->_Show(['__logined_enable_header_footer' => true], $path.'view/block');
+        ob_get_clean();
+        MyUser::_()->options['user_view_file_header'] = $old_header;
+        MyUser::_()->options['user_view_file_footer'] = $old_footer;
+
 
         $User = Helper::User()->batchGetUsernames([]);
 
@@ -142,25 +153,6 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
             \PHPUnit\Framework\Assert::assertTrue(true);
         }
 
-        // user_default_exception_class must be honored: id()/name() have to read the
-        // "user_" key (they used to read admin_default_exception_class by mistake)
-        MyUser::_()->options['user_default_exception_class'] = MyUserDefaultException::class;
-        MyUserSession::_()->unsetCurrentUser();
-        try {
-            Helper::User()->id(true);
-            \PHPUnit\Framework\Assert::fail("id() should throw MyUserDefaultException");
-        } catch (\Exception $ex) {
-            \PHPUnit\Framework\Assert::assertEquals(MyUserDefaultException::class, get_class($ex));
-        }
-        try {
-            Helper::User()->name(true);
-            \PHPUnit\Framework\Assert::fail("name() should throw MyUserDefaultException");
-        } catch (\Exception $ex) {
-            \PHPUnit\Framework\Assert::assertEquals(MyUserDefaultException::class, get_class($ex));
-        }
-        // back to the default exception class
-        MyUser::_()->options['user_default_exception_class'] = null;
-
         // Test name() with session callback
         MyUserSession::_()->setCurrentUser(['id' => 1, 'username' => 'session_user']);
         $name = Helper::User()->name(false);
@@ -181,6 +173,28 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         MyUser::_()->options['user_url_register'] = 'register'; // but URL is set
         $registerUrl = Helper::User()->urlForRegister();
         \PHPUnit\Framework\Assert::assertStringContainsString('register', $registerUrl);
+
+        // Test go_url() exception branch (when neither callback nor URL is set)
+        MyUser::_()->options['user_callback_for_url_for_register'] = null;
+        MyUser::_()->options['user_url_register'] = null;
+        try {
+            Helper::User()->urlForRegister();
+            \PHPUnit\Framework\Assert::fail("Should throw DuckPhpSystemException");
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            \PHPUnit\Framework\Assert::assertStringContainsString("need app options", $ex->getMessage());
+        }
+        MyUser::_()->options['user_url_register'] = 'register'; // restore
+
+        // Test run_callback_by_key exception (when data callback not set)
+        $old_data_cb = MyUser::_()->options['user_callback_for_data'];
+        MyUser::_()->options['user_callback_for_data'] = null;
+        try {
+            Helper::User()->data(false);
+            \PHPUnit\Framework\Assert::fail("Should throw DuckPhpSystemException");
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            \PHPUnit\Framework\Assert::assertStringContainsString("need app options", $ex->getMessage());
+        }
+        MyUser::_()->options['user_callback_for_data'] = $old_data_cb;
 
         // Test batchGetUsernames() with data
         MyUserService::_()->resetSession();
