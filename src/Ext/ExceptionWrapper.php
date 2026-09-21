@@ -7,7 +7,9 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-
+/**
+ * @todo deprecate
+ */
 class ExceptionWrapper extends ComponentBase
 {
     protected $object;

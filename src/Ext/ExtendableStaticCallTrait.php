@@ -6,6 +6,9 @@
 
 namespace DuckPhp\Ext;
 
+/**
+ * @todo deprecate
+ */
 trait ExtendableStaticCallTrait
 {
     protected static $static_methods = [];

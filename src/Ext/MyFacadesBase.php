@@ -8,7 +8,9 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\MyFacadesAutoLoader;
-
+/**
+ * @todo deprecate
+ */
 class MyFacadesBase extends ComponentBase
 {
     public function __construct()
