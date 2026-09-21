@@ -11,15 +11,17 @@ use DuckPhp\Foundation\System\Helper as SystemHelper;
 use PHPUnit\Framework\Assert;
 
 /**
- * 四层并集门面的一致性与防漂移测试。
+ * 四层并集（Foundation\Helper / DuckPhpAllInOne）的一致性与防漂移测试。
  *
- * Foundation\Helper 与 DuckPhpAllInOne 不再用 trait 组合，而是「一行转发」到四层 Helper；
+ * 设计（作者裁定，与 master 一致）：并集**不声明**任何 Helper 方法，而是用
+ * `__callStatic` 按固定顺序在四个层 Helper 里找第一个 `method_exists` 的实现并转发。
  * 本文件负责保证：
- *   1) 转发目标与历史 insteadof 冲突消解表一致（逐方法核对源码里的转发目标）；
- *   2) 方法集 / 签名与四层 Helper 完全一致（少一个方法、丢一个类型注解都会红）；
- *   3) 事件属性（原来由 trait 白拿）仍然存在且值一致；
- *   4) 96 个方法都能被真实调用（哑参数冒烟）；
- *   5) ThrowOn 这个唯一「语义可辨」的冲突项确实取 System（Project）版本。
+ *   1) 96 个方法名都能被派发到真实实现（逐名调用冒烟）；
+ *   2) 派发顺序被钉住（System → Controller → Business → Model），并据此算出 12 个
+ *      跨层重名方法的胜出方（其中 6 个与历史 insteadof 的裁定不同，见测试注释）；
+ *   3) 未定义方法走 trigger_error(E_USER_ERROR) 报错，不会被静默吞掉；
+ *   4) 四个层 Helper 才是方法/事件属性的真正持有者（并集类不再自带事件属性）；
+ *   5) ThrowOn 这个唯一「语义可辨」的重名项确实取 System（Project）版本。
  */
 class HelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,18 +33,32 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         'System' => SystemHelper::class,
     ];
 
-    /** 12 个跨层重名方法 => 胜出层（与旧 insteadof 块逐字一致） */
-    const CONFLICT = [
-        'Setting' => 'Business',
-        'AppOptions' => 'Business',
-        'Config' => 'Business',
-        'XpCall' => 'Business',
-        'FireGlobalEvent' => 'Business',
-        'OnGlobalEvent' => 'Business',
+    /** __callStatic 的查找顺序（改这里等于改重名方法的胜出方） */
+    const DISPATCH_ORDER = ['System', 'Controller', 'Business', 'Model'];
+
+    /**
+     * 跨层重名方法 => 按上面顺序的胜出层（= DISPATCH_ORDER 里第一个声明它的层）。
+     *
+     * 与旧 `insteadof` 裁定的差异（8 个名字换了主人，但**行为等价**）：
+     *   - `Setting`/`AppOptions`/`Config`/`XpCall`：旧裁定 Business，魔术顺序下 Controller
+     *     （两版都是转发到 App/Configer/CoreHelper，等价）；
+     *   - `header`/`setcookie`/`exit`：旧裁定 Controller，魔术顺序下 **System**（System 也声明了
+     *     这三个，且实现逐字相同：`SystemWrapper::_()->_header/_setcookie/_exit`）；
+     *   - `FireGlobalEvent`/`OnGlobalEvent`：旧裁定 Business，魔术顺序下 **System**（三层实现相同）。
+     * 唯一语义可辨的 `ThrowOn` 两种裁定都是 System（Project 版）；`AdminService`/`UserService`
+     * 两种裁定都是 Controller。
+     */
+    const CONFLICT_WINNER = [
+        'Setting' => 'Controller',
+        'AppOptions' => 'Controller',
+        'Config' => 'Controller',
+        'XpCall' => 'Controller',
+        'FireGlobalEvent' => 'System',
+        'OnGlobalEvent' => 'System',
         'ThrowOn' => 'System',
-        'header' => 'Controller',
-        'setcookie' => 'Controller',
-        'exit' => 'Controller',
+        'header' => 'System',
+        'setcookie' => 'System',
+        'exit' => 'System',
         'AdminService' => 'Controller',
         'UserService' => 'Controller',
     ];
@@ -65,7 +81,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    /** 类自己声明的 public static 方法（不含继承、不含 SingletonExTrait 的 _()） */
+    /** 类自己声明的 public static 方法（不含继承、不含 SonstletonExTrait 的 _()） */
     protected function staticApi(string $class): array
     {
         $rc = new \ReflectionClass($class);
@@ -79,135 +95,97 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             }
             $ret[$m->getName()] = $m;
         }
-        unset($ret['_']);
+        unset($ret['_'], $ret['__callStatic']);
         return $ret;
     }
 
-    /** 名字 => 应该转发到的层 */
-    protected function expectedTargets(): array
+    /** 名字 => 按 DISPATCH_ORDER 首次命中的层 */
+    protected function dispatchedTargets(): array
     {
+        $ret = [];
+        foreach (self::DISPATCH_ORDER as $layer) {
+            foreach (array_keys($this->staticApi(self::LAYER_CLASS[$layer])) as $name) {
+                if (!isset($ret[$name])) {
+                    $ret[$name] = $layer;
+                }
+            }
+        }
+        return $ret;
+    }
+
+    // ---------------------------------------------------------------- 1) 四层仍是真宿主
+    public function testLayersHoldTheWholeApi()
+    {
+        $targets = $this->dispatchedTargets();
+        Assert::assertCount(self::EXPECTED_UNION_SIZE, $targets, '四层并集方法数变了，请同步重名方法的裁定');
+
+        // 并集类自己不声明任何 Helper 方法（只有 _() 与 __callStatic 的语义留给魔术方法）
+        foreach ([Helper::class, DuckPhpAllInOne::class] as $class) {
+            Assert::assertSame([], array_keys($this->staticApi($class)), "$class 不应再显式声明 Helper 方法");
+        }
+
+        // 事件属性只住在层 Helper 上（Business 4 个 + Controller 6 个）
+        foreach (self::EVENT_PROPS as $name) {
+            $owners = [];
+            foreach (self::LAYER_CLASS as $layer => $class) {
+                if ((new \ReflectionClass($class))->hasProperty($name)) {
+                    $owners[] = $layer;
+                }
+            }
+            Assert::assertCount(1, $owners, "事件属性 $name 应恰好由一层持有");
+            Assert::assertContains($owners[0], ['Business', 'Controller'], "事件属性 $name 落错层");
+        }
+    }
+
+    // ---------------------------------------------------------------- 2) 派发顺序被钉住
+    public function testDispatchOrderAndWinnersArePinned()
+    {
+        $src = file_get_contents(dirname(__DIR__, 2) . '/src/Foundation/Helper.php');
+        preg_match_all('/\\\\DuckPhp\\\\Foundation\\\\(\w+)\\\\Helper::class/', $src, $m);
+        Assert::assertSame(self::DISPATCH_ORDER, $m[1], 'Foundation\Helper 的派发顺序变了');
+
+        $src_all_in_one = file_get_contents(dirname(__DIR__, 2) . '/src/DuckPhpAllInOne.php');
+        preg_match_all('/\\\\DuckPhp\\\\Foundation\\\\(\w+)\\\\Helper::class/', $src_all_in_one, $m2);
+        Assert::assertSame(self::DISPATCH_ORDER, $m2[1], 'DuckPhpAllInOne 的派发顺序与 Foundation\Helper 不一致');
+
+        // 重名方法：按顺序算出的胜出方必须与钉住的表一致
         $layers_of = [];
         foreach (self::LAYER_CLASS as $layer => $class) {
             foreach (array_keys($this->staticApi($class)) as $name) {
                 $layers_of[$name][] = $layer;
             }
         }
-        $ret = [];
+        $conflicts = [];
         foreach ($layers_of as $name => $layers) {
-            $ret[$name] = count($layers) === 1 ? $layers[0] : self::CONFLICT[$name];
+            if (count($layers) > 1) {
+                $conflicts[$name] = $this->dispatchedTargets()[$name];
+            }
         }
-        return $ret;
-    }
-
-    protected function typeName(?\ReflectionType $t): string
-    {
-        if ($t === null) {
-            return '';
-        }
-        $n = $t->getName();
-        $s = $t->isBuiltin() ? $n : '\\' . $n;
-        if ($t->allowsNull() && $n !== 'null' && $n !== 'mixed') {
-            $s = '?' . $s;
-        }
-        return $s;
-    }
-
-    protected function signatureOf(\ReflectionMethod $m): array
-    {
-        $ret = ['params' => [], 'return' => $this->typeName($m->getReturnType())];
-        foreach ($m->getParameters() as $p) {
-            $ret['params'][] = [
-                'name' => $p->getName(),
-                'type' => $this->typeName($p->getType()),
-                'by_ref' => $p->isPassedByReference(),
-                'variadic' => $p->isVariadic(),
-                'has_default' => $p->isDefaultValueAvailable(),
-                'default' => $p->isDefaultValueAvailable() ? $p->getDefaultValue() : null,
-            ];
-        }
-        return $ret;
-    }
-
-    // ---------------------------------------------------------------- 1) 转发目标
-    public function testForwardTargetsMatchConflictTable()
-    {
-        $expected = $this->expectedTargets();
-        Assert::assertCount(self::EXPECTED_UNION_SIZE, $expected, '四层并集方法数变了，请同步 12 个冲突项的裁定');
-
-        $src = file_get_contents(dirname(__DIR__, 2) . '/src/Foundation/Helper.php');
-        preg_match_all('/\\\\DuckPhp\\\\Foundation\\\\(\w+)\\\\Helper::(\w+)\(/', $src, $m, PREG_SET_ORDER);
-        $actual = [];
-        foreach ($m as $one) {
-            $actual[$one[2]] = $one[1];
-        }
-
+        ksort($conflicts);
+        $expected = self::CONFLICT_WINNER;
         ksort($expected);
-        ksort($actual);
-        foreach ($expected as $name => $layer) {
-            Assert::assertArrayHasKey($name, $actual, "Foundation\\Helper 缺少转发：$name");
-            Assert::assertSame($layer, $actual[$name], "Foundation\\Helper::$name 转发到了 {$actual[$name]}，应为 $layer");
-        }
-        Assert::assertSame(array_keys($expected), array_keys($actual), 'Foundation\\Helper 里有多余的转发');
+        Assert::assertSame($expected, $conflicts, '跨层重名方法的胜出方变了');
     }
 
-    // ---------------------------------------------------------------- 2) 方法集与签名
-    public function testSurfaceAndSignaturesMatchLayers()
+    // ---------------------------------------------------------------- 3) 未定义方法
+    public function testUnknownMethodRaisesUserError()
     {
-        $union = $this->expectedTargets();
-        $actual = $this->staticApi(Helper::class);
-
-        $missing = array_diff(array_keys($union), array_keys($actual));
-        $extra = array_diff(array_keys($actual), array_keys($union));
-        Assert::assertSame([], array_values($missing), 'Foundation\\Helper 少了方法');
-        Assert::assertSame([], array_values($extra), 'Foundation\\Helper 多了方法');
-
-        foreach ($union as $name => $layer) {
-            $expected_sig = $this->signatureOf(new \ReflectionMethod(self::LAYER_CLASS[$layer], $name));
-            Assert::assertSame($expected_sig, $this->signatureOf($actual[$name]), "Foundation\\Helper::$name 签名与 $layer 层不一致");
-        }
-    }
-
-    public function testAllInOneCarriesWholeUnion()
-    {
-        $union = $this->expectedTargets();
-        $actual = $this->staticApi(DuckPhpAllInOne::class);
-
-        $missing = array_diff(array_keys($union), array_keys($actual));
-        Assert::assertSame([], array_values($missing), 'DuckPhpAllInOne 少了 Helper 方法');
-
-        foreach ($union as $name => $layer) {
-            $expected_sig = $this->signatureOf(new \ReflectionMethod(self::LAYER_CLASS[$layer], $name));
-            Assert::assertSame($expected_sig, $this->signatureOf($actual[$name]), "DuckPhpAllInOne::$name 签名与 $layer 层不一致");
-        }
-    }
-
-    // ---------------------------------------------------------------- 3) 事件属性
-    public function testEventPropertiesSurviveOnBothUnions()
-    {
-        foreach (self::EVENT_PROPS as $name) {
-            $owner = null;
-            foreach (['Business', 'Controller'] as $layer) {
-                $rc = new \ReflectionClass(self::LAYER_CLASS[$layer]);
-                if ($rc->hasProperty($name)) {
-                    $owner = $rc;
+        foreach ([Helper::class, DuckPhpAllInOne::class] as $class) {
+            $errorTriggered = false;
+            set_error_handler(function ($errno, $errstr) use (&$errorTriggered) {
+                if (strpos($errstr, 'Call to undefined method') !== false) {
+                    $errorTriggered = true;
                 }
-            }
-            Assert::assertNotNull($owner, "四层 Helper 里找不到事件属性 $name");
-
-            foreach ([Helper::class, DuckPhpAllInOne::class] as $class) {
-                $rc = new \ReflectionClass($class);
-                Assert::assertTrue($rc->hasProperty($name), "$class 丢了事件属性 $name");
-                Assert::assertSame(
-                    $owner->getStaticPropertyValue($name),
-                    $rc->getStaticPropertyValue($name),
-                    "$class::$name 的值与层 Helper 不一致"
-                );
-            }
+                return true;
+            });
+            $class::nonExistentMethod();
+            restore_error_handler();
+            Assert::assertTrue($errorTriggered, "$class 调用不存在的静态方法应触发错误");
         }
     }
 
-    // ---------------------------------------------------------------- 4) 冒烟
-    public function testSmokeEveryForwarder()
+    // ---------------------------------------------------------------- 4) 逐名派发冒烟
+    public function testSmokeEveryDispatchedMethod()
     {
         \LibCoverage\LibCoverage::Begin(Helper::class);
 
@@ -217,7 +195,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             'exit' => function ($code = 0) {},
         ]);
 
-        foreach (array_keys($this->expectedTargets()) as $name) {
+        foreach (array_keys($this->dispatchedTargets()) as $name) {
             $this->callWithDummyArgs(Helper::class, $name);
             $this->callWithDummyArgs(DuckPhpAllInOne::class, $name);
         }
@@ -227,15 +205,17 @@ class HelperTest extends \PHPUnit\Framework\TestCase
 
     protected function callWithDummyArgs(string $class, string $name): void
     {
-        $m = new \ReflectionMethod($class, $name);
+        // 并集类没有声明这些方法，参数只能用「层里同名方法」的签名来生成
+        $target = $this->dispatchedTargets()[$name];
+        $m = new \ReflectionMethod(self::LAYER_CLASS[$target], $name);
         $args = [];
         foreach ($m->getParameters() as $p) {
             $args[] = $this->dummyValue($p);
         }
         try {
-            $m->invoke(null, ...$args);
+            $class::$name(...$args);
         } catch (\Throwable $ex) {
-            // 冒烟只保证转发链路能走通，不保证方法在空环境下能成功
+            // 冒烟只保证派发链路能走通，不保证方法在空环境下能成功
         }
     }
 
@@ -271,7 +251,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $app->options['exception_for_controller'] = HelperUnionControllerException::class;
 
         $cases = [
-            [Helper::class, HelperUnionProjectException::class, '并集取 System（Project）版'],
+            [Helper::class, HelperUnionProjectException::class, '并集按顺序取到 System（Project）版'],
             [SystemHelper::class, HelperUnionProjectException::class, 'System 层即 Project 版'],
             [BusinessHelper::class, HelperUnionBusinessException::class, 'Business 层取 Business 版'],
             [ControllerHelper::class, HelperUnionControllerException::class, 'Controller 层取 Controller 版'],
@@ -284,20 +264,6 @@ class HelperTest extends \PHPUnit\Framework\TestCase
                 Assert::fail("$class::ThrowOn 应该抛异常（{$why}）");
             } catch (HelperUnionProjectException | HelperUnionBusinessException | HelperUnionControllerException $ex) {
                 Assert::assertInstanceOf($expected, $ex, "$class::ThrowOn 选错了层（{$why}）");
-            }
-        }
-    }
-
-    // ---------------------------------------------------------------- 6) 未定义方法
-    public function testUnknownMethodRaisesError()
-    {
-        // 并集是显式方法集：不存在的静态方法由 PHP 直接报 Error（旧版 __callStatic 魔术已移除）
-        foreach ([Helper::class, DuckPhpAllInOne::class] as $class) {
-            try {
-                $class::nonExistentMethod();
-                Assert::fail("$class 调用不存在的静态方法应该报错");
-            } catch (\Error $ex) {
-                Assert::assertStringContainsString('nonExistentMethod', $ex->getMessage());
             }
         }
     }
