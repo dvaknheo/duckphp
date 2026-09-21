@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\Ext;
 
-use DuckPhp\Core\ThrowOnTrait;
+use DuckPhp\Ext\ThrowOnTrait;
 
 class ThrowOnTraitTest extends \PHPUnit\Framework\TestCase
 {

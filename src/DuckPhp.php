@@ -97,11 +97,11 @@ class DuckPhp extends App
         'use_admin_view' => false,
         'use_user_view_header_footer' => false,
         'use_admin_view_header_footer' => false,
-        'exception_for_business'    => \Exception::class,
-        'exception_for_controller'  => \Exception::class,
-        'duckphp_all_in_one_wrap_header_foot'   => false, // DuckPhpAllInOne::embedMe() sets it to true
+        'exception_for_business' => \Exception::class,
+        'exception_for_controller' => \Exception::class,
+        'duckphp_all_in_one_wrap_header_foot' => false, // DuckPhpAllInOne::embedMe() sets it to true
 
-        'permission_menu_tree_for_admin'    => null,
+        'permission_menu_tree_for_admin' => null,
 
         // @used-by dvaknheo/duckcoverage : used by that composer package for coverage testing (no reader inside this repo)
         'duckcoverage_test_lister' => null,

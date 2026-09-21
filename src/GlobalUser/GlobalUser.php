@@ -57,9 +57,13 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         'user_callback_for_url_for_logout' => null,
         'user_default_exception_class' => null,
     ];
+    public function init(array $options, ?object $context = null)
+    {
+        return $this;
+    }
     protected function run_callback_by_key(string $key, ...$args)
     {
-        DuckPhpSystemException::ThrowOn(!isset($this->options[$key]), static::class. " need app options '$key'");
+        CoreHelper::ControllerThrowOn(!isset($this->options[$key]), static::class. " need app options '$key'");
 
         $callback = $this->options[$key];
 
@@ -83,24 +87,22 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
             $exception_class = $this->options['user_default_exception_class'] ?? UserException::class;
             CoreHelper::ControllerThrowOn($check_login && !$id, "id(): NoLogin", -1, $exception_class);
             return $id ?? 0;
-        }
-        if (isset($this->options['user_callback_for_id'])) {
+        } elseif (isset($this->options['user_callback_for_id'])) {
             return $this->run_callback_by_key('user_callback_for_id', $check_login);
         }
-        throw new DuckPhpSystemException("id(): No GlobalUser Provider.", -1);
+        throw new DuckPhpSystemException("No GlobalUser Provider.", -1);
     }
     public function name(bool $check_login = true): string
     {
         if (isset($this->options['user_callback_for_session'])) {
             $name = $this->getSession()->getCurrentUserName();
             $exception_class = $this->options['user_default_exception_class'] ?? UserException::class;
-            CoreHelper::ControllerThrowOn($check_login && !$name, "name() NoLogin 2", -2, $exception_class);
+            CoreHelper::ControllerThrowOn($check_login && !$name, "name(): NoLogin 2", -2, $exception_class);
             return $name;
-        }
-        if (isset($this->options['user_callback_for_name'])) {
+        } elseif (isset($this->options['user_callback_for_name'])) {
             return $this->run_callback_by_key('user_callback_for_name', $check_login);
         }
-        throw new DuckPhpSystemException("name():No GlobalUser Provider.", -2);
+        throw new DuckPhpSystemException("No GlobalUser Provider.", -2);
     }
     public function data(bool $check_login = true): array
     {
@@ -118,7 +120,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         if (isset($this->options[$key_callback])) {
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
-        DuckPhpSystemException::ThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
+        CoreHelper::ControllerThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
         $url = $this->options[$key_url];
         return __url($url);
     }

@@ -6,9 +6,9 @@
 
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Core\SingletonExTrait as Singleton;
+use DuckPhp\Core\SingletonExTrait;
 
 trait SingletonTrait
 {
-    use Singleton;
+    use SingletonExTrait;
 }

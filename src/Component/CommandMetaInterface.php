@@ -10,5 +10,3 @@ interface CommandMetaInterface
 {
     public function __commandMeta() : array;
 }
-
-

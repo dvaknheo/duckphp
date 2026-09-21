@@ -55,9 +55,13 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         'admin_callback_for_url_for_logout' => null,
         'admin_default_exception_class' => null,
     ];
+    public function init(array $options, ?object $context = null)
+    {
+        return parent::init($options, $context);
+    }
     protected function run_callback_by_key(string $key, ...$args)
     {
-        DuckPhpSystemException::ThrowOn(!isset($this->options[$key]), static::class. " need app options '$key'");
+        CoreHelper::ControllerThrowOn(!isset($this->options[$key]), static::class. " need app options '$key'");
 
         $callback = $this->options[$key];
 
@@ -81,8 +85,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
             $exception_class = $this->options['admin_default_exception_class'] ?? AdminException::class;
             CoreHelper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, $exception_class);
             return $id ?? 0;
-        }
-        if (isset($this->options['admin_callback_for_id'])) {
+        } elseif (isset($this->options['admin_callback_for_id'])) {
             return $this->run_callback_by_key('admin_callback_for_id', $check_login);
         }
         throw new DuckPhpSystemException("No GlobalAdmin Provider.", -1);
@@ -90,12 +93,12 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     public function name(bool $check_login = true): string
     {
         if (isset($this->options['admin_callback_for_session'])) {
+
             $name = $this->getSession()->getCurrentAdminName();
             $exception_class = $this->options['admin_default_exception_class'] ?? AdminException::class;
             CoreHelper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, $exception_class);
             return $name;
-        }
-        if (isset($this->options['admin_callback_for_name'])) {
+        } elseif (isset($this->options['admin_callback_for_name'])) {
             return $this->run_callback_by_key('admin_callback_for_name', $check_login);
         }
         throw new DuckPhpSystemException("No GlobalAdmin Provider.", -2);
@@ -116,7 +119,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         if (isset($this->options[$key_callback])) {
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
-        DuckPhpSystemException::ThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
+        CoreHelper::ControllerThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
         $url = $this->options[$key_url];
         return __url($url);
     }

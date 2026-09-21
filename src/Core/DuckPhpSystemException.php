@@ -11,5 +11,5 @@ use Exception;
 
 class DuckPhpSystemException extends Exception
 {
-    use ThrowOnTrait;
+    //
 }

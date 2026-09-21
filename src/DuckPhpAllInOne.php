@@ -9,30 +9,16 @@
 namespace DuckPhp;
 
 use DuckPhp\Component\Command;
-use DuckPhp\Helper\AppHelperTrait;
-use DuckPhp\Helper\BusinessHelperTrait;
-use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\Foundation\Helper;
 
 class DuckPhpAllInOne extends DuckPhp
 {
-    use ModelHelperTrait;
-    use BusinessHelperTrait, ControllerHelperTrait, AppHelperTrait{
-        AppHelperTrait::ThrowOn insteadof ControllerHelperTrait;
-        AppHelperTrait::ThrowOn insteadof BusinessHelperTrait;
-        BusinessHelperTrait::Setting insteadof ControllerHelperTrait;
-        BusinessHelperTrait::AppOptions insteadof ControllerHelperTrait;
-        BusinessHelperTrait::Config insteadof ControllerHelperTrait;
-        BusinessHelperTrait::XpCall insteadof ControllerHelperTrait;
-        BusinessHelperTrait::FireGlobalEvent insteadof ControllerHelperTrait;
-        BusinessHelperTrait::OnGlobalEvent insteadof ControllerHelperTrait;
-        BusinessHelperTrait::OnGlobalEvent insteadof AppHelperTrait;
-        BusinessHelperTrait::FireGlobalEvent insteadof AppHelperTrait;
-        ControllerHelperTrait::header insteadof AppHelperTrait;
-        ControllerHelperTrait::setcookie  insteadof AppHelperTrait;
-        ControllerHelperTrait::exit  insteadof AppHelperTrait;
-        ControllerHelperTrait::AdminService  insteadof BusinessHelperTrait;
-        ControllerHelperTrait::UserService  insteadof BusinessHelperTrait;
+    public static function __callStatic($method, $args)
+    {
+        if (method_exists(Helper::class, $method)) {
+            return Helper::$method(...$args);
+        }
+        trigger_error("Call to undefined method " . static::class . "::$method()", E_USER_ERROR);
     }
     protected $head_view = 'head';
     protected $foot_view = 'foot';

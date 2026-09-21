@@ -10,5 +10,3 @@ interface PermissionMenuMetaInterface
 {
     public function __permissionMenuMeta() : array;
 }
-
-

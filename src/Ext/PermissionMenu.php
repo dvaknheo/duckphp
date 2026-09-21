@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp Admin System - Admin Tree Builder
+ * DuckPhp
+ * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Component\RouteLister;
@@ -14,7 +16,7 @@ class PermissionMenu extends ComponentBase
     {
         $routes = $this->getRoutes(true);
         $tree = $this->build($routes);
-        
+
         $menu_file = $this->getMenuJsonFileConfig();
         if (!$menu_file) {
             return;
