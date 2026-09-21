@@ -65,7 +65,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     }
     protected function run_callback_by_key(string $key, ...$args)
     {
-        if(!isset($this->options[$key])) {
+        if (!isset($this->options[$key])) {
             throw new DuckPhpSystemException(" need app options '$key'", -1);
         }
 
