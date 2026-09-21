@@ -22,6 +22,8 @@ use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
+use DuckPhp\Core\DuckPhpSystemException;
+use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
@@ -49,6 +51,9 @@ class DuckPhp extends App
         'lang_final' => null,
         'local_database' => false,
         'local_redis' => false,
+
+        'exception_reporter' => null,
+        'exception_for_project' => null,
 
         // 'use_user_view' => true,
         // 'use_admin_view' => true,
@@ -128,6 +133,13 @@ class DuckPhp extends App
     ////////////////////
     protected function initComponentsOfInner($components, $default): void
     {
+        if ($this->options['exception_reporter'] ?? null &&  ($this->options['exception_for_project'] ?? null)) {
+            $exception_class = $this->options['exception_for_project'] ?? \Exception::class;
+            if(!is_callable($this->options['exception_reporter'])){
+                throw new DuckPhpSystemException("'exception_reporter' config error!");
+            }
+            ExceptionManager::_()->assignExceptionHandler($exception_class, $this->options['exception_reporter']);
+        }
         if (!$this->is_root && ($this->options['data_file_enable'] ?? false)) {
             ExtOptionsLoader::_()->init($this->options, $this);
         }

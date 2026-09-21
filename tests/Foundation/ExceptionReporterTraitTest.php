@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Foundation;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\ExceptionReporterTrait;
-use DuckPhp\Core\ThrowOnTrait;
+use DuckPhp\Ext\ThrowOnTrait;
 
 class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +14,7 @@ class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
         $options=[
             'namespace' => 'tests\DuckPhp\Foundation',
             'namespace_controller' => '\tests\DuckPhp\Foundation',
-            'exception_reporter' => MyExceptionReporter::class,
+            'exception_reporter' => [MyExceptionReporter::class, 'OnException'],
             'handle_all_exception'=>false,
             'controller_class_postfix'=>'Controller',
             'controller_method_prefix'=>'action_',
@@ -50,6 +50,7 @@ class MainController
 class MyExceptionReporter
 {
     use ExceptionReporterTrait;
+
     public function onTheFirstException($ex)
     {
         //

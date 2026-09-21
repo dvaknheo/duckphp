@@ -73,14 +73,11 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ExceptionManager::_(new ExceptionManager())->reset();
         
         
-        $exception_options['exception_reporter'] = ExceptionManagerExceptionReporter::class;
-        $exception_options['exception_reporter_for_class'] = \Exception::class;
-        
-        ExceptionManager::_(new ExceptionManager())->init($exception_options)->run();
-        $ex=new \Exception("ABCss",123);
+        // exception_reporter 已移至 DuckPhp 层处理，此处改为直接测试 assignExceptionHandler 的 callback 机制
+        ExceptionManager::_(new ExceptionManager())->init(['handle_exception_on_init' => false])->run();
+        ExceptionManager::_()->assignExceptionHandler(\Exception::class, [ExceptionManagerExceptionReporter::class, 'OnException']);
+        $ex = new \Exception("ABCss", 123);
         ExceptionManager::CallException($ex);
-                    //'exception_reporter' =>  ExceptionManagerExceptionReporter::class,
-            //'exception_reporter_for_class' =>  \Exception::class,
         
         
         $t=\LibCoverage\LibCoverage::G();

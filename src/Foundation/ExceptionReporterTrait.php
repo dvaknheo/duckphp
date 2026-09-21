@@ -12,28 +12,23 @@ use DuckPhp\Core\SingletonExTrait;
 trait ExceptionReporterTrait
 {
     use SingletonExTrait;
-    public static function OnException($ex)
+    public static function OnException(\Throwable $ex)
+    {
+        return static::_()->_OnException($ex);
+    }
+    public function _OnException($ex)
     {
         $class = get_class($ex);
-        $namespace_prefix = App::_()->options['namespace'] ."\\";
-        if ($namespace_prefix !== substr($class, 0, strlen($namespace_prefix))) {
-            return static::_()->defaultException($ex);
-        }
         $t = explode("\\", $class);
-        $class = array_pop($t);
-        $method = 'on'.$class;
-        $object = static::_();
-        if (!is_callable([$object,$method])) {
-            return static::_()->defaultException($ex);
+        $class_basename = array_pop($t);
+        $method = 'on'.$class_basename;
+        // PHP method names are case-insensitive, avoid infinite recursion
+        if (strtolower($method) === strtolower('OnException') || strtolower($method) === strtolower('_OnException')) {
+            return App::_()->_OnDefaultException($ex);
         }
-        return $object->$method($ex);
-    }
-    protected function defaultSystemException(\Throwable $ex): void
-    {
-        App::_()->_OnDefaultException($ex);
-    }
-    public function defaultException(\Throwable $ex): void
-    {
-        $this->defaultSystemException($ex);
+        if (!is_callable([$this,$method])) {
+            return App::_()->_OnDefaultException($ex);
+        }
+        return $this->$method($ex);
     }
 }

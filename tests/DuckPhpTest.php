@@ -250,7 +250,7 @@ class FakeUser
 }
 class FakeReporter
 {
-
+    use \DuckPhp\Foundation\ExceptionReporterTrait;
 }
 class FakeUserController implements \DuckPhp\GlobalUser\UserControllerInterface
 {
