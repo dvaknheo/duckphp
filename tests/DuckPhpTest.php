@@ -163,17 +163,47 @@ PhaseContainer::RestAllContainerForTesting();
             ],
             'path_view' => $path.'view/',
         ]);
+        // 给 GlobalUser/GlobalAdmin 各配一个「追加视图数据」回调：这样 _Show() 内部不必再走
+        // id()/name()/urlForLogout() 那串 provider（没配 provider 时会在 return 之前抛异常，
+        // 于是 DuckPhp::_Show() 的两个 return 分支永远到不了）。
+        // 注意：带 context 初始化后 GlobalUser::_() / GlobalAdmin::_() 返回的是 PhaseProxy
+        //（只转发方法调用），要经 self() 才能拿到真身去改 options。
+        // 回调顺便记录"是谁接手的"，用来证明三条分支各自走了哪条路（三条都会渲染同一个 block 视图）。
+        $called = [];
+        $user_cb = function ($input) use (&$called) {
+            $called[] = 'user';
+            return $input;
+        };
+        $admin_cb = function ($input) use (&$called) {
+            $called[] = 'admin';
+            return $input;
+        };
+        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_add_ext_view_data'] = $user_cb;
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_add_ext_view_data'] = $admin_cb;
+
         Route::_()->calling_class = FakeUserController::class;
-        try {
-            DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
-        } catch (\Throwable $ex) {
-        }
+        ob_start();
+        DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
+        $out_user_view = ob_get_clean();
+        $this->assertStringContainsString('Block', $out_user_view);
+        $this->assertSame(['user'], $called, 'UserControllerInterface 分支应由 GlobalUser::_Show() 接手');
+
         // use_admin_view 分支：路由调用类实现 AdminControllerInterface
         Route::_()->calling_class = FakeAdminController::class;
-        try {
-            DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
-        } catch (\Throwable $ex) {
-        }
+        ob_start();
+        DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
+        $out_admin_view = ob_get_clean();
+        $this->assertStringContainsString('Block', $out_admin_view);
+        $this->assertSame(['user', 'admin'], $called, 'AdminControllerInterface 分支应由 GlobalAdmin::_Show() 接手');
+
+        // 开了 __logined_enable_view，但调用类两个接口都不实现 → 回落父类 _Show
+        Route::_()->calling_class = FakeController::class;
+        ob_start();
+        DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
+        $out_plain_view = ob_get_clean();
+        $this->assertStringContainsString('Block', $out_plain_view);
+        $this->assertSame(['user', 'admin'], $called, '两个接口都不是时应回落父类 _Show，不经 GlobalUser/GlobalAdmin');
+
         Route::_()->calling_class = '';
         //////////////////////
         // 回归测试：$view 为空串时必须回落到「当前路由调用路径」当视图名
