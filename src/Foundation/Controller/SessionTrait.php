@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\Foundation;
+namespace DuckPhp\Foundation\Controller;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\SingletonExTrait;

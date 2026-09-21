@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\GlobalUser;
 
 use DuckPhp\GlobalUser\UserSessionTrait;
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class UserSessionTraitTest extends \PHPUnit\Framework\TestCase
 {

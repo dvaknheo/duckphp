@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Foundation;
+namespace tests\DuckPhp\Foundation\Controller;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class SessionTraitTest extends \PHPUnit\Framework\TestCase
 {

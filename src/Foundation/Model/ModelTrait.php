@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\Foundation;
+namespace DuckPhp\Foundation\Model;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;

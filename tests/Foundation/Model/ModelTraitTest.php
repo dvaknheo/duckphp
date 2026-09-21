@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Foundation;
+namespace tests\DuckPhp\Foundation\Model;
 
-use DuckPhp\Foundation\ModelTrait;
+use DuckPhp\Foundation\Model\ModelTrait;
 use DuckPhp\DuckPhpAllInOne;
 
 class ModelTraitTest extends \PHPUnit\Framework\TestCase

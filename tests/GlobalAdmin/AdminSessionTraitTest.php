@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Foundation\Controller;
 
 use DuckPhp\GlobalAdmin\AdminSessionTrait;
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class AdminSessionTraitTest extends \PHPUnit\Framework\TestCase
 {
