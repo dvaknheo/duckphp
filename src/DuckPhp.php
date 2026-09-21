@@ -41,9 +41,6 @@ class DuckPhp extends App
             RouteHookResource::class => true,
             RouteHookPathInfoCompat::class => 'path_info_compact_enable',
         ],
-
-        'admin_provider' => '',
-        'user_provider' => '',
         'database_driver' => '',
         'cli_command_with_common' => true,
 
@@ -95,6 +92,7 @@ class DuckPhp extends App
      * The value written here is the effective fallback used at the read site.
      */
     protected $hidden_options = [
+        'not_empty' => true,
         'session_prefix' => '',
         'table_prefix' => '',
 
@@ -104,7 +102,8 @@ class DuckPhp extends App
         'use_admin_view_header_footer' => false,
         'exception_for_business' => \Exception::class,
         'exception_for_controller' => \Exception::class,
-        'duckphp_all_in_one_wrap_header_foot' => false, // DuckPhpAllInOne::embedMe() sets it to true
+        // DuckPhpAllInOne::embedMe() sets it to true
+        'duckphp_all_in_one_wrap_header_foot' => false,
 
         'permission_menu_tree_for_admin' => null,
 
@@ -133,10 +132,10 @@ class DuckPhp extends App
     ////////////////////
     protected function initComponentsOfInner($components, $default): void
     {
-        if ($this->options['exception_reporter'] ?? null &&  ($this->options['exception_for_project'] ?? null)) {
+        if ($this->options['exception_reporter'] ?? null) {
             $exception_class = $this->options['exception_for_project'] ?? \Exception::class;
-            if(!is_callable($this->options['exception_reporter'])){
-                throw new DuckPhpSystemException("'exception_reporter' config error!");
+            if (!is_callable($this->options['exception_reporter'])) {
+                throw new DuckPhpSystemException("'exception_reporter' config error!:" . var_export($this->options['exception_reporter'], true));
             }
             ExceptionManager::_()->assignExceptionHandler($exception_class, $this->options['exception_reporter']);
         }
@@ -160,21 +159,6 @@ class DuckPhp extends App
             RedisManager::_()->init($this->options, $this);
         }
     }
-    protected function initComponentsOfExt($classes, $default): void
-    {
-        parent::initComponentsByClasseOptions($classes, $default);
-        if ($this->options['admin_provider']) {
-            $class = $this->options['admin_provider'];
-            $object = $class::_();
-            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
-        }
-        if ($this->options['user_provider']) {
-            $class = $this->options['user_provider'];
-            $object = $class::_();
-            GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->getThisPhaseName(), $object));
-        }
-    }
-
     protected function haltInitInBaseClass(): void
     {
         // Just Keep Blank

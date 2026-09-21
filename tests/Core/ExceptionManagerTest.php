@@ -100,7 +100,6 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
 }
 class ExceptionManagerExceptionReporter
 {
-    use \DuckPhp\Foundation\ExceptionReporterTrait;
     public function defaultException($ex)
     {
         var_dump("exception!");

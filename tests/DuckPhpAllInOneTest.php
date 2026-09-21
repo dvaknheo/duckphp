@@ -58,7 +58,7 @@ class DuckPhpAllInOneTest extends \PHPUnit\Framework\TestCase
         Assert::assertTrue($errorTriggered, 'Should trigger error for non-existent method');
 
         \LibCoverage\LibCoverage::G($LibCoverage);
-        \LibCoverage\LibCoverage::End(DuckPhpAllInOne::class);
+        \LibCoverage\LibCoverage::End();
 
     }
 

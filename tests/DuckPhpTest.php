@@ -3,19 +3,17 @@ namespace tests\DuckPhp;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
-use DuckPhp\Ext\Misc;
-use DuckPhp\Component\Configer;
-use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\PhaseContainer;
+use \DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(DuckPhp::class);
-        $LibCoverage = \LibCoverage\LibCoverage::G();
-        $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+        $LibCoverage = \LibCoverage\LibCoverage::_();
+        $path = \LibCoverage\LibCoverage::_()->getClassTestPath(DuckPhp::class);
 
         $path_view= $path.'view/';
         $options=[
@@ -23,8 +21,17 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'path_view'=>$path_view,
             'path_info_compact_enable'=>true,
             'cli_command_with_app' => true,
+            'exception_reporter' => [FakeReporter::class, 'OnException'],
 
         ];
+        
+        DuckPhp::_()->init($options);
+        try{
+        $options['exception_reporter']="CAN_NO call me";
+        DuckPhp::_()->init($options);
+        }catch(\Exception $ex){}
+        PhaseContainer::RestAllContainerForTesting();
+        unset($options['exception_reporter']);
         DuckPhp::_()->init($options);
 
         $options['path'] = $path;
@@ -144,10 +151,11 @@ PhaseContainer::RestAllContainerForTesting();
         $out_fallback = ob_get_clean();
         $this->assertStringContainsString('Block', $out_fallback);
         Route::_()->calling_path = '';
+
         //////////////////////
 
-        \LibCoverage\LibCoverage::G($LibCoverage);
-        \LibCoverage\LibCoverage::End(DuckPhp::class);
+        \LibCoverage\LibCoverage::_($LibCoverage);
+        \LibCoverage\LibCoverage::End();
 
     }
 
@@ -250,7 +258,8 @@ class FakeUser
 }
 class FakeReporter
 {
-    use \DuckPhp\Foundation\ExceptionReporterTrait;
+    use SingletonExTrait;
+    use ExceptionReporterTrait;
 }
 class FakeUserController implements \DuckPhp\GlobalUser\UserControllerInterface
 {

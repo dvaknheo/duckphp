@@ -14,13 +14,13 @@ namespace {
             require_once $autoload_file;
         }
     }
+
 }
 ////////////////////////////////////////
 
 // 以下部分是核心工程师写。
 namespace MySpace\System
 {    
-    use DuckPhp\Component\RouteHookPathInfoCompat;
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
     use MySpace\View\Views;
@@ -108,7 +108,7 @@ namespace MySpace\Business
 namespace MySpace\Model
 {
     //use DuckPhp\Foundation\Model\Helper;
-    use DuckPhp\Foundation\ModelTrait;
+    use DuckPhp\Foundation\Model\ModelTrait;
     
     class MyModel
     {

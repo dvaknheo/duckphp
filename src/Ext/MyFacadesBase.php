@@ -8,6 +8,7 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\MyFacadesAutoLoader;
+
 /**
  * @todo deprecate
  */

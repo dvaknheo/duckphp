@@ -33,6 +33,11 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     const EVENT_SERVICE_USER_LOGOUTED = 'SERVICE_USER_LOGOUTED';
 
     public $options = [
+        'user_enable' => false,
+        'user_default_exception_class' => null,
+        'user_default_exception_code' => null,
+        'user_loginout_auto_redirect' => true,
+
         'user_url_home' => null,
         'user_url_register' => null,
         'user_url_login' => null,
@@ -49,16 +54,18 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         'user_callback_for_add_ext_view_data' => null, //[UserAction::class,'addExtViewData'],
         'user_callback_for_login_service' => null,
         'user_callback_for_session' => null,
-        'user_loginout_auto_redirect' => true,
 
         'user_callback_for_url_for_home' => null,
         'user_callback_for_url_for_register' => null,
         'user_callback_for_url_for_login' => null,
         'user_callback_for_url_for_logout' => null,
-        'user_default_exception_class' => null,
     ];
     public function init(array $options, ?object $context = null)
     {
+        parent::init($options, $context);
+        if ($context->options['user_provider_enable']) {
+            GlobalUser::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
+        }
         return $this;
     }
     protected function run_callback_by_key(string $key, ...$args)
@@ -82,6 +89,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
      */
     public function id(bool $check_login = true)
     {
+        if (!$this->is_inited) {
+            throw new DuckPhpSystemException("Need Provider", -1);
+        }
         if (isset($this->options['user_callback_for_session'])) {
             $id = $this->getSession()->getCurrentUserId();
             $exception_class = $this->options['user_default_exception_class'] ?? UserException::class;
@@ -94,6 +104,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     }
     public function name(bool $check_login = true): string
     {
+        if (!$this->is_inited) {
+            throw new DuckPhpSystemException("Need Provider", -1);
+        }
         if (isset($this->options['user_callback_for_session'])) {
             $name = $this->getSession()->getCurrentUserName();
             $exception_class = $this->options['user_default_exception_class'] ?? UserException::class;

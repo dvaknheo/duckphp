@@ -5,7 +5,7 @@
  */
 namespace ProjectNameTemplate\Model;
 
-use DuckPhp\Foundation\ModelTrait;
+use DuckPhp\Foundation\Model\ModelTrait;
 
 class Base
 {

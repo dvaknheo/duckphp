@@ -466,7 +466,6 @@ class KernelTestObjectError
 }
 class ExceptionReporter
 {
-    use \DuckPhp\Foundation\ExceptionReporterTrait;
     public function defaultException($ex)
     {
         var_dump("exception!");

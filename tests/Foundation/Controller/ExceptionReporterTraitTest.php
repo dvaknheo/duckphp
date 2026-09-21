@@ -3,6 +3,8 @@ namespace tests\DuckPhp\Foundation\Controller;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
+use DuckPhp\Foundation\SingletonTrait;
+
 use DuckPhp\Ext\ThrowOnTrait;
 
 class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
@@ -12,8 +14,8 @@ class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(ExceptionReporterTrait::class);
         
         $options=[
-            'namespace' => 'tests\DuckPhp\Foundation',
-            'namespace_controller' => '\tests\DuckPhp\Foundation',
+            'namespace' => 'tests\DuckPhp\Foundation\Controller',
+            'namespace_controller' => '\tests\DuckPhp\Foundation\Controller',
             'exception_reporter' => [MyExceptionReporter::class, 'OnException'],
             'handle_all_exception'=>false,
             'controller_class_postfix'=>'Controller',
@@ -24,11 +26,11 @@ class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->init($options);
 
         $_SERVER['PATH_INFO']='/first';
-        DuckPhp::_()->run();
+        DuckPhp::_()->serve();
         $_SERVER['PATH_INFO']='/second';
-        DuckPhp::_()->run();
+        DuckPhp::_()->serve();
         $_SERVER['PATH_INFO']='/third';
-        DuckPhp::_()->run();
+        DuckPhp::_()->serve();
         \LibCoverage\LibCoverage::End();
     }
 }
@@ -49,15 +51,17 @@ class MainController
 }
 class MyExceptionReporter
 {
+    use SingletonTrait;
     use ExceptionReporterTrait;
 
     public function onTheFirstException($ex)
     {
         //
     }
-    public function defaultExceptionX($ex)
+    public function defaultException($ex)
     {
-        var_dump(get_class($ex));
+        echo "?????";
+        //var_dump(get_class($ex));
     }
 }
 class TheFirstException extends \Exception

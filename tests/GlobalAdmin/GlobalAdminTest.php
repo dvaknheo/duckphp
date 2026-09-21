@@ -14,7 +14,14 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(GlobalAdmin::class);
-        DuckPhp::_()->init(['admin_provider'=>MyAdmin::class]);
+        DuckPhp::_()->init([
+            'admin_provider_enable'=>true,
+            'ext'=>[
+                MyAdmin::class=>[
+                    'admin_enable'=>true
+                ]
+            ],
+        ]);
         Helper::AdminId();
         try{
         (Helper::AdminId());
@@ -159,13 +166,29 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
             \PHPUnit\Framework\Assert::assertStringContainsString("No GlobalAdmin Provider", $ex->getMessage());
         }
-
+        MyAdmin::_()->is_inited = false;
+        try {
+            Helper::Admin()->id(false);
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            //\PHPUnit\Framework\Assert::assertStringContainsString("Provider", $ex->getMessage());
+        }
+        try {
+            Helper::Admin()->name(false);
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            //\PHPUnit\Framework\Assert::assertStringContainsString("Provider", $ex->getMessage());
+        }
+        try {
+            Helper::Admin()->data(false);
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            //\PHPUnit\Framework\Assert::assertStringContainsString("Provider", $ex->getMessage());
+        }
 
         \LibCoverage\LibCoverage::End();
     }
 }
 class MyAdmin extends GlobalAdmin
 {
+    public $is_inited = false;
     public $options =[
         'admin_url_home' => 'home',
         'admin_callback_for_id' => [MyAction::class,'id'],

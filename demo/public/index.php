@@ -13,6 +13,8 @@ if (is_file($autoload_file)) {
         require_once $autoload_file;
     }
 }
+//ini_set('error_reporting');
+ini_set("display_errors", 1);
 ////////////////////////////////////////
 if (!class_exists(\ProjectNameTemplate\System\App::class)) {
     \DuckPhp\Core\AutoLoader::RunQuickly([

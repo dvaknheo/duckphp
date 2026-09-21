@@ -16,6 +16,15 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(GlobalUser::class);
         DuckPhp::_()->init(['user_provider'=>MyUser::class]);
+        DuckPhp::_()->init([
+            'user_provider_enable'=>true,
+            'ext'=>[
+                MyUser::class=>[
+                    'user_enable'=>true
+                ]
+            ],
+        ]);
+
         Helper::UserId();
         try{
         (Helper::UserId());
@@ -198,6 +207,25 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
             \PHPUnit\Framework\Assert::assertStringContainsString("No GlobalUser Provider", $ex->getMessage());
         }
 
+        MyUser::_()->is_inited = false;
+        try {
+            Helper::User()->id(false);
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            //\PHPUnit\Framework\Assert::assertStringContainsString("Provider", $ex->getMessage());
+        }
+        try {
+            Helper::User()->name(false);
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            //\PHPUnit\Framework\Assert::assertStringContainsString("Provider", $ex->getMessage());
+        }
+        try {
+            Helper::User()->data(false);
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            //\PHPUnit\Framework\Assert::assertStringContainsString("Provider", $ex->getMessage());
+        }
+
+
+
         \LibCoverage\LibCoverage::End();
     }
 }
@@ -206,7 +234,9 @@ class MyUserDefaultException extends UserException
 }
 class MyUser extends GlobalUser
 {
+    public $is_inited = false;
     public $options =[
+        'user_enable' => true,
         'user_url_home' => 'home',
         'user_url_register' => 'register',
         'user_url_login' => 'login',

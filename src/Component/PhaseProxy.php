@@ -33,7 +33,6 @@ class PhaseProxy
         $phase = App::Phase($this->phase);
 
         $object = $this->getObjectForPhaseProxy();
-
         $callback = [$object,$method];
         $ret = ($callback)(...$args); /** @phpstan-ignore-line */
         App::Phase($phase);

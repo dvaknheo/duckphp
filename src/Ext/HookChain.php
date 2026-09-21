@@ -7,6 +7,7 @@
 namespace DuckPhp\Ext;
 
 use ArrayAccess;
+
 /**
  * @todo deprecate
  * @implements ArrayAccess<int, callable> */

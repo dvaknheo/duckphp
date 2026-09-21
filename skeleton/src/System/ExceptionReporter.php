@@ -19,7 +19,7 @@
  */
 namespace YourProjectName\System;
 
-use DuckPhp\Foundation\ExceptionReporterTrait;
+use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 
 class ExceptionReporter
 {

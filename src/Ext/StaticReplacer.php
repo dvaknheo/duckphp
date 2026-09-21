@@ -7,6 +7,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+
 /**
  * @todo deprecate
  */

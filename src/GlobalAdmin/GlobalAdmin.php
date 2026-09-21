@@ -33,6 +33,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     const EVENT_SERVICE_ADMIN_LOGOUTED = 'SERVICE_ADMIN_LOGOUTED';
 
     public $options = [
+        'admin_default_exception_class' => null,
+        'admin_default_exception_code' => null,
+        'admin_loginout_auto_redirect' => true,
+
         'admin_url_home' => null,
         'admin_url_login' => null,
         'admin_url_logout' => null,
@@ -48,16 +52,18 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         'admin_callback_for_add_ext_view_data' => null, //[AdminAction::class,'addExtViewData'],
         'admin_callback_for_login_service' => null,
         'admin_callback_for_session' => null,
-        'admin_loginout_auto_redirect' => true,
 
         'admin_callback_for_url_for_home' => null,
         'admin_callback_for_url_for_login' => null,
         'admin_callback_for_url_for_logout' => null,
-        'admin_default_exception_class' => null,
     ];
     public function init(array $options, ?object $context = null)
     {
-        return parent::init($options, $context);
+        parent::init($options, $context);
+        if ($context->options['admin_provider_enable'] ?? false) {
+            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
+        }
+        return $this;
     }
     protected function run_callback_by_key(string $key, ...$args)
     {
@@ -80,6 +86,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
      */
     public function id(bool $check_login = true)
     {
+        if (!$this->is_inited) {
+            throw new DuckPhpSystemException("Need Provider", -1);
+        }
+
         if (isset($this->options['admin_callback_for_session'])) {
             $id = $this->getSession()->getCurrentAdminId();
             $exception_class = $this->options['admin_default_exception_class'] ?? AdminException::class;
@@ -92,6 +102,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     }
     public function name(bool $check_login = true): string
     {
+        if (!$this->is_inited) {
+            throw new DuckPhpSystemException("Need Provider", -1);
+        }
         if (isset($this->options['admin_callback_for_session'])) {
 
             $name = $this->getSession()->getCurrentAdminName();
@@ -105,6 +118,10 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     }
     public function data(bool $check_login = true): array
     {
+        if (!$this->is_inited) {
+            throw new DuckPhpSystemException("Need Provider", -1);
+        }
+
         return $this->run_callback_by_key('admin_callback_for_data', $check_login);
     }
     public function localService()

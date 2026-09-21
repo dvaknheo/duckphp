@@ -7,11 +7,9 @@
 namespace DuckPhp\Foundation\Controller;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\SingletonExTrait;
 
 trait ExceptionReporterTrait
 {
-    use SingletonExTrait;
     public static function OnException(\Throwable $ex)
     {
         return static::_()->_OnException($ex);

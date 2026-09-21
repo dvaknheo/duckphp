@@ -17,7 +17,7 @@ class Helper
             \DuckPhp\Foundation\Business\Helper::class,
             \DuckPhp\Foundation\Model\Helper::class,
         ];
-        foreach($classes as $class){
+        foreach ($classes as $class) {
             if (method_exists($class, $method)) {
                 return $class::$method(...$args);
             }
