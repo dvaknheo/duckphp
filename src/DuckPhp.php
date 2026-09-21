@@ -96,10 +96,6 @@ class DuckPhp extends App
         'session_prefix' => '',
         'table_prefix' => '',
 
-        'use_user_view' => false,
-        'use_admin_view' => false,
-        'use_user_view_header_footer' => false,
-        'use_admin_view_header_footer' => false,
         'exception_for_business' => \Exception::class,
         'exception_for_controller' => \Exception::class,
         // DuckPhpAllInOne::embedMe() sets it to true
@@ -168,14 +164,16 @@ class DuckPhp extends App
      * @param array<string, mixed> $data
      * @return void
      */
-
     public function _Show(array $data, string $view = '')
     {
-        if (($this->options['use_user_view'] ?? false) && \is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
+        if ($data['__logined_enable_view'] ?? false) {
+            return parent::_Show($data, $view);
+        }
+        if (\is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
             GlobalUser::_()->_Show($data, $view);
             return;
         }
-        if (($this->options['use_admin_view'] ?? false) && \is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
+        if (\is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
             GlobalAdmin::_()->_Show($data, $view);
             return;
         }

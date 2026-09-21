@@ -19,14 +19,26 @@ class AdminControllerBase implements AdminControllerInterface
     protected function initController()
     {
         Helper::checkInstall(null);
-        $flag = Helper::Admin()->canAccess();
-        if (!$flag) {
-            if (!Helper::IsAjax()) {
-                Helper::Show302(Helper::Admin()->urlForLogin());
-                Helper::exit();
-            } else {
-                throw new AdminException("can not access", -1);
-            }
+        try {
+            Helper::Admin()->id(true);
+            $flag = Helper::Admin()->canAccess();
+            Helper::ThrowOn(!$flag, AdminException::MESSAGE_NEED_PEMISSION, AdminException::CODE_NEED_PERMISSION, AdminException::class);
+        } catch (AdminException $ex) {
+            $this->onLoginedException($ex);
+            Helper::exit();
+        }
+        Helper::assignViewData('__logined_enable_view', true);
+        Helper::assignViewData('__logined_enable_header_footer', true);
+    }
+    protected function onLoginedException(AdminException $ex)
+    {
+        if (!Helper::IsAjax()) {
+            Helper::Show302(Helper::Admin()->urlForLogin());
+        } else {
+            Helper::ShowJson([
+                'error_code' => $ex->getCode(),
+                'error_message' => $ex->getMessage()
+            ]);
         }
     }
 }

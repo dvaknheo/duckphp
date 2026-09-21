@@ -34,8 +34,6 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
 
     public $options = [
         'user_enable' => false,
-        'user_default_exception_class' => null,
-        'user_default_exception_code' => null,
         'user_loginout_auto_redirect' => true,
 
         'user_url_home' => null,
@@ -63,14 +61,20 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if ($context->options['user_provider_enable']) {
+        if (!$this->options['user_enable']) {
+            $this->is_inited = false;
+            return $this;
+        }
+        if ($context->options['user_provider_enable'] ?? true) {
             GlobalUser::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
         }
         return $this;
     }
     protected function run_callback_by_key(string $key, ...$args)
     {
-        CoreHelper::ControllerThrowOn(!isset($this->options[$key]), static::class. " need app options '$key'");
+        if(!isset($this->options[$key])) {
+            throw new DuckPhpSystemException(" need app options '$key'", -1);
+        }
 
         $callback = $this->options[$key];
 
@@ -94,8 +98,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         }
         if (isset($this->options['user_callback_for_session'])) {
             $id = $this->getSession()->getCurrentUserId();
-            $exception_class = $this->options['user_default_exception_class'] ?? UserException::class;
-            CoreHelper::ControllerThrowOn($check_login && !$id, "id(): NoLogin", -1, $exception_class);
+            CoreHelper::ControllerThrowOn($check_login && !$id, UserException::MESSAGE_NEED_LOGIN, UserException::CODE_NEED_LOGIN, UserException::class);
             return $id ?? 0;
         } elseif (isset($this->options['user_callback_for_id'])) {
             return $this->run_callback_by_key('user_callback_for_id', $check_login);
@@ -109,8 +112,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         }
         if (isset($this->options['user_callback_for_session'])) {
             $name = $this->getSession()->getCurrentUserName();
-            $exception_class = $this->options['user_default_exception_class'] ?? UserException::class;
-            CoreHelper::ControllerThrowOn($check_login && !$name, "name(): NoLogin 2", -2, $exception_class);
+            CoreHelper::ControllerThrowOn($check_login && !$name, UserException::MESSAGE_NEED_LOGIN, UserException::CODE_NEED_LOGIN, UserException::class);
             return $name;
         } elseif (isset($this->options['user_callback_for_name'])) {
             return $this->run_callback_by_key('user_callback_for_name', $check_login);
@@ -133,7 +135,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         if (isset($this->options[$key_callback])) {
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
-        CoreHelper::ControllerThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
+        if (!isset($this->options[$key_url])) {
+            throw new DuckPhpSystemException("need app options '$key_url'", -1);
+        }
         $url = $this->options[$key_url];
         return __url($url);
     }
@@ -203,6 +207,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
         $input['__logined_id'] ??= $this->id(true);
         $input['__logined_name'] ??= $this->name(true);
         $input['__logined_url_logout'] ??= $this->urlForLogout();
+        $input['__logined_header_footer'] ??= true;
         return $input;
     }
     /**
@@ -218,7 +223,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
-        if (App::_()->options['use_user_view_header_footer'] ?? false) {
+        if ($data['__logined_header_footer'] ?? false) {
             View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
         }
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;

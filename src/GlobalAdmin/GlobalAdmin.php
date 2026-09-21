@@ -33,8 +33,8 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     const EVENT_SERVICE_ADMIN_LOGOUTED = 'SERVICE_ADMIN_LOGOUTED';
 
     public $options = [
-        'admin_default_exception_class' => null,
-        'admin_default_exception_code' => null,
+        'admin_enable' => true,
+        'admin_need_login_exception_code' => null,
         'admin_loginout_auto_redirect' => true,
 
         'admin_url_home' => null,
@@ -60,14 +60,20 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if ($context->options['admin_provider_enable'] ?? false) {
+        if (!$this->options['admin_enable']) {
+            $this->is_inited = false;
+            return $this;
+        }
+        if ($context->options['admin_provider_enable'] ?? true) {
             GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
         }
         return $this;
     }
     protected function run_callback_by_key(string $key, ...$args)
     {
-        CoreHelper::ControllerThrowOn(!isset($this->options[$key]), static::class. " need app options '$key'");
+        if(!isset($this->options[$key])) {
+            throw new DuckPhpSystemException(" need app options '$key'", -1);
+        }
 
         $callback = $this->options[$key];
 
@@ -92,8 +98,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
 
         if (isset($this->options['admin_callback_for_session'])) {
             $id = $this->getSession()->getCurrentAdminId();
-            $exception_class = $this->options['admin_default_exception_class'] ?? AdminException::class;
-            CoreHelper::ControllerThrowOn($check_login && !$id, " NoLogin 1", -1, $exception_class);
+            CoreHelper::ControllerThrowOn($check_login && !$id, "Need Login", $this->options['admin_need_login_exception_code']);
             return $id ?? 0;
         } elseif (isset($this->options['admin_callback_for_id'])) {
             return $this->run_callback_by_key('admin_callback_for_id', $check_login);
@@ -108,8 +113,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         if (isset($this->options['admin_callback_for_session'])) {
 
             $name = $this->getSession()->getCurrentAdminName();
-            $exception_class = $this->options['admin_default_exception_class'] ?? AdminException::class;
-            CoreHelper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, $exception_class);
+            CoreHelper::ControllerThrowOn($check_login && !$name, "Need Login", $this->options['admin_need_login_exception_code']);
             return $name;
         } elseif (isset($this->options['admin_callback_for_name'])) {
             return $this->run_callback_by_key('admin_callback_for_name', $check_login);
@@ -121,7 +125,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         if (!$this->is_inited) {
             throw new DuckPhpSystemException("Need Provider", -1);
         }
-
         return $this->run_callback_by_key('admin_callback_for_data', $check_login);
     }
     public function localService()
@@ -136,7 +139,9 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         if (isset($this->options[$key_callback])) {
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
-        CoreHelper::ControllerThrowOn(!isset($this->options[$key_url]), "need app options '$key_url'");
+        if (!isset($this->options[$key_url])) {
+            throw new DuckPhpSystemException("need app options '$key_url'", -1);
+        }
         $url = $this->options[$key_url];
         return __url($url);
     }
@@ -199,6 +204,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         $input['__logined_id'] ??= $this->id(true);
         $input['__logined_name'] ??= $this->name(true);
         $input['__logined_url_logout'] ??= $this->urlForLogout();
+        $input['__logined_enable_header_footer'] ??= false;
         return $input;
     }
     /**
@@ -214,7 +220,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
-        if (App::_()->options['use_admin_view_header_footer'] ?? false) {
+        if ($data['__logined_enable_header_footer'] ?? false) {
             View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
         }
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;
