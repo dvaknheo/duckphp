@@ -175,16 +175,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     public function mergeViewData(array $input): array
     {
         $input = $this->addExtViewData($input);
-        $header = '';
-        $footer = '';
-        if (isset($this->options['admin_view_file_header'])) {
-            $header = View::_()->_Render($this->options['admin_view_file_header'], $input);
-        }
-        if (isset($this->options['admin_view_file_footer'])) {
-            $footer = View::_()->_Render($this->options['admin_view_file_footer'], $input);
-        }
-        $input['__view_data']['header'] = $header;
-        $input['__view_data']['footer'] = $footer;
         return $input;
     }
     /**
@@ -195,10 +185,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
             return $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $input);
         }
-        $input['__logined_id'] ??= $this->id(true);
-        $input['__logined_name'] ??= $this->name(true);
-        $input['__logined_url_logout'] ??= $this->urlForLogout();
-        $input['__logined_enable_header_footer'] ??= false;
         return $input;
     }
     /**
@@ -207,14 +193,34 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     public function _Show(array $data = [], string $view = '')
     {
         $last_phase = App::_()->getLastPhase();
-        $data = $this->mergeViewData($data);
 
-        $full_header_file = $this->options['admin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_header'], true) : '';
-        $full_footer_file = $this->options['admin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_footer'], true) : '';
+        $data = $this->addExtViewData($data);
+        $header = '';
+        $footer = '';
+        $full_header_file = null;
+        $full_footer_file = null;
+        if (isset($this->options['admin_view_file_header'])) {
+            $header = View::_()->_Render($this->options['admin_view_file_header'], $data);
+            $full_header_file = $this->options['admin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_header'], true) : '';
+
+        }
+        if (isset($this->options['admin_view_file_footer'])) {
+            $footer = View::_()->_Render($this->options['admin_view_file_footer'], $data);
+            $full_footer_file = $this->options['admin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_footer'], true) : '';
+        }
+
+        View::_()->data['__view_data']['header'] = $header;
+        View::_()->data['__view_data']['footer'] = $footer;
+
+        View::_()->data['__logined_id'] ??= $this->id(true);
+        View::_()->data['__logined_name'] ??= $this->name(true);
+        View::_()->data['__logined_url_logout'] ??= $this->urlForLogout();
+        View::_()->data['__logined_enable_header_footer'] ??= false;
 
         $old_phase = App::Phase($last_phase);
         App::_()->onBeforeOutput();
-        if ($data['__logined_enable_header_footer'] ?? false) {
+        $enable_header_footer = $data['__logined_enable_header_footer'] ?? (View::_()->data['__logined_enable_header_footer'] ?? null);
+        if ($enable_header_footer ?? false) {
             View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
         }
         $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;

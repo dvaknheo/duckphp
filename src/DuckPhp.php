@@ -25,6 +25,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\View;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalUser\GlobalUser;
@@ -166,7 +167,8 @@ class DuckPhp extends App
      */
     public function _Show(array $data, string $view = '')
     {
-        if (!($data['__logined_enable_view'] ?? false)) {
+        $enable = $data['__logined_enable_view'] ?? (View::_()->data['__logined_enable_view'] ?? null);
+        if (!($enable ?? false)) {
             return parent::_Show($data, $view);
         }
         if (\is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {

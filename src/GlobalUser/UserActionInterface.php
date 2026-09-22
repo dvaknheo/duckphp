@@ -47,11 +47,6 @@ interface UserActionInterface
     public function urlForHome(?string $url_back = null, ?array $ext = null): string;
 
     /**
-     * @param array<string, mixed> $input
-     * @param array<string, mixed> $input
-     */
-    public function mergeViewData(array $input): array;
-    /**
      * @param array<string, mixed> $data
      */
     public function _Show(array $data = [], string $view = '');

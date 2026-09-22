@@ -43,12 +43,6 @@ interface AdminActionInterface
      * @param array<string, mixed> $ext
      */
     public function urlForHome(?string $url_back = null, ?array $ext = null): string;
-
-    /**
-     * @param array<string, mixed> $input
-     * @param array<string, mixed> $input
-     */
-    public function mergeViewData(array $input): array;
     /**
      * @param array<string, mixed> $data
      */
@@ -60,6 +54,4 @@ interface AdminActionInterface
     public function log(string $string, ?string $type = null, array $ext = []);
 
     public function isSuper(): bool;
-    // public function login(array $post);
-    // public function logout();
 }
