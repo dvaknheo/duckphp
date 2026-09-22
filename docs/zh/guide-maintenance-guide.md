@@ -298,4 +298,6 @@ python3 <tmp>/drift.py --all                                                    
 
 **踩坑（重要，写脚本改文档的人都该知道）**：分两批替换时，第二批把「新文案」当成「旧文案」单独传了进去（少传了第三个参数），`String.Replace(old, $null)` **直接删掉了 5 行正文**（`cache.md`/`appendix-glossary.md`/`lifecycle.md`/`security-performance.md`/`embed.md`）。教训：批量改文档**每条都必须传「旧→新」两个字符串**，脚本要打印「命中/未命中」计数；`命中数 = 配对数` 是能立刻发现「误删」的唯一信号，改完还要 grep 复查一次目标串。
 
+- 另：落实作者在 `exception.md` 里留的 3 条 `//TODO`——① 异常报告器的装配点已移到入口类（`DuckPhp::initComponentsOfInner()`，源码 `src/DuckPhp.php` 第 132–137 行），`ExceptionManager` 不再读这两个选项；② 条件抛不再推荐 `Ext\ThrowOnTrait`（框架一处不用），推荐 `Helper::ThrowOn()` 家族；③ `Ext\ExceptionWrapper` 标注为**不推荐**（改用 `Helper::XpCall()` 或直接 `try/catch`）。同时把「报告器分发」那节的旧三步（按命名空间 + `defaultException()`）改成现状（短类名拼 `on{类名}()`，兜底 `App::_()->_OnDefaultException()`）。
+
 **验收**：`docs/zh/guide` 里 `HelperTrait` / 旧类名 / `use_*_view` / `insteadof` **归零**（只剩 `Model\ModelHelperTrait` 与「旧选项已失效」的说明）；`check-doc-links.py docs/zh` → `broken: 0`；全量测试 `OK (95 tests, 658 assertions)`、LibCoverage `4876/4876 (100.00%)`；`helper.md` 198 行（≤400）。

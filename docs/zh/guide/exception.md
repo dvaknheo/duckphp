@@ -48,17 +48,19 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 
 ### 条件抛：ThrowOn 家族
 
-[DuckPhp\Ext\ThrowOnTrait](../reference/Ext-ThrowOnTrait.md) 提供静态守卫：`XxxException::ThrowOn($flag, $message, $code)`——`$flag` 为真就抛。Helper 侧按层封装（[CoreHelper](../reference/Core-CoreHelper.md)）：
-//TODO ThrowOnTrait 已经不推荐，现在 推荐的是 Helper::ThrowOn
+**推荐用 Helper 侧的条件抛**（[CoreHelper](../reference/Core-CoreHelper.md)）——`$flag` 为真就抛，异常类由应用选项集中决定：
 
-| 写法                                               | 抛出的异常类由谁定                                      |
-| ------------------------------------------------ | ---------------------------------------------- |
+| 写法 | 抛出的异常类由谁定 |
+| --- | --- |
+| `Helper::ThrowOn($flag, 'msg', $code)` | 看是哪一层的 Helper：System 层 = Project 版；Business / Controller 层各自用本层选项 |
+| `Helper::ProjectThrowOn($flag, 'msg', $code)` | 选项 `exception_for_project`（缺省 `\Exception`） |
+| `Helper::BusinessThrowOn($flag, 'msg', $code)` | 选项 `exception_for_business`（缺省 `\Exception`） |
 | `Helper::ControllerThrowOn($flag, 'msg', $code)` | 选项 `exception_for_controller`（缺省 `\Exception`） |
-| `Helper::BusinessThrowOn($flag, 'msg', $code)`   | 选项 `exception_for_business`（缺省 `\Exception`）   |
-| `Helper::ProjectThrowOn($flag, 'msg', $code)`    | 选项 `exception_for_project`（缺省 `\Exception`）    |
-| `MyException::ThrowOn($flag, 'msg', $code)`      | 就是 `MyException` 自己                            |
+| `Helper::ThrowOn($flag, 'msg', $code, MyException::class)` | 第 4 个参数直接点名异常类 |
 
-三个 `exception_for_*` 都是**隐藏选项**（`src/DuckPhp.php` 第 100–101 行只列了 business/controller；project 走 [`ExceptionManager`](../reference/Core-ExceptionManager.md) 的同名选项），可在 [App](../reference/Core-App.md) 选项里覆盖。另有 `exception_map` 可做异常类名映射（[CoreHelper](../reference/Core-CoreHelper.md)）。
+> ⚠️ **不再推荐**「在异常类上 `use DuckPhp\Ext\ThrowOnTrait`，然后 `MyException::ThrowOn(...)`」这种写法：[DuckPhp\Ext\ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)（源码 `src/Ext/ThrowOnTrait.php`）还在，但**框架自己已经一处都不用**。条件抛一律走 Helper——异常类由选项集中决定，测试里也能整族换掉。真想在异常类上留个静态守卫，就自己 `use` 它（`static` 绑定到该类，抛出的就是它本身）。
+
+三个 `exception_for_*` 都是入口类的选项（源码 `src/DuckPhp.php` 第 53–54 行给了 `exception_reporter` 与 `exception_for_project`，第 100–101 行给了 business/controller），在 [App](../reference/Core-App.md) 的 `$options` 里覆盖即可。另有 `exception_map` 做异常类名映射（[CoreHelper](../reference/Core-CoreHelper.md)）。
 
 ### 错误视图四选项 + 维护页
 
@@ -89,11 +91,23 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 
 ### 异常报告器 ExceptionReporter
 
-配了 `exception_reporter` 选项后，`ExceptionManager` 初始化时（源码 `src/Core/ExceptionManager.php` 第 45–48 行）会把「`exception_for_project`（缺省 `\Exception`）的异常」统一指给报告器的 `OnException()`。[DuckPhp\Foundation\Controller\ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md) 的分发逻辑：
-//TODO 现有版本职责已经yi'do
-1. 异常类名不在当前应用命名空间下 → `defaultException($ex)`（缺省转 `_OnDefaultException()`）；
-2. 取类短名拼方法名 `on{短名}()`，可调用则执行；
-3. 否则 `defaultException($ex)`。
+**装配在入口类里**：`exception_reporter` 选项由 [`DuckPhp\DuckPhp`](../reference/DuckPhp.md) 在装配组件时读取（源码 `src/DuckPhp.php` 第 132–137 行 `initComponentsOfInner()`），把它注册为 **`exception_for_project`（缺省 `\Exception`）这一族异常**的处理器：
+
+```php
+ExceptionManager::_()->assignExceptionHandler($exception_class, $this->options['exception_reporter']);
+```
+
+- `exception_reporter` 不可调用时**启动即抛** `DuckPhpSystemException("'exception_reporter' config error!: …")`——配置写错要早失败；
+- [`ExceptionManager`](../reference/Core-ExceptionManager.md) **自己不读这两个选项**，它只维护「异常类 → 处理器」的映射（`assignExceptionHandler()` / `setMultiExceptionHandler()` / `setDefaultExceptionHandler()`），并在 `_CallException($ex)`（源码 `src/Core/ExceptionManager.php` 第 88–100 行）里按 **后注册优先**（`array_reverse`）+ `is_a($ex, $class)` 逐个匹配、命中即调用处理器；都不命中才落 `default_exception_handler`（通常是 `App::OnDefaultException`）。
+
+分发到具体方法这一步在 [DuckPhp\Foundation\Controller\ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md) 里：`OnException()`（静态入口）转发给 `_OnException($ex)`，后者：
+
+1. 取异常的**短类名**拼方法名 `on{短类名}()`（`BusinessException` → `onBusinessException()`）；
+2. 该方法 `is_callable([$this, $method])`（**静态方法、实例方法都行**）→ 执行它并返回其返回值；
+3. 没有这个方法 → 落回 `App::_()->_OnDefaultException($ex)`；
+4. 方法名正好是 `OnException` / `_OnException`（PHP 方法名大小写不敏感，会自我递归）→ 同样走第 3 步兜底。
+
+> 旧版本的「按命名空间判断 + `defaultException()` 方法」已经取消：现在没有 `defaultException()`，兜底统一为 `App::_()->_OnDefaultException()`。要自定义兜底，就在报告器里加一个覆盖所有异常的 `onException()`（注意它与 `OnException` 同名、会被第 4 步挡住），或者更稳妥地**覆盖 `App::_OnDefaultException()`**（错误页三分支见本章前面那节）。
 
 `demo/src/Controller/ExceptionReporter.php` 是骨架：
 
@@ -117,11 +131,16 @@ class ExceptionReporter
 }
 ```
 
-对应关系：`BusinessException` → `onBusinessException()`、`ControllerException` → `onControllerException()`、`ProjectException` → `onProjectException()`、其它 → `defaultException()`。
+对应关系：`BusinessException` → `onBusinessException()`、`ControllerException` → `onControllerException()`、`ProjectException` → `onProjectException()`；没有对应方法（或异常本身就是报告器方法名撞上的那两个）→ `App::_()->_OnDefaultException()`。
 
-### 异常安全包装：Ext\ExceptionWrapper
+### 异常安全包装：Ext\ExceptionWrapper（**不推荐**）
 
-[DuckPhp\Ext\ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)（源码 `src/Ext/ExceptionWrapper.php`）把对象包一层：经 `__call` 的方法调用被 try/catch 包住——正常返回结果，抛 `\Exception` 时**把异常对象当返回值**交回（不抛）。只捕获 `\Exception`，不捕获 `\Error`。
+⚠️ 这个扩展**框架里已经没有内部使用者，新代码别用**。它要解决的两件事现在都有更直接的做法：
+
+- 「一处调用不想让整条流程炸掉」→ 用 `Helper::XpCall($cb, ...$args)`（源码 `src/Core/CoreHelper.php` 的 `_XpCall()`：`try { return ($cb)(...$args); } catch (\Exception $ex) { return $ex; }`，异常当返回值拿回）；
+- 「真需要处理异常」→ 直接 `try/catch` 分支处理，别把异常混进正常返回值。
+
+老代码已经在用的可以继续用：[DuckPhp\Ext\ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)（源码 `src/Ext/ExceptionWrapper.php`）把对象包一层，`__call` 里 try/catch，抛 `\Exception` 时把异常对象当返回值交回（只捕 `\Exception`，不捕 `\Error`）。
 
 ```php
 $safe = ExceptionWrapper::Wrap($someClient);
@@ -189,20 +208,20 @@ ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) { /* 兜底 */ 
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 业务异常继承了 `DuckPhpSystemException` | 把「框架坏了」和「业务出错」混在一起 | 改 `extends \Exception`；要 `ThrowOn()` 就 `use ThrowOnTrait` |
-| 配了 `exception_reporter` 却没被调用 | 异常类不在当前应用命名空间，或 `exception_for_project` 没配 | 异常类放到 `namespace` 选项对应的命名空间下；或给 `exception_for_project` 配公共基类 |
-| 报告器方法没命中 | 方法名不是 `on{异常类短名}` | 对照 [`ExceptionReporterTrait::OnException()`](../reference/Foundation-Controller-ExceptionReporterTrait.md) 的拼法 |
-| 404 页不出来，只有占位文本 | `error_404` 没配，或应用在 init 完成前就 404 | 配 `'error_404' => '_sys/error_404'`；init 完成前的错误只出占位 |
-| 生产环境泄露了异常详情 | `is_debug` 为真，或视图里没判 `__is_debug()` | 上线置 `false`；错误视图里用 `__is_debug()` 包调试块 |
-| `IsDebug()` 莫名为真 | 根应用或 Setting 里 `duckphp_is_debug` 为真 | 用 `IsHiddenDebug()` 或检查根/设置 |
-| 维护页不生效 | 只配了 `error_maintain` 没置 `is_maintain` | 同时置 `'is_maintain' => true` 或 Setting `duckphp_is_maintain` |
-| [`ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md) 没接住 `\Error` | 它只捕获 `\Exception` | `\Error` 属编程错误，应让它抛出来修 |
+| 现象                                                                      | 原因                                         | 改法                                                                                                             |
+| ----------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| 业务异常继承了 `DuckPhpSystemException`                                        | 把「框架坏了」和「业务出错」混在一起                         | 改 `extends \Exception`；条件抛改用 `Helper::ThrowOn()`（不再推荐 `use ThrowOnTrait`）                                     |
+| 配了 `exception_reporter` 却启动就报 `config error`                              | `exception_reporter` 不可调用（入口类里 `is_callable()` 校验，源码 `src/DuckPhp.php` 第 134–136 行） | 填 `[类名, 方法]` / 类名（有静态 `OnException()`）/ 可调用对象                              |
+| 报告器方法没命中                                                                | 方法名不是 `on{异常类短名}`                          | 对照 [`ExceptionReporterTrait::OnException()`](../reference/Foundation-Controller-ExceptionReporterTrait.md) 的拼法 |
+| 404 页不出来，只有占位文本                                                         | `error_404` 没配，或应用在 init 完成前就 404          | 配 `'error_404' => '_sys/error_404'`；init 完成前的错误只出占位                                                            |
+| 生产环境泄露了异常详情                                                             | `is_debug` 为真，或视图里没判 `__is_debug()`        | 上线置 `false`；错误视图里用 `__is_debug()` 包调试块                                                                         |
+| `IsDebug()` 莫名为真                                                        | 根应用或 Setting 里 `duckphp_is_debug` 为真       | 用 `IsHiddenDebug()` 或检查根/设置                                                                                    |
+| 维护页不生效                                                                  | 只配了 `error_maintain` 没置 `is_maintain`      | 同时置 `'is_maintain' => true` 或 Setting `duckphp_is_maintain`                                                    |
+| [`ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md)（不推荐用）没接住 `\Error` | 它只捕获 `\Exception`                          | `\Error` 属编程错误，应让它抛出来修；不推荐用的理由见上文                                                                          |
 
 ## 下一步
 
 - [第 2-12 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
 - [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：异常发生在请求时序的哪一环。
 - [第 1-6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 与日志分级的入门。
-- 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md)、[Ext-ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)、[Core-ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)
+- 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md)、[Ext-ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)、[Ext\ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)
