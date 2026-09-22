@@ -21,6 +21,48 @@ class RouteLister extends ComponentBase
     public $options = [
         'classes_to_get_controller_path' => [],
     ];
+    /**
+     * @command_desc [[command.routes|show routes]]
+     */
+    public function command_routes(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
+    {
+        $routes = RouteLister::_()->listAll($with_children, $only_controller, $only_admin, $only_user);
+        foreach ($routes as $route) {
+            // url line: green background
+            echo "\033[42;30m" . $route['url'] . "\033[0m\n";
+            $extra = '';
+            if (!empty($route['controller'])) {
+                $extra = $route['controller'] . '->' . $route['method'];
+            }
+            $marks = [];
+            if ($route['route_map']) {
+                $marks[] = 'route_map';
+            }
+            if ($route['route_map_important']) {
+                $marks[] = 'route_map_important';
+            }
+            if ($route['rewrite_map']) {
+                $marks[] = 'rewrite_map';
+            }
+            if ($marks) {
+                $extra = $extra ? $extra . ' ' : '';
+                $extra .= '(' . implode(',', $marks) . ')';
+            }
+            // admin/user: red marks at the end, without brackets
+            $admin_user = '';
+            if ($route['is_admin']) {
+                $admin_user .= ' admin';
+            }
+            if ($route['is_user']) {
+                $admin_user .= ' user';
+            }
+            $admin_user = $admin_user !== '' ? "\033[31m" . $admin_user . "\033[0m" : '';
+            $phase = $route['phase'];
+            $phase_str = $phase !== '' ? ' (' . $phase . ')' : '';
+            echo '  ' . $extra . $phase_str . $admin_user . "\n";
+        }
+    }
+
     ////[[
     public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
     {

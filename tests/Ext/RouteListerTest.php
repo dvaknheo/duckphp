@@ -118,16 +118,47 @@ class RouteListerTest extends \PHPUnit\Framework\TestCase
         Route::_()->options['namespace']="NoExists";
         RouteLister::_()->listAll();
         //////////////
+        // 确保 namespace_controller 设置正确，指向 Controller 目录
+        Route::_()->options['namespace_controller'] = 'Controller';
+        Route::_()->options['namespace'] = 'tests_Ext_RouteLister';
+        // 强制重新扫描
+        $all_routes = RouteLister::_()->listAll();
+        // 查找 admin 和 user 控制器
+        $has_admin = false;
+        $has_user = false;
+        foreach ($all_routes as $route) {
+            if (!empty($route['controller'])) {
+                if ($route['is_admin']) {
+                    $has_admin = true;
+                }
+                if ($route['is_user']) {
+                    $has_user = true;
+                }
+            }
+        }
+        $this->assertTrue($has_admin, 'Should have admin controller route');
+        $this->assertTrue($has_user, 'Should have user controller route');
+        // command_routes 测试 - 需要有 admin/user 路由才覆盖分支
+        ob_start();
+        RouteLister::_()->command_routes();
+        $output = ob_get_clean();
+        // 验证输出中包含 admin/user 标记
+        $this->assertStringContainsString('admin', $output);
+        $this->assertStringContainsString('user', $output);
+        //////////////
+        // getControllerPathByApp()：用一个真实 App 的文件位置 + namespace_controller 定位控制器目录
+        // （从 Component 搬到 Ext 时这段丢了，导致该方法只剩“找不到目录返回 null”那半条被覆盖）
         PhaseContainer::RestAllContainerForTesting();
+        \tests_Ext_RouteLister\System\RouteListerApp::_()->init(['path' => $path]);
+        $controller_path = MyRouteLister::_()->getControllerPathByApp(Route::_()->getControllerNamespacePrefix());
+        $this->assertSame($path.'Controller'.DIRECTORY_SEPARATOR, $controller_path);
+        $this->assertDirectoryExists($controller_path);
 
-        include $path.'System/RouteListerApp.php';
-        \tests_Ext_RouteLister\System\RouteListerApp::_()->init([
-             'path'=>$path,
-        ]);
-        MyRouteLister::_()->getControllerPathByApp(Route::_()->getControllerNamespacePrefix());
-
+        // prefix 以 \ 开头：namespace_controller 设成 '\' 时 getControllerNamespacePrefix() 就返回 '\'
+        // → getControllerPathByApp() 直接返回 null
         Route::_()->options['namespace_controller'] = '\\';
-        MyRouteLister::_()->getControllerPathByApp(Route::_()->getControllerNamespacePrefix());
+        $this->assertNull(MyRouteLister::_()->getControllerPathByApp(Route::_()->getControllerNamespacePrefix()));
+        Route::_()->options['namespace_controller'] = 'Controller';
 
         \LibCoverage\LibCoverage::End();
     }
