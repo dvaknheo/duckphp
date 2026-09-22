@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Foundation\Model;
 
 use DuckPhp\Foundation\Model\Base;
 use DuckPhp\Foundation\Model\ModelHelper as Helper;
+use DuckPhp\Foundation\Model\ModelHelperTrait;
 use PHPUnit\Framework\Assert;
 
 class HelperTest extends \PHPUnit\Framework\TestCase
@@ -75,4 +76,46 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         } catch (\Throwable $ex) {
         }
     }
+
+    /**
+     * 覆盖测试：`ModelHelperTrait` 是独立文件，必须单独 Begin/End 才会有它的覆盖率 dump
+     * （模型侧的 ModelHelper/Base 用的是同一个 trait，方法体只在这一个文件里）。
+     */
+    public function testModelHelperTraitCoverage()
+    {
+        \LibCoverage\LibCoverage::Begin(ModelHelperTrait::class);
+
+        $sql = 'Select * from users';
+        try {
+            TraitOnlyModelHelper::SqlForPager($sql, 1, 5);
+        } catch (\Throwable $ex) {
+        }
+        try {
+            TraitOnlyModelHelper::SqlForCountSimply($sql);
+        } catch (\Throwable $ex) {
+        }
+        try {
+            TraitOnlyModelHelper::Db();
+        } catch (\Throwable $ex) {
+        }
+        try {
+            TraitOnlyModelHelper::DbForRead();
+        } catch (\Throwable $ex) {
+        }
+        try {
+            TraitOnlyModelHelper::DbForWrite();
+        } catch (\Throwable $ex) {
+        }
+        try {
+            TraitOnlyModelHelper::DatabaseDriver();
+        } catch (\Throwable $ex) {
+        }
+
+        \LibCoverage\LibCoverage::End();
+    }
+}
+
+class TraitOnlyModelHelper
+{
+    use ModelHelperTrait;
 }

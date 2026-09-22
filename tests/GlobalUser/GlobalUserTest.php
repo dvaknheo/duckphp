@@ -76,7 +76,6 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
 
         // show() 分支：渲染视图；header/footer 的渲染结果写进 View::_()->data['__view_data']
         ob_start();
-        App::_()->options['use_user_view_header_footer'] = true;
         Helper::User()->_Show([], $path.'view/block');
         ob_get_clean();
         \PHPUnit\Framework\Assert::assertStringContainsString('Block', \DuckPhp\Core\View::_()->data['__view_data']['header'] ?? '');
