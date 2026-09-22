@@ -15,7 +15,7 @@ php -S 127.0.0.1:8080 -t demo/public
 |---|---|---|
 | 规范 | **8** | 本章：四层各管什么、谁不能调谁 |
 | 请求路径 | 9–13 | [路由](routing.md) → [控制器](controllers.md) → [视图](views.md) → [数据库](database.md) → [模型](model.md) |
-| 横切能力 | 14–16 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话与用户体系](external-auth.md) |
+| 横切能力 | 14–16 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话](session.md)、[用户体系](user.md)、[管理员体系](admin.md) |
 | 框架机制 | 17–19 | [生命周期与钩子](lifecycle.md)、[异常](exception.md)、[事件](events.md) |
 | 进阶 | 20–24 | [缓存](cache.md)、[国际化](i18n.md)、[命令行](cli.md)、[测试](testing.md)、[安全与性能](security-performance.md) |
 
@@ -98,13 +98,13 @@ HTTP 请求 → 路由 → MainController::index()
 
 ### 1. 五层各自的职责与边界
 
-| 层 | 职责 | 可以做 | **不可以做** |
-|---|---|---|---|
-| **Controller** | 请求的入口与出口 | 取输入、调 Business、把数据交给视图、跳转、404 | 写业务规则、直接查数据库、拼 SQL |
-| **Business** | 业务逻辑编排 | 调 Model、调 Service、条件抛业务异常 | 读写 `$_GET`/`$_POST`/`$_SERVER`/Session，依赖当前请求 |
-| **Model** | 数据访问 | 调 [Db](../reference/Db-Db.md)、按表做 CRUD、返回数组/对象 | 写业务判断、抛业务异常、调 Business |
-| **[View](../reference/Core-View.md)** | 显示 | 用 Helper 与全局函数输出、读控制器给的数据 | 查数据库、调 Business、写业务逻辑 |
-| **System** | 接线（不属于四层） | 配置、注册事件/命令、装配应用类 | 混进业务代码里被四层反向依赖 |
+| 层                                     | 职责        | 可以做                                            | **不可以做**                                      |
+| ------------------------------------- | --------- | ---------------------------------------------- | --------------------------------------------- |
+| **Controller**                        | 请求的入口与出口  | 取输入、调 Business、把数据交给视图、跳转、404                  | 写业务规则、直接查数据库、拼 SQL                            |
+| **Business**                          | 业务逻辑编排    | 调 Model、调 Service、条件抛业务异常                      | 读写 `$_GET`/`$_POST`/`$_SERVER`/Session，依赖当前请求 |
+| **Model**                             | 数据访问      | 调 [Db](../reference/Db-Db.md)、按表做 CRUD、返回数组/对象 | 写业务判断、抛业务异常、调 Business                        |
+| **[View](../reference/Core-View.md)** | 显示        | 用 Helper 与全局函数输出、读控制器给的数据                      | 查数据库、调 Business、写业务逻辑                         |
+| **System**                            | 接线（不属于四层） | 配置、注册事件/命令、装配应用类                               | 混进业务代码里被四层反向依赖                                |
 
 > **编码规则**：`Controller`、`Business`、`Model`、`View` 四层里，除 Helper 与全局函数外，**不要直接 `use` `DuckPhp\*` 的框架类**；框架相关的调用集中在 `System` 层，或由 `Helper` 代劳。这条规则的意义在第三卷会体现：包装配（`ext`、覆盖、相位）全都发生在 `System` 层，业务代码因此可以整片复用。
 
@@ -112,15 +112,18 @@ HTTP 请求 → 路由 → MainController::index()
 
 左列「调用方」去调右列「被调方」，✅ 允许、⚠️ 有条件、❌ 禁止：
 
-| 调用方 ↓ / 被调方 → | Controller | Business | Service | Model | Db | View | Session |
-|---|---|---|---|---|---|---|---|
-| **Controller** | ⚠️ 仅同层复用走 Action | ✅ | ✅ | ❌ | ❌ | ✅（通过 `Helper::Show`） | ⚠️ 只经 Helper |
-| **Business** | ❌ | ⚠️ 同层走 Service | ✅ | ✅ | ❌（经 Model） | ❌ | ❌ |
-| **Service** | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| **Model** | ❌ | ❌ | ❌ | ⚠️ 跨库模型例外 | ✅ | ❌ | ❌ |
-| **View** | ❌ | ❌ | ❌ | ❌ | ❌ | — | ❌ |
-| **System** | ⚠️ 只在接线时 | ⚠️ 只在接线时 | ⚠️ | ⚠️ | ✅ | ✅ | ✅ |
-
+| 调用方 ↓ / 被调方 →  | Controller       | Business       | Service | Model     | Db         | View                 | Session      |
+| -------------- | ---------------- | -------------- | ------- | --------- | ---------- | -------------------- | ------------ |
+| **Controller** | ⚠️ 仅同层复用走 Action | ✅              | ✅       | ❌         | ❌          | ✅（通过 `Helper::Show`） | ⚠️ 只经 Helper |
+| **Business**   | ❌                | ⚠️ 同层走 Service | ✅       | ✅         | ❌（经 Model） | ❌                    | ❌            |
+| **Service**    | ❌                | ❌              | ✅       | ✅         | ❌          | ❌                    | ❌            |
+| **Model**      | ❌                | ❌              | ❌       | ⚠️ 跨库模型例外 | ✅          | ❌                    | ❌            |
+| **View**       | ❌                | ❌              | ❌       | ❌         | ❌          | —                    | ❌            |
+| **System**     | ⚠️ 只在接线时         | ⚠️ 只在接线时       | ⚠️      | ⚠️        | ✅          | ✅                    | ✅            |
+|                |                  |                |         |           |            |                      |              |
+|                |                  |                |         |           |            |                      |              |
+//TODO 说明不带特定后缀的 不能跃层访问 
+// 说明 System 一般调用 Controller 的 Action 不跳过读取 Business
 三条最容易记错的：
 - **控制器不碰 Db/Model**：一次「顺手查一下」就是越界，因为它绕过了业务规则（校验、权限、事务边界都写在 Business 里）。
 - **业务不碰请求上下文**：`Business` 拿到的一切都应该由参数传进来。理由见下一节。
@@ -133,19 +136,20 @@ HTTP 请求 → 路由 → MainController::index()
 1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 2-15 章](cli.md)）、定时任务、测试（[第 2-16 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
 2. **多应用/相位下会被共享或复制**：第三卷的应用树里，子应用与父应用可能各自持有一份组件（[第 3-4 章](component-sharing.md)），带状态的业务类会随相位漂移，出现「同一个请求里两份状态」。
 3. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
-
+//TODO 第二项去除
 所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`、`Helper::Session()` 之类），Business 的入参一律显式传。
 
 ### 4. Helper 的分层：四层各有一套
 
 框架把「能用什么便捷方法」也按层切开了——`Helper` 不是一个大杂烩，而是按层拆成四个类：
 
-| 层 | 工程侧的类（`YourProjectName\<层>\Helper`） | 框架里对应的类 | 典型方法 |
-|---|---|---|---|
-| Controller | `Controller\Helper` | [`DuckPhp\Foundation\Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md) | `Show()`、`ShowJson()`、`Show302()`、`GET()`、`POST()` |
-| Business | `Business\Helper` | [`DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md) | `Setting()`、`Config()`、`BusinessThrowOn()`、`XpCall()` |
-| Model | `Model\Helper` | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳；方法在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)） | `Db()`、`DbForRead()`、`SqlForPager()` |
-| 应用/接线 | `System\Helper` | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md) | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
+| 层          | 工程侧的类（`YourProjectName\<层>\Helper`） | 框架里对应的类                                                                                                                                                                      | 典型方法                                                   |
+| ---------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Controller | `Controller\Helper`                 | [`DuckPhp\Foundation\Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md)                                                                   | `Show()`、`ShowJson()`、`Show302()`、`GET()`、`POST()`     |
+| Business   | `Business\Helper`                   | [`DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)                                                                           | `Setting()`、`Config()`、`BusinessThrowOn()`、`XpCall()`  |
+| Model      | `Model\Helper`                      | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳；方法在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)） | `Db()`、`DbForRead()`、`SqlForPager()`                   |
+| 应用/接线      | `System\Helper`                     | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)                                                                                   | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
+|            |                                     |                                                                                                                                                                              |                                                        |
 
 工程侧的 `Xxx\Helper` 类本身极短（`demo/src/Controller/Helper.php` 就是 `extends` 一行 + 一个空类），也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-7 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 

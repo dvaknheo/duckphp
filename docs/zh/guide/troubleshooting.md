@@ -120,8 +120,8 @@ init()（onPrepare → onInit → onInited） → serve()（onRequest → Route:
 
 | 症状 | 看什么 | 大概率原因 / 改法 |
 |---|---|---|
-| Session 写了读不到 | `session_prefix` 与启动时机 | 前缀不同＝不同键；[`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) 首次读写时才 `session_start()`（[第 2-9 章](external-auth.md)） |
-| 登录后仍显示未登录 | [`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 的回调配置 | `user_callback_for_session` 等键名要对（旧名 `user_callback_get_*` 已失效）（[第 2-9 章](external-auth.md)） |
+| Session 写了读不到 | `session_prefix` 与启动时机 | 前缀不同＝不同键；[`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) 首次读写时才 `session_start()`（[第 2-9 章](session.md)） |
+| 登录后仍显示未登录 | [`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 的回调配置 | `user_callback_for_session` 等键名要对（旧名 `user_callback_get_*` 已失效）（[第 2-18 章](user.md)） |
 | 后台菜单为空 | 控制器的注释 | `@menu_directory` 等注解缺失；[`PermissionMenu`](../reference/Ext-PermissionMenu.md) 只收可导航节点（参考页） |
 | 输出里有未转义的用户数据 | 视图里的 `<?=` | 一律 `__h()` |
 | 上线后有人能看后台 | 越权判断 | 权限体系只管「是不是管理员」，**资源归属要自己在 Business 判断**（[第 2-17 章](security-performance.md)） |

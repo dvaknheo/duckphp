@@ -5,13 +5,13 @@
 
 ## 两者一句话区别
 
-| | 应用选项 options | 应用设置 settings |
-|---|---|---|
-| 写在哪 | 应用类 `public $options`（可再被 `init()`/`RunQuickly()` 传入的覆盖） | `config/DuckPhpSettings.config.php`、`.env`、或选项 `setting` 里给的数组 |
-| 装什么 | 框架与组件的**行为开关**（路径、错误页、路由规则、扩展列表…） | **敏感/环境相关**的键值（数据库、Redis 密码…） |
-| 谁读 | 各组件在自己的 `init()` 里按自己的白名单取 | 根应用 `_Setting()`；组件**显式**去读（如 [`DbManager`](../reference/Component-DbManager.md) 读 `database_list`） |
-| 作用域 | 每个应用一套（子应用可在 `app` 选项里注入不同的值） | **只有根应用**加载，读的也是根应用的（`static::Root()->setting`） |
-| 怎么查 | [`App::_()->options`](../reference/Core-App.md)（可 dump 出全部） | `App::_Setting()`（无参返回整个数组）、`Setting('key', $default)` |
+|     | 应用选项 options                                                | 应用设置 settings                                                                                       |
+| --- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 写在哪 | 应用类 `public $options`（可再被 `init()`/`RunQuickly()` 传入的覆盖）    | `config/DuckPhpSettings.config.php`、`.env`、或选项 `setting` 里给的数组                                      |
+| 装什么 | 框架与组件的**行为开关**（路径、错误页、路由规则、扩展列表…）                           | **敏感/环境相关**的键值（数据库、Redis 密码…）                                                                       |
+| 谁读  | 各组件在自己的 `init()` 里按自己的白名单取                                  | 根应用 `_Setting()`；组件**显式**去读（如 [`DbManager`](../reference/Component-DbManager.md) 读 `database_list`） |
+| 作用域 | 每个应用一套（子应用可在 `app` 选项里注入不同的值）                               | **只有根应用**加载，读的也是根应用的（`static::Root()->setting`）                                                     |
+| 怎么查 | [`App::_()->options`](../reference/Core-App.md)（可 dump 出全部） | `App::_Setting()`（无参返回整个数组）、`Setting('key', $default)`                                              |
 
 ## 应用选项
 
@@ -76,23 +76,24 @@ return [
 
 控制它的选项：
 
-| 选项 | 默认 | 说明 |
-|---|---|---|
-| `setting_file` | `'config/DuckPhpSettings.config.php'` | 设置文件路径（相对 `path`） |
-| `setting_file_enable` | `true` | 关掉就不加载设置文件 |
-| `setting_file_ignore_exists` | `true` | 文件不存在时不报错 |
-| `use_env_file` | `false` | 置真后加载项目根的 `.env`（`parse_ini_file` 格式） |
-| `setting` | `[]` | 直接在选项里给一份设置数组（最低优先级） |
+| 选项                           | 默认                                    | 说明                                    |
+| ---------------------------- | ------------------------------------- | ------------------------------------- |
+| `setting_file`               | `'config/DuckPhpSettings.config.php'` | 设置文件路径（相对 `path`）                     |
+| `setting_file_enable`        | `true`                                | 关掉就不加载设置文件                            |
+| `setting_file_ignore_exists` | `true`                                | 文件不存在时不报错                             |
+| `use_env_file`               | `false`                               | 置真后加载项目根的 `.env`（`parse_ini_file` 格式） |
+| `setting`                    | `[]`                                  | 直接在选项里给一份设置数组（最低优先级）                  |
+|                              |                                       |                                       |
 
 加载时机：**根应用**的 `onPrepare()` 阶段（`loadSetting()`），顺序是 `options['setting']` → `.env`（若开）→ 设置文件。
 
 三个以 `duckphp_` 开头的键是框架自己认的：
 
-| 设置键 | 读取处 | 效果 |
-|---|---|---|
-| `duckphp_is_debug` | `App::IsDebug()` | 与根应用的 `is_debug` 选项**或**关系：任一为真即调试模式 |
-| `duckphp_is_maintain` | `prepareServe()` | 为真时进入维护页（`error_maintain` 选项） |
-| `duckphp_platform` | `App::Platform()` | 多机部署标识 |
+| 设置键                   | 读取处               | 效果                                   |
+| --------------------- | ----------------- | ------------------------------------ |
+| `duckphp_is_debug`    | `App::IsDebug()`  | 与根应用的 `is_debug` 选项**或**关系：任一为真即调试模式 |
+| `duckphp_is_maintain` | `prepareServe()`  | 为真时进入维护页（`error_maintain` 选项）        |
+| `duckphp_platform`    | `App::Platform()` | 多机部署标识                               |
 
 **关键认知**：设置**不会**自动变成「所有组件的选项」。只有**显式去读设置**的地方才会受它影响，目前已内建支持的有：
 
@@ -126,13 +127,13 @@ class App extends DuckPhp
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 改了选项「没反应」 | 该键不属于你改的那个组件（组件选项是白名单） | 查[参考手册](../reference/index.md)确认键的归属；用 `App::_()->options` 看实际生效值 |
-| 设置文件里的键不生效 | 设置≠选项，只有显式读设置的地方认它 | 行为开关写选项；只有 `database_list`/`redis_list`/`duckphp_*` 这类才写设置 |
-| 子应用读不到设置 | 设置只由**根应用**加载，且读的是根的那份 | 用 `App::_Setting()`；要给子应用不同配置就用子应用的选项（`app` 里注入） |
-| `.env` 没生效 | 忘了 `'use_env_file' => true`，或格式不是 `parse_ini_file` 的 `key=value` | 打开选项；检查文件在项目根 |
-| 设置文件缺失导致报错 | 关掉了 `setting_file_ignore_exists` | 保持默认 `true`，或用空数组占位 |
+| 现象         | 原因                                                               | 改法                                                                |
+| ---------- | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 改了选项「没反应」  | 该键不属于你改的那个组件（组件选项是白名单）                                           | 查[参考手册](../reference/index.md)确认键的归属；用 `App::_()->options` 看实际生效值 |
+| 设置文件里的键不生效 | 设置≠选项，只有显式读设置的地方认它                                               | 行为开关写选项；只有 `database_list`/`redis_list`/`duckphp_*` 这类才写设置        |
+| 子应用读不到设置   | 设置只由**根应用**加载，且读的是根的那份                                           | 用 `App::_Setting()`；要给子应用不同配置就用子应用的选项（`app` 里注入）                  |
+| `.env` 没生效 | 忘了 `'use_env_file' => true`，或格式不是 `parse_ini_file` 的 `key=value` | 打开选项；检查文件在项目根                                                     |
+| 设置文件缺失导致报错 | 关掉了 `setting_file_ignore_exists`                                 | 保持默认 `true`，或用空数组占位                                               |
 
 ## 下一步
 

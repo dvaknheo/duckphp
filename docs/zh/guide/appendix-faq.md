@@ -97,8 +97,8 @@
 | 连不上数据库 / 表不存在 | [第 2-5 章](../guide/database.md) | DSN、表前缀宏、目录权限 |
 | 分页数字不对 | [第 2-5 章](../guide/database.md) | 计数 SQL 带了 limit |
 | 缓存不生效 | [第 2-13 章](../guide/cache.md) | 没装 `RedisCache`（默认空实现） |
-| Session 读不到 | [第 2-9 章](../guide/external-auth.md) | `session_prefix` 不一致；未启动 |
-| 登录后还是未登录 | [第 2-9 章](../guide/external-auth.md) | `user_callback_for_*` 键名/相位不对 |
+| Session 读不到 | [第 2-9 章](../guide/session.md) | `session_prefix` 不一致；未启动 |
+| 登录后还是未登录 | [第 2-18 章](../guide/user.md) | `user_callback_for_*` 键名/相位不对 |
 | 命令找不到 | [第 2-15 章](../guide/cli.md) | 没注册 / 方法名缺 `command_` / 缺命令组前缀 |
 | 事件监听不到 | [第 2-12 章](../guide/events.md) | [`GlobalEvent`](../reference/Component-GlobalEvent.md) 默认关闭（`EXT_DISABLE`） |
 | 翻译不生效 | [第 2-14 章](../guide/i18n.md) | 语言文件名与 `lang_final` 不匹配 |

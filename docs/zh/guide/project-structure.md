@@ -19,7 +19,7 @@ project/
 │   │   └── App.php        ← 应用类：项目的配置中枢（选项都写这里）
 │   ├── Controller/
 │   │   ├── Base.php       ← 控制器基类（勿改）
-│   │   ├── Helper.php     ← 控制器侧助手（勿改；或直接用 Foundation\Controller\Helper）
+│   │   ├── Helper.php     ← 控制器侧助手（勿改；或直接用 Foundation\Controller\ControllerHelper as Helper）
 │   │   ├── MainController.php       ← 欢迎页/短路由
 │   │   ├── Session.php    ← 会话读写集中在这里
 │   │   └── *Controller.php / *Action.php   ← 你的控制器与可复用动作类
@@ -38,31 +38,31 @@ project/
 
 **框架为什么能找得到这些东西**（四条例）：
 
-| 找什么 | 依据 |
-|---|---|
+| 找什么   | 依据                                                         |
+| ----- | ---------------------------------------------------------- |
 | 控制器目录 | 从**应用类文件所在目录**推算 + `namespace_controller`（默认 `Controller`） |
-| 视图文件 | 应用 `path` + `path_view`（默认 `view`）+ 视图名 |
-| 配置文件 | 应用 `path` + `path_config`（默认 `config`） |
-| 设置文件 | 选项 `setting_file`（默认 `config/DuckPhpSettings.config.php`） |
+| 视图文件  | 应用 `path` + `path_view`（默认 `view`）+ 视图名                    |
+| 配置文件  | 应用 `path` + `path_config`（默认 `config`）                     |
+| 设置文件  | 选项 `setting_file`（默认 `config/DuckPhpSettings.config.php`）  |
 
 所以：**类文件必须落在与命名空间一致的目录里**（`MyProj\Controller\NoteController` → `src/Controller/NoteController.php`，且 `path` 指向项目根）。
 
 ## 命名规范
 
-| 类型 | 规则 | 例子 |
-|---|---|---|
-| 控制器 | `{名字}Controller`，方法名就是 URL 段 | `NoteController::index()` → `/Note/index` |
-| 动作类（控制器层复用） | `{名字}Action`，必须有无参 `__construct()` | `ExportAction` |
-| 业务类 | `{名字}Business` | `NoteBusiness` |
-| 服务类（业务层复用） | `{名字}Service` | `MailService` |
-| 模型类 | `{名字}Model`，**类名决定表名**：去掉 `Model` 再小写 | `NoteModel` → 表 `note` |
-| 异常类 | `{名字}Exception` | `ProjectException` |
-| 会话类 | `Session` | `Session` |
-| CLI 命令方法 | `command_{名字}` | `command_sync()` → `php bin/cli.php sync` |
+| 类型          | 规则                                    | 例子                                        |
+| ----------- | ------------------------------------- | ----------------------------------------- |
+| 控制器         | `{名字}Controller`，方法名就是 URL 段          | `NoteController::index()` → `/Note/index` |
+| 动作类（控制器层复用） | `{名字}Action`，必须有无参 `__construct()`    | `ExportAction`                            |
+| 业务类         | `{名字}Business`                        | `NoteBusiness`                            |
+| 服务类（业务层复用）  | `{名字}Service`                         | `MailService`                             |
+| 模型类         | `{名字}Model`，**类名决定表名**：去掉 `Model` 再小写 | `NoteModel` → 表 `note`                    |
+| 异常类         | `{名字}Exception`                       | `ProjectException`                        |
+| 会话类         | `Session`                             | `Session`                                 |
+| CLI 命令方法    | `command_{名字}`                        | `command_sync()` → `php bin/cli.php sync` |
+|             |                                       |                                           |
 
-两条容易踩的细节：
+容易踩的细节：
 
-- **`controller_method_prefix` 默认是空串**：方法名直接当 URL 段。想用 `action_` 前缀就显式配 `'controller_method_prefix' => 'action_'`（很多老文档/示例还写着 `action_`，那是早期默认值）。
 - **URL 大小写敏感**：默认不会把 `/note/list` 自动转成 `/Note/list`；要宽松匹配就配 `controller_class_adjust`（第 2-2 章）。
 
 ## 层级调用铁律
@@ -117,17 +117,18 @@ class NoteModel extends Base
 }
 ```
 
-正确的抛异常方式：Controller 层用 `Helper::ControllerThrowOn(...)`，Business 层用 `Helper::BusinessThrowOn(...)`（第 2-11 章）。
+正确的抛异常方式：`Helper::ThrowOn(...)`[第 2-11 章](exception.md) 。
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 新增控制器 404 | 文件名/命名空间/后缀不匹配 | `src/Controller/NoteController.php` + `class NoteController` + 后缀默认 `Controller` |
-| 模型找不到表 | 表名与类名推导不一致 | `NoteModel` → 表 `note`；表名不同就在模型里 `protected $table_name = 'notes';` |
-| 视图找不到 | 视图名与文件路径不一致 | `Helper::Show($data)` 用当前路由路径；显式指定时写 `'note/index'` → `view/note/index.php` |
-| CLI 下业务层报错 | 业务层里读了 `$_POST`/Session | 参数由控制器传入（上面的铁律） |
-| 改了 `Base.php`/`Helper.php` 后框架异常 | 那是框架约定文件 | 要扩展就在自己的子类里加，别改基类 |
+| 现象                               | 原因                      | 改法                                                                               |
+| -------------------------------- | ----------------------- | -------------------------------------------------------------------------------- |
+| 新增控制器 404                        | 文件名/命名空间/后缀不匹配          | `src/Controller/NoteController.php` + `class NoteController` + 后缀默认 `Controller` |
+| 模型找不到表                           | 表名与类名推导不一致              | `NoteModel` → 表 `note`；表名不同就在模型里 `protected $table_name = 'notes';`              |
+| 视图找不到                            | 视图名与文件路径不一致             | `Helper::Show($data)` 用当前路由路径；显式指定时写 `'note/index'` → `view/note/index.php`      |
+| CLI 下业务层报错                       | 业务层里读了 `$_POST`/Session | 参数由控制器传入（上面的铁律）                                                                  |
+| 改了 `Base.php`/`Helper.php` 后框架异常 | 那是框架约定文件                | 要扩展就在自己的子类里加，别改基类                                                                |
+|                                  |                         |                                                                                  |
 
 ## 下一步
 

@@ -101,7 +101,7 @@ public function list()
 
 ## 5. 登录 / 登出 / 当前用户
 
-配置见[第 2-9 章](../guide/external-auth.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
+配置见[第 2-18 章](../guide/user.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
 
 ```php
 // System/App.php 的选项
@@ -137,7 +137,7 @@ public function edit(int $noteId, int $userId): array
 }
 ```
 
-后台菜单靠控制器注释生成（`@menu_directory` 等），见[第 2-9 章](../guide/external-auth.md)与 [Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)。
+后台菜单靠控制器注释生成（`@menu_directory` 等），见[第 2-19 章](../guide/admin.md)与 [Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)。
 
 ## 7. 缓存热点数据
 

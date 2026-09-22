@@ -2,7 +2,7 @@
 
 > 解决什么问题：一次请求从入口到输出，框架在**哪些点**允许你插手；钩子怎么挂、谁先谁后、什么时候该用钩子而不是继承基类。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-2 章 路由进阶](routing.md)。预计 25 分钟。
-> 分工：本章只讲**时序与钩子**。会话见[第 2-9 章](external-auth.md)、异常见[第 2-11 章](exception.md)、事件见[第 2-12 章](events.md)、调试开关见[第 1-6 章](debugging.md)。
+> 分工：本章只讲**时序与钩子**。会话见[第 2-9 章](session.md)、异常见[第 2-11 章](exception.md)、事件见[第 2-12 章](events.md)、调试开关见[第 1-6 章](debugging.md)。
 > 示例：`demo/src/System/App.php`（真实的 `onPrepare()`/`onInited()` 覆盖）与 `tests/Ext/MyMiddlewareManagerTest.php`（中间件真实跑法）。
 
 ```bash
@@ -151,17 +151,17 @@ RouteHookManager::_()->dump();                           // ★ 排查：把三�
 
 框架自己的路由能力也是钩子，位置如下（都可用 `dump()` 看到）：
 
-| 钩子 | 位置 | 作用 |
-|---|---|---|
-| [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | `prepend-outter` | PATH_INFO 兼容（`?_r=` 形式，[第 2-2 章](routing.md)） |
-| [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) | `prepend-outter` | URL 重写 |
-| [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底） |
-| [`RouteHookApiServer`](../reference/Ext-RouteHookApiServer.md)（扩展） | `prepend-inner` | API 服务 |
-| [`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md)（扩展） | `prepend-inner` | Web 安装流程（[第 3-6 章](installer.md)） |
-| [`RouteHookFunctionRoute`](../reference/Ext-RouteHookFunctionRoute.md)（扩展） | `append-inner` | 函数式路由 |
-| [`RouteHookDirectoryMode`](../reference/Ext-RouteHookDirectoryMode.md)（扩展） | `prepend-outter` | 目录模式（多入口） |
-| [`RouteHookResource`](../reference/Component-RouteHookResource.md) | `append-outter` | 静态资源代发（[第 3-3 章](static-resources.md)） |
-
+| 钩子                                                                             | 位置                                | 作用                                            |
+| ------------------------------------------------------------------------------ | --------------------------------- | --------------------------------------------- |
+| [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | `prepend-outter`                  | PATH_INFO 兼容（`?_r=` 形式，[第 2-2 章](routing.md)） |
+| [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md)               | `prepend-outter`                  | URL 重写                                        |
+| [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md)             | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底）                             |
+| [`RouteHookApiServer`](../reference/Ext-RouteHookApiServer.md)（扩展）             | `prepend-inner`                   | API 服务                                        |
+| [`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md)（扩展）       | `prepend-inner`                   | Web 安装流程（[第 3-6 章](installer.md)）             |
+| [`RouteHookFunctionRoute`](../reference/Ext-RouteHookFunctionRoute.md)（扩展）     | `append-inner`                    | 函数式路由                                         |
+| [`RouteHookDirectoryMode`](../reference/Ext-RouteHookDirectoryMode.md)（扩展）     | `prepend-outter`                  | 目录模式（多入口）                                     |
+| [`RouteHookResource`](../reference/Component-RouteHookResource.md)             | `append-outter`                   | 静态资源代发（[第 3-3 章](static-resources.md)）        |
+//TODO 说明 Ext 的组件是不会自动加载的
 ### 7. 兼容性扩展：洋葱中间件（`Ext\MyMiddlewareManager`）
 
 说清楚定位：**中间件不是 DuckPHP 的主推路数**。框架的默认做法是「路由钩子 + 分层 Helper」，中间件只是给习惯了 Laravel/PSR-15 那种写法的人留的一层兼容，用得上就用，用不上不用管。

@@ -291,12 +291,12 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 
 ### 留给阶段五（用户指南）
 
-- `guide/external-auth.md` §「视图级开关：use_user_view / use_admin_view」整节要改成 `__logined_enable_view` 机制；`overriding.md`（两处示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`（`DuckPhp\Helper\*`）、`project-structure.md`（`Foundation\Controller\Helper`）都要按新命名/新机制改写
+- `guide/external-auth.md` §「视图级开关：use_user_view / use_admin_view」整节要改成 `__logined_enable_view` 机制（该章后来按作者裁定拆成 `session.md` / `user.md` / `admin.md` 三章）；`overriding.md`（两处示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`（`DuckPhp\Helper\*`）、`project-structure.md`（`Foundation\Controller\Helper`）都要按新命名/新机制改写
 - `helper.md` 重写（四层 Helper 表格、`extends`/`as Helper` 写法、并集 `__callStatic`、「继承即边界」论述）
 ## 阶段五 · 用户指南（`docs/zh/guide/`）—— ✅ 已完成
 
 - [x] `helper.md` **整章重写**（177 → 198 行）：四层四个类对照表（含 Model 薄壳 + trait）、两种工程写法（`extends` / `use … as Helper`）、并集 `__callStatic` 的顺序与代价（含「反射看不到」）、`Model\Base` 走 trait、常见写法 5 条、常见错误表新增 4 行（并集未定义方法 / 胜出方不符预期 / 反射找不到 / `__logined_enable_view`）、下一步链新页名
-- [x] **视图级开关机制改写**（对话外代码改动的指南同步）：`external-auth.md` 的「视图级开关：use_user_view / use_admin_view」整节 → `__logined_enable_view`（视图数据，不是选项；给出手动开关写法与「继承 `UserControllerBase`/`AdminControllerBase` 即自动开」）；错误表那一行同步
+- [x] **视图级开关机制改写 + 2-9 拆章**（对话外代码改动的指南同步）：`external-auth.md` 的「视图级开关：use_user_view / use_admin_view」整节 → `__logined_enable_view`（视图数据，不是选项；给出手动开关写法与「继承 `UserControllerBase`/`AdminControllerBase` 即自动开」）；错误表那一行同步
 - [x] `overriding.md`（表格行 + 示例改成 `Helper::assignViewData(...)`）、`embed.md`（DuckPhpAllInOne 的 trait/insteadof 段 → `__callStatic`；`use_user_view` → `__logined_enable_view`；`embedMe()` 行号 39–57 → 145 起）、`static-resources.md`、`appendix-glossary.md`、`layers.md`（Helper 对照表 + 去掉「拆成 trait」的说法）、`model.md`（§5 标题与「`use ModelHelperTrait;` 一行」→ `extends Model\ModelHelper` + 基类用 trait）、`events.md`（两层 Helper 的名字与源文件行号）、`cache.md`、`lifecycle.md`、`security-performance.md`、`project-structure.md`
 - [x] 顺手修掉 `layers.md` 里**不存在**的示例路径 `tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`
 - [x] 账本同步：`guide-maintenance-guide.md`（§1 链接规则的 trait 例子改用新名 + 新增 §15 本轮记录，含「批量替换误删 5 行」的踩坑）、`reference-maintenance-guide.md`（§3「Trait 转发类」示例改成 `Model\ModelHelper`/`ModelHelperTrait`、覆盖率小节补 `--coverage-*` 会跳过 LibCoverage dump 的坑 + 薄壳类 dump 为空属正常、新增第 15 轮记录）、`guide-rewrite-checklist.md`（里程碑加 M7 行）

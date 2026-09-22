@@ -79,7 +79,7 @@ server {
 ```
 
 **为什么是 `/index.php$request_uri` 而不是 `/index.php?$query_string`**：框架读的是 `PATH_INFO`。`try_files … /index.php$request_uri` 让 nginx 内部把请求变成「执行 index.php，PATH_INFO = 原始路径」，框架才能知道用户请求的是 `/Note/index`。用 `?$query_string` 会把路径塞进查询串，路由就丢了（这正是那类「nginx 配好 rewrite 后全站 404」的原因）。
-
+//TODO 说明默认 Route 的 controller_fix_mistake_path_info 选项 兼容一般的 框架的 nginx 配置
 ## 四、生产用：Apache
 
 文档根同样指 `public/`，在 `public/.htaccess` 里：
@@ -103,12 +103,12 @@ server {
 
 ## 五、权限
 
-| 目录/文件 | 要求 |
-|---|---|
-| `runtime/` | **Web 用户可写**（日志、缓存） |
-| `config/` | 可读即可；含口令，**不可** Web 直达 |
-| `public/` | 只读 |
-| 代码目录 | 只读 |
+| 目录/文件      | 要求                     |     |
+| ---------- | ---------------------- | --- |
+| `runtime/` | **Web 用户可写**（日志、缓存）    |     |
+| `config/`  | 可读即可；含口令，**不可** Web 直达 |     |
+| `public/`  | 只读                     |     |
+| 代码目录       | 只读                     |     |
 
 ```bash
 chown -R www-data:www-data runtime

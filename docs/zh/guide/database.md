@@ -223,16 +223,16 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `no such table` | DSN 指到别的库，或表还没建 | 检查 `database.dsn` 与初始化 SQL；SQLite 相对 DSN 需要可写目录 |
-| 表名带前缀却查不到表 | SQL 里手写死了表名，或宏写法不对 | 用 `` `'TABLE'` ``（带反引号）；确认 `table_prefix` |
-| `execute()` 返回 `0`，以为「没执行」 | 语义是**成功返回受影响行数、失败 0** | 结合异常判断；`UPDATE` 无字段变化也会是 0 |
-| 读库里查不到刚写入的数据 | 读写分离的复制延迟 | 写后立即读的场景显式用 `Helper::Db()`（写连接） |
-| SQLite 报 `unable to open database file` | 目录不可写（`runtime/` 权限） | 修目录权限（[第 1-7 章](deployment.md)） |
-| 事务没生效 | 事务与写操作不在同一连接 | 同一连接上完成；读写分离时特别注意 |
-| 用户输入直接进了 SQL | 拼串 | 一律占位符；标识符用 `quoteScheme()` |
-| 分页总数不对 | 计数时用了带 `limit` 的 SQL | 用 `Helper::SqlForCountSimply($sql)` 生成计数 SQL |
+| 现象                                      | 原因                    | 改法                                              |
+| --------------------------------------- | --------------------- | ----------------------------------------------- |
+| `no such table`                         | DSN 指到别的库，或表还没建       | 检查 `database.dsn` 与初始化 SQL；SQLite 相对 DSN 需要可写目录 |
+| 表名带前缀却查不到表                              | SQL 里手写死了表名，或宏写法不对    | 用 `` `'TABLE'` ``（带反引号）；确认 `table_prefix`       |
+| `execute()` 返回 `0`，以为「没执行」              | 语义是**成功返回受影响行数、失败 0** | 结合异常判断；`UPDATE` 无字段变化也会是 0                      |
+| 读库里查不到刚写入的数据                            | 读写分离的复制延迟             | 写后立即读的场景显式用 `Helper::Db()`（写连接）                 |
+| SQLite 报 `unable to open database file` | 目录不可写（`runtime/` 权限）  | 修目录权限（[第 1-7 章](deployment.md)）                 |
+| 事务没生效                                   | 事务与写操作不在同一连接          | 同一连接上完成；读写分离时特别注意                               |
+| 用户输入直接进了 SQL                            | 拼串                    | 一律占位符；标识符用 `quoteScheme()`                      |
+| 分页总数不对                                  | 计数时用了带 `limit` 的 SQL  | 用 `Helper::SqlForCountSimply($sql)` 生成计数 SQL    |
 
 ## 下一步
 

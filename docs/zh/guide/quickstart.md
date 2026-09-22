@@ -13,7 +13,7 @@ GET /Note/show?id=1 →  单条便签
 
 ## 步骤 1：建库建表
 
-SQLite 最省事（换 MySQL 只是改 DSN）：
+SQLite 最省事（换 MySQL 只是改 DSN）：[[]]
 
 ```sql
 CREATE TABLE note (
@@ -105,6 +105,7 @@ class NoteBusiness
 ```
 
 `Helper` 是业务层自己的助手（`src/Business/Helper.php`，内部 [`use DuckPhp\Foundation\Business\BusinessHelper;`](../reference/Foundation-Business-BusinessHelper.md)），脚手架自带。
+//TODO  Helper 的作用
 
 ## 步骤 5：控制器（Controller）—— 收输入、出输出
 
@@ -158,11 +159,11 @@ class NoteController extends Base
 php -S 127.0.0.1:8080 -t public
 ```
 
-| 访问 | 结果 |
-|---|---|
-| `http://127.0.0.1:8080/Note/index` | 列表页 |
-| `http://127.0.0.1:8080/Note/show?id=1` | 详情页 |
-| `http://127.0.0.1:8080/` | 走 `MainController::index()`（欢迎页控制器，第 2-2 章） |
+| 访问                                     | 结果                                          |
+| -------------------------------------- | ------------------------------------------- |
+| `http://127.0.0.1:8080/Note/index`     | 列表页                                         |
+| `http://127.0.0.1:8080/Note/show?id=1` | 详情页                                         |
+| `http://127.0.0.1:8080/`               | 走 `MainController::index()`（欢迎页控制器，第 2-2 章） |
 
 > URL 里的 `Note` 大小写要与类名一致（默认不做大小写宽松处理）。
 
@@ -210,14 +211,14 @@ class MainController          // 单文件示例：控制器写在同一文件�
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `/Note/index` 404 | 方法带了 `action_` 前缀而选项里没配 | 方法名去掉前缀，或配 `'controller_method_prefix' => 'action_'` |
-| `Class "MyProj\Model\NoteModel" not found` | 命名空间与目录不匹配 | `src/Model/NoteModel.php` + `namespace MyProj\Model;` |
-| 视图里 `$list` 未定义 | 没把变量传进去 | `Helper::Show(get_defined_vars(), 'note/index')` |
-| 列表页报 SQL 错误 | 表没建 / DSN 指到别处 | 检查 `runtime/app.db` 与设置文件里的路径 |
-| 页面乱码 | 视图没声明编码 | HTML 里加 `<meta charset="utf-8">` |
-| 便签存在却报「便签不存在」 | `Helper::GET('id')` 拿到的不是数字 | 强转 `(int)`，并在 Business 层校验 |
+| 现象                                         | 原因                          | 改法                                                    |
+| ------------------------------------------ | --------------------------- | ----------------------------------------------------- |
+| `/Note/index` 404                          | 方法带了 `action_` 前缀而选项里没配     | 方法名去掉前缀，或配 `'controller_method_prefix' => 'action_'`  |
+| `Class "MyProj\Model\NoteModel" not found` | 命名空间与目录不匹配                  | `src/Model/NoteModel.php` + `namespace MyProj\Model;` |
+| 视图里 `$list` 未定义                            | 没把变量传进去                     | `Helper::Show(get_defined_vars(), 'note/index')`      |
+| 列表页报 SQL 错误                                | 表没建 / DSN 指到别处              | 检查 `runtime/app.db` 与设置文件里的路径                         |
+| 页面乱码                                       | 视图没声明编码                     | HTML 里加 `<meta charset="utf-8">`                      |
+| 便签存在却报「便签不存在」                              | `Helper::GET('id')` 拿到的不是数字 | 强转 `(int)`，并在 Business 层校验                            |
 
 ## 下一步
 

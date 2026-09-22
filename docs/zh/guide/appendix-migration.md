@@ -22,7 +22,7 @@
 | 中间件 | `behaviors()` / filters | Filters | Middleware | 钩子链为主；中间件只是兼容扩展（[第 2-10 章](../guide/lifecycle.md)） |
 | 事件 | `Event::on()` | Events | Events/Listeners | [`GlobalEvent`](../reference/Component-GlobalEvent.md)（回调**绑定相位**）（[第 2-12 章](../guide/events.md)） |
 | 依赖注入/容器 | `Yii::$container` | Services | Service Container | **单例容器**：`Xxx::_()` / `Xxx::_($new)`（无自动注入）（[第 4-1 章](../guide/container-phases.md)） |
-| 会话/用户 | `Yii::$app->user` | `session()` + 自定义 | `Auth` | [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) + [`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)（回调配置）（[第 2-9 章](../guide/external-auth.md)） |
+| 会话/用户 | `Yii::$app->user` | `session()` + 自定义 | `Auth` | [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) + [`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)（回调配置）（[第 2-9 章](../guide/session.md)、[第 2-18 章](../guide/user.md)、[第 2-19 章](../guide/admin.md)） |
 | 验证 | `Model::rules()` | Validation | FormRequest / `validate()` | [`Validator`](../reference/Component-Validator.md) 组件三种口径（[第 2-8 章](../guide/validator.md)） |
 | 缓存 | `Yii::$app->cache` | `cache()` | [`Cache::`](../reference/Component-Cache.md) | `Helper::Cache()`（默认空实现，装 [`RedisCache`](../reference/Component-RedisCache.md) 才生效）（[第 2-13 章](../guide/cache.md)） |
 | 国际化 | `Yii::t()` | `lang()` | `__()` | `__l()` / `__hl()`（五级语言检测）（[第 2-14 章](../guide/i18n.md)） |
@@ -94,7 +94,7 @@ class NoteController extends Base
 4. **补业务层**：把控制器里的业务判断下移到 Business，控制器只留输入输出（[第 2-1 章](../guide/layers.md)）；
 5. **搬视图**：模板语法换成 PHP；输出一律 `__h()`（[第 2-4 章](../guide/views.md)）；
 6. **搬横切**：中间件/filter → 钩子或（必要时）[`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md)（[第 2-10 章](../guide/lifecycle.md)）；
-7. **会话与登录**：接 `GlobalUser`/`GlobalAdmin` 的回调（[第 2-9 章](../guide/external-auth.md)）；
+7. **会话与登录**：会话见[第 2-9 章](../guide/session.md)，用户/管理员回调见[第 2-18 章](../guide/user.md)与[第 2-19 章](../guide/admin.md)；
 8. **补自己实现的部分**：CSRF、上传、限流、队列（框架不提供）（[第 2-17 章](../guide/security-performance.md)）；
 9. **写冒烟测试**：照 `ZAllDemoTest` 的方式起内置服务器 + curl 各入口（[第 2-16 章](../guide/testing.md)）。
 

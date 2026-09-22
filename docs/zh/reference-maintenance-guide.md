@@ -306,7 +306,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
         - 校验：41 章 H1 / 总目录 / 交叉引用 / 无单数字章号 = **0 处不一致**；`docs/zh` 站内链接 **1973 条 0 死链**；代码块内链接 **0 处**；`docs/zh` 全 UTF-8；三条新规矩已写进 `guide-maintenance-guide.md` §1 硬约束（第 6/7/8 条）与 §2 模板约定。
 - **待办（本工作范围外）**：
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
-  - `docs/zh/guide/external-auth.md` 里还有一批旧键名（`user_callback_get_id/name/data/service`）未校（属下面的教程校对）；
+  - ~~`docs/zh/guide/external-auth.md` 里还有一批旧键名未校~~ **已处理**：该章已拆成 `session.md`(2-9)/`user.md`(2-18)/`admin.md`(2-19)，键名与选项按当前源码逐条核对（旧键 `user_callback_get_*`、已废选项 `user_provider`/`admin_provider`/`*_default_exception_class` 都已在正文标注失效）；
   - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含 3 篇新类文档与早期那 8 篇 GlobalAdmin/GlobalUser 接口文档），剩下的是**逐条核对说明文字**是否仍准确；
   - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页（内容过时且行文损坏，建议改为由脚本生成）；
   - `docs/zh/guide/` 教程与 reference 的交叉引用校对。

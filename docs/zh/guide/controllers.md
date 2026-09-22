@@ -48,8 +48,8 @@ class MainController extends Base
 |---|---|---|
 | [`DuckPhp\Foundation\Controller\Base`](../reference/Foundation-Controller-Base.md) | `src/Foundation/Controller/Base.php` | 最简：只 `use SingletonTrait` |
 | [`DuckPhp\Foundation\Controller\ActionBase`](../reference/Foundation-Controller-ActionBase.md) | 同上目录 | Action 的基类 |
-| [`DuckPhp\Foundation\Controller\UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) | 同上目录 | 前台用户控制器（[第 2-9 章](external-auth.md)） |
-| [`DuckPhp\Foundation\Controller\AdminControllerBase`](../reference/Foundation-Controller-AdminControllerBase.md) | 同上目录 | 后台管理员控制器（[第 2-9 章](external-auth.md)） |
+| [`DuckPhp\Foundation\Controller\UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) | 同上目录 | 前台用户控制器（[第 2-18 章](user.md)） |
+| [`DuckPhp\Foundation\Controller\AdminControllerBase`](../reference/Foundation-Controller-AdminControllerBase.md) | 同上目录 | 后台管理员控制器（[第 2-19 章](admin.md)） |
 
 方法名前缀由 `controller_method_prefix` 决定（默认 `''`）。`demo/src/System/App.php` 配的是 `'action_'`，所以 demo 里的方法写成 `action_login()`；ZAllDemo 没配，所以是 `index()`。**改了前缀，URL 不变，但控制器方法名要跟着改**。
 
@@ -113,7 +113,7 @@ class UserAction extends ActionBase      // 只调 Business 与 Session，不直
 }
 ```
 
-控制器里只留输入输出：`$user = UserAction::_()->login($name, $password);`（Action 的完整分工见[第 2-9 章](external-auth.md)）。
+控制器里只留输入输出：`$user = UserAction::_()->login($name, $password);`（Action 的完整分工见[第 2-18 章](user.md)）。
 
 ## 常见写法
 
@@ -200,5 +200,5 @@ Mailer::_()->send($user['email'], '欢迎', $body);
 
 - [第 2-4 章 视图与模板](views.md)：视图文件怎么定位、页眉页脚、转义。
 - [第 2-8 章 表单与数据验证](validator.md)：输入校验的三种口径。
-- [第 2-9 章 会话与用户/管理员体系](external-auth.md)：`UserControllerBase` / `AdminControllerBase` 与 Action。
+- [第 2-18 章 用户体系](user.md) / [第 2-19 章 管理员体系](admin.md)：`UserControllerBase` / `AdminControllerBase` 与 Action。
 - 参考手册：[DuckPhp\Foundation\Controller\ControllerHelper](../reference/Foundation-Controller-ControllerHelper.md)、[DuckPhp\Foundation\Controller\Base](../reference/Foundation-Controller-Base.md)、[DuckPhp\Core\SuperGlobal](../reference/Core-SuperGlobal.md)。

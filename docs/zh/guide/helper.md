@@ -193,6 +193,6 @@ Helper::assignRewrite('/legacy', 'home/index');
 ## 下一步
 
 - [第 2-8 章 表单与数据验证](validator.md)：`Helper::Validator*` 的用法。
-- [第 2-9 章 会话与用户/管理员体系](external-auth.md)：`Helper::UserId()` / `AdminService()` 等。
+- [第 2-18 章 用户体系](user.md) / [第 2-19 章 管理员体系](admin.md)：`Helper::UserId()` / `AdminService()` 等。
 - [DuckPhp\Core\Functions（全局函数参考）](../reference/Core-Functions.md)：完整函数清单与签名。
 - 参考手册：[`Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md)、[`Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)、[`Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)、[`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)、[`System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)、[`Foundation\Helper`（并集）](../reference/Foundation-Helper.md)。

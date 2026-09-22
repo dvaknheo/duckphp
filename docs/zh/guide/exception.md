@@ -49,6 +49,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 ### 条件抛：ThrowOn 家族
 
 [DuckPhp\Ext\ThrowOnTrait](../reference/Ext-ThrowOnTrait.md) 提供静态守卫：`XxxException::ThrowOn($flag, $message, $code)`——`$flag` 为真就抛。Helper 侧按层封装（[CoreHelper](../reference/Core-CoreHelper.md)）：
+//TODO ThrowOnTrait 已经不推荐，现在 推荐的是 Helper::ThrowOn
 
 | 写法                                               | 抛出的异常类由谁定                                      |
 | ------------------------------------------------ | ---------------------------------------------- |
@@ -89,7 +90,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 ### 异常报告器 ExceptionReporter
 
 配了 `exception_reporter` 选项后，`ExceptionManager` 初始化时（源码 `src/Core/ExceptionManager.php` 第 45–48 行）会把「`exception_for_project`（缺省 `\Exception`）的异常」统一指给报告器的 `OnException()`。[DuckPhp\Foundation\Controller\ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md) 的分发逻辑：
-
+//TODO 现有版本职责已经yi'do
 1. 异常类名不在当前应用命名空间下 → `defaultException($ex)`（缺省转 `_OnDefaultException()`）；
 2. 取类短名拼方法名 `on{短名}()`，可调用则执行；
 3. 否则 `defaultException($ex)`。

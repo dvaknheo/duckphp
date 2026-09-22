@@ -209,9 +209,9 @@ Helper::Show302(Helper::Url('user/login'));
 | `/Main/index` 被拒绝（E009）             | `controller_welcome_class_visible` 默认 `false` | 用 `/` 访问欢迎页；确实需要显式路径就设为 `true`                    |
 | 路由映射里写 `Class::method` 不生效          | `::` 形式**不支持**                                | 用 `Class@method`（`::_()`）或 `Class->method`（`new`） |
 | 普通 `route_map` 里的规则抢不过默认路由          | 位置不同：important 在默认路由**之前**，普通 map 是**兜底**     | 需要优先匹配就放进 `route_map_important`                   |
-| 子应用里访问得到 404、错误码 E001               | URL 没带子应用的 `controller_url_prefix`            | URL 加上前缀，或调整子应用配置（[第 3-2 章](mount-app.md)）         |
+| 子应用里访问得到 404、错误码 E001               | URL 没带子应用的 `controller_url_prefix`            | URL 加上前缀，或调整子应用配置（[第 3-2 章](mount-app.md)）        |
 | 部署到子目录后所有站内链接 404                   | 手写了 `/xxx` 绝对路径                               | 一律用 `__url()`/`Helper::Url()` 生成                  |
-| 开了 `_r=` 兼容模式，原 PATH_INFO 路由全失效     | 兼容模式下路径改从查询串取                                 | 只在没有 PATH_INFO 的服务器上开（[第 1-7 章](deployment.md)）     |
+| 开了 `_r=` 兼容模式，原 PATH_INFO 路由全失效     | 兼容模式下路径改从查询串取                                 | 只在没有 PATH_INFO 的服务器上开（[第 1-7 章](deployment.md)）   |
 
 ## 下一步
 

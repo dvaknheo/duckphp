@@ -76,7 +76,6 @@ class MainController
 }
 ```
 
-> ⚠️ **方法名就是 URL 段**。框架的 `controller_method_prefix` 默认是**空**，所以 `/` 与 `/index` 都会调用 `index()`；如果你写成 `action_index()`，那只有 `/action_index` 能访问到它（老文档里到处都是 `action_`，那是早期默认值）。
 
 **④ `view/main/index.php`（可选）** —— 想用视图就用 `Helper::Show()`：
 
@@ -146,13 +145,13 @@ project/
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 访问 `/` 是 404 | 控制器方法写成了 `action_index()` 而前缀是空 | 方法名去掉 `action_`；或显式设 `'controller_method_prefix' => 'action_'` |
-| 全站 500，提示类找不到 | 命名空间与目录不一致 | `MyProj\Controller\MainController` 必须在 `src/Controller/MainController.php` 且 `path` 指向项目根 |
-| `Failed opening required vendor/autoload.php` | 入口的相对路径写错 | 照抄上面入口里的「两处 vendor」写法 |
-| `php -S` 下除了首页都 404 | 忘了 `-t public`，或访问了 `/index.php/foo` 之外的路径 | 用 `-t public`；短路径由框架接管（第 1-7 章讲服务器配置） |
-| CLI 里跑到 Web 分支 | 入口没传 `cli_enable`，而 `cli_enable` 被关掉了 | CLI 入口传 `['cli_enable' => true]` |
+| 现象                                            | 原因                                         | 改法                                                                                        |
+| --------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| 访问 `/` 是 404                                  | 控制器方法写成了 `action_index()` 而前缀是空            | 方法名去掉 `action_`；或显式设 `'controller_method_prefix' => 'action_'`                            |
+| 全站 500，提示类找不到                                 | 命名空间与目录不一致                                 | `MyProj\Controller\MainController` 必须在 `src/Controller/MainController.php` 且 `path` 指向项目根 |
+| `Failed opening required vendor/autoload.php` | 入口的相对路径写错                                  | 照抄上面入口里的「两处 vendor」写法                                                                     |
+| `php -S` 下除了首页都 404                           | 忘了 `-t public`，或访问了 `/index.php/foo` 之外的路径 | 用 `-t public`；短路径由框架接管（第 1-7 章讲服务器配置）                                                     |
+| CLI 里跑到 Web 分支                                | 入口没传 `cli_enable`，而 `cli_enable` 被关掉了      | CLI 入口传 `['cli_enable' => true]`                                                          |
 
 ## 下一步
 

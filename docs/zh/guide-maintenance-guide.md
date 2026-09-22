@@ -188,7 +188,9 @@ python3 <tmp>/drift.py --all                                                    
 | 2-6 | 模型层 | `model.md` | 13 |
 | 2-7 | Helper 与全局函数 | `helper.md` | 15 |
 | 2-8 | 表单与数据验证 | `validator.md` | 16 |
-| 2-9 | 会话与用户/管理员体系 | `external-auth.md` | 17 |
+| 2-9 | 会话 | `session.md` | 17 |
+| 2-18 | 用户体系（原 2-9 拆出，放在卷二末尾） | `user.md` | — |
+| 2-19 | 管理员体系（原 2-9 拆出，放在卷二末尾） | `admin.md` | — |
 | 2-10 | 请求生命周期与钩子点（含兼容扩展：洋葱中间件 + 钩子链） | `lifecycle.md` | 8 |
 | 2-11 | 异常与错误处理 | `exception.md` | 19 |
 | 2-12 | 事件系统 | `events.md` | 20 |
@@ -211,8 +213,9 @@ python3 <tmp>/drift.py --all                                                    
 
 ## 10. 本轮（第二卷）交付记录
 
-- 章节（17 篇，全部 ≤400 行，总目录 `docs/zh/guide/index.md` 第二卷表）：
-  `layers.md`(226)、`routing.md`(221)、`controllers.md`(204)、`views.md`(187)、`database.md`(242)、`model.md`(259)、`helper.md`(177)、`validator.md`(180)、`external-auth.md`(228)、`lifecycle.md`(293)、`exception.md`(207)、`events.md`(127)、`cache.md`(137)、`i18n.md`(123)、`cli.md`(217)、`testing.md`(151)、`security-performance.md`(181)。
+- 章节（19 篇，全部 ≤400 行，总目录 `docs/zh/guide/index.md` 第二卷表）：
+  `layers.md`(226)、`routing.md`(221)、`controllers.md`(204)、`views.md`(187)、`database.md`(242)、`model.md`(259)、`helper.md`(198，第 5 轮重写)、`validator.md`(180)、`session.md`(137)、`lifecycle.md`(293)、`exception.md`(207)、`events.md`(127)、`cache.md`(137)、`i18n.md`(123)、`cli.md`(217)、`testing.md`(151)、`security-performance.md`(181)、`user.md`(198)、`admin.md`(185)。
+  其中 2-9 原为「会话与用户/管理员体系」一篇（228 行），第 5 轮按作者裁定拆成三章：会话留在 2-9，用户体系与管理员体系放到卷二末尾（2-18/2-19）。
   其中**新写 6 篇**（controllers / views / events / cache / i18n / security-performance），其余 11 篇为改写；`layers.md` 由 581 行拆成「四层规范」并把控制器/视图内容交给 10/11 两章。
 - 分工与执行：先由 5 个子代理并行改写（第 15/16/18/19/20/21 章共 6 篇由子代理完成），**其余 11 篇因子代理连续失败改由主代理亲自写**（`routing`/`controllers`/`views`/`database`/`model`/`helper`/`lifecycle` 及 `cli`/`testing`/`security-performance`/`layers`）。教训：子代理适合「一章一文件、明确验收」的活；并行超过 3 个或单个任务超过 4 章时失败率明显上升，**重试前先确认它对文件没有半途写入**。
 - 示例策略（守硬约束 2，不新建示例工程）：全部指向现成资产 —— `demo/public/demo.php`（单文件五层 + 路由 + 函数式视图）、`demo/public/dbtest.php`（模型/分页/CRUD 全链路）、`demo/src/*`、`tests/data_for_tests/ZAllDemo`、`tests/data_for_tests/ZThirdDemo`。
@@ -290,7 +293,7 @@ python3 <tmp>/drift.py --all                                                    
 **做了什么**
 
 - `helper.md` 整章重写（198 行）：四层四个类的对照表、两种工程写法（`extends` / `use … as Helper`）、并集 `__callStatic` 的顺序与代价、`Model\Base` 走 trait 的说明；常见错误表新增 4 行（并集未定义方法、胜出方不符预期、反射看不到、`__logined_enable_view`）。
-- `external-auth.md` 的「视图级开关」整节改成 `__logined_enable_view` 机制（含手动开关写法与「继承 `UserControllerBase` 即自动开」）；`overriding.md`（表格行 + 示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`、`layers.md`、`model.md`、`events.md`、`cache.md`、`lifecycle.md`、`security-performance.md`、`project-structure.md` 的旧名/旧选项一并改。
+- `external-auth.md` 的「视图级开关」整节改成 `__logined_enable_view` 机制（含手动开关写法与「继承 `UserControllerBase` 即自动开」）；随后按作者裁定**把这一章拆成三章**：`session.md`（2-9 会话）、`user.md`（2-18 用户体系）、`admin.md`（2-19 管理员体系，含 PermissionMenu），并顺手核对了两处源码已改的事实（`user_provider`/`admin_provider` 选项已不存在、未登录异常类写死为 `UserException`/`AdminException`）；`overriding.md`（表格行 + 示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`、`layers.md`、`model.md`、`events.md`、`cache.md`、`lifecycle.md`、`security-performance.md`、`project-structure.md` 的旧名/旧选项一并改。
 - 顺手修掉 `layers.md` 里那个**不存在**的示例路径 `tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`。
 
 **踩坑（重要，写脚本改文档的人都该知道）**：分两批替换时，第二批把「新文案」当成「旧文案」单独传了进去（少传了第三个参数），`String.Replace(old, $null)` **直接删掉了 5 行正文**（`cache.md`/`appendix-glossary.md`/`lifecycle.md`/`security-performance.md`/`embed.md`）。教训：批量改文档**每条都必须传「旧→新」两个字符串**，脚本要打印「命中/未命中」计数；`命中数 = 配对数` 是能立刻发现「误删」的唯一信号，改完还要 grep 复查一次目标串。

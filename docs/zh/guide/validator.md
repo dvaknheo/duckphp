@@ -39,11 +39,11 @@ class UserBusiness
 
 ### 三种验证口径
 
-| 口径 | 写法 | 失败行为 | 适用场景 |
-|---|---|---|---|
-| **手写校验** | `if (trim($post['title'] ?? '') === '') { … }` | 完全自己定 | 一两个字段的极简场景；错误要拼进视图数据 |
-| **[Validator](../reference/Component-Validator.md) 组件** | `Helper::Validator()->init($rules)->valid($data)` | 返回**错误数组** `['字段' => '消息', …]`，空数组表示全通过 | 表单回显、API 逐字段提示 |
-| **条件抛（ThrowOn）** | `Helper::BusinessThrowOn($flag, '消息', 代码)` | 满足条件就抛异常 | 业务规则（余额不足、无权操作），与验证互补 |
+| 口径                                                      | 写法                                                | 失败行为                                    | 适用场景                  |
+| ------------------------------------------------------- | ------------------------------------------------- | --------------------------------------- | --------------------- |
+| **手写校验**                                                | `if (trim($post['title'] ?? '') === '') { … }`    | 完全自己定                                   | 一两个字段的极简场景；错误要拼进视图数据  |
+| **[Validator](../reference/Component-Validator.md) 组件** | `Helper::Validator()->init($rules)->valid($data)` | 返回**错误数组** `['字段' => '消息', …]`，空数组表示全通过 | 表单回显、API 逐字段提示        |
+| **条件抛（ThrowOn）**                                        | `Helper::BusinessThrowOn($flag, '消息', 代码)`        | 满足条件就抛异常                                | 业务规则（余额不足、无权操作），与验证互补 |
 
 三种口径不互斥：字段格式用 Validator，业务规则用条件抛，极简场景手写。
 
@@ -174,7 +174,7 @@ Helper::Validator()
 
 ## 下一步
 
-- [第 2-9 章 会话与用户/管理员体系](external-auth.md)：登录之后，怎么知道「当前是谁」。
+- [第 2-18 章 用户体系](user.md)：登录之后，怎么知道「当前是谁」。
 - [第 2-11 章 异常与错误处理](exception.md)：`check()`/`ThrowOn` 抛出的异常，框架怎么接住、怎么呈现。
 - [第 2-3 章 控制器](controllers.md)：`Helper::POST()` 与输出四方式。
 - 参考手册：[DuckPhp\Component\Validator](../reference/Component-Validator.md)、[DuckPhp\Foundation\Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)

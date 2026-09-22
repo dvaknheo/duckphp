@@ -87,7 +87,7 @@ Helper::Show(get_defined_vars(), 'main');          // ① 当前作用域全部�
 Helper::Show(['notes' => $notes], 'note/list');    // ② 显式数组
 Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show 都带上）
 ```
-
+//TODO 介绍 assignViewData() 和  View::_()->data 属性 的关系，告诫应用
 视图里读数据就是读变量（`$notes`）。**转义是必须的**，框架提供全局函数：
 
 | 函数 | 用途 |
@@ -104,7 +104,7 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 <img src="<?= __res('img/logo.png') ?>">
 ```
 
-视图里**只用 Helper 与全局函数**，不要查库、不要调 Business——那是[第 2-1 章](layers.md)的越界矩阵里明确禁止的。
+视图里**只能用全局函数**，不要查库、不要调 Business——那是[第 2-1 章](layers.md)的越界矩阵里明确禁止的。
 
 ### 5. 不用 PHP 文件写视图：三种替换引擎
 
@@ -167,16 +167,16 @@ Helper::assignViewData(['site_name' => 'MyProj', 'year' => date('Y')]);
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 视图找不到（include 失败/白屏） | 视图名与文件路径不对，或没放在 `path_view` 下 | 视图名 = 相对 `view/` 的路径；确认 `view/<名>.php` 存在 |
-| 根路径省略视图名，报找不到 `Main/index` | 根路径的路由路径是欢迎类补出来的 `Main/index` | 显式传视图名（如 `Helper::Show($data, 'main')`） |
-| 视图里 `$var` 是 `null` 且不报错 | `view_skip_notice_error` 默认 `true`，未定义变量只当 notice 被屏蔽 | 检查变量是否真的传进 `Show()`；调试时可临时关掉该选项 |
-| 页面里出现未转义的用户输入 | 直接 `<?= $title ?>` 输出 | 一律 `<?= __h($title) ?>` |
-| 部署到子目录后视图里的链接 404 | 视图里手写 `/note/show` | 用 `__url('note/show')` |
-| `Helper::Render()` 出来的页面没有头尾 | `Render()` **不带**头尾（只渲染单个视图） | 页面用 `Show()`；确实要带布局就自己拼头尾或改用视图包含 |
-| 开了 `CallableView` 但 `Show()` 还是找 `.php` 文件 | 没配 `callable_view_class`，或该扩展没进 `ext` | 两个都要配（见 §5） |
-| 视图里写业务逻辑，改需求要动模板 | 越界的典型表现 | 数据准备放控制器/Business，视图只做显示 |
+| 现象                                         | 原因                                                    | 改法                                        |
+| ------------------------------------------ | ----------------------------------------------------- | ----------------------------------------- |
+| 视图找不到（include 失败/白屏）                       | 视图名与文件路径不对，或没放在 `path_view` 下                         | 视图名 = 相对 `view/` 的路径；确认 `view/<名>.php` 存在 |
+| 根路径省略视图名，报找不到 `Main/index`                 | 根路径的路由路径是欢迎类补出来的 `Main/index`                         | 显式传视图名（如 `Helper::Show($data, 'main')`）   |
+| 视图里 `$var` 是 `null` 且不报错                   | `view_skip_notice_error` 默认 `true`，未定义变量只当 notice 被屏蔽 | 检查变量是否真的传进 `Show()`；调试时可临时关掉该选项           |
+| 页面里出现未转义的用户输入                              | 直接 `<?= $title ?>` 输出                                 | 一律 `<?= __h($title) ?>`                   |
+| 部署到子目录后视图里的链接 404                          | 视图里手写 `/note/show`                                    | 用 `__url('note/show')`                    |
+| `Helper::Render()` 出来的页面没有头尾               | `Render()` **不带**头尾（只渲染单个视图）                          | 页面用 `Show()`；确实要带布局就自己拼头尾或改用视图包含          |
+| 开了 `CallableView` 但 `Show()` 还是找 `.php` 文件 | 没配 `callable_view_class`，或该扩展没进 `ext`                 | 两个都要配（见 §5）                               |
+| 视图里写业务逻辑，改需求要动模板                           | 越界的典型表现                                               | 数据准备放控制器/Business，视图只做显示                  |
 
 ## 下一步
 

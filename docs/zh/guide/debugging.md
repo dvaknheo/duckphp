@@ -66,7 +66,6 @@ Logger::_()->error('db failed: ' . $e->getMessage());
 ```bash
 php bin/cli.php help        # 列出全部命令
 php bin/cli.php version     # 版本
-php bin/cli.php routes      # 列出所有路由（含来源标记：controller / route_map / rewrite_map）
 php bin/cli.php run         # 用内置 HTTP 服务把应用跑起来（默认 127.0.0.1:8080）
 php bin/cli.php debug       # 开关调试标记（需要 data_file 能力，见下）
 ```
@@ -106,14 +105,14 @@ var_dump(\DuckPhp\Core\App::_Setting());
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `runtime/` 里没有日志 | 目录不可写；或 `path_log` 改过 | `chmod` 给写权限；确认 `App::_()->options['path_log']` |
-| 页面报错但看不到堆栈 | `is_debug` 没开，走的是 `error_500` | 临时 `is_debug=true`；或改 `error_500` 视图 |
-| 自定义错误页不生效 | 选项里写的是**文件路径**而不是视图名 | 写相对 `view/` 的视图名，如 `'_sys/error_404'` |
-| `php bin/cli.php run` 打不开 | 端口被占 / 文档根不对 | 换端口 `--port=9000`；文档根由 `path_document` 决定（默认 `public`） |
-| CLI 里命令找不到 | 命令属于某个子应用 | 加相位前缀（`shop-help`），见第 23/26 章 |
-| 调试页显示的信息太多，想给用户看简洁版 | 生产应关 `is_debug` 并配 `error_500` | 见第 1-7 章上线清单 |
+| 现象                        | 原因                             | 改法                                                     |
+| ------------------------- | ------------------------------ | ------------------------------------------------------ |
+| `runtime/` 里没有日志          | 目录不可写；或 `path_log` 改过          | `chmod` 给写权限；确认 `App::_()->options['path_log']`        |
+| 页面报错但看不到堆栈                | `is_debug` 没开，走的是 `error_500`  | 临时 `is_debug=true`；或改 `error_500` 视图                   |
+| 自定义错误页不生效                 | 选项里写的是**文件路径**而不是视图名           | 写相对 `view/` 的视图名，如 `'_sys/error_404'`                  |
+| `php bin/cli.php run` 打不开 | 端口被占 / 文档根不对                   | 换端口 `--port=9000`；文档根由 `path_document` 决定（默认 `public`） |
+| CLI 里命令找不到                | 命令属于某个子应用                      | 加相位前缀（`shop-help`），见第 23/26 章                          |
+| 调试页显示的信息太多，想给用户看简洁版       | 生产应关 `is_debug` 并配 `error_500` | 见第 1-7 章上线清单                                           |
 
 ## 下一步
 

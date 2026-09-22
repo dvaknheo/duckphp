@@ -82,10 +82,11 @@ public function findByStatus(string $status): array
 
 ### 2. 两条路线
 
-| 路线 | 写法 | 适用 |
-|---|---|---|
-| **用 `ModelTrait`** | `use ModelTrait;` | 常规单表模型：表名宏、读写分流、分页都接好了 |
+| 路线                                    | 写法                                            | 适用                       |
+| ------------------------------------- | --------------------------------------------- | ------------------------ |
+| **用 `ModelTrait`**                    | `use ModelTrait;`                             | 常规单表模型：表名宏、读写分流、分页都接好了   |
 | **直接用 [`Db`](../reference/Db-Db.md)** | 自己的类里调 `Helper::Db()` / `Helper::DbForRead()` | 跨多表复杂查询、报表、要精细控制 SQL 的场景 |
+|                                       |                                               |                          |
 
 两条可以混用：`demo/src/Model/DemoModel.php` 既继承了带 `ModelTrait` 的 `Base`，也在方法里直接 `Helper::Db()->fetch(...)`。
 
@@ -240,16 +241,16 @@ try {
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `Call to protected method ...::add()` | `ModelTrait` 的 CRUD 是 protected（刻意设计） | 在模型里写 public 包装方法对外暴露 |
-| 找不到表 | 类名推导不合预期（`UserProfileModel` → `userprofile`） | 构造函数里显式 `$this->table_name = 'user_profile'` |
-| 表名前缀没生效 | SQL 里手写表名，没走 `` `'TABLE'` `` 宏 | 用宏，或调 `$this->prepare($sql)` |
-| 模型里抛业务异常 / 写权限判断 | 越界：那是 Business 的活 | 挪到 Business，模型只返回数据 |
-| Business 里出现 `Helper::Db()` 裸 SQL | 越界：绕过模型层 | 把 SQL 收进模型，业务只调模型方法 |
-| 读连接查不到刚写的数据 | 读写分离延迟，`fetch*` 默认走读连接 | 需要强一致时显式用写连接 |
-| 模型变成几百行「上帝类」 | 一张表堆了太多业务语义 | 判断逻辑回 Business，按业务拆方法 |
-| 覆盖模型类后没生效 | 用了 `new NoteModel()` 而不是 `NoteModel::_()` | 一律 `::_()`（覆盖依赖容器，[第 3-5 章](overriding.md)） |
+| 现象                                    | 原因                                           | 改法                                           |
+| ------------------------------------- | -------------------------------------------- | -------------------------------------------- |
+| `Call to protected method ...::add()` | `ModelTrait` 的 CRUD 是 protected（刻意设计）        | 在模型里写 public 包装方法对外暴露                        |
+| 找不到表                                  | 类名推导不合预期（`UserProfileModel` → `userprofile`） | 构造函数里显式 `$this->table_name = 'user_profile'` |
+| 表名前缀没生效                               | SQL 里手写表名，没走 `` `'TABLE'` `` 宏               | 用宏，或调 `$this->prepare($sql)`                 |
+| 模型里抛业务异常 / 写权限判断                      | 越界：那是 Business 的活                            | 挪到 Business，模型只返回数据                          |
+| Business 里出现 `Helper::Db()` 裸 SQL     | 越界：绕过模型层                                     | 把 SQL 收进模型，业务只调模型方法                          |
+| 读连接查不到刚写的数据                           | 读写分离延迟，`fetch*` 默认走读连接                       | 需要强一致时显式用写连接                                 |
+| 模型变成几百行「上帝类」                          | 一张表堆了太多业务语义                                  | 判断逻辑回 Business，按业务拆方法                        |
+| 覆盖模型类后没生效                             | 用了 `new NoteModel()` 而不是 `NoteModel::_()`    | 一律 `::_()`（覆盖依赖容器，[第 3-5 章](overriding.md)）  |
 
 ## 下一步
 
