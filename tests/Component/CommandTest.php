@@ -16,7 +16,7 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\Component\Command;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
-use DuckPhp\Component\RouteLister;
+use DuckPhp\Ext\RouteLister;
 
 use DuckPhp\Core\Console;
 use DuckPhp\Core\Route;

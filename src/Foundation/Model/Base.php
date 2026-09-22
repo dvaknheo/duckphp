@@ -6,7 +6,9 @@
 
 namespace DuckPhp\Foundation\Model;
 
-abstract class Base extends Helper
+use DuckPhp\Component\DbManager;
+
+abstract class Base
 {
     use ModelTrait;
 
@@ -19,7 +21,7 @@ abstract class Base extends Helper
      */
     public static function Db($tag = null)
     {
-        return Helper::Db($tag);
+        return DbManager::_()->_Db($tag);
     }
     /**
      *
@@ -27,7 +29,7 @@ abstract class Base extends Helper
      */
     public static function DbForRead()
     {
-        return Helper::DbForRead();
+        return DbManager::_()->_DbForRead();
     }
     /**
      *
@@ -35,21 +37,21 @@ abstract class Base extends Helper
      */
     public static function DbForWrite()
     {
-        return Helper::DbForWrite();
+        return DbManager::_()->_DbForWrite();
     }
     public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
     {
-        return Helper::SqlForPager($sql, $pageNo, $pageSize);
+        return DbManager::_()->_SqlForPager($sql, $pageNo, $pageSize);
     }
     public static function SqlForCountSimply(string $sql): string
     {
-        return Helper::SqlForCountSimply($sql);
+        return DbManager::_()->_SqlForCountSimply($sql);
     }
     /**
      * @return string
      */
     public static function DatabaseDriver(): string
     {
-        return Helper::DatabaseDriver();
+        return DbManager::_()->getDatabaseDriver();
     }
 }

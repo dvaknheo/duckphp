@@ -199,6 +199,16 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             $this->callWithDummyArgs(Helper::class, $name);
             $this->callWithDummyArgs(DuckPhpAllInOne::class, $name);
         }
+        $errorTriggered = false;
+        set_error_handler(function ($errno, $errstr) use (&$errorTriggered) {
+            if (strpos($errstr, 'Call to undefined method') !== false) {
+                $errorTriggered = true;
+            }
+            return true;
+        });
+        Helper::nonExistentMethod();
+        restore_error_handler();
+        Assert::assertTrue($errorTriggered, 'Should trigger error for non-existent method');
 
         \LibCoverage\LibCoverage::End();
     }

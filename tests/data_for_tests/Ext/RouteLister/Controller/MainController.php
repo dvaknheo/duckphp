@@ -15,4 +15,8 @@ class MainController
     public function is_not_action()
     {
     }
+    protected function protetedfunc()
+    {
+
+    }
 }

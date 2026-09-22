@@ -171,9 +171,6 @@ class RouteLister extends ComponentBase
             if ($method->isStatic()) {
                 continue;
             }
-            if (!$method->isPublic()) {
-                continue;
-            }
             if ($method->isConstructor()) {
                 continue;
             }

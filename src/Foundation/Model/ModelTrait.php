@@ -8,7 +8,6 @@ namespace DuckPhp\Foundation\Model;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
-use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonExTrait;
 
 trait ModelTrait
