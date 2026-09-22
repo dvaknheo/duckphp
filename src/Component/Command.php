@@ -252,6 +252,7 @@ EOT;
                     $desc = trim(substr($desc, 0, $pos), "* \t\n");
                 }
             }
+            $command = str_replace('_', '-', $command);
             $ret[$command] = $this->translateCommandDesc($desc);
         }
         return $ret;
