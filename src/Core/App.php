@@ -466,11 +466,11 @@ EOT;
         $this_debug = $this->options['is_debug'] ?? false;
         return $root_debug || $this_debug;
     }
-    public static function IsRealDebug()
+    public static function IsHiddenDebug()
     {
-        return static::_()->_IsRealDebug();
+        return static::_()->_IsHiddenDebug();
     }
-    public function _IsRealDebug()
+    public function _IsHiddenDebug()
     {
         return $this->_IsDebug();
     }

@@ -318,7 +318,7 @@ PhaseContainer::RestAllContainerForTesting();
         \__debug_log("OK");
         
         \__is_debug();
-        \__is_real_debug();
+        \__is_hidden_debug();
         \__platform();
         \__logger();
     }
@@ -450,7 +450,7 @@ PhaseContainer::RestAllContainerForTesting();
     public function doHelper()
     {
         MyApp::IsDebug();
-        MyApp::IsRealDebug();
+        MyApp::IsHiddenDebug();
         MyApp::Platform();
 
    

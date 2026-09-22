@@ -76,9 +76,9 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_IsDebug();
     }
-    public static function IsRealDebug()
+    public static function IsHiddenDebug()
     {
-        return static::_()->_IsRealDebug();
+        return static::_()->_IsHiddenDebug();
     }
     public static function Platform()
     {
@@ -201,9 +201,9 @@ class CoreHelper extends ComponentBase
     {
         return App::_()->_IsDebug();
     }
-    public function _IsRealDebug()
+    public function _IsHiddenDebug()
     {
-        return App::_()->_IsRealDebug();
+        return App::_()->_IsHiddenDebug();
     }
     public function _Platform()
     {

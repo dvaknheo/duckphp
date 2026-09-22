@@ -98,9 +98,9 @@ if (! function_exists('__is_debug')) {
     }
 }
 if (! function_exists('__is_real_debug')) {
-    function __is_real_debug()
+    function __is_hidden_debug()
     {
-        return CoreHelper::IsRealDebug();
+        return CoreHelper::IsHiddenDebug();
     }
 }
 if (! function_exists('__platform')) {

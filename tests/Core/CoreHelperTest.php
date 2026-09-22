@@ -50,7 +50,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::_()->_LangText('$(command.bar)');
 
         CoreHelper::IsDebug();
-        CoreHelper::IsRealDebug();
+        CoreHelper::IsHiddenDebug();
         CoreHelper::Platform();
         
         \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace(['exit'=>function($code=0){
