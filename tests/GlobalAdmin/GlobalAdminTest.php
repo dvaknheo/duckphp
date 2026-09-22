@@ -42,19 +42,18 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         Helper::Admin()->service();
         $data = [];
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
-        // mergeViewData: without header
+        // mergeViewData(): 自作者提交 838b42c9 起只做 addExtViewData，不再渲染 header/footer
         unset(MyAdmin::_()->options['admin_view_file_header']);
         $res = Helper::Admin()->mergeViewData([]);
         \PHPUnit\Framework\Assert::assertSame('', $res['__view_data']['header'] ?? '');
-        // mergeViewData: with header
         MyAdmin::_()->options['admin_view_file_header']=$path.'view/block';
-        Helper::Admin()->mergeViewData($data);
-        // mergeViewData: with header + footer
         MyAdmin::_()->options['admin_view_file_footer']=$path.'view/block';
         $data3 = Helper::Admin()->mergeViewData($data);
-        \PHPUnit\Framework\Assert::assertStringContainsString('Block', $data3['__view_data']['footer'] ?? '');
+        \PHPUnit\Framework\Assert::assertArrayNotHasKey('__view_data', $data3, 'mergeViewData() 不再注入 __view_data');
         // test admin_callback_for_add_ext_view_data
         MyAdmin::_()->options['admin_callback_for_add_ext_view_data'] = [MyAction::class, 'myAddExtViewData'];
+        $data4 = Helper::Admin()->mergeViewData($data);
+        \PHPUnit\Framework\Assert::assertTrue($data4['__view_data']['custom'] ?? false, 'addExtViewData 回调仍生效');
         Helper::Admin()->canAccess('class','method','url');
         // canAccess() 无参分支：获取路由上下文
         Helper::Admin()->canAccess();
@@ -67,11 +66,13 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         Helper::Admin()->log('a','b');
         }catch(\Throwable $ex){}
 
-        // show() 分支：渲染视图
+        // show() 分支：渲染视图；header/footer 的渲染结果写进 View::_()->data['__view_data']
         ob_start();
         App::_()->options['use_admin_view_header_footer'] = true;
         Helper::Admin()->_Show([], $path.'view/block');
         ob_get_clean();
+        \PHPUnit\Framework\Assert::assertStringContainsString('Block', \DuckPhp\Core\View::_()->data['__view_data']['header'] ?? '');
+        \PHPUnit\Framework\Assert::assertStringContainsString('Block', \DuckPhp\Core\View::_()->data['__view_data']['footer'] ?? '');
 
         $admin = Helper::Admin();
         try{
@@ -129,15 +130,21 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         $name = Helper::Admin()->name(false);
         \PHPUnit\Framework\Assert::assertEquals('session_admin', $name);
 
-        // Test addExtViewData() default branch (without callback) - via mergeViewData
+        // Test addExtViewData() 默认分支（无回调）：作者 838b42c9 起 __logined_* 改由 _Show() 填，
+        // mergeViewData()/addExtViewData() 不再注入
         unset(MyAdmin::_()->options['admin_callback_for_add_ext_view_data']);
-        // Set session admin first since addExtViewData calls $this->id(true) and $this->name(true)
         MyAdminSession::_()->setCurrentAdmin(['id' => 99, 'name' => 'extadmin']);
         $extData = Helper::Admin()->mergeViewData(['test' => 'value']);
         \PHPUnit\Framework\Assert::assertEquals('value', $extData['test'] ?? null);
-        \PHPUnit\Framework\Assert::assertEquals(99, $extData['__logined_id'] ?? null);
-        \PHPUnit\Framework\Assert::assertEquals('extadmin', $extData['__logined_name'] ?? null);
-        \PHPUnit\Framework\Assert::assertArrayHasKey('__logined_url_logout', $extData);
+        \PHPUnit\Framework\Assert::assertArrayNotHasKey('__logined_id', $extData, 'mergeViewData() 默认分支不再填 __logined_*');
+        // ??= 只在未设置时赋值，先清掉前面 _Show() 留下的值才能重新观察
+        \DuckPhp\Core\View::_()->reset();
+        ob_start();
+        Helper::Admin()->_Show([], $path.'view/block');
+        ob_end_clean();
+        \PHPUnit\Framework\Assert::assertEquals(99, \DuckPhp\Core\View::_()->data['__logined_id'] ?? null);
+        \PHPUnit\Framework\Assert::assertEquals('extadmin', \DuckPhp\Core\View::_()->data['__logined_name'] ?? null);
+        \PHPUnit\Framework\Assert::assertArrayHasKey('__logined_url_logout', \DuckPhp\Core\View::_()->data);
 
         // Test go_url() fallback branch (when callback not set but URL is set)
         $old_url_for_home_cb = MyAdmin::_()->options['admin_callback_for_url_for_home'];

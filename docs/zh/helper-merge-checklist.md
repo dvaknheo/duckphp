@@ -96,6 +96,26 @@
 
 > 全量测试仍绿，因为这些文件都不在测试加载路径上。建议单独一轮清理（其中 skeleton 的两处会在阶段三一并处理）；master 的类移动也**没有同步文档**，参考手册里 `Foundation-ModelTrait.md`/`Foundation-SessionTrait.md`/`Foundation-ExceptionReporterTrait.md`/`Core-ThrowOnTrait.md`/`Foundation-ExceptionTrait.md` 都还是旧路径，需在阶段四一并处理或单独立项。
 
+**作者随后的提交（分支继续前进，记下来以免错认归属）**
+
+| 提交 | 内容 |
+|---|---|
+| `6dfd1972` | 完成代码的更改 —— 把本阶段那批改动提交了（并集改 `__callStatic`、两处测试、本 checklist） |
+| `838b42c9` | 调整 GlobalAdmin/GlobalUser —— `mergeViewData()` **不再**渲染 header/footer（回到只做 `addExtViewData`），另改 `src/DuckPhp.php` 4 行 |
+| `380a9ba3` | `Command` 的提示由 `_` 改成 `-` |
+| `87f8027b` | 修正 `RouteLister`（跳过非 public 方法、`path_info` 补前导 `/`）+ `Ext\PermissionMenu` 两处 |
+
+> ⚠️ **HEAD(`87f8027b`) 目前自带 4 个红灯，与本分支的 Helper 合并无关**。取证：把本 checklist 记录的未提交改动 `git stash` 掉后，纯 HEAD 复现同样结果。
+>
+> | 测试 | 现象 | 归属 |
+> |---|---|---|
+> | `tests/GlobalAdmin/GlobalAdminTest.php:55` | `Failed asserting that '' contains "Block"` | `838b42c9`：`mergeViewData()` 不再渲染 header/footer，测试仍按渲染断言 |
+> | `tests/GlobalUser/GlobalUserTest.php:63` | 同上 | 同上 |
+> | `tests/Ext/PermissionMenuTest.php:93` | 期望 `…\AdminController` 实得 `''` | `87f8027b`：`RouteLister` 的 path 前缀/可见性变化 |
+> | `tests/DuckPhp/DuckPhpTest.php:186` | `DuckPhpSystemException: No GlobalUser Provider.` | `838b42c9`（`src/DuckPhp.php` 那 4 行） |
+>
+> 这 4 个不属于本任务范围，需作者裁定是改测试还是改回源码。
+
 ---
 
 ## 阶段一 · 修改代码 —— ✅ 已完成
@@ -104,7 +124,8 @@
 - [x] `src/Foundation/Business/Helper.php` ← `BusinessHelperTrait`（17 + 4 事件属性）
 - [x] `src/Foundation/Controller/Helper.php` ← `ControllerHelperTrait`（48 + 6 事件属性）
 - [x] `src/Foundation/Model/Helper.php` ← `ModelHelperTrait`（6 方法）
-- [x] `src/Foundation/Model/Base.php` → `abstract class Base extends Helper { use ModelTrait; }`
+- [x] `src/Foundation/Model/Base.php` → `abstract class Base extends Helper { use ModelTrait; }`，并**显式声明** 6 个数据层静态助手（`Db/DbForRead/DbForWrite/SqlForPager/SqlForCountSimply/DatabaseDriver`）——并集走魔术转发，但模型基类要保持 `$model->Db()` 这种「静态方法经实例调用」可用
+- [x] 两个并集类补 **96 条 `@method` 注释**（IDE / PHPStan 可见性）：按派发顺序分组标注来源层，实测分布 System 40 / Controller 42 / Business 8 / Model 6
 - [x] `src/Foundation/Helper.php`：删 4 个 `use ...Trait` 与 12 条 `insteadof`，改为 **master 版**——`__callStatic` 按 `System → Controller → Business → Model` 派发到四层 Helper（27 行）
 - [x] `src/DuckPhpAllInOne.php`：同上，内联同一套 `__callStatic` 派发（121 行；不再持有 96 个显式方法，也不再持有 10 个事件属性）
 - [x] 删除 `src/Helper/`（4 个文件）
@@ -117,6 +138,7 @@
 - **并集**：曾用一次性反射脚本生成 96 个显式转发（`%TEMP%\dph-gen-forwarders.php`，未提交）；作者裁定改用 master 的 `__callStatic` 方案后，该生成物作废（不再需要、也未提交）。
 - **事件属性**：10 个 `$EVENT_*` 只留在 Business（4 个）/ Controller（6 个）两个层 Helper 上；并集类按 master 版不再自带（全仓无任何代码引用并集类的这些属性，已在测试 `testLayersHoldTheWholeApi` 里钉住归属）。
 - **`_()`**：`Foundation\Helper` 按 master 版不再 `use SingletonExTrait`（全仓无 `Foundation\Helper::_()` 调用）；`DuckPhpAllInOne::_()` 来自父类 `App`。
+- **`@method` 注释**：`__callStatic` 方案的固有代价是「反射/IDE/`method_exists()` 看不到方法」，作者要求补注释 → 用一次性反射脚本（`%TEMP%\dph-gen-method-tags.php`，未提交）从**胜出层**的真实签名生成 96 条 `@method static <返回类型> <名字>(<参数>)`，按 `---- resolved from Foundation\<层>\Helper (n) ----` 分组；无返回类型的方法标 `mixed`，`saveExtOptions` 标 `void`。注释只进 docblock，不产生真方法（`testLayersHoldTheWholeApi` 仍断言两个并集类「不声明任何 Helper 方法」）。
 
 ## 阶段二 · 测试 —— ✅ 已完成
 
@@ -134,7 +156,14 @@
 - [x] `tests/DuckPhpAllInOneTest.php`：保留 master 的 `__callStatic` 断言（`Setting()` 可用 + 未定义方法报错）
 - [x] **反向验证**（第一轮「显式转发」方案下做的，该方案已被裁定替换）：删掉一个转发 → 立刻红 → 恢复即绿；作为当时的兜底证据保留
 - [x] `ZAllDemoTest` 的 `files` 期望值：10360 → 10359（本分支）→ 10531（并 master + 定稿并集写法），当前 **10531**
-- [x] 全量测试绿（最终态）：`OK (91 tests, 593 assertions)`，覆盖率 `4862/4863 (99.98%)`
+- [x] 全量测试绿（定稿时）：`OK (91 tests, 593 assertions)`，覆盖率 `4862/4863 (99.98%)`
+
+### 作者追加要求（阶段尾补，未提交）
+
+- [x] **并集类补 `@method` 注释**（让 IDE / PHPStan 看得到方法）：`src/Foundation/Helper.php`、`src/DuckPhpAllInOne.php` 各 96 条，按派发来源层分组（`---- resolved from Foundation\<层>\Helper (n) ----`），实测 System 40 / Controller 42 / Business 8 / Model 6；无返回类型标 `mixed`，`saveExtOptions` 标 `void`。注释只在 docblock，不产生真方法（`testLayersHoldTheWholeApi` 仍断言两个并集类不声明 Helper 方法）。
+- [x] **`Model\Base` 显式声明 6 个数据层助手**（`Db/DbForRead/DbForWrite/SqlForPager/SqlForCountSimply/DatabaseDriver`），把 `$model->Db()` 这类「静态方法经实例调用」恢复回来；`extends Helper` 保留，其余方法仍走 `__callStatic`。
+- [x] 回归测试 `tests/Foundation/Model/HelperTest.php::testModelBaseDeclaresHelpersExplicitly`：6 个方法必须是**显式声明**（`getDeclaringClass()` = `Model\Base`）、`is_callable([$model, $name])` 为真（正是魔术转发做不到的那点），再逐个用实例式调用冒烟。
+- 本批验收：`tests/Foundation/Model/HelperTest.php` → `OK (2 tests, 19 assertions)`；`tests/Foundation/HelperTest.php` → `OK (5 tests, 34 assertions)`；`tests/DuckPhpAllInOneTest.php` → `OK (1 test, 8 assertions)`；`bash docs/scripts/check-non-ascii.sh` → 0（`src/` 仍纯 ASCII）。
 
 **验收命令与结果**
 
@@ -199,6 +228,8 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 - [ ] `Foundation-Helper.md` 重写：**并集 = `__callStatic` 派发**（写清查找顺序 System → Controller → Business → Model 与 12 个重名方法的胜出方），方法列表只需列 `__callStatic` 一条 + 链到四层页
 - [ ] `DuckPhpAllInOne.md`：删掉「use 了四个 Helper Trait / insteadof」的旧描述，改为「`__callStatic` 派发到四层 Helper」，方法列表保持 master 状态（本类没有 Helper 方法条目）
 - [ ] `Foundation-ModelTrait.md` / `Foundation-Model-Base.md` / `Foundation-Controller-Base.md` 等互链
+- [ ] `Foundation-Model-Base.md`：补 6 个**显式声明**的静态助手方法条目（`Model\Base` 现在真声明了它们，漂移扫描会要求）；同时把「同时使用 `ModelTrait` + `ModelHelperTrait`」的描述改成「继承 `Model\Helper` 派生的 `Helper` 并显式声明 6 个助手」
+- [ ] `Foundation-Helper.md` / `DuckPhpAllInOne.md`：说明「方法由 `__callStatic` 派发，源码里带 96 条 `@method` 注释供 IDE/静态分析使用」
 - [ ] master 的类移动未同步文档：`Foundation-ModelTrait.md`、`Foundation-SessionTrait.md`、`Foundation-ExceptionReporterTrait.md`、`Core-ThrowOnTrait.md`、`Foundation-ExceptionTrait.md` 需改名/改写或单独立项
 - [ ] `php docs/scripts/gen-options-docs.php` 重生成索引（类页 113 → 109）+ `--check` 通过
 - 验收：`python3 docs/scripts/check-doc-links.py docs/zh` → `broken: 0`；漂移扫描 `missing-method` 为空；`grep -rn "HelperTrait" docs/zh/reference` = 0
@@ -206,6 +237,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 ## 阶段五 · 用户指南（`docs/zh/guide/`）
 
 - [ ] `helper.md` 重写（表格第 4 列、最小示例改 `extends`、§3 改「继承即边界」、常见写法/错误表/链接）
+- [ ] `helper.md` 里补一句并集类的定位：`Foundation\Helper` / `DuckPhpAllInOne` 用 `__callStatic` 按 System → Controller → Business → Model 派发，源码带 `@method` 注释；`Model\Base` 的 6 个数据层助手是显式声明（`$model->Db()` 可用）
 - [ ] `layers.md`、`controllers.md`、`model.md`、`quickstart.md`、`events.md`、`embed.md`、`validator.md`、`security-performance.md`、`lifecycle.md`、`cache.md`
 - [ ] 修掉 `helper.md` 里不存在的 `ZAllDemo/src/Controller/Helper.php` 引用
 - [ ] 账本：`guide-maintenance-guide.md`（§1 例子 + M7 记录）、`guide-rewrite-checklist.md`、`reference-maintenance-guide.md`
@@ -213,18 +245,18 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 
 ## 提交（由作者执行）
 
-- [ ] ① 阶段一＋二（代码 + 测试，必须一起绿）
-- [ ] ② 阶段三（skeleton）
+- [x] ① 阶段一＋二 已由作者提交（`02209c67` → 并集改 master 方案后为 `6dfd1972`）；作者随后又推 `838b42c9` / `380a9ba3` / `87f8027b`
+- [ ] 阶段尾补的 `@method` 注释 + `Model\Base` 显式 6 方法 + 回归测试 —— **尚未提交**（工作区 5 个文件：`src/Foundation/Helper.php`、`src/DuckPhpAllInOne.php`、`src/Foundation/Model/Base.php`、`tests/Foundation/Model/HelperTest.php`、本 checklist）
+- [ ] ② 阶段三（skeleton：`Business/Helper.php`、`Model/Base.php` 两处 + `AppAction.php` 的坏引用 + `agent-zh.md`/`RULES.md` 措辞）
 - [ ] ③ 阶段四（参考手册）
 - [ ] ④ 阶段五（用户指南 + 账本）
 
-> 阶段一＋二目前是「全量绿」状态（`OK (91 tests, 593 assertions)`），改动已全部 `git add`。
-> ⚠️ 若要现在提交 ①，请先做 ②（skeleton 的 `Business/Helper.php` 与 `Model/Base.php` 还引用着已删除的 trait）；或者把 ①②合并提交。
-> ⚠️ 本阶段**改动了作者已提交的 `02209c67`**（并集从显式转发改回 master 的 `__callStatic`）：可以 `git commit --amend` 进那个提交，也可以单独提交一条「并集改用 `__callStatic`（按 master 方案）」，由作者定。
+> ⚠️ 若要提交这批，建议连同阶段三一起（`skeleton/src/Business/Helper.php` 与 `skeleton/src/Model/Base.php` 仍 `use` 已删除的 trait）。
+> ⚠️ HEAD 上那 4 个红灯是作者自己新提交带来的（见上表），提交前请先与作者确认怎么处理，别误当成这批改动的锅。
 
 ## 风险与备忘
 
-- 并集是 `__callStatic` 魔术派发：**反射 / IDE / `method_exists()` 看不到并集类的方法**（这正是它的取舍），因此把「96 个名字都能派发到真实实现」「派发顺序」「12 个重名胜出方」写成显式测试钉住（`tests/Foundation/HelperTest.php`）。
+- 并集是 `__callStatic` 魔术派发：**反射 / `method_exists()` 看不到并集类的方法**（这正是它的取舍）——已按作者要求补 96 条 `@method` 注释给 IDE/PHPStan 看，并把「96 个名字都能派发到真实实现」「派发顺序」「12 个重名胜出方」写成显式测试钉住（`tests/Foundation/HelperTest.php`）。注意 `@method` 只是注释：`is_callable()`、`method_exists()`、`ReflectionMethod` 仍然看不到它们。
 - 体积（定稿）：`Foundation/Helper.php` 35 → **27 行**；`DuckPhpAllInOne.php` 116 → **121 行**；四个层 Helper 各自持有方法体（190–249 行）。对比显式转发写法（425 / 511 行）更瘦，且全量覆盖率从 98.13% 升到 99.98%。
 - `ZAllDemoTest` 的 `files` 期望值含执行耗时/内存字样，其**宽度**变化会再改长度（既有脆弱点，本次未动）。
 - 一次性生成脚本 `%TEMP%\dph-gen-forwarders.php` 未提交，**已作废**（并集不再用显式转发）。

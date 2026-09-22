@@ -180,6 +180,27 @@ PhaseContainer::RestAllContainerForTesting();
         };
         \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_add_ext_view_data'] = $user_cb;
         \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_add_ext_view_data'] = $admin_cb;
+        // 作者提交 838b42c9 起，GlobalUser/GlobalAdmin 的 _Show() 会把 __logined_id/name/url_logout
+        // 填进 View::_()->data（不再放在 addExtViewData 里），所以这里要给出这三个回调，
+        // 否则没有 provider 时会抛 "No GlobalUser Provider."，两个分支根本走不到。
+        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_id'] = function ($check_login = true) {
+            return 1;
+        };
+        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_name'] = function ($check_login = true) {
+            return 'test_user';
+        };
+        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_url_for_logout'] = function ($url_back = null, $ext = null) {
+            return '/user_logout';
+        };
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_id'] = function ($check_login = true) {
+            return 1;
+        };
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_name'] = function ($check_login = true) {
+            return 'test_admin';
+        };
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_url_for_logout'] = function ($url_back = null, $ext = null) {
+            return '/admin_logout';
+        };
 
         Route::_()->calling_class = FakeUserController::class;
         ob_start();

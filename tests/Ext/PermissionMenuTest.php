@@ -90,7 +90,7 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         $routes = $my->getRoutesPub(false);
         $this->assertNotEmpty($routes);
         $this->assertArrayHasKey('url', $routes[0]);
-        $this->assertSame(AdminController::class, $this->controllerOf($routes, 'Admin/index'));
+        $this->assertSame(AdminController::class, $this->controllerOf($routes, '/Admin/index'));
 
         $tree = $menu->build($routes);
         // __permissionMenuMeta() controllers put their items at the top level,
@@ -118,7 +118,7 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         $system = $admin['children'][0];
         $this->assertSame('System', $system['name']);
         // the derived url (first method's dirname + '/#') is used when no url annotation
-        $this->assertSame('Admin/#', $system['url']);
+        $this->assertSame('/Admin/#', $system['url']);
         // annotation values run to the end of the line, so an icon may contain blanks
         $this->assertSame('fa fa-folder', $system['icon']);
 
@@ -131,7 +131,7 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         );
         $dashboard = $this->findNode($system['children'], 'Dashboard Panel');
         $this->assertSame(1, $dashboard['type']);
-        $this->assertSame('Admin/index', $dashboard['url']);
+        $this->assertSame('/Admin/index', $dashboard['url']);
         $this->assertSame('home', $dashboard['icon']);
         $this->assertArrayNotHasKey('weight', $dashboard);
         // @menu_weight 5 (Dashboard Panel) and 3 (Profile) sort before the zero weight ones
@@ -140,14 +140,14 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
 
         $plain = $this->findNode($system['children'], 'action_plain');
         $this->assertSame(2, $plain['type']);
-        $this->assertSame('Admin/plain', $plain['url']);
+        $this->assertSame('/Admin/plain', $plain['url']);
         // a bare "@menu_icon" without a value is ignored, the key stays null
         $this->assertNull($this->findNode($system['children'], 'action_bare_icon')['icon']);
         // "#url Name" permissions are prefixed with the method url,
         // a permission without a name ("#noname") is dropped
         $permission = $this->findNode($system['children'], 'Edit User');
         $this->assertSame(3, $permission['type']);
-        $this->assertSame('Admin/edit#edit', $permission['url']);
+        $this->assertSame('/Admin/edit#edit', $permission['url']);
         $this->assertNull($permission['icon']);
         $this->assertSame('/abs/place', $this->findNode($system['children'], 'Abs Place Here')['url']);
 
@@ -172,10 +172,10 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         // BadMetaController throws and NullMetaController returns null: both fall back
         // to annotation mode, each in its own basename-named directory
         $bad = $this->findNode($tree, 'BadMetaController');
-        $this->assertSame('BadMeta/#', $bad['url']);
+        $this->assertSame('/BadMeta/#', $bad['url']);
         $this->assertSame(['Bad Meta Item'], array_column($bad['children'], 'name'));
         $null_meta = $this->findNode($tree, 'NullMetaController');
-        $this->assertSame('NullMeta/#', $null_meta['url']);
+        $this->assertSame('/NullMeta/#', $null_meta['url']);
         $this->assertSame(['Null Meta Item'], array_column($null_meta['children'], 'name'));
 
         ////////////////////////////////////////////////////////////////////
@@ -275,7 +275,7 @@ class PermissionMenuTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, count(array_keys($all_names, 'Grand Menu')));
         $this->assertSame(1, count(array_keys($all_names, 'Leaf Menu')));
         $all_urls = $this->collectUrls($tree_all);
-        $this->assertContains('Admin/index', $all_urls);
+        $this->assertContains('/Admin/index', $all_urls);
         $this->assertContains('/child/index', $all_urls);
         $this->assertContains('/grand/index', $all_urls);
         $this->assertContains('/leaf/index', $all_urls);
