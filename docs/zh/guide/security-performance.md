@@ -103,7 +103,8 @@ class App extends DuckPhp
 | ☐ | 写操作有 CSRF 防护 | **框架不提供**：自己发令牌 + 校验 | 工程侧 |
 | ☐ | 上传做了类型/大小/路径校验 | **框架不提供**：自己校验，存储目录不可执行 | 工程侧 |
 | ☐ | 越权判断写在 Business 层 | 每条资源访问都判断归属 | [第 2-1 章](layers.md) |
-| ☐ | Cookie 设了 `Secure`/`HttpOnly`/`SameSite` | 用 `Helper::setcookie(...)` 显式传参 | [`ControllerHelperTrait::setcookie()`](../reference/Helper-ControllerHelperTrait.md) |
+| ☐ | Cookie 设了 `Secure`/`HttpOnly`/`SameSite` | 用 `Helper::setcookie(...)` 显式传参 | [`Controller\ControllerHelper::setcookie()`](../reference/Foundation-Controller-ControllerHelper.md) |
+
 | ☐ | Session 前缀不与其他应用冲突 | 配 `session_prefix` | `Foundation/SessionTrait.php` |
 | ☐ | HTTPS 强制跳转 + HSTS | 用 pre 路由钩子实现 | [第 2-10 章](lifecycle.md) |
 | ☐ | 敏感配置不在代码库 | 走 `.env`（`use_env_file`）或设置文件，且该文件不进 git | [第 1-5 章](configuration.md) |

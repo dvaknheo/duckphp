@@ -273,7 +273,7 @@ python3 <tmp>/drift.py --all                                                    
 1. **章号改成「卷-章」号**（单数字废弃）：`1-1`–`1-7`、`2-1`–`2-17`、`3-1`–`3-7`、`4-1`–`4-10`，附录仍是 A/B/C/D。落地范围：41 章 H1、总目录章号列（41 行）、41 条 checklist 条目、全库 `第 N 章` 交叉引用（含范围写法 `第 8–24 章` → `第 2-1–2-17 章`、「第X卷 A–B」→「第X卷 A'-B'」），共 **49 个文件、约 700 处**。
    - **踩坑记录（值得记住）**：第一次整库替换时把「表格首列是数字」和「`# 数字`」的规则套到了所有文件上，结果把 `docs/zh/reference/setting.md`、`docs/zh/guide/i18n.md` 里「次序 1/2/3」的**普通编号表格**改成了 `1-1/1-2/1-3` ——**只能 `git checkout` 回滚重做**。正确做法：**表格行替换只对总目录 `guide/index.md` 与 checklist 生效，H1 只在 `docs/zh/guide/` 内生效**；另外总目录里有的表被 Obsidian 加了对齐空格，正则要写成 `^\|\s*(\d+)\s*\|`。
 2. **类名第一次出现链接参考手册**：脚本从 `docs/zh/reference/*.md` 的 H1（类全名）建表（113 个类页），在每个指南文件里给**每个类**找**第一次出现**并加链，共 **45 个文件、新增 359 处**（净增 347；现在每章/每附录都至少有一条指向参考手册的类链接）。
-   - 规则：`Base`/`Helper` 有多个同名页 ⇒ **只用全限定名形式**链接；短名支持 `Ext\Xxx` / `Core\Xxx` 这类部分命名空间写法；`Xxx.php` 文件名不链接；优先链**正文里的裸出现**，没有裸出现时才退回「链整段行内代码」（例如把 `` `DuckPhp\Helper\AppHelperTrait` `` 整段链到 `reference/Helper-AppHelperTrait.md`）；
+   - 规则：`Base`/`Helper` 有多个同名页 ⇒ **只用全限定名形式**链接；短名支持 `Ext\Xxx` / `Core\Xxx` 这类部分命名空间写法；`Xxx.php` 文件名不链接；优先链**正文里的裸出现**，没有裸出现时才退回「链整段行内代码」（例如把 `` `DuckPhp\Foundation\Model\ModelHelperTrait` `` 整段链到 `reference/Foundation-Model-ModelHelperTrait.md`）；
    - **踩坑记录（三个，都踩过）**：
      a. 第一版脚本**没跳过围栏代码块**，把 76 处链接插进了 PHP 示例里（示例没法直接复制）⇒ 必须先把每个文件的行标记成「是否在 ``` 围栏内」；
      b. 第二版在处理**行内代码**时，以为「反引号里就只有类名」，结果把 `` `View::getViewFile()` `` 整段替换成了 `` [`View`](…) `` ——**吞掉了 `::getViewFile()`**。正确做法是：反引号里如果还有别的内容，要么整段当链接文字、要么跳过该处另找；
@@ -282,3 +282,17 @@ python3 <tmp>/drift.py --all                                                    
    - 三条新规矩已写进 §1 硬约束（第 6/7/8 条）与 §2 模板约定（含「代码块里不插链接」）。
 
 **校验**：41 章 H1 / 总目录 / 交叉引用 / 无单数字章号 → **0 处不一致**（脚本反查，含「章号+链接」配对）；`docs/zh` 站内链接 **1973 条 0 死链**；围栏代码块内链接 **0 处**；行内代码段内容未被截断（抽查 `View::getViewFile()` 完好）；`docs/zh` 全 UTF-8；`docs/zh/guide/` 仍是 `index.md` + 41 章 + 4 附录（46 个文件）。
+
+## 15. M7 / 本轮（阶段五）：Helper 章重写 + 视图级开关机制改写
+
+**背景**：Helper 体系重构（层 Helper 改名 `Foundation\<层>\<层>Helper`、并集改 `__callStatic`、`ModelHelperTrait` 归位 `Foundation\Model`）之后，指南有 11 章带失效表述；另外作者在对话外把「登录后视图」的开关从选项 `use_user_view`/`use_admin_view` 改成**视图数据** `__logined_enable_view`（由 `UserControllerBase`/`AdminControllerBase` 自动 `assignViewData`）。
+
+**做了什么**
+
+- `helper.md` 整章重写（198 行）：四层四个类的对照表、两种工程写法（`extends` / `use … as Helper`）、并集 `__callStatic` 的顺序与代价、`Model\Base` 走 trait 的说明；常见错误表新增 4 行（并集未定义方法、胜出方不符预期、反射看不到、`__logined_enable_view`）。
+- `external-auth.md` 的「视图级开关」整节改成 `__logined_enable_view` 机制（含手动开关写法与「继承 `UserControllerBase` 即自动开」）；`overriding.md`（表格行 + 示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`、`layers.md`、`model.md`、`events.md`、`cache.md`、`lifecycle.md`、`security-performance.md`、`project-structure.md` 的旧名/旧选项一并改。
+- 顺手修掉 `layers.md` 里那个**不存在**的示例路径 `tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`。
+
+**踩坑（重要，写脚本改文档的人都该知道）**：分两批替换时，第二批把「新文案」当成「旧文案」单独传了进去（少传了第三个参数），`String.Replace(old, $null)` **直接删掉了 5 行正文**（`cache.md`/`appendix-glossary.md`/`lifecycle.md`/`security-performance.md`/`embed.md`）。教训：批量改文档**每条都必须传「旧→新」两个字符串**，脚本要打印「命中/未命中」计数；`命中数 = 配对数` 是能立刻发现「误删」的唯一信号，改完还要 grep 复查一次目标串。
+
+**验收**：`docs/zh/guide` 里 `HelperTrait` / 旧类名 / `use_*_view` / `insteadof` **归零**（只剩 `Model\ModelHelperTrait` 与「旧选项已失效」的说明）；`check-doc-links.py docs/zh` → `broken: 0`；全量测试 `OK (95 tests, 658 assertions)`、LibCoverage `4876/4876 (100.00%)`；`helper.md` 198 行（≤400）。

@@ -15,14 +15,14 @@
 | 请求对象 | `Yii::$app->request` | `$this->request` | `Request $request` 注入 | **没有请求对象**：`Helper::GET()/POST()/Parameter()`（[第 2-3 章](../guide/controllers.md)） |
 | 响应对象 | `$this->asJson()` 等 | `$this->response` | `response()` / `Response` | `Helper::Show()` / `ShowJson()` / `Show302()` / `Show404()`（[第 2-3 章](../guide/controllers.md)） |
 | 视图 | `$this->render()` + `layouts/` | `view()` + `layout` | Blade `view()` + `@extends` | PHP 文件 + `Helper::Show()` + `setViewHeadFoot()`（**没有模板语法**）（[第 2-4 章](../guide/views.md)） |
-| 模型 | ActiveRecord（`yii\db\ActiveRecord`） | `Model` + `Entity` | Eloquent | **没有 ORM**：[`ModelTrait`](../reference/Foundation-ModelTrait.md) 提供表名/读写分流/CRUD 原语，SQL 自己写（[第 2-6 章](../guide/model.md)） |
+| 模型 | ActiveRecord（`yii\db\ActiveRecord`） | `Model` + `Entity` | Eloquent | **没有 ORM**：[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 提供表名/读写分流/CRUD 原语，SQL 自己写（[第 2-6 章](../guide/model.md)） |
 | 迁移 | `yii migrate` | `spark migrate` | `artisan migrate` | 无内置；建表 SQL 写在模型的 `init()` 或安装流程里（[第 2-5 章](../guide/database.md)） |
 | 查询构造器 | `Yii::$app->db->createCommand()` | `$db->table()` | `DB::table()` | [`Helper::Db()->fetchAll($sql, ...)`](../reference/Db-Db.md) + `` `'TABLE'` `` 宏 + [`DbAdvanceTrait`](../reference/Db-DbAdvanceTrait.md) 的片段拼装（[第 2-5 章](../guide/database.md)） |
 | 配置 | `config/web.php` 数组 | `.env` + `Config\*` | `config/*.php` + `.env` | **分两套**：`options`（白名单，代码里）与 `settings`（文件/`.env`，只读）（[第 1-5 章](../guide/configuration.md)） |
 | 中间件 | `behaviors()` / filters | Filters | Middleware | 钩子链为主；中间件只是兼容扩展（[第 2-10 章](../guide/lifecycle.md)） |
 | 事件 | `Event::on()` | Events | Events/Listeners | [`GlobalEvent`](../reference/Component-GlobalEvent.md)（回调**绑定相位**）（[第 2-12 章](../guide/events.md)） |
 | 依赖注入/容器 | `Yii::$container` | Services | Service Container | **单例容器**：`Xxx::_()` / `Xxx::_($new)`（无自动注入）（[第 4-1 章](../guide/container-phases.md)） |
-| 会话/用户 | `Yii::$app->user` | `session()` + 自定义 | `Auth` | [`SessionTrait`](../reference/Foundation-SessionTrait.md) + [`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)（回调配置）（[第 2-9 章](../guide/external-auth.md)） |
+| 会话/用户 | `Yii::$app->user` | `session()` + 自定义 | `Auth` | [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) + [`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)（回调配置）（[第 2-9 章](../guide/external-auth.md)） |
 | 验证 | `Model::rules()` | Validation | FormRequest / `validate()` | [`Validator`](../reference/Component-Validator.md) 组件三种口径（[第 2-8 章](../guide/validator.md)） |
 | 缓存 | `Yii::$app->cache` | `cache()` | [`Cache::`](../reference/Component-Cache.md) | `Helper::Cache()`（默认空实现，装 [`RedisCache`](../reference/Component-RedisCache.md) 才生效）（[第 2-13 章](../guide/cache.md)） |
 | 国际化 | `Yii::t()` | `lang()` | `__()` | `__l()` / `__hl()`（五级语言检测）（[第 2-14 章](../guide/i18n.md)） |

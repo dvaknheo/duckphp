@@ -133,7 +133,8 @@ use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookManager;
 
 Route::_()->addRouteHook($cb, 'prepend-inner');          // 直接挂（默认 append-outter）
-Helper::addRouteHook($cb, 'prepend-inner');              // 应用/接线层的 Helper 转发（AppHelperTrait）
+Helper::addRouteHook($cb, 'prepend-inner');              // 应用/接线层的 Helper（System\SystemHelper）
+
 
 RouteHookManager::_()->attachPreRun()                    // 拿 pre 链的引用，然后…
     ->append([MyHook::class, 'Hook'])                    // 追加到末尾

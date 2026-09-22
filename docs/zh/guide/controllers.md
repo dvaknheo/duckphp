@@ -201,4 +201,4 @@ Mailer::_()->send($user['email'], '欢迎', $body);
 - [第 2-4 章 视图与模板](views.md)：视图文件怎么定位、页眉页脚、转义。
 - [第 2-8 章 表单与数据验证](validator.md)：输入校验的三种口径。
 - [第 2-9 章 会话与用户/管理员体系](external-auth.md)：`UserControllerBase` / `AdminControllerBase` 与 Action。
-- 参考手册：[DuckPhp\Helper\ControllerHelperTrait](../reference/Helper-ControllerHelperTrait.md)、[DuckPhp\Foundation\Controller\Base](../reference/Foundation-Controller-Base.md)、[DuckPhp\Core\SuperGlobal](../reference/Core-SuperGlobal.md)。
+- 参考手册：[DuckPhp\Foundation\Controller\ControllerHelper](../reference/Foundation-Controller-ControllerHelper.md)、[DuckPhp\Foundation\Controller\Base](../reference/Foundation-Controller-Base.md)、[DuckPhp\Core\SuperGlobal](../reference/Core-SuperGlobal.md)。

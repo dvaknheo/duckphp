@@ -1,6 +1,6 @@
 # 2-6 模型层
 
-> 解决什么问题：模型里到底该写什么、[`ModelTrait`](../reference/Foundation-ModelTrait.md) 白送了什么、为什么它的 CRUD 方法是 `protected`、表名怎么推导、模型该向业务层暴露什么。
+> 解决什么问题：模型里到底该写什么、[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 白送了什么、为什么它的 CRUD 方法是 `protected`、表名怎么推导、模型该向业务层暴露什么。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-5 章 数据库](database.md)。预计 20 分钟。
 > 示例：`demo/src/Model/`（`Base.php` / `DemoModel.php`）、`demo/public/dbtest.php`（完整可跑：模型 + 分页 + 增删改查）、`tests/data_for_tests/ZAllDemo/src/Model/`。
 
@@ -17,7 +17,7 @@ php -S 127.0.0.1:8080 -t demo/public
 // demo/src/Model/Base.php —— 工程自己的模型基类
 namespace MyProj\Model;
 
-use DuckPhp\Foundation\ModelTrait;
+use DuckPhp\Foundation\Model\ModelTrait;
 
 class Base
 {
@@ -140,7 +140,7 @@ class NoteModel extends Base
 
 好处很实际：Business 拿不到 `execute()` 这种万能入口，就没法绕过模型写裸 SQL——边界从「约定」变成了「语言层面的可见性」。
 
-### 5. `ModelHelperTrait`：模型可用的静态工具
+### 5. 模型可用的静态工具：`ModelHelperTrait`
 
 | 方法 | 用途 |
 |---|---|
@@ -150,7 +150,7 @@ class NoteModel extends Base
 | `Helper::SqlForCountSimply($sql)` | 把 SQL 转成计数 SQL |
 | `Helper::DatabaseDriver()` | 当前驱动名（写驱动分支时用） |
 
-工程侧的 `Model\Helper`（`demo/src/Model/Helper.php`）就是 [`use ModelHelperTrait;`](../reference/Helper-ModelHelperTrait.md) 一行。
+工程侧的 `Model\Helper`（`demo/src/Model/Helper.php`）就是 [`extends Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md) 一行；模型基类 [`Model\Base`](../reference/Foundation-Model-Base.md) 则直接 `use` [`ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)，所以 `$this->Db()` 与 `$model->Db()` 都能用。
 
 ### 6. 跨库/多连接
 
@@ -256,4 +256,4 @@ try {
 - [第 2-8 章 表单与数据验证](validator.md)：入库前的校验放在业务层。
 - [第 2-11 章 异常与错误处理](exception.md)：数据层错误怎么变成用户看得懂的响应。
 - [第 3-5 章 重写与覆盖](overriding.md)：模型/控制器的覆盖与替换。
-- 参考手册：[DuckPhp\Foundation\ModelTrait](../reference/Foundation-ModelTrait.md)、[DuckPhp\Helper\ModelHelperTrait](../reference/Helper-ModelHelperTrait.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)。
+- 参考手册：[DuckPhp\Foundation\Model\ModelTrait](../reference/Foundation-Model-ModelTrait.md)、[DuckPhp\Foundation\Model\ModelHelperTrait](../reference/Foundation-Model-ModelHelperTrait.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)。

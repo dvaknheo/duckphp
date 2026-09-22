@@ -128,7 +128,7 @@ $sql = "select * from `'TABLE'` where id=?";
 // table_prefix='app_'、模型表名 note → select * from `app_note` where id=?
 ```
 
-宏的字面量是 `` `'TABLE'` ``（含反引号），[`ModelTrait::prepare()`](../reference/Foundation-ModelTrait.md) 负责替换（[第 2-6 章](model.md)），底层是 `Db::doTableNameMacro()`。
+宏的字面量是 `` `'TABLE'` ``（含反引号），[`ModelTrait::prepare()`](../reference/Foundation-Model-ModelTrait.md) 负责替换（[第 2-6 章](model.md)），底层是 `Db::doTableNameMacro()`。
 
 ### 5. 增删改的便捷方法
 

@@ -37,7 +37,7 @@ class NoteModel extends Base
 }
 ```
 
-要点：`` `'TABLE'` `` 是表名宏（自动加 `table_prefix`）；[`ModelTrait`](../reference/Foundation-ModelTrait.md) 的 CRUD 是 `protected`，所以要自己开 public 方法（[第 2-6 章](../guide/model.md)）。
+要点：`` `'TABLE'` `` 是表名宏（自动加 `table_prefix`）；[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 的 CRUD 是 `protected`，所以要自己开 public 方法（[第 2-6 章](../guide/model.md)）。
 
 ## 2. 分页（列表 + 分页条）
 

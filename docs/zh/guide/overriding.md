@@ -11,7 +11,7 @@
 | **文件级** | 父应用按「子应用 name」建同名子目录                            | 子应用的视图 / 配置 / 资源 | `view/shop/index.php`、`config/shop/greet.php`、`res/shop/third.css` |
 | **类级**  | `controller_class_map`（可从父应用注入给子应用）             | 某个控制器类的实现        | `src/Override/ShopControllerOverride.php`                          |
 | **路由级** | [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md)        | URL 的指向          | `MainApp::onInit()` 里的 `/legacy-shop`                              |
-| **视图级** | `use_admin_view` / `use_user_view` + 头尾视图选项     | `_Show()` 的渲染方式  | 第 2-9 章                                                             |
+| **视图级** | `__logined_enable_view`（+ `__logined_enable_header_footer`）视图数据，基类会自动置真     | `_Show()` 的渲染方式  | 第 2-9 章                                                             |
 | **组件级** | `ext` 表（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*`） | 组件与扩展的装配         | 第 4-2 章                                                             |
 
 ## 文件级覆盖：先讲清「谁赢」
@@ -101,9 +101,12 @@ RouteHookRewrite::_()->assignRewrite('/legacy-shop', 'shop/');
 ## 视图级覆盖：换渲染方式与页头页脚
 
 ```php
-MainApp::_()->options['use_admin_view'] = true;    // _Show 交给 GlobalAdmin（带后台头尾）
-MainApp::_()->options['use_user_view']  = true;    // 交给 GlobalUser（带前台头尾）
+// 开关是视图数据，不是应用选项；写在自己的控制器基类里即可
+Helper::assignViewData('__logined_enable_view', true);          // _Show 交给 GlobalUser/GlobalAdmin
+Helper::assignViewData('__logined_enable_header_footer', true); // 顺手把头尾视图套上
 ```
+
+> 继承 `Foundation\Controller\UserControllerBase` / `AdminControllerBase` 时这两句已经自动做了，不必手写。
 
 命中条件是「当前路由的控制器实现了 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) / [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md)」；头尾文件由 `admin_view_file_header/footer`、`user_view_file_header/footer` 指定（都是**相位可覆盖**的视图名，所以第三个应用也能换掉后台的头尾）。空视图名由 [`GlobalAdmin::_Show()`](../reference/GlobalAdmin-GlobalAdmin.md) / [`GlobalUser::_Show()`](../reference/GlobalUser-GlobalUser.md) 内部兜底成当前路由路径。
 
@@ -126,7 +129,7 @@ MainApp::_()->options['use_user_view']  = true;    // 交给 GlobalUser（带前
 1. **同一种资源在同一相位链里**：先命中的赢，顺序是「父应用的 `<name>` 子目录 → 子应用自己」。
 2. **同一层里同名目录合并**时（例如菜单树），以**先创建者**的 `url`/`icon` 为准（见 [Ext-PermissionMenu](../reference/Ext-PermissionMenu.md) 注意事项）。
 3. **路由钩子**按注册位置决定先后：外层的 pre → 内层 pre → 默认路由 → 内层 post → 外层 post。
-4. 排查工具：[`PhaseContainer::_()->dumpAllObject()`](../reference/Core-PhaseContainer.md)（相位里到底有哪些实例）、`getOverrideableFile(..., true)`（文件到底命中谁）、[`RouteLister::_()->listAll()`](../reference/Component-RouteLister.md)（现在有哪些路由，第 2-2 章）。
+4. 排查工具：[`PhaseContainer::_()->dumpAllObject()`](../reference/Core-PhaseContainer.md)（相位里到底有哪些实例）、`getOverrideableFile(..., true)`（文件到底命中谁）、[`RouteLister::_()->listAll()`](../reference/Ext-RouteLister.md)（现在有哪些路由，第 2-2 章）。
 
 ## 覆盖的代价：三条纪律
 

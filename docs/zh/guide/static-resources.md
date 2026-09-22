@@ -119,5 +119,5 @@ HttpServer::RunQuickly([
 ## 相关参考
 
 - [DuckPhp\Component\RouteHookResource](../reference/Component-RouteHookResource.md)（含 `cloneResource()` 细节）
-- [第 2-9 章 会话与用户/管理员体系](external-auth.md) 的 `use_admin_view` / `use_user_view`
+- [第 2-9 章 会话与用户/管理员体系](external-auth.md) 的 `__logined_enable_view`（登录后视图）
 - [第 3-5 章 重写与覆盖](overriding.md)：`res/<name>/` 覆盖规则

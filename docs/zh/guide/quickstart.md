@@ -104,7 +104,7 @@ class NoteBusiness
 }
 ```
 
-`Helper` 是业务层自己的助手（`src/Business/Helper.php`，内部 [`use DuckPhp\Helper\BusinessHelperTrait;`](../reference/Helper-BusinessHelperTrait.md)），脚手架自带。
+`Helper` 是业务层自己的助手（`src/Business/Helper.php`，内部 [`use DuckPhp\Foundation\Business\BusinessHelper;`](../reference/Foundation-Business-BusinessHelper.md)），脚手架自带。
 
 ## 步骤 5：控制器（Controller）—— 收输入、出输出
 

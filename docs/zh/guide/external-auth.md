@@ -2,7 +2,7 @@
 
 > 解决什么问题：Session 怎么读写、登录/注册/登出怎么做、权限与后台菜单怎么生成。
 > 前置：[第 2-3 章 控制器](controllers.md)、[第 2-8 章 表单与数据验证](validator.md)。预计 20 分钟。
-> 示例片段基于 `MyProj` 工程；`demo/src/Controller/Session.php` 是 [SessionTrait](../reference/Foundation-SessionTrait.md) 的最小骨架，可直接参考。
+> 示例片段基于 `MyProj` 工程；`demo/src/Controller/Session.php` 是 [SessionTrait](../reference/Foundation-Controller-SessionTrait.md) 的最小骨架，可直接参考。
 
 ## 最小示例
 
@@ -43,7 +43,7 @@ public function center()
 
 ### Session：SessionTrait + SuperGlobal
 
-`DuckPhp\Foundation\SessionTrait`（源码 `src/Foundation/SessionTrait.php`）给任意类加上带前缀的 Session 读写：
+`DuckPhp\Foundation\Controller\SessionTrait`（源码 `src/Foundation/SessionTrait.php`）给任意类加上带前缀的 Session 读写：
 
 - 首次访问时自动 `session_start()`（经 [`SystemWrapper`](../reference/Core-SystemWrapper.md)），并把应用选项 **`session_prefix`**（隐藏选项，默认空串）缓存为键前缀；
 - `get($key, $default)` / `set($key, $value)` / `unset($key)` 读写 `session_prefix . $key`，底层走 [DuckPhp\Core\SuperGlobal](../reference/Core-SuperGlobal.md) 的 `_SessionGet/_SessionSet/_SessionUnset`。
@@ -53,7 +53,7 @@ public function center()
 ```php
 namespace ProjectNameTemplate\Controller;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class Session
 {
@@ -115,7 +115,7 @@ class Session
 ```php
 namespace MyProj\UserSystem;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 use DuckPhp\GlobalUser\UserSessionInterface;
 use DuckPhp\GlobalUser\UserSessionTrait;
 
@@ -131,7 +131,7 @@ class UserSession implements UserSessionInterface
 
 ### 权限与菜单：Ext\PermissionMenu
 
-[DuckPhp\Ext\PermissionMenu](../reference/Ext-PermissionMenu.md) 用 [DuckPhp\Component\RouteLister](../reference/Component-RouteLister.md) 扫出**后台控制器**（实现了 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 的类）的路由，按注释或元数据生成菜单树：
+[DuckPhp\Ext\PermissionMenu](../reference/Ext-PermissionMenu.md) 用 [DuckPhp\Ext\RouteLister](../reference/Ext-RouteLister.md) 扫出**后台控制器**（实现了 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 的类）的路由，按注释或元数据生成菜单树：
 
 - **注释模式**：在控制器类/方法上写 `@menu_directory`、`@menu`、`@menu_action`、`@menu_permission` 等（示例见 `tests/data_for_tests/Ext/PermissionMenu/Controller/AdminController.php`）；
 - **元数据模式**：控制器实现 [DuckPhp\Ext\PermissionMenuMetaInterface](../reference/Ext-PermissionMenuMetaInterface.md)，`__permissionMenuMeta()` 返回数组接管整表；
@@ -139,16 +139,29 @@ class UserSession implements UserSessionInterface
 
 `loadAll()` 会把根应用与各子应用的菜单合并成一棵整树（跨相位安全）。菜单文件由隐藏选项 `permission_menu_tree_for_admin` 指定。
 
-### 视图级开关：use_user_view / use_admin_view
+### 视图级开关：`__logined_enable_view`
 
-`DuckPhp::_Show()`（源码 `src/DuckPhp.php` 第 176–187 行）在渲染前检查两个**隐藏选项**：
+**没有** `use_user_view` / `use_admin_view` 这两个选项了（源码已移除，只在 `src/DuckPhp.php` 的选项表里留了注释行）。现在的开关是 **`__logined_enable_view`**，它是一份**视图数据**而不是应用选项：
 
-- `use_user_view` 为真**且**当前控制器实现 [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md) → 交给 `GlobalUser::_Show()`（自动注入用户头尾与 `__logined_*` 变量）；
-- `use_admin_view` 为真**且**当前控制器实现 `AdminControllerInterface` → 交给 `GlobalAdmin::_Show()`。
+- 它出现在 `_Show()` 的 `$data` 里、或 `View::_()->data` 里，且为真时，`DuckPhp::_Show()`（源码 `src/DuckPhp.php` 第 170–182 行）才走「登录后视图」分支；
+- 当前路由的控制器实现 [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md) → 交给 `GlobalUser::_Show()`（渲染用户头尾、注入 `__logined_id/__logined_name/__logined_url_logout`）；
+- 实现了 `AdminControllerInterface` → 交给 `GlobalAdmin::_Show()`；
+- 两个接口都不实现 → 回落父类 `_Show()`，就是普通渲染。
 
-命中条件有两个，缺一不可：选项打开 + 控制器实现对应接口。配套基类 [Foundation\Controller\UserControllerBase](../reference/Foundation-Controller-UserControllerBase.md) / [Foundation\Controller\AdminControllerBase](../reference/Foundation-Controller-AdminControllerBase.md) 已在构造函数里做了「未登录跳登录页 / Ajax 抛异常」的兜底。
+工程里通常**不用手写**：继承 [Foundation\Controller\UserControllerBase](../reference/Foundation-Controller-UserControllerBase.md)（或 [AdminControllerBase](../reference/Foundation-Controller-AdminControllerBase.md)）就行——它们的 `initController()` 会 `Helper::assignViewData('__logined_enable_view', true)`，同时把 `__logined_enable_header_footer` 也置真（决定要不要把 `user_view_file_header/footer` 套到页面上），并做「未登录跳登录页 / Ajax 抛异常」的兜底。
 
-> 这两个选项是**隐藏选项**（不在默认 `$options` 表里声明，见 `src/DuckPhp.php` 第 92–108 行），读写时按普通选项一样用即可；头尾文件是相位可覆盖的视图名，第三方应用也能换掉——见[第 3-5 章 重写与覆盖](overriding.md)。
+要手动开、或只对某一次渲染开：
+
+```php
+// 全控制器打开（自己的基类里）
+Helper::assignViewData('__logined_enable_view', true);
+Helper::assignViewData('__logined_enable_header_footer', true);
+
+// 或只在这一次渲染里开
+Helper::Show(['__logined_enable_view' => true, 'note' => $note], 'user/profile');
+```
+
+> 头尾文件是**相位可覆盖**的视图名（`user_view_file_header/footer`、`admin_view_file_header/footer`），第三方应用也能换掉——见[第 3-5 章 重写与覆盖](overriding.md)。
 
 ## 常见写法
 
@@ -215,7 +228,7 @@ $names = Helper::UserService()->batchGetUsernames([1, 2, 3]);   // [1 => '张三
 | `need app options 'user_callback_for_xxx'` | 组件走到了未配置的回调键 | 对照上表补齐选项；或改用 `user_provider` 整体替换 |
 | 旧代码 `user_callback_get_id` 报错 | 键名已失效 | 改为 `user_callback_for_id`（name/data/local_service 同理） |
 | `urlForRegister()` 报「need app options 'user_url_register'」 | 还在用旧键 `user_url_regist` | 改为 `user_url_register` |
-| 开了 `use_user_view` 却没走用户头尾 | 控制器没实现 `UserControllerInterface` | 让控制器实现该接口，或继承 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) |
+| 开了 `__logined_enable_view` 却没走用户头尾 | 控制器没实现 `UserControllerInterface`（或没继承 `UserControllerBase`） | 让控制器实现该接口，或继承 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) |
 | 后台菜单是空的 | 控制器没实现 `AdminControllerInterface`，或没写 `@menu*` 注释 | 实现接口 + 写注释；或实现 [`PermissionMenuMetaInterface`](../reference/Ext-PermissionMenuMetaInterface.md) |
 | 多应用会话互相覆盖 | 各应用 Session 键前缀相同 | 给每个应用配不同的 `session_prefix` |
 | `Helper::UserId()` 未登录时行为不对 | 会话模式与非会话模式抛的异常不同 | 会话模式抛 `user_default_exception_class`（默认 `UserException`）；回调模式由你的回调决定 |
@@ -225,4 +238,4 @@ $names = Helper::UserService()->batchGetUsernames([1, 2, 3]);   // [1 => '张三
 - [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：这一次请求框架内部都做了什么。
 - [第 2-11 章 异常与错误处理](exception.md)：`UserException` / `AdminException` 怎么被接住、怎么变成跳转或错误页。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉用户/后台视图头尾的覆盖写法。
-- 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)、[Foundation\SessionTrait](../reference/Foundation-SessionTrait.md)、[DuckPhp（user_provider/admin_provider）](../reference/DuckPhp.md)
+- 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)、[Foundation\SessionTrait](../reference/Foundation-Controller-SessionTrait.md)、[DuckPhp（user_provider/admin_provider）](../reference/DuckPhp.md)

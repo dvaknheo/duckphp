@@ -36,7 +36,8 @@
 | **系统层** | System | 放应用配置与框架相关的接线，命名空间 `src/System`。（第 1-3 章） |
 | **动作类** | Action | 控制器层里可复用的无状态类，供多个控制器共享。（第 2-3 章） |
 | **服务类** | Service | 业务层里可复用的类，供多个 Business 共享。（第 2-1 章） |
-| **Helper** | `DuckPhp\Helper\*` / 工程的 `Helper` | 分层助手：`Helper::Show()` 等便捷入口，替代到处 `use` 框架类。（第 2-7 章） |
+| **Helper** | `DuckPhp\Foundation\<层>\<层>Helper` / 工程的 `Helper` | 分层助手：`Helper::Show()` 等便捷入口，替代到处 `use` 框架类。（第 2-7 章） |
+
 | **控制器后缀 / 方法前缀** | `controller_class_postfix` / `controller_method_prefix` | 决定 URL 与类名、方法名之间的换算；方法前缀默认为空。（第 9、10 章） |
 | **欢迎页** | `controller_welcome_class` / `_method` | 默认 `Main::index`：根路径与单段路径都先落到它。（第 2-2 章） |
 
@@ -61,7 +62,7 @@
 | **运行时目录** | `path_runtime` | 日志、缓存等可写目录。 |
 | **配置目录** | `path_config` | `config/`，[`Configer`](../reference/Component-Configer.md) 与安装器从这里读文件。 |
 | **事件** | Event / [`GlobalEvent`](../reference/Component-GlobalEvent.md) | 跨应用广播的命名事件；事件名用 `registering`/`registered` 这类「进行中/已完成」后缀。（第 2-12 章） |
-| **条件抛** | `ThrowOn()` / `*ThrowOn()` | 「满足条件就抛」的守卫式写法，来自 [`ThrowOnTrait`](../reference/Core-ThrowOnTrait.md) 或 Helper。（第 2-11 章） |
+| **条件抛** | `ThrowOn()` / `*ThrowOn()` | 「满足条件就抛」的守卫式写法，来自 [`ThrowOnTrait`](../reference/Ext-ThrowOnTrait.md) 或 Helper。（第 2-11 章） |
 | **系统异常** | [`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md) | **只**表示「框架自己出问题」，工程的业务/权限异常请直接继承 `\Exception`。（第 2-11 章） |
 
 ## 写作约定

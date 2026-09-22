@@ -231,30 +231,84 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
   - 全量：`OK (92 tests, 622 assertions)`，覆盖率 `4876/4884 (99.84%)`
 - ⚠️ **新发现的文档漂移（交给阶段四/五）**：`use_admin_view_header_footer` / `use_user_view_header_footer` 这两个选项**源码里已经没有任何读取点**（真正起作用的是 `__logined_enable_header_footer`），但参考手册 `GlobalAdmin-GlobalUser`/`options*.md` 仍在写它们，且 `docs/scripts/gen-options-docs.php:52-53` 把这两行**硬编码**在生成器里 → 两个测试里也还在设它们（无害但误导）。阶段四需要一并处理，否则重新生成索引又会把它们写回来。
 
-## 阶段四 · 参考手册（`docs/zh/reference/`）
+## 阶段四 · 参考手册（`docs/zh/reference/`）—— ✅ 已完成
 
-> 第 3 轮改名后，本阶段多了一件事：**参考页文件与标题要跟着改名**——`Foundation-Controller-Helper.md` → `Foundation-Controller-ControllerHelper.md`（四层同理），并新增 `Foundation-ModelHelperTrait.md`（`DuckPhp\Foundation\ModelHelperTrait`，内容来自原 `Helper-ModelHelperTrait.md`）；`Foundation-Model-Base.md` 要改成「`use ModelTrait` + `use ModelHelperTrait`」。`docs/scripts/gen-options-docs.php` 重生成索引时会按新页名登记。
+> 页名规则不变（命名空间打平）；薄壳页沿用「方法全来自 trait 就不重复列」的既有规矩；master 的类移动漂移（D 组）与对话外代码改动的漂移（G 组）本轮一并做掉。
 
-- [ ] 4 个 `Helper-*HelperTrait.md` 的方法表并入 `Foundation-*-Helper.md`（脚本抽取），删 4 页
-- [ ] `Foundation-Helper.md` 重写：**并集 = `__callStatic` 派发**（写清查找顺序 System → Controller → Business → Model 与 12 个重名方法的胜出方），方法列表只需列 `__callStatic` 一条 + 链到四层页
-- [ ] `DuckPhpAllInOne.md`：删掉「use 了四个 Helper Trait / insteadof」的旧描述，改为「`__callStatic` 派发到四层 Helper」，方法列表保持 master 状态（本类没有 Helper 方法条目）
-- [ ] `Foundation-ModelTrait.md` / `Foundation-Model-Base.md` / `Foundation-Controller-Base.md` 等互链
-- [ ] `Foundation-Model-Base.md`：补 6 个**显式声明**的静态助手方法条目（`Model\Base` 现在真声明了它们，漂移扫描会要求）；同时把「同时使用 `ModelTrait` + `ModelHelperTrait`」的描述改成「继承 `Model\Helper` 派生的 `Helper` 并显式声明 6 个助手」
-- [ ] `Foundation-Helper.md` / `DuckPhpAllInOne.md`：说明「方法由 `__callStatic` 派发，源码里带 96 条 `@method` 注释供 IDE/静态分析使用」
-- [ ] master 的类移动未同步文档：`Foundation-ModelTrait.md`、`Foundation-SessionTrait.md`、`Foundation-ExceptionReporterTrait.md`、`Core-ThrowOnTrait.md`、`Foundation-ExceptionTrait.md` 需改名/改写或单独立项
-- [ ] **清掉已失效的选项**：`use_admin_view_header_footer` / `use_user_view_header_footer` 源码里已无读取点 → 从 `docs/scripts/gen-options-docs.php:52-53` 的硬编码表里删掉，并同步 `GlobalAdmin-GlobalAdmin.md`/`GlobalUser-GlobalUser.md` 的「隐藏选项」段（重新生成 `options.md`/`options-by-class.md` 后旧行会消失）；两个测试里设置它们的语句同时删掉
-- [ ] `php docs/scripts/gen-options-docs.php` 重生成索引（类页 113 → 109）+ `--check` 通过
-- 验收：`python3 docs/scripts/check-doc-links.py docs/zh` → `broken: 0`；漂移扫描 `missing-method` 为空；`grep -rn "HelperTrait" docs/zh/reference` = 0
+### A. 层 Helper 页：改名 + 承接方法表 ✅
 
-## 阶段五 · 用户指南（`docs/zh/guide/`）
+- [x] 三个非 Model 层的「trait 页」直接 `git mv -f` 成新类名页（方法表原样搬过去）：`Helper-AppHelperTrait.md` → `Foundation-System-SystemHelper.md`、`Helper-ControllerHelperTrait.md` → `Foundation-Controller-ControllerHelper.md`、`Helper-BusinessHelperTrait.md` → `Foundation-Business-BusinessHelper.md`
+- [x] 旧的三个类页（`Foundation-{System,Controller,Business}-Helper.md`）`git rm`（内容被上行覆盖）
+- [x] 每页改写：标题/命名空间/`声明：class XxxHelper`、简介（「方法就在本类里，不再有 trait」）、`## 使用方式`（改成 `extends` 或 `use … as Helper` 两种写法）、注意事项与相关链接（去掉自链、补并集页）
 
-- [ ] `helper.md` 重写（表格第 4 列、最小示例改 `extends`、§3 改「继承即边界」、常见写法/错误表/链接）
-- [ ] `helper.md` 里补一句并集类的定位：`Foundation\Helper` / `DuckPhpAllInOne` 用 `__callStatic` 按 System → Controller → Business → Model 派发，源码带 `@method` 注释；`Model\Base` 的 6 个数据层助手是显式声明（`$model->Db()` 可用）
-- [ ] `layers.md`、`controllers.md`、`model.md`、`quickstart.md`、`events.md`、`embed.md`、`validator.md`、`security-performance.md`、`lifecycle.md`、`cache.md`
-- [ ] 修掉 `helper.md` 里不存在的 `ZAllDemo/src/Controller/Helper.php` 引用
-- [ ] 账本：`guide-maintenance-guide.md`（§1 例子 + M7 记录）、`guide-rewrite-checklist.md`、`reference-maintenance-guide.md`
-- 验收：链接检查 0；`grep -rn "HelperTrait" docs/zh/guide` = 0（历史沿革段除外）
+### B. Model 层特例（trait 回归）✅
 
+- [x] `Helper-ModelHelperTrait.md` → `Foundation-ModelHelperTrait.md`（标题/命名空间 `DuckPhp\Foundation`），并说明它由 `Model\Base` 与 `Model\ModelHelper` 共用、并集不直接持有它
+- [x] `Foundation-Model-ModelHelper.md`：薄壳页（方法全由 trait 提供）
+- [x] `Foundation-Model-Base.md`：`use ModelTrait` + `use ModelHelperTrait`（去掉「显式声明 6 个助手」的旧说法）
+
+### C. 并集两页 ✅
+
+- [x] `Foundation-Helper.md` 重写：派发顺序（System → Controller → Business → Model）、12 个重名方法胜出方表、96 条 `@method` 注释的定位（IDE/静态分析可见；`method_exists()`/反射不可见）、方法列表只列 `__callStatic` + 链四层页、与旧 `insteadof` 写法的差异沿革
+- [x] `DuckPhpAllInOne.md`：把「use 了四个 Helper Trait + insteadof」整块换成 `__callStatic` 源码片段 + 胜出方指引；补 `__callStatic` 方法条目；注明 10 个 `$EVENT_*` 已不在并集类上；相关链接改指四层 Helper
+
+### D. master 类移动的文档漂移 ✅
+
+- [x] `Foundation-ModelTrait.md` → `Foundation-Model-ModelTrait.md`
+- [x] `Foundation-SessionTrait.md` → `Foundation-Controller-SessionTrait.md`
+- [x] `Foundation-ExceptionReporterTrait.md` → `Foundation-Controller-ExceptionReporterTrait.md`
+- [x] `Core-ThrowOnTrait.md` → `Ext-ThrowOnTrait.md`
+- [x] `git rm Foundation-ExceptionTrait.md`（trait 已删）
+- [x] 全库替换类名/链接（`DuckPhp\Helper\*` 51 处、`Foundation\{ModelTrait,SessionTrait,ExceptionReporterTrait}`、`Core\ThrowOnTrait`、`Foundation\ExceptionTrait`）——53 个 md 命中
+
+### E. 失效选项 + 索引重生成 ✅
+
+- [x] 生成器 `docs/scripts/gen-options-docs.php`：删 `use_user_view`/`use_admin_view`/`use_{user,admin}_view_header_footer` 四条硬编码（源码已无读取点），补 `not_empty`（声明但无读取点，历史遗留），修 `session_prefix` 的来源标注（`Foundation\Controller\SessionTrait`）
+- [x] `GlobalAdmin-GlobalAdmin.md`/`GlobalUser-GlobalUser.md` 的「隐藏选项」段改成真实开关 `__logined_enable_header_footer`，并注明旧的 `use_*_view_header_footer` 已失效
+- [x] `DuckPhp.md`：删掉 `use_user_view`/`use_admin_view` 两行选项与两处示例，改成 `__logined_enable_view` 机制说明
+- [x] 两个测试里设置死选项的语句删除（`GlobalAdminTest`、`GlobalUserTest`）
+- [x] `gen-options-docs.php` 重生成 `index.md`/`options.md`/`options-by-class.md`/`options-index.md`；`--check` → **`options docs are up to date`**
+
+### G. 对话外代码改动的文档同步 ✅
+
+- [x] `App`/`CoreHelper`：`IsRealDebug`/`_IsRealDebug` → **`IsHiddenDebug`/`_IsHiddenDebug`**（两页方法名、全库文本）
+- [x] `Component-RouteLister.md` → **`Ext-RouteLister.md`**（页面改名 + 命名空间 `DuckPhp\Ext` + 新增 `command_routes()` 条目 + 全库引用）
+- [x] `Component-Command.md`：删掉已迁走的 `command_routes` 条目与说明，改为指向 `Ext\RouteLister`
+- [x] `Core-ExceptionManager.md`：把 `exception_reporter`/`exception_for_project` 从「选项」表挪到「隐藏选项」说明（它们不在本类 `$options` 里声明）
+- [x] `Foundation-Controller-{Admin,User}ControllerBase.md`：补 `onLoginedException`（受保护）
+- [x] `Foundation-Controller-ExceptionReporterTrait.md`：补 `_OnException`
+- [x] `GlobalAdmin`/`GlobalUser` 页：补 `init()`；`GlobalUser` 补选项 `user_enable`；删掉源码里根本不存在的 `admin_default_exception_class`/`user_default_exception_class` 两行
+- [x] 判读为**假报**（不改）：`Core-Functions.md`/`Ext-RouteHookWebInstallerView.md` 的「标题 vs 声明」不一致（脚本对函数文件/多声明文件的限制）；`DuckPhpAllInOne.md` 的 embedMe 键表与示例方法；`ModelTrait.md` 的 `myOrders`、`SessionTrait.md` 的 `remember/forget`、`ExceptionReporterTrait.md` 的 `onBusinessException` 等示例方法
+
+### F. 验收门槛 ✅
+
+- [x] `python3 docs/scripts/check-doc-links.py docs/zh` → **`checked 1972 relative md links, broken: 0`**
+- [x] 漂移扫描（`%TEMP%\dph-drift.py`，含孤儿页与标题核对）→ 只剩上面 3 条已判读的假报，**无 `missing-method` / `missing-option` / 真 `extra-option`**，**无孤儿页**
+- [x] `grep -rn "HelperTrait" docs/zh/reference` → 只剩 `Foundation-ModelHelperTrait` 自身系列
+- [x] 旧类名 `Foundation\{System,Controller,Business,Model}\Helper` 在参考/指南里 → 0（config 注释里的沿革说明除外）
+- [x] `php docs/scripts/gen-options-docs.php --check` → up to date
+- [x] 全量测试：`OK (94 tests, 657 assertions)`，覆盖率 `4870/4876 (99.88%)`
+
+### 留给阶段五（用户指南）
+
+- `guide/external-auth.md` §「视图级开关：use_user_view / use_admin_view」整节要改成 `__logined_enable_view` 机制；`overriding.md`（两处示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`（`DuckPhp\Helper\*`）、`project-structure.md`（`Foundation\Controller\Helper`）都要按新命名/新机制改写
+- `helper.md` 重写（四层 Helper 表格、`extends`/`as Helper` 写法、并集 `__callStatic`、「继承即边界」论述）
+## 阶段五 · 用户指南（`docs/zh/guide/`）—— ✅ 已完成
+
+- [x] `helper.md` **整章重写**（177 → 198 行）：四层四个类对照表（含 Model 薄壳 + trait）、两种工程写法（`extends` / `use … as Helper`）、并集 `__callStatic` 的顺序与代价（含「反射看不到」）、`Model\Base` 走 trait、常见写法 5 条、常见错误表新增 4 行（并集未定义方法 / 胜出方不符预期 / 反射找不到 / `__logined_enable_view`）、下一步链新页名
+- [x] **视图级开关机制改写**（对话外代码改动的指南同步）：`external-auth.md` 的「视图级开关：use_user_view / use_admin_view」整节 → `__logined_enable_view`（视图数据，不是选项；给出手动开关写法与「继承 `UserControllerBase`/`AdminControllerBase` 即自动开」）；错误表那一行同步
+- [x] `overriding.md`（表格行 + 示例改成 `Helper::assignViewData(...)`）、`embed.md`（DuckPhpAllInOne 的 trait/insteadof 段 → `__callStatic`；`use_user_view` → `__logined_enable_view`；`embedMe()` 行号 39–57 → 145 起）、`static-resources.md`、`appendix-glossary.md`、`layers.md`（Helper 对照表 + 去掉「拆成 trait」的说法）、`model.md`（§5 标题与「`use ModelHelperTrait;` 一行」→ `extends Model\ModelHelper` + 基类用 trait）、`events.md`（两层 Helper 的名字与源文件行号）、`cache.md`、`lifecycle.md`、`security-performance.md`、`project-structure.md`
+- [x] 顺手修掉 `layers.md` 里**不存在**的示例路径 `tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`
+- [x] 账本同步：`guide-maintenance-guide.md`（§1 链接规则的 trait 例子改用新名 + 新增 §15 本轮记录，含「批量替换误删 5 行」的踩坑）、`reference-maintenance-guide.md`（§3「Trait 转发类」示例改成 `Model\ModelHelper`/`ModelHelperTrait`、覆盖率小节补 `--coverage-*` 会跳过 LibCoverage dump 的坑 + 薄壳类 dump 为空属正常、新增第 15 轮记录）、`guide-rewrite-checklist.md`（里程碑加 M7 行）
+- ⚠️ **本轮踩坑（已记进两份维护指南）**：批量替换分两批做时，第二批有 5 处**只传了新文案**（漏了 old），`String.Replace(old, $null)` 把正文行删掉了（`cache.md`/`appendix-glossary.md`/`lifecycle.md`/`security-performance.md`/`embed.md`）——已逐条恢复并复查。教训：每条替换都要传「旧→新」，脚本要打印「命中/配对数」，跑完再 grep 复查目标串。
+
+**验收**
+
+- `docs/zh/guide` 里：`HelperTrait`（除 `Model\ModelHelperTrait`）、`DuckPhp\Helper`、`use_user_view`/`use_admin_view`（除「已失效」说明）、`insteadof`、旧类名 `Foundation\<层>\Helper` → **全部归零**
+- `python3 docs/scripts/check-doc-links.py docs/zh` → **`checked 1972 relative md links, broken: 0`**
+- `php docs/scripts/gen-options-docs.php --check` → **up to date**
+- 全量测试（最近一次含覆盖率）：**`OK (95 tests, 658 assertions)`**，**`Test Lines: 4876/4876 (100.00%)`**
+- 各章行数仍在 ≤400 内（`helper.md` 198 行）
 ## 需求变更（第 3 轮）：ModelHelperTrait 回归 + 层 Helper 改名 —— ✅ 已完成
 
 > 本节的命名是**当前有效**的；上文历史记录里的旧名（`Foundation\<层>\Helper`、`Model\Base` 显式 6 方法等）保留原样作为沿革。
@@ -287,6 +341,31 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 - `tests/Foundation` → `OK (21 tests, 103 assertions)`；`ZThirdDemoTest` → `OK (1 test, 36 assertions)`；`DuckPhpInstallerTest` → `OK (1 test, 9 assertions)`；`ZAllDemoTest` → `OK`；`DuckPhpAllInOneTest` → `OK (1 test, 8 assertions)`
 - 全量：**`OK (94 tests, 657 assertions)`**，覆盖率 `4870/4876 (99.88%)`（改动后重跑确认）
 
+## 需求变更（第 4 轮）：trait 归位到 Model 命名空间 + 覆盖测试 —— ✅ 已完成
+
+- [x] `src/Foundation/ModelHelperTrait.php` → **`src/Foundation/Model/ModelHelperTrait.php`**，命名空间 `DuckPhp\Foundation` → `DuckPhp\Foundation\Model`（`git mv`）；`Model\Base`、`Model\ModelHelper` 去掉现在多余的 import（同命名空间直接用）
+- [x] 参考页 `Foundation-ModelHelperTrait.md` → `Foundation-Model-ModelHelperTrait.md`（H1 与「命名空间」行同步），全库 11 个 md 的链接/类名引用一起改
+- [x] **补覆盖测试**：`tests/Foundation/Model/HelperTest.php::testModelHelperTraitCoverage` —— `LibCoverage::Begin(ModelHelperTrait::class)` 后经 `class TraitOnlyModelHelper { use ModelHelperTrait; }` 逐个调用 6 个方法，再 `End()`。trait 是**独立文件**，不单独 Begin/End 就不会有它的覆盖率 dump（模型侧 `ModelHelper`/`Base` 用的是同一份实现，但 dump 是按类名/文件分别落的）
+- [x] 覆盖率自查：`%TEMP%\dph-cov.php` 读 `test_coveragedumps/` 下的 dump，逐个报 `Foundation/Helper`、四层 Helper、`Model/ModelHelper`、`Model/ModelHelperTrait`、`Model/Base`、`Model/ModelTrait`、`DuckPhpAllInOne` 的「已执行/可执行」行数与未覆盖行
+- ⚠️ **关键坑（要记进账本）**：**PHPUnit 带 `--coverage-*` 参数时，LibCoverage 会跳过自己的 dump**（`LibCoverage::isSkip()` 检查 argv 里的 `--coverage-php/clover/html/text/crap4j`）。所以查覆盖率只能用 `XDEBUG_MODE=coverage php vendor/bin/phpunit`，**不要**再加 `--coverage-*`；dump 落在 `test_coveragedumps/<去掉命名空间前缀的路径>.php`
+**第 4 轮验收结果**
+
+- 全量测试（带 LibCoverage dump）：**`OK (95 tests, 658 assertions)`**，**`Test Lines: 4876/4876 (100.00%)`**（第 4 轮新增的 `testModelHelperTraitCoverage` 把 trait 补进 dump 后回到 100%）
+- 逐类覆盖率自查（`%TEMP%\dph-cov.php`，读 dump 的原始行数据）：
+
+  | 类 | 已执行/可执行 |
+  |---|---|
+  | `Foundation\Helper`（并集 `__callStatic`） | 10/10 |
+  | `Foundation\System\SystemHelper` | 40/40 |
+  | `Foundation\Controller\ControllerHelper` | 48/48 |
+  | `Foundation\Business\BusinessHelper` | 17/17 |
+  | `Foundation\Model\ModelHelperTrait` | **6/6** |
+  | `Foundation\Model\ModelTrait` | 38/38 |
+  | `DuckPhpAllInOne` | 50/50 |
+  | `Foundation\Model\ModelHelper` / `Model\Base` | 各自文件**没有可执行行**（薄壳：只有类声明与 `use` trait），dump 为空属正常；它们的方法体在 trait 的 6/6 里统计 |
+
+- 文档侧：`check-doc-links.py docs/zh` → `broken: 0`；`gen-options-docs.php --check` → up to date；漂移扫描 → 无 `missing-method`/`missing-option`/真 `extra-option`、无孤儿页（只剩 3 条已判读的假报）
+- `ZAllDemoTest` 的 `files` 期望值 **10567 未变**（trait 路径变长但该页列的是本次请求加载过的文件，demo 里不加载 ModelHelperTrait）
 ## 提交（由作者执行）
 
 - [x] 阶段一＋二 已提交（作者 `6dfd1972`，并集改 master 方案）

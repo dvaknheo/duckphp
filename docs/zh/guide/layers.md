@@ -138,16 +138,16 @@ HTTP 请求 → 路由 → MainController::index()
 
 ### 4. Helper 的分层：四层各有一套
 
-框架把「能用什么便捷方法」也按层切开了——`Helper` 不是一个大杂烩，而是按层拆成 trait：
+框架把「能用什么便捷方法」也按层切开了——`Helper` 不是一个大杂烩，而是按层拆成四个类：
 
-| 层 | 工程侧的类（`YourProjectName\<层>\Helper`） | 背后的 trait | 典型方法 |
+| 层 | 工程侧的类（`YourProjectName\<层>\Helper`） | 框架里对应的类 | 典型方法 |
 |---|---|---|---|
-| Controller | `Controller\Helper` | [`DuckPhp\Helper\ControllerHelperTrait`](../reference/Helper-ControllerHelperTrait.md) | `Show()`、`ShowJson()`、`Show302()`、`GET()`、`POST()` |
-| Business | `Business\Helper` | [`DuckPhp\Helper\BusinessHelperTrait`](../reference/Helper-BusinessHelperTrait.md) | `Setting()`、`Config()`、`BusinessThrowOn()`、`XpCall()` |
-| Model | `Model\Helper` | [`DuckPhp\Helper\ModelHelperTrait`](../reference/Helper-ModelHelperTrait.md) | 模型侧便捷方法 |
-| 应用/接线 | `System\Helper` | [`DuckPhp\Helper\AppHelperTrait`](../reference/Helper-AppHelperTrait.md) | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
+| Controller | `Controller\Helper` | [`DuckPhp\Foundation\Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md) | `Show()`、`ShowJson()`、`Show302()`、`GET()`、`POST()` |
+| Business | `Business\Helper` | [`DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md) | `Setting()`、`Config()`、`BusinessThrowOn()`、`XpCall()` |
+| Model | `Model\Helper` | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳；方法在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)） | `Db()`、`DbForRead()`、`SqlForPager()` |
+| 应用/接线 | `System\Helper` | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md) | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
 
-这些 `Xxx\Helper` 类本身极短（`tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` 只有 `use` 两行 + 一个空类），也可以直接用框架现成的 [`DuckPhp\Foundation\Controller\Helper`](../reference/Foundation-Controller-Helper.md) 等类。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
+工程侧的 `Xxx\Helper` 类本身极短（`demo/src/Controller/Helper.php` 就是 `extends` 一行 + 一个空类），也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-7 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 
 视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](../reference/Core-Functions.md)）：
 
@@ -223,4 +223,4 @@ new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 - [第 2-3 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
 - [第 2-4 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
 - [第 2-5 章 数据库](database.md) 与 [第 2-6 章 模型层](model.md)：模型层这一列往下的全部内容。
-- 参考手册：[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)、[DuckPhp\Helper\ControllerHelperTrait](../reference/Helper-ControllerHelperTrait.md)、[DuckPhp\Helper\BusinessHelperTrait](../reference/Helper-BusinessHelperTrait.md)。
+- 参考手册：[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)、[DuckPhp\Foundation\Controller\ControllerHelper](../reference/Foundation-Controller-ControllerHelper.md)、[DuckPhp\Foundation\Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)。

@@ -185,6 +185,8 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 
 - **必须给 `XDEBUG_MODE=coverage`**：不给的话 dump 里每一行的命中数都是 0，看起来像“一行都没跑到”。
 - dump 的文件名就是类路径：`test_coveragedumps/Ext/PermissionMenu.php`（该目录已被 `.gitignore`，不要提交）。
+- ⚠️ **不要同时给 PHPUnit 的 `--coverage-php/clover/html/text/crap4j`**：`LibCoverage::isSkip()` 一看到这些参数就**跳过自己的 dump**——该类的 dump 文件根本不会生成（看起来像“这个类没被测/没覆盖”）。查 LibCoverage 覆盖率只能用 `XDEBUG_MODE=coverage php vendor/bin/phpunit`。2026-09-22 实测踩过：加 `--coverage-php /dev/null` 后 `ModelHelperTrait.php` 的 dump 消失，去掉就回来了。
+- 薄壳类（只有 `class X extends Y {}` 或 `abstract class X { use A; use B; }`）的 dump **本来就可能是空的**：它们自己的文件没有可执行行，方法体算在 trait / 父类的文件里——这不是漏测。
 - dump 是序列化的 `CodeCoverage` 大对象、含二进制字节：**别 `cat`/`head`/`grep` 它**（刷屏、乱码，`grep` 只会回一句 `binary file matches`）。用脚本只打印“没执行的行”：
 
 ```python
@@ -249,7 +251,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 | 引用返回 `function &name` | 签名照源码写 `&`，校验正则已兼容。 |
 | 示例代码里的自定义方法 | 如 `action_index`、`view_hello`、`getList` 等出现在「使用方式」示例里，会被扫描算作 `extra`，属正常，不用删。 |
 | 空类/空接口 | 方法列表写“本类为空类，未额外声明方法（继承 … 的能力）”，不要凭空造方法。 |
-| Trait 转发类 | 如 `Foundation\Controller\Helper`（`use ControllerHelperTrait`）不重复列 46 个方法，只说明“方法全部由某 Trait 提供”，并链到该 Trait 文档。 |
+| Trait 转发类 | 如 `Foundation\Model\ModelHelper`（`use Model\ModelHelperTrait`）不重复列方法，只说明“方法全部由某 trait 提供”，并链到该 trait 文档（`Foundation-Model-ModelHelperTrait.md`）。 |
 | GBK 旧文件 | 读取报 `0xbc` 即 GBK，需以 UTF-8 重写整篇。 |
 | PowerShell 写中文 | 禁止 `Set-Content`/`Out-File` 直接写中文（会乱码）；用编辑器/`write_file` 工具写 UTF-8，或 `python` 显式 `encoding='utf-8'`。 |
 | `python -c` 被安全护栏拦 | 本环境下 `python -c` 后接其它命令会被拒绝；把脚本**存成 `.py` 文件再跑**。 |
@@ -353,3 +355,17 @@ print('non-utf8:', bad if bad else 'none')
 **判定为真缺（必须补）**：以上形式都正常、且该名字在源码里确实存在时，就是文档少写了条目/选项。
 
 **历史记录（此前的假报已全部清零）**：脚本首次全量扫描报出 15 处，其中 2 处是真缺（`Component-Configer.md` 缺 `path` 选项 + 整个「全部选项」节、`Core-Logger.md` 缺 `path` 表格行），另外 13 处即上述两类形式假报。这些**现已全部修复**（统一格式 + 补齐真缺），`drift.py --all` 现输出 **0 假报**。
+
+## 11. 第 15 轮：Helper 合并 / 改名后的参考手册同步（阶段四 + 第 4 轮需求）
+
+**背景**：`src/Helper/*HelperTrait` 并进 Foundation 之后，作者又改了两轮命名——层 Helper 类改成 `Foundation\<层>\<层>Helper`，并集改由 `Foundation\Helper` / `DuckPhpAllInOne` 的 `__callStatic` 承接；`ModelHelperTrait` 落回 `DuckPhp\Foundation\Model\ModelHelperTrait`。
+
+**做法（可复用）**
+
+1. 层页与 trait 页**用 `git mv -f` 互换**：trait 页带着方法表直接变成新类名页，旧类页删掉——方法表不用手搬。
+2. 并集两页（`Foundation-Helper.md`、`DuckPhpAllInOne.md`）手写重写：写清派发顺序、12 个重名方法的胜出方、`@method` 注释的定位（IDE/静态分析可见，反射与 `method_exists()` 不可见）。
+3. 全库替换用**一次成对替换**（`DuckPhp\Helper\*` → 新类名、页文件名 → 新页名），53 个 md 命中；**账本类文档先排除**（本文件、`guide-maintenance-guide.md`、两份 checklist），它们的旧名是沿革记录，单独手改。
+4. 同一轮清掉两类「别人的漂移」：master 的类移动（`ModelTrait`→`Model\ModelTrait`、`SessionTrait`/`ExceptionReporterTrait`→`Controller\*`、`Core\ThrowOnTrait`→`Ext\ThrowOnTrait`、`Foundation\ExceptionTrait` 删除）与**对话外代码改动**（`IsRealDebug`→`IsHiddenDebug`、`Component\RouteLister`→`Ext\RouteLister`、`use_user_view`/`use_admin_view`/`use_*_view_header_footer` 四个选项全失效）。
+5. 索引：先在 `gen-options-docs.php` 里删掉失效选项的硬编码行、补 `not_empty` 的说明，再重生成 `index.md`/`options.md`/`options-by-class.md`；`--check` 必须 up to date。
+
+**验收**：`check-doc-links.py docs/zh` → 1972 条链接 0 死链；漂移扫描只剩 3 条已判读的假报（函数文件/多声明文件的标题核对、`DuckPhpAllInOne.md` 的 embedMe 键表与示例方法）；参考页 **118 → 114**（删 3 个旧类页 + `Foundation-ExceptionTrait.md`，另 8 处改名）。

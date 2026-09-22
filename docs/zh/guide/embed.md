@@ -61,8 +61,10 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
 
 [src/DuckPhpAllInOne.php](../../src/DuckPhpAllInOne.php) 里的 [`DuckPhp\DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 把**应用入口、控制器、视图回调、四组 Helper** 全部塞进一个类：
 
-- `use` 了 [`ModelHelperTrait`](../reference/Helper-ModelHelperTrait.md)、[`BusinessHelperTrait`](../reference/Helper-BusinessHelperTrait.md)、[`ControllerHelperTrait`](../reference/Helper-ControllerHelperTrait.md)、[`AppHelperTrait`](../reference/Helper-AppHelperTrait.md) 四个 Helper Trait，并用一长串 `insteadof` 解决同名方法冲突（`ThrowOn`、`Setting`、`Config`、`header`、`setcookie` 等，见源码第 19–36 行）。所以在它的 `action_*` 方法里能直接 [`$this->Db()`](../reference/Db-Db.md)、`$this->Setting()`、`$this->Show()`。
-- 构造函数里调 `embedMe()`（第 39–57 行）注入一组默认选项：
+- 用 `__callStatic` 把**四层 Helper 的并集**嵌进本类：调用本类上不存在的静态方法时，按 System → Controller → Business → Model 找第一个声明它的层 Helper 并转发（源码第 128–139 行）。所以在它的 `action_*` 方法里能直接 [`$this->Db()`](../reference/Db-Db.md)、`$this->Setting()`、`$this->Show()`——注意这些方法在反射层面并不存在（IDE 靠源码里 96 条 `@method` 注释），细节见[第 2-7 章](helper.md)。
+
+
+- 构造函数里调 `embedMe()`（第 145 行起）注入一组默认选项：
 
 | 选项 | 注入值 | 作用 |
 |---|---|---|
@@ -133,7 +135,7 @@ class Tiny extends \DuckPhp\DuckPhpAllInOne
 Tiny::RunQuickly([]);
 ```
 
-访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。父类选项如 `use_user_view`（[第 2-9 章](external-auth.md) 的用户控制器视图）在子类里照常可用。
+访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。「登录后视图」（[第 2-9 章](external-auth.md)）靠视图数据 `__logined_enable_view` 打开，在子类里 `Helper::assignViewData('__logined_enable_view', true)` 即可。
 
 ## 常见错误
 

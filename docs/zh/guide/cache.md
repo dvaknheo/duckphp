@@ -93,7 +93,8 @@ ThirdApp::class => [
 ## 常见写法
 
 ```php
-// 1) 业务层里缓存一段数据（Helper::Cache 来自 BusinessHelperTrait）
+// 1) 业务层里缓存一段数据（Helper::Cache 来自 Business\BusinessHelper）
+
 public function hotProducts(): array
 {
     $key = 'hot_products';

@@ -93,7 +93,7 @@ Helper::system_wrapper_replace([
 | 想要 | 用选项 | 而不是 |
 |---|---|---|
 | 换 Db 实现类 | `database_class` | 改 `Db.php` |
-| 换整份 Session 行为 | `session_prefix` + [`SessionTrait`](../reference/Foundation-SessionTrait.md) 子类 | 覆盖 [`SuperGlobal`](../reference/Core-SuperGlobal.md) |
+| 换整份 Session 行为 | `session_prefix` + [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) 子类 | 覆盖 [`SuperGlobal`](../reference/Core-SuperGlobal.md) |
 | 关掉某个扩展 | `ext` 里置 `EXT_DISABLE`（`0`） | 卸载代码 |
 | 每次请求重建组件 | `ext` 里置 `EXT_RENEW`（`3`） | 手动 `reInit()` |
 

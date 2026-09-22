@@ -90,7 +90,7 @@ php vendor/bin/duckphp help
 \DuckPhp\Core\PhaseContainer::Dump();          // 或 PhaseContainer::_()->dumpAllObject()
 
 // 2) 现在有哪些路由（排查 404 的第一站）
-print_r(\DuckPhp\Component\RouteLister::_()->listAll());
+print_r(\DuckPhp\Ext\RouteLister::_()->listAll());
 
 // 3) 当前请求走到了哪个控制器/方法/路径
 \DuckPhp\Core\Route::_()->getRouteCallingClass();

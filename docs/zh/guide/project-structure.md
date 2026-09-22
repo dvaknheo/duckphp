@@ -82,7 +82,7 @@ View          只做展示（只用全局函数）
 |---|---|---|
 | Controller / Action | 同层 Action、Business、Helper、Session | **Model、Service**（必须经 Business） |
 | Business / Service | Model、Helper | Session、`$_GET`/`$_POST`/`$_SERVER`/`$_FILES` |
-| Model | 仅数据访问（[`Db`](../reference/Db-Db.md)/[`ModelTrait`](../reference/Foundation-ModelTrait.md)） | 业务逻辑、抛异常 |
+| Model | 仅数据访问（[`Db`](../reference/Db-Db.md)/[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md)） | 业务逻辑、抛异常 |
 | [View](../reference/Core-View.md) | 全局函数 `__h()` / `__url()` / `__res()` / `__l()` | 框架类（尽量不要） |
 | 自定义 Helper | System 层、框架、第三方库 | 任何业务层（Controller/Action/Business/Service/Model） |
 

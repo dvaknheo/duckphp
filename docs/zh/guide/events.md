@@ -48,7 +48,7 @@ GlobalEvent::_()->fire('third.ordered', $order_id);
 
 ### Helper 侧入口
 
-工程的 `Helper`（[`use DuckPhp\Helper\AppHelperTrait`](../reference/Helper-AppHelperTrait.md) / [`BusinessHelperTrait`](../reference/Helper-BusinessHelperTrait.md) / [`ControllerHelperTrait`](../reference/Helper-ControllerHelperTrait.md)）都提供了同名静态方法，语义一致：
+工程的 `Helper`（[`System\SystemHelper`](../reference/Foundation-System-SystemHelper.md) / [`Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md) / [`Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md)）都提供了同名静态方法，语义一致：
 
 ```php
 Helper::OnGlobalEvent('third.ordered', function ($order_id) { /* … */ });  // = GlobalEvent::_()->on(...)
@@ -58,7 +58,7 @@ Helper::RemoveEvent('third.ordered');                                      // = 
 
 ### 事件名约定：「进行中 / 已完成」后缀
 
-框架内置的事件常量分两组（`src/Helper/BusinessHelperTrait.php` 第 23–27 行、`src/Helper/ControllerHelperTrait.php` 第 28–35 行）：
+框架内置的事件常量分两组（`src/Foundation/Business/BusinessHelper.php` 第 23–27 行、`src/Foundation/Controller/ControllerHelper.php` 第 28–35 行）：
 
 | 层 | 常量 | 值 |
 |---|---|---|

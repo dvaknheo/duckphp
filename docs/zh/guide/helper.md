@@ -1,23 +1,20 @@
 # 2-7 Helper 与全局函数
 
-> 解决什么问题：四层各自的 Helper 有什么区别、该用哪一个、`Helper::` 与全局函数怎么选，以及为什么「这一层 Helper 里没有这个方法」往往是在提示你越界了。
+> 解决什么问题：四层的 Helper 分别是什么、该用哪一个、工程里怎么写自己的 Helper、`Helper::` 与全局函数怎么选，以及为什么「这一层 Helper 里没有这个方法」往往是在提示你越界了。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)。预计 15 分钟。
-> 示例：`tests/data_for_tests/ZAllDemo/src/Controller/Helper.php`（极简写法）、`demo/src/*/Helper.php`、`src/Core/Functions.php`（全局函数定义）。
+> 示例：`demo/src/{Controller,Business,Model}/Helper.php`、`skeleton/src/*/Helper.php`、`tests/data_for_tests/ZThirdDemo/src/Controller/Helper.php`（都是几行的薄壳类）、`src/Core/Functions.php`（全局函数定义）。
 
 ## 最小示例
 
-工程里的 Helper 就是这么短（`tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` 全文）：
+工程里的 Helper 就是这么短（`demo/src/Controller/Helper.php` 全文）：
 
 ```php
-namespace YourProjectName\Controller;
+namespace ProjectNameTemplate\Controller;
 
-use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\Foundation\Controller\ControllerHelper;
 
-class Helper
+class Helper extends ControllerHelper
 {
-    use ControllerHelperTrait;
-    use SingletonTrait;
 }
 ```
 
@@ -36,20 +33,45 @@ $rows = Helper::DbForRead()->fetchAll($sql);
 
 ## 机制说明
 
-### 1. 四个 trait，按层分工
+### 1. 四层四个类，各管一摊
 
-框架把便捷方法按层拆成四个 trait（`src/Helper/`），**一层的 Helper 里不会出现另一层的专属方法**：
+框架把便捷方法按层分到四个类里（`src/Foundation/<层>/`），**一层的 Helper 里不会出现另一层的专属方法**：
 
-| 层 | 现成类 | trait | 代表方法 |
-|---|---|---|---|
-| Controller | [`DuckPhp\Foundation\Controller\Helper`](../reference/Foundation-Controller-Helper.md) | [`ControllerHelperTrait`](../reference/Helper-ControllerHelperTrait.md) | `Show()` `ShowJson()` `Show302()` `Show404()` `Render()` `GET()` `POST()` `REQUEST()` `Parameter()` [`Pager()`](../reference/Component-Pager.md) `PageHtml()` `header()` `setcookie()` `ControllerThrowOn()` `UserId()` `AdminId()` |
-| Business | [`DuckPhp\Foundation\Business\Helper`](../reference/Foundation-Business-Helper.md) | [`BusinessHelperTrait`](../reference/Helper-BusinessHelperTrait.md) | `Setting()` `Config()` `AppOptions()` `XpCall()` `BusinessThrowOn()` [`Cache()`](../reference/Component-Cache.md) [`Validator()`](../reference/Component-Validator.md) `ValidatorFilter()` `FireGlobalEvent()` `OnGlobalEvent()` `AdminService()` `UserService()` `PathOfProject()` `PathOfRuntime()` |
-| Model | [`DuckPhp\Foundation\Model\Helper`](../reference/Foundation-Model-Helper.md) | [`ModelHelperTrait`](../reference/Helper-ModelHelperTrait.md) | [`Db()`](../reference/Db-Db.md) `DbForRead()` `DbForWrite()` `SqlForPager()` `SqlForCountSimply()` `DatabaseDriver()` |
-| 应用/接线（System） | [`DuckPhp\Foundation\System\Helper`](../reference/Foundation-System-Helper.md) | [`AppHelperTrait`](../reference/Helper-AppHelperTrait.md) | `addRouteHook()` `replaceController()` `assignRoute()` `assignImportantRoute()` `assignRewrite()` `Redis()` `SESSION()` `getCliParameters()` `isRunning()` `isInException()` `system_wrapper_replace()` |
+| 层 | 现成类 | 代表方法 |
+|---|---|---|
+| Controller | [`DuckPhp\Foundation\Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md) | `Show()` `ShowJson()` `Show302()` `Show404()` `Render()` `GET()` `POST()` `REQUEST()` `Parameter()` [`Pager()`](../reference/Component-Pager.md) `PageHtml()` `header()` `setcookie()` `ControllerThrowOn()` `UserId()` `AdminId()` |
+| Business | [`DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md) | `Setting()` `Config()` `AppOptions()` `XpCall()` `BusinessThrowOn()` [`Cache()`](../reference/Component-Cache.md) [`Validator()`](../reference/Component-Validator.md) `ValidatorFilter()` `FireGlobalEvent()` `OnGlobalEvent()` `AdminService()` `UserService()` `PathOfProject()` `PathOfRuntime()` |
+| Model | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳，方法全在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md) 里） | [`Db()`](../reference/Db-Db.md) `DbForRead()` `DbForWrite()` `SqlForPager()` `SqlForCountSimply()` `DatabaseDriver()` |
+| 应用/接线（System） | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md) | `addRouteHook()` `replaceController()` `assignRoute()` `assignImportantRoute()` `assignRewrite()` `Redis()` `SESSION()` `getCliParameters()` `isRunning()` `isInException()` `system_wrapper_replace()` |
 
-另外两个「全量版」：[`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md) 把四个 trait 全用上（用 `insteadof` 解决同名冲突），[`DuckPhp\DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 是更极端的单文件形态。
+两个「全量版」：
 
-工程里的 `Xxx\Helper` 惯例是「只 `use` 这一层需要的 trait」——**这正是边界的一部分**（见 §3）。
+- [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)：**自己不声明任何方法**，用 `__callStatic` 按 **System → Controller → Business → Model** 的顺序找第一个有该方法的那层并转过去；源码里带 96 条 `@method` 注释（只为 IDE / 静态分析可见，`method_exists()` 与反射看不到）。
+- [`DuckPhp\DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md)：同一套派发，把整个应用塞进一个类。
+
+工程侧的 `Xxx\Helper` 有两种写法，任选：
+
+```php
+// 写法 A（demo / skeleton 用的）：继承本层的类，之后可以往里加自己的方法
+use DuckPhp\Foundation\Controller\ControllerHelper;
+
+class Helper extends ControllerHelper
+{
+    public static function money(float $v): string
+    {
+        return '¥' . number_format($v, 2);
+    }
+}
+```
+
+```php
+// 写法 B：调用点想保持 `Helper::` 这个名字时，import 起别名
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
+
+Helper::Show(get_defined_vars(), 'note/list');
+```
+
+模型基类走的是另一条路：[`DuckPhp\Foundation\Model\Base`](../reference/Foundation-Model-Base.md) 同时 `use ModelTrait` 与 [`ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)，所以模型子类里 `$this->Db()`、`$this->getList()` 都能用（`$model->Db()` 这种「静态方法经实例调用」也成立）。
 
 ### 2. Helper 是静态门面，底层是可替换的系统包装
 
@@ -67,10 +89,10 @@ public static function Db($tag = null)                    { return DbManager::_(
 
 ```php
 // Business 里想输出页面：
-Helper::Show($data, 'x');     // ❌ Business 的 Helper 里没有 Show()
+Helper::Show($data, 'x');     // ❌ Business 的 Helper 继承链里没有 Show()
 ```
 
-`BusinessHelperTrait` 里没有 `Show()`、`ModelHelperTrait` 里没有 `GET()`，这不是漏了，而是**用类型系统表达的边界**：业务层不该直接输出、模型层不该读请求。正解见下表：
+`BusinessHelper` 里没有 `Show()`、`ModelHelper` 里没有 `GET()`，这不是漏了，而是**用类型系统表达的边界**：业务层不该直接输出、模型层不该读请求。各层 Helper 就是按这个边界拆开的类，工程里「继承哪一层的 Helper」就等于声明了「我属于哪一层」。正解见下表：
 
 | 想做的事 | 别用 | 该用 |
 |---|---|---|
@@ -114,23 +136,19 @@ Helper::Show($data, 'x');     // ❌ Business 的 Helper 里没有 Show()
 
 ## 常见写法
 
-**① 工程 Helper 只暴露本层需要的 trait**（见开头的极简写法）。
+**① 工程 Helper 只继承本层的类**（见开头的薄壳写法）——**这就是边界的一部分**。
 
-**② 团队自己的便捷方法写在工程 Helper 里**
+**② 需要「一处引入、四层都能用」时**
 
 ```php
-namespace MyProj\Business;
+use DuckPhp\Foundation\Helper;      // 并集门面：__callStatic 派发到四层
 
-class Helper
-{
-    use \DuckPhp\Helper\BusinessHelperTrait;
-
-    public static function money(float $v): string
-    {
-        return '¥' . number_format($v, 2);
-    }
-}
+Helper::Setting('page_size', 20);   // → Business\BusinessHelper
+Helper::Db()->fetch($sql);          // → Model\ModelHelper
+Helper::Show($data, 'note/list');   // → Controller\ControllerHelper
 ```
+
+代价要知道：并集类的方法**在反射层面不存在**（`method_exists()` 为 false、IDE 只能靠 `@method` 注释），而且同名方法按固定顺序判定胜负（见[参考手册](../reference/Foundation-Helper.md#注意事项)）。分层清楚的项目更推荐按层用 A 写法。
 
 **③ 配置与设置一律走 Helper，不直接读文件**
 
@@ -160,12 +178,15 @@ Helper::assignRewrite('/legacy', 'home/index');
 
 | 现象 | 原因 | 改法 |
 |---|---|---|
-| `Call to undefined method ...::Show()` | 用的是业务/模型层的 Helper（它们没有输出方法） | 输出放控制器；或检查 `use` 的 trait 对不对 |
+| `Call to undefined method ...::Show()` | 用的是业务/模型层的 Helper（继承链里没有输出方法） | 输出放控制器；或检查 `extends` 的是哪一层的 Helper |
+| 并集 `Helper::Foo()` 报 `Call to undefined method` | 四层都没有这个方法（`__callStatic` 找不到就报错） | 查四层 Helper 的参考页，或看源码里的 `@method` 注释确认名字 |
+| 并集 `Helper::Setting()` 行为与预期不符 | 同名方法按 System → Controller → Business → Model 顺序判定 | 需要明确语义时直接用那一层的类（`Business\BusinessHelper::Setting()`） |
+| 反射/IDE 找不到并集类的方法 | `__callStatic` 方案下方法是注释而非声明 | 用 `@method` 注释支持的 IDE；或直接依赖四层类 |
 | `assignRewrite('article/123', …)` 不生效 | 重写键**少了前导 `/`**：钩子拿 `'/'.$path_info` 比较 | 写成 `'/article/123'` |
 | 视图里 `Helper::` 报类不存在 | 视图里没引入 Helper | 视图里用全局函数（`__h`/`__url`/`__l`） |
 | 业务层里 `Helper::GET()` 报错 | 越界 | 参数由控制器取好传进来 |
 | 换了系统包装但业务没变化 | 业务代码直接用了原生函数或 `new` | 全部走 `Helper::` |
-| 各层混用一个「大 Helper」 | 边界失效：业务里能拿到输出/请求方法 | 每层只 `use` 本层 trait；确需全量就用 `Foundation\Helper` 并知道代价 |
+| 各层混用一个「大 Helper」 | 边界失效：业务里能拿到输出/请求方法 | 每层只继承本层的类；确需全量就用 `Foundation\Helper` 并知道代价 |
 | 业务层用 `Helper::Db()` 写裸 SQL | 越界：绕过模型层 | SQL 收进模型（[第 2-6 章](model.md)） |
 | 找不到某个全局函数 | 它确实没定义（拼写/版本差异） | 以 `src/Core/Functions.php` 为准，或改用 `Helper::` 对应方法 |
 
@@ -174,4 +195,4 @@ Helper::assignRewrite('/legacy', 'home/index');
 - [第 2-8 章 表单与数据验证](validator.md)：`Helper::Validator*` 的用法。
 - [第 2-9 章 会话与用户/管理员体系](external-auth.md)：`Helper::UserId()` / `AdminService()` 等。
 - [DuckPhp\Core\Functions（全局函数参考）](../reference/Core-Functions.md)：完整函数清单与签名。
-- 参考手册：[DuckPhp\Helper\ControllerHelperTrait](../reference/Helper-ControllerHelperTrait.md)、[DuckPhp\Helper\BusinessHelperTrait](../reference/Helper-BusinessHelperTrait.md)、[DuckPhp\Helper\ModelHelperTrait](../reference/Helper-ModelHelperTrait.md)、[DuckPhp\Helper\AppHelperTrait](../reference/Helper-AppHelperTrait.md)、[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)。
+- 参考手册：[`Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md)、[`Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)、[`Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)、[`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)、[`System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)、[`Foundation\Helper`（并集）](../reference/Foundation-Helper.md)。

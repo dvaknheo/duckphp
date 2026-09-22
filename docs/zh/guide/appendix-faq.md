@@ -11,7 +11,7 @@
 | DuckPHP 适合什么项目？ | 想要「零依赖、单文件也能跑、又能长成多应用」的 PHP 项目；不适合指望 ORM/生态开箱即用的团队 | [第 1-1 章](../guide/intro.md) |
 | 必须用 Composer 吗？ | 不必须。框架自带的 [`AutoLoader`](../reference/Core-AutoLoader.md) 能自己找类，根 `autoload.php` 就是最小加载器 | [第 4-4 章](../guide/embed.md) |
 | 能不能塞进一个老项目里只加一个页面？ | 能：一个入口文件 + `RunQuickly()`，或用 [`DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 单文件形态 | [第 4-4 章](../guide/embed.md) |
-| 有 ORM / 迁移工具 / 队列吗？ | 都没有。数据访问用 [`ModelTrait`](../reference/Foundation-ModelTrait.md) + 手写 SQL；建表 SQL 自己放安装流程；队列自己接 | [第 2-5 章](../guide/database.md) |
+| 有 ORM / 迁移工具 / 队列吗？ | 都没有。数据访问用 [`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) + 手写 SQL；建表 SQL 自己放安装流程；队列自己接 | [第 2-5 章](../guide/database.md) |
 | 支持 PHP 版本？ | `>=7.4`（仓库同时在 7.4 与 8.4 容器里跑测试） | [第 4-7 章](../guide/coverage.md) |
 | 和 Laravel 的心智模型差在哪？ | 没有 PSR-7/15、没有注入容器、没有注释路由；换来相位隔离与覆盖机制 | [附录 C](appendix-migration.md) |
 
