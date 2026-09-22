@@ -2,11 +2,11 @@
 /**
  * DuckPhp
  * Don't change me.
- * or you can use DuckPhp\Foundation\Controller\Helper directly.
+ * or you can use DuckPhp\Foundation\Controller\ControllerHelper directly.
  */
 namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\Controller\Helper as HelperBase;
+use DuckPhp\Foundation\Controller\ControllerHelper as HelperBase;
 
 class Helper extends HelperBase
 {

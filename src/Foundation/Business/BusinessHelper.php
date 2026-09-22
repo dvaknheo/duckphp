@@ -16,7 +16,7 @@ use DuckPhp\Core\SingletonExTrait;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalUser\GlobalUser;
 
-class Helper
+class BusinessHelper
 {
     use SingletonExTrait;
 

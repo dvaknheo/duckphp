@@ -4,13 +4,13 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\Foundation\Model;
+namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonExTrait;
 
-class Helper
+trait ModelHelperTrait
 {
     use SingletonExTrait;
     /**

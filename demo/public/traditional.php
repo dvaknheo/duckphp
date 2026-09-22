@@ -16,7 +16,7 @@ if (is_file($autoload_file)) {
 ////////////////////////////////////////
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\View;
-use DuckPhp\Foundation\Controller\Helper;
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 
 
 

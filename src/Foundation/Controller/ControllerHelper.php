@@ -21,7 +21,7 @@ use DuckPhp\Core\View;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalUser\GlobalUser;
 
-class Helper
+class ControllerHelper
 {
     use SingletonExTrait;
 

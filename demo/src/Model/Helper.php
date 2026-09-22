@@ -5,7 +5,7 @@
  */
 namespace ProjectNameTemplate\Model;
 
-use DuckPhp\Foundation\Model\Helper as ModelHelper;
+use DuckPhp\Foundation\Model\ModelHelper;
 
 class Helper extends ModelHelper
 {

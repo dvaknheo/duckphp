@@ -5,7 +5,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Foundation\Controller\AdminControllerBase;
-use DuckPhp\Foundation\Controller\Helper;
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 class AdminControllerBaseTest extends \PHPUnit\Framework\TestCase

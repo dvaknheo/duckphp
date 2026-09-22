@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use DuckPhp\DuckPhpAllInOne;
-use DuckPhp\Foundation\Controller\Helper;
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 
 use MyApp as MyWelcomeController;
 use MyApp as MyBusiness;

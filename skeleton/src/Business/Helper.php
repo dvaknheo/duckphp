@@ -2,11 +2,11 @@
 /**
  * DuckPhp
  * Don't change me.
- * or you can use DuckPhp\Foundation\Business\Helper directly.
+ * or you can use DuckPhp\Foundation\Business\BusinessHelper directly.
  */
 namespace YourProjectName\Business;
 
-use DuckPhp\Foundation\Business\Helper as BusinessHelper;
+use DuckPhp\Foundation\Business\BusinessHelper;
 
 class Helper extends BusinessHelper
 {

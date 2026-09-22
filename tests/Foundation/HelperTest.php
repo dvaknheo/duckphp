@@ -4,10 +4,10 @@ namespace tests\DuckPhp\Foundation;
 use DuckPhp\DuckPhp;
 use DuckPhp\DuckPhpAllInOne;
 use DuckPhp\Foundation\Helper;
-use DuckPhp\Foundation\Business\Helper as BusinessHelper;
-use DuckPhp\Foundation\Controller\Helper as ControllerHelper;
-use DuckPhp\Foundation\Model\Helper as ModelHelper;
-use DuckPhp\Foundation\System\Helper as SystemHelper;
+use DuckPhp\Foundation\Business\BusinessHelper;
+use DuckPhp\Foundation\Controller\ControllerHelper;
+use DuckPhp\Foundation\Model\ModelHelper;
+use DuckPhp\Foundation\System\SystemHelper;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -140,14 +140,26 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     // ---------------------------------------------------------------- 2) 派发顺序被钉住
     public function testDispatchOrderAndWinnersArePinned()
     {
-        $src = file_get_contents(dirname(__DIR__, 2) . '/src/Foundation/Helper.php');
-        preg_match_all('/\\\\DuckPhp\\\\Foundation\\\\(\w+)\\\\Helper::class/', $src, $m);
-        Assert::assertSame(self::DISPATCH_ORDER, $m[1], 'Foundation\Helper 的派发顺序变了');
-
-        $src_all_in_one = file_get_contents(dirname(__DIR__, 2) . '/src/DuckPhpAllInOne.php');
-        preg_match_all('/\\\\DuckPhp\\\\Foundation\\\\(\w+)\\\\Helper::class/', $src_all_in_one, $m2);
-        Assert::assertSame(self::DISPATCH_ORDER, $m2[1], 'DuckPhpAllInOne 的派发顺序与 Foundation\Helper 不一致');
-
+        // 用位置排序核对派发顺序（不用正则，免得转义打架）：源码里出现得越早，越先被命中
+        $orders = [];
+        foreach (['src/Foundation/Helper.php', 'src/DuckPhpAllInOne.php'] as $rel) {
+            $src = file_get_contents(dirname(__DIR__, 2) . '/' . $rel);
+            $found = [];
+            foreach (self::DISPATCH_ORDER as $layer) {
+                $needle = '\\DuckPhp\\Foundation\\' . $layer . '\\' . $layer . 'Helper::class';
+                $pos = strpos($src, $needle);
+                Assert::assertNotFalse($pos, "$rel 里找不到 {$layer}Helper 的派发条目");
+                $found[$pos] = $layer;
+            }
+            ksort($found);
+            $orders[$rel] = array_values($found);
+        }
+        Assert::assertSame(self::DISPATCH_ORDER, $orders['src/Foundation/Helper.php'], 'Foundation\Helper 的派发顺序变了');
+        Assert::assertSame(
+            self::DISPATCH_ORDER,
+            $orders['src/DuckPhpAllInOne.php'],
+            'DuckPhpAllInOne 的派发顺序与 Foundation\Helper 不一致'
+        );
         // 重名方法：按顺序算出的胜出方必须与钉住的表一致
         $layers_of = [];
         foreach (self::LAYER_CLASS as $layer => $class) {

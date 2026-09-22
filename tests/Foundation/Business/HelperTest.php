@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Foundation\Business;
 
-use DuckPhp\Foundation\Business\Helper;
+use DuckPhp\Foundation\Business\BusinessHelper as Helper;
 use DuckPhp\DuckPhp;
 
 class HelperTest extends \PHPUnit\Framework\TestCase

@@ -4,7 +4,7 @@
  */
 namespace ZThirdDemo\Controller;
 
-use DuckPhp\Foundation\Controller\Helper as ControllerHelper;
+use DuckPhp\Foundation\Controller\ControllerHelper;
 
 class Helper extends ControllerHelper
 {

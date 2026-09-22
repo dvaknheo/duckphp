@@ -22,7 +22,7 @@ use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
-class Helper
+class SystemHelper
 {
     use SingletonExTrait;
     public static function CallException(\Throwable $ex)

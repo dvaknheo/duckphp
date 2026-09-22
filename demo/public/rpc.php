@@ -18,7 +18,7 @@ if (is_file($autoload_file)) {
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\JsonRpcExt;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\Foundation\Controller\Helper;
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 
 class CalcService
 {

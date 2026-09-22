@@ -18,7 +18,7 @@ namespace DuckPhp\Foundation;
  * and static analysers can see the whole surface without the methods existing
  * as real declarations.
  *
- * ---- resolved from Foundation\System\Helper (40) ----
+ * ---- resolved from Foundation\System\SystemHelper (40) ----
  * @method static mixed CallException(\Throwable $ex)
  * @method static mixed RemoveEvent($event, $callback = null)
  * @method static bool isRunning()
@@ -60,7 +60,7 @@ namespace DuckPhp\Foundation;
  * @method static mixed ProjectThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
  * @method static mixed ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
  *
- * ---- resolved from Foundation\Controller\Helper (42) ----
+ * ---- resolved from Foundation\Controller\ControllerHelper (42) ----
  * @method static mixed Setting($key = null, $default = null)
  * @method static mixed AppOptions(string $key, $default = null)
  * @method static mixed XpCall($callback, ...$args)
@@ -104,7 +104,7 @@ namespace DuckPhp\Foundation;
  * @method static mixed UserName(bool $check_login = true)
  * @method static mixed UserService()
  *
- * ---- resolved from Foundation\Business\Helper (8) ----
+ * ---- resolved from Foundation\Business\BusinessHelper (8) ----
  * @method static mixed BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
  * @method static mixed Cache($object = null)
  * @method static string PathOfProject()
@@ -114,7 +114,7 @@ namespace DuckPhp\Foundation;
  * @method static mixed ValidatorCheck($data, $rules, $messages = [])
  * @method static mixed ValidatorValid($data, $rules, $messages = [])
  *
- * ---- resolved from Foundation\Model\Helper (6) ----
+ * ---- resolved from Foundation\Model\ModelHelper (6) ----
  * @method static mixed Db($tag = null)
  * @method static mixed DbForRead()
  * @method static mixed DbForWrite()
@@ -127,10 +127,10 @@ class Helper
     public static function __callStatic($method, $args)
     {
         $classes = [
-            \DuckPhp\Foundation\System\Helper::class,
-            \DuckPhp\Foundation\Controller\Helper::class,
-            \DuckPhp\Foundation\Business\Helper::class,
-            \DuckPhp\Foundation\Model\Helper::class,
+            \DuckPhp\Foundation\System\SystemHelper::class,
+            \DuckPhp\Foundation\Controller\ControllerHelper::class,
+            \DuckPhp\Foundation\Business\BusinessHelper::class,
+            \DuckPhp\Foundation\Model\ModelHelper::class,
         ];
         foreach ($classes as $class) {
             if (method_exists($class, $method)) {

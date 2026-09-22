@@ -56,7 +56,7 @@ namespace MySpace\System
 
 namespace MySpace\Controller
 {
-    use DuckPhp\Foundation\Controller\Helper;
+    use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
     use DuckPhp\Foundation\SingletonTrait;
     use MySpace\Business\MyBusiness;
 
@@ -90,7 +90,7 @@ namespace MySpace\Controller
 namespace MySpace\Business
 {
     use MySpace\Model\MyModel;
-    use DuckPhp\Foundation\Business\Helper;
+    use DuckPhp\Foundation\Business\BusinessHelper as Helper;
     use DuckPhp\Foundation\SingletonTrait; //为了 Business::_() 可变单例。
 
     class MyBusiness
@@ -107,7 +107,7 @@ namespace MySpace\Business
 
 namespace MySpace\Model
 {
-    //use DuckPhp\Foundation\Model\Helper;
+    //use DuckPhp\Foundation\Model\ModelHelper as Helper;
     use DuckPhp\Foundation\Model\ModelTrait;
     
     class MyModel

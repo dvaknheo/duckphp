@@ -484,12 +484,12 @@ skeleton/
 ├── src/
 │   ├── Controller/
 │   │   ├── Base.php                    # 基类（继承 Foundation\Controller\Base）
-│   │   ├── Helper.php                  # 静态辅助（继承 Foundation\Controller\Helper）
+│   │   ├── Helper.php                  # 静态辅助（继承 Foundation\Controller\ControllerHelper）
 │   │   ├── MainController.php          # 欢迎页
 │   │   └── Session.php                 # Session 管理
 │   ├── Business/
 │   │   ├── Base.php                    # 基类（继承 Foundation\Business\Base）
-│   │   ├── Helper.php                  # 静态辅助（继承 Foundation\Business\Helper）
+│   │   ├── Helper.php                  # 静态辅助（继承 Foundation\Business\BusinessHelper）
 │   │   └── DemoBusiness.php            # 示例（可删除）
 │   ├── Model/
 │   │   ├── Base.php                    # 基类（继承 Foundation\Model\Base）

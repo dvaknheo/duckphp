@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Foundation\Controller;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Foundation\Controller\Helper;
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 use DuckPhp\Component\Pager;
 
 class HelperTest extends \PHPUnit\Framework\TestCase

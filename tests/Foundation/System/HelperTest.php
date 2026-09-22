@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Foundation\System;
 
-use DuckPhp\Foundation\System\Helper;
+use DuckPhp\Foundation\System\SystemHelper as Helper;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 

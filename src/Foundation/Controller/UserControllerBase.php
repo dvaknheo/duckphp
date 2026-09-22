@@ -17,24 +17,24 @@ class UserControllerBase implements UserControllerInterface
     }
     protected function initController()
     {
-        Helper::checkInstall(null);
+        ControllerHelper::checkInstall(null);
         try {
-            Helper::User()->id(true);
-            $flag = Helper::User()->canAccess();
-            Helper::ThrowOn(!$flag, UserException::MESSAGE_NEED_PEMISSION, UserException::CODE_NEED_PERMISSION, UserException::class);
+            ControllerHelper::User()->id(true);
+            $flag = ControllerHelper::User()->canAccess();
+            ControllerHelper::ThrowOn(!$flag, UserException::MESSAGE_NEED_PEMISSION, UserException::CODE_NEED_PERMISSION, UserException::class);
         } catch (UserException $ex) {
             $this->onLoginedException($ex);
-            Helper::exit();
+            ControllerHelper::exit();
         }
-        Helper::assignViewData('__logined_enable_view', true);
-        Helper::assignViewData('__logined_enable_header_footer', true);
+        ControllerHelper::assignViewData('__logined_enable_view', true);
+        ControllerHelper::assignViewData('__logined_enable_header_footer', true);
     }
     protected function onLoginedException(UserException $ex)
     {
-        if (!Helper::IsAjax()) {
-            Helper::Show302(Helper::User()->urlForLogin());
+        if (!ControllerHelper::IsAjax()) {
+            ControllerHelper::Show302(ControllerHelper::User()->urlForLogin());
         } else {
-            Helper::ShowJson([
+            ControllerHelper::ShowJson([
                 'error_code' => $ex->getCode(),
                 'error_message' => $ex->getMessage()
             ]);

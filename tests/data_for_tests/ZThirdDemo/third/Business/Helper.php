@@ -4,7 +4,7 @@
  */
 namespace ZThirdDemo\Third\Business;
 
-use DuckPhp\Foundation\Business\Helper as BusinessHelper;
+use DuckPhp\Foundation\Business\BusinessHelper;
 
 class Helper extends BusinessHelper
 {

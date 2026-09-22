@@ -233,6 +233,8 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 
 ## 阶段四 · 参考手册（`docs/zh/reference/`）
 
+> 第 3 轮改名后，本阶段多了一件事：**参考页文件与标题要跟着改名**——`Foundation-Controller-Helper.md` → `Foundation-Controller-ControllerHelper.md`（四层同理），并新增 `Foundation-ModelHelperTrait.md`（`DuckPhp\Foundation\ModelHelperTrait`，内容来自原 `Helper-ModelHelperTrait.md`）；`Foundation-Model-Base.md` 要改成「`use ModelTrait` + `use ModelHelperTrait`」。`docs/scripts/gen-options-docs.php` 重生成索引时会按新页名登记。
+
 - [ ] 4 个 `Helper-*HelperTrait.md` 的方法表并入 `Foundation-*-Helper.md`（脚本抽取），删 4 页
 - [ ] `Foundation-Helper.md` 重写：**并集 = `__callStatic` 派发**（写清查找顺序 System → Controller → Business → Model 与 12 个重名方法的胜出方），方法列表只需列 `__callStatic` 一条 + 链到四层页
 - [ ] `DuckPhpAllInOne.md`：删掉「use 了四个 Helper Trait / insteadof」的旧描述，改为「`__callStatic` 派发到四层 Helper」，方法列表保持 master 状态（本类没有 Helper 方法条目）
@@ -252,6 +254,38 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 - [ ] 修掉 `helper.md` 里不存在的 `ZAllDemo/src/Controller/Helper.php` 引用
 - [ ] 账本：`guide-maintenance-guide.md`（§1 例子 + M7 记录）、`guide-rewrite-checklist.md`、`reference-maintenance-guide.md`
 - 验收：链接检查 0；`grep -rn "HelperTrait" docs/zh/guide` = 0（历史沿革段除外）
+
+## 需求变更（第 3 轮）：ModelHelperTrait 回归 + 层 Helper 改名 —— ✅ 已完成
+
+> 本节的命名是**当前有效**的；上文历史记录里的旧名（`Foundation\<层>\Helper`、`Model\Base` 显式 6 方法等）保留原样作为沿革。
+
+**作者的四条要求与落点**
+
+| # | 要求 | 落点 |
+|---|---|---|
+| 1 | `DuckPhp\Foundation\ModelHelperTrait` 还回来；`Foundation\...\Base` 用它 | 新增 `src/Foundation/ModelHelperTrait.php`（`namespace DuckPhp\Foundation`，6 个方法 + `use SingletonExTrait`，与原 `Helper/ModelHelperTrait` 内容一致）；`src/Foundation/Model/Base.php` → `abstract class Base { use ModelTrait; use ModelHelperTrait; }`（不再 `extends` 层 Helper，也不再逐个显式声明） |
+| 2 | `Foundation\{Name}\Helper` → `Foundation\{Name}\{Name}Helper` | `git mv` 四对：`System/Helper.php`→`System/SystemHelper.php`、`Controller/…`→`ControllerHelper.php`、`Business/…`→`BusinessHelper.php`、`Model/…`→`ModelHelper.php`，类名同步改（每个文件 1 处 `class Helper` → `class <Name>Helper`） |
+| 3 | `Foundation\Model\ModelHelper` use `ModelHelperTrait` | `class ModelHelper { use ModelHelperTrait; }`（方法体搬进 trait，与 `Model\Base` 共用同一份实现） |
+| 4 | 样例代码统一 `use DuckPhp\Foundation\{Name}\{Name}Helper as Helper` | `demo/sample1.php`、`demo/public/demo.php`（Controller + Business 两处、Model 注释处）、`demo/public/rpc.php`、`demo/public/traditional.php`；四个层测试与 `AdminControllerBaseTest` 也用同一写法（import 加别名，方法体一字未改） |
+
+**连带更新**
+
+- 并集派发：`src/Foundation/Helper.php` 与 `src/DuckPhpAllInOne.php` 的 `$classes` 名单 → `\DuckPhp\Foundation\<层>\<层>Helper::class`；`@method` 分组注释 → `resolved from Foundation\<层>\<层>Helper (n)`（**96 条注解的签名一字未改**，只是来源层名字变了）。
+- 框架内部调用点：`src/Foundation/Controller/{AdminControllerBase,UserControllerBase}.php` 里 22 处 `Helper::` → `ControllerHelper::`（同命名空间）。
+- 工程模板/测试数据：`demo/src/*/Helper.php`、`skeleton/src/{Controller,Business}/Helper.php`、`tests/data_for_tests/ZThirdDemo/{src,third}/{Controller,Business}/Helper.php` 的 import 指向新类名（同名前缀的冗余别名一并去掉；骨架 Controller 那个保留 `as HelperBase`）。
+- `tests/Foundation/HelperTest.php`：`LAYER_CLASS` 与 import 指向新类名；派发顺序检查**改用位置排序**（`strpos` + `ksort`）而不是正则，免得反斜杠转义打架。
+- `tests/Foundation/Model/HelperTest.php`：`testModelBaseDeclaresHelpersExplicitly` → `testModelBaseHelpersAreRealMethods`（断言不变：真方法、`static`、`is_callable([$model, …])`；只是措辞从「显式声明」改成「由 `ModelHelperTrait` 提供」）。
+- `skeleton/agent-zh.md`：目录树注释里的 `继承 Foundation\Controller\Helper` → `…\ControllerHelper`（Business 同理）。
+- `ZAllDemoTest` 的 `files` 期望值：10537（作者改过）→ **10567**（类文件路径变长，测试自己 dump 取证），`tests/data_for_tests/ZAllDemoTest.config.php` 的注释也改成带沿革的版本。
+
+**只恢复了 Model 层的 trait**：`ModelHelperTrait` 是 `Model\Base` 与 `Model\ModelHelper` 共用的那一份实现，所以必须存在；其余三层各自只有一个持有者（并集走 `__callStatic`），没有共用者就没有加 trait。若你想让四层都回到「trait + 薄壳类」的形态（`Foundation\{App,Business,Controller}HelperTrait`），说一声，照搬即可。
+
+**验收**
+
+- 旧类名残留：`grep -nE 'Foundation\\(Model|Controller|Business|System)\\Helper(?!\w)'` → **0 处**（只剩 config 注释里的沿革说明）
+- `php -l` 全部改动文件通过；`src/` 仍纯 ASCII
+- `tests/Foundation` → `OK (21 tests, 103 assertions)`；`ZThirdDemoTest` → `OK (1 test, 36 assertions)`；`DuckPhpInstallerTest` → `OK (1 test, 9 assertions)`；`ZAllDemoTest` → `OK`；`DuckPhpAllInOneTest` → `OK (1 test, 8 assertions)`
+- 全量：**`OK (94 tests, 657 assertions)`**，覆盖率 `4870/4876 (99.88%)`（改动后重跑确认）
 
 ## 提交（由作者执行）
 

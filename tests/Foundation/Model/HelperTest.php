@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Foundation\Model;
 
 use DuckPhp\Foundation\Model\Base;
-use DuckPhp\Foundation\Model\Helper;
+use DuckPhp\Foundation\Model\ModelHelper as Helper;
 use PHPUnit\Framework\Assert;
 
 class HelperTest extends \PHPUnit\Framework\TestCase
@@ -35,17 +35,17 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         //*/
     }
     /**
-     * Model\Base 的 6 个数据层静态助手必须是**显式声明**：
-     * 并集类走 __callStatic 魔术，但模型基类要保持 `$model->Db()`（静态方法经实例调用）可用。
+     * Model\Base 的 6 个数据层静态助手由 `DuckPhp\Foundation\ModelHelperTrait` 提供（真方法，
+     * 不是并集类那种 `__callStatic` 魔术），因此 `Base::Db()` 与 `$model->Db()` 都可用。
      */
-    public function testModelBaseDeclaresHelpersExplicitly()
+    public function testModelBaseHelpersAreRealMethods()
     {
         $names = ['Db', 'DbForRead', 'DbForWrite', 'SqlForPager', 'SqlForCountSimply', 'DatabaseDriver'];
         $model = new class extends Base {
         };
         foreach ($names as $name) {
             $m = new \ReflectionMethod(Base::class, $name);
-            Assert::assertSame(Base::class, $m->getDeclaringClass()->getName(), "Model\\Base::$name 应为显式声明（不是魔术转发）");
+            Assert::assertSame(Base::class, $m->getDeclaringClass()->getName(), "Model\\Base::$name 应由 ModelHelperTrait 提供（不是魔术转发）");
             Assert::assertTrue($m->isStatic(), "Model\\Base::$name 应为 static");
             Assert::assertTrue(is_callable([$model, $name]), "Model\\Base::$name 应可经实例调用（\$model->$name()）");
         }
