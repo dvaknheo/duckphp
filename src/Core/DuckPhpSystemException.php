@@ -6,7 +6,6 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ThrowOnTrait;
 use Exception;
 
 class DuckPhpSystemException extends Exception

@@ -88,6 +88,47 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertFileDoesNotExist($path_nsx.'/src/System/App.php');
         $app_data = (string) file_get_contents($path_nsx.'/src/System/NSXApp.php');
         $this->assertStringContainsString('class NSXApp extends DuckPhp', $app_data);
+
+        // 生成的骨架必须**真的能加载**：方法签名与父类不兼容（例如 onInited() 少了 `: void`）
+        // 只在类被编译时才炸，光看文件内容是查不出来的。
+        spl_autoload_register(function ($class) use ($path_nsx) {
+            if (strpos($class, 'NSX\\') !== 0) {
+                return;
+            }
+            $file = $path_nsx . '/src/' . str_replace('\\', '/', substr($class, 4)) . '.php';
+            if (is_file($file)) {
+                require $file;
+            }
+        });
+        $skeleton_classes = [
+            'NSX\\System\\NSXApp',
+            'NSX\\System\\ProjectException',
+            'NSX\\System\\BusinessException',
+            'NSX\\System\\ControllerException',
+            'NSX\\System\\ExceptionReporter',
+            'NSX\\Controller\\Helper',
+            'NSX\\Controller\\Base',
+            'NSX\\Controller\\AppAction',
+            'NSX\\Controller\\MainController',
+            'NSX\\Controller\\Session',
+            'NSX\\Business\\Helper',
+            'NSX\\Business\\Base',
+            'NSX\\Business\\DemoBusiness',
+            'NSX\\Model\\Base',
+            'NSX\\Model\\DemoModel',
+        ];
+        $not_loaded = [];
+        foreach ($skeleton_classes as $class) {
+            if (!class_exists($class)) {
+                $not_loaded[] = $class;
+            }
+        }
+        $this->assertSame([], $not_loaded, '骨架类应能全部加载（签名不兼容会在这里暴露）');
+        // Model\Base 的 6 个数据层助手是显式声明，实例式调用应可用
+        $model = new class extends \NSX\Model\Base {
+        };
+        $this->assertTrue(is_callable([$model, 'Db']));
+        $this->assertTrue(is_callable([$model, 'DatabaseDriver']));
         
         // getNamespaceBasename: 空 namespace 分支
         $rm = new \ReflectionMethod(\DuckPhp\Ext\DuckPhpInstaller::class, 'getNamespaceBasename');

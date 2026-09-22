@@ -5,7 +5,7 @@
  */
 namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\ExceptionReporterTrait;
+use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 class AppAction extends Base
 {
     use ExceptionReporterTrait;

@@ -212,15 +212,24 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 1. **demo/ 与 `ZThirdDemo` 的 3+3 个 Helper 提前到本阶段改**：它们是 `ZAllDemoTest`/`ZThirdDemoTest` 的被测宿主，不改则阶段二无法验证（实测：`ZThirdDemoTest` 报 `Trait "DuckPhp\Helper\ControllerHelperTrait" not found`、`ZAllDemoTest` 的 `test/done`/根页/`files` 全部空响应）。改为 `extends \DuckPhp\Foundation\<层>\Helper`（`SingletonTrait` 不再需要，`_()` 由父类继承，语义不变）。
 2. **`skeleton/` 仍留在阶段三**：它不被任何测试加载（`DuckPhpInstallerTest` 只复制骨架并断言 `src/System/NSXApp.php`），所以全量测试能全绿。**目前全仓仅剩 `skeleton/src/{Controller,Business}/Helper.php`、`skeleton/src/Model/Base.php` 还引用已删除的 trait** —— 提交前请确认这三处已在阶段三处理。
 
-## 阶段三 · skeleton 的引用（含 skeleton 侧文档）
+## 阶段三 · skeleton 的引用（含 skeleton 侧文档）—— ✅ 已完成
 
 - [x] `skeleton/src/Controller/Helper.php` —— **master 上已经就是** `extends Foundation\Controller\Helper`（与本分支设计一致，无需再改）
-- [ ] `skeleton/src/Business/Helper.php` → `extends \DuckPhp\Foundation\Business\Helper`（仍 `use` 已删除的 trait）
-- [ ] `skeleton/src/Model/Base.php` → `extends \DuckPhp\Foundation\Model\Base`（仍 `use` 已删除的 trait）
-- [ ] `skeleton/src/Controller/AppAction.php`（master 新增）里的 `use DuckPhp\Foundation\ExceptionReporterTrait;` → 新路径 `Foundation\Controller\ExceptionReporterTrait`（master 遗留坏引用）
-- [ ] `skeleton/agent-zh.md`、`skeleton/RULES.md` 去掉 trait 措辞
-- 备注：demo 与 `ZThirdDemo` 已在阶段二完成
-- 验收：`grep -rn "HelperTrait" skeleton` = 0；`DuckPhpInstallerTest` 绿
+- [x] `skeleton/src/Business/Helper.php` → `class Helper extends \DuckPhp\Foundation\Business\Helper`（保留「Don't change me」注释与 `// your helper methods` 位）
+- [x] `skeleton/src/Model/Base.php` → `class Base extends \DuckPhp\Foundation\Model\Base`（ModelTrait 与 6 个数据层助手都由父类继承）
+- [x] `skeleton/src/Controller/AppAction.php`：`use DuckPhp\Foundation\ExceptionReporterTrait;` → `Foundation\Controller\ExceptionReporterTrait`（master 遗留坏引用）
+- [x] `skeleton/src/System/ProjectException.php`：删掉已废弃的 `ExceptionTrait`（master 已删除该 trait）；类保持 `extends \Exception`，与 master 对 `UserException`/`AdminException` 的处理一致
+- [x] `skeleton/agent-zh.md`：§Model 数据连接方法（改成「父类自带」）、异常类示例（去掉 `ExceptionTrait`）、`ThrowOn` 示例（改成 `Helper::BusinessThrowOn/ControllerThrowOn`，并给出 `DuckPhp\Ext\ThrowOnTrait` 的自助写法）、异常报告器 `use` 路径；`RULES.md` 无需改（无 trait 措辞）
+- [x] **顺带修掉 master 的其它遗留坏引用**：`demo/src/Controller/Session.php`（`Foundation\SessionTrait` → `Foundation\Controller\SessionTrait`）、`demo/src/System/ProjectException.php`（删 `ExceptionTrait`）、`tests/data_for_tests/Ext/SqlDumper/Model/{Empty,Error,NoTable}Model.php`（`Foundation\ModelTrait` → `Foundation\Model\ModelTrait`）、`src/Core/DuckPhpSystemException.php`（删掉指向已移走的 `Core\ThrowOnTrait` 的无用导入）
+- [x] **额外发现并修掉一个骨架致命 bug**：`skeleton/src/System/App.php` 的 `protected function onInited()` **少了 `: void`**，与父类 `KernelTrait::onInited(): void` 不兼容 → 每个新装项目的 `App` 类**一加载就 Fatal error**（doced 时代就存在，测试没覆盖到，因为安装器测试只看文件内容不加载类）。已补 `: void`
+- [x] 加护栏 `tests/Ext/DuckPhpInstallerTest.php`：注册 `NSX\` 自动加载后逐个 `class_exists()` 15 个生成出来的骨架类（含 `NSXApp`），并断言 `Model\Base` 的 `Db`/`DatabaseDriver` 可经实例调用
+- 备注：`ZThirdDemo` 已在阶段二完成
+- 验收：
+  - `grep -rn "HelperTrait" skeleton demo tests` → **0 处**；「已删除/已移动的类」全仓残留引用 → **0 处**
+  - 独立脚本把 `skeleton/src` 下 15 个类全部 `class_exists()` 通过 + 6 个模型助手 `is_callable([$model,...])` 为真 → `ALL OK`
+  - `DuckPhpInstallerTest` → `OK (1 test, 9 assertions)`；**反向验证**：把 `onInited()` 的 `: void` 去掉 → 立刻 `PHP Fatal error: Declaration of NSX\System\NSXApp::onInited() must be compatible…`（护栏有效）→ 恢复即绿
+  - 全量：`OK (92 tests, 622 assertions)`，覆盖率 `4876/4884 (99.84%)`
+- ⚠️ **新发现的文档漂移（交给阶段四/五）**：`use_admin_view_header_footer` / `use_user_view_header_footer` 这两个选项**源码里已经没有任何读取点**（真正起作用的是 `__logined_enable_header_footer`），但参考手册 `GlobalAdmin-GlobalUser`/`options*.md` 仍在写它们，且 `docs/scripts/gen-options-docs.php:52-53` 把这两行**硬编码**在生成器里 → 两个测试里也还在设它们（无害但误导）。阶段四需要一并处理，否则重新生成索引又会把它们写回来。
 
 ## 阶段四 · 参考手册（`docs/zh/reference/`）
 
@@ -231,6 +240,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 - [ ] `Foundation-Model-Base.md`：补 6 个**显式声明**的静态助手方法条目（`Model\Base` 现在真声明了它们，漂移扫描会要求）；同时把「同时使用 `ModelTrait` + `ModelHelperTrait`」的描述改成「继承 `Model\Helper` 派生的 `Helper` 并显式声明 6 个助手」
 - [ ] `Foundation-Helper.md` / `DuckPhpAllInOne.md`：说明「方法由 `__callStatic` 派发，源码里带 96 条 `@method` 注释供 IDE/静态分析使用」
 - [ ] master 的类移动未同步文档：`Foundation-ModelTrait.md`、`Foundation-SessionTrait.md`、`Foundation-ExceptionReporterTrait.md`、`Core-ThrowOnTrait.md`、`Foundation-ExceptionTrait.md` 需改名/改写或单独立项
+- [ ] **清掉已失效的选项**：`use_admin_view_header_footer` / `use_user_view_header_footer` 源码里已无读取点 → 从 `docs/scripts/gen-options-docs.php:52-53` 的硬编码表里删掉，并同步 `GlobalAdmin-GlobalAdmin.md`/`GlobalUser-GlobalUser.md` 的「隐藏选项」段（重新生成 `options.md`/`options-by-class.md` 后旧行会消失）；两个测试里设置它们的语句同时删掉
 - [ ] `php docs/scripts/gen-options-docs.php` 重生成索引（类页 113 → 109）+ `--check` 通过
 - 验收：`python3 docs/scripts/check-doc-links.py docs/zh` → `broken: 0`；漂移扫描 `missing-method` 为空；`grep -rn "HelperTrait" docs/zh/reference` = 0
 
@@ -245,14 +255,13 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 
 ## 提交（由作者执行）
 
-- [x] ① 阶段一＋二 已由作者提交（`02209c67` → 并集改 master 方案后为 `6dfd1972`）；作者随后又推 `838b42c9` / `380a9ba3` / `87f8027b`
-- [ ] 阶段尾补的 `@method` 注释 + `Model\Base` 显式 6 方法 + 回归测试 —— **尚未提交**（工作区 5 个文件：`src/Foundation/Helper.php`、`src/DuckPhpAllInOne.php`、`src/Foundation/Model/Base.php`、`tests/Foundation/Model/HelperTest.php`、本 checklist）
-- [ ] ② 阶段三（skeleton：`Business/Helper.php`、`Model/Base.php` 两处 + `AppAction.php` 的坏引用 + `agent-zh.md`/`RULES.md` 措辞）
-- [ ] ③ 阶段四（参考手册）
-- [ ] ④ 阶段五（用户指南 + 账本）
-
-> ⚠️ 若要提交这批，建议连同阶段三一起（`skeleton/src/Business/Helper.php` 与 `skeleton/src/Model/Base.php` 仍 `use` 已删除的 trait）。
-> ⚠️ HEAD 上那 4 个红灯是作者自己新提交带来的（见上表），提交前请先与作者确认怎么处理，别误当成这批改动的锅。
+- [x] 阶段一＋二 已提交（作者 `6dfd1972`，并集改 master 方案）
+- [x] 作者后续提交：`838b42c9` / `380a9ba3` / `87f8027b`
+- [x] 阶段尾补（@method 注释 + `Model\Base` 显式 6 方法 + 回归测试）→ **`3d78611b`**
+- [x] 4 个测试红灯修复（GlobalAdmin/GlobalUser header/footer 丢失 + 4 个测试口径同步）→ **`bef4d50e`**（全量 `OK (92 tests, 619 assertions)`）
+- [ ] 阶段三（skeleton / demo / 测试数据引用 + 骨架 `onInited(): void` 致命 bug + 安装器护栏）—— **已 staged，未提交**
+- [ ] 阶段四（参考手册）
+- [ ] 阶段五（用户指南 + 账本）
 
 ## 风险与备忘
 

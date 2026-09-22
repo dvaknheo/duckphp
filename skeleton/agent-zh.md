@@ -398,7 +398,7 @@ Helper::XpCall($callable);              // 安全调用（捕获异常）
 
 ### Model 数据连接方法（在 Model 子类内用 `static::` 或 `$this->` 调用）
 
-这些方法由 `DuckPhp\Foundation\Model\Base` 提供（同时使用了 `ModelTrait` 和 `ModelHelperTrait`），**不需要额外引入 Helper 类**：
+这些方法由 `DuckPhp\Foundation\Model\Base` 提供（它自己 `use ModelTrait`，并**显式声明**了 6 个数据层静态助手），**不需要额外引入 Helper 类**：
 
 ```php
 static::Db();                              // 数据库连接（无读写分离时用这个）
@@ -581,11 +581,8 @@ Helper::BusinessThrowOn($条件, '错误消息');
 <?php
 namespace YourProject\System;
 
-use DuckPhp\Foundation\ExceptionTrait;
-
-class ProjectException
+class ProjectException extends \Exception
 {
-    use ExceptionTrait;  // 提供 ThrowOn() 静态方法
 }
 class BusinessException extends ProjectException {}
 class ControllerException extends ProjectException {}
@@ -602,14 +599,13 @@ class ControllerException extends ProjectException {}
 ### 使用 `ThrowOn` 条件抛异常
 
 ```php
-// 直接在异常类上调用（任何地方可用）
-BusinessException::ThrowOn($balance < $amount, '余额不足', 2001);
-
-// Controller 层快捷方式
+// 业务/控制器级别的条件抛异常（走 Helper，推荐）
+Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 Helper::ControllerThrowOn(!$user, '请先登录', 403);
 
-// Business 层快捷方式
-Helper::BusinessThrowOn(!$user, '用户不存在', 1001);
+// 想在某个异常类上直接用 ThrowOn()，自行 use DuckPhp\Ext\ThrowOnTrait：
+//   class ProjectException extends \Exception { use \DuckPhp\Ext\ThrowOnTrait; }
+//   ProjectException::ThrowOn($flag, $msg, 2001);
 ```
 
 ### 异常报告器
@@ -620,7 +616,7 @@ Helper::BusinessThrowOn(!$user, '用户不存在', 1001);
 <?php
 namespace YourProject\Controller;
 
-use DuckPhp\Foundation\ExceptionReporterTrait;
+use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 
 class ExceptionReporter
 {

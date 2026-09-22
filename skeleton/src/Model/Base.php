@@ -5,11 +5,8 @@
  */
 namespace YourProjectName\Model;
 
-use DuckPhp\Foundation\Model\ModelTrait;
-use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\Foundation\Model\Base as ModelBase;
 
-class Base
+class Base extends ModelBase
 {
-    use ModelHelperTrait;
-    use ModelTrait;
 }

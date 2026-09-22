@@ -40,9 +40,11 @@ class App extends DuckPhp
         // ... see options.md for more
     ];
     //@override
-    protected function onInited()
+    protected function onInited(): void
     {
         parent::onInited();
         // add your init code here
     }
 }
+
+
