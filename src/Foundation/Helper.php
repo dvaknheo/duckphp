@@ -7,6 +7,121 @@
 
 namespace DuckPhp\Foundation;
 
+/**
+ * DuckPhp
+ *
+ * Four-layer helper union. Every call is dispatched by __callStatic to the first
+ * layer Helper that declares the method, in this order:
+ *   System -> Controller -> Business -> Model
+ * (the 12 names declared by more than one layer therefore resolve to the first
+ *  layer in that list). The @method tags below mirror that resolution so IDEs
+ * and static analysers can see the whole surface without the methods existing
+ * as real declarations.
+ *
+ * ---- resolved from Foundation\System\Helper (40) ----
+ * @method static mixed CallException(\Throwable $ex)
+ * @method static mixed RemoveEvent($event, $callback = null)
+ * @method static bool isRunning()
+ * @method static bool isInException()
+ * @method static mixed addRouteHook($callback, $position = 'append-outter', $once = true)
+ * @method static mixed replaceController(string $old_class, string $new_class)
+ * @method static array getViewData()
+ * @method static mixed DbCloseAll()
+ * @method static mixed SESSION($key = null, $default = null)
+ * @method static mixed FILES($key = null, $default = null)
+ * @method static mixed SessionSet($key, $value)
+ * @method static mixed SessionUnset($key)
+ * @method static mixed SessionGet($key, $default = null)
+ * @method static mixed CookieSet($key, $value, $expire = 0)
+ * @method static mixed CookieGet($key, $default = null)
+ * @method static mixed system_wrapper_replace(array $funcs)
+ * @method static array system_wrapper_get_providers()
+ * @method static mixed header($output, bool $replace = true, int $http_response_code = 0)
+ * @method static mixed setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+ * @method static mixed exit($code = 0)
+ * @method static mixed set_exception_handler(callable $exception_handler)
+ * @method static mixed register_shutdown_function(callable $callback, ...$args)
+ * @method static mixed session_start(array $options = [])
+ * @method static mixed session_id($session_id = null)
+ * @method static mixed session_destroy()
+ * @method static mixed session_set_save_handler(\SessionHandlerInterface $handler)
+ * @method static mixed mime_content_type($file)
+ * @method static mixed setBeforeGetDbHandler($db_before_get_object_handler)
+ * @method static mixed Redis($tag = 0)
+ * @method static mixed getRouteMaps()
+ * @method static mixed assignRoute($key, $value = null)
+ * @method static mixed assignImportantRoute($key, $value = null)
+ * @method static mixed assignRewrite($key, $value = null)
+ * @method static mixed getRewrites()
+ * @method static mixed getCliParameters()
+ * @method static mixed FireGlobalEvent($event, ...$args)
+ * @method static mixed OnGlobalEvent($event, $callback)
+ * @method static void saveExtOptions(array $options)
+ * @method static mixed ProjectThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+ * @method static mixed ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+ *
+ * ---- resolved from Foundation\Controller\Helper (42) ----
+ * @method static mixed Setting($key = null, $default = null)
+ * @method static mixed AppOptions(string $key, $default = null)
+ * @method static mixed XpCall($callback, ...$args)
+ * @method static mixed Config($file_basename, $key = null, $default = null)
+ * @method static ?string getRouteCallingClass()
+ * @method static ?string getRouteCallingMethod()
+ * @method static ?string PathInfo()
+ * @method static mixed Url($url = null)
+ * @method static string Domain(bool $use_scheme = false)
+ * @method static mixed Res($url = null)
+ * @method static mixed Parameter($key = null, $default = null)
+ * @method static mixed Render($view, $data = null)
+ * @method static mixed Show($data = [], $view = '')
+ * @method static mixed checkInstall(?string $url_install = null)
+ * @method static mixed setViewHeadFoot($head_file = null, $foot_file = null)
+ * @method static mixed assignViewData($key, $value = null)
+ * @method static mixed IsAjax()
+ * @method static mixed Show302($url)
+ * @method static mixed Show404()
+ * @method static mixed ShowJson($ret, $flags = 0)
+ * @method static mixed assignExceptionHandler($classes, $callback = null)
+ * @method static mixed setMultiExceptionHandler(array $classes, $callback)
+ * @method static mixed setDefaultExceptionHandler($callback)
+ * @method static mixed ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+ * @method static mixed IsPost()
+ * @method static mixed GET($key = null, $default = null)
+ * @method static mixed POST($key = null, $default = null)
+ * @method static mixed REQUEST($key = null, $default = null)
+ * @method static mixed COOKIE($key = null, $default = null)
+ * @method static mixed SERVER($key = null, $default = null)
+ * @method static mixed Pager($new = null)
+ * @method static mixed PageNo($new_value = null)
+ * @method static mixed PageWindow($new_value = null)
+ * @method static mixed PageHtml($total, $options = [])
+ * @method static mixed Admin()
+ * @method static mixed AdminId(bool $check_login = true)
+ * @method static mixed AdminName(bool $check_login = true)
+ * @method static mixed AdminService()
+ * @method static mixed User()
+ * @method static mixed UserId(bool $check_login = true)
+ * @method static mixed UserName(bool $check_login = true)
+ * @method static mixed UserService()
+ *
+ * ---- resolved from Foundation\Business\Helper (8) ----
+ * @method static mixed BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+ * @method static mixed Cache($object = null)
+ * @method static string PathOfProject()
+ * @method static string PathOfRuntime()
+ * @method static mixed Validator($new = null)
+ * @method static mixed ValidatorFilter($data, $rules, $messages = [])
+ * @method static mixed ValidatorCheck($data, $rules, $messages = [])
+ * @method static mixed ValidatorValid($data, $rules, $messages = [])
+ *
+ * ---- resolved from Foundation\Model\Helper (6) ----
+ * @method static mixed Db($tag = null)
+ * @method static mixed DbForRead()
+ * @method static mixed DbForWrite()
+ * @method static string SqlForPager(string $sql, int $pageNo, int $pageSize = 10)
+ * @method static string SqlForCountSimply(string $sql)
+ * @method static string DatabaseDriver()
+ */
 class Helper
 {
     public static function __callStatic($method, $args)
