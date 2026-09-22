@@ -4,7 +4,7 @@
 
 `Foundation\Controller\Base` 是工程「控制器层」的推荐基类（abstract）。源码极简：只有 `use SingletonTrait`，即让控制器类拥有 `类名::_()` 式的单例访问。
 
-工程中你的控制器基类应继承它（或直接继承它以共享该模式），控制器动作仍按 `action_xxx()` 等路由约定书写；本类不绑定任何输入/输出能力——那由控制器 `Helper`（`ControllerHelperTrait`）提供。
+工程中你的控制器基类应继承它（或直接继承它以共享该模式），控制器动作仍按 `action_xxx()` 等路由约定书写；本类不绑定任何输入/输出能力——那由 [DuckPhp\Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md) 提供。
 
 ## 类信息
 
@@ -38,4 +38,4 @@ abstract class MyControllerBase extends Base
 
 - [DuckPhp\Foundation\SingletonTrait](Foundation-SingletonTrait.md) — 单例入口来源
 - [DuckPhp\Foundation\Controller\AdminControllerBase](Foundation-Controller-AdminControllerBase.md) / [UserControllerBase](Foundation-Controller-UserControllerBase.md) — 需登录的控制器基类
-- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md) — 控制器静态助手
+- [DuckPhp\Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md) — 控制器静态助手

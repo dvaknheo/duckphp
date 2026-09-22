@@ -54,12 +54,9 @@ $this->options = array_replace_recursive($this->options, $options);
 <!-- GEN:hidden start -->
 | 隐藏选项 | 默认值 | 出处 | 说明 |
 |---|---|---|---|
-| `session_prefix` | `''` | Foundation\SessionTrait | 会话名的前缀（根应用的设置也走这里）。 |
+| `not_empty` | `true` | DuckPhp::$common_options | 声明在默认选项里、但源码中没有任何读取点（历史遗留，可忽略）。 |
+| `session_prefix` | `''` | Foundation\Controller\SessionTrait | 会话名的前缀（根应用的设置也走这里）。 |
 | `table_prefix` | `''` | Ext\SqlDumper / Ext\RouteHookWebInstaller | 数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。 |
-| `use_user_view` | `false` | DuckPhp::_Show() | 为 true 时，前台控制器（`UserControllerInterface`）的 `_Show()` 交给 `GlobalUser::_Show()` 渲染。 |
-| `use_admin_view` | `false` | DuckPhp::_Show() | 同上，后台控制器（`AdminControllerInterface`）交给 `GlobalAdmin::_Show()`。 |
-| `use_user_view_header_footer` | `false` | GlobalUser::_Show() | 是否把 `user_view_file_header/footer` 套到视图上（配合 `use_user_view`）。 |
-| `use_admin_view_header_footer` | `false` | GlobalAdmin::_Show() | 是否把 `admin_view_file_header/footer` 套到视图上（配合 `use_admin_view`）。 |
 | `exception_for_business` | `\Exception::class` | CoreHelper::_BusinessThrowOn() | `BusinessThrowOn()` 未显式指定时的异常类。 |
 | `exception_for_controller` | `\Exception::class` | CoreHelper::_ControllerThrowOn() | `ControllerThrowOn()` 未显式指定时的异常类。 |
 | `duckphp_all_in_one_wrap_header_foot` | `false` | DuckPhpAllInOne::onInited() | AllInOne 入口是否给 `_Show()` 包 head/foot 视图（该类自己会置 true）。 |

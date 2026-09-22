@@ -45,6 +45,9 @@ class CenterController extends UserControllerBase
 
 ### 受保护方法
 
+    protected function onLoginedException(UserException $ex)
+会话模式下的登录态异常钩子（子类可覆盖）。
+
     protected function initController()
 检查安装与权限：无权时非 Ajax 跳登录页，Ajax 抛 `UserException`。
 
@@ -53,4 +56,4 @@ class CenterController extends UserControllerBase
 - [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) — 权限与登录提供方
 - [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) — 标记接口
 - [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md) — Ajax 无权异常
-- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md) — 内部使用的静态助手
+- [DuckPhp\Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md) — 内部使用的静态助手

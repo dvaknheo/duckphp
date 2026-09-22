@@ -13,7 +13,7 @@
 
 - 命名空间：`DuckPhp\Foundation\Model`
 - 声明：`abstract class Base`
-- 使用的 Trait：`DuckPhp\Foundation\ModelTrait`、`DuckPhp\Helper\ModelHelperTrait`
+- 使用的 Trait：`DuckPhp\Foundation\Model\ModelTrait`、`DuckPhp\Foundation\Model\ModelHelperTrait`
 
 ## 使用方式
 
@@ -46,6 +46,6 @@ class UserModel extends Base
 
 ## 相关链接
 
-- [DuckPhp\Foundation\ModelTrait](Foundation-ModelTrait.md) — 表级 CRUD/查询封装
-- [DuckPhp\Helper\ModelHelperTrait](Helper-ModelHelperTrait.md) — 数据层静态助手
-- [DuckPhp\Foundation\Model\Helper](Foundation-Model-Helper.md) — Model 静态助手类
+- [DuckPhp\Foundation\Model\ModelTrait](Foundation-Model-ModelTrait.md) — 表级 CRUD/查询封装
+- [DuckPhp\Foundation\Model\ModelHelperTrait](Foundation-Model-ModelHelperTrait.md) — 数据层静态助手
+- [DuckPhp\Foundation\Model\ModelHelper](Foundation-Model-ModelHelper.md) — Model 静态助手类

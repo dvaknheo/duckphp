@@ -37,8 +37,6 @@ class MyApp extends \DuckPhp\DuckPhp { /* 覆盖/合并 $options */ }
 | `ext` | 数组（见下） | 本类默认启用的扩展钩子映射。值为源码 `ext` 五项：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`(=那个开关值)。 |
 | `session_prefix` | `null` | Session 键命名前缀（宿主用来避免 / 多应用并发覆盖）。 |
 | `table_prefix` | `null` | 数据库表名前缀（DB 层在所需 CRUD 时用它拼接表名）。 |
-| `use_user_view` | `true` | 当前控制器实现用户界面基类时，是否把渲染（`_Show`）转交给用户系统（`GlobalUser`）。 |
-| `use_admin_view` | `true` | 同类，处理器是管理控制器时把渲染转给管理页面（`GlobalAdmin`）。 |
 | `admin_provider` | `''` | 自定义管理员提供者类名；非空时会在内部阶段实例化并交给 `GlobalAdmin`。 |
 | `user_provider` | `''` | 自定义用户提供者类名；非空时同理交给 `GlobalUser`（可用 `PhaseProxy` 包装）。 |
 | `database_driver` | `''` | 数据库驱动标签（如 `mysql`）。初始化后会把 `DbManager` 得到的真实驱动回填到该 options 供上层读取。 |
@@ -61,7 +59,6 @@ class App extends DuckPhp {
     public $options = [
         'namespace'  => 'Demo',
         'path'       => __DIR__.'/../..',
-        'use_user_view' => true,
         'user_provider' => \Demo\UserProvider::class,
     ];
 }
@@ -74,6 +71,7 @@ class App extends DuckPhp {
 - `name → namespace` 自动反推项目目录/命名空间（由 Kernel 层核）。
 - 想用自己的控制器后缀/前缀，同样在 `$options` 覆盖（如 `controller_method_prefix => 'action_'`）。
 - 用户/管理后台默认关闭 —— 若 `user_provider` / `admin_provider` 是空的就直接不启用相应界面。
+- 「登录后视图」（把渲染转交 `GlobalUser`/`GlobalAdmin`）现在由 **`__logined_enable_view`** 开关：它在 `_Show()` 的 `$data` 或 `View::_()->data` 里为真时生效，框架的 `Controller\UserControllerBase`/`AdminControllerBase` 会自动 `assignViewData('__logined_enable_view', true)`。历史上用过的 `use_user_view` / `use_admin_view` 两个选项**源码已不再读取**（只在 `$common_options` 里留了注释行），不要再写。
 - CLI 命令 <hint>默认提供；想只**关闭某个**可用 `cli_command_with_common=false`。</hint>
 
 ## 配置示例
@@ -85,7 +83,6 @@ class MyApp extends \DuckPhp\DuckPhp {
         'path'       => __DIR__.'/../..',
         'lang_default'   => 'zh_CN',
         'lang_final'     => 'zh_CN',
-        'use_admin_view' => true,
         'admin_provider' => \Demo\Admin\Provider::class,
         'database_driver'=> 'mysql',
         'local_database' => false,     // 应用间共享默认 Db
@@ -106,7 +103,7 @@ DuckPhp::Setting('shop_name','demo');
 
 1. 类别的“是否可直 init”：`App` 在 `haltInitInBaseClass` 会阻止不加继承的 base 初始化；`DuckPhp` 把这些钩子做合理默认，直接用即可。
 2. 要关闭默认扩展：合并 `ext => [Lang::class => false, RouteHookRewrite::class => false, …]`（数组层会覆盖默认）。
-3. 开启 administrator/user：需设 `use_admin_view/use_user_view` + 对应 `provider`；为空即关闭。
+3. 开启 administrator/user：配 `user_provider` / `admin_provider`（为空即关闭）；「登录后视图」由 `__logined_enable_view` 触发（旧的 `use_admin_view/use_user_view` 已失效）。
 4. 独立 DB/Redis：在多 app 或沙盒场景用 `local_database/local_redis`，否则共享根 Manager。
 5. 配置后参数 `database_driver` 会被框架回填（读到值而不是空）。
 6. 本类方法不多，框架主体在 `App`/`KernelTrait`；本文档的方法列表只列 `DuckPhp.php` 本身新增的钩子-外壳。

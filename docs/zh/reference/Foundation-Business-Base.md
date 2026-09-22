@@ -4,7 +4,7 @@
 
 `Business\Base` 是工程「Business（业务层）」的推荐基类（abstract）。源码极简：`use SingletonTrait`，让业务类可通过 `类名::_()` 单例访问。
 
-业务层约定为“纯逻辑、无状态处理请求上下文”，本基类不绑定任何框架 API——业务所需的设置/缓存/校验等由 `Business\Helper`（`BusinessHelperTrait`）提供。
+业务层约定为“纯逻辑、无状态处理请求上下文”，本基类不绑定任何框架 API——业务所需的设置/缓存/校验等由 [DuckPhp\Foundation\Business\BusinessHelper](Foundation-Business-BusinessHelper.md) 提供。
 
 ## 类信息
 
@@ -40,5 +40,5 @@ class UserBusiness extends Base
 
 ## 相关链接
 
-- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md) — 业务静态助手（BusinessHelperTrait）
+- [DuckPhp\Foundation\Business\BusinessHelper](Foundation-Business-BusinessHelper.md) — 业务静态助手
 - [DuckPhp\Foundation\SingletonTrait](Foundation-SingletonTrait.md) — 单例入口来源

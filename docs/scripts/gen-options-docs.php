@@ -45,17 +45,14 @@ const HIDDEN_VAR = 'hidden_options';
  * is reported as a warning, so the two can not drift apart silently.
  */
 const HIDDEN_DESC = [
-    'session_prefix' => ['Foundation\\SessionTrait', '会话名的前缀（根应用的设置也走这里）。'],
+    'session_prefix' => ['Foundation\\Controller\\SessionTrait', '会话名的前缀（根应用的设置也走这里）。'],
     'table_prefix' => ['Ext\\SqlDumper / Ext\\RouteHookWebInstaller', '数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。'],
-    'use_user_view' => ['DuckPhp::_Show()', '为 true 时，前台控制器（`UserControllerInterface`）的 `_Show()` 交给 `GlobalUser::_Show()` 渲染。'],
-    'use_admin_view' => ['DuckPhp::_Show()', '同上，后台控制器（`AdminControllerInterface`）交给 `GlobalAdmin::_Show()`。'],
-    'use_user_view_header_footer' => ['GlobalUser::_Show()', '是否把 `user_view_file_header/footer` 套到视图上（配合 `use_user_view`）。'],
-    'use_admin_view_header_footer' => ['GlobalAdmin::_Show()', '是否把 `admin_view_file_header/footer` 套到视图上（配合 `use_admin_view`）。'],
     'exception_for_business' => ['CoreHelper::_BusinessThrowOn()', '`BusinessThrowOn()` 未显式指定时的异常类。'],
     'exception_for_controller' => ['CoreHelper::_ControllerThrowOn()', '`ControllerThrowOn()` 未显式指定时的异常类。'],
     'duckphp_all_in_one_wrap_header_foot' => ['DuckPhpAllInOne::onInited()', 'AllInOne 入口是否给 `_Show()` 包 head/foot 视图（该类自己会置 true）。'],
     'permission_menu_tree_for_admin' => ['Ext\\PermissionMenu::getMenuJsonFileConfig()', '后台权限菜单树的配置文件（相对 `path_config`）。'],
     'duckcoverage_test_lister' => ['外部包 dvaknheo/duckcoverage', '配合该 composer 包做覆盖测试使用，框架自身不读。'],
+    'not_empty' => ['DuckPhp::$common_options', '声明在默认选项里、但源码中没有任何读取点（历史遗留，可忽略）。'],
     'background' => ['HttpServer::run*()', '内置服务器是否后台运行；CLI 开关 `-b/--background` 会把它置 true。'],
 ];
 

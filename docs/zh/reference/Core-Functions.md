@@ -29,7 +29,7 @@
 | `__debug_log` | `($str, $args = [])` | `CoreHelper::DebugLog`(转发时展开 `...$args`) |
 | `__logger` | `()` | `CoreHelper::Logger` |
 | `__is_debug` | `()` | `CoreHelper::IsDebug` |
-| `__is_real_debug` | `()` | `CoreHelper::IsRealDebug` |
+| `__is_real_debug` | `()` | `CoreHelper::IsHiddenDebug` |
 | `__platform` | `()` | `CoreHelper::Platform` |
 
 （分组讲解见下。）
@@ -166,7 +166,7 @@ if (__is_debug()) {
 
 #### `__is_real_debug()`
 
-判断是否为真实调试模式。对应 `CoreHelper::IsRealDebug()`。通常与 `__is_debug()` 一致，仅在特殊环境配置下有区别。
+判断是否为真实调试模式。对应 `CoreHelper::IsHiddenDebug()`。通常与 `__is_debug()` 一致，仅在特殊环境配置下有区别。
 
 ```php
 if (__is_real_debug()) {

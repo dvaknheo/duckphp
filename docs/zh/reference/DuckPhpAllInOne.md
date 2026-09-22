@@ -7,8 +7,7 @@
 `DuckPhpAllInOne extends DuckPhp`，是“整个应用只用一个类”版本的入口：
 
 - 直接把应用的 action（`action_*`）、视图回调（`view_*`）、欢迎动作与 CLI 自注册放进**同一个类**里写；
-- `use` 了四个 Helper Trait（`ModelHelperTrait`、`BusinessHelperTrait`、`ControllerHelperTrait`、`AppHelperTrait`），让你在动作里能直接用 `Setting()`、`Db()`、`Session`、`URL`/显示等一系列静态/实例便捷方法；
-- 因为 4 个 Trait 存在同名方法，类里用 trait 别名 + `insteadof` 把冲突固定为合理实现（详见「类信息」）；
+- 用 `__callStatic` 把四层 Helper 的并集「嵌」进本类：调用本类上不存在的静态方法时，按 **System → Controller → Business → Model** 找第一个声明了它的层 Helper 并转发，于是动作里能直接用 `Setting()`、`Db()`、`POST()`、`Show()` 这一整套便捷方法；
 - 该类不新增 options 数组，而是在编译/运行时由父 `DuckPhp::$common_options` 叠加 `embedMe()` 注入键、并在 `onInited()` 依据是否要头尾 wrap 做设定。
 
 适用对象：想用“一个文件解释整个 demo 应用”时的教程/乐园写法（见 README 的 sample1），或特小型原型。较大项目更倾向于继承 `DuckPhp`、配合 `Foundation/*` 分层。
@@ -19,30 +18,28 @@
 
 - 命名空间：`DuckPhp`
 - 声明：`class DuckPhpAllInOne extends DuckPhp`
-- 使用 Trait：`ModelHelperTrait`、`BusinessHelperTrait`、`ControllerHelperTrait`、`AppHelperTrait`
-
-由于 4 个组上一起有同名方法，构造性冲突用 trait 的 `insteadof` 规则判定（规则正文引用中未处理的部分）：
+- 使用的 Trait：无（Helper 方法由 `__callStatic` 派发）
+- 并集派发顺序（与 [DuckPhp\Foundation\Helper](Foundation-Helper.md) 完全一致）：
 
 ```php
-use ModelHelperTrait;
-use BusinessHelperTrait, ControllerHelperTrait, AppHelperTrait {
-    AppHelperTrait::ThrowOn insteadof ControllerHelperTrait;
-    AppHelperTrait::ThrowOn insteadof BusinessHelperTrait;
-    BusinessHelperTrait::Setting        insteadof ControllerHelperTrait;
-    BusinessHelperTrait::AppOptions     insteadof ControllerHelperTrait;
-    BusinessHelperTrait::Config         insteadof ControllerHelperTrait;
-    BusinessHelperTrait::XpCall         insteadof ControllerHelperTrait;
-    BusinessHelperTrait::FireGlobalEvent insteadof ControllerHelperTrait;
-    BusinessHelperTrait::OnGlobalEvent  insteadof ControllerHelperTrait;
-    BusinessHelperTrait::OnGlobalEvent  insteadof AppHelperTrait;
-    BusinessHelperTrait::FireGlobalEvent insteadof AppHelperTrait;
-    ControllerHelperTrait::header       insteadof AppHelperTrait;
-    ControllerHelperTrait::setcookie    insteadof AppHelperTrait;
-    ControllerHelperTrait::exit         insteadof AppHelperTrait;
-    ControllerHelperTrait::AdminService insteadof BusinessHelperTrait;
-    ControllerHelperTrait::UserService  insteadof BusinessHelperTrait;
+public static function __callStatic($method, $args)
+{
+    $classes = [
+        \DuckPhp\Foundation\System\SystemHelper::class,      // 先命中者胜
+        \DuckPhp\Foundation\Controller\ControllerHelper::class,
+        \DuckPhp\Foundation\Business\BusinessHelper::class,
+        \DuckPhp\Foundation\Model\ModelHelper::class,
+    ];
+    foreach ($classes as $class) {
+        if (method_exists($class, $method)) {
+            return $class::$method(...$args);
+        }
+    }
+    trigger_error("Call to undefined method " . static::class . "::$method()", E_USER_ERROR);
 }
 ```
+
+12 个跨层重名方法因此按顺序判定胜负（`ThrowOn` → System，`Setting` 一组 → Controller，`header/setcookie/exit` → System，`AdminService/UserService` → Controller）；完整对照表与「与旧 `insteadof` 写法的差异」见 [DuckPhp\Foundation\Helper](Foundation-Helper.md#注意事项)。
 
 另有 `protected $head_view='head'`、`protected $foot_view='foot'`，作为 `_Show()` 包头脚模板名。
 
@@ -105,10 +102,11 @@ Tiny::RunQuickly([]);
 
 ## 注意事项
 
-1. DB / Setting / Session 之类的便捷来自于一次性 used 的 4 个 Helper Trait 合成，其中同名近义方法由一列 `insteadof` 决定实现；改写一个方法需要覆写本类、而不是 `use` 那四个。
+1. DB / Setting / Session 之类的便捷来自 `__callStatic` 派发到四层 Helper（不是 trait 合成）：想改某个方法的行为，**覆写本类**的同名方法，或改对应层 Helper；本类不再自带 10 个 `$EVENT_*` 静态属性（它们住在 `Business\BusinessHelper` / `Controller\ControllerHelper` 上）。
 2. 欢迎类就是 `static::class`：路由内部把空 URL 当作调用本类的 `action_index`。
 3. `duckphp_all_in_one_wrap_header_foot=false` 时，`_Show` 仍会匹配一个无 head/foot 的直接回调。
 4. 全类不新增 options：想要完整通用配置，仍落在父类一层（下链参考）。
+5. 反射看不到派发来的那 96 个方法（`method_exists` 为 false）；源码带 96 条 `@method` 注释供 IDE 用。
 
 ## 可用显示用内置视图方法（作为模板示意）
 
@@ -119,6 +117,9 @@ Tiny::RunQuickly([]);
 > 只列 `DuckPhpAllInOne.php` 中本类 override/新增方法；父 `DuckPhp`/`Core` shell（RunQuickly、Setting 等）见各自文档，不重复。
 
 ### 公共方法
+
+    public static function __callStatic($method, $args)
+四层 Helper 并集的入口：按 System → Controller → Business → Model 找第一个 `method_exists` 的层 Helper 并转发；都没有则 `trigger_error(..., E_USER_ERROR)`。96 个可派发方法的签名见 [Foundation\Helper](Foundation-Helper.md) 与四个层 Helper 页。
 
     public function __construct()
 先 call embedMe() 注入默认（欢迎类=本类/action_/wrap 等），再 parent::__construct()
@@ -156,6 +157,6 @@ Tiny::RunQuickly([]);
 
 - [DuckPhp\DuckPhp](DuckPhp.md) — 父类；通用 options/组件装配从这里来
 - [DuckPhp\Core\App](Core-App.md) / [Core-KernelTrait](Core-KernelTrait.md)
-- Helper traits：`AppHelperTrait`(Helper-AppHelperTrait.md)、`ControllerHelperTrait`、`BusinessHelperTrait`、`ModelHelperTrait`
+- 四层 Helper（`__callStatic` 的派发目标）：[System\SystemHelper](Foundation-System-SystemHelper.md)、[Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md)、[Business\BusinessHelper](Foundation-Business-BusinessHelper.md)、[Model\ModelHelper](Foundation-Model-ModelHelper.md)；并集说明见 [DuckPhp\Foundation\Helper](Foundation-Helper.md)
 - [DuckPhp\Ext\CallableView](Ext-CallableView.md)（本类把同级能力以 view_ 内建实现）
 - guide：[quickstart](../guide/quickstart.md)、[layers](../guide/layers.md)

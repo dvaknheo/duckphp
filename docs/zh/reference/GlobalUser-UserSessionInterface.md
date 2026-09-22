@@ -18,7 +18,7 @@ namespace MyProject\System;
 
 use DuckPhp\GlobalUser\UserSessionInterface;
 use DuckPhp\GlobalUser\UserSessionTrait;
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class UserSession implements UserSessionInterface
 {

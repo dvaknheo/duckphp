@@ -8,7 +8,7 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
 
 - 它把 KernelTrait 里几个“装组件 / 跑一次请求”的入口改名后 override，从而在工作骨干里插入框架的静态组件（`SystemWrapper`、`Logger`、`CoreHelper`、`Route`、`View`、`SuperGlobal`）与设置(supplier→setting)加载。
 - 构造时把来自 kernel / core / 用户 options 按 `array_replace_recursive` 合并进 `public $options`，并清空临时属性；`core_options` 设定了若干个进程级/错误/设置文件默认配置。
-- 还提供把 Framework 公共能力做网关的一组静态/实例便利：`Setting()/version()/Platform()`、命名 debug 判断 `IsDebug/IsRealDebug`、错误页/维护页回调、可覆盖文件查询、URL/lang 简单口味等。
+- 还提供把 Framework 公共能力做网关的一组静态/实例便利：`Setting()/version()/Platform()`、命名 debug 判断 `IsDebug/IsHiddenDebug`、错误页/维护页回调、可覆盖文件查询、URL/lang 简单口味等。
 
 一般项目并不直接 new `App`；通常你定义一个 `class XApp extends DuckPhp\DuckPhp` 或 `DuckPhpAllInOne`，其父链最终会用本类的那些组件/设置。只有在你**自行组装底层**时才直接 extend `App`。
 
@@ -174,10 +174,10 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
     public function _IsDebug()
 debug = setting(duckphp_is_debug) ∨ 根 options is_debug ∨ 本 options is_debug
 
-    public static function IsRealDebug()
+    public static function IsHiddenDebug()
 真实 debug 静态壳
 
-    public function _IsRealDebug()
+    public function _IsHiddenDebug()
 默认等同 `_IsDebug()`（上层若要区分再做覆盖）
 
     public function _On404(): void

@@ -1,37 +1,39 @@
-# DuckPhp\Helper\AppHelperTrait
+# DuckPhp\Foundation\System\SystemHelper
 
 ## 简介
 
-`AppHelperTrait` 是**应用级（App 上下文）**的静态助手集合，汇集了“框架级但不属于某一层专属”的常用转发：异常处理、全局事件、运行状态、路由钩子与映射、会话/请求状态（`SuperGlobal`）、可替换系统函数（`SystemWrapper`：`header`/`setcookie`/`exit`/`session_*` 等）、DB/Redis、CLI 参数、扩展选项保存等。
+`SystemHelper` 是**应用/接线层（System）**的静态助手集合（方法就在本类里，不再有 trait），汇集了“框架级但不属于某一层专属”的常用转发：异常处理、全局事件、运行状态、路由钩子与映射、会话/请求状态（`SuperGlobal`）、可替换系统函数（`SystemWrapper`：`header`/`setcookie`/`exit`/`session_*` 等）、DB/Redis、CLI 参数、扩展选项保存等。
 
-业务代码通常不直接使用本 Trait；它是 `DuckPhpAllInOne` 组合的四个 Helper 之一，工程里也可由自己的 `System` 层/应用基类组合。
+业务代码通常不直接用它；它是四层 Helper 之一，工程里也可由自己的 `System` 层/应用基类 `extends` 它。注意 `Foundation\Helper` 与 `DuckPhpAllInOne` 的 `__callStatic` 派发会**最先**在它这里找方法，所以重名方法的胜负受它影响（见 [DuckPhp\Foundation\Helper](Foundation-Helper.md)）。
 
 ## 类信息
 
-- 命名空间：`DuckPhp\Helper`
-- 声明：`trait AppHelperTrait`
+- 命名空间：`DuckPhp\Foundation\System`
+- 声明：`class SystemHelper`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
 
 ## 使用方式
 
 ```php
-class MyApp extends DuckPhp\DuckPhp
-{
-    use DuckPhp\Helper\AppHelperTrait; // 或直接继承 DuckPhpAllInOne
+namespace MyProject\System;
 
-    // 控制器动作内即可使用这些应用级能力：
-    // self::header('Content-Type: application/json');
-    // self::addRouteHook(..., 'prepend-outter');
-    // $map = self::getRouteMaps();
-    // self::FireGlobalEvent('my_event', $data);
+use DuckPhp\Foundation\System\SystemHelper as Helper;   // 别名写法，与工程里各层 Helper 一致
+
+// 1) 当门面直接用（应用接线处，如 App::onInited()）
+$map = Helper::getRouteMaps();
+Helper::addRouteHook($cb, 'prepend-inner');
+Helper::header('Content-Type: application/json');
+
+// 2) 包一层工程自己的 System Helper（推荐：便于加本项目的方法）
+class SysHelper extends Helper
+{
 }
 ```
-
 ## 注意事项
 
 - 大多方法为**纯转发**：同一能力的“下层组件”在对应组件文档（`ExceptionManager`/`Runtime`/`Route`/`RouteHookRouteMap`/`RouteHookRewrite`/`SuperGlobal`/`SystemWrapper`/`DbManager`/`RedisManager`/`Console`/`GlobalEvent`/`ExtOptionsLoader`/`View`）中描述。
 - `header`/`setcookie`/`exit`/`session_*`/`set_exception_handler`/`register_shutdown_function`/`mime_content_type` 走 `SystemWrapper`，即**可被替换的系统函数**（测试/常驻场景可注入实现）。
-- 本 Trait 未包含 `Controller` 层的 `GET/POST/Show/Url` 等方法；那些属于 `ControllerHelperTrait`。
+- 本类未包含 `Controller` 层的 `GET/POST/Show/Url` 等方法；那些属于 [DuckPhp\Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md)。
 
 ## 方法列表
 
@@ -159,6 +161,7 @@ class MyApp extends DuckPhp\DuckPhp
 
 ## 相关链接
 
-- [DuckPhp\Helper\ControllerHelperTrait](Helper-ControllerHelperTrait.md) — 控制器层助手
-- [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md) — 业务层助手
-- [DuckPhp\DuckPhpAllInOne](DuckPhpAllInOne.md) — 组合四个 Helper Trait 的入口类
+- [DuckPhp\Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md) — 控制器层助手
+- [DuckPhp\Foundation\Helper](Foundation-Helper.md) — 四层并集门面（`__callStatic`）
+- [DuckPhp\Foundation\Business\BusinessHelper](Foundation-Business-BusinessHelper.md) — 业务层助手
+- [DuckPhp\DuckPhpAllInOne](DuckPhpAllInOne.md) — 用 `__callStatic` 组合四层 Helper 的入口类

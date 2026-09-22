@@ -1,14 +1,14 @@
-# DuckPhp\Helper\ModelHelperTrait
+# DuckPhp\Foundation\Model\ModelHelperTrait
 
 ## 简介
 
 `ModelHelperTrait` 是面向 **Model（数据层）** 的静态助手集合。它把 `Component\DbManager` 的常用入口折叠成一组静态方法，使 Model 层代码可以写作 `self::Db(...)`、`self::DbForRead()` 这类调用，而无需直接接触 `DbManager` 组件。
 
-该 Trait 仅 `use SingletonExTrait`（提供 `_()` 静态入口），不引入额外状态；框架的 `DuckPhpAllInOne` 会组合它，工程里也可由你自己的 Model 基类组合。
+该 trait 仅 `use SingletonExTrait`（提供 `_()` 静态入口），不引入额外状态。框架里 [Foundation\Model\Base](Foundation-Model-Base.md) 与 [Foundation\Model\ModelHelper](Foundation-Model-ModelHelper.md) 都用它；工程里也可由你自己的 Model 基类 `use` 它。`DuckPhpAllInOne` / `Foundation\Helper` 不直接持有它——并集是靠 `__callStatic` 派发到 `Model\ModelHelper`。
 
 ## 类信息
 
-- 命名空间：`DuckPhp\Helper`
+- 命名空间：`DuckPhp\Foundation\Model`
 - 声明：`trait ModelHelperTrait`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
 
@@ -17,7 +17,7 @@
 ```php
 namespace MyProject\Model;
 
-use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\Foundation\Model\ModelHelperTrait;
 
 class Base
 {
@@ -59,5 +59,5 @@ $row  = Base::DbForRead()->fetch('select * from log where id = ?', 1);
 ## 相关链接
 
 - [DuckPhp\Component\DbManager](Component-DbManager.md) — 本 Trait 的主要转发目标
-- [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md) — 业务层助手
-- [DuckPhp\Foundation\Model\Helper](Foundation-Model-Helper.md) — 工程化 Model 助手类
+- [DuckPhp\Foundation\Business\BusinessHelper](Foundation-Business-BusinessHelper.md) — 业务层助手
+- [DuckPhp\Foundation\Model\ModelHelper](Foundation-Model-ModelHelper.md) — 工程化 Model 助手类

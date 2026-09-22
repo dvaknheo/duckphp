@@ -12,7 +12,7 @@
 - URL/Domain/Res（转发给 `Route`）；
 - 视图：`Display`（转发 `View`）；
 - 调试：`var_dump/VarLog/TraceDump/DebugLog`（仅 debug 生效，转发 Logger）；
-- 环境/Request：`IsDebug/IsRealDebug/Platform/IsAjax`；
+- 环境/Request：`IsDebug/IsHiddenDebug/Platform/IsAjax`；
 - 业务友好：`ShowJson/Show302/XpCall/PhaseCall/BusinessThrowOn/ControllerThrowOn`。
 
 大部分能设置为静态壳转发到**对应实例方法** `_Xxx`；改动可只用（覆盖）实例或其关的处理器（html_handler、lang_handler）。
@@ -121,7 +121,7 @@ debug 时把 message+context 记（Logger::debug）。
     public static function IsDebug()
 是否 debug（App::_IsDebug）。
 
-    public static function IsRealDebug()
+    public static function IsHiddenDebug()
 真实 debug 判定。
 
     public static function Platform()
@@ -189,8 +189,8 @@ debug gate 下 logger debug（$context）。非 debug 返回 false。
     public function _IsDebug()
 转 App::_IsDebug。
 
-    public function _IsRealDebug()
-转 App::_IsRealDebug。
+    public function _IsHiddenDebug()
+转 App::_IsHiddenDebug。
 
     public function _Platform()
 转 App::_Platform。

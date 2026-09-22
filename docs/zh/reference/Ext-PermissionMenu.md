@@ -2,7 +2,7 @@
 
 ## 简介
 
-`PermissionMenu` 是「后台权限菜单树」构建器：它用 [DuckPhp\Component\RouteLister](Component-RouteLister.md) 扫出**后台控制器**的路由，再按控制器类/方法上的注释（或类自己提供的元数据）整理成多层菜单树，供管理后台渲染侧边栏与权限点。
+`PermissionMenu` 是「后台权限菜单树」构建器：它用 [DuckPhp\Ext\RouteLister](Ext-RouteLister.md) 扫出**后台控制器**的路由，再按控制器类/方法上的注释（或类自己提供的元数据）整理成多层菜单树，供管理后台渲染侧边栏与权限点。
 
 三种用法：
 
@@ -230,7 +230,7 @@ class MyApp extends \DuckPhp\DuckPhp
 
 ## 相关链接
 
-- [DuckPhp\Component\RouteLister](Component-RouteLister.md) — 路由来源（`listAll()`）
+- [DuckPhp\Ext\RouteLister](Ext-RouteLister.md) — 路由来源（`listAll()`）
 - [DuckPhp\Ext\PermissionMenuMetaInterface](Ext-PermissionMenuMetaInterface.md) — 元数据模式接口
 - [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) — 会被收进菜单的后台控制器标记接口
 - [DuckPhp\Core\App](Core-App.md) — `getConfigFile()` 与 options 来源

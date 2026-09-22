@@ -49,7 +49,6 @@ const EVENT_SERVICE_ADMIN_LOGOUTED    = 'SERVICE_ADMIN_LOGOUTED';
 | `admin_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
 | `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
 | `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
-| `admin_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `AdminException::class`）；只在会话模式（配了 `admin_callback_for_session`）下的 `id()/name()` 里生效。 |
 
 ## 使用方式
 
@@ -76,13 +75,16 @@ $admin->_Show($data, 'admin/index');      // 带后台头尾的渲染
 - `service()` 与 `localService()`：后者直接返回本 Phase 的服务；前者用 `PhaseProxy::CreatePhaseProxy` 包装，便于跨子应用 Phase 调用。
 - URL 生成优先回调；无回调时 `__url($options['admin_url_*'])`。
 - `_Show()` 会临时切到 `App::getLastPhase()`；头尾模板仅在 `admin_view_file_header/footer` 非空时解析；`$view` 为空时使用当前路由路径。
-- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`use_admin_view_header_footer`——为真时才把 `admin_view_file_header/footer` 设为视图的 head/foot（配合入口类的 `use_admin_view` 使用，缺省 `false`）。
+- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`__logined_enable_header_footer`——它出现在 `_Show()` 的 `$data` 或 `View::_()->data` 里且为真时，才把 `admin_view_file_header/footer` 设为视图 head/foot（缺省 `false`）。注：早期的 `use_admin_view_header_footer` 选项源码里已无读取点，别再使用。
 - `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, …)`。
 - 组件经 `ComponentBase` 的 `_()` 取实例；`Foundation\Controller\AdminControllerBase`/`GlobalAdmin` 配套见 F 批相关文档。
 
 ## 方法列表
 
 ### 公共方法
+
+    public function init(array $options, ?object $context = null)
+初始化组件（覆盖父类）：读入 admin_* 选项并完成 provider 装配。
 
     public function id(bool $check_login = true)
 当前管理员 ID：配置了 `admin_callback_for_session` 时读会话（未登录且 `$check_login` 时抛 `AdminException(" NoLogin 1")`）；否则走 `admin_callback_for_id`；两者都未配置则抛 `DuckPhpSystemException("No GlobalAdmin Provider.")`。

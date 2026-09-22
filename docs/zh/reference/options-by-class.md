@@ -2,7 +2,7 @@
 
 > 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
-选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**221** 个选项（同名选项在不同类各自声明，合计 255 处；另有 12 个隐藏选项见文末）。
+选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**218** 个选项（同名选项在不同类各自声明，合计 252 处；另有 9 个隐藏选项见文末）。
 
 想按名字找？看 [应用选项（按字母顺序索引）](options-index.md)；选项机制见 [应用选项总览](options.md)。
 
@@ -20,14 +20,14 @@ DuckPhp\Core\App 的子类，本身不定义复杂的业务，而是
 |---|---|---|
 | `data_file_enable` | `false` | 是否打开“数据属性/外部扩展 options 文件”机制。开启后会在对应初始化阶段调用 `ExtOptionsLoader` 读取额外定义（如多应用共用配置）。 |
 | `ext` | `[...]` | 本类默认启用的扩展钩子映射。值为源码 `ext` 五项：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`(=那个开关值)。 |
-| `admin_provider` | `''` | 自定义管理员提供者类名；非空时会在内部阶段实例化并交给 `GlobalAdmin`。 |
-| `user_provider` | `''` | 自定义用户提供者类名；非空时同理交给 `GlobalUser`（可用 `PhaseProxy` 包装）。 |
 | `database_driver` | `''` | 数据库驱动标签（如 `mysql`）。初始化后会把 `DbManager` 得到的真实驱动回填到该 options 供上层读取。 |
 | `cli_command_with_common` | `true` | 是否把内置默认 CLI 命令集（`DuckPhp\Component\Command`）登记进当前应用的命令列表。 |
 | `lang_default` | `null` | 多语言默认语言（与 Lang 组件共享；不做进一步检测的兜底）。 |
 | `lang_final` | `null` | 最终语言；设置后不再自动检测、直接以它为准。 |
 | `local_database` | `false` | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不计入公共容器共享，互不干扰）。 |
 | `local_redis` | `false` | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
+| `exception_reporter` | `null` | （该类文档未写说明） |
+| `exception_for_project` | `null` | （该类文档未写说明） |
 
 ## 核心
 
@@ -103,8 +103,6 @@ ExceptionManager（class ExceptionManager…
 | `handle_exception_on_init` | `true` | init 时立即 run 接管。 |
 | `default_exception_handler` | `null` | 未匹配的自定义回退（通常填 App::OnDefaultException）。 |
 | `dev_error_handler` | `null` | dev错误回调（通常 App::OnDevErrorHandler）。 |
-| `exception_reporter` | `null` | 项目级“异常报告类”（要有静态 OnException），会在 init 时 assign。 |
-| `exception_for_project` | `null` | project 主异常类名；给了 exception_reporter 时作为 assign 目标基类。 |
 
 ### DuckPhp\Core\KernelTrait
 
@@ -348,16 +346,6 @@ RouteHookRouteMap extends ComponentBase…
 | `route_map_important` | `[]` | 重要组（先探）。 |
 | `route_map` | `[]` | 普通组（后探）。 |
 
-### DuckPhp\Component\RouteLister
-
-RouteLister extends ComponentBase 提供“把系…
-
-类文档：[DuckPhp\Component\RouteLister](Component-RouteLister.md)
-
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
-
 ### DuckPhp\Component\Validator
 
 DuckPHP 的数据验证组件，采用“字段 => 规则字符串”的声明式写法
@@ -552,6 +540,16 @@ RouteHookDirectoryMode 实现“目录/文件模式”路由
 | `web_installer_render_custom_callback` | `null` | 自定义“渲染”回调。 |
 | `web_installer_default_sentences` | `[]` | 界面文案覆盖（空则用内置英文默认文案 `builtin_default_sentences`）。 |
 
+### DuckPhp\Ext\RouteLister
+
+RouteLister extends ComponentBase 提供“把系…
+
+类文档：[DuckPhp\Ext\RouteLister](Ext-RouteLister.md)
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
+
 ### DuckPhp\Ext\SqlDumper
 
 数据库“结构/数据导出与安装”扩展
@@ -605,6 +603,7 @@ DuckPHP 的「全局管理员组件」
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
+| `admin_loginout_auto_redirect` | `true` | `login()/logout()` 完成后是否自动 302（登录跳 home、退出跳 login）。 |
 | `admin_url_home` | `null` | 后台首页 URL（未配回调时用 `__url()` 生成）。 |
 | `admin_url_login` | `null` | 后台登录 URL。 |
 | `admin_url_logout` | `null` | 后台退出 URL。 |
@@ -618,11 +617,9 @@ DuckPHP 的「全局管理员组件」
 | `admin_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
 | `admin_callback_for_login_service` | `null` | 登录服务回调（`login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
 | `admin_callback_for_session` | `null` | 管理员会话实现回调（返回 `AdminSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
-| `admin_loginout_auto_redirect` | `true` | `login()/logout()` 完成后是否自动 302（登录跳 home、退出跳 login）。 |
 | `admin_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
 | `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
 | `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
-| `admin_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `AdminException::class`）；只在会话模式（配了 `admin_callback_for_session`）下的 `id()/name()` 里生效。 |
 
 ## 全局管理
 
@@ -634,6 +631,8 @@ DuckPHP 的「全局用户组件」
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
+| `user_enable` | `true` | 是否启用用户体系（关掉后 provider 相关分支不接管）。 |
+| `user_loginout_auto_redirect` | `true` | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
 | `user_url_home` | `null` | 站内首页 URL（未配回调时用 `__url()` 生成）。 |
 | `user_url_register` | `null` | 注册 URL（键名由旧 `user_url_regist` 更名）。 |
 | `user_url_login` | `null` | 登录 URL。 |
@@ -648,12 +647,10 @@ DuckPHP 的「全局用户组件」
 | `user_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
 | `user_callback_for_login_service` | `null` | 登录服务回调（`register()/login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
 | `user_callback_for_session` | `null` | 用户会话实现回调（返回 `UserSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
-| `user_loginout_auto_redirect` | `true` | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
 | `user_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `user_url_home`）。 |
 | `user_callback_for_url_for_register` | `null` | 生成注册 URL 的回调（键名与 `urlForRegister()` 拼写一致）。 |
 | `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
 | `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
-| `user_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `UserException::class`）；只在会话模式（配了 `user_callback_for_session`）下的 `id()/name()` 里生效。 |
 
 ## 隐藏选项
 
@@ -661,12 +658,9 @@ DuckPHP 的「全局用户组件」
 
 | 选项 | 默认值 | 出处 | 说明 |
 |---|---|---|---|
-| `session_prefix` | `''` | Foundation\SessionTrait | 会话名的前缀（根应用的设置也走这里）。 |
+| `not_empty` | `true` | DuckPhp::$common_options | 声明在默认选项里、但源码中没有任何读取点（历史遗留，可忽略）。 |
+| `session_prefix` | `''` | Foundation\Controller\SessionTrait | 会话名的前缀（根应用的设置也走这里）。 |
 | `table_prefix` | `''` | Ext\SqlDumper / Ext\RouteHookWebInstaller | 数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。 |
-| `use_user_view` | `false` | DuckPhp::_Show() | 为 true 时，前台控制器（`UserControllerInterface`）的 `_Show()` 交给 `GlobalUser::_Show()` 渲染。 |
-| `use_admin_view` | `false` | DuckPhp::_Show() | 同上，后台控制器（`AdminControllerInterface`）交给 `GlobalAdmin::_Show()`。 |
-| `use_user_view_header_footer` | `false` | GlobalUser::_Show() | 是否把 `user_view_file_header/footer` 套到视图上（配合 `use_user_view`）。 |
-| `use_admin_view_header_footer` | `false` | GlobalAdmin::_Show() | 是否把 `admin_view_file_header/footer` 套到视图上（配合 `use_admin_view`）。 |
 | `exception_for_business` | `\Exception::class` | CoreHelper::_BusinessThrowOn() | `BusinessThrowOn()` 未显式指定时的异常类。 |
 | `exception_for_controller` | `\Exception::class` | CoreHelper::_ControllerThrowOn() | `ControllerThrowOn()` 未显式指定时的异常类。 |
 | `duckphp_all_in_one_wrap_header_foot` | `false` | DuckPhpAllInOne::onInited() | AllInOne 入口是否给 `_Show()` 包 head/foot 视图（该类自己会置 true）。 |

@@ -12,13 +12,13 @@
 > - 工程侧的业务/权限/登录异常 → 继承 `\Exception` 自己定义，例如 [AdminException](GlobalAdmin-AdminException.md)、[UserException](GlobalUser-UserException.md) 都是**直接继承 `\Exception`** 的。
 >
 > 原因：捕获 `DuckPhpSystemException` 等于「框架坏了」的兜底信号，业务异常混进来会让上层无法区分「该提示用户」还是「该报障」。
-> 想要 `ThrowOn()` 那种守卫式抛法不必继承本类——像 `AdminException` 那样 `use DuckPhp\Core\ThrowOnTrait;` 即可。
+> 想要 `ThrowOn()` 那种守卫式抛法不必继承本类——像 `AdminException` 那样 `use DuckPhp\Ext\ThrowOnTrait;` 即可。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\Core`
 - 声明：`class DuckPhpSystemException extends Exception`
-- 使用 Trait：`DuckPhp\Core\ThrowOnTrait`
+- 使用 Trait：`DuckPhp\Ext\ThrowOnTrait`
 
 ## 使用方式
 
@@ -32,7 +32,7 @@ DuckPhpSystemException::ThrowOn($user == null, 'not logged in');
 要在工程里定义**自己的业务异常**，请继承 `\Exception`（而不是本类），需要守卫式抛法就再 `use ThrowOnTrait`：
 
 ```php
-use DuckPhp\Core\ThrowOnTrait;
+use DuckPhp\Ext\ThrowOnTrait;
 
 class MyBizException extends \Exception
 {
@@ -47,10 +47,10 @@ class MyBizException extends \Exception
 
 本类**自身没有显式声明任何方法**，可用能力来自以下来源：
 
-- 静态抛出工具 `ThrowOn(...)`：来自 `use DuckPhp\Core\ThrowOnTrait` —— 首位参数为真时 `throw new static($message,$code)`；详见 [Core-ThrowOnTrait](Core-ThrowOnTrait.md)。
+- 静态抛出工具 `ThrowOn(...)`：来自 `use DuckPhp\Ext\ThrowOnTrait` —— 首位参数为真时 `throw new static($message,$code)`；详见 [Core-ThrowOnTrait](Ext-ThrowOnTrait.md)。
 - 标准异常能力：来自 PHP 内置 `Exception`（`getMessage()`、`getCode()`、`getPrevious()`、`getLine()`、`getFile()`、`getTrace()`、`__toString()` 等），全部可用。
 
 ## 相关链接
 
-- [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md) — 静态抛异常来源 Trait
+- [DuckPhp\Ext\ThrowOnTrait](Ext-ThrowOnTrait.md) — 静态抛异常来源 Trait
 - [DuckPhp\Core\ExitException](Core-ExitException.md) — 它的独特子类（exit 语义）

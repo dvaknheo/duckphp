@@ -1,8 +1,8 @@
-# DuckPhp\Helper\ControllerHelperTrait
+# DuckPhp\Foundation\Controller\ControllerHelper
 
 ## 简介
 
-`ControllerHelperTrait` 是面向 **Controller（控制器层）** 的静态助手集合，也是四个 Helper Trait 中最丰富的一个。它提供控制器日常所需的全部便捷入口：
+`ControllerHelper` 是面向 **Controller（控制器层）** 的静态助手集合（方法就在本类里，不再有 trait），也是四层 Helper 中最丰富的一个。它提供控制器日常所需的全部便捷入口：
 
 - 请求输入：`GET/POST/REQUEST/COOKIE/SERVER`；
 - 请求类型判断：`IsPost`（当前是否 POST）、`IsAjax`（是否 Ajax）；
@@ -15,12 +15,12 @@
 - 事件：`FireGlobalEvent/OnGlobalEvent`；
 - 用户/管理员：`Admin*`/`User*` 系列。
 
-Trait 自带 6 个“动作级”事件常量（`$EVENT_ACTION_*`），供控制器动作生命周期事件使用。
+本类自带 6 个“动作级”事件常量（`$EVENT_ACTION_*`），供控制器动作生命周期事件使用。
 
 ## 类信息
 
-- 命名空间：`DuckPhp\Helper`
-- 声明：`trait ControllerHelperTrait`
+- 命名空间：`DuckPhp\Foundation\Controller`
+- 声明：`class ControllerHelper`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
 - 事件常量：`$EVENT_ACTION_REGISTERING/REGISTERED/LOGINING/LOGINED/LOGOUTING/LOGOUTED`（值为 `action_registering`、`action_registered`、`action_logining`、`action_logined`、`action_logouting`、`action_logouted`）
 
@@ -29,26 +29,25 @@ Trait 自带 6 个“动作级”事件常量（`$EVENT_ACTION_*`），供控制
 ```php
 namespace MyProject\Controller;
 
-use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\Foundation\Controller\ControllerHelper;
 
-class Base
+// 工程惯例：本层 Helper 只是薄薄一层，方便加本项目自己的便捷方法
+class Helper extends ControllerHelper
 {
-    use ControllerHelperTrait;
 }
 
-// 在 Controller 内：
+// 在 Controller 里（Helper 与控制器同命名空间）：
 public function action_login()
 {
-    $name = Base::POST('name');
-    if (Base::IsAjax()) {
-        Base::ShowJson(['ok' => true]);
+    $name = Helper::POST('name');
+    if (Helper::IsAjax()) {
+        Helper::ShowJson(['ok' => true]);
         return;
     }
-    Base::assignViewData('name', $name);
-    Base::Show(get_defined_vars(), 'login');
+    Helper::assignViewData('name', $name);
+    Helper::Show(get_defined_vars(), 'login');
 }
 ```
-
 ## 注意事项
 
 - `Show($data, $view)` 最终走 `App::_()->_Show()`（含 head/foot 包裹与视图文件查找）；`Render` 走 `View::_Render()`（不含 head/foot）。
@@ -208,6 +207,6 @@ public function action_login()
 
 ## 相关链接
 
-- [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md) — 业务层助手（本 Trait 也含其 `AdminService/UserService` 等）
-- [DuckPhp\Helper\AppHelperTrait](Helper-AppHelperTrait.md) — 应用级助手
-- [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md) — 工程化 Controller 助手类
+- [DuckPhp\Foundation\Business\BusinessHelper](Foundation-Business-BusinessHelper.md) — 业务层助手（本类也含其 `AdminService/UserService` 等）
+- [DuckPhp\Foundation\System\SystemHelper](Foundation-System-SystemHelper.md) — 应用级助手
+- [DuckPhp\Foundation\Helper](Foundation-Helper.md) — 四层并集门面（`__callStatic`，本层是它的第二查找目标）

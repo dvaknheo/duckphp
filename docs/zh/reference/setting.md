@@ -29,7 +29,7 @@ $home = App::Setting('my_home', '/');      // 带缺省值
 
 - 静态入口 `App::Setting($key = null, $default = null)`；实例形式 `App::_()->_Setting(...)`。
 - 实现是 `static::Root()->setting[$key] ?? $default` —— **永远读根应用的设置**，所以在子 Phase 里也能拿到同一份值。
-- Helper 里也有：`Helper::Setting()`（`BusinessHelperTrait` 与 `ControllerHelperTrait` 都提供），业务/控制器层不必直接依赖 `App`。
+- Helper 里也有：`Helper::Setting()`（[Foundation\Business\BusinessHelper](Foundation-Business-BusinessHelper.md) 与 [Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md) 都提供），业务/控制器层不必直接依赖 `App`。
 
 ## 框架自己认的设置键
 

@@ -13,7 +13,6 @@
 - `command_run()` 用 HttpServer 把当前应用跑成内嵌 HTTP 会话；
 - `command_fetch($uri,$post)` 于 CLI 抓取私有路径（经 SuperGlobal context 写入并调 App→serve）
 - `command_call(<class>@<method>…)` 调用某个业务方法（business 便利）
-- `command_routes()` 让 RouteLister 枚举路由并带高亮打印
 - `command_debug($off=false)` 切换 dev flag（需 data_file 能力）
 
 此外含若干被引用的获取/解析辅助方法（methods 列表详下）。
@@ -67,8 +66,6 @@ CLI 里“抓取”：向 __SUPERGLOBAL_CONTEXT (或全局) 写 REQUEST_URI/PATH
     public function command_call()
 `namespace/Business@method +args`：解析业务类并反射调用（经 Console::callObject）。
 
-    public function command_routes(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
-交给 RouteLister listAll() 后端颜色高亮输出 url/controller/route-map/admin-user/phase。
 
     public function command_debug(bool $off = false): void
 开关调试标记（写 ext options 之 is_debug），受限前提：data_file_enable + data_file_bump_allowed…
@@ -100,5 +97,5 @@ CLI 里“抓取”：向 __SUPERGLOBAL_CONTEXT (或全局) 写 REQUEST_URI/PATH
 - [DuckPhp\Core\Console](Core-Console.md) —— 命令执行主机
 - [DuckPhp\Component\CommandMetaInterface](Component-CommandMetaInterface.md) —— 命令表元数据接口（`__commandMeta()`）
 - [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) —— command_run 起服务
-- [DuckPhp\Component\RouteLister](Component-RouteLister.md) —— command_routes 用
+- [DuckPhp\Ext\RouteLister](Ext-RouteLister.md) —— `command_routes` 命令的实际实现（已从本类迁到那里）
 - [DuckPhp\Core\App](Core-App.md)/langText —— 版本/lang 翻译来源

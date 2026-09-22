@@ -28,11 +28,10 @@
 | `handle_exception_on_init` | true | init 时立即 run 接管。 |
 | `default_exception_handler` | null | 未匹配的自定义回退（通常填 App::OnDefaultException）。 |
 | `dev_error_handler` | null | dev错误回调（通常 App::OnDevErrorHandler）。 |
-| `exception_reporter` | null | 项目级“异常报告类”（要有静态 OnException），会在 init 时 assign。 |
-| `exception_for_project` | null | project 主异常类名；给了 exception_reporter 时作为 assign 目标基类。 |
 
 ## 使用方式（一般不需要手工大改）
 
+> 隐藏选项（不在本类 `$options` 里声明，但 init 时会读）：`exception_reporter`（项目级“异常报告类”，需有静态 `OnException`）、`exception_for_project`（project 主异常类名，配了 reporter 时作为 assign 的目标基类）。它们通常写在应用入口的 options 里。
 ```php
 use DuckPhp\Core\ExceptionManager;
 

@@ -1,4 +1,4 @@
-# DuckPhp\Core\ThrowOnTrait
+# DuckPhp\Ext\ThrowOnTrait
 
 ## 简介
 

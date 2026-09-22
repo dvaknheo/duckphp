@@ -17,7 +17,7 @@
 ```php
 namespace MyProject\System;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 use DuckPhp\GlobalAdmin\AdminSessionTrait;
 
 class AdminSession
@@ -57,5 +57,5 @@ class AdminSession
 ## 相关链接
 
 - [DuckPhp\GlobalAdmin\AdminSessionInterface](GlobalAdmin-AdminSessionInterface.md) — 本 Trait 实现的接口
-- [DuckPhp\Foundation\SessionTrait](Foundation-SessionTrait.md) — 提供 `get/set` 的会话基座
+- [DuckPhp\Foundation\Controller\SessionTrait](Foundation-Controller-SessionTrait.md) — 提供 `get/set` 的会话基座
 - [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) — 使用会话的组件

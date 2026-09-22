@@ -1,4 +1,4 @@
-# DuckPhp\Foundation\ModelTrait
+# DuckPhp\Foundation\Model\ModelTrait
 
 ## 简介
 
@@ -20,7 +20,7 @@
 ```php
 namespace MyProject\Model;
 
-use DuckPhp\Foundation\ModelTrait;
+use DuckPhp\Foundation\Model\ModelTrait;
 
 class OrderModel
 {
@@ -98,4 +98,4 @@ $m->myOrders(7);
 
 - [DuckPhp\Foundation\Model\Base](Foundation-Model-Base.md) — 组合本 Trait 的模型基类
 - [DuckPhp\Db\DbAdvanceTrait](Db-DbAdvanceTrait.md) — insertData/updateData 等底层实现
-- [DuckPhp\Helper\ModelHelperTrait](Helper-ModelHelperTrait.md) — 配套静态助手
+- [DuckPhp\Foundation\Model\ModelHelperTrait](Foundation-Model-ModelHelperTrait.md) — 配套静态助手

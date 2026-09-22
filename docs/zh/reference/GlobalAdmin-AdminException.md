@@ -4,13 +4,13 @@
 
 `AdminException` 是管理员（后台）领域的异常类：`class AdminException extends \Exception`（PHP 内置异常）。管理员动作/服务实现抛出与后台相关的业务异常时使用本类（或其子类），便于上层按异常类型统一处理；[AdminControllerBase](Foundation-Controller-AdminControllerBase.md) 在 Ajax 无权场景就是抛它。
 
-它**不继承** `DuckPhp\Core\DuckPhpSystemException`——后者只用于框架内部的系统级错误（见 [Core-DuckPhpSystemException](Core-DuckPhpSystemException.md) 的硬性说明）。为了保留守卫式抛法，本类自己 `use DuckPhp\Core\ThrowOnTrait;`。
+它**不继承** `DuckPhp\Core\DuckPhpSystemException`——后者只用于框架内部的系统级错误（见 [Core-DuckPhpSystemException](Core-DuckPhpSystemException.md) 的硬性说明）。为了保留守卫式抛法，本类自己 `use DuckPhp\Ext\ThrowOnTrait;`。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\GlobalAdmin`
 - 声明：`class AdminException extends \Exception`
-- 使用 Trait：`DuckPhp\Core\ThrowOnTrait`（提供 `ThrowOn()`）
+- 使用 Trait：`DuckPhp\Ext\ThrowOnTrait`（提供 `ThrowOn()`）
 
 ## 使用方式
 
@@ -34,12 +34,12 @@ AdminException::ThrowOn(!$allowed, '后台权限不足', 403);
 
 本类未显式声明方法，可用能力来自：
 
-- `DuckPhp\Core\ThrowOnTrait::ThrowOn($flag, $message, $code = 0)` —— 首位为真时 `throw new static(...)`。
+- `DuckPhp\Ext\ThrowOnTrait::ThrowOn($flag, $message, $code = 0)` —— 首位为真时 `throw new static(...)`。
 - PHP 内置 `\Exception` 的全部能力（`getMessage()`、`getCode()` 等）。
 
 ## 相关链接
 
 - [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md) — 框架内部系统异常（本类**不**继承它）
-- [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md) — `ThrowOn()` 的来源
+- [DuckPhp\Ext\ThrowOnTrait](Ext-ThrowOnTrait.md) — `ThrowOn()` 的来源
 - [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md) — 前台侧的对称异常
 - [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) — 管理员组件

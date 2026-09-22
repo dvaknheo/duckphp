@@ -18,7 +18,7 @@ namespace MyProject\System;
 
 use DuckPhp\GlobalAdmin\AdminSessionInterface;
 use DuckPhp\GlobalAdmin\AdminSessionTrait;
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class AdminSession implements AdminSessionInterface
 {

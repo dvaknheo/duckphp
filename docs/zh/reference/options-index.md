@@ -2,7 +2,7 @@
 
 > 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
-一共 **221** 个选项；同名选项出现在多个类时**合并为一行**，来源类并列。隐藏选项见 [按类分组](options-by-class.md#隐藏选项) 文末（本页只收正式选项）。
+一共 **218** 个选项；同名选项出现在多个类时**合并为一行**，来源类并列。隐藏选项见 [按类分组](options-by-class.md#隐藏选项) 文末（本页只收正式选项）。
 
 按类查看：[应用选项（按类分组）](options-by-class.md) · 选项机制：[应用选项总览](options.md)
 
@@ -24,10 +24,8 @@
 | `admin_callback_for_url_for_home` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
 | `admin_callback_for_url_for_login` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
 | `admin_callback_for_url_for_logout` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
-| `admin_default_exception_class` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 未登录时抛出的异常类（缺省用 `AdminException::class`）；只在会话模式（配了 `admin_callback_for_session`）下的 `id()/name()` 里生效。 |
 | `admin_enable_callback_singleton` | `true` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 回调为 `[类名, 方法]` 数组时，是否先把类名转成 `类名::_()` 单例实例。 |
 | `admin_loginout_auto_redirect` | `true` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | `login()/logout()` 完成后是否自动 302（登录跳 home、退出跳 login）。 |
-| `admin_provider` | `''` | [DuckPhp\DuckPhp](DuckPhp.md) | 自定义管理员提供者类名；非空时会在内部阶段实例化并交给 `GlobalAdmin`。 |
 | `admin_url_home` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 后台首页 URL（未配回调时用 `__url()` 生成）。 |
 | `admin_url_login` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 后台登录 URL。 |
 | `admin_url_logout` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 后台退出 URL。 |
@@ -54,7 +52,7 @@
 | `callable_view_is_object_call` | `true` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 类名为字符串且可 `_()` 时转为单例实例，否则 `new`。 |
 | `callable_view_prefix` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 视图名加工前缀（如 `view_`，与 `/`→`_` 替换）。 |
 | `callable_view_skip_replace` | `false` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 为 `true` 时不把自身替换成全局 `View` 单例。 |
-| `classes_to_get_controller_path` | `[]` | [DuckPhp\Component\RouteLister](Component-RouteLister.md) | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
+| `classes_to_get_controller_path` | `[]` | [DuckPhp\Ext\RouteLister](Ext-RouteLister.md) | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
 | `cli_command_with_common` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否把内置默认 CLI 命令集（`DuckPhp\Component\Command`）登记进当前应用的命令列表。 |
 | `cli_enable` | `true` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | CLI 环境下是否进入命令处理（`execute()`）。为 `false` 即使 CLI 也走 Web。 |
 | `close_resource_at_output` | `false` | [DuckPhp\Core\App](Core-App.md) | 输出结束是否统一关闭/回收资源（默认关闭）。 |
@@ -113,9 +111,9 @@
 | `error_500` | `null` | [DuckPhp\Core\App](Core-App.md) | 异常默认总页（路径或可调用）。null → debug 下详细、非 debug 精简。 |
 | `error_debug` | `null` | [DuckPhp\Core\App](Core-App.md) | 开发期错误视图/可调用。null → 内置 fieldset 回执。 |
 | `error_maintain` | `null` | [DuckPhp\Core\App](Core-App.md) | 维护页视图/可调用。null → 内置 “Maintaining.”。 |
-| `exception_for_project` | `null` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | project 主异常类名；给了 exception_reporter 时作为 assign 目标基类。 |
+| `exception_for_project` | `null` | [DuckPhp\DuckPhp](DuckPhp.md) | （类文档未写说明） |
 | `exception_map` | `[]` | [DuckPhp\Core\App](Core-App.md) | 异常类映射表（`原异常类 => 替代异常类`）；`ProjectThrowOn/BusinessThrowOn/ControllerThrowOn` 抛异常前会先按它替换类名。 |
-| `exception_reporter` | `null` | [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 项目级“异常报告类”（要有静态 OnException），会在 init 时 assign。 |
+| `exception_reporter` | `null` | [DuckPhp\DuckPhp](DuckPhp.md) | （类文档未写说明） |
 | `ext` | `[]` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) / [DuckPhp\DuckPhp](DuckPhp.md) | 层内要初始化的扩展组件列表：`类 => true|数组|'@方法'|EXT_* 常量`。在初始化阶段按 `initOptions→…→initComponents…OfExt` 生效。 |
 
 ## f
@@ -285,10 +283,9 @@
 | `user_callback_for_url_for_login` | `null` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 生成登录 URL 的回调。 |
 | `user_callback_for_url_for_logout` | `null` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 生成退出 URL 的回调。 |
 | `user_callback_for_url_for_register` | `null` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 生成注册 URL 的回调（键名与 `urlForRegister()` 拼写一致）。 |
-| `user_default_exception_class` | `null` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 未登录时抛出的异常类（缺省用 `UserException::class`）；只在会话模式（配了 `user_callback_for_session`）下的 `id()/name()` 里生效。 |
+| `user_enable` | `true` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 是否启用用户体系（关掉后 provider 相关分支不接管）。 |
 | `user_enable_callback_singleton` | `true` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 回调为 `[类名, 方法]` 时是否先把类名转成 `类名::_()` 单例实例。 |
 | `user_loginout_auto_redirect` | `true` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
-| `user_provider` | `''` | [DuckPhp\DuckPhp](DuckPhp.md) | 自定义用户提供者类名；非空时同理交给 `GlobalUser`（可用 `PhaseProxy` 包装）。 |
 | `user_url_home` | `null` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 站内首页 URL（未配回调时用 `__url()` 生成）。 |
 | `user_url_login` | `null` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 登录 URL。 |
 | `user_url_logout` | `null` | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 退出 URL。 |
@@ -325,7 +322,7 @@
 
 ## 按前缀分组（便于成组记忆）
 
-- **`admin_*`**（19）：`admin_callback_for_add_ext_view_data`、`admin_callback_for_data`、`admin_callback_for_id`、`admin_callback_for_local_service`、`admin_callback_for_login_service`、`admin_callback_for_name`、`admin_callback_for_session`、`admin_callback_for_url_for_home`、`admin_callback_for_url_for_login`、`admin_callback_for_url_for_logout`、`admin_default_exception_class`、`admin_enable_callback_singleton`、`admin_loginout_auto_redirect`、`admin_provider`、`admin_url_home`、`admin_url_login`、`admin_url_logout`、`admin_view_file_footer`、`admin_view_file_header`
+- **`admin_*`**（17）：`admin_callback_for_add_ext_view_data`、`admin_callback_for_data`、`admin_callback_for_id`、`admin_callback_for_local_service`、`admin_callback_for_login_service`、`admin_callback_for_name`、`admin_callback_for_session`、`admin_callback_for_url_for_home`、`admin_callback_for_url_for_login`、`admin_callback_for_url_for_logout`、`admin_enable_callback_singleton`、`admin_loginout_auto_redirect`、`admin_url_home`、`admin_url_login`、`admin_url_logout`、`admin_view_file_footer`、`admin_view_file_header`
 - **`api_*`**（5）：`api_server_404_as_exception`、`api_server_base_class`、`api_server_class_postfix`、`api_server_namespace`、`api_server_use_singletonex`
 - **`callable_*`**（6）：`callable_view_class`、`callable_view_foot`、`callable_view_head`、`callable_view_is_object_call`、`callable_view_prefix`、`callable_view_skip_replace`
 - **`console_*`**（4）：`console_command_classes`、`console_command_default`、`console_command_phase`、`console_readlines_logfile`
@@ -347,7 +344,7 @@
 - **`skip_*`**（3）：`skip_404`、`skip_app_autoload`、`skip_exception_check`
 - **`sql_*`**（6）：`sql_dump_data_tables`、`sql_dump_debug_show_sql`、`sql_dump_exclude_tables`、`sql_dump_include_tables`、`sql_dump_include_tables_all`、`sql_dump_include_tables_by_model`
 - **`use_*`**（3）：`use_env_file`、`use_exit_exception`、`use_output_buffer`
-- **`user_*`**（21）：`user_callback_for_add_ext_view_data`、`user_callback_for_data`、`user_callback_for_id`、`user_callback_for_local_service`、`user_callback_for_login_service`、`user_callback_for_name`、`user_callback_for_session`、`user_callback_for_url_for_home`、`user_callback_for_url_for_login`、`user_callback_for_url_for_logout`、`user_callback_for_url_for_register`、`user_default_exception_class`、`user_enable_callback_singleton`、`user_loginout_auto_redirect`、`user_provider`、`user_url_home`、`user_url_login`、`user_url_logout`、`user_url_register`、`user_view_file_footer`、`user_view_file_header`
+- **`user_*`**（20）：`user_callback_for_add_ext_view_data`、`user_callback_for_data`、`user_callback_for_id`、`user_callback_for_local_service`、`user_callback_for_login_service`、`user_callback_for_name`、`user_callback_for_session`、`user_callback_for_url_for_home`、`user_callback_for_url_for_login`、`user_callback_for_url_for_logout`、`user_callback_for_url_for_register`、`user_enable`、`user_enable_callback_singleton`、`user_loginout_auto_redirect`、`user_url_home`、`user_url_login`、`user_url_logout`、`user_url_register`、`user_view_file_footer`、`user_view_file_header`
 - **`web_*`**（10）：`web_installer_check_custom_callback`、`web_installer_database_drivers`、`web_installer_default_sentences`、`web_installer_do_custom_callback`、`web_installer_force`、`web_installer_render_custom_callback`、`web_installer_use_database`、`web_installer_use_redis`、`web_installer_view`、`web_installer_view_block_custom`
 
 ## 相关链接

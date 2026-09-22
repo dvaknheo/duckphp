@@ -1,15 +1,15 @@
-# DuckPhp\Helper\BusinessHelperTrait
+# DuckPhp\Foundation\Business\BusinessHelper
 
 ## 简介
 
-`BusinessHelperTrait` 是面向 **Business（业务层）** 的静态助手集合。业务层通过它访问：应用设置与路径（`Setting`/`AppOptions`/`PathOfProject`/`PathOfRuntime`）、配置（`Config`）、缓存（`Cache`）、校验（`Validator*`）、事件（`FireGlobalEvent`/`OnGlobalEvent`）、用户/管理员服务（`AdminService`/`UserService`）以及业务异常快速抛出（`BusinessThrowOn`）。
+`BusinessHelper` 是面向 **Business（业务层）** 的静态助手集合（方法就在本类里，不再有 trait）。业务层通过它访问：应用设置与路径（`Setting`/`AppOptions`/`PathOfProject`/`PathOfRuntime`）、配置（`Config`）、缓存（`Cache`）、校验（`Validator*`）、事件（`FireGlobalEvent`/`OnGlobalEvent`）、用户/管理员服务（`AdminService`/`UserService`）以及业务异常快速抛出（`BusinessThrowOn`）。
 
-Trait 自带 4 个事件名常量（`$EVENT_REGISTERING/$EVENT_REGISTERED/$EVENT_LOGINING/$EVENT_LOGINED`），供注册/登录等业务生命周期事件使用。
+本类自带 4 个事件名常量（`$EVENT_REGISTERING/$EVENT_REGISTERED/$EVENT_LOGINING/$EVENT_LOGINED`），供注册/登录等业务生命周期事件使用。
 
 ## 类信息
 
-- 命名空间：`DuckPhp\Helper`
-- 声明：`trait BusinessHelperTrait`
+- 命名空间：`DuckPhp\Foundation\Business`
+- 声明：`class BusinessHelper`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
 - 事件名常量：`$EVENT_REGISTERING = 'registering'`、`$EVENT_REGISTERED = 'registered'`、`$EVENT_LOGINING = 'logining'`、`$EVENT_LOGINED = 'logined'`
 
@@ -18,21 +18,19 @@ Trait 自带 4 个事件名常量（`$EVENT_REGISTERING/$EVENT_REGISTERED/$EVENT
 ```php
 namespace MyProject\Business;
 
-use DuckPhp\Helper\BusinessHelperTrait;
+use DuckPhp\Foundation\Business\BusinessHelper;
 
-class Base
+class Helper extends BusinessHelper
 {
-    use BusinessHelperTrait;
 }
 
 // 在 Business 内：
-$conf = Base::Config('database', 'host');
-$rows = Base::Cache()->get('k');          // 取缓存
-$ok   = Base::XpCall([$obj, 'method']);   // 异常封装调用
-$errs = Base::ValidatorValid($_POST, ['age' => 'int|min:1']);
-Base::BusinessThrowOn(!$flag, '业务不允许', 10001);
+$conf = Helper::Config('database', 'host');
+$rows = Helper::Cache()->get('k');          // 取缓存
+$ok   = Helper::XpCall([$obj, 'method']);   // 异常封装调用
+$errs = Helper::ValidatorValid($_POST, ['age' => 'int|min:1']);
+Helper::BusinessThrowOn(!$flag, '业务不允许', 10001);
 ```
-
 ## 注意事项
 
 - `Setting`/`Options` 读取的是 App 的设置与选项；`PathOfProject`/`PathOfRuntime` 来自 App 的项目/运行时路径。
@@ -97,6 +95,6 @@ Base::BusinessThrowOn(!$flag, '业务不允许', 10001);
 
 ## 相关链接
 
-- [DuckPhp\Helper\ControllerHelperTrait](Helper-ControllerHelperTrait.md) — 控制器层助手（含 `AdminService`/`UserService` 的控制器版）
-- [DuckPhp\Helper\ModelHelperTrait](Helper-ModelHelperTrait.md) — 数据层助手
-- [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md) — 工程化 Business 助手类
+- [DuckPhp\Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md) — 控制器层助手（含 `AdminService`/`UserService` 的控制器版）
+- [DuckPhp\Foundation\Model\ModelHelperTrait](Foundation-Model-ModelHelperTrait.md) — 数据层助手
+- [DuckPhp\Foundation\Helper](Foundation-Helper.md) — 四层并集门面（`__callStatic`，本层是它的第三查找目标）

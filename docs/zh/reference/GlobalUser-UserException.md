@@ -25,7 +25,7 @@ throw new UserException('请先登录');
 ## 注意事项
 
 - 该类为空类，本身不增加行为；能力来自 PHP `\Exception`。
-- **没有** `ThrowOn()` 静态方法（未 `use ThrowOnTrait`）；需要“条件抛”时用 `CoreHelper` 系列（`ProjectThrowOn`/`BusinessThrowOn`/`ControllerThrowOn`），或在自定义异常上 `use DuckPhp\Core\ThrowOnTrait`。
+- **没有** `ThrowOn()` 静态方法（未 `use ThrowOnTrait`）；需要“条件抛”时用 `CoreHelper` 系列（`ProjectThrowOn`/`BusinessThrowOn`/`ControllerThrowOn`），或在自定义异常上 `use DuckPhp\Ext\ThrowOnTrait`。
 - 与后台侧的 [AdminException](GlobalAdmin-AdminException.md) 对称：两者都直接继承 `\Exception`（那边多一个 `ThrowOnTrait`）。
 
 ## 方法列表

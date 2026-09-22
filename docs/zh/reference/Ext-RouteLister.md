@@ -1,4 +1,4 @@
-# DuckPhp\Component\RouteLister
+# DuckPhp\Ext\RouteLister
 
 路由枚举：把当前应用的路由集合（Rewrite / important 地图 / 控制器自动路由 / 普通地图，以及子应用）整理成统一记录集 —— 供权限导出、路由展示（如 CLI `routes`）使用。
 
@@ -19,9 +19,9 @@
 
 ## 类信息
 
-- 命名空间：`DuckPhp\Component`
+- 命名空间：`DuckPhp\Ext`
 - 声明：`class RouteLister extends ComponentBase`
-- 通常被命令层调用（如在 `DuckPhp\Component\Command::command_routes` 中显示）。
+- CLI 展示由本类的 `command_routes()` 实现（把路由表打印成带高亮的彩行），`DuckPhp\Component\Command` 的 CLI 命令转调它。
 
 ## 选项
 
@@ -36,9 +36,9 @@
 ## 使用方式
 
 ```php
-use DuckPhp\Component\RouteLister;
+use DuckPhp\Ext\RouteLister;
 $rows = RouteLister::_()->listAll();
-// CLI: 展示成彩行可自行 echo（见 Component\Command.command_routes）。
+// CLI: 彩色输出用 RouteLister::_()->command_routes()。
 $rows_admin = RouteLister::_()->listAll(true, true, true, false);  // 仅 admin 控制器
 ```
 
@@ -55,6 +55,9 @@ $rows_admin = RouteLister::_()->listAll(true, true, true, false);  // 仅 admin 
 ## 方法列表
 
 ### 公共方法
+
+    public function command_routes(bool $with_children = true, bool $only_controller = false, bool $only_admin = false, bool $only_user = false): void
+把 `listAll()` 的结果按 URL/controller/route-map/admin-user/phase 分块、带颜色打印到命令行（`Command` 的 `command_routes` 命令转调它）。
 
     public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
 根据 控制器全名+方法 → 该路由可写 URL（或欢迎/欢迎方法特殊短文/空 return prefix）。实现去反向 controller_class_adjust。

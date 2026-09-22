@@ -1,4 +1,4 @@
-# DuckPhp\Foundation\SessionTrait
+# DuckPhp\Foundation\Controller\SessionTrait
 
 ## 简介
 
@@ -20,7 +20,7 @@
 ```php
 namespace MyProject\Controller;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 
 class Session
 {

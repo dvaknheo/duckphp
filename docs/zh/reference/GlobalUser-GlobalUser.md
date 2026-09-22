@@ -40,6 +40,7 @@ const EVENT_SERVICE_USER_LOGOUTED    = 'SERVICE_USER_LOGOUTED';
 | `user_url_logout` | `null` | 退出 URL。 |
 | `user_view_file_header` | `null` | 用户页头视图文件。 |
 | `user_view_file_footer` | `null` | 用户页脚视图文件。 |
+| `user_enable` | `true` | 是否启用用户体系（关掉后 provider 相关分支不接管）。 |
 | `user_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 时是否先把类名转成 `类名::_()` 单例实例。 |
 | `user_callback_for_id` | `null` | 取当前用户 id 的回调。 |
 | `user_callback_for_name` | `null` | 取当前用户名的回调。 |
@@ -53,7 +54,6 @@ const EVENT_SERVICE_USER_LOGOUTED    = 'SERVICE_USER_LOGOUTED';
 | `user_callback_for_url_for_register` | `null` | 生成注册 URL 的回调（键名与 `urlForRegister()` 拼写一致）。 |
 | `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
 | `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
-| `user_default_exception_class` | `null` | 未登录时抛出的异常类（缺省用 `UserException::class`）；只在会话模式（配了 `user_callback_for_session`）下的 `id()/name()` 里生效。 |
 
 ## 使用方式
 
@@ -81,13 +81,16 @@ $user->_Show($data, 'user/center');       // 带用户页头尾的渲染
 - `service()` 与 `localService()`：前者经 `PhaseProxy` 包装成可跨 Phase 调用的代理；后者返回当前 Phase 的服务。
 - URL 生成优先 callback；无 callback 时 `__url($options['user_url_*'])`。
 - `_Show()` 会临时切到 `App::getLastPhase()`；头尾模板仅在 `user_view_file_header/footer` 非空时解析；`$view` 为空时使用当前路由路径。
-- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`use_user_view_header_footer`——为真时才把 `user_view_file_header/footer` 设为视图的 head/foot（配合入口类的 `use_user_view` 使用，缺省 `false`）。
+- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`__logined_enable_header_footer`——它出现在 `_Show()` 的 `$data` 或 `View::_()->data` 里且为真时，才把 `user_view_file_header/footer` 设为视图 head/foot（缺省 `false`）。注：早期的 `use_user_view_header_footer` 选项源码里已无读取点，别再使用。
 - `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, …)`。
 - 组件经 `ComponentBase` 的 `_()` 取实例。
 
 ## 方法列表
 
 ### 公共方法
+
+    public function init(array $options, ?object $context = null)
+初始化组件（覆盖父类）：读入 user_* 选项并完成 provider 装配。
 
     public function id(bool $check_login = true)
 当前用户 ID：配置了 `user_callback_for_session` 时读会话（未登录且 `$check_login` 时抛 `UserException("id(): NoLogin")`）；否则走 `user_callback_for_id`；都未配置则抛 `DuckPhpSystemException("id(): No GlobalUser Provider.")`。

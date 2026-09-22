@@ -1,4 +1,4 @@
-# DuckPhp\Foundation\ExceptionReporterTrait
+# DuckPhp\Foundation\Controller\ExceptionReporterTrait
 
 ## 简介
 
@@ -22,7 +22,7 @@
 ```php
 namespace MyProject\System;
 
-use DuckPhp\Foundation\ExceptionReporterTrait;
+use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 
 class ExceptionReporter
 {
@@ -45,6 +45,9 @@ class ExceptionReporter
 ## 方法列表
 
 ### 公共方法
+
+    public function _OnException($ex)
+实例侧入口（静态 ``OnException()`` 转发到它）：按命名空间与 ``onXxx()`` 方法分派。
 
     public static function OnException($ex)
 异常报告入口：按命名空间与 `onXxx` 方法分派到对应处理方法或默认处理。
