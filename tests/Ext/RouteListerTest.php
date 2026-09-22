@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
-use DuckPhp\Component\RouteLister;
+use DuckPhp\Ext\RouteLister;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\PhaseContainer;

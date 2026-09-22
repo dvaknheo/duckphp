@@ -6,9 +6,9 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Component\RouteLister;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Ext\RouteLister;
 
 class PermissionMenu extends ComponentBase
 {

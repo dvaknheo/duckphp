@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPhp\Component;
+namespace DuckPhp\Ext;
 
 use Directory;
 use DuckPhp\Component\RouteHookRewrite;
@@ -48,7 +48,7 @@ class RouteLister extends ComponentBase
         }
 
         if ($method_prefix && substr($method, 0, strlen($method_prefix)) !== $method_prefix) {
-            return null; // TODO do_action
+            return null; //  example: do_action_post 
         }
         $last = substr($method, strlen($method_prefix));
         [$first, $last] = $this->doControllerClassAdjust($first, $last);
