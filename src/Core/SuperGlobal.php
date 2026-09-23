@@ -20,16 +20,18 @@ class SuperGlobal extends ComponentBase
     public $_SESSION;
     public $_FILES;
 
-    protected $init_once = true;
+    protected $init_once = false;
 
     /**
      * @param array<string, mixed> $options
      */
     protected function initOptions(array $options): void
     {
+        // 每次 init 都加载超全局变量，确保多相位下数据可用
+        $this->_LoadSuperGlobalAll();
+        
         if ($this->options['superglobal_auto_define']) {
             static::DefineSuperGlobalContext();
-            $this->_LoadSuperGlobalAll();
         }
     }
 
