@@ -593,7 +593,7 @@ DuckPHP 内置的“用 PHP 内置服务器跑项目”的启动器
 | `path_document` | `'public'` | 文档目录名；实际 docroot = `path/path_document`。 |
 | `workers` | `null` | 非空时用 `PHP_CLI_SERVER_WORKERS=N` 启动多进程内置服务器。 |
 
-## 全局管理
+## 管理员系统
 
 ### DuckPhp\GlobalAdmin\GlobalAdmin
 
@@ -621,7 +621,7 @@ DuckPHP 的「全局管理员组件」
 | `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
 | `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
 
-## 全局管理
+## 用户系统
 
 ### DuckPhp\GlobalUser\GlobalUser
 

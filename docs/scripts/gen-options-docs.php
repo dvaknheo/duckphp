@@ -80,8 +80,8 @@ const LAYERS = [
     'HttpServer' => [5, 'HTTP 服务器', 'httpserver'],
     'Helper' => [6, '助手', 'helper'],
     'Foundation' => [7, '基础骨架', 'foundation'],
-    'GlobalAdmin' => [8, '全局管理', 'global'],
-    'GlobalUser' => [9, '全局管理', 'global'],
+    'GlobalAdmin' => [8, '管理员系统', 'admin'],
+    'GlobalUser' => [9, '用户系统', 'user'],
 ];
 
 /** the 5 App options that drive the setting mechanism, in source order */
@@ -544,7 +544,8 @@ function render_doc_nav(array $g): string
         '数据库' => ['Db'],
         'HTTP 服务器' => ['HttpServer'],
         '助手' => ['Helper', 'Foundation'],
-        '全局管理' => ['GlobalAdmin', 'GlobalUser'],
+        '管理员系统' => ['GlobalAdmin'],
+        '用户系统' => ['GlobalUser'],
     ];
     $pages = [];
     foreach (glob(REF_DIR . '/*.md') as $p) {

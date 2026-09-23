@@ -161,7 +161,7 @@
 | [DuckPhp\Foundation\SingletonTrait](Foundation-SingletonTrait.md) | Foundation 层对 Core\SingletonExTrait 的**… |
 | [DuckPhp\Foundation\System\SystemHelper](Foundation-System-SystemHelper.md) | **应用/接线层（System）**的静态助手集合（方法就在本类里，不再有 t… |
 
-## 全局管理
+## 管理员系统
 
 | 类 | 说明 |
 |---|---|
@@ -174,6 +174,11 @@
 | [DuckPhp\GlobalAdmin\AdminSessionInterface](GlobalAdmin-AdminSessionInterface.md) | 「管理员会话」契约接口 |
 | [DuckPhp\GlobalAdmin\AdminSessionTrait](GlobalAdmin-AdminSessionTrait.md) | AdminSessionInterface 的默认实现 Trait |
 | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | DuckPHP 的「全局管理员组件」 |
+
+## 用户系统
+
+| 类 | 说明 |
+|---|---|
 | [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | DuckPHP 的「全局用户组件」 |
 | [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) | 「用户会话动作」的契约接口 |
 | [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 一个**空的标记接口**（marker interface，不声明任何方法） |
