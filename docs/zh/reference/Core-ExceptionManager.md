@@ -20,14 +20,14 @@
 
 `ExceptionManager::$options`：
 
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `handle_all_dev_error` | true | 是否接管 PHP 错误处理器（dev path）。 |
-| `handle_all_exception` | true | 是否接管全局异常处理器。 |
-| `system_exception_handler` | null | 自定义异常安装回调 `function(callable $handler)`，可替代内建 set_exception_handler（极端/跨运行时用）。 |
-| `handle_exception_on_init` | true | init 时立即 run 接管。 |
-| `default_exception_handler` | null | 未匹配的自定义回退（通常填 App::OnDefaultException）。 |
-| `dev_error_handler` | null | dev错误回调（通常 App::OnDevErrorHandler）。 |
+| 选项                          | 默认值  | 说明                                                                             |
+| --------------------------- | ---- | ------------------------------------------------------------------------------ |
+| `handle_all_dev_error`      | true | 是否接管 PHP 错误处理器（dev path）。                                                      |
+| `handle_all_exception`      | true | 是否接管全局异常处理器。                                                                   |
+| `system_exception_handler`  | null | 自定义异常安装回调 `function(callable $handler)`，可替代内建 set_exception_handler（极端/跨运行时用）。 |
+| `handle_exception_on_init`  | true | init 时立即 run 接管。                                                               |
+| `default_exception_handler` | null | 未匹配的自定义回退（通常填 App::OnDefaultException）。                                        |
+| `dev_error_handler`         | null | dev错误回调（通常 App::OnDevErrorHandler）。                                            |
 
 ## 使用方式（一般不需要手工大改）
 
