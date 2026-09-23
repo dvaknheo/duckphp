@@ -18,7 +18,7 @@ GlobalEvent::_()->globalOn('third.ordered', '', function ($order_id) {
 GlobalEvent::_()->fire('third.ordered', $order_id);
 ```
 
-`GlobalEvent` **默认是关闭的**（`DuckPhp.php` 里默认 `EXT_DISABLE`），要在根应用的 `ext` 里先打开：
+**开箱可用，不需要先「打开」**：`GlobalEvent::_()` 是惰性单例，不写任何 `ext` 配置，`GlobalEvent::_()->on(...)` + `fire(...)` 也照常触发（`Helper::OnGlobalEvent()` / `Helper::FireGlobalEvent()` 同理）。
 
 ```php
 // tests/data_for_tests/ZThirdDemo/src/System/MainApp.php
@@ -26,6 +26,8 @@ GlobalEvent::_()->fire('third.ordered', $order_id);
     GlobalEvent::class => true,
 ],
 ```
+
+> 源码 `src/DuckPhp.php` 第 117 行的 `GlobalEvent::class => self::EXT_DISABLE` 很容易被误读成「默认关闭」：它只表示**组装阶段不把这个组件预先放进当前相位**（这类 `EXT_DISABLE` 项在 init 之后也不会留在 `options['ext']` 里）。组件按需创建，所以事件能不能用与这一行无关；ZThirdDemo 里显式写一行属于「表意清晰的可选项」，不是必需。
 
 ## 机制说明
 
@@ -38,13 +40,13 @@ GlobalEvent::_()->fire('third.ordered', $order_id);
 
 ### API 一览
 
-| 方法 | 作用 |
-|---|---|
-| `on($event, $callback)` | 绑定到**当前相位**（内部调 [`globalOn($event, App::Phase(), $callback)`](../reference/Core-App.md)） |
-| `globalOn($event, $phase, $callback)` | 绑定到指定相位（`''` = 根相位） |
-| `fire($event, ...$args)` | 按注册顺序逐个调用回调；**无返回值** |
-| `all()` | 返回整个注册表（排错用） |
-| `remove($event, $phase = null, $callback = null)` | 不传后两者则清空该事件；否则按相位+回调过滤 |
+| 方法                                                | 作用                                                                                       |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `on($event, $callback)`                           | 绑定到**当前相位**（内部调 [`globalOn($event, App::Phase(), $callback)`](../reference/Core-App.md)） |
+| `globalOn($event, $phase, $callback)`             | 绑定到指定相位（`''` = 根相位）                                                                      |
+| `fire($event, ...$args)`                          | 按注册顺序逐个调用回调；**无返回值**                                                                     |
+| `all()`                                           | 返回整个注册表（排错用）                                                                             |
+| `remove($event, $phase = null, $callback = null)` | 不传后两者则清空该事件；否则按相位+回调过滤                                                                   |
 
 ### Helper 侧入口
 
@@ -82,9 +84,11 @@ Helper::RemoveEvent('third.ordered');                                      // = 
 
 一句话：**要拦截请求用钩子，要广播状态用事件**。详见 [第 2-10 章](lifecycle.md)。
 
-### `Ext\EventManager` 是什么
+### `Ext\EventManager`（**不推荐**）
 
-`src/Ext/EventManager.php` 是另一个独立的事件管理器扩展，API 与 `GlobalEvent` 类似（`OnEvent/FireEvent/AllEvents/RemoveEvent`），但**不带相位概念**——回调在哪个相位 `fire` 就在哪个相位执行。框架内部**没有使用它**（`src/` 里无引用），属于可选工具；需要「不带相位切换的纯进程内事件总线」时才引入。参考 [DuckPhp\Ext\EventManager](../reference/Ext-EventManager.md)。
+⚠️ **新代码别用它**。它的 API 与 `GlobalEvent` 类似（`OnEvent/FireEvent/AllEvents/RemoveEvent`），但**不带相位概念**——回调在哪个相位 `fire` 就在哪个相位执行，所以**跨相位事件（第三卷的多应用/子应用场景）处理不了**；框架内部也**没有任何引用**（`src/` 里搜不到）。
+
+要用事件就用 `GlobalEvent`（本章其余部分）。真需要「不带相位切换的纯进程内总线」，写一个几十行的类比引入它更可控。参考页保留：[DuckPhp\Ext\EventManager](../reference/Ext-EventManager.md)。
 
 ## 常见写法
 
@@ -112,13 +116,13 @@ GlobalEvent::_()->remove('order.created', '', $callback); // 只删指定相位+
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 监听不到任何事件 | `GlobalEvent` 没打开（默认 `EXT_DISABLE`） | 在根应用 `ext` 里声明 `GlobalEvent::class => true` |
-| 事件回调里 `::_()` 拿错实例 | `fire()` 会把相位切到「注册时的相位」再执行回调 | 注册时就选对相位（`globalOn` 的第二个参数） |
-| 重复注册导致回调执行多次 | 同一事件+相位+回调三元组已存在时 `globalOn` 会跳过；但不同闭包算不同回调 | 排重时用同一个 callable（如 `[Class::class, 'method']`），不要每次 `fire` 前都 `on` |
-| 想让事件「拦截」后续流程 | 事件是广播、无返回值、不可短路 | 改用路由钩子（[第 2-10 章](lifecycle.md)）或直接在业务里判断 |
-| `remove($event, $phase, $callback)` 删不掉 | 源码的过滤条件是「相位与回调**都**不同才保留」 | 传入与注册时**完全一致**的相位与回调 |
+| 现象                                      | 原因                                          | 改法                                                                 |
+| --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------ |
+| 监听不到任何事件                                | `GlobalEvent` 没打开（默认 `EXT_DISABLE`）         | 在根应用 `ext` 里声明 `GlobalEvent::class => true`                        |
+| 事件回调里 `::_()` 拿错实例                      | `fire()` 会把相位切到「注册时的相位」再执行回调                | 注册时就选对相位（`globalOn` 的第二个参数）                                        |
+| 重复注册导致回调执行多次                            | 同一事件+相位+回调三元组已存在时 `globalOn` 会跳过；但不同闭包算不同回调 | 排重时用同一个 callable（如 `[Class::class, 'method']`），不要每次 `fire` 前都 `on` |
+| 想让事件「拦截」后续流程                            | 事件是广播、无返回值、不可短路                             | 改用路由钩子（[第 2-10 章](lifecycle.md)）或直接在业务里判断                          |
+| `remove($event, $phase, $callback)` 删不掉 | 源码的过滤条件是「相位与回调**都**不同才保留」                   | 传入与注册时**完全一致**的相位与回调                                               |
 
 ## 下一步
 

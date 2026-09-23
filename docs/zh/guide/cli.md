@@ -80,16 +80,27 @@ RunQuickly() → init() → 分流：
 
 内置命令（`src/Component/Command.php`，`php demo/cli.php help` 实测可见）：
 
-| 命令 | 作用 |
-|---|---|
-| `version` | 打印 `(应用类)版本号` |
-| `help` | 打印命令清单（按命令组分组） |
-| `routes` | 打印路由表（可带 `--with_children`、`--only_controller` 等参数） |
-| `run` | 起内置 HTTP 服务器 |
-| `fetch` | 在命令行里抓一个 URL（`--uri=…`、`--post=…`） |
-| `call` | 直接调方法：`namespace/class@method arg1 --k=v` |
-| `debug` | 开关调试模式（`debug off`） |
+| 命令        | 作用                                                  |
+| --------- | --------------------------------------------------- |
+| `version` | 打印 `(应用类)版本号`                                       |
+| `help`    | 打印命令清单（按命令组分组）                                      |
 
+| `run`     | 起内置 HTTP 服务器                                        |
+| `fetch`   | 在命令行里抓一个 URL（`--uri=…`、`--post=…`）                  |
+| `call`    | 直接调方法：`namespace/class@method arg1 --k=v`           |
+| `debug`   | 开关调试模式（`debug off`）                                 |
+> **`routes` 命令不在上面这个类里**：它实现于 [`DuckPhp\Ext\RouteLister::command_routes()`](../reference/Ext-RouteLister.md)（源码 `src/Ext/RouteLister.php` 第 27 行），属于 `Ext\*` 扩展，**不会自动装配**（见[第 2-10 章](lifecycle.md)）。要用就把它登记进应用的 `cmd`：
+
+```php
+// src/System/App.php
+public $options = [
+    'cmd' => [
+        \DuckPhp\Ext\RouteLister::class => true,   // true = 用默认方法前缀 command_
+    ],
+];
+```
+
+之后 `php cli.php routes --with_children=0 --only_admin=1` 就能用了（参数见参考页）；`cmd` 的值也可以写成前缀字符串（如 `'command_'`），写 `false` 或删掉就是关闭。
 **框架自带的 `bin/duckphp`** 是另一回事：它是**安装器 CLI**，只有 `new`/`help`/`show` 三个命令（`src/Ext/DuckPhpInstaller.php`），用来建新项目，不提供上面那套常用命令。
 
 ### 3. 命令名、参数与相位前缀

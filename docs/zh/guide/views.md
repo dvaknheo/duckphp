@@ -87,7 +87,13 @@ Helper::Show(get_defined_vars(), 'main');          // ① 当前作用域全部�
 Helper::Show(['notes' => $notes], 'note/list');    // ② 显式数组
 Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show 都带上）
 ```
-//TODO 介绍 assignViewData() 和  View::_()->data 属性 的关系，告诫应用
+`assignViewData()` 与 `Show()` 的 `$data` 最终汇到**同一个地方**：[`View`](../reference/Core-View.md) 组件（`View::_()`，按相位一个单例）的 `$data` 属性。`Helper::assignViewData($k, $v)` 就是 `View::_()->data[$k] = $v`（传数组则 merge）；`Show($data, $view)` 渲染前做 `array_merge($this->data, $data)`，所以**参数里的同名键会覆盖预置值**。
+
+正因为它是「组件上的一个属性」，用法上要留意三点：
+
+- **预置值是相位级的共享状态**：写进去之后，**同一相位后续每一次渲染**都会带上它（包括 head/foot 视图，以及同相位子应用的视图）。适合 `site_name`、当前用户这类「整站一样」的数据；请求独有的数据请走 `Show()` 的 `$data` 参数。
+- **别把敏感数据放进去**：它会被所有视图看见；`__h()` 只解决转义，不解决「这个视图该不该看到」。
+- **想清干净**：`View::_()->reset()`（清 `$data` 与 head/foot 设置）；或干脆只用每个动作自己的 `$data`，不依赖预置。
 视图里读数据就是读变量（`$notes`）。**转义是必须的**，框架提供全局函数：
 
 | 函数 | 用途 |

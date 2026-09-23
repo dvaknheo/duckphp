@@ -122,8 +122,9 @@ HTTP 请求 → 路由 → MainController::index()
 | **System**     | ⚠️ 只在接线时         | ⚠️ 只在接线时       | ⚠️      | ⚠️        | ✅          | ✅                    | ✅            |
 |                |                  |                |         |           |            |                      |              |
 |                |                  |                |         |           |            |                      |              |
-//TODO 说明不带特定后缀的 不能跃层访问 
-// 说明 System 一般调用 Controller 的 Action 不跳过读取 Business
+矩阵的行/列按**目录 + 后缀**判定归属：`Controller/` 下的 `*Controller`、`Business/` 下的 `*Business` 与 `*Service`、`Model/` 下的 `*Model`（目录与后缀约定见 `skeleton/RULES.md`）。**不带这些层后缀、也不在上述目录里的类不属于四层**——它没有「本层」可依托，因此不能被别的层跨层调用，只能放进 `System/`（接线处）或与调用方同层。
+
+`System` 那一行标 ⚠️ 的含义是「只在接线时」：它可以装配和调用各层，但**正规做法是调 Controller 的 Action**（CLI 命令、异常报告器都是这个路子），不要跳过 Action 直接去读 Business——否则「请求入口」的职责会摊到接线层。
 三条最容易记错的：
 - **控制器不碰 Db/Model**：一次「顺手查一下」就是越界，因为它绕过了业务规则（校验、权限、事务边界都写在 Business 里）。
 - **业务不碰请求上下文**：`Business` 拿到的一切都应该由参数传进来。理由见下一节。
@@ -134,9 +135,7 @@ HTTP 请求 → 路由 → MainController::index()
 这不是洁癖，有三个很具体的后果：
 
 1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 2-15 章](cli.md)）、定时任务、测试（[第 2-16 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
-2. **多应用/相位下会被共享或复制**：第三卷的应用树里，子应用与父应用可能各自持有一份组件（[第 3-4 章](component-sharing.md)），带状态的业务类会随相位漂移，出现「同一个请求里两份状态」。
-3. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
-//TODO 第二项去除
+2. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
 所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`、`Helper::Session()` 之类），Business 的入参一律显式传。
 
 ### 4. Helper 的分层：四层各有一套

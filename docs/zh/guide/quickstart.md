@@ -104,8 +104,9 @@ class NoteBusiness
 }
 ```
 
-`Helper` 是业务层自己的助手（`src/Business/Helper.php`，内部 [`use DuckPhp\Foundation\Business\BusinessHelper;`](../reference/Foundation-Business-BusinessHelper.md)），脚手架自带。
-//TODO  Helper 的作用
+`Helper` 是业务层自己的助手（`src/Business/Helper.php`，一行 [`extends DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)），脚手架自带。
+
+**它的作用是把「业务层能用什么」固定成一个类**：`Helper::BusinessThrowOn()` / `Helper::Config()` / `Helper::Cache()` 这些静态方法都只是转发到对应组件（`CoreHelper`/`Configer`/`Cache`…），业务代码因此不必到处 `use` 框架类、也不直接 `new` 组件，测试里还能整体替换底层。同时**它只有本层的方法**：在这里写 `Helper::Show()`（输出）或 `Helper::GET()`（读请求）会直接「方法不存在」——这不是缺功能，而是**用类型系统表达的层边界**（[第 2-7 章](helper.md)）。完整方法表见 [Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)。
 
 ## 步骤 5：控制器（Controller）—— 收输入、出输出
 

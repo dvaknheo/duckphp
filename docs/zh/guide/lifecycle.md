@@ -161,7 +161,7 @@ RouteHookManager::_()->dump();                           // ★ 排查：把三�
 | [`RouteHookFunctionRoute`](../reference/Ext-RouteHookFunctionRoute.md)（扩展）     | `append-inner`                    | 函数式路由                                         |
 | [`RouteHookDirectoryMode`](../reference/Ext-RouteHookDirectoryMode.md)（扩展）     | `prepend-outter`                  | 目录模式（多入口）                                     |
 | [`RouteHookResource`](../reference/Component-RouteHookResource.md)             | `append-outter`                   | 静态资源代发（[第 3-3 章](static-resources.md)）        |
-//TODO 说明 Ext 的组件是不会自动加载的
+> 表里标**（扩展）**的四行属于 `Ext\*`：**`Ext\` 下的组件不会自动装配**，必须写进应用的 `ext`（如 `'ext' => [\DuckPhp\Ext\RouteHookFunctionRoute::class => true]`）才会挂上。注意这与「类能不能被加载」是两件事：AutoLoader 只负责按需把类文件载进来，**装配进当前相位**要靠 `ext` 声明。不标（扩展）的几行是框架默认已装的（`src/DuckPhp.php` 的 `common_options['ext']` 里：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`）。
 ### 7. 兼容性扩展：洋葱中间件（`Ext\MyMiddlewareManager`）
 
 说清楚定位：**中间件不是 DuckPHP 的主推路数**。框架的默认做法是「路由钩子 + 分层 Helper」，中间件只是给习惯了 Laravel/PSR-15 那种写法的人留的一层兼容，用得上就用，用不上不用管。

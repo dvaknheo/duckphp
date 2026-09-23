@@ -79,7 +79,11 @@ server {
 ```
 
 **为什么是 `/index.php$request_uri` 而不是 `/index.php?$query_string`**：框架读的是 `PATH_INFO`。`try_files … /index.php$request_uri` 让 nginx 内部把请求变成「执行 index.php，PATH_INFO = 原始路径」，框架才能知道用户请求的是 `/Note/index`。用 `?$query_string` 会把路径塞进查询串，路由就丢了（这正是那类「nginx 配好 rewrite 后全站 404」的原因）。
-//TODO 说明默认 Route 的 controller_fix_mistake_path_info 选项 兼容一般的 框架的 nginx 配置
+> **框架自带一层兜底**：`Route` 的选项 `controller_fix_mistake_path_info`（默认 `true`，源码 `src/Core/Route.php` 第 388–404 行 `getPathInfo()`）会在 `PATH_INFO` 为空**且** `SCRIPT_NAME` 恰好等于 `/index.php` 时，用 `parse_url(REQUEST_URI, PHP_URL_PATH)` 把路径补回 `PATH_INFO`（并写回 `$_SERVER`/SuperGlobal）。
+>
+> 也就是说：**「所有请求都丢给 `/index.php`、不带 PATH_INFO」这种通用框架式的 nginx 配置，DuckPhp 也照样能路由**（`try_files … /index.php?$query_string` 那类写法不会全站 404）。
+>
+> 它只在 `SCRIPT_NAME` 是 `/index.php` 时生效：入口文件改了名（如 `app.php`）、应用挂在子目录、或者你要自己完全掌控 PATH_INFO 时，仍以上面的 `$request_uri` 写法为准；若确认环境正确、想避免它把真实 404 误判成别的路径，可置 `'controller_fix_mistake_path_info' => false`。
 ## 四、生产用：Apache
 
 文档根同样指 `public/`，在 `public/.htaccess` 里：

@@ -54,11 +54,11 @@ tests/
 
 ### 2. 框架给测试的三件武器
 
-| 手段 | 解决什么 |
-|---|---|
-| `system_wrapper_replace()` | 替换 `header()`/`setcookie()`/`exit()` 等系统调用，让「输出/跳转」可断言（[第 2-7 章](helper.md)） |
-| [`Route::_()->PathInfo('note/show')`](../reference/Core-Route.md) | 不起 HTTP 也能把「当前请求路径」设成任意值，直接测路由与控制器（[第 2-2 章](routing.md)） |
-| [`SuperGlobal`](../reference/Core-SuperGlobal.md) / [`Runtime`](../reference/Core-Runtime.md) 等组件的可替换单例 | GET/POST/Session 都能喂假数据；`Runtime` 还能开输出缓冲 |
+| 手段                                                                                                      | 解决什么                                                                         |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `system_wrapper_replace()`                                                                              | 替换 `header()`/`setcookie()`/`exit()` 等系统调用，让「输出/跳转」可断言（[第 2-7 章](helper.md)） |
+| [`Route::_()->PathInfo('note/show')`](../reference/Core-Route.md)                                       | 不起 HTTP 也能把「当前请求路径」设成任意值，直接测路由与控制器（[第 2-2 章](routing.md)）                    |
+| [`SuperGlobal`](../reference/Core-SuperGlobal.md) / [`Runtime`](../reference/Core-Runtime.md) 等组件的可替换单例 | GET/POST/Session 都能喂假数据；`Runtime` 还能开输出缓冲                                    |
 
 ```php
 // 让 exit() 变成异常，从而断言"跳转确实发生了"
