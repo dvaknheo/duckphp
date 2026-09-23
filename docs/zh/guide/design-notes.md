@@ -76,5 +76,6 @@ var_dump(array_key_exists('我的选项', App::_()->options));  // 选项有没�
 ## 下一步
 
 - [第 4-9 章 性能调优与排错手册](troubleshooting.md)：症状 → 排查路径。
+- [第 4-11 章 过时与冷门的扩展类](deprecated-exts.md)：`src/Ext/` 里带 `@todo deprecate` 的类，以及"能用但不在推荐路径上"的冷门页。
 - [第 4-8 章 文档与参考手册维护](doc-maintenance.md)：改完怎么同步文档。
 - [参考手册维护指南](../reference-maintenance-guide.md)：参考手册侧的完整维护流程与陷阱表。

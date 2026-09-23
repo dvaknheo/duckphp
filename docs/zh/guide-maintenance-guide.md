@@ -134,12 +134,13 @@ for p, t in bad:
 
 ## 6. 下一轮的起手动作
 
-> 全书 41 章 + 4 附录已交付，所以这里的「下一轮」指的是**增量维护**（加新章、改现有章、跟源码同步）。
+> 全书 44 章 + 4 附录已交付（重写收尾时是 41 章；之后 2-9 拆出用户/管理员两章、本轮又加了 4-11），所以这里的「下一轮」指的是**增量维护**（加新章、改现有章、跟源码同步）。
 
 ```powershell
 $env:WSL_UTF8=1
 # 1) 基线复核（改文档前后各跑一次）
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-doc-links.py docs/zh"   # 期望 broken: 0
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/find-unmentioned-classes.py"  # 期望「从没被链到: 0」
 python3 <tmp>/drift.py --all                                                                        # reference 与源码一致性
 
 # 2) 改哪一章就守 §2 的四条约定：
@@ -301,3 +302,17 @@ python3 <tmp>/drift.py --all                                                    
 - 另：**落实作者在指南里留的全部 `//TODO`**（exception.md 3 条 + deployment/events×2/layers×2/lifecycle/quickstart/views/cli 共 10 条；`design-notes.md` 里那两处是「介绍源码 TODO」的正文，保留）：exception.md 的 3 条——① 异常报告器的装配点已移到入口类（`DuckPhp::initComponentsOfInner()`，源码 `src/DuckPhp.php` 第 132–137 行），`ExceptionManager` 不再读这两个选项；② 条件抛不再推荐 `Ext\ThrowOnTrait`（框架一处不用），推荐 `Helper::ThrowOn()` 家族；③ `Ext\ExceptionWrapper` 标注为**不推荐**（改用 `Helper::XpCall()` 或直接 `try/catch`）。同时把「报告器分发」那节的旧三步（按命名空间 + `defaultException()`）改成现状（短类名拼 `on{类名}()`，兜底 `App::_()->_OnDefaultException()`）。
 
 **验收**：`docs/zh/guide` 里 `HelperTrait` / 旧类名 / `use_*_view` / `insteadof` **归零**（只剩 `Model\ModelHelperTrait` 与「旧选项已失效」的说明）；`check-doc-links.py docs/zh` → `broken: 0`；全量测试 `OK (95 tests, 658 assertions)`、LibCoverage `4876/4876 (100.00%)`；`helper.md` 198 行（≤400）。
+
+## 16. M8 / 本轮：新增第 4-11 章「过时与冷门的扩展类」+ 参考页孤儿清零
+
+**背景**：新增的 `docs/scripts/find-unmentioned-classes.py`（**纯链接反查**：扫 `docs/zh/guide/*.md` 里指向 `../reference/*.md` 的链接，按页名比对）首扫发现参考手册有 **19 个类页指南从没链到**，其中 7 个是 `src/Ext/` 里「框架内部不用、指南也没写」的扩展。作者两条裁定：① 这些 Ext 类在第四卷专门写一章介绍；② 那些接口页链到各自的**实现章**里说明。
+
+**做了什么**
+
+- 新增 `deprecated-exts.md`（4-11，122 行）。判据只有一个、可复现：源码里的 `@todo deprecate`（`grep -rn "@todo deprecate" src/` 命中 6 个类：`StaticReplacer`、`MyFacadesBase`、`MyFacadesAutoLoader`、`ExtendableStaticCallTrait`、`ExceptionWrapper`、`HookChain`）。逐个写清「它做什么 / 为什么过时 / 现在用什么」，并如实写出反例：`MiniRoute`、`Misc`、`ThrowOnTrait` **没有**废弃标记，但同样在推荐路径外（`grep -rn "MiniRoute" src/` 只命中它自己）；`Misc` 的五个能力逐一给替代（`RecordsetH` → `__h()`、`RecordsetUrl` → `__url()`/`Route::Url`、`Import` → Composer、`DI` → 相位容器），只有 `CallAPI()` **没有**替代品，明说「需要就照用」。
+- 顺手核实并写进正文的两个事实：`MiniRoute` 无法通过选项替换框架路由（`DuckPhp.php` 174 行直接取 `Route::_()`，且它不是 `Route` 子类）；`Core\ComponentBase` **没有**真的 `implements ComponentInterface`（`src/Core/ComponentBase.php` 12 行是注释掉的）——所以那是「鸭子类型」契约。
+- 总目录 `index.md`：加 4-11 行，章数 43 → 44（`index.md` 顶部那句是全库唯一的活章数声明）。
+- 接口/冷门页按「链到实现章」补链：`user.md`（`UserLoginActionInterface`、`UserLoginServiceInterface`）、`admin.md`（`AdminLoginActionInterface`、`AdminServiceInterface`、`AdminLoginServiceInterface`）、`database.md`（`PagerInterface`）、`http-server.md`（`HttpServerInterface`，换实现要满足的四个方法）、`custom-component.md`（`ComponentInterface`）、`layers.md`（`Business\Base`，顺带把四层基类补齐）、`installer.md`（`RouteHookWebInstallerView`：纯视图文件、改外观走 `web_installer_view`）、`exception.md`（`ExitException`：`use_exit_exception` 下 `SystemWrapper::exit()` 抛它、`ExceptionManager` 原样放行）。
+- 同时**纠正一处误导**：`database.md` 的 SQL 导出表原来把 `ByMysql`/`ByPgsql`/`BySqlite` 并列成一行，实际 `SqlDumperSupporter` 的默认映射只有 mysql 与 sqlite（`src/Ext/SqlDumperSupporter.php` 16-19 行），pgsql 要自己加 `database_driver_SqlDumperSupporter_map`。
+
+**验收**：`find-unmentioned-classes.py` → **109/109 个类页全被链到、孤儿 0**（补链前 19）；`check-doc-links.py docs/zh` → **2099 条链接 0 死链**；`deprecated-exts.md` **122 行**（≤400）；`src/` 未改动（`git diff -- src` 为空，无需跑测试）。新工具已登记进 `coverage.md`（§5 工具表）与两份维护指南。
