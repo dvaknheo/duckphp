@@ -10,12 +10,9 @@ spl_autoload_register([\DuckPhp\Core\AutoLoader::class ,'DuckPhpSystemAutoLoader
 
 $options=[
     'is_debug'=>true,
-    //'path'=>getcwd(),
-    'cli_command_with_common' => false,
-    'cli_command_with_fast_installer' => false,
-    'allow_require_ext_app' => false,
-    'cli_command_classes' =>[
-        DuckPhpInstaller::class,
+    'path'=>__DIR__,
+    'ext' => [
+        DuckPhpInstaller::class  => true,
     ],
 ];
 DuckPhp::RunQuickly($options);

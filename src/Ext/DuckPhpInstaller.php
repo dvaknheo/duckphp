@@ -22,6 +22,12 @@ class DuckPhpInstaller extends ComponentBase
         'verbose' => false,
         'help' => false,
     ];
+    public function init(array $options, ?object $context = null)
+    {
+        parent::init($options, $context);
+        Console::_()->regCommandClassSingle($this->context()->getThisCommandPrefix(), static::class, 'command_');
+        return $this;
+    }
     /**
      * create new project in current diretory.
      */
@@ -88,17 +94,21 @@ EOT;
     public function newProject($options = [])
     {
         $namespace = $options['namespace'] ?? true;
+        $path = $options['path'] ?? true;
+        if (empty($path) || $path === true) {
+            $path = realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../../').DIRECTORY_SEPARATOR;
+        }
+
         if (empty($namespace) || $namespace === true) {
-            $namespace = $this->getNameSpaceByComposer($options['path']);
+            $namespace = $this->getNameSpaceByComposer($path);
             if (!$namespace) {
                 $namespace = $this->getNamespaceByConsole();
             }
         }
-
         $this->options = array_merge($this->options, $options);
-        $this->options['namespace'] = $namespace;
+        $this->options['namespace'] = rtrim($namespace, '\\');
         $source = __DIR__ .'/../../skeleton';
-        $dest = $this->options['path'];
+        $dest = $path;
 
         $this->dumpDir($source, $dest, $this->options['force']);
     }
@@ -165,6 +175,15 @@ EOT;
                 $data = str_replace('class App extends', 'class '.$ns_basename.'App extends', $data);
             }
             $flag = file_put_contents($dest_file, $data);
+
+            if (str_replace('\\', '/', $short_file_name) === 'public/index.php') {
+                // rename class App to class {namespace_basename}App to match the new file name
+                $ns_basename = $this->getNamespaceBasename();
+                $data = str_replace('System\\App', "System\\{$ns_basename}App", $data);
+            }
+            $flag = file_put_contents($dest_file, $data);
+
+
 
             if ($this->options['verbose']) {
                 echo $dest_file;

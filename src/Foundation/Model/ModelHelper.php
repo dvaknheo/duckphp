@@ -6,7 +6,6 @@
 
 namespace DuckPhp\Foundation\Model;
 
-
 class ModelHelper
 {
     use ModelHelperTrait;

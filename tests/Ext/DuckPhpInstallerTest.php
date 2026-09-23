@@ -141,7 +141,27 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('', $rm->invoke($installer));
         $installer->options['namespace'] = 'NSX';
         $this->assertSame('NSX', $rm->invoke($installer));
-        
+
+        // newProject() 不传 path 时：用 $_SERVER['SCRIPT_FILENAME'] 往上两级推断项目目录（line 99）。
+        // 把 SCRIPT_FILENAME 指到本测试自己的临时目录，既覆盖这一行，又不至于真往仓库根写文件。
+        $path_auto = $path . '_auto';
+        mkdir($path_auto . '/deep/tmp', 0777, true);
+        file_put_contents(
+            $path_auto . '/composer.json',
+            json_encode(['autoload' => ['psr-4' => ['AutoNS' => 'src']]])
+        );
+        $script_filename = $_SERVER['SCRIPT_FILENAME'];
+        $_SERVER['SCRIPT_FILENAME'] = $path_auto . '/deep/tmp/index.php';
+        $_SERVER['argv'] = ['-', 'new', '--verbose'];
+        DuckPhpInstaller::_()->command_new();
+        $_SERVER['SCRIPT_FILENAME'] = $script_filename;
+        // 骨架落在 SCRIPT_FILENAME 上两级那个目录，命名空间取自那里的 composer.json
+        $this->assertFileExists($path_auto . '/src/System/AutoNSApp.php');
+        $this->assertStringContainsString(
+            'class AutoNSApp extends DuckPhp',
+            (string) file_get_contents($path_auto . '/src/System/AutoNSApp.php')
+        );
+
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
         \LibCoverage\LibCoverage::End();

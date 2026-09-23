@@ -113,7 +113,7 @@ class PermissionMenu extends ComponentBase
         // Convert to relative path
         $prefix = App::_()->options['controller_url_prefix'] ?? '';
         foreach ($routes as &$route) {
-            $route['url'] = substr($route['url'], 1+strlen($prefix));
+            $route['url'] = substr($route['url'], 1 + strlen($prefix));
         }
         unset($route);
         return $routes;

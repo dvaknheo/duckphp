@@ -90,7 +90,7 @@ class RouteLister extends ComponentBase
         }
 
         if ($method_prefix && substr($method, 0, strlen($method_prefix)) !== $method_prefix) {
-            return null; //  example: do_action_post 
+            return null; //  example: do_action_post
         }
         $last = substr($method, strlen($method_prefix));
         [$first, $last] = $this->doControllerClassAdjust($first, $last);
@@ -221,7 +221,7 @@ class RouteLister extends ComponentBase
             if (!isset($path_info)) {
                 continue;
             }
-            $path_info = '/'. ltrim($path_info,'/');
+            $path_info = '/'. ltrim($path_info, '/');
             $ret[$full_class.'->'.$function] = $path_info;
         }
         return $ret;

@@ -37,13 +37,13 @@ Helper::system_wrapper_replace([
 
 ### 1. 五种层次：想改什么 → 动哪里
 
-| 层次        | 手段                                                                       | 生效范围       | 典型用途                                     |     |
-| --------- | ------------------------------------------------------------------------ | ---------- | ---------------------------------------- | --- |
-| **类级**    | `override_class` 选项、`controller_class_map`、`Helper::replaceController()` | 整个应用/指定控制器 | 换成自己写的实现（`override_class` 会让应用直接变成另一个类）  |     |
-| **文件级**   | `getOverrideableFile()` 的相位回退（`view/`、`config/`、`res/`）                  | 按相位逐层      | 子应用覆盖视图/配置/资源（[第 3-5 章](overriding.md)）   |     |
-| **单例级**   | `Xxx::_($newObject)`                                                     | 当前相位       | 换 View 引擎、换 Cache 实现、测试替身                |     |
-| **系统调用级** | `Helper::system_wrapper_replace()`（[`SystemWrapper`](../reference/Core-SystemWrapper.md)）                      | 全进程        | 拦 `header`/`exit`/`session_start`，做测试或常驻 |     |
-| **组件级**   | 组件自己的选项：`database_class`、`view_*`、`*_skip_replace`                       | 该组件        | 换 [Db](../reference/Db-Db.md) 实现、关掉自动替换                           |     |
+| 层次        | 手段                                                                                        | 生效范围       | 典型用途                                     |     |
+| --------- | ----------------------------------------------------------------------------------------- | ---------- | ---------------------------------------- | --- |
+| **类级**    | `override_class` 选项、`controller_class_map`、`Helper::replaceController()`                  | 整个应用/指定控制器 | 换成自己写的实现（`override_class` 会让应用直接变成另一个类）  |     |
+| **文件级**   | `getOverrideableFile()` 的相位回退（`view/`、`config/`、`res/`）                                   | 按相位逐层      | 子应用覆盖视图/配置/资源（[第 3-5 章](overriding.md)）  |     |
+| **单例级**   | `Xxx::_($newObject)`                                                                      | 当前相位       | 换 View 引擎、换 Cache 实现、测试替身                |     |
+| **系统调用级** | `Helper::system_wrapper_replace()`（[`SystemWrapper`](../reference/Core-SystemWrapper.md)） | 全进程        | 拦 `header`/`exit`/`session_start`，做测试或常驻 |     |
+| **组件级**   | 组件自己的选项：`database_class`、`view_*`、`*_skip_replace`                                        | 该组件        | 换 [Db](../reference/Db-Db.md) 实现、关掉自动替换  |     |
 
 ### 2. 类级：`override_class` 与 `controller_class_map`
 

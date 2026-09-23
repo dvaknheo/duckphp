@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace DuckPhp\Component;
 
-use DuckPhp\Ext\RouteLister;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
+use DuckPhp\Ext\RouteLister;
 use DuckPhp\HttpServer\HttpServer;
 
 class Command extends ComponentBase
