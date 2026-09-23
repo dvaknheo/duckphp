@@ -12,17 +12,17 @@
 
 ## 1. 一览
 
-| 类 | 源码标记 | 它做什么 | 建议 |
-|---|---|---|---|
-| [`Ext\ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md) | `@todo deprecate` | 把 PHP 错误包装成异常 | 用 `ExceptionManager`（[第 2-11 章](exception.md)） |
-| [`Ext\HookChain`](../reference/Ext-HookChain.md) | `@todo deprecate` | 洋葱式中间件链 | 路由钩子与事件（[第 2-10 章](lifecycle.md)） |
-| [`Ext\StaticReplacer`](../reference/Ext-StaticReplacer.md) | `@todo deprecate` | 把 `$GLOBALS`/函数静态/类静态搬进组件 | 新代码别用，见 §2.1 |
-| [`Ext\MyFacadesBase`](../reference/Ext-MyFacadesBase.md) | `@todo deprecate` | 门面基类：`__callStatic()` 转发到真实类 | 用 `@method` 注解，见 §2.2 |
-| [`Ext\MyFacadesAutoLoader`](../reference/Ext-MyFacadesAutoLoader.md) | `@todo deprecate` | 自动 `eval` 出门面类 | 同上 |
-| [`Ext\ExtendableStaticCallTrait`](../reference/Ext-ExtendableStaticCallTrait.md) | `@todo deprecate` | 运行时给类登记静态方法 | 手写 `__callStatic()`，见 §2.3 |
-| [`Ext\MiniRoute`](../reference/Ext-MiniRoute.md) | 无 | `Core\Route` 的早期子集 | [`Core\Route`](../reference/Core-Route.md)，见 §2.4 |
-| [`Ext\Misc`](../reference/Ext-Misc.md) | 无 | 杂项工具集 | 见 §2.5 |
-| [`Ext\ThrowOnTrait`](../reference/Ext-ThrowOnTrait.md) | 无 | 给异常类加一行 `ThrowOn()` | [第 2-11 章](exception.md) 的分层 `ThrowOn()` |
+| 类                                                                                | 源码标记              | 它做什么                         | 建议                                                |
+| -------------------------------------------------------------------------------- | ----------------- | ---------------------------- | ------------------------------------------------- |
+| [`Ext\ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md)                   | `@todo deprecate` | 把 PHP 错误包装成异常                | 用 `ExceptionManager`（[第 2-11 章](exception.md)）    |
+| [`Ext\HookChain`](../reference/Ext-HookChain.md)                                 | `@todo deprecate` | 洋葱式中间件链                      | 路由钩子与事件（[第 2-10 章](lifecycle.md)）                 |
+| [`Ext\StaticReplacer`](../reference/Ext-StaticReplacer.md)                       | `@todo deprecate` | 把 `$GLOBALS`/函数静态/类静态搬进组件    | 新代码别用，见 §2.1                                      |
+| [`Ext\MyFacadesBase`](../reference/Ext-MyFacadesBase.md)                         | `@todo deprecate` | 门面基类：`__callStatic()` 转发到真实类 | 用 `@method` 注解，见 §2.2                             |
+| [`Ext\MyFacadesAutoLoader`](../reference/Ext-MyFacadesAutoLoader.md)             | `@todo deprecate` | 自动 `eval` 出门面类               | 同上                                                |
+| [`Ext\ExtendableStaticCallTrait`](../reference/Ext-ExtendableStaticCallTrait.md) | `@todo deprecate` | 运行时给类登记静态方法                  | 手写 `__callStatic()`，见 §2.3                        |
+| [`Ext\MiniRoute`](../reference/Ext-MiniRoute.md)                                 | 无                 | `Core\Route` 的早期子集           | [`Core\Route`](../reference/Core-Route.md)，见 §2.4 |
+| [`Ext\Misc`](../reference/Ext-Misc.md)                                           | 无                 | 杂项工具集                        | 见 §2.5                                            |
+| [`Ext\ThrowOnTrait`](../reference/Ext-ThrowOnTrait.md)                           | 无                 | 给异常类加一行 `ThrowOn()`          | [第 2-11 章](exception.md) 的分层 `ThrowOn()`          |
 
 > `MiniRoute` / `Misc` **没有**废弃标记，但它们同样在推荐路径外：`grep -rn "MiniRoute" src/` 只命中它自己的文件——框架内部没有任何使用点。这也是本章要交代它们的原因。
 
@@ -75,13 +75,14 @@ $ok = \DuckPhp\Ext\MiniRoute::_()->run();      // 解析并调用控制器
 
 `Misc` 是若干杂项工具的大杂烩，逐项看就明白它为什么被边缘化：
 
-| 方法 | 实际行为 | 现在用什么 |
-|---|---|---|
-| `Import($file)` | `include_once {path}/{path_lib}/{file}.php`，`path_lib` 默认 `'lib'` | Composer 自动加载（`src/` 里除它自己**没有任何地方**读 `path_lib`） |
-| `RecordsetH($data, $cols)` | 对指定列做 HTML 转义 | `CoreHelper::H()` / 全局 `__h()`（[第 2-17 章](security-performance.md)） |
-| `RecordsetUrl($data, $cols_map)` | 按 `{列名}` 模板替换后经 `Route::Url` 生成 URL | 可留用；等价的还有 `__url()` |
-| `DI($name, $object = null)` | 读/写组件**实例内**的一个数组（`$this->_di_container`） | 跨类共享请用相位容器（[第 4-1 章](container-phases.md)）——这个 DI 只在 `Misc::_()` 这一份实例里可见 |
-| `CallAPI($class, $method, $input, $interface)` | 反射调用：按参数名从 `$input` 取值、按 `bool/int/float/string` 过滤、缺参抛 `ReflectionException`、可选校验类实现了某接口 | 没有替代品；需要就照用 |
+| 方法                                             | 实际行为                                                                                      | 现在用什么                                                                     |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `Import($file)`                                | `include_once {path}/{path_lib}/{file}.php`，`path_lib` 默认 `'lib'`                         | Composer 自动加载（`src/` 里除它自己**没有任何地方**读 `path_lib`）                         |
+| `RecordsetH($data, $cols)`                     | 对指定列做 HTML 转义                                                                             | `CoreHelper::H()` / 全局 `__h()`（[第 2-17 章](security-performance.md)）       |
+| `RecordsetUrl($data, $cols_map)`               | 按 `{列名}` 模板替换后经 `Route::Url` 生成 URL                                                       | 可留用；等价的还有 `__url()`                                                       |
+| `DI($name, $object = null)`                    | 读/写组件**实例内**的一个数组（`$this->_di_container`）                                                 | 跨类共享请用相位容器（[第 4-1 章](container-phases.md)）——这个 DI 只在 `Misc::_()` 这一份实例里可见 |
+| `CallAPI($class, $method, $input, $interface)` | 反射调用：按参数名从 `$input` 取值、按 `bool/int/float/string` 过滤、缺参抛 `ReflectionException`、可选校验类实现了某接口 | 没有替代品；需要就照用                                                               |
+|                                                |                                                                                           |                                                                           |
 
 **唯一还值得了解的**是 `CallAPI()`：它做的是"把 `$_POST` 按目标方法的签名喂进去"，这在 RPC / 表单服务化的场景里比手写 `func_get_args()` 稳。其余四项用上一列的现代写法更省事。
 
@@ -104,11 +105,11 @@ trait ThrowOnTrait
 
 这几类在指南正文里也不常见，但它们**没有过时**，只是用途固定：
 
-| 类/文件 | 定位 | 在哪儿讲到 |
-|---|---|---|
-| [`Ext\RouteHookWebInstallerView`](../reference/Ext-RouteHookWebInstallerView.md) | 安装向导的**内置视图模板**（文件里没有任何 class/function，被 `RouteHookWebInstaller::show()` `include`） | [第 3-6 章](installer.md) |
-| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) | SQL 导出的方言实现，**默认映射里就有**这两个 | [第 2-5 章](database.md) |
-| [`Ext\SqlDumperSupporterByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md) | 同样是方言实现，但**默认映射里没有**它：要自己加 `database_driver_SqlDumperSupporter_map`（`src/Ext/SqlDumperSupporter.php` 16-19 行） | [第 2-5 章](database.md) |
+| 类/文件                                                                                                                                            | 定位                                                                                                            | 在哪儿讲到                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| [`Ext\RouteHookWebInstallerView`](../reference/Ext-RouteHookWebInstallerView.md)                                                                | 安装向导的**内置视图模板**（文件里没有任何 class/function，被 `RouteHookWebInstaller::show()` `include`）                           | [第 3-6 章](installer.md) |
+| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) | SQL 导出的方言实现，**默认映射里就有**这两个                                                                                    | [第 2-5 章](database.md)  |
+| [`Ext\SqlDumperSupporterByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md)                                                                | 同样是方言实现，但**默认映射里没有**它：要自己加 `database_driver_SqlDumperSupporter_map`（`src/Ext/SqlDumperSupporter.php` 16-19 行） | [第 2-5 章](database.md)  |
 
 ## 4. 参考手册
 

@@ -49,11 +49,11 @@ class HelloBanner extends ComponentBase
 
 两者都 [`extends DuckPhp\Core\ComponentBase`](../reference/Core-ComponentBase.md)，都靠 `::_(new Xxx())->init($options, $context)` 被装配。差别只在**谁初始化它、默认开不开**：
 
-| | 组件 `DuckPhp\Component\*` | 扩展 `DuckPhp\Ext\*` |
-|---|---|---|
-| 例子 | `DbManager`、[`Configer`](../reference/Component-Configer.md)、[`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) | `JsonView`、[`PermissionMenu`](../reference/Ext-PermissionMenu.md)、[`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md) |
-| 装载方式 | 框架在 `initComponents()` 里按内置表装载（部分标为 public，见第 4-1 章） | 由你在 `options['ext']` 里声明才装载 |
-| 默认状态 | 多数默认启用 | 全部默认关闭 |
+|      | 组件 `DuckPhp\Component\*`                                                                                                      | 扩展 `DuckPhp\Ext\*`                                                                                                                     |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 例子   | `DbManager`、[`Configer`](../reference/Component-Configer.md)、[`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) | `JsonView`、[`PermissionMenu`](../reference/Ext-PermissionMenu.md)、[`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md) |
+| 装载方式 | 框架在 `initComponents()` 里按内置表装载（部分标为 public，见第 4-1 章）                                                                          | 由你在 `options['ext']` 里声明才装载                                                                                                            |
+| 默认状态 | 多数默认启用                                                                                                                        | 全部默认关闭                                                                                                                                 |
 
 注意「扩展」也是普通类：[`JsonView extends View`](../reference/Core-View.md)、[`MyMiddlewareManager extends ComponentBase`](../reference/Ext-MyMiddlewareManager.md)——扩展可以就是另一个组件的子类。
 
@@ -79,16 +79,16 @@ if ($context !== null) { $this->initContext($context); }
 
 `ext` 是 `[类名 => 取值]` 表。取值决定装载方式（判定逻辑在 `src/Core/KernelTrait.php` 375-421 行）：
 
-| 取值 | 常量（值） | 行为 | 什么时候用 |
-|---|---|---|---|
-| `false` / `null` | `EXT_DISABLE`(0) | 不装载 | 关掉框架默认开的扩展（如 [`GlobalEvent`](../reference/Component-GlobalEvent.md) 默认就是 `EXT_DISABLE`） |
-| `true` | `EXT_DEFAULT`(1) | 用传入的 `$default` 模式装载 | 最常见的「打开」 |
-| 数组 | — | `init(数组, $this)` | 只给这个扩展传它自己的选项 |
-| `'@方法名'` | — | 调用本应用的该方法取返回值，再按返回值递归处理 | 选项要运行期决定（`overriding.md` 的 `RouteHookRewrite::class => '@myRewriteOptions'`） |
-| 选项键名字符串 | — | 取 `$this->options[该键]` 的值再递归处理 | 用某个开关选项控制扩展开/关 |
-| `App::EXT_FOLLOW_APP`(2) | — | `init($this->options, $this)`：拿应用全部选项初始化 | 框架内部对 [`Console`](../reference/Core-Console.md)/[`Route`](../reference/Core-Route.md) 的用法（`src/Core/KernelTrait.php` 329、335 行） |
-| `App::EXT_SKIP_INIT`(-1) | — | 只 `::_()` 取实例，**不 init** | 想延迟初始化、或只要单例占位 |
-| `App::EXT_RENEW`(3) | — | 取旧实例的选项，**换新对象**重新 init | 每次请求重建（`prepareServe()` 以 `$default=EXT_RENEW` 走动态扩展，`src/Core/KernelTrait.php` 501-506 行） |
+| 取值                       | 常量（值）            | 行为                                       | 什么时候用                                                                                                                           |
+| ------------------------ | ---------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `false` / `null`         | `EXT_DISABLE`(0) | 不装载                                      | 关掉框架默认开的扩展（如 [`GlobalEvent`](../reference/Component-GlobalEvent.md) 默认就是 `EXT_DISABLE`）                                         |
+| `true`                   | `EXT_DEFAULT`(1) | 用传入的 `$default` 模式装载                     | 最常见的「打开」                                                                                                                        |
+| 数组                       | —                | `init(数组, $this)`                        | 只给这个扩展传它自己的选项                                                                                                                   |
+| `'@方法名'`                 | —                | 调用本应用的该方法取返回值，再按返回值递归处理                  | 选项要运行期决定（`overriding.md` 的 `RouteHookRewrite::class => '@myRewriteOptions'`）                                                    |
+| 选项键名字符串                  | —                | 取 `$this->options[该键]` 的值再递归处理           | 用某个开关选项控制扩展开/关                                                                                                                  |
+| `App::EXT_FOLLOW_APP`(2) | —                | `init($this->options, $this)`：拿应用全部选项初始化 | 框架内部对 [`Console`](../reference/Core-Console.md)/[`Route`](../reference/Core-Route.md) 的用法（`src/Core/KernelTrait.php` 329、335 行） |
+| `App::EXT_SKIP_INIT`(-1) | —                | 只 `::_()` 取实例，**不 init**                 | 想延迟初始化、或只要单例占位                                                                                                                  |
+| `App::EXT_RENEW`(3)      | —                | 取旧实例的选项，**换新对象**重新 init                  | 每次请求重建（`prepareServe()` 以 `$default=EXT_RENEW` 走动态扩展，`src/Core/KernelTrait.php` 501-506 行）                                      |
 
 框架内置的实际用法（照抄即可）：[`DuckPhp`](../reference/DuckPhp.md) 默认 `ext` 表（`src/DuckPhp.php` 35-41 行）里 `Lang`/`RouteHookRewrite`/[`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md)/[`RouteHookResource`](../reference/Component-RouteHookResource.md) 是 `true`，[`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) 是选项键名 `'path_info_compact_enable'`；`initComponentsOfRoot()` 里 `DbManager`/[`RedisManager`](../reference/Component-RedisManager.md) 用 `EXT_DEFAULT`、[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)/[`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/`GlobalEvent` 用 `EXT_DISABLE`（`src/DuckPhp.php` 111-117 行）。
 
@@ -147,14 +147,14 @@ MyExt::_(new MyExt())->init(['my_option' => 1], App::_());
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| 给扩展传了选项却没生效 | 键没声明在该扩展的 `public $options` 里，被白名单裁掉 | 在扩展类里补上该键（带默认值） |
-| 扩展的钩子从不执行 | `initContext()` 没挂钩子，或挂的位置/返回值不对 | 照 `RouteHookWebInstaller::initContext()` 写；确认返回 `false` 放行 |
-| `ext` 里写 `'@method'` 报方法不存在 | 方法必须是**本应用类**上的（可 protected） | 在 [App](../reference/Core-App.md) 子类里加该方法，或改用数组取值 |
-| 扩展里 `App::_()` 拿到的是别的应用 | 扩展在子相位被 init，`App::_()` 是「当前应用」 | 用传入的 `$context`（init 的第二个参数），它就是宿主应用 |
-| 想替换 `Db` 却继承了 `DbManager` | 换错层 | 实现 `DbInterface` 填 `database_class` 选项；只有要改连接管理才动 [DbManager](../reference/Component-DbManager.md) |
-| 重写 `init()` 忘了 `parent::init()` | 选项白名单与 `is_inited` 都没走 | 第一句必须 `parent::init($options, $context)` |
+| 现象                              | 原因                                   | 改法                                                                                                 |
+| ------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| 给扩展传了选项却没生效                     | 键没声明在该扩展的 `public $options` 里，被白名单裁掉 | 在扩展类里补上该键（带默认值）                                                                                    |
+| 扩展的钩子从不执行                       | `initContext()` 没挂钩子，或挂的位置/返回值不对     | 照 `RouteHookWebInstaller::initContext()` 写；确认返回 `false` 放行                                         |
+| `ext` 里写 `'@method'` 报方法不存在     | 方法必须是**本应用类**上的（可 protected）         | 在 [App](../reference/Core-App.md) 子类里加该方法，或改用数组取值                                                  |
+| 扩展里 `App::_()` 拿到的是别的应用         | 扩展在子相位被 init，`App::_()` 是「当前应用」      | 用传入的 `$context`（init 的第二个参数），它就是宿主应用                                                               |
+| 想替换 `Db` 却继承了 `DbManager`       | 换错层                                  | 实现 `DbInterface` 填 `database_class` 选项；只有要改连接管理才动 [DbManager](../reference/Component-DbManager.md) |
+| 重写 `init()` 忘了 `parent::init()` | 选项白名单与 `is_inited` 都没走               | 第一句必须 `parent::init($options, $context)`                                                           |
 
 ## 下一步
 
