@@ -220,8 +220,9 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
 
         View::_()->data['__view_data']['header'] = $header;
         View::_()->data['__view_data']['footer'] = $footer;
-        // 也写进 $data：_Show() 末尾会把 $data merge 进 View::_()->data，若 addExtViewData
-        // 回调塞过 __view_data，只写 View::_()->data 会被整体覆盖，header/footer 就到不了视图。
+        // Write into $data too: _Show() merges $data into View::_()->data at the end, so when an
+        // addExtViewData callback has already set __view_data, writing only View::_()->data would be
+        // overwritten by that merge and the header/footer would never reach the view.
         $data['__view_data']['header'] = $header;
         $data['__view_data']['footer'] = $footer;
 

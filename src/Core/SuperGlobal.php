@@ -27,7 +27,7 @@ class SuperGlobal extends ComponentBase
      */
     protected function initOptions(array $options): void
     {
-        // 每次 init 都加载超全局变量，确保多相位下数据可用
+        // Reload superglobals on every init, so multi-phase requests keep seeing their data.
         $this->_LoadSuperGlobalAll();
         
         if ($this->options['superglobal_auto_define']) {
