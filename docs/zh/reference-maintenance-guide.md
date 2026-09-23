@@ -78,6 +78,7 @@
 |---|---|
 | `docs/scripts/gen-reference.php` | `facts <src-rel>` 打印解析结果；`skeleton [--out DIR] [--file REL]` 生成骨架；`verify --file <md>` 比对方法/选项 |
 | `docs/scripts/gen-route.php` | 极简版骨架生成（Route 风格，只抓声明/方法行/options 原文） |
+| `docs/scripts/find-unmentioned-classes.py` | **反查孤儿页**：扫 `docs/zh/guide/*.md` 里指向 `../reference/*.md` 的链接，报「指南从没链到」的类页（`--all` 另列只链 1 次的；纯链接判定，正文写了类名但没挂链接不算） |
 
 > ⚠️ **`gen-reference.php verify` 不可全信**：对 `Core/App.php` 这类“`use KernelTrait { … as … }` 并 override”的大文件，它可能漏列方法，从而把正确文档误报为“多了方法”。判定一致性请以下面第 6 节的**漂移扫描**为准。
 

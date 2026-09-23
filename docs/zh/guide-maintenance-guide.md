@@ -62,7 +62,7 @@
 | `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php` | 第三卷 3-1–3-7 | `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` |
 | `tests/data_for_tests/ZAllDemo` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由） | 同上换文件名；它是「起内置服务器 + curl 各路由比字节长度」的重型冒烟，改 `src/` 后长度会变（见 §5） |
 | `demo/`（`public/` 多入口 + `src/System/AppWithAllOptions.php`） | 第一卷、第二卷 | `php -S 127.0.0.1:8080 -t demo/public` 后访问各入口 |
-| `docs/scripts/`（7 个文档工具） | 全卷校验/生成 | `python3 docs/scripts/check-doc-links.py docs/zh`、`bash docs/scripts/check-non-ascii.sh` 等；**脚本随文档一起提交**，都从仓库根目录跑 |
+| `docs/scripts/`（8 个文档工具） | 全卷校验/生成 | `python3 docs/scripts/check-doc-links.py docs/zh`、`python3 docs/scripts/find-unmentioned-classes.py`、`bash docs/scripts/check-non-ascii.sh` 等；**脚本随文档一起提交**，都从仓库根目录跑 |
 
 **约定：新写的章里每一段示例代码，都要能在上述资产里指出出处，或已在对话中实跑过。** 第三卷的 7 章就是这么做的——每条章内结论都对应 `ZThirdDemoTest` 里的一条断言。
 

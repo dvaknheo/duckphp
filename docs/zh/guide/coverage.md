@@ -92,6 +92,7 @@ XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php
 | `docs/scripts/scan-options.py` | 扫描 `$options`/`$hidden_options`，报「读了没声明」的键与拼写变体 |
 | `tests/genoptions.php` | 生成选项相关的校验数据（composer 脚本 `genoptions`） |
 | `docs/scripts/check-doc-links.py` | 站内 md 链接校验（0 死链是本仓库的硬指标） |
+| `docs/scripts/find-unmentioned-classes.py` | 反查指南的参考页链接：报「从没被指南链到」的类页（`--all` 加列只链 1 次的） |
 | `docs/scripts/check-non-ascii.sh` | `src/` 纯 ASCII 校验（改 `src/` 后必跑） |
 
 > 这些脚本统一放在 **`docs/scripts/`** 下、跟文档一起提交：它们只服务文档生成与校验（不是框架运行时的一部分），放在 `docs/` 里能让「文档改动 + 生成器改动」同一次提交、同一个位置找到。命令一律从**仓库根目录**执行（如 `python3 docs/scripts/check-doc-links.py docs/zh`）。
