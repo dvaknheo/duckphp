@@ -134,7 +134,7 @@ $options = [
 | ------------------------------ | ----------------------------------------------------------- | ---------------------------------------------------------------------- |
 | `php cli.php` 进了 Web 流程而不是命令列表 | `cli_enable` 是 `false` 或没传                                  | 入口里给 `'cli_enable' => true`（[第 2-15 章](cli.md)）                          |
 | API 入口全 404                    | `RouteHookApiServer` 没启用，或 `apiserver_namespace` 与实际命名空间不符 | 对照 `demo/public/api.php` 检查 `ext` 选项                                   |
-| API 类不满足基类约束 → 静默 404          | `apiserver_base_class` 写错（**不是** `apiserver_interface`，那个键从没生效过） | 用 `~BaseApi` 形式（`~` = 当前 `namespace` + `apiserver_namespace`）             |
+| API 类不满足基类约束 → 静默 404          | `apiserver_base_class` 写错或漏配                                  | 用 `~BaseApi` 形式（`~` = 当前 `namespace` + `apiserver_namespace`）             |
 | RPC 客户端报「找不到类」                 | `JsonRpc\` 前缀的自动加载没注册                                       | 确认 `JsonRpcExt` 在 `ext` 里且 `jsonrpc_enable_autoload` 为真                |
 | 子目录部署后所有站内链接 404               | 手写了 `/xxx` 绝对路径                                             | 一律 `__url()`（[第 2-2 章](routing.md)）                                      |
 | 子目录部署后路由全 404                  | rewrite 没把子目录剥掉，或 PATH_INFO 丢失                              | [第 1-7 章](deployment.md) 的 nginx/apache 写法；或开 `path_info_compact_enable` |

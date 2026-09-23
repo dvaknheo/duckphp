@@ -22,8 +22,6 @@
 | `apiserver_use_singletonex` | `false` | 为 `true` 时经 `_()` 取单例（且动作名为 `G` 时拒绝）。 |
 | `apiserver_404_as_exception` | `false` | 未命中时是否抛 `ReflectionException("404")`。 |
 
-> ⚠️ **选项名统一为 `apiserver_*`**：旧拼法 `api_server_base_class` / `api_server_namespace` / `api_server_class_postfix` / `api_server_use_singletonex` / `api_server_404_as_exception` **在源码里已不存在**（见 `src/Ext/RouteHookApiServer.php` 的 `$options`）；传旧名不会报错，但**不生效**（组件退回默认值），表现为「明明配了命名空间却全 404」。更早还有一个 `api_server_interface`，它被 `apiserver_base_class` 取代（`~` 前缀表示当前命名空间）。
-
 ## 使用方式
 
 ```php

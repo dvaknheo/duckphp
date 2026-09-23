@@ -50,7 +50,6 @@ var_dump(array_key_exists('我的选项', App::_()->options));  // 选项有没�
 | 子应用的 `is_debug` 是「或」关系                                                                 | 生产环境看到堆栈                                                                                                                | `_IsDebug()` = 设置 or 根 or 本应用；上线前**全局搜 `'is_debug' => true`**（[第 2-17 章](security-performance.md)）                                                      |
 | `gen-reference.php verify` 会漏列方法                                                       | 把正确文档误报成"多了方法"                                                                                                          | trait 别名 override 的大文件（如 `Core/App.php`）；判一致性以漂移扫描为准（[第 4-8 章](doc-maintenance.md)）                                                                     |
 | 在 `docker/test-php74/` 里找不到 `.sh` 脚本                                                   | 起停脚本只放在 `docker/test-php84/` 里                                                                                          | 用 8.4 那套脚本，或直接用 `docker-compose` 起 php74（[第 4-7 章](coverage.md)）                                                                                        |
-| `RouteHookApiServer` 的选项名记成 `api_server_*`                                             | 那是旧拼法，源码里已统一为 `apiserver_*`                                                                                            | 传旧名**不报错也不生效**（组件退回默认值），症状是「配了命名空间仍全 404」；更早的 `api_server_interface` 已被 `apiserver_base_class` 取代（[第 4-6 章](multi-entry.md)、[参考页](../reference/Ext-RouteHookApiServer.md)） |
 
 ## 常见写法：判断流程与改框架的纪律
 

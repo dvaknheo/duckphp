@@ -319,16 +319,16 @@ python3 <tmp>/drift.py --all                                                    
 
 ## 17. M9 / 本轮：`RouteHookApiServer` 选项改名为 `apiserver_*`（含 src）
 
-**背景**：作者裁定把参考手册里的 `api_server_*` 统一为 `apiserver_*`。**关键点：这不能只改文档**——参考手册的 `options-index.md` / `options-by-class.md` 是 `gen-options-docs.php` 从 `src/` 的 `$options` 生成的，`--check` 会对拍；只改 md 的话下次重新生成就会把旧拼法写回来。所以按「全仓一起改」执行。
+**背景**：作者裁定把 `RouteHookApiServer` 的选项前缀统一为 `apiserver_`（改名前的那套拼法见提交 `77da0c5f`）。**关键点：这不能只改文档**——参考手册的 `options-index.md` / `options-by-class.md` 是 `gen-options-docs.php` 从 `src/` 的 `$options` 生成的，`--check` 会对拍；只改 md 的话下次重新生成就会把旧拼法写回来。所以按「全仓一起改」执行。
 
-**做了什么**（`api_server_` → `apiserver_`，共 49 处 / 8 个文件）
+**做了什么**（前缀一律改为 `apiserver_`，共 49 处 / 8 个文件）
 
 - `src/Ext/RouteHookApiServer.php` 12 处：5 个生效键（`base_class` / `namespace` / `class_postfix` / `use_singletonex` / `404_as_exception`）+ 2 条注释键（`config_cache_file` / `on_missing`）+ 6 处读取点；
 - `tests/Ext/RouteHookApiServerTest.php` 14 处；`demo/src/System/AppWithAllOptions.php` 5 处；`demo/public/api.php` 3 处；
 - 文档：`reference/Ext-RouteHookApiServer.md` 9 处、`guide/multi-entry.md` 6 处；两个生成页重跑 `gen-options-docs.php` 重建（11 行），`--check` → up to date。
 
-**顺手修的 docs/代码不一致（改名时暴露出来的）**：`demo/public/api.php` 用的是 `api_server_interface`——这个键**源码从来没读过**。`git log -S api_server_interface -- src` 显示它更早在 `487c9cbe` 就被 `base_class` 取代（那个提交的说明就是「改了 api_server 的一个选项」），而 demo 自 `1b165a7e` 起一直没跟进 ⇒ demo 里的基类约束**从未生效**。本轮一并改成 `apiserver_base_class`（`~BaseApi`），并在 `multi-entry.md`（正文 + 常见错误表）与 `design-notes.md` 陷阱表写明「不是 `apiserver_interface`，那个键从没生效过」。
+**顺手修的 docs/代码不一致（改名时暴露出来的）**：`demo/public/api.php` 里配的那个键**源码从来没读过**——`git log -S`（键名见 `77da0c5f` 的 diff）显示它更早在 `487c9cbe` 就被 `base_class` 取代（那个提交的说明就是「改了路由扩展的一个选项，调了好多文档」），而 demo 自 `1b165a7e` 起一直没跟进 ⇒ demo 里的基类约束**从未生效**。本轮一并改成 `apiserver_base_class`（`~BaseApi`），并在 `multi-entry.md` 常见错误表补了一条「`apiserver_base_class` 写错/漏配 ⇒ 静默 404」。
 
 **踩坑（我自己犯的，记下来）**：前一轮修作者提交红灯时（`bef4d50e`），我在 `src/GlobalAdmin/GlobalAdmin.php`、`src/GlobalUser/GlobalUser.php` 里写了**中文注释**——违反「`src/` 纯 ASCII」这条硬约束，而且当轮没跑 `check-non-ascii.sh`（以为只改了 CSS/逻辑），直到本轮才被闸门抓出 5 行（另 1 行来自 `0f612538 修复多相位`）。教训：**改了 `src/` 就当场跑 `check-non-ascii.sh`，别攒到下一轮**；中文说明写在提交信息里、不写在源码注释里。本轮已把 5 行全改成英文注释。
 
-**验收**：`check-non-ascii.sh` → **Total non-ASCII lines: 0**；`gen-options-docs.php --check` → up to date；`check-doc-links.py docs/zh` → **2103 条链接 0 死链**；全量测试与覆盖率见下；`grep -rn api_server_ src tests demo docs/zh` 只剩 2 处**故意保留**的「旧名已失效」说明（参考页 + 陷阱表）。
+**验收**：`check-non-ascii.sh` → **Total non-ASCII lines: 0**；`gen-options-docs.php --check` → up to date；`check-doc-links.py docs/zh` → **2103 条链接 0 死链**；全量测试与覆盖率见下；作者裁定**不保留旧拼法的说明**（旧名不再出现在任何文档里，需要时从提交 `77da0c5f` 的 diff 取），`grep -rn` 旧拼法在全仓 md/php 里为 **0**。
