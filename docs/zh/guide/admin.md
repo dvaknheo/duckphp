@@ -53,15 +53,15 @@ public function update()
 
 [DuckPhp\GlobalAdmin\GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md) 实现 [`AdminActionInterface`](../reference/GlobalAdmin-AdminActionInterface.md)，提供：
 
-| 入口 | 说明 |
-|---|---|
-| `Helper::Admin()` / `Helper::AdminId()` / `Helper::AdminName()` | 当前管理员（`AdminId()` 默认 `check_login=true`，未登录抛 `AdminException`） |
-| `Helper::AdminService()` | 本地 Service（`admin_callback_for_local_service`） |
-| `login($post)` / `logout()`（源码 `src/GlobalAdmin/GlobalAdmin.php` 第 249 / 260 行） | 登录/登出，**没有注册**（后台账号由你自建） |
-| `canAccess($class, $method, $url)`（第 272 行） | 权限判断；不传参时取当前路由上下文 |
-| `log($string, $type, $ext)`（第 293 行） | 操作日志（写什么、写哪里由你的实现决定） |
-| `isSuper()`（第 297 行） | 是否超管 |
-| `_Show()` | 后台页面渲染（头尾 + `__logined_*` 注入） |
+| 入口                                                                              | 说明                                                             |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `Helper::Admin()` / `Helper::AdminId()` / `Helper::AdminName()`                 | 当前管理员（`AdminId()` 默认 `check_login=true`，未登录抛 `AdminException`） |
+| `Helper::AdminService()`                                                        | 本地 Service（`admin_callback_for_local_service`）                 |
+| `login($post)` / `logout()`（源码 `src/GlobalAdmin/GlobalAdmin.php` 第 249 / 260 行） | 登录/登出，**没有注册**（后台账号由你自建）                                       |
+| `canAccess($class, $method, $url)`（第 272 行）                                     | 权限判断；不传参时取当前路由上下文                                              |
+| `log($string, $type, $ext)`（第 293 行）                                            | 操作日志（写什么、写哪里由你的实现决定）                                           |
+| `isSuper()`（第 297 行）                                                            | 是否超管                                                           |
+| `_Show()`                                                                       | 后台页面渲染（头尾 + `__logined_*` 注入）                                  |
 
 ### 2. 接入方式
 
