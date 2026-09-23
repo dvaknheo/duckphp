@@ -27,28 +27,28 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
 
 `App::core_options`（默认）你几乎总能改；下表为实际生效的键：
 
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `path_runtime` | `'runtime'` | 运行期相对项目根目录（或绝对路径）。`getRuntimePath()` 返回。 |
-| `path_config` | `'config'` | 配置文件目录（`getConfigFile()` 基于它+Phase覆盖查找）。 |
-| `default_exception_do_log` | `true` | 默认异常处理器是否写日志。 |
-| `close_resource_at_output` | `false` | 输出结束是否统一关闭/回收资源（默认关闭）。 |
-| `html_handler` | `null` | （预留/扩展用）任意 html 处理器回调。 |
-| `lang_handler` | `null` | 传入后 `lang()`/`langText()` 将优先走它，而不再 fallback 简易替换。 |
-| `is_maintain` | `false` | 维护标记。命中时 `prepareServe()` 渲维护页（`error_maintain`）。 |
-| `skip_404` | `false` | 跳过 404 展示（`skip404Handler()` 会置真）。 |
-| `error_404` | `null` | 404 时用（路径或可调用）。null → 内置 404 占位/开发信息。 |
-| `error_500` | `null` | 异常默认总页（路径或可调用）。null → debug 下详细、非 debug 精简。 |
-| `error_debug` | `null` | 开发期错误视图/可调用。null → 内置 fieldset 回执。 |
-| `error_maintain` | `null` | 维护页视图/可调用。null → 内置 “Maintaining.”。 |
-| `setting_file` | `'config/DuckPhpSettings.config.php'` | Setting 文件（相对根或绝对）。 |
-| `setting_file_ignore_exists` | `true` | 设置文件缺失时是否忽略（并不抛错）。 |
-| `setting_file_enable` | `true` | 是否加载设置文件。 |
-| `use_env_file` | `false` | 为真则在 loadSetting 一并读根 `.env`(INI) 合并。 |
-| `setting` | `[]` | 直接以数组形式给出的应用设置（setting）初值；作为 `loadSetting()` 的起点，随后再合并 `.env`（可选）与设置文件。 |
-| `installed` | `false` | 应用是否“已安装”（false 会触发安装跳转）。 |
-| `url_install` | `'install'` | 未安装时跳到的安装 URL。 |
-| `exception_map` | `[]` | 异常类映射表（`原异常类 => 替代异常类`）；`ProjectThrowOn/BusinessThrowOn/ControllerThrowOn` 抛异常前会先按它替换类名。 |
+| 选项                           | 默认值                                   | 说明                                                                                       |
+| ---------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `path_runtime`               | `'runtime'`                           | 运行期相对项目根目录（或绝对路径）。`getRuntimePath()` 返回。                                                 |
+| `path_config`                | `'config'`                            | 配置文件目录（`getConfigFile()` 基于它+Phase覆盖查找）。                                                 |
+| `default_exception_do_log`   | `true`                                | 默认异常处理器是否写日志。                                                                            |
+| `close_resource_at_output`   | `false`                               | 输出结束是否统一关闭/回收资源（默认关闭）。                                                                   |
+| `html_handler`               | `null`                                | （预留/扩展用）任意 html 处理器回调。                                                                   |
+| `lang_handler`               | `null`                                | 传入后 `lang()`/`langText()` 将优先走它，而不再 fallback 简易替换。                                       |
+| `is_maintain`                | `false`                               | 维护标记。命中时 `prepareServe()` 渲维护页（`error_maintain`）。                                        |
+| `skip_404`                   | `false`                               | 跳过 404 展示（`skip404Handler()` 会置真）。                                                       |
+| `error_404`                  | `null`                                | 404 时用（路径或可调用）。null → 内置 404 占位/开发信息。                                                    |
+| `error_500`                  | `null`                                | 异常默认总页（路径或可调用）。null → debug 下详细、非 debug 精简。                                              |
+| `error_debug`                | `null`                                | 开发期错误视图/可调用。null → 内置 fieldset 回执。                                                       |
+| `error_maintain`             | `null`                                | 维护页视图/可调用。null → 内置 “Maintaining.”。                                                      |
+| `setting_file`               | `'config/DuckPhpSettings.config.php'` | Setting 文件（相对根或绝对）。                                                                      |
+| `setting_file_ignore_exists` | `true`                                | 设置文件缺失时是否忽略（并不抛错）。                                                                       |
+| `setting_file_enable`        | `true`                                | 是否加载设置文件。                                                                                |
+| `use_env_file`               | `false`                               | 为真则在 loadSetting 一并读根 `.env`(INI) 合并。                                                    |
+| `setting`                    | `[]`                                  | 直接以数组形式给出的应用设置（setting）初值；作为 `loadSetting()` 的起点，随后再合并 `.env`（可选）与设置文件。                  |
+| `installed`                  | `false`                               | 应用是否“已安装”（false 会触发安装跳转）。                                                                |
+| `url_install`                | `'install'`                           | 未安装时跳到的安装 URL。                                                                           |
+| `exception_map`              | `[]`                                  | 异常类映射表（`原异常类 => 替代异常类`）；`ProjectThrowOn/BusinessThrowOn/ControllerThrowOn` 抛异常前会先按它替换类名。 |
 
 ## 使用方式
 

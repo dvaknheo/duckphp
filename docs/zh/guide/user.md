@@ -180,15 +180,15 @@ $names = Helper::UserService()->batchGetUsernames([1, 2, 3]);   // [1 => '张三
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `DuckPhpSystemException: No GlobalUser Provider.` | 没配任何回调（session / id / name 都没有） | 至少配 `user_callback_for_session` 或 `user_callback_for_id`+`_name` |
-| `need app options 'user_callback_for_xxx'` | 组件走到了未配置的回调键 | 对照选项表补齐；或改用自己的 provider 类 |
-| 旧代码 `user_callback_get_id` 报错 | 键名已失效 | 改成 `user_callback_for_id`（name/data/local_service 同理） |
-| `user_provider` 选项没反应 | 该选项源码里已不存在 | 用 `'ext' => [MyUser::class => true]` 挂工程侧子类 |
-| `urlForRegister()` 报「need app options 'user_url_register'」 | 还在用旧键 `user_url_regist` | 改成 `user_url_register` |
-| 开了 `__logined_enable_view` 却没走用户头尾 | 控制器没实现 `UserControllerInterface`（或没继承 `UserControllerBase`） | 实现该接口，或继承 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) |
-| `Helper::UserId()` 未登录时行为不对 | 会话模式与非会话模式不同 | 会话模式抛 `UserException`；回调模式由你的回调决定（`check_login=false` 时不抛） |
+| 现象                                                         | 原因                                                          | 改法                                                                                         |
+| ---------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `DuckPhpSystemException: No GlobalUser Provider.`          | 没配任何回调（session / id / name 都没有）                             | 至少配 `user_callback_for_session` 或 `user_callback_for_id`+`_name`                           |
+| `need app options 'user_callback_for_xxx'`                 | 组件走到了未配置的回调键                                                | 对照选项表补齐；或改用自己的 provider 类                                                                  |
+| 旧代码 `user_callback_get_id` 报错                              | 键名已失效                                                       | 改成 `user_callback_for_id`（name/data/local_service 同理）                                      |
+| `user_provider` 选项没反应                                      | 该选项源码里已不存在                                                  | 用 `'ext' => [MyUser::class => true]` 挂工程侧子类                                                |
+| `urlForRegister()` 报「need app options 'user_url_register'」 | 还在用旧键 `user_url_regist`                                     | 改成 `user_url_register`                                                                     |
+| 开了 `__logined_enable_view` 却没走用户头尾                         | 控制器没实现 `UserControllerInterface`（或没继承 `UserControllerBase`） | 实现该接口，或继承 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) |
+| `Helper::UserId()` 未登录时行为不对                                | 会话模式与非会话模式不同                                                | 会话模式抛 `UserException`；回调模式由你的回调决定（`check_login=false` 时不抛）                                 |
 
 ## 下一步
 

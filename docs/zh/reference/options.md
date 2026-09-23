@@ -19,16 +19,16 @@ $this->options = array_replace_recursive($this->kernel_options, $this->core_opti
 $this->options = array_replace_recursive($this->options, $options);
 ```
 
-| 次序 | 来源 | 谁写 | 备注 |
-|---|---|---|---|
-| 1 | `KernelTrait::$kernel_options` | 框架 | 应用骨架：`path`/`namespace`/`app`/`cmd`/`ext`/`cli_enable`/`on_*` |
-| 2 | `App::$core_options` | 框架 | 核心：`path_runtime`、`path_config`、`setting*`、`error_*`、`exception_map` |
-| 3 | `DuckPhp::$common_options` | 框架 | 入口类默认：默认 `ext` 组件表、`*_provider`、`lang_*`、`local_database` 等 |
-| 4 | **子类 `$options` 属性** | 工程 | 你的应用类写在这里；同键覆盖前三层 |
-| 5 | `ext` 表里给出的**数组**选项 | 工程 | 组件初始化时各自合并 |
-| 6 | `init($options)` | 工程 | **最后合并、优先级最高**（`initOptions()` 不做白名单） |
-| — | 设置文件 / `.env` | 环境 | 不进 `$options`，用 `Setting()` 读：见 [应用设置](setting.md) |
-| — | 数据文件（`ExtOptionsLoader`） | 运行时 | 运行时可改的选项落在 `runtime/DuckPhpData.config.json` |
+| 次序  | 来源                             | 谁写  | 备注                                                                   |
+| --- | ------------------------------ | --- | -------------------------------------------------------------------- |
+| 1   | `KernelTrait::$kernel_options` | 框架  | 应用骨架：`path`/`namespace`/`app`/`cmd`/`ext`/`cli_enable`/`on_*`        |
+| 2   | `App::$core_options`           | 框架  | 核心：`path_runtime`、`path_config`、`setting*`、`error_*`、`exception_map` |
+| 3   | `DuckPhp::$common_options`     | 框架  | 入口类默认：默认 `ext` 组件表、`*_provider`、`lang_*`、`local_database` 等          |
+| 4   | **子类 `$options` 属性**           | 工程  | 你的应用类写在这里；同键覆盖前三层                                                    |
+| 5   | `ext` 表里给出的**数组**选项            | 工程  | 组件初始化时各自合并                                                           |
+| 6   | `init($options)`               | 工程  | **最后合并、优先级最高**（`initOptions()` 不做白名单）                                |
+| —   | 设置文件 / `.env`                  | 环境  | 不进 `$options`，用 `Setting()` 读：见 [应用设置](setting.md)                   |
+| —   | 数据文件（`ExtOptionsLoader`）       | 运行时 | 运行时可改的选项落在 `runtime/DuckPhpData.config.json`                         |
 
 > ⚠️ **组件有白名单，App 没有**：组件（`ComponentBase` 子类）的 `init()` 会做 `array_intersect_key($this->options, $options)`——**组件自己 `$options` 里没有的键，传进去会被静默丢掉**；而 `App` 走的是 `KernelTrait::initOptions()`，任意键都能进来（所以「隐式选项」在 App 上可用）。
 
