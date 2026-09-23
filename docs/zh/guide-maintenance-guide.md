@@ -332,3 +332,20 @@ python3 <tmp>/drift.py --all                                                    
 **踩坑（我自己犯的，记下来）**：前一轮修作者提交红灯时（`bef4d50e`），我在 `src/GlobalAdmin/GlobalAdmin.php`、`src/GlobalUser/GlobalUser.php` 里写了**中文注释**——违反「`src/` 纯 ASCII」这条硬约束，而且当轮没跑 `check-non-ascii.sh`（以为只改了 CSS/逻辑），直到本轮才被闸门抓出 5 行（另 1 行来自 `0f612538 修复多相位`）。教训：**改了 `src/` 就当场跑 `check-non-ascii.sh`，别攒到下一轮**；中文说明写在提交信息里、不写在源码注释里。本轮已把 5 行全改成英文注释。
 
 **验收**：`check-non-ascii.sh` → **Total non-ASCII lines: 0**；`gen-options-docs.php --check` → up to date；`check-doc-links.py docs/zh` → **2103 条链接 0 死链**；全量测试与覆盖率见下；作者裁定**不保留旧拼法的说明**（旧名不再出现在任何文档里，需要时从提交 `77da0c5f` 的 diff 取），`grep -rn` 旧拼法在全仓 md/php 里为 **0**。
+
+## 18. M10 / 本轮：落实 `helper.md` 的两条 `//TODO`（工程 Helper 的动态方法 + 静态覆盖）
+
+**背景**：作者在 `helper.md` §1「工程侧的 `Xxx\Helper` 有两种写法」之后留了两条 `//TODO`：① 说明工程侧 Helper 新增的方法都是「动态方法」，并讲清「你的工程除 `System/` 外不要引用 `DuckPhp` 的东西，应经工程侧 Helper 或 Base 引用」；② 说明工程侧的静态方法用于 override 父类实现。
+
+**做了什么**（`helper.md` 200 → 227 行，仍 ≤400）
+
+- 删掉两行 `//TODO`，在写法 A / 写法 B 的代码块之后补四段正文：
+  - **动态扩展点**：工程 Helper 里加静态方法零成本（调用点始终写 `Helper::`），四层各写一个还能固定层边界；
+  - **⚠️ 并集看不到你的方法**：`Foundation\Helper` 与 `DuckPhpAllInOne` 的 `__callStatic()` 只派发到框架那四层（`src/Foundation/Helper.php` 129-134 行写死了四个类名），96 条 `@method` 里也没有你的方法 ⇒ `MyProj\Controller\Helper::money()` 成立、`DuckPhp\Foundation\Helper::money()` 报 `Call to undefined method`；
+  - **除 `System/` 外不要直接 `use` `DuckPhp\*`**：要框架能力就经本层工程 Helper（包一层静态方法）或本层 Base 的 `_()`；与 `layers.md` §1 的编码规则互链；
+  - **静态方法可覆盖父类实现**：给了 `Show()` 先补 `page_title` 再 `parent::Show()` 的示例，并写明两个前提——只对「**经你工程类名**」的调用生效（框架内部是硬编码框架类名调用：`UserControllerBase` / `AdminControllerBase` 的 `ControllerHelper::checkInstall()` / `assignViewData()` / `Show302()`，源码 20-37 行，改那类行为要用 `onLoginedException()` 这类钩子或第 4-3 章手段）；覆盖的**签名必须兼容**。
+- 「常见错误」表那条「并集 `Helper::Foo()` 报 `Call to undefined method`」补了一句「你工程 Helper 里新增的方法也不在其中」，改法列补「工程自己的方法用工程 Helper 类名调」。
+
+**两条断言是实测的**（不是凭记忆写的）：① 静态方法不兼容覆盖是**编译期致命错误**（`php -l` 实测 `Declaration of B::f() must be compatible with A::f($x = 1)`）；② `parent::` 调静态方法可行（实测输出 `A1B`）。
+
+**验收**：`docs/zh/guide` 里再无作者留的 `//TODO`（剩下 4 处命中都是「介绍源码 TODO」的正文，按约定保留）；`check-doc-links.py docs/zh` → **2105 条链接 0 死链**；`helper.md` **227 行**（≤400）。

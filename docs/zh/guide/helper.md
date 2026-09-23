@@ -37,12 +37,12 @@ $rows = Helper::DbForRead()->fetchAll($sql);
 
 框架把便捷方法按层分到四个类里（`src/Foundation/<层>/`），**一层的 Helper 里不会出现另一层的专属方法**：
 
-| 层 | 现成类 | 代表方法 |
-|---|---|---|
-| Controller | [`DuckPhp\Foundation\Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md) | `Show()` `ShowJson()` `Show302()` `Show404()` `Render()` `GET()` `POST()` `REQUEST()` `Parameter()` [`Pager()`](../reference/Component-Pager.md) `PageHtml()` `header()` `setcookie()` `ControllerThrowOn()` `UserId()` `AdminId()` |
-| Business | [`DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md) | `Setting()` `Config()` `AppOptions()` `XpCall()` `BusinessThrowOn()` [`Cache()`](../reference/Component-Cache.md) [`Validator()`](../reference/Component-Validator.md) `ValidatorFilter()` `FireGlobalEvent()` `OnGlobalEvent()` `AdminService()` `UserService()` `PathOfProject()` `PathOfRuntime()` |
-| Model | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳，方法全在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md) 里） | [`Db()`](../reference/Db-Db.md) `DbForRead()` `DbForWrite()` `SqlForPager()` `SqlForCountSimply()` `DatabaseDriver()` |
-| 应用/接线（System） | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md) | `addRouteHook()` `replaceController()` `assignRoute()` `assignImportantRoute()` `assignRewrite()` `Redis()` `SESSION()` `getCliParameters()` `isRunning()` `isInException()` `system_wrapper_replace()` |
+| 层             | 现成类                                                                                                                                                                             | 代表方法                                                                                                                                                                                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Controller    | [`DuckPhp\Foundation\Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md)                                                                      | `Show()` `ShowJson()` `Show302()` `Show404()` `Render()` `GET()` `POST()` `REQUEST()` `Parameter()` [`Pager()`](../reference/Component-Pager.md) `PageHtml()` `header()` `setcookie()` `ControllerThrowOn()` `UserId()` `AdminId()`                                                                   |
+| Business      | [`DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)                                                                              | `Setting()` `Config()` `AppOptions()` `XpCall()` `BusinessThrowOn()` [`Cache()`](../reference/Component-Cache.md) [`Validator()`](../reference/Component-Validator.md) `ValidatorFilter()` `FireGlobalEvent()` `OnGlobalEvent()` `AdminService()` `UserService()` `PathOfProject()` `PathOfRuntime()` |
+| Model         | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳，方法全在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md) 里） | [`Db()`](../reference/Db-Db.md) `DbForRead()` `DbForWrite()` `SqlForPager()` `SqlForCountSimply()` `DatabaseDriver()`                                                                                                                                                                                 |
+| 应用/接线（System） | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)                                                                                      | `addRouteHook()` `replaceController()` `assignRoute()` `assignImportantRoute()` `assignRewrite()` `Redis()` `SESSION()` `getCliParameters()` `isRunning()` `isInException()` `system_wrapper_replace()`                                                                                               |
 
 两个「全量版」：
 
@@ -70,6 +70,34 @@ use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 
 Helper::Show(get_defined_vars(), 'note/list');
 ```
+
+**为什么值得单独写一个工程 Helper**：它是你工程的**动态扩展点**——想加工具方法就在里面加静态方法（像上面写法 A 的 `money()`），调用点永远是 `Helper::`，不必改；四层各写一个，层边界也跟着固定下来。
+
+> ⚠️ **但你新增的方法只有你自己认识**：并集 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md) 与 [`DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 的 `__callStatic()` **只派发到框架那四个层 Helper**（源码里写死了那四个类名，见 `src/Foundation/Helper.php` 129-134 行），它们的 96 条 `@method` 里也没有你的方法。所以 `MyProj\Controller\Helper::money()` 成立，而 `DuckPhp\Foundation\Helper::money()` 会报 `Call to undefined method`——用并集时要把「框架的方法」与「你工程的方法」分清楚。
+
+**除 `System/` 外，工程代码不要直接 `use` `DuckPhp\*`**：要框架能力就经**本层的工程 Helper**（在里面包一层静态方法），或继承**本层的 Base** 拿 `_()` 单例入口；`System/` 是接线层（装配 `ext`、挂钩子、注册命令都在那儿），只有它可以随手引用框架类（[第 2-1 章](layers.md)）。
+
+**静态方法也可以覆盖父类实现**——想改某一层 Helper 的行为，不必动框架：
+
+```php
+namespace MyProj\Controller;
+
+use DuckPhp\Foundation\Controller\ControllerHelper;
+
+class Helper extends ControllerHelper
+{
+    public static function Show($data = [], $view = '')
+    {
+        $data['page_title'] = $data['page_title'] ?? 'MyProj';   // 统一补标题
+        return parent::Show($data, $view);                       // 再走框架原实现
+    }
+}
+```
+
+两点必须清楚：
+
+- **只对「经你工程类名」的调用生效**：`Helper::Show(...)` 命中你的实现；而框架内部有些地方是**直接写框架类名**调的（`UserControllerBase` / `AdminControllerBase` 里的 `ControllerHelper::checkInstall()`、`assignViewData()`、`Show302()`，源码 `src/Foundation/Controller/UserControllerBase.php` 20-37 行），那些调用**不会**因为你覆盖了子类而改变——静态方法没有虚派发。要改那类行为，用 `onLoginedException()` 这类现成钩子，或[第 4-3 章 替换框架行为](replace-behavior.md)。
+- 覆盖要**签名兼容**（同名静态方法、参数与默认值一致），否则 PHP 加载类时直接致命错误：`Declaration of Helper::Show() must be compatible with ...`；想保留原行为就用 `parent::` 兜一下。
 
 模型基类走的是另一条路：[`DuckPhp\Foundation\Model\Base`](../reference/Foundation-Model-Base.md) 同时 `use ModelTrait` 与 [`ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)，所以模型子类里 `$this->Db()`、`$this->getList()` 都能用（`$model->Db()` 这种「静态方法经实例调用」也成立）。
 
@@ -176,19 +204,19 @@ Helper::assignRewrite('/legacy', 'home/index');
 
 ## 常见错误
 
-| 现象 | 原因 | 改法 |
-|---|---|---|
-| `Call to undefined method ...::Show()` | 用的是业务/模型层的 Helper（继承链里没有输出方法） | 输出放控制器；或检查 `extends` 的是哪一层的 Helper |
-| 并集 `Helper::Foo()` 报 `Call to undefined method` | 四层都没有这个方法（`__callStatic` 找不到就报错） | 查四层 Helper 的参考页，或看源码里的 `@method` 注释确认名字 |
-| 并集 `Helper::Setting()` 行为与预期不符 | 同名方法按 System → Controller → Business → Model 顺序判定 | 需要明确语义时直接用那一层的类（`Business\BusinessHelper::Setting()`） |
-| 反射/IDE 找不到并集类的方法 | `__callStatic` 方案下方法是注释而非声明 | 用 `@method` 注释支持的 IDE；或直接依赖四层类 |
-| `assignRewrite('article/123', …)` 不生效 | 重写键**少了前导 `/`**：钩子拿 `'/'.$path_info` 比较 | 写成 `'/article/123'` |
-| 视图里 `Helper::` 报类不存在 | 视图里没引入 Helper | 视图里用全局函数（`__h`/`__url`/`__l`） |
-| 业务层里 `Helper::GET()` 报错 | 越界 | 参数由控制器取好传进来 |
-| 换了系统包装但业务没变化 | 业务代码直接用了原生函数或 `new` | 全部走 `Helper::` |
-| 各层混用一个「大 Helper」 | 边界失效：业务里能拿到输出/请求方法 | 每层只继承本层的类；确需全量就用 `Foundation\Helper` 并知道代价 |
-| 业务层用 `Helper::Db()` 写裸 SQL | 越界：绕过模型层 | SQL 收进模型（[第 2-6 章](model.md)） |
-| 找不到某个全局函数 | 它确实没定义（拼写/版本差异） | 以 `src/Core/Functions.php` 为准，或改用 `Helper::` 对应方法 |
+| 现象                                              | 原因                                                | 改法                                                    |
+| ----------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------- |
+| `Call to undefined method ...::Show()`          | 用的是业务/模型层的 Helper（继承链里没有输出方法）                     | 输出放控制器；或检查 `extends` 的是哪一层的 Helper                    |
+| 并集 `Helper::Foo()` 报 `Call to undefined method` | 四层都没有这个方法（`__callStatic` 找不到就报错）；**你工程 Helper 里新增的方法也不在其中**    | 查四层 Helper 的参考页，或看源码里的 `@method` 注释确认名字；工程自己的方法用工程 Helper 类名调 |
+| 并集 `Helper::Setting()` 行为与预期不符                  | 同名方法按 System → Controller → Business → Model 顺序判定 | 需要明确语义时直接用那一层的类（`Business\BusinessHelper::Setting()`） |
+| 反射/IDE 找不到并集类的方法                                | `__callStatic` 方案下方法是注释而非声明                       | 用 `@method` 注释支持的 IDE；或直接依赖四层类                        |
+| `assignRewrite('article/123', …)` 不生效           | 重写键**少了前导 `/`**：钩子拿 `'/'.$path_info` 比较           | 写成 `'/article/123'`                                   |
+| 视图里 `Helper::` 报类不存在                            | 视图里没引入 Helper                                     | 视图里用全局函数（`__h`/`__url`/`__l`）                         |
+| 业务层里 `Helper::GET()` 报错                         | 越界                                                | 参数由控制器取好传进来                                           |
+| 换了系统包装但业务没变化                                    | 业务代码直接用了原生函数或 `new`                               | 全部走 `Helper::`                                        |
+| 各层混用一个「大 Helper」                                | 边界失效：业务里能拿到输出/请求方法                                | 每层只继承本层的类；确需全量就用 `Foundation\Helper` 并知道代价            |
+| 业务层用 `Helper::Db()` 写裸 SQL                      | 越界：绕过模型层                                          | SQL 收进模型（[第 2-6 章](model.md)）                         |
+| 找不到某个全局函数                                       | 它确实没定义（拼写/版本差异）                                   | 以 `src/Core/Functions.php` 为准，或改用 `Helper::` 对应方法     |
 
 ## 下一步
 
