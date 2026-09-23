@@ -130,6 +130,7 @@ for p, t in bad:
 | `ZAllDemoTest` 的字节长度比对 | 它把 demo 各路由输出长度与 `tests/data_for_tests/ZAllDemoTest.config.php` 硬比，`files` 路由会 dump **选项表**（`合计 N个`）+ 方法表 + 包含文件 + 调用栈行号，**源码一动就变**（把选项在 `$options` 与 `$hidden_options` 之间搬家同样会变）。只有它红时：把期望值改成括号里的实际值（新 dump 会存成 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可 `diff` 新旧两份看差在哪）；先确认这轮没碰 `src/`，再用 `git stash push -- src` 验证是不是本来就红。**当前基线 10360**（第一卷收尾时对齐）。 |
 | 测试一律走 WSL | Windows 侧 PHP 没有 redis 扩展会假失败；`docs/scripts/*.sh` 也要在 WSL 跑。 |
 | 别 `git add .` | 仓库有未跟踪的 `.obsidian/`（`docs/zh/guide/` 与 `docs/zh/reference/` 各一个）、测试产物 `*/log_*.log`、`ZAllDemoTest-*.txt` 等。提交前 `git status --short` 复核。 |
+| **Obsidian 保存时重排表格** | 用 Obsidian（Advanced Tables 类插件）打开 `docs/zh/` 时，保存会重排表格：按显示宽度补齐列宽、把 `\|---\|` 写成 `\| --- \|`，**还会补出多余的空列/空行**。对指南（手写章）只是 diff 噪声，**不影响内容**；但 `reference/index.md` 的 `<!-- GEN:nav -->`、`reference/options.md` 的 `<!-- GEN:layers -->` 块内表格被重排会让 `gen-options-docs.php --check` 报 stale（现已改为忽略排版差异，`layout-only differences ignored`；多出来的空列属实质差异，要砍掉）。详见[参考手册维护指南](reference-maintenance-guide.md) 的陷阱表。 |
 | 中文文档不受 ASCII 限制 | `src/` 才必须纯 ASCII（改 `src/` 后跑 `docs/scripts/check-non-ascii.sh`）；`docs/` 是中文，正常写。 |
 
 ## 6. 下一轮的起手动作

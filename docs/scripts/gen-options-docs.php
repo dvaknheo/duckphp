@@ -700,6 +700,30 @@ const SKELETONS = [
     'setting.md' => "# 应用设置（Setting）\n\n## 简介\n\n（手写）\n\n## 设置键\n\n<!-- GEN:settingkeys start -->\n<!-- GEN:settingkeys end -->\n\n## 相关选项\n\n<!-- GEN:settingoptions start -->\n<!-- GEN:settingoptions end -->\n\n## 相关链接\n\n- [应用选项总览](options.md)\n",
 ];
 
+/**
+ * 编辑器重排表格只改空白（列宽对齐、`|---|` 写成 `| --- |`、末尾补一行空表格行），
+ * 内容其实没变。这类差异**不算文档过时**：按「去掉行内空白 + 丢掉纯占位表格行」归一后再比。
+ * 详见 reference-maintenance-guide.md 的陷阱表（Obsidian 表格插件）。
+ */
+function normalize_layout(string $text): string
+{
+    $out = [];
+    foreach (preg_split('~\R~', $text) as $line) {
+        $line = rtrim($line);
+        if (preg_match('~^\|[\s|]*\|$~', $line)) {
+            continue;   // 只有 | 与空白的占位行
+        }
+        $t = preg_replace('~[ \t]+~', '', $line);
+        if (preg_match('~^\|[\-:|]+\|$~', $t)) {
+            // 分隔行只看列数：编辑器会把 `---` 拉长到列宽（`|---|` -> `| -------- |`）
+            $out[] = '|' . str_repeat('-|', max(0, substr_count($t, '|') - 1));
+            continue;
+        }
+        $out[] = $t;
+    }
+    return implode("\n", $out);
+}
+
 function main(): int
 {
     $argv = $GLOBALS['argv'];
@@ -735,6 +759,7 @@ function main(): int
     ];
 
     $changed = [];
+    $layout_only = [];
     $bad_encoding = [];
     foreach ($targets as $file => $content) {
         if (!mb_check_encoding($content, 'UTF-8')) {
@@ -743,6 +768,10 @@ function main(): int
         $path = REF_DIR . '/' . $file;
         $old = is_file($path) ? (string) file_get_contents($path) : null;
         if ($old === $content) {
+            continue;
+        }
+        if ($old !== null && normalize_layout($old) === normalize_layout($content)) {
+            $layout_only[] = $file;   // 只被编辑器重排过：不报 stale，也不写回（保留编辑器的排版）
             continue;
         }
         $changed[] = $file;
@@ -763,6 +792,10 @@ function main(): int
         if ($new === $old) {
             continue;
         }
+        if (normalize_layout($old) === normalize_layout($new)) {
+            $layout_only[] = $file;   // 同上：块内容没变，只是被编辑器重排过
+            continue;
+        }
         $changed[] = $file;
         if (!$check) {
             file_put_contents($path, $new);
@@ -778,6 +811,7 @@ function main(): int
     }
 
     sort($changed);
+    sort($layout_only);
     if ($check) {
         foreach ($problems as $p) {
             fwrite(STDERR, '!! ' . $p . "\n");
@@ -787,10 +821,16 @@ function main(): int
             return 1;
         }
         echo "options docs are up to date\n";
+        if ($layout_only) {
+            echo 'note: layout-only differences ignored (' . count($layout_only) . '): ' . implode(', ', $layout_only) . "\n";
+        }
         return $problems ? 1 : 0;
     }
 
     echo "written: " . ($changed ? implode(', ', $changed) : '(nothing changed)') . "\n";
+    if ($layout_only) {
+        echo 'kept as-is (layout-only, 编辑器排版过): ' . implode(', ', $layout_only) . "\n";
+    }
     foreach ($problems as $p) {
         echo '!! ' . $p . "\n";
     }
