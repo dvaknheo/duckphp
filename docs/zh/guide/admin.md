@@ -51,12 +51,12 @@ public function update()
 
 ### 1. GlobalAdmin：与用户体系同构
 
-[DuckPhp\GlobalAdmin\GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md) 实现 [`AdminActionInterface`](../reference/GlobalAdmin-AdminActionInterface.md)，提供：
+[DuckPhp\GlobalAdmin\GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md) 实现 [`AdminActionInterface`](../reference/GlobalAdmin-AdminActionInterface.md) 与 [`AdminLoginActionInterface`](../reference/GlobalAdmin-AdminLoginActionInterface.md)，提供：
 
 | 入口                                                                              | 说明                                                             |
 | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `Helper::Admin()` / `Helper::AdminId()` / `Helper::AdminName()`                 | 当前管理员（`AdminId()` 默认 `check_login=true`，未登录抛 `AdminException`） |
-| `Helper::AdminService()`                                                        | 本地 Service（`admin_callback_for_local_service`）                 |
+| `Helper::AdminService()`                                                        | 本地 Service（`admin_callback_for_local_service`），服务侧契约 [`AdminServiceInterface`](../reference/GlobalAdmin-AdminServiceInterface.md) |
 | `login($post)` / `logout()`（源码 `src/GlobalAdmin/GlobalAdmin.php` 第 249 / 260 行） | 登录/登出，**没有注册**（后台账号由你自建）                                       |
 | `canAccess($class, $method, $url)`（第 272 行）                                     | 权限判断；不传参时取当前路由上下文                                              |
 | `log($string, $type, $ext)`（第 293 行）                                            | 操作日志（写什么、写哪里由你的实现决定）                                           |
@@ -77,8 +77,8 @@ public function update()
 | `admin_view_file_header` / `admin_view_file_footer` | `null` | 后台页面头/尾视图文件 |
 | `admin_enable_callback_singleton` | `true` | 回调写成 `[类名, 方法]` 时是否先转 `类名::_()` |
 | `admin_callback_for_id` / `_for_name` / `_for_data` | `null` | 取当前管理员 id / 名字 / 数据 |
-| `admin_callback_for_local_service` | `null` | 返回本地 Service 实现 |
-| `admin_callback_for_login_service` | `null` | 登录服务：`login()/logout()` 经它校验 |
+| `admin_callback_for_local_service` | `null` | 返回本地 Service 实现（服务侧契约 [`AdminServiceInterface`](../reference/GlobalAdmin-AdminServiceInterface.md)） |
+| `admin_callback_for_login_service` | `null` | 登录服务（服务侧契约 [`AdminLoginServiceInterface`](../reference/GlobalAdmin-AdminLoginServiceInterface.md)）：`login()/logout()` 经它校验 |
 | `admin_callback_for_session` | `null` | 会话实现（[`AdminSessionInterface`](../reference/GlobalAdmin-AdminSessionInterface.md)）；配了它 `id()/name()` 优先读会话 |
 | `admin_callback_for_url_for_home` / `_login` / `_logout` | `null` | 生成对应 URL 的回调（优先于 `admin_url_*`） |
 | `admin_loginout_auto_redirect` | `true` | 登录/登出成功后自动 302 |
@@ -182,4 +182,4 @@ class AdminController implements AdminControllerInterface, PermissionMenuMetaInt
 - [第 2-11 章 异常与错误处理](exception.md)：`AdminException` 怎么被接住、怎么变成跳转或错误页。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉后台视图头尾。
 - [第 2-15 章 命令行与定时任务](cli.md)：用 CLI 跑菜单落盘、看路由表。
-- 参考手册：[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[AdminActionInterface](../reference/GlobalAdmin-AdminActionInterface.md)、[AdminSessionTrait](../reference/GlobalAdmin-AdminSessionTrait.md)、[AdminException](../reference/GlobalAdmin-AdminException.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)、[Ext\RouteLister](../reference/Ext-RouteLister.md)
+- 参考手册：[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[AdminActionInterface](../reference/GlobalAdmin-AdminActionInterface.md)、[AdminLoginActionInterface](../reference/GlobalAdmin-AdminLoginActionInterface.md)、[AdminServiceInterface](../reference/GlobalAdmin-AdminServiceInterface.md)、[AdminLoginServiceInterface](../reference/GlobalAdmin-AdminLoginServiceInterface.md)、[AdminSessionTrait](../reference/GlobalAdmin-AdminSessionTrait.md)、[AdminException](../reference/GlobalAdmin-AdminException.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)、[Ext\RouteLister](../reference/Ext-RouteLister.md)

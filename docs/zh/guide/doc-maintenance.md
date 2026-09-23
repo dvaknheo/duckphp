@@ -24,7 +24,7 @@ python3 <tmp>/drift.py --all
 
 ```
 docs/zh/index.md            ← 指路页：只告诉你"去哪找"，不复制目录
-docs/zh/guide/              ← 用户指南：一页总目录 + 四卷 41 章 + 4 附录（"怎么做"）
+docs/zh/guide/              ← 用户指南：一页总目录 + 四卷 44 章 + 4 附录（"怎么做"）
 docs/zh/reference/          ← 参考手册：一类一页 + 汇总页（"有什么"）
 docs/zh/*maintenance-guide* ← 两份维护指南 + 进度 checklist（"怎么维护"）
 ```

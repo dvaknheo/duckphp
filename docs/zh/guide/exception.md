@@ -46,6 +46,8 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 
 框架自带的 [UserException](../reference/GlobalUser-UserException.md) / [AdminException](../reference/GlobalAdmin-AdminException.md) 也是**直接继承 `\Exception`** 的（源码 `src/GlobalUser/UserException.php`、`src/GlobalAdmin/AdminException.php`），可作参照。
 
+树上那个 [`ExitException`](../reference/Core-ExitException.md) 属于**框架内部**：打开 `use_exit_exception` 选项后，[`SystemWrapper::exit()`](../reference/Core-SystemWrapper.md) 会抛它（`src/Core/SystemWrapper.php` 167-168 行），[`ExceptionManager`](../reference/Core-ExceptionManager.md) 把它原样放行（`src/Core/ExceptionManager.php` 90 行）——业务代码不要抛它。
+
 ### 条件抛：ThrowOn 家族
 
 **推荐用 Helper 侧的条件抛**（[CoreHelper](../reference/Core-CoreHelper.md)）——`$flag` 为真就抛，异常类由应用选项集中决定：
@@ -224,4 +226,4 @@ ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) { /* 兜底 */ 
 - [第 2-12 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
 - [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：异常发生在请求时序的哪一环。
 - [第 1-6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 与日志分级的入门。
-- 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md)、[Ext-ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)、[Ext\ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)
+- 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Core-ExitException](../reference/Core-ExitException.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md)、[Ext-ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)、[Ext\ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)

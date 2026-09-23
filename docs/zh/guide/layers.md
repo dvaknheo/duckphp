@@ -108,6 +108,8 @@ HTTP 请求 → 路由 → MainController::index()
 
 > **编码规则**：`Controller`、`Business`、`Model`、`View` 四层里，除 Helper 与全局函数外，**不要直接 `use` `DuckPhp\*` 的框架类**；框架相关的调用集中在 `System` 层，或由 `Helper` 代劳。这条规则的意义在第三卷会体现：包装配（`ext`、覆盖、相位）全都发生在 `System` 层，业务代码因此可以整片复用。
 
+四层各有一个框架基类可以继承（都只做一件事：给本层的类装上单例入口 `_()`）：控制器 [`Controller\Base`](../reference/Foundation-Controller-Base.md)、业务 [`Business\Base`](../reference/Foundation-Business-Base.md)、模型 [`Model\Base`](../reference/Foundation-Model-Base.md)（模型基类多一层：它同时 `use` 了 [`ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)，所以模型里 `$this->Db()` 直接可用）。Helper 的分工见本节 §4。
+
 ### 2. 越界矩阵（本章最重要的一张表）
 
 左列「调用方」去调右列「被调方」，✅ 允许、⚠️ 有条件、❌ 禁止：
@@ -226,4 +228,4 @@ new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 - [第 2-3 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
 - [第 2-4 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
 - [第 2-5 章 数据库](database.md) 与 [第 2-6 章 模型层](model.md)：模型层这一列往下的全部内容。
-- 参考手册：[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)、[DuckPhp\Foundation\Controller\ControllerHelper](../reference/Foundation-Controller-ControllerHelper.md)、[DuckPhp\Foundation\Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)。
+- 参考手册：[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)、[DuckPhp\Foundation\Controller\ControllerHelper](../reference/Foundation-Controller-ControllerHelper.md)、[DuckPhp\Foundation\Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)、四层基类 [Controller\Base](../reference/Foundation-Controller-Base.md) / [Business\Base](../reference/Foundation-Business-Base.md) / [Model\Base](../reference/Foundation-Model-Base.md)。

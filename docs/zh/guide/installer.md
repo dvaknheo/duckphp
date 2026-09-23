@@ -95,6 +95,8 @@ GET /install
   └─ 未安装 → 采集数据库/Redis 参数 → 写配置 → 置 installed
 ```
 
+向导页面由内置视图 [`Ext\RouteHookWebInstallerView`](../reference/Ext-RouteHookWebInstallerView.md) 渲染——它是**纯视图文件**（不定义任何 class），由扩展在 `show()` 时 `include`。要改外观就把它拷出来改，再经 `web_installer_view` 指定；只加字段则用 `web_installer_view_block_custom`。
+
 三个回调分别对应「能否安装 / 怎么安装 / 怎么显示」，只填你需要的那一个即可；文案走 [`Lang`](../reference/Component-Lang.md)，所以向导是多语言的（第 2-14 章）。
 
 ## 上线检查清单
@@ -118,6 +120,6 @@ GET /install
 
 ## 相关参考
 
-- [DuckPhp\Ext\DuckPhpInstaller](../reference/Ext-DuckPhpInstaller.md)、[DuckPhp\Ext\RouteHookWebInstaller](../reference/Ext-RouteHookWebInstaller.md)
+- [DuckPhp\Ext\DuckPhpInstaller](../reference/Ext-DuckPhpInstaller.md)、[DuckPhp\Ext\RouteHookWebInstaller](../reference/Ext-RouteHookWebInstaller.md)、[DuckPhp\Ext\RouteHookWebInstallerView](../reference/Ext-RouteHookWebInstallerView.md)
 - [DuckPhp\Core\App](../reference/Core-App.md) 的 `checkInstallToPage()`、`installed`、`url_install`
 - 第 1-7 章[上线最小清单](deployment.md)

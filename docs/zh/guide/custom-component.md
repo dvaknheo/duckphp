@@ -32,6 +32,8 @@ class HelloBanner extends ComponentBase
 }
 ```
 
+组件要满足的最小契约是 [`Core\ComponentInterface`](../reference/Core-ComponentInterface.md)：`_()` / `init()` / `isInited()` 三个方法。注意框架**没有**让 `ComponentBase` 真的 `implements` 它（`src/Core/ComponentBase.php` 12 行是注释掉的 `// implements ComponentInterface`）——它是一份"鸭子类型"契约，你写自己的组件时按它对齐即可，不必强制声明。
+
 挂进应用（`tests/data_for_tests/ZThirdDemo/src/System/MainApp.php` 52-55 行的同款写法）：
 
 ```php

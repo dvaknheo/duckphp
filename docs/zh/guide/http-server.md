@@ -143,6 +143,8 @@ php cli.php run --http_server=MyProj/Http/MyServer
 
 （`command_run` 会把 `http_server` 参数解析成类名并替换单例。）
 
+换进来的类要实现 [`HttpServerInterface`](../reference/HttpServer-HttpServerInterface.md)：`RunQuickly($options)` / `run()` / `getPid()` / `close()` 四个方法。
+
 ## 常见错误
 
 | 现象                         | 原因                                             | 改法                                                            |
@@ -161,4 +163,4 @@ php cli.php run --http_server=MyProj/Http/MyServer
 - [第 4-6 章 多入口·多域名·多 SAPI](multi-entry.md)：同一个代码库的多种入口。
 - [第 4-7 章 测试基建与覆盖率流水线](coverage.md)：起服务器做端到端冒烟的那套流程。
 - [第 4-9 章 性能调优与排错手册](troubleshooting.md)：端口/进程类问题的排查路径。
-- 参考手册：[DuckPhp\HttpServer\HttpServer](../reference/HttpServer-HttpServer.md)、[DuckPhp\Component\Command](../reference/Component-Command.md)、[DuckPhp\Core\Runtime](../reference/Core-Runtime.md)。
+- 参考手册：[DuckPhp\HttpServer\HttpServer](../reference/HttpServer-HttpServer.md)、[DuckPhp\HttpServer\HttpServerInterface](../reference/HttpServer-HttpServerInterface.md)、[DuckPhp\Component\Command](../reference/Component-Command.md)、[DuckPhp\Core\Runtime](../reference/Core-Runtime.md)。

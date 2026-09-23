@@ -305,6 +305,9 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
         - 指南里删掉 5 处「旧文档里的 X 已失效 / 旧文档遗留」这类表述（旧文已删，只写当前事实），`intro.md` 里把「⏳ 撰写中」当章号用的过时说法也换成了正式链接；
         - **三个踩坑已写进 `guide-maintenance-guide.md` §14**：①「表格首列是数字」的替换规则**不能全库套用**——第一次整库替换把 `setting.md`/`i18n.md` 里「次序 1/2/3」的普通编号表改成了 `1-1/1-2/1-3`，只能 `git checkout` 回滚重做（正确规则：表格行只对总目录与 checklist 生效、H1 只在 `docs/zh/guide/` 内生效）；②**加链接脚本必须跳过围栏代码块**——第一版把 76 处链接插进了 PHP 示例；③**行内代码整段替换的坑**——把 `` `View::getViewFile()` `` 换成 `` [`View`](…) `` 会吞掉 `::getViewFile()`，必须「整段当链接文字」或「另找一处」。
         - 校验：41 章 H1 / 总目录 / 交叉引用 / 无单数字章号 = **0 处不一致**；`docs/zh` 站内链接 **1973 条 0 死链**；代码块内链接 **0 处**；`docs/zh` 全 UTF-8；三条新规矩已写进 `guide-maintenance-guide.md` §1 硬约束（第 6/7/8 条）与 §2 模板约定。
+    15. **参考页孤儿清零（本轮）**：新增 `docs/scripts/find-unmentioned-classes.py`——**纯链接判定**（扫 `docs/zh/guide/*.md` 里所有指向 `../reference/*.md` 的链接，按页名反查，锚点/`./`/`../` 归一化），报「指南从没链到」的类页；正文写了类名但没挂链接**不算**命中，避免 `Helper`/`Base` 这类短名误判。首扫：**109 个类页 / 496 条指南→参考页链接 / 19 页从没被链到**（其中 17 页指南里连类名都没有）。补链 + 新增指南第 4-11 章后：**555 条链接、109/109 全被链到、孤儿 0**（`--all` 另列「只链 1 次」的 34 页，那是下一档的候选）。
+        - 补链落点：`Core\ExitException`（exception.md：`use_exit_exception` 下 `SystemWrapper::exit()` 抛它、`ExceptionManager` 原样放行）、`Component\PagerInterface`（database.md 分页节）、`HttpServer\HttpServerInterface`（http-server.md「换实现」节）、`GlobalUser\User{LoginAction,LoginService}Interface`（user.md 选项表 + 参考手册行）、`GlobalAdmin\Admin{LoginAction,LoginService,Service}Interface`（admin.md 同构）、`Foundation\Business\Base`（layers.md 四层基类）、`Ext\RouteHookWebInstallerView`（installer.md §③）、`Ext\SqlDumperSupporterByPgsql`/`BySqlite`（database.md SQL 导出表——并**纠正**原先把三者并列的误导：默认映射只有 mysql 与 sqlite，pgsql 要自己配 `database_driver_SqlDumperSupporter_map`）。
+        - 7 个「指南从没写过的 Ext 类」另立一章：`guide/deprecated-exts.md`（4-11，122 行），判据是源码 `@todo deprecate`（`grep -rn` 命中 6 个类），`MiniRoute`/`Misc`/`ThrowOnTrait` 则如实标注「无废弃标记、但框架内部无使用点」。
 - **待办（本工作范围外）**：
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
   - ~~`docs/zh/guide/external-auth.md` 里还有一批旧键名未校~~ **已处理**：该章已拆成 `session.md`(2-9)/`user.md`(2-18)/`admin.md`(2-19)，键名与选项按当前源码逐条核对（旧键 `user_callback_get_*`、已废选项 `user_provider`/`admin_provider`/`*_default_exception_class` 都已在正文标注失效）；
@@ -323,6 +326,9 @@ python %TEMP%\drift.py --all
 
 # 2) 编码抽查：把下面脚本存成 %TEMP%\enc.py 后运行
 python %TEMP%\enc.py
+
+# 2b) 孤儿页反查（指南有没有链到每个参考页；期望「从没被链到: 0」）
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/find-unmentioned-classes.py"
 
 # 3) 本次改了 src/ 或 tests/ 时（一律走 WSL，按单个测试文件跑，见第 5 节末）：
 wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"

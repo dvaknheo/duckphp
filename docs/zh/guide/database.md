@@ -170,7 +170,7 @@ try {
 
 ### 7. 分页
 
-分页由 [`Pager`](../reference/Component-Pager.md) 组件 + SQL 工具配合（`demo/public/dbtest.php` 是完整例子）：
+分页由 [`Pager`](../reference/Component-Pager.md) 组件（实现 [`PagerInterface`](../reference/Component-PagerInterface.md)）+ SQL 工具配合（`demo/public/dbtest.php` 是完整例子）：
 
 ```php
 $sql   = "select * from `'TABLE'` order by id desc";
@@ -188,7 +188,8 @@ $pager = Helper::PageHtml($total);                                              
 | 类 | 支持 |
 |---|---|
 | `Ext\SqlDumper` | 通用导出器（表前缀被写成 `{prefix}` 占位） |
-| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / `ByPgsql` / `BySqlite` | 各驱动方言 |
+| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) | 各驱动方言；**默认映射里就有**这两个（`src/Ext/SqlDumperSupporter.php` 16-19 行） |
+| [`Ext\SqlDumperSupporterByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md) | 同样是方言实现，但**默认映射里没有**它：要自己加进 `database_driver_SqlDumperSupporter_map` |
 
 导出的 SQL 里用 `{prefix}` 表示表前缀，Web 安装流程（[第 3-6 章](installer.md)）执行时会换成实际前缀。
 
@@ -239,4 +240,4 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 - [第 2-6 章 模型层](model.md)：把这一章的能力封装成模型，业务层只看模型。
 - [第 2-8 章 表单与数据验证](validator.md)：数据入库前的校验。
 - [第 3-6 章 安装器与 Web 安装流程](installer.md)：`SqlDumper` 与 `{prefix}` 的实际用法。
-- 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Ext\SqlDumper](../reference/Ext-SqlDumper.md)。
+- 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Component\PagerInterface](../reference/Component-PagerInterface.md)、[DuckPhp\Ext\SqlDumper](../reference/Ext-SqlDumper.md)、[DuckPhp\Ext\SqlDumperSupporter](../reference/Ext-SqlDumperSupporter.md)。

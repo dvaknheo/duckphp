@@ -51,7 +51,7 @@ public function center()
 
 ### 1. GlobalUser：一个组件 + 一组回调
 
-[DuckPhp\GlobalUser\GlobalUser](../reference/GlobalUser-GlobalUser.md) 实现 [`UserActionInterface`](../reference/GlobalUser-UserActionInterface.md)，把「当前是谁、站内 URL、视图头尾、登录/注册/登出流程」集中在一个组件里；**具体实现用选项回调外包给工程类**。
+[DuckPhp\GlobalUser\GlobalUser](../reference/GlobalUser-GlobalUser.md) 实现 [`UserActionInterface`](../reference/GlobalUser-UserActionInterface.md) 与 [`UserLoginActionInterface`](../reference/GlobalUser-UserLoginActionInterface.md)，把「当前是谁、站内 URL、视图头尾、登录/注册/登出流程」集中在一个组件里；**具体实现用选项回调外包给工程类**。
 
 - `Helper::User()` / `Helper::UserId()` / `Helper::UserName()` / `Helper::UserService()` 都进到它；
 - 默认它在 `ext` 里是**关闭**的（`src/DuckPhp.php` 的 `common_options` 里 `GlobalUser::class => EXT_DISABLE`），要显式挂上工程侧的子类才会启用。
@@ -72,7 +72,7 @@ public function center()
 | `user_enable_callback_singleton` | `true` | 回调写成 `[类名, 方法]` 时是否先转成 `类名::_()` |
 | `user_callback_for_id` / `_for_name` / `_for_data` | `null` | 取当前 id / 名字 / 整个数据数组 |
 | `user_callback_for_local_service` | `null` | 返回本地 Service 实现（`Helper::UserService()` 用它） |
-| `user_callback_for_login_service` | `null` | 登录服务：`register()/login()/logout()` 经它做校验与落库 |
+| `user_callback_for_login_service` | `null` | 登录服务（服务侧契约 [`UserLoginServiceInterface`](../reference/GlobalUser-UserLoginServiceInterface.md)）：`register()/login()/logout()` 经它做校验与落库 |
 | `user_callback_for_session` | `null` | 会话实现（[`UserSessionInterface`](../reference/GlobalUser-UserSessionInterface.md)）；**配了它，`id()/name()` 优先读会话** |
 | `user_callback_for_add_ext_view_data` | `null` | 追加视图数据 |
 | `user_callback_for_url_for_home` / `_login` / `_logout` / `_register` | `null` | 生成各 URL 的回调（优先于对应 `user_url_*`） |
@@ -195,4 +195,4 @@ $names = Helper::UserService()->batchGetUsernames([1, 2, 3]);   // [1 => '张三
 - [第 2-19 章 管理员体系](admin.md)：后台那套（登录、`canAccess`、菜单）。
 - [第 2-11 章 异常与错误处理](exception.md)：`UserException` 怎么被接住、怎么变成跳转或错误页。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉用户视图头尾。
-- 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)、[UserException](../reference/GlobalUser-UserException.md)
+- 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[UserLoginActionInterface](../reference/GlobalUser-UserLoginActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserLoginServiceInterface](../reference/GlobalUser-UserLoginServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)、[UserException](../reference/GlobalUser-UserException.md)
