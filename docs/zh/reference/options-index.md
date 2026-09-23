@@ -31,11 +31,11 @@
 | `admin_url_logout` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 后台退出 URL。 |
 | `admin_view_file_footer` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 后台页脚视图文件（渲染时并入 `__view_data.footer`）。 |
 | `admin_view_file_header` | `null` | [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 后台页头视图文件（渲染时并入 `__view_data.header`）。 |
-| `api_server_404_as_exception` | `false` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 未命中时是否抛 `ReflectionException("404")`。 |
-| `api_server_base_class` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 服务类基类约束（支持 `~` 占位前缀；服务类须为其子类）。 |
-| `api_server_class_postfix` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 服务类名后缀。 |
-| `api_server_namespace` | `'Api'` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 服务类所在命名空间。 |
-| `api_server_use_singletonex` | `false` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 为 `true` 时经 `_()` 取单例（且动作名为 `G` 时拒绝）。 |
+| `apiserver_404_as_exception` | `false` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 未命中时是否抛 `ReflectionException("404")`。 |
+| `apiserver_base_class` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 服务类基类约束（支持 `~` 占位前缀；服务类须为其子类）。 |
+| `apiserver_class_postfix` | `''` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 服务类名后缀。 |
+| `apiserver_namespace` | `'Api'` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 服务类所在命名空间。 |
+| `apiserver_use_singletonex` | `false` | [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 为 `true` 时经 `_()` 取单例（且动作名为 `G` 时拒绝）。 |
 | `app` | `[]` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 子应用声明表。形如 `[类 => ['namespace'=>…,'controller_url_prefix'=>…, …]]`；`initChildren()` 会把它们逐个做成独立子 Phase。 |
 | `app_children_allow_mix_mode` | `true` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 允许子应用简写：用表键当 `controller_url_prefix`、值内含 `'class'` 指定真实子应用类。false 则要求结构化写法。 |
 | `autoload_cache_in_cli` | `false` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 为真时 CLI 模式 `run()` 里会先 `cacheClasses()`（opcache 预编译）。 |
@@ -323,7 +323,7 @@
 ## 按前缀分组（便于成组记忆）
 
 - **`admin_*`**（17）：`admin_callback_for_add_ext_view_data`、`admin_callback_for_data`、`admin_callback_for_id`、`admin_callback_for_local_service`、`admin_callback_for_login_service`、`admin_callback_for_name`、`admin_callback_for_session`、`admin_callback_for_url_for_home`、`admin_callback_for_url_for_login`、`admin_callback_for_url_for_logout`、`admin_enable_callback_singleton`、`admin_loginout_auto_redirect`、`admin_url_home`、`admin_url_login`、`admin_url_logout`、`admin_view_file_footer`、`admin_view_file_header`
-- **`api_*`**（5）：`api_server_404_as_exception`、`api_server_base_class`、`api_server_class_postfix`、`api_server_namespace`、`api_server_use_singletonex`
+- **`apiserver_*`**（5）：`apiserver_404_as_exception`、`apiserver_base_class`、`apiserver_class_postfix`、`apiserver_namespace`、`apiserver_use_singletonex`
 - **`callable_*`**（6）：`callable_view_class`、`callable_view_foot`、`callable_view_head`、`callable_view_is_object_call`、`callable_view_prefix`、`callable_view_skip_replace`
 - **`console_*`**（4）：`console_command_classes`、`console_command_default`、`console_command_phase`、`console_readlines_logfile`
 - **`controller_*`**（13）：`controller_class_adjust`、`controller_class_base`、`controller_class_map`、`controller_class_postfix`、`controller_fix_mistake_path_info`、`controller_method_prefix`、`controller_path_ext`、`controller_prefix_post`、`controller_resource_prefix`、`controller_url_prefix`、`controller_welcome_class`、`controller_welcome_class_visible`、`controller_welcome_method`

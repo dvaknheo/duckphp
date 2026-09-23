@@ -18,13 +18,13 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
                 RouteHookApiServer::class => true,
             ],
             
-            'api_server_base_class' => '~BaseApi',
-            'api_server_namespace' => '\tests\DuckPhp\Ext',
-            'api_server_class_postfix' => 'API',
-            //'api_server_config_cache_file' => '',
-            //'api_server_on_missing' => '',
-            'api_server_use_singletonex' => false,
-            'api_server_404_as_exception' => false,
+            'apiserver_base_class' => '~BaseApi',
+            'apiserver_namespace' => '\tests\DuckPhp\Ext',
+            'apiserver_class_postfix' => 'API',
+            //'apiserver_config_cache_file' => '',
+            //'apiserver_on_missing' => '',
+            'apiserver_use_singletonex' => false,
+            'apiserver_404_as_exception' => false,
             'cli_enable'=>false,
         ];
         
@@ -54,11 +54,11 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->run();
         
         
-        RouteHookApiServer::_()->options['api_server_404_as_exception']=true;
+        RouteHookApiServer::_()->options['apiserver_404_as_exception']=true;
         Route::_()->bind('/');
         DuckPhp::_()->run();
         
-        RouteHookApiServer::_()->options['api_server_use_singletonex']=true;
+        RouteHookApiServer::_()->options['apiserver_use_singletonex']=true;
         Route::_()->bind('/test.G');
         DuckPhp::_()->run();
         Route::_()->bind('/test.foo');
@@ -72,11 +72,11 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
                 RouteHookApiServer::class => true,
             ],
             'namespace'=>'tests',
-            'api_server_base_class' => '~BaseApi',
-            'api_server_namespace' => 'DuckPhp\Ext',
-            'api_server_class_postfix' => 'API',
-            'api_server_use_singletonex' => false,
-            'api_server_404_as_exception' => false,
+            'apiserver_base_class' => '~BaseApi',
+            'apiserver_namespace' => 'DuckPhp\Ext',
+            'apiserver_class_postfix' => 'API',
+            'apiserver_use_singletonex' => false,
+            'apiserver_404_as_exception' => false,
             'cli_enable'=>false,
         ];
         

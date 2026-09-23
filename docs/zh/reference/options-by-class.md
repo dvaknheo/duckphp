@@ -493,11 +493,11 @@ MyFacadesAutoLoader 实现“Facade（门面）命名空间自动…
 | 选项 | 默认值 | 说明 |
 |---|---|---|
 | `namespace` | `''` | 应用命名空间（拼相对子命名空间用）。 |
-| `api_server_base_class` | `''` | 服务类基类约束（支持 `~` 占位前缀；服务类须为其子类）。 |
-| `api_server_namespace` | `'Api'` | 服务类所在命名空间。 |
-| `api_server_class_postfix` | `''` | 服务类名后缀。 |
-| `api_server_use_singletonex` | `false` | 为 `true` 时经 `_()` 取单例（且动作名为 `G` 时拒绝）。 |
-| `api_server_404_as_exception` | `false` | 未命中时是否抛 `ReflectionException("404")`。 |
+| `apiserver_base_class` | `''` | 服务类基类约束（支持 `~` 占位前缀；服务类须为其子类）。 |
+| `apiserver_namespace` | `'Api'` | 服务类所在命名空间。 |
+| `apiserver_class_postfix` | `''` | 服务类名后缀。 |
+| `apiserver_use_singletonex` | `false` | 为 `true` 时经 `_()` 取单例（且动作名为 `G` 时拒绝）。 |
+| `apiserver_404_as_exception` | `false` | 未命中时是否抛 `ReflectionException("404")`。 |
 
 ### DuckPhp\Ext\RouteHookDirectoryMode
 

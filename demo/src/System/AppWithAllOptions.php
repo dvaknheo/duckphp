@@ -540,19 +540,19 @@ class AppWithAllOptions extends DuckPhp
         /*
         $options['ext']['DuckPhp\\Ext\\RouteHookApiServer'] = true;
             // API服务器， 404 引发异常的模式
-            $options['api_server_404_as_exception'] = false;
+            $options['apiserver_404_as_exception'] = false;
 
             // API服务器，限定的接口或基类，  ~ 开始的表示是当前命名空间
-            $options['api_server_base_class'] = '';
+            $options['apiserver_base_class'] = '';
 
             // API服务器， 限定类名后缀
-            $options['api_server_class_postfix'] = '';
+            $options['apiserver_class_postfix'] = '';
 
             // API服务器， 命名空间，配合 namespace选项使用
-            $options['api_server_namespace'] = 'Api';
+            $options['apiserver_namespace'] = 'Api';
 
             // API服务器， 使用可变单例模式，方便替换实现
-            $options['api_server_use_singletonex'] = false;
+            $options['apiserver_use_singletonex'] = false;
 
             // 【共享】命名空间
             // $options['namespace'] = '';

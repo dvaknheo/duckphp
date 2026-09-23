@@ -94,7 +94,7 @@ protected function onPrepare(): void
 
 - **web**：`serve()`，走 [Runtime](../reference/Core-Runtime.md) + [Route](../reference/Core-Route.md)（[第 2-10 章](lifecycle.md)）。
 - **cli**：`execute()`，走 Console（[第 2-15 章](cli.md)）。
-- **api**：仍是 `serve()`，但由 [DuckPhp\Ext\RouteHookApiServer](../reference/Ext-RouteHookApiServer.md) 挂在 `prepend-inner` 位置**在默认路由前接管**：`api.php/test.foo2?a=1&b=2` → 调 `\Api\test::foo2(1, 2)`，按反射参数名取参，结果 JSON 输出。选项见 `demo/public/api.php` 的 `api_server_namespace` / `api_server_interface`（`~BaseApi` 表示当前命名空间下的 `BaseApi`）。
+- **api**：仍是 `serve()`，但由 [DuckPhp\Ext\RouteHookApiServer](../reference/Ext-RouteHookApiServer.md) 挂在 `prepend-inner` 位置**在默认路由前接管**：`api.php/test.foo2?a=1&b=2` → 调 `\Api\test::foo2(1, 2)`，按反射参数名取参，结果 JSON 输出。选项见 `demo/public/api.php` 的 `apiserver_namespace` / `apiserver_base_class`（`~BaseApi` 表示当前命名空间下的 `BaseApi`，服务类须实现它，否则按未命中处理）。
 - **rpc**：`demo/public/rpc.php` 一个文件同时演两端。[DuckPhp\Ext\JsonRpcExt](../reference/Ext-JsonRpcExt.md) 的 `onRpcCall($_POST)` 在服务端把 `Namespace.Service.method` 分发到本地服务类；客户端用 `JsonRpcExt::Wrap(服务类::class)` 或 `\JsonRpc\服务名::_()`（`jsonrpc_namespace` 前缀自动加载，类继承 [DuckPhp\Ext\JsonRpcClientBase](../reference/Ext-JsonRpcClientBase.md)），调用经 `jsonrpc_backend` POST 到服务端。
 
 ## 常见写法
@@ -106,9 +106,9 @@ $options = [
     'namespace' => '',
     'ext' => [
         \DuckPhp\Ext\RouteHookApiServer::class => [
-            'api_server_namespace' => '\\Api',
-            'api_server_interface' => '~BaseApi',
-            'api_server_404_as_exception' => true,
+            'apiserver_namespace' => '\\Api',
+            'apiserver_base_class' => '~BaseApi',
+            'apiserver_404_as_exception' => true,
         ],
     ],
 ];
@@ -133,7 +133,8 @@ $options = [
 | 现象                             | 原因                                                          | 改法                                                                     |
 | ------------------------------ | ----------------------------------------------------------- | ---------------------------------------------------------------------- |
 | `php cli.php` 进了 Web 流程而不是命令列表 | `cli_enable` 是 `false` 或没传                                  | 入口里给 `'cli_enable' => true`（[第 2-15 章](cli.md)）                          |
-| API 入口全 404                    | `RouteHookApiServer` 没启用，或 `api_server_namespace` 与实际命名空间不符 | 对照 `demo/public/api.php` 检查 `ext` 选项                                   |
+| API 入口全 404                    | `RouteHookApiServer` 没启用，或 `apiserver_namespace` 与实际命名空间不符 | 对照 `demo/public/api.php` 检查 `ext` 选项                                   |
+| API 类不满足基类约束 → 静默 404          | `apiserver_base_class` 写错（**不是** `apiserver_interface`，那个键从没生效过） | 用 `~BaseApi` 形式（`~` = 当前 `namespace` + `apiserver_namespace`）             |
 | RPC 客户端报「找不到类」                 | `JsonRpc\` 前缀的自动加载没注册                                       | 确认 `JsonRpcExt` 在 `ext` 里且 `jsonrpc_enable_autoload` 为真                |
 | 子目录部署后所有站内链接 404               | 手写了 `/xxx` 绝对路径                                             | 一律 `__url()`（[第 2-2 章](routing.md)）                                      |
 | 子目录部署后路由全 404                  | rewrite 没把子目录剥掉，或 PATH_INFO 丢失                              | [第 1-7 章](deployment.md) 的 nginx/apache 写法；或开 `path_info_compact_enable` |

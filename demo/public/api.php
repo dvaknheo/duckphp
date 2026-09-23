@@ -62,9 +62,9 @@ namespace {
         'setting_file_enable' => false,
         'ext' => [
             'DuckPhp\\Ext\\RouteHookApiServer' => [
-                'api_server_namespace' => '\\Api',
-                'api_server_interface' => '~BaseApi',
-                'api_server_404_as_exception' => true,
+                'apiserver_namespace' => '\\Api',
+                'apiserver_base_class' => '~BaseApi',
+                'apiserver_404_as_exception' => true,
             ],
         ],
         'is_debug' => true,

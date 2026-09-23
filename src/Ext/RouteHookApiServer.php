@@ -15,14 +15,14 @@ class RouteHookApiServer extends ComponentBase
 {
     public $options = [
         'namespace' => '',
-        'api_server_base_class' => '',
-        'api_server_namespace' => 'Api',
-        'api_server_class_postfix' => '',
-        'api_server_use_singletonex' => false,
-        'api_server_404_as_exception' => false,
+        'apiserver_base_class' => '',
+        'apiserver_namespace' => 'Api',
+        'apiserver_class_postfix' => '',
+        'apiserver_use_singletonex' => false,
+        'apiserver_404_as_exception' => false,
     ];
-    //'api_server_config_cache_file' => '',
-    //'api_server_on_missing' => '',
+    //'apiserver_config_cache_file' => '',
+    //'apiserver_on_missing' => '',
     protected $headers = [
         'Access-Control-Allow-Origin' => '*',
         'Access-Control-Allow-Methods' => 'POST,PUT,GET,DELETE',
@@ -56,7 +56,7 @@ class RouteHookApiServer extends ComponentBase
     }
     protected function onMissing(): bool
     {
-        if ($this->options['api_server_404_as_exception']) {
+        if ($this->options['apiserver_404_as_exception']) {
             throw new \ReflectionException("404", -1);
         }
         return false;
@@ -94,16 +94,16 @@ class RouteHookApiServer extends ComponentBase
             return [null, null];
         }
 
-        $namespace = $this->getComponenetNamespace('api_server_namespace');
+        $namespace = $this->getComponenetNamespace('apiserver_namespace');
         $namespace_prefix = $namespace ? $namespace .'\\':'';
 
-        $class = $namespace_prefix . $class . $this->options['api_server_class_postfix'];
+        $class = $namespace_prefix . $class . $this->options['apiserver_class_postfix'];
         /** @var string */
-        $base_class = str_replace('~', $namespace_prefix, $this->options['api_server_base_class']);
+        $base_class = str_replace('~', $namespace_prefix, $this->options['apiserver_base_class']);
         if ($base_class && !is_subclass_of($class, $base_class)) {
             return [null, null];
         }
-        if ($this->options['api_server_use_singletonex']) {
+        if ($this->options['apiserver_use_singletonex']) {
             if ($method === 'G') {
                 return [null, null];
             }
