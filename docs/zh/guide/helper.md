@@ -43,6 +43,7 @@ $rows = Helper::DbForRead()->fetchAll($sql);
 | Business      | [`DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)                                                                              | `Setting()` `Config()` `AppOptions()` `XpCall()` `BusinessThrowOn()` [`Cache()`](../reference/Component-Cache.md) [`Validator()`](../reference/Component-Validator.md) `ValidatorFilter()` `FireGlobalEvent()` `OnGlobalEvent()` `AdminService()` `UserService()` `PathOfProject()` `PathOfRuntime()` |
 | Model         | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳，方法全在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md) 里） | [`Db()`](../reference/Db-Db.md) `DbForRead()` `DbForWrite()` `SqlForPager()` `SqlForCountSimply()` `DatabaseDriver()`                                                                                                                                                                                 |
 | 应用/接线（System） | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)                                                                                      | `addRouteHook()` `replaceController()` `assignRoute()` `assignImportantRoute()` `assignRewrite()` `Redis()` `SESSION()` `getCliParameters()` `isRunning()` `isInException()` `system_wrapper_replace()`                                                                                               |
+|               |                                                                                                                                                                                 |                                                                                                                                                                                                                                                                                                       |
 
 两个「全量版」：
 
@@ -57,11 +58,14 @@ use DuckPhp\Foundation\Controller\ControllerHelper;
 
 class Helper extends ControllerHelper
 {
-    public static function money(float $v): string
+    // 动态方法：加在自己 Helper 的单例上
+    public function money(float $v): string
     {
         return '¥' . number_format($v, 2);
     }
 }
+
+Helper::_()->money(12.5);   // 调用走单例（_()），不是静态调用
 ```
 
 ```php
@@ -71,13 +75,20 @@ use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 Helper::Show(get_defined_vars(), 'note/list');
 ```
 
-**为什么值得单独写一个工程 Helper**：它是你工程的**动态扩展点**——想加工具方法就在里面加静态方法（像上面写法 A 的 `money()`），调用点永远是 `Helper::`，不必改；四层各写一个，层边界也跟着固定下来。
+**为什么值得单独写一个工程 Helper**：它是你工程的**动态扩展点**——想加工具方法就往里加**动态方法（实例方法）**，用**单例调用**取用：
 
-> ⚠️ **但你新增的方法只有你自己认识**：并集 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md) 与 [`DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 的 `__callStatic()` **只派发到框架那四个层 Helper**（源码里写死了那四个类名，见 `src/Foundation/Helper.php` 129-134 行），它们的 96 条 `@method` 里也没有你的方法。所以 `MyProj\Controller\Helper::money()` 成立，而 `DuckPhp\Foundation\Helper::money()` 会报 `Call to undefined method`——用并集时要把「框架的方法」与「你工程的方法」分清楚。
+```php
+Helper::_()->money(12.5);   // ✅ 动态方法：先取单例，再调方法
+Helper::money(12.5);        // ❌ Error: Non-static method ... cannot be called statically
+```
 
-**除 `System/` 外，工程代码不要直接 `use` `DuckPhp\*`**：要框架能力就经**本层的工程 Helper**（在里面包一层静态方法），或继承**本层的 Base** 拿 `_()` 单例入口；`System/` 是接线层（装配 `ext`、挂钩子、注册命令都在那儿），只有它可以随手引用框架类（[第 2-1 章](layers.md)）。
+`_()` 来自 [`SingletonExTrait`](../reference/Core-SingletonExTrait.md)（`src/Core/SingletonExTrait.php`）：`PhaseContainer::GetObject(static::class)`，所以你拿到的是**当前相位里自己那个 Helper 实例**，方法里能读写实例状态（`$this->…`），也不用和框架的静态方法抢名字。框架自带的那些方法（`Show()` / `Db()` / `Setting()`）都是**静态**的，照旧直接 `Helper::Show()` 调。
 
-**静态方法也可以覆盖父类实现**——想改某一层 Helper 的行为，不必动框架：
+> ⚠️ **动态方法只能经「你工程那个类」的 `_()` 调**：并集 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md) 自己没有 `_()`，`DuckPhp\Foundation\Helper::_()` 会被 `__callStatic()` 按派发顺序派到第一站的 [`SystemHelper`](../reference/Foundation-System-SystemHelper.md)——**实测拿到的是 `SystemHelper` 实例，不是你的 Helper**；`DuckPhp\Foundation\Helper::money()` 则报 `Call to undefined method`（那 96 条 `@method` 里也没有你的方法）。所以自己的方法写全类名：`MyProj\Controller\Helper::_()->money(12.5)`。
+
+**除 `System/` 外，工程代码不要直接 `use` `DuckPhp\*`**：要框架能力就经**本层的工程 Helper**（框架方法照旧静态调、自己的工具方法做成动态方法），或继承**本层的 Base** 拿 `_()` 单例入口；`System/` 是接线层（装配 `ext`、挂钩子、注册命令都在那儿），只有它可以随手引用框架类（[第 2-1 章](layers.md)）。
+
+**动态方法与静态方法，分工别搞混**：自己新增的工具方法写成**动态方法**（`Helper::_()->x()`，能带实例状态、不占名字）；**静态方法**则是用来**覆盖父类实现**的——想改某一层 Helper 的行为，不必动框架：
 
 ```php
 namespace MyProj\Controller;
@@ -133,18 +144,19 @@ Helper::Show($data, 'x');     // ❌ Business 的 Helper 继承链里没有 Show
 
 `src/Core/Functions.php` 定义了一组全局函数，专为模板与随手调用准备：
 
-| 函数 | 作用 |
-|---|---|
-| `__h($str)` | HTML 转义 |
-| `__l($str, $args, $fallback)` | 翻译（[第 2-14 章](i18n.md)） |
-| `__hl($str, $args)` | 翻译 + 转义 |
-| `__langtext($desc, $args)` | 一段文本里的 `[[key\|fallback]]` 占位翻译 |
-| `__json($data, $options)` | JSON 编码 |
-| `__url($url)` / `__domain($use_scheme)` / `__res($url)` | URL / 域名 / 资源地址（[第 2-2 章](routing.md)、[第 3-3 章](static-resources.md)） |
-| `__display(...)` | 调试输出 |
-| `__var_dump()` / `__var_log()` / `__trace_dump()` / `__debug_log()` | 调试与日志（[第 1-6 章](debugging.md)） |
-| `__logger()` | 取日志器 |
-| `__is_debug()` / `__is_real_debug()` / `__platform()` | 环境判断 |
+| 函数                                                                  | 作用                                                                    |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `__h($str)`                                                         | HTML 转义                                                               |
+| `__l($str, $args, $fallback)`                                       | 翻译（[第 2-14 章](i18n.md)）                                               |
+| `__hl($str, $args)`                                                 | 翻译 + 转义                                                               |
+| `__langtext($desc, $args)`                                          | 一段文本里的 `[[key\|fallback]]` 占位翻译                                       |
+| `__json($data, $options)`                                           | JSON 编码                                                               |
+| `__url($url)` / `__domain($use_scheme)` / `__res($url)`             | URL / 域名 / 资源地址（[第 2-2 章](routing.md)、[第 3-3 章](static-resources.md)） |
+| `__display(...)`                                                    | 调试输出                                                                  |
+| `__var_dump()` / `__var_log()` / `__trace_dump()` / `__debug_log()` | 调试与日志（[第 1-6 章](debugging.md)）                                        |
+| `__logger()`                                                        | 取日志器                                                                  |
+| `__is_debug()` / `__is_real_debug()` / `__platform()`               | 环境判断                                                                  |
+|                                                                     |                                                                       |
 
 放在视图里最自然：
 
@@ -207,7 +219,8 @@ Helper::assignRewrite('/legacy', 'home/index');
 | 现象                                              | 原因                                                | 改法                                                    |
 | ----------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------- |
 | `Call to undefined method ...::Show()`          | 用的是业务/模型层的 Helper（继承链里没有输出方法）                     | 输出放控制器；或检查 `extends` 的是哪一层的 Helper                    |
-| 并集 `Helper::Foo()` 报 `Call to undefined method` | 四层都没有这个方法（`__callStatic` 找不到就报错）；**你工程 Helper 里新增的方法也不在其中**    | 查四层 Helper 的参考页，或看源码里的 `@method` 注释确认名字；工程自己的方法用工程 Helper 类名调 |
+| 并集 `Helper::Foo()` 报 `Call to undefined method` | 四层都没有这个方法（`__callStatic` 找不到就报错）；**你工程 Helper 里新增的动态方法也不在其中** | 查四层 Helper 的参考页，或看源码里的 `@method` 注释确认名字；工程自己的动态方法用工程 Helper 的 `_()` 调 |
+| 自己加的方法 `Helper::money()` 报 `Non-static method ... cannot be called statically` | 加的是**动态方法**（如 `public function money()`），却用静态调用 | 写成 `Helper::_()->money(...)`（[§1](#1-四层四个类各管一摊)）；要静态调就把方法声明成 `static`，但那是「覆盖父类实现」的路子 |
 | 并集 `Helper::Setting()` 行为与预期不符                  | 同名方法按 System → Controller → Business → Model 顺序判定 | 需要明确语义时直接用那一层的类（`Business\BusinessHelper::Setting()`） |
 | 反射/IDE 找不到并集类的方法                                | `__callStatic` 方案下方法是注释而非声明                       | 用 `@method` 注释支持的 IDE；或直接依赖四层类                        |
 | `assignRewrite('article/123', …)` 不生效           | 重写键**少了前导 `/`**：钩子拿 `'/'.$path_info` 比较           | 写成 `'/article/123'`                                   |

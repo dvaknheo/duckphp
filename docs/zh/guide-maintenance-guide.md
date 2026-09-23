@@ -337,15 +337,17 @@ python3 <tmp>/drift.py --all                                                    
 
 **背景**：作者在 `helper.md` §1「工程侧的 `Xxx\Helper` 有两种写法」之后留了两条 `//TODO`：① 说明工程侧 Helper 新增的方法都是「动态方法」，并讲清「你的工程除 `System/` 外不要引用 `DuckPhp` 的东西，应经工程侧 Helper 或 Base 引用」；② 说明工程侧的静态方法用于 override 父类实现。
 
-**做了什么**（`helper.md` 200 → 227 行，仍 ≤400）
+**做了什么**（`helper.md` 200 → 240 行，仍 ≤400）
 
 - 删掉两行 `//TODO`，在写法 A / 写法 B 的代码块之后补四段正文：
-  - **动态扩展点**：工程 Helper 里加静态方法零成本（调用点始终写 `Helper::`），四层各写一个还能固定层边界；
-  - **⚠️ 并集看不到你的方法**：`Foundation\Helper` 与 `DuckPhpAllInOne` 的 `__callStatic()` 只派发到框架那四层（`src/Foundation/Helper.php` 129-134 行写死了四个类名），96 条 `@method` 里也没有你的方法 ⇒ `MyProj\Controller\Helper::money()` 成立、`DuckPhp\Foundation\Helper::money()` 报 `Call to undefined method`；
-  - **除 `System/` 外不要直接 `use` `DuckPhp\*`**：要框架能力就经本层工程 Helper（包一层静态方法）或本层 Base 的 `_()`；与 `layers.md` §1 的编码规则互链；
-  - **静态方法可覆盖父类实现**：给了 `Show()` 先补 `page_title` 再 `parent::Show()` 的示例，并写明两个前提——只对「**经你工程类名**」的调用生效（框架内部是硬编码框架类名调用：`UserControllerBase` / `AdminControllerBase` 的 `ControllerHelper::checkInstall()` / `assignViewData()` / `Show302()`，源码 20-37 行，改那类行为要用 `onLoginedException()` 这类钩子或第 4-3 章手段）；覆盖的**签名必须兼容**。
-- 「常见错误」表那条「并集 `Helper::Foo()` 报 `Call to undefined method`」补了一句「你工程 Helper 里新增的方法也不在其中」，改法列补「工程自己的方法用工程 Helper 类名调」。
+  - **动态扩展点 = 动态方法 + 单例调用**：自己新增的工具方法写成**动态方法（实例方法）**（`public function money()`），调用走**单例** `Helper::_()->money(12.5)`；`_()` 来自 `SingletonExTrait` → `PhaseContainer::GetObject(static::class)`，拿到的是当前相位里你自己那个 Helper 实例（能带实例状态）；
+  - **⚠️ 动态方法只能经「你工程那个类」的 `_()` 调**：并集 `Foundation\Helper` 自己没有 `_()`，`DuckPhp\Foundation\Helper::_()` 会被 `__callStatic()` 按派发顺序派到第一站的 `SystemHelper`——**实测返回 `SystemHelper` 实例**（不是你的 Helper）；`DuckPhp\Foundation\Helper::money()` 报 `Call to undefined method`（96 条 `@method` 里没有你的方法）；
+  - **除 `System/` 外不要直接 `use` `DuckPhp\*`**：要框架能力经本层工程 Helper（框架方法照旧静态调、自己的工具方法做成动态方法）或本层 Base 的 `_()`；与 `layers.md` §1 的编码规则互链；
+  - **静态方法用于覆盖父类实现**（与动态方法分工明确）：给了 `Show()` 先补 `page_title` 再 `parent::Show()` 的示例，并写明两个前提——只对「**经你工程类名**」的调用生效（框架内部是硬编码框架类名调用：`UserControllerBase` / `AdminControllerBase` 的 `ControllerHelper::checkInstall()` / `assignViewData()` / `Show302()`，源码 20-37 行，改那类行为要用 `onLoginedException()` 这类钩子或第 4-3 章手段）；覆盖的**签名必须兼容**。
+- 「常见错误」表补两行：并集那条补「你工程 Helper 里新增的动态方法也不在其中」；新增一行「`Helper::money()` 报 `Non-static method ... cannot be called statically`」→ 改成 `Helper::_()->money(...)`。
 
-**两条断言是实测的**（不是凭记忆写的）：① 静态方法不兼容覆盖是**编译期致命错误**（`php -l` 实测 `Declaration of B::f() must be compatible with A::f($x = 1)`）；② `parent::` 调静态方法可行（实测输出 `A1B`）。
+**四处断言全是实测的**（不是凭记忆写的，脚本 `php check_helper_pattern.php`，跑在仓库根目录）：① `MyH::_()` 返回 `MyH`；② `MyH::_()->money(12.5)` 正常返回；③ `Foundation\Helper::_()` 返回 `DuckPhp\Foundation\System\SystemHelper`；④ `MyH::money(1)` 抛 `Error: Non-static method MyH::money() cannot be called statically`。另外（静态覆盖那条）：静态方法不兼容覆盖是**编译期致命错误**（`php -l` 实测 `Declaration of B::f() must be compatible with A::f($x = 1)`），`parent::` 调静态方法可行（实测输出 `A1B`）。
+
+**修正记录**：本条第一版把 TODO ① 写成了「加**静态**方法、调用点始终 `Helper::`」——作者指出理解有误（是**加动态方法、单例调用**），随后按实测重写，并同步改了写法 A 的示例（`money()` 由 `static` 改为实例方法、示例里补 `Helper::_()->money(12.5)` 调用行）。教训：TODO 里的「动态方法」是 DuckPHP 的固定说法（相对「静态方法」），不要按「运行时可扩展」去自由发挥。
 
 **验收**：`docs/zh/guide` 里再无作者留的 `//TODO`（剩下 4 处命中都是「介绍源码 TODO」的正文，按约定保留）；`check-doc-links.py docs/zh` → **2105 条链接 0 死链**；`helper.md` **227 行**（≤400）。
