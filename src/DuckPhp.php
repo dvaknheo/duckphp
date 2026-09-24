@@ -94,6 +94,8 @@ class DuckPhp extends App
      */
     protected $hidden_options = [
         'not_empty' => true,
+        'url_admin_home' => null,
+        'url_user_home' => null,
         'session_prefix' => '',
         'table_prefix' => '',
 
@@ -110,11 +112,11 @@ class DuckPhp extends App
     protected function initComponentsOfRoot($components, $default): void
     {
         $my_components = [
-            DbManager::class => self::EXT_DEFAULT,
-            RedisManager::class => self::EXT_DEFAULT,
-            GlobalAdmin::class => self::EXT_DISABLE,
-            GlobalUser::class => self::EXT_DISABLE,
-            GlobalEvent::class => self::EXT_DISABLE,
+            DbManager::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
+            RedisManager::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
+            GlobalAdmin::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
+            GlobalUser::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
+            GlobalEvent::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
         ];
         $components = array_merge($components, $my_components);
 
@@ -122,9 +124,15 @@ class DuckPhp extends App
         if ($this->options['data_file_enable'] ?? false) {
             ExtOptionsLoader::_()->init($this->options, $this);
         }
-        DbManager::_()->init($this->options, $this);
-        RedisManager::_()->init($this->options, $this);
-        $this->options['database_driver'] = DbManager::_()->options['database_driver'];
+        if (isset($this->setting['redis']) || isset($this->setting['redis_list']) ||
+            isset($this->options['redis']) || isset($this->options['redis_list'])) {
+            RedisManager::_()->init($this->options, $this);
+        }
+        if (isset($this->setting['database']) || isset($this->setting['database_list']) ||
+            isset($this->options['database']) || isset($this->options['database_list'])) {
+            DbManager::_()->init($this->options, $this);
+            $this->options['database_driver'] = DbManager::_()->options['database_driver'];
+        }
     }
     ////////////////////
     protected function initComponentsOfInner($components, $default): void

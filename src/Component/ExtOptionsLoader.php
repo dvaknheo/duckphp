@@ -10,6 +10,7 @@ namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\DuckPhpSystemException;
 
 class ExtOptionsLoader extends ComponentBase
 {
@@ -108,6 +109,9 @@ class ExtOptionsLoader extends ComponentBase
         $options['__class__'] = get_class(App::_());
 
         $root = $this->getRoot();
+        if (!($root->options['data_file_enable'] ?? false)) {
+            throw new DuckPhpSystemException("must enable 'data_file_enable' in root!");
+        }
 
         $root->root_set_options_by_phase($phase, $options);
         $root->saveAllOptions();

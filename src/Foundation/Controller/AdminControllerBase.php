@@ -6,9 +6,7 @@
 
 namespace DuckPhp\Foundation\Controller;
 
-use DuckPhp\Core\App;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
-use DuckPhp\GlobalAdmin\AdminException;
 
 class AdminControllerBase implements AdminControllerInterface
 {
@@ -19,25 +17,25 @@ class AdminControllerBase implements AdminControllerInterface
     protected function initController()
     {
         ControllerHelper::checkInstall(null);
-        try {
-            ControllerHelper::Admin()->id(true);
-            $flag = ControllerHelper::Admin()->canAccess();
-            ControllerHelper::ThrowOn(!$flag, AdminException::MESSAGE_NEED_PEMISSION, AdminException::CODE_NEED_PERMISSION, AdminException::class);
-        } catch (AdminException $ex) {
-            $this->onLoginedException($ex);
+        ControllerHelper::Admin()->id(true);
+        $flag = ControllerHelper::Admin()->canAccess();
+        if (!$flag) {
+            $this->onNeedPermission();
             ControllerHelper::exit();
         }
+
         ControllerHelper::assignViewData('__use_logined_view_data', true);
         ControllerHelper::assignViewData('__use_logined_header_footer_file', true);
     }
-    protected function onLoginedException(AdminException $ex)
+    protected function onNeedPermission()
     {
         if (!ControllerHelper::IsAjax()) {
-            ControllerHelper::Show302(ControllerHelper::Admin()->urlForLogin());
+            $url_back = parse_url(ControllerHelper::SERVER('REQUEST_URI', ''), PHP_URL_PATH);
+            ControllerHelper::Show302(ControllerHelper::Admin()->urlForLogin($url_back));
         } else {
             ControllerHelper::ShowJson([
-                'error_code' => $ex->getCode(),
-                'error_message' => $ex->getMessage()
+                'error_code' => -1,
+                'error_message' => 'NEED_PERMISSION',
             ]);
         }
     }

@@ -38,6 +38,7 @@ class App extends ComponentBase
     const EXT_DEFAULT = 1;
     const EXT_FOLLOW_APP = 2;
     const EXT_RENEW = 3;
+    const EXT_ROOT_HOLD_POSISION_ONLY = 0;
 
     protected $core_options = [
         'path_runtime' => 'runtime',

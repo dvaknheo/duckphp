@@ -18,25 +18,25 @@ class UserControllerBase implements UserControllerInterface
     protected function initController()
     {
         ControllerHelper::checkInstall(null);
-        try {
-            ControllerHelper::User()->id(true);
-            $flag = ControllerHelper::User()->canAccess();
-            ControllerHelper::ThrowOn(!$flag, UserException::MESSAGE_NEED_PEMISSION, UserException::CODE_NEED_PERMISSION, UserException::class);
-        } catch (UserException $ex) {
-            $this->onLoginedException($ex);
+        ControllerHelper::User()->id(true);
+        $flag = ControllerHelper::Admin()->canAccess();
+        if (!$flag) {
+            $this->onNeedPermission();
             ControllerHelper::exit();
         }
+
         ControllerHelper::assignViewData('__use_logined_view_data', true);
         ControllerHelper::assignViewData('__use_logined_header_footer_file', true);
     }
-    protected function onLoginedException(UserException $ex)
+    protected function onNeedPermission()
     {
         if (!ControllerHelper::IsAjax()) {
-            ControllerHelper::Show302(ControllerHelper::User()->urlForLogin());
+            $url_back = parse_url(ControllerHelper::SERVER('REQUEST_URI', ''), PHP_URL_PATH);
+            ControllerHelper::Show302(ControllerHelper::User()->urlForLogin($url_back));
         } else {
             ControllerHelper::ShowJson([
-                'error_code' => $ex->getCode(),
-                'error_message' => $ex->getMessage()
+                'error_code' => -2,
+                'error_message' => 'NEED_PERMISSION',
             ]);
         }
     }
