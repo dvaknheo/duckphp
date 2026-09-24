@@ -60,7 +60,7 @@ class App extends DuckPhp
 | **文件上传校验**          | 只提供 `Helper::FILES()` 取数据 | 校验 MIME/扩展名/大小、重命名存储、**别放进可执行目录**（[第 3-3 章](static-resources.md)）                |
 | **越权（水平/垂直）**       | 权限体系只解决「是不是登录/是不是管理员」     | 每条业务都要判断「这个资源是不是他的」——放 Business 层                                                |
 | **限流/防刷**           | 无内置                       | Redis 计数（[第 2-14 章](cache.md)）或网关层做                                              |
-| **强制 HTTPS / HSTS** | 无内置中间件                    | 用 pre 路由钩子判断 `$_SERVER['HTTPS']` 后 `Helper::Show302()`（[第 2-3 章](route-hooks.md)） |
+| **强制 HTTPS / HSTS** | 无内置中间件                    | 用 pre 路由钩子判断 `$_SERVER['HTTPS']` 后 `Helper::Show302()`（[第 2-4 章](route-hooks.md)） |
 | **请求体大小/超时**        | PHP-FPM/nginx 的职责         | 在服务器配置里限制                                                                        |
 | **依赖与版本**           | `composer.lock` 是你的责任     | 上线前 `composer audit`，锁定版本再部署                                                     |
 
@@ -107,7 +107,7 @@ class App extends DuckPhp
 | ☐ | Cookie 设了 `Secure`/`HttpOnly`/`SameSite` | 用 `Helper::setcookie(...)` 显式传参 | [`Controller\ControllerHelper::setcookie()`](../reference/Foundation-Controller-ControllerHelper.md) |
 
 | ☐ | Session 前缀不与其他应用冲突 | 配 `session_prefix` | `Foundation/SessionTrait.php` |
-| ☐ | HTTPS 强制跳转 + HSTS | 用 pre 路由钩子实现 | [第 2-3 章](route-hooks.md) |
+| ☐ | HTTPS 强制跳转 + HSTS | 用 pre 路由钩子实现 | [第 2-4 章](route-hooks.md) |
 | ☐ | 敏感配置不在代码库 | 走 `.env`（`use_env_file`）或设置文件，且该文件不进 git | [第 1-5 章](configuration.md) |
 | ☐ | `runtime/`、`config/` 不可被 Web 直接访问 | 文档根指向 `public/` | [第 1-7 章](deployment.md) |
 | ☐ | 依赖已审计/锁版本 | `composer audit` + 提交 `composer.lock` | 工程侧 |
@@ -137,7 +137,7 @@ Helper::addRouteHook(function (string $path_info) {
     if (App::_()->isCli()) { return false; }
     if (!empty($_SERVER['HTTPS'])) { return false; }
     Helper::Show302('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    return true;                      // 拦住：控制器不执行（第 2-3 章）
+    return true;                      // 拦住：控制器不执行（第 2-4 章）
 }, 'prepend-outter');
 ```
 

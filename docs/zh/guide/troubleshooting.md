@@ -53,13 +53,13 @@ init()（onPrepare → onInit → onInited） → serve()（onRequest → Route:
 | 症状 | 看什么 | 大概率原因 / 改法 |
 |---|---|---|
 | 404，页面提示 `404 File Not Found` | `Route::_()->getRouteError()` | 类不存在（E003）→ 检查命名空间与 `Controller` 后缀；前缀不符（E001）→ 子应用的 `controller_url_prefix`（[第 3-2 章](mount-app.md)） |
-| `/about` 报类不存在 | 单段路径的规则 | 单段 = «欢迎类的方法»，不是控制器；控制器至少两段，或改用 `route_map`（[第 2-4 章](routing.md)） |
+| `/about` 报类不存在 | 单段路径的规则 | 单段 = «欢迎类的方法»，不是控制器；控制器至少两段，或改用 `route_map`（[第 2-3 章](routing.md)） |
 | `/Main/index` 被拒绝 | 错误码 E009 | `controller_welcome_class_visible` 默认 `false`；真需要就设为 `true` |
 | 命中了错误的控制器 | `getRouteCallingClass()` | 同名类在两个命名空间；或 `controller_class_map` 里有映射 |
-| `assignRewrite()` 不生效 | 键是否带前导 `/` | 必须写 `'/legacy'`（[第 2-4 章](routing.md)） |
+| `assignRewrite()` 不生效 | 键是否带前导 `/` | 必须写 `'/legacy'`（[第 2-3 章](routing.md)） |
 | `route_map` 里 `Class::method` 无效 | 回调写法 | 只支持 `Class@method` / `Class->method` / callable |
 | 子应用永远接不到请求 | 入口 URL | 缺 `controller_url_prefix`，或父应用先抢到了（[第 3-2 章](mount-app.md)） |
-| 每条请求都跑两遍控制器 | 是否装了中间件 | [`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 的短路坑：不调 `$next` 就 return 会让 `Route::run()` 再跑一次默认回调（[第 2-3 章](route-hooks.md)） |
+| 每条请求都跑两遍控制器 | 是否装了中间件 | [`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 的短路坑：不调 `$next` 就 return 会让 `Route::run()` 再跑一次默认回调（[第 2-4 章](route-hooks.md)） |
 
 ### B. 输出与视图
 

@@ -96,7 +96,7 @@ RouteHookRewrite::_()->assignRewrite('/legacy-shop', 'shop/');
 
 > ⚠️ **重写表的键必须带前导 `/`**：钩子内部是拿 `'/'.$path_info` 跟你的键比较的。写 `'legacy-shop'` 永远不命中（这是很容易踩的坑；`Helper::assignRewrite()` 也一样）。
 >
-> 另一个常见用法是把 URL 直接绑到「类@方法」：`RouteHookRouteMap::_()->assignRoute($url, $callback)`，重要路由用 `assignImportantRoute()`，它们在路由匹配前生效（第 2-4 章）。
+> 另一个常见用法是把 URL 直接绑到「类@方法」：`RouteHookRouteMap::_()->assignRoute($url, $callback)`，重要路由用 `assignImportantRoute()`，它们在路由匹配前生效（第 2-3 章）。
 
 ## 视图级覆盖：换渲染方式与页头页脚
 
@@ -129,7 +129,7 @@ Helper::assignViewData('__use_logined_header_footer_file', true);  // 顺手把�
 1. **同一种资源在同一相位链里**：先命中的赢，顺序是「父应用的 `<name>` 子目录 → 子应用自己」。
 2. **同一层里同名目录合并**时（例如菜单树），以**先创建者**的 `url`/`icon` 为准（见 [Ext-PermissionMenu](../reference/Ext-PermissionMenu.md) 注意事项）。
 3. **路由钩子**按注册位置决定先后：外层的 pre → 内层 pre → 默认路由 → 内层 post → 外层 post。
-4. 排查工具：[`PhaseContainer::_()->dumpAllObject()`](../reference/Core-PhaseContainer.md)（相位里到底有哪些实例）、`getOverrideableFile(..., true)`（文件到底命中谁）、[`RouteLister::_()->listAll()`](../reference/Ext-RouteLister.md)（现在有哪些路由，第 2-4 章）。
+4. 排查工具：[`PhaseContainer::_()->dumpAllObject()`](../reference/Core-PhaseContainer.md)（相位里到底有哪些实例）、`getOverrideableFile(..., true)`（文件到底命中谁）、[`RouteLister::_()->listAll()`](../reference/Ext-RouteLister.md)（现在有哪些路由，第 2-3 章）。
 
 ## 覆盖的代价：三条纪律
 

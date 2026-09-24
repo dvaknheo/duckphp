@@ -102,7 +102,7 @@ server {
 **如果你的服务器环境实在拿不到 PATH_INFO**（部分 CGI/FastCGI 配置），开一个兼容模式即可，路由改从查询串解析：
 
 ```php
-'path_info_compact_enable' => true,     // 由 RouteHookPathInfoCompat 接管（第 2-4 章）
+'path_info_compact_enable' => true,     // 由 RouteHookPathInfoCompat 接管（第 2-3 章）
 ```
 
 ## 五、权限

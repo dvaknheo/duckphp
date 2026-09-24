@@ -151,7 +151,7 @@ Helper::Show($data, 'x');     // ❌ Business 的 Helper 继承链里没有 Show
 | `__hl($str, $args)`                                                 | 翻译 + 转义                                                               |
 | `__langtext($desc, $args)`                                          | 一段文本里的 `[[key\|fallback]]` 占位翻译                                       |
 | `__json($data, $options)`                                           | JSON 编码                                                               |
-| `__url($url)` / `__domain($use_scheme)` / `__res($url)`             | URL / 域名 / 资源地址（[第 2-4 章](routing.md)、[第 3-3 章](static-resources.md)） |
+| `__url($url)` / `__domain($use_scheme)` / `__res($url)`             | URL / 域名 / 资源地址（[第 2-3 章](routing.md)、[第 3-3 章](static-resources.md)） |
 | `__display(...)`                                                    | 调试输出                                                                  |
 | `__var_dump()` / `__var_log()` / `__trace_dump()` / `__debug_log()` | 调试与日志（[第 1-6 章](debugging.md)）                                        |
 | `__logger()`                                                        | 取日志器                                                                  |

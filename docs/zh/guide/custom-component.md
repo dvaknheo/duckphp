@@ -112,7 +112,7 @@ protected function initContext(object $context): void
 }
 ```
 
-钩子的静态方法收 `$path_info`，返回真值表示「这条请求我处理了」（短路），返回 `false` 放行给后续钩子与默认路由。四个挂载位置与执行顺序见[第 2-3 章 路由钩子](route-hooks.md)。
+钩子的静态方法收 `$path_info`，返回真值表示「这条请求我处理了」（短路），返回 `false` 放行给后续钩子与默认路由。四个挂载位置与执行顺序见[第 2-4 章 路由钩子](route-hooks.md)。
 
 ### 替换框架组件
 

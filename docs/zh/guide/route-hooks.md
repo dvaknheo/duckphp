@@ -1,7 +1,7 @@
-# 2-3 路由钩子
+# 2-4 路由钩子
 
 > 解决什么问题：要在请求进入控制器**之前**拦住它、在没命中时**兜底**、或者在请求收尾时做统计——用路由钩子，而不是去继承控制器基类。
-> 前置：[第 2-2 章 请求生命周期](lifecycle.md)（钩子插在时序的哪个位置）、[第 2-4 章 路由进阶](routing.md)。预计 20 分钟。
+> 前置：[第 2-2 章 请求生命周期](lifecycle.md)（钩子插在时序的哪个位置）、[第 2-3 章 路由进阶](routing.md)。预计 20 分钟。
 > 示例：`demo/src/System/App.php`（真实接线）、`tests/Ext/MyMiddlewareManagerTest.php`（中间件实跑，含洋葱顺序）。
 > 想跑一遍：`wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Ext/MyMiddlewareManagerTest.php"`
 
@@ -76,7 +76,7 @@ RouteHookManager::_()->dump();                           // ★ 排查：把三�
 
 | 钩子 | 位置 | 作用 |
 |---|---|---|
-| [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | `prepend-outter` | PATH_INFO 兼容（`?_r=` 形式，[第 2-4 章](routing.md)） |
+| [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | `prepend-outter` | PATH_INFO 兼容（`?_r=` 形式，[第 2-3 章](routing.md)） |
 | [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) | `prepend-outter` | URL 重写 |
 | [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底） |
 | [`RouteHookApiServer`](../reference/Ext-RouteHookApiServer.md)（扩展） | `prepend-inner` | API 服务 |
@@ -207,7 +207,7 @@ echo RouteHookManager::_()->dump();   // 三个链表全打印
 ## 下一步
 
 - [第 2-2 章 请求生命周期](lifecycle.md)：钩子插在时序的哪一步、`finally` 为什么一定跑。
-- [第 2-4 章 路由进阶](routing.md)：`route_map`/`route_map_important` 与钩子的关系。
+- [第 2-3 章 路由进阶](routing.md)：`route_map`/`route_map_important` 与钩子的关系。
 - [第 2-13 章 事件系统](events.md)：广播式介入点，与钩子的分工。
 - [第 3-5 章 重写与覆盖](overriding.md)：不写钩子也能换掉某个控制器的实现。
 - 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)、[DuckPhp\Ext\RouteHookManager](../reference/Ext-RouteHookManager.md)、[DuckPhp\Ext\MyMiddlewareManager](../reference/Ext-MyMiddlewareManager.md)、[DuckPhp\Ext\HookChain](../reference/Ext-HookChain.md)。

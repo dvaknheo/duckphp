@@ -1,4 +1,4 @@
-# 2-4 路由进阶
+# 2-3 路由进阶
 
 > 解决什么问题：URL 是怎么变成「某个控制器方法」的；参数从哪来；怎么重写旧链接、怎么把 URL 绑到指定类@方法；以及多应用前缀是怎么参与匹配的。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)。预计 20 分钟。
@@ -141,7 +141,7 @@ $options = [
 
 回调写法（`adjustCallback()`）：`Class@method`（用 `::_()` 单例）、`Class->method`（用 `new`）、或任意 callable；**`Class::method` 这种静态字符串不支持**。
 
-`route_map_important` 挂在 pre 链（`prepend-inner`），`route_map` 挂在 post 链（`append-outter`）——位置与短路语义见[第 2-3 章](route-hooks.md)。
+`route_map_important` 挂在 pre 链（`prepend-inner`），`route_map` 挂在 post 链（`append-outter`）——位置与短路语义见[第 2-4 章](route-hooks.md)。
 
 ### 6. 多应用前缀：`controller_url_prefix`
 
@@ -216,6 +216,6 @@ Helper::Show302(Helper::Url('user/login'));
 ## 下一步
 
 - [第 2-5 章 控制器](controllers.md)：路由命中之后，控制器里怎么写。
-- [第 2-3 章 路由钩子](route-hooks.md)：钩子位置、短路语义，以及完整的「谁先命中」顺序。
+- [第 2-4 章 路由钩子](route-hooks.md)：钩子位置、短路语义，以及完整的「谁先命中」顺序。
 - [第 3-5 章 重写与覆盖](overriding.md)：`controller_class_map` 背后的整套覆盖机制。
 - 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)、[DuckPhp\Component\RouteHookRewrite](../reference/Component-RouteHookRewrite.md)、[DuckPhp\Component\RouteHookRouteMap](../reference/Component-RouteHookRouteMap.md)、[DuckPhp\Component\RouteHookPathInfoCompat](../reference/Component-RouteHookPathInfoCompat.md)。

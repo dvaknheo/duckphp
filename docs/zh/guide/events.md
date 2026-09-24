@@ -1,7 +1,7 @@
 # 2-13 事件系统
 
 > 解决什么问题：在**不改动对方代码**的前提下，让应用的各个部分（甚至跨应用的组件）能对「某件事发生了」作出响应。
-> 前置：[第 2-3 章 路由钩子](route-hooks.md)、[第 2-9 章 Helper 与全局函数](helper.md)。预计 15 分钟。
+> 前置：[第 2-4 章 路由钩子](route-hooks.md)、[第 2-9 章 Helper 与全局函数](helper.md)。预计 15 分钟。
 > 示例来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑。
 
 ## 最小示例
@@ -98,7 +98,7 @@ GlobalEvent::_()->fire(User::EVENT_SERVICE_USER_REGISTERED, $post);
 
 **约定**：`xxxING` 表示「正在进行中」（还可以干预），`xxxED` 表示「已完成」（做善后）。自定义事件请沿用同一后缀，例如 `order.creating` / `order.created`。
 
-### 与第 2-3 章路由钩子的分工
+### 与第 2-4 章路由钩子的分工
 
 | | 钩子（[Route](../reference/Core-Route.md) Hook） | 事件（[GlobalEvent](../reference/Component-GlobalEvent.md)） |
 |---|---|---|
@@ -108,7 +108,7 @@ GlobalEvent::_()->fire(User::EVENT_SERVICE_USER_REGISTERED, $post);
 | 跨相位 | 否（在路由当前相位内执行） | 是（回调在注册时的相位里执行） |
 | 配置入口 | `Route::addRouteHook()` / 选项 `ext` | 选项 `ext` 里打开 `GlobalEvent::class => true` |
 
-一句话：**要拦截请求用钩子，要广播状态用事件**。详见 [第 2-3 章](route-hooks.md)。
+一句话：**要拦截请求用钩子，要广播状态用事件**。详见 [第 2-4 章](route-hooks.md)。
 
 ### `Ext\EventManager`（**不推荐**）
 
@@ -147,11 +147,11 @@ GlobalEvent::_()->remove('order.created', '', $callback); // 只删指定相位+
 | 监听不到任何事件                                | `GlobalEvent` 没打开（默认 `EXT_DISABLE`）         | 在根应用 `ext` 里声明 `GlobalEvent::class => true`                        |
 | 事件回调里 `::_()` 拿错实例                      | `fire()` 会把相位切到「注册时的相位」再执行回调                | 注册时就选对相位（`globalOn` 的第二个参数）                                        |
 | 重复注册导致回调执行多次                            | 同一事件+相位+回调三元组已存在时 `globalOn` 会跳过；但不同闭包算不同回调 | 排重时用同一个 callable（如 `[Class::class, 'method']`），不要每次 `fire` 前都 `on` |
-| 想让事件「拦截」后续流程                            | 事件是广播、无返回值、不可短路                             | 改用路由钩子（[第 2-3 章](route-hooks.md)）或直接在业务里判断                          |
+| 想让事件「拦截」后续流程                            | 事件是广播、无返回值、不可短路                             | 改用路由钩子（[第 2-4 章](route-hooks.md)）或直接在业务里判断                          |
 | `remove($event, $phase, $callback)` 删不掉 | 源码的过滤条件是「相位与回调**都**不同才保留」                   | 传入与注册时**完全一致**的相位与回调                                               |
 
 ## 下一步
 
-- [第 2-3 章 路由钩子](route-hooks.md)：钩子的单链/短路语义，与事件的分工。
+- [第 2-4 章 路由钩子](route-hooks.md)：钩子的单链/短路语义，与事件的分工。
 - [第 2-14 章 缓存与 Redis](cache.md)：事件回调里如果要写共享状态，缓存是可靠的去处。
 - 参考手册：[DuckPhp\Component\GlobalEvent](../reference/Component-GlobalEvent.md)、[DuckPhp\Ext\EventManager](../reference/Ext-EventManager.md)。

@@ -2,7 +2,7 @@
 
 > 解决什么问题：一次请求从入口到输出，框架内部按什么顺序做了哪些事、**默认给你装了哪些内置组件**、你想插手时该覆盖哪个方法。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)。预计 20 分钟。
-> 分工：本章只讲**时序与内置组件**。要「拦请求」看[第 2-3 章 路由钩子](route-hooks.md)；异常见[第 2-12 章](exception.md)、事件见[第 2-13 章](events.md)、CLI 支线见[第 2-16 章](cli.md)。
+> 分工：本章只讲**时序与内置组件**。要「拦请求」看[第 2-4 章 路由钩子](route-hooks.md)；异常见[第 2-12 章](exception.md)、事件见[第 2-13 章](events.md)、CLI 支线见[第 2-16 章](cli.md)。
 > 示例：`demo/src/System/App.php`（真实的 `onPrepare()`/`onInited()` 覆盖）。
 
 ## 最小示例
@@ -70,22 +70,22 @@ class App extends DuckPhp
 
 **① root 层**——只有根应用装配这一批，而且它们的类名会被登记成「公共类」，**各相位 `::_()` 拿到的都是根应用里那一个实例**：
 
-| 组件 | 装配方式 | 作用 |
-|---|---|---|
-| [`Console`](../reference/Core-Console.md) | 跟随应用选项 | CLI 命令根（[第 2-16 章](cli.md)） |
-| [`SystemWrapper`](../reference/Core-SystemWrapper.md) | 只建实例、不 `init()` | 可替换的系统调用包装（`header`/`exit`/`setcookie`…，[第 4-3 章](replace-behavior.md)） |
-| [`Logger`](../reference/Core-Logger.md) | 只建实例、不 `init()` | 日志 |
-| [`CoreHelper`](../reference/Core-CoreHelper.md) | 只建实例、不 `init()` | `Helper::` 静态门面的实现体 |
-| [`DbManager`](../reference/Component-DbManager.md) / [`RedisManager`](../reference/Component-RedisManager.md) | **只占位**；有 `database`/`redis`（或 setting 里的 `database_list`/`redis_list`）时才 `init()` | 连接管理（[第 2-7 章](database.md)、[第 2-14 章](cache.md)） |
-| [`Admin`](../reference/GlobalAdmin-Admin.md) / [`User`](../reference/GlobalUser-User.md) | **只占位** | 管理员/用户体系的容器键（[第 2-19 章](user.md)、[第 2-20 章](admin.md)） |
-| [`GlobalEvent`](../reference/Component-GlobalEvent.md) | **只占位** | 事件总线（[第 2-13 章](events.md)） |
-| [`ExtOptionsLoader`](../reference/Component-ExtOptionsLoader.md) | 仅 `data_file_enable` 为真时 | 运行时配置文件（选项落盘） |
+| 组件                                                                                                            | 装配方式                                                                               | 作用                                                                      |
+| ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [`Console`](../reference/Core-Console.md)                                                                     | 跟随应用选项                                                                             | CLI 命令根（[第 2-16 章](cli.md)）                                             |
+| [`SystemWrapper`](../reference/Core-SystemWrapper.md)                                                         | 只建实例、不 `init()`                                                                    | 可替换的系统调用包装（`header`/`exit`/`setcookie`…，[第 4-3 章](replace-behavior.md)） |
+| [`Logger`](../reference/Core-Logger.md)                                                                       | 只建实例、不 `init()`                                                                    | 日志                                                                      |
+| [`CoreHelper`](../reference/Core-CoreHelper.md)                                                               | 只建实例、不 `init()`                                                                    | `Helper::` 静态门面的实现体                                                     |
+| [`DbManager`](../reference/Component-DbManager.md) / [`RedisManager`](../reference/Component-RedisManager.md) | **只占位**；有 `database`/`redis`（或 setting 里的 `database_list`/`redis_list`）时才 `init()` | 连接管理（[第 2-7 章](database.md)、[第 2-14 章](cache.md)）                       |
+| [`Admin`](../reference/GlobalAdmin-Admin.md) / [`User`](../reference/GlobalUser-User.md)                      | **只占位**                                                                            | 管理员/用户体系的容器键（[第 2-19 章](user.md)、[第 2-20 章](admin.md)）                  |
+| [`GlobalEvent`](../reference/Component-GlobalEvent.md)                                                        | **只占位**                                                                            | 事件总线（[第 2-13 章](events.md)）                                             |
+| [`ExtOptionsLoader`](../reference/Component-ExtOptionsLoader.md)                                              | 仅 `data_file_enable` 为真时                                                           | 运行时配置文件（选项落盘）                                                           |
 
 **② inner 层**——**每个相位各一套**（子应用有自己的路由与视图）：
 
 | 组件 | 装配方式 | 作用 |
 |---|---|---|
-| [`Route`](../reference/Core-Route.md) | 跟随应用选项 | 路由（[第 2-4 章](routing.md)） |
+| [`Route`](../reference/Core-Route.md) | 跟随应用选项 | 路由（[第 2-3 章](routing.md)） |
 | [`View`](../reference/Core-View.md) | 跟随应用选项 | 视图渲染（[第 2-6 章](views.md)） |
 | [`Configer`](../reference/Component-Configer.md) | 默认开 | 配置读取（`config/<名>.php`，[第 1-5 章](configuration.md)） |
 
@@ -94,7 +94,7 @@ class App extends DuckPhp
 | 组件 | 作用 |
 |---|---|
 | [`Lang`](../reference/Component-Lang.md) | 多语言（[第 2-15 章](i18n.md)） |
-| [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) / [`RouteHookResource`](../reference/Component-RouteHookResource.md) / [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | 四个内置路由钩子（[第 2-3 章](route-hooks.md)），最后一个受 `path_info_compact_enable` 控制 |
+| [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) / [`RouteHookResource`](../reference/Component-RouteHookResource.md) / [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | 四个内置路由钩子（[第 2-4 章](route-hooks.md)），最后一个受 `path_info_compact_enable` 控制 |
 
 `ext` 里的写法（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*` 常量）与九种语义见[第 4-2 章 开发组件与扩展](custom-component.md)。
 
@@ -135,7 +135,7 @@ serve()
 - **[`Route::clear()`](../reference/Core-Route.md) 在 `finally` 里**，所以 `finally-inner`/`finally-outter` 钩子一定会执行（包括异常路径），适合做收尾、清理、统计上报。
 - **`run()` 是 `serve()` 与 `execute()` 的分流点**：`cli_enable` 为真且是 CLI 时走 [`Console::_()->run()`](../reference/Core-Console.md)（[第 2-16 章](cli.md)），Web 走 `serve()`。判断当前形态用 `App::_()->isCli()`，别去猜 `PHP_SAPI`。
 
-> 时序里那三个钩子链表是下一章的主角：[第 2-3 章 路由钩子](route-hooks.md)。
+> 时序里那三个钩子链表是下一章的主角：[第 2-4 章 路由钩子](route-hooks.md)。
 
 ### 4. 输出：`onBeforeOutput()`
 
@@ -184,7 +184,7 @@ public function onBeforeOutput()          // 注意：它是 public，覆盖时�
 
 ## 下一步
 
-- [第 2-3 章 路由钩子](route-hooks.md)：本章时序里那三个钩子链表怎么用、谁先谁后、怎么拦请求。
+- [第 2-4 章 路由钩子](route-hooks.md)：本章时序里那三个钩子链表怎么用、谁先谁后、怎么拦请求。
 - [第 2-12 章 异常与错误处理](exception.md)：`_On404()`/`runException()` 之后的完整流程。
 - [第 2-13 章 事件系统](events.md)：广播式的介入点。
 - [第 2-16 章 命令行与定时任务](cli.md)：`execute()` 这条支线。

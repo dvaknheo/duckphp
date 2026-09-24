@@ -15,7 +15,7 @@
 | 类                                                                                | 源码标记              | 它做什么                         | 建议                                                |
 | -------------------------------------------------------------------------------- | ----------------- | ---------------------------- | ------------------------------------------------- |
 | [`Ext\ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md)                   | `@todo deprecate` | 把 PHP 错误包装成异常                | 用 `ExceptionManager`（[第 2-12 章](exception.md)）    |
-| [`Ext\HookChain`](../reference/Ext-HookChain.md)                                 | `@todo deprecate` | 洋葱式中间件链                      | 路由钩子与事件（[第 2-3 章](route-hooks.md)）                 |
+| [`Ext\HookChain`](../reference/Ext-HookChain.md)                                 | `@todo deprecate` | 洋葱式中间件链                      | 路由钩子与事件（[第 2-4 章](route-hooks.md)）                 |
 | [`Ext\StaticReplacer`](../reference/Ext-StaticReplacer.md)                       | `@todo deprecate` | 把 `$GLOBALS`/函数静态/类静态搬进组件    | 新代码别用，见 §2.1                                      |
 | [`Ext\MyFacadesBase`](../reference/Ext-MyFacadesBase.md)                         | `@todo deprecate` | 门面基类：`__callStatic()` 转发到真实类 | 用 `@method` 注解，见 §2.2                             |
 | [`Ext\MyFacadesAutoLoader`](../reference/Ext-MyFacadesAutoLoader.md)             | `@todo deprecate` | 自动 `eval` 出门面类               | 同上                                                |
@@ -60,7 +60,7 @@
 
 ### 2.4 Ext\MiniRoute：Core\Route 的早期子集
 
-`MiniRoute` 只做"PATH_INFO → 控制器类/方法 → 反射校验 → 调用"这一件事，**没有钩子链、没有重写、没有资源路由**（[`Core\Route`](../reference/Core-Route.md) 的完整能力见[第 2-4 章](routing.md)）。失败时它**不抛异常**，而是把错误码写进 `$route_error`（`E001` 前缀不符、`E003` 类不存在、`E005` 隐藏方法……），用 `getRouteError()` 读。
+`MiniRoute` 只做"PATH_INFO → 控制器类/方法 → 反射校验 → 调用"这一件事，**没有钩子链、没有重写、没有资源路由**（[`Core\Route`](../reference/Core-Route.md) 的完整能力见[第 2-3 章](routing.md)）。失败时它**不抛异常**，而是把错误码写进 `$route_error`（`E001` 前缀不符、`E003` 类不存在、`E005` 隐藏方法……），用 `getRouteError()` 读。
 
 **为什么在推荐路径外**：框架的路由是写死的 `Route::_()`（`src/DuckPhp.php` 174 行就是这么取的），**没有"换路由类"的选项**；`MiniRoute` 也不是 `Route` 的子类，无法借 `Route::_(new MiniRoute())` 顶上。要用它只能自己起一套：
 
@@ -114,7 +114,7 @@ trait ThrowOnTrait
 ## 4. 参考手册
 
 - [DuckPhp\Ext\StaticReplacer](../reference/Ext-StaticReplacer.md)、[MyFacadesBase](../reference/Ext-MyFacadesBase.md)、[MyFacadesAutoLoader](../reference/Ext-MyFacadesAutoLoader.md)、[ExtendableStaticCallTrait](../reference/Ext-ExtendableStaticCallTrait.md)、[MiniRoute](../reference/Ext-MiniRoute.md)、[Misc](../reference/Ext-Misc.md)、[ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)
-- 已在前文交代过的过时类：[ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)（[第 2-12 章](exception.md)）、[HookChain](../reference/Ext-HookChain.md)（[第 2-3 章](route-hooks.md)）
+- 已在前文交代过的过时类：[ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)（[第 2-12 章](exception.md)）、[HookChain](../reference/Ext-HookChain.md)（[第 2-4 章](route-hooks.md)）
 
 ## 下一步
 

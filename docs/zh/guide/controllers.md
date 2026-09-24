@@ -1,7 +1,7 @@
 # 2-5 控制器
 
 > 解决什么问题：控制器里怎么取输入、怎么把结果送出去（四种方式）、怎么跳转和报 404，以及哪些东西**不该**写在控制器里。
-> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-4 章 路由进阶](routing.md)。预计 20 分钟。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-3 章 路由进阶](routing.md)。预计 20 分钟。
 > 示例：`tests/data_for_tests/ZAllDemo/src/Controller/MainController.php`（五层骨架里的真实控制器）与 `demo/public/demo.php`（单文件版，含登录/跳转写法）。
 
 ## 最小示例
@@ -61,7 +61,7 @@ class MainController extends Base
 | POST 参数         | `Helper::POST('name')`                                                                      | 同上                                                    |
 | GET+POST 合并     | `Helper::REQUEST('q')`                                                                      | 按 PHP 的 `$_REQUEST` 语义                                |
 | Cookie / Server | `Helper::COOKIE('k')` / `Helper::SERVER('HTTP_HOST')`                                       |                                                       |
-| **路由参数**        | `Helper::Parameter('id')`                                                                   | 路由映射里 `{id}`、`*` 通配、正则捕获组匹配出来的参数（[第 2-4 章](routing.md)） |
+| **路由参数**        | `Helper::Parameter('id')`                                                                   | 路由映射里 `{id}`、`*` 通配、正则捕获组匹配出来的参数（[第 2-3 章](routing.md)） |
 | 判断请求类型          | `Helper::IsPost()` / `Helper::IsAjax()`                                                     |                                                       |
 | 当前路由信息          | `Helper::getRouteCallingClass()` / `Helper::getRouteCallingMethod()` / `Helper::PathInfo()` | 排错与日志常用                                               |
 
@@ -168,7 +168,7 @@ public function show()
 **④ 用路由参数（而不是查询串）取资源 id**
 
 ```php
-// 路由：'/note/{id:\d+}' => '...\NoteController@show'（第 2-4 章）
+// 路由：'/note/{id:\d+}' => '...\NoteController@show'（第 2-3 章）
 public function show()
 {
     $id = (int)Helper::Parameter('id');       // ← 路由捕获的参数

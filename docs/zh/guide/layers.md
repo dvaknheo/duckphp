@@ -14,8 +14,7 @@ php -S 127.0.0.1:8080 -t demo/public
 | 阶段 | 章 | 讲什么 |
 |---|---|---|
 | 规范 | **2-1** | 本章：四层各管什么、谁不能调谁 |
-| 框架机制（先看懂时序） | 2-2–2-3 | [请求生命周期](lifecycle.md)（含框架默认装了哪些内置组件）→ [路由钩子](route-hooks.md) |
-| 请求路径 | 2-4–2-8 | [路由](routing.md) → [控制器](controllers.md) → [视图](views.md) → [数据库](database.md) → [模型](model.md) |
+| 时序与请求路径 | 2-2–2-8 | [请求生命周期](lifecycle.md)（含框架默认装了哪些内置组件）→ [路由](routing.md) → [路由钩子](route-hooks.md) → [控制器](controllers.md) → [视图](views.md) → [数据库](database.md) → [模型](model.md) |
 | 横切能力 | 2-9–2-11 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话](session.md) |
 | 框架机制 | 2-12–2-13 | [异常](exception.md)、[事件](events.md) |
 | 进阶 | 2-14–2-18 | [缓存](cache.md)、[国际化](i18n.md)、[命令行](cli.md)、[测试](testing.md)、[安全与性能](security-performance.md) |
@@ -226,7 +225,7 @@ new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 
 ## 下一步
 
-- [第 2-4 章 路由进阶](routing.md)：先弄清请求是怎么落到某个控制器方法的。
+- [第 2-3 章 路由进阶](routing.md)：先弄清请求是怎么落到某个控制器方法的。
 - [第 2-5 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
 - [第 2-6 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
 - [第 2-7 章 数据库](database.md) 与 [第 2-8 章 模型层](model.md)：模型层这一列往下的全部内容。

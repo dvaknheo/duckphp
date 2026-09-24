@@ -74,7 +74,7 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
 | `controller_class_postfix` | `''` | 类名不再追加 `Controller` 后缀 |
 | `controller_method_prefix` | `'action_'` | 只有 `action_*` 方法才是动作 |
 | `cli_enable` | `true` | 同时是 CLI 入口 |
-| `path_info_compact_enable` | `true` | 无 PATH_INFO 也能跑（[第 2-4 章](routing.md)） |
+| `path_info_compact_enable` | `true` | 无 PATH_INFO 也能跑（[第 2-3 章](routing.md)） |
 | `duckphp_all_in_one_wrap_header_foot` | `true` | `_Show()` 时自动包 `view_head` / `view_foot` |
 
 - 视图不走视图文件，而是**类方法**：`viewToCallback()`（第 86–93 行）把视图名里的 `/` 换成 `_`，找 `view_<名字>` 方法；找到就当作可调用视图，找不到才回落到父类的文件视图。`_Show()`（第 94–109 行）按「head → 正文 → foot」顺序调用。所以子类只要写 `view_hello($data)` 就等于定义了 `hello` 视图。

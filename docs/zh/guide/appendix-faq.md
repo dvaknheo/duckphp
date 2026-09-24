@@ -29,9 +29,9 @@
 
 | 问题 | 答案 | 去哪看 |
 |---|---|---|
-| URL 怎么映射到控制器？ | 最后一段是方法名，前面是类路径，类名自动补 `Controller` 后缀；单段路径落到欢迎类的方法 | [第 2-4 章](../guide/routing.md) |
-| 怎么把 URL 绑到指定类@方法？ | `route_map_important`（优先）或 `route_map`（兜底），回调写 `Class@method` | [第 2-4 章](../guide/routing.md) |
-| 旧链接怎么兼容？ | `assignRewrite('/old', 'new/path')`——**键必须带前导 `/`** | [第 2-4 章](../guide/routing.md) |
+| URL 怎么映射到控制器？ | 最后一段是方法名，前面是类路径，类名自动补 `Controller` 后缀；单段路径落到欢迎类的方法 | [第 2-3 章](../guide/routing.md) |
+| 怎么把 URL 绑到指定类@方法？ | `route_map_important`（优先）或 `route_map`（兜底），回调写 `Class@method` | [第 2-3 章](../guide/routing.md) |
+| 旧链接怎么兼容？ | `assignRewrite('/old', 'new/path')`——**键必须带前导 `/`** | [第 2-3 章](../guide/routing.md) |
 | 视图文件放哪、怎么被找到？ | `view/<视图名>.php`，查找按相位逐层回退（可被父应用覆盖） | [第 2-6 章](../guide/views.md) |
 | 怎么加统一的页眉页脚？ | 控制器构造函数里 `Helper::setViewHeadFoot('header', 'footer')` | [第 2-6 章](../guide/views.md) |
 | 输出只有「渲染视图」一种吗？ | 四种：视图、`Render()` 取字符串、`ShowJson()`、直接 `echo`；另有 `Show302`/`Show404` | [第 2-5 章](../guide/controllers.md) |
@@ -52,11 +52,11 @@
 
 | 问题 | 答案 | 去哪看 |
 |---|---|---|
-| 想在请求前后做事，用哪个？ | 拦截用路由钩子（pre 链返回真值）；前后置装饰用中间件 | [第 2-3 章 路由钩子](../guide/route-hooks.md) |
-| 中间件里 `return` 了响应怎么没生效？ | 已知坑：短路无效，控制器照样执行；要拦截请用钩子 | [第 2-3 章 路由钩子](../guide/route-hooks.md) |
-| 想在所有控制器前做点什么，要继承基类吗？ | 先考虑钩子；继承会把可变能力变成血缘 | [第 2-3 章 路由钩子](../guide/route-hooks.md) |
+| 想在请求前后做事，用哪个？ | 拦截用路由钩子（pre 链返回真值）；前后置装饰用中间件 | [第 2-4 章 路由钩子](../guide/route-hooks.md) |
+| 中间件里 `return` 了响应怎么没生效？ | 已知坑：短路无效，控制器照样执行；要拦截请用钩子 | [第 2-4 章 路由钩子](../guide/route-hooks.md) |
+| 想在所有控制器前做点什么，要继承基类吗？ | 先考虑钩子；继承会把可变能力变成血缘 | [第 2-4 章 路由钩子](../guide/route-hooks.md) |
 | 事件和钩子区别？ | 事件是广播（无返回值、可跨相位）；钩子是单链（有返回值、可短路） | [第 2-13 章](../guide/events.md) |
-| 怎么知道谁挂了钩子、顺序如何？ | [`RouteHookManager::_()->dump()`](../reference/Ext-RouteHookManager.md) | [第 2-3 章 路由钩子](../guide/route-hooks.md) |
+| 怎么知道谁挂了钩子、顺序如何？ | [`RouteHookManager::_()->dump()`](../reference/Ext-RouteHookManager.md) | [第 2-4 章 路由钩子](../guide/route-hooks.md) |
 
 ### 多应用与运维
 
@@ -85,7 +85,7 @@
 
 | 症状 | 先去哪 | 最可能的原因 |
 |---|---|---|
-| 404 | [第 2-4 章](../guide/routing.md) §7 | 前缀不符（E001）/ 类不存在（E003）/ 单段路径规则 |
+| 404 | [第 2-3 章](../guide/routing.md) §7 | 前缀不符（E001）/ 类不存在（E003）/ 单段路径规则 |
 | 路由命中了错的控制器 | [第 3-5 章](../guide/overriding.md) | `controller_class_map`、同名类、覆盖顺序 |
 | 白屏 | [第 4-9 章](../guide/troubleshooting.md) §B | 视图找不到 / 路由没命中 / include 失败 |
 | 视图里变量是 `null` | [第 2-6 章](../guide/views.md) | 没传进 `Show()`；`view_skip_notice_error` 掩盖了 notice |
@@ -103,7 +103,7 @@
 | 事件监听不到 | [第 2-13 章](../guide/events.md) | [`GlobalEvent`](../reference/Component-GlobalEvent.md) 默认关闭（`EXT_DISABLE`） |
 | 翻译不生效 | [第 2-15 章](../guide/i18n.md) | 语言文件名与 `lang_final` 不匹配 |
 | 页面慢 | [第 4-9 章](../guide/troubleshooting.md) §I | 调试开关、OPcache、SQL、缓存、多余 ext |
-| 子目录部署后链接 404 | [第 2-4 章](../guide/routing.md) | 手写绝对路径，没用 `__url()` |
+| 子目录部署后链接 404 | [第 2-3 章](../guide/routing.md) | 手写绝对路径，没用 `__url()` |
 | 测试在 Windows 上假失败 | [第 2-17 章](../guide/testing.md) | 环境差异（redis 等），换 WSL |
 | `ZAllDemoTest` 的 `files` 变红 | [第 2-17 章](../guide/testing.md) | 输出字节长度随源码变化，更新期望值 |
 | 文档链接校验报坏链 | [第 4-8 章](../guide/doc-maintenance.md) | 指向了未写的页；未写的用「纯文本 + ⏳」 |

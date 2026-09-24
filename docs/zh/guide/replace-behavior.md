@@ -54,7 +54,7 @@ App::RunQuickly(['override_class' => \MyProj\System\AppEx::class]);
 
 框架的动作是：把 `override_class` 的值当成新类，`$class::_(new $class)->init($options, $context)`（[`KernelTrait::init()`](../reference/Core-KernelTrait.md) 开头），并把 `override_from` 记成原类——所以覆盖类能拿到"我是从谁被换过来的"。
 
-控制器级更常用的是 `controller_class_map`（[第 2-4 章](routing.md)）：它是**类名 → 类名**的映射，在路由解析出类名之后、实例化之前生效。`Helper::replaceController()` 就是往这个映射里写一条。
+控制器级更常用的是 `controller_class_map`（[第 2-3 章](routing.md)）：它是**类名 → 类名**的映射，在路由解析出类名之后、实例化之前生效。`Helper::replaceController()` 就是往这个映射里写一条。
 
 ### 3. 单例级：`Xxx::_($new)`
 

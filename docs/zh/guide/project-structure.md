@@ -63,7 +63,7 @@ project/
 
 容易踩的细节：
 
-- **URL 大小写敏感**：默认不会把 `/note/list` 自动转成 `/Note/list`；要宽松匹配就配 `controller_class_adjust`（第 2-4 章）。
+- **URL 大小写敏感**：默认不会把 `/note/list` 自动转成 `/Note/list`；要宽松匹配就配 `controller_class_adjust`（第 2-3 章）。
 
 ## 层级调用铁律
 

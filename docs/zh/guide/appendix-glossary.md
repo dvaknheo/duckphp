@@ -24,9 +24,9 @@
 | **挂载前缀**         | `controller_url_prefix`                                                                                      | 一个应用所有控制器 URL 的前缀；子应用也用它实现「挂到某个路径下」。（第 3-2 章）         |
 | **文档根**          | `path_document`                                                                                              | Web 服务器暴露的目录（如 `public/`）。决定 URL 里哪些路径由 Web 服务器直接吐文件。 |
 | **资源目录**         | `path_resource` / [`RouteHookResource`](../reference/Component-RouteHookResource.md)                         | 不做 rewrite 的部署环境下，由框架代发静态资源的目录。（第 3-3 章）              |
-| **重写**           | Rewrite / [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md)                                   | 把某个 URL 映射到另一个路由（不改变用户看到的地址）。（第 2-4 章）                |
-| **路由映射**         | [Route](../reference/Core-Route.md) Map / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | 把 URL 直接绑到「类@方法」，可标为「重要路由」优先匹配。（第 2-4 章）              |
-| **PATH_INFO 兼容** | [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md)                               | 无 PATH_INFO 的服务器上用查询串传递路由。（第 2-4 章）                   |
+| **重写**           | Rewrite / [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md)                                   | 把某个 URL 映射到另一个路由（不改变用户看到的地址）。（第 2-3 章）                |
+| **路由映射**         | [Route](../reference/Core-Route.md) Map / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | 把 URL 直接绑到「类@方法」，可标为「重要路由」优先匹配。（第 2-3 章）              |
+| **PATH_INFO 兼容** | [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md)                               | 无 PATH_INFO 的服务器上用查询串传递路由。（第 2-3 章）                   |
 
 ## 分层与命名
 
@@ -39,7 +39,7 @@
 | **Helper** | `DuckPhp\Foundation\<层>\<层>Helper` / 工程的 `Helper`                 | 分层助手：`Helper::Show()` 等便捷入口，替代到处 `use` 框架类。（第 2-9 章） |
 
 | **控制器后缀 / 方法前缀** | `controller_class_postfix` / `controller_method_prefix` | 决定 URL 与类名、方法名之间的换算；方法前缀默认为空。（第 9、10 章） |
-| **欢迎页** | `controller_welcome_class` / `_method` | 默认 `Main::index`：根路径与单段路径都先落到它。（第 2-4 章） |
+| **欢迎页** | `controller_welcome_class` / `_method` | 默认 `Main::index`：根路径与单段路径都先落到它。（第 2-3 章） |
 
 ## 组件与扩展
 

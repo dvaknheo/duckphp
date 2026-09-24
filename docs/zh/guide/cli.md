@@ -89,7 +89,7 @@ RunQuickly() → init() → 分流：
 | `fetch`   | 在命令行里抓一个 URL（`--uri=…`、`--post=…`）                  |
 | `call`    | 直接调方法：`namespace/class@method arg1 --k=v`           |
 | `debug`   | 开关调试模式（`debug off`）                                 |
-> **`routes` 命令不在上面这个类里**：它实现于 [`DuckPhp\Ext\RouteLister::command_routes()`](../reference/Ext-RouteLister.md)（源码 `src/Ext/RouteLister.php` 第 27 行），属于 `Ext\*` 扩展，**不会自动装配**（见[第 2-3 章 路由钩子](route-hooks.md)）。要用就把它登记进应用的 `cmd`：
+> **`routes` 命令不在上面这个类里**：它实现于 [`DuckPhp\Ext\RouteLister::command_routes()`](../reference/Ext-RouteLister.md)（源码 `src/Ext/RouteLister.php` 第 27 行），属于 `Ext\*` 扩展，**不会自动装配**（见[第 2-4 章 路由钩子](route-hooks.md)）。要用就把它登记进应用的 `cmd`：
 
 ```php
 // src/System/App.php

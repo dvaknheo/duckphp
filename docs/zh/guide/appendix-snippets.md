@@ -97,7 +97,7 @@ public function list()
 }
 ```
 
-> 想统一包装成功/失败格式，用路由钩子包一层，或写个 `ApiControllerBase`（[第 2-3 章 路由钩子](../guide/route-hooks.md)）。
+> 想统一包装成功/失败格式，用路由钩子包一层，或写个 `ApiControllerBase`（[第 2-4 章 路由钩子](../guide/route-hooks.md)）。
 
 ## 5. 登录 / 登出 / 当前用户
 
@@ -198,7 +198,7 @@ Helper::FireGlobalEvent('order.created', $orderId);
 
 ## 10. 统一给响应加东西（钩子）
 
-见[第 2-3 章 路由钩子](../guide/route-hooks.md)。
+见[第 2-4 章 路由钩子](../guide/route-hooks.md)。
 
 ```php
 // src/System/App.php 的 onInited() 里
