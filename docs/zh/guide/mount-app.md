@@ -50,7 +50,7 @@ class MainApp extends DuckPhp
 | `controller_url_prefix` | 少一个尾斜杠就会拼出 `/shopXxx/index`                                 | 写 `'shop/'`                                   |
 | 资源目录                    | 它的 `res/` 要能通过 URL 访问                                       | 配 `controller_resource_prefix`（第 3-3 章）        |
 | 数据库                     | 它是否该用**独立的**连接                                              | 注入 `local_database => true` + `database_list` |
-| CLI 命令                  | 它的命令会带相位前缀                                                  | `php cli.php shop-<命令>`（第 2-15 章）               |
+| CLI 命令                  | 它的命令会带相位前缀                                                  | `php cli.php shop-<命令>`（第 2-16 章）               |
 |                         |                                                             |                                               |
 
 ## 它其实是「一个完整应用」
@@ -117,7 +117,7 @@ GET /legacy-shop   → 主应用写的重写规则指到了它（第 3-5 章）
 | 子应用 404，但类都在                     | 路由前缀不匹配                           | 前缀带尾斜杠；确认 `path` 指向它的根目录                            |
 | 找到的是主应用的同名类                      | 两个应用用了同一命名空间                      | 每个应用一个独立命名空间（相位隔离的是**实例**，不是类）                      |
 | 它的视图渲染报「变量不存在」                   | 它的视图依赖它自己的 `Helper`/数据            | 别只拷视图文件；要么整目录挂，要么按第 3-5 章「覆盖但不搬走」                    |
-| CLI 里 `php cli.php help` 看不到它的命令 | 命令按相位加前缀了                         | 用 `php cli.php shop-help`，或看第 2-15 章的命令前缀规则           |
+| CLI 里 `php cli.php help` 看不到它的命令 | 命令按相位加前缀了                         | 用 `php cli.php shop-help`，或看第 2-16 章的命令前缀规则           |
 | 上线后它的资源 404                      | 生产用静态服务器直出，需要把 `res/` 部署到 docroot | 用 [`RouteHookResource::_()->cloneResource()`](../reference/Component-RouteHookResource.md)（第 3-3 章） |
 |                                  |                                   |                                                     |
 

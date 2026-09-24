@@ -10,7 +10,7 @@
 
 - [x] **M0** 一页总目录 + 站点首页瘦身 + 附录 A 术语表 + `ZThirdDemo` 示例工程与冒烟测试
 - [x] **M1** 第三卷 3-1–3-7（7 章，含示例被测试兜底）
-- [x] **M2** 第二卷 2-1–2-17（17 章：11 篇改写 + 6 篇新写）
+- [x] **M2** 第二卷（当时 2-1–2-17，17 章：11 篇改写 + 6 篇新写；M13 后该卷是 2-1–2-20）
 - [x] **M3** 第一卷 1-1–1-7（2 篇新写 + 5 篇改写）
 - [x] **M4** 第四卷 4-1–4-10 + 附录 B/C/D（已全部落稿；全局函数参考由 `reference/Core-Functions.md` 承接，见「参考手册侧」小节）
 - [x] **M5** 收尾：删掉被吸收的 `architecture.md` / `components.md` 与 guide 侧两篇附录；`reference/index.md` 登记；全量校验（**已完成**，见下）
@@ -31,32 +31,33 @@
 
 ## 第二卷 · 单一应用 —— ✅ 已完成
 
-> 章序按「先立规范 → 再走请求路径 → 再补横切能力 → 最后框架机制与进阶」重排（作者裁定）。
-> **章号形式**：全库统一用**卷-章号**——第一卷 `1-1`–`1-7`、第二卷 `2-1`–`2-19`（2-9 会话 + 末尾 2-18 使用用户系统 / 2-19 使用管理员系统）、第三卷 `3-1`–`3-7`、第四卷 `4-1`–`4-13`（末尾 4-12/4-13 是实现用户/管理员系统），附录 A/B/C/D。**单数字章号已废除**（历史上第二卷曾用 8–24 的单数字，与最初 9/14/15/16/17 的排法做过一次置换）。
-> 「中间件与钩子链」**不再单独成章**（中间件只是兼容性扩展，不是主推能力）——已并入 2-10 作为一节，其余章顺次前移；全书共 **46 章** + 4 附录（第 5 轮把原 2-9「会话与用户/管理员体系」拆成 2-9 会话 + 2-18 + 2-19；M8 加 4-11；M12 加 4-12/4-13）。
+> 章序按「先立规范 → 再走请求路径 → 再补横切能力 → 最后框架机制与进阶」重排（作者裁定）；M13 又按作者裁定把「请求生命周期 + 路由钩子」提前到 2-2/2-3（先看懂时序，再走请求路径）。
+> **章号形式**：全库统一用**卷-章号**——第一卷 `1-1`–`1-7`、第二卷 `2-1`–`2-20`（2-2 请求生命周期 / 2-3 路由钩子 / 末尾 2-19 使用用户系统 / 2-20 使用管理员系统）、第三卷 `3-1`–`3-7`、第四卷 `4-1`–`4-13`（末尾 4-12/4-13 是实现用户/管理员系统），附录 A/B/C/D。**单数字章号已废除**（历史上第二卷曾用 8–24 的单数字，与最初 9/14/15/16/17 的排法做过一次置换）。
+> 「中间件与钩子链」**不单独成章**（中间件只是兼容性扩展，不是主推能力）——作为 2-3 的节；全书共 **47 章** + 4 附录（第 5 轮把原 2-9「会话与用户/管理员体系」拆成 2-9 会话 + 用户/管理员两章；M8 加 4-11；M12 加 4-12/4-13；M13 把原 2-10「请求生命周期与钩子点」拆成 2-2/2-3 并整体重排）。
 
-- [x] 2-1 四层架构与调用规范 —— `layers.md`（226 行：本卷导读 + 五层职责 + 越界矩阵 + Helper 分层 + 全局函数表）
-- [x] 2-2 路由进阶 —— `routing.md`（221 行：默认规则表、PATH_INFO 来源、`__url()` 规则、重写与路由映射、错误码速查）
-- [x] 2-3 控制器 —— `controllers.md`（204 行：四种输出方式、输入表、`get_defined_vars()` 惯用法、Action）
-- [x] 2-4 视图与模板 —— `views.md`（187 行：视图定位与相位回退、头→视图→尾、转义、三种替换引擎）
-- [x] 2-5 数据库 —— `database.md`（242 行：连接选项表、读写分离、`` `'TABLE'` `` 宏、事务、分页、SqlDumper）
-- [x] 2-6 模型层 —— `model.md`（259 行：`ModelTrait` 成员表、「CRUD 为什么是 protected」、表名推导、跨库 tag 写法）
-- [x] 2-7 Helper 与全局函数 —— `helper.md`（第 5 轮重写为 198 行：四层四个类对照表、`extends` / `use … as Helper` 两种写法、并集 `__callStatic`、全局函数全表）
-- [x] 2-8 表单与验证 —— `validator.md`（180 行：三种口径、`valid/check/filter`、skipEmpty、未知规则即抛）
-- [x] 2-9 会话 —— `session.md`（137 行：SessionTrait 三方法、session_prefix 隔离、会话里放什么、会话≠登录态）
-- [x] 2-18 使用用户系统（第 5 轮从 2-9 拆出，放在卷二末尾；M12 按作者裁定改成**只讲怎么用**：`Helper::User()/UserId()/UserName()/UserService()` 的入口表、未登录三条路、登录/注册/登出、两个视图开关；实现搬去 4-12）—— `user.md`
-- [x] 2-19 使用管理员系统（同上：`Helper::Admin*()`、`canAccess/log/isSuper`、`onNeedPermission()`、后台菜单 PermissionMenu；实现搬去 4-13）—— `admin.md`
-- [x] 2-10 请求生命周期与钩子点 —— `lifecycle.md`（293 行：init 六步 + serve 时序 + 钩子六位置 + 内置钩子位置表 + 中间件兼容节 + HookChain + 选型表）
-  - [x] 17 附节「兼容性扩展：洋葱中间件」：`Ext\MyMiddlewareManager` 配置与四种写法 + 实测洋葱输出 + **短路无效的坑**（按作者裁定保持源码现状，当坑写）
-  - [x] 17 附节「钩子链」：`Route::addRouteHook()` 六位置与短路语义、内置钩子位置清单、`RouteHookManager` 增删改排序与 `dump()`、`Ext\HookChain`
-- [x] 2-11 异常与错误处理 —— `exception.md`（207 行：`DuckPhpSystemException` 只给框架内部用的铁律 + 错误页三分支 + 报告器）
-- [x] 2-12 事件系统 —— `events.md`（127 行：`GlobalEvent` 相位绑定、`$EVENT_*` 常量全表、与钩子的对比表）
-- [x] 2-13 缓存与 Redis —— `cache.md`（137 行：`Cache` 空实现降级、`RedisCache` 自动替换、`local_redis`、失效策略）
-- [x] 2-14 国际化与文案 —— `i18n.md`（123 行：`__l()` 调用链、五级检测顺序、占位翻译与回落链、`lang_handler`）
-- [x] 2-15 命令行与定时任务 —— `cli.md`（217 行：内置七命令、`regConsoleCommand()`、命令组前缀、参数解析、crontab）
-- [x] 2-16 测试 —— `testing.md`（151 行：WSL、`data_for_tests` 约定、`system_wrapper_replace`/`PathInfo` 可测性、`LibCoverage` 与 `@codeCoverageIgnore` 语义）
-- [x] 2-17 安全与性能清单 —— `security-performance.md`（181 行：框架做了/不提供两张表 + 安全清单 16 项 + 性能清单 10 项 + 常见写法）
-- [x] 本卷收尾校验：`docs/zh` 站内链接 **1281 条 0 死链**、17 章全部 **≤400 行**（123–293）、示例全部指向现成 `demo/`／`ZAllDemo`／`ZThirdDemo`、`demo/cli.php help|routes|DbTestApp:version` 实跑过、`regConsoleCommand()` 注册命令用临时脚本实测过
+- [x] 2-1 四层架构与调用规范 —— `layers.md`（本卷导读 + 五层职责 + 越界矩阵 + Helper 分层 + 全局函数表 + 本卷地图）
+- [x] 2-2 请求生命周期 —— `lifecycle.md`（M13 拆出：`init()` 八步 + **框架默认装了哪些内置组件**（root/inner/ext 三层表 + 只占位/只建实例的语义）+ `serve()` 时序 + `onBeforeOutput()`）
+- [x] 2-3 路由钩子 —— `route-hooks.md`（M13 新写：六个位置与短路语义、`RouteHookManager` 增删改查、内置钩子位置表、选型表）
+  - [x] 附节「兼容性扩展：洋葱中间件」：`Ext\MyMiddlewareManager` 配置与四种写法 + 实测洋葱输出 + **短路无效的坑**（按作者裁定保持源码现状，当坑写）
+  - [x] 附节「钩子链」：`Route::addRouteHook()` 六位置与短路语义、内置钩子位置清单、`RouteHookManager` 增删改排序与 `dump()`、`Ext\HookChain`
+- [x] 2-4 路由进阶 —— `routing.md`（默认规则表、PATH_INFO 来源、`__url()` 规则、重写与路由映射、错误码速查）
+- [x] 2-5 控制器 —— `controllers.md`（四种输出方式、输入表、`get_defined_vars()` 惯用法、Action）
+- [x] 2-6 视图与模板 —— `views.md`（视图定位与相位回退、头→视图→尾、转义、三种替换引擎）
+- [x] 2-7 数据库 —— `database.md`（连接选项表、读写分离、`` `'TABLE'` `` 宏、事务、分页、SqlDumper）
+- [x] 2-8 模型层 —— `model.md`（`ModelTrait` 成员表、「CRUD 为什么是 protected」、表名推导、跨库 tag 写法）
+- [x] 2-9 Helper 与全局函数 —— `helper.md`（第 5 轮重写：四层四个类对照表、`extends` / `use … as Helper` 两种写法、并集 `__callStatic`、全局函数全表）
+- [x] 2-10 表单与验证 —— `validator.md`（三种口径、`valid/check/filter`、skipEmpty、未知规则即抛）
+- [x] 2-11 会话 —— `session.md`（SessionTrait 三方法、session_prefix 隔离、会话里放什么、会话≠登录态）
+- [x] 2-12 异常与错误处理 —— `exception.md`（`DuckPhpSystemException` 只给框架内部用的铁律 + 错误页三分支 + 报告器）
+- [x] 2-13 事件系统 —— `events.md`（`GlobalEvent` 相位绑定、`User`/`Admin` 上的事件常量、与钩子的对比表）
+- [x] 2-14 缓存与 Redis —— `cache.md`（`Cache` 空实现降级、`RedisCache` 自动替换、`local_redis`、失效策略）
+- [x] 2-15 国际化与文案 —— `i18n.md`（`__l()` 调用链、五级检测顺序、占位翻译与回落链、`lang_handler`）
+- [x] 2-16 命令行与定时任务 —— `cli.md`（内置七命令、`regConsoleCommand()`、命令组前缀、参数解析、crontab）
+- [x] 2-17 测试 —— `testing.md`（WSL、`data_for_tests` 约定、`system_wrapper_replace`/`PathInfo` 可测性、`LibCoverage` 与 `@codeCoverageIgnore` 语义）
+- [x] 2-18 安全与性能清单 —— `security-performance.md`（框架做了/不提供两张表 + 安全清单 16 项 + 性能清单 10 项 + 常见写法）
+- [x] 2-19 使用用户系统（第 5 轮从 2-9 拆出；M12 改成**只讲怎么用**：`Helper::User()/UserId()/UserName()/UserService()` 的入口表、未登录三条路、登录/注册/登出、两个视图开关；实现搬去 4-12）—— `user.md`
+- [x] 2-20 使用管理员系统（同上：`Helper::Admin*()`、`canAccess/log/isSuper`、`onNeedPermission()`、后台菜单 PermissionMenu；实现搬去 4-13）—— `admin.md`
+- [x] 本卷收尾校验（M13 重排后）：`docs/zh` 站内链接 **0 死链**、20 章全部 **≤400 行**、H1 恰好是 `2-1`…`2-20`、示例全部指向现成 `demo/`／`ZAllDemo`／`ZThirdDemo`
 
 ## 第三卷 · 使用第三方应用 —— ✅ 已完成
 
@@ -132,7 +133,7 @@
 |---|---|
 | M0 一页总目录 + 站点首页瘦身 + 附录 A + `ZThirdDemo` | ✅ |
 | M1 第三卷 3-1–3-7 | ✅ |
-| M2 第二卷 2-1–2-17 | ✅ |
+| M2 第二卷（当时 2-1–2-17，现 2-1–2-20） | ✅ |
 | M3 第一卷 1-1–1-7 | ✅ |
 | M4 第四卷 4-1–4-10 + 附录 B/C/D | ✅ |
 | M5 收尾（删被吸收旧文、参考手册侧迁入、全量校验） | ✅ |
@@ -143,10 +144,13 @@
 | M10 落实 `helper.md` 的两条 `//TODO`（工程 Helper 的动态方法 + 静态覆盖） | ✅ |
 | M11 跟随 `GlobalAdmin`/`GlobalUser` 重写同步指南（2-18/2-19 重写、2-12 事件常量表、3-5 视图级开关、附录 B 登录片段、2-11 登录/权限表述） | ✅ |
 | M12 2-18/2-19 改成「使用」章 + 新写 4-12/4-13「实现」章（作者裁定：先用后装） | ✅ |
+| M13 拆开「请求生命周期与钩子点」→ 2-2 请求生命周期（含内置组件清单）+ 2-3 路由钩子，卷二顺延为 2-1–2-20 | ✅ |
 | Q1–Q4 待决策 | ✅ 全部已定并落地 |
 
 > **M11 收尾实测**（2026-09-24，详见 [用户指南维护指南](guide-maintenance-guide.md) §20）：`check-doc-links.py docs/zh` → **2109 条 0 死链**；`checkchap.py`（本轮临时脚本）→ 「链接文字章号 vs 目标 H1」**0 处不一致**、`index.md` 之外无缺章号 H1；`find-unmentioned-classes.py` → **109/109 类页全被链到、孤儿 0**；改动章行数 117–294（全部 ≤400）；`docs/zh/guide` 里同步轮留下的 `//TODO` **清零**；全量测试 `OK (96 tests, 823 assertions)`、覆盖率 `4895/4895`。
 
 > **M12 收尾实测**（详见 [用户指南维护指南](guide-maintenance-guide.md) §21）：新增 `impl-user.md`(214 行) / `impl-admin.md`(173 行)，2-18/2-19 重写成「使用」章（214 / 198 行）；章数 44 → **46**；`check-doc-links.py docs/zh` → **2174 条 0 死链**；章号一致性 0 处不符；改动章全部 ≤400 行；`find-unmentioned-classes.py` → **109/109 类页全被链到、孤儿 0**；临时脚本 13 条断言 0 失败（`Helper::User*` / `Helper::UserService` / `BusinessHelper::UserService` 的用法逐条实测）；`src/`、`tests/` 未改动。
 
-> **用户指南重写任务至此完成**：`docs/zh/guide/` = `index.md` + 46 章 + 4 附录（章号 `1-1`…`4-13`，单数字形式已废弃；M12 起「使用」章在卷二末尾、「实现」章在卷四末尾）；`docs/zh` 站内链接 0 死链、全 UTF-8；每个类名的首次出现都链到参考手册（代码块内不插链接）；全量测试绿。写作约定见 [用户指南维护指南](guide-maintenance-guide.md) §1 的硬约束（第 6/7/8 条是章号/类名链接/不写旧内容，第 10 条是「用」与「实现」分家）；M6 的踩坑与校验结果见其 §14 与 [参考手册维护指南](reference-maintenance-guide.md) 第 14 条。
+> **M13 收尾实测**（详见 [用户指南维护指南](guide-maintenance-guide.md) §22）：原 2-10 拆成 `lifecycle.md`(191 行，新增「内置组件清单」一节) + 新文件 `route-hooks.md`(213 行)；卷二重排为 `2-1`…`2-20`（映射 `{2:4,…,9:11,11:12,…,19:20}`，老 2-10 的 44 处引用逐条分派到 2-2/2-3）；章数 46 → **47**；`check-doc-links.py docs/zh` → **2234 条 0 死链**；章号一致性 0 处不符、`grep -h '^# 2-' docs/zh/guide/*.md` 恰好 `2-1`…`2-20` 二十行；`find-unmentioned-classes.py` → 109/109 类页全被链到；新增/改写章 ≤400 行；`src/`、`tests/` 未改动。
+
+> **用户指南重写任务至此完成**：`docs/zh/guide/` = `index.md` + 47 章 + 4 附录（章号 `1-1`…`4-13`，单数字形式已废弃；卷二 `2-1`–`2-20`：2-2/2-3 是生命周期与路由钩子，末尾 2-19/2-20 是「使用」章；卷四末尾 4-12/4-13 是「实现」章）；`docs/zh` 站内链接 0 死链、全 UTF-8；每个类名的首次出现都链到参考手册（代码块内不插链接）；全量测试绿。写作约定见 [用户指南维护指南](guide-maintenance-guide.md) §1 的硬约束（第 6/7/8 条是章号/类名链接/不写旧内容，第 10 条是「用」与「实现」分家）；M6 的踩坑与校验结果见其 §14 与 [参考手册维护指南](reference-maintenance-guide.md) 第 14 条。

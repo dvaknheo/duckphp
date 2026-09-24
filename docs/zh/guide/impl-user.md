@@ -1,7 +1,7 @@
 # 4-12 实现用户系统
 
-> 解决什么问题：让[第 2-18 章 使用用户系统](user.md)里那些 `Helper::User*()` 真的有东西可用——你提供「会话 / 登录服务 / 本地服务」三件实现，再把组件挂进应用。
-> 前置：[第 2-18 章](user.md)（先知道调用方怎么用）、[第 2-9 章 会话](session.md)、[第 4-2 章 开发组件与扩展](custom-component.md)。预计 25 分钟。
+> 解决什么问题：让[第 2-19 章 使用用户系统](user.md)里那些 `Helper::User*()` 真的有东西可用——你提供「会话 / 登录服务 / 本地服务」三件实现，再把组件挂进应用。
+> 前置：[第 2-19 章](user.md)（先知道调用方怎么用）、[第 2-11 章 会话](session.md)、[第 4-2 章 开发组件与扩展](custom-component.md)。预计 25 分钟。
 > 可跑资产：`tests/GlobalUser/GlobalUserTest.php`（`UserTestApp` / `UserTestSession` / `UserTestService`，58 断言）、`tests/Foundation/Controller/UserControllerBaseTest.php`（控制器侧 12 断言）。
 
 ## 最小可跑接入
@@ -45,7 +45,7 @@ use DuckPhp\GlobalUser\UserSessionTrait;
 
 class UserSession implements UserSessionInterface
 {
-    use SessionTrait;          // 带前缀的会话读写（第 2-9 章）
+    use SessionTrait;          // 带前缀的会话读写（第 2-11 章）
     use UserSessionTrait;      // getCurrentUserId/Name、getCurrentUser、setCurrentUser、unsetCurrentUser
 }
 ```
@@ -132,9 +132,9 @@ class UserService implements UserServiceInterface, UserLoginServiceInterface
 
 用户系统**不碰 `$_SESSION`**，`globaluser_login_session` 要求的是一个 [`UserSessionInterface`](../reference/GlobalUser-UserSessionInterface.md) 实现——五个方法：`getCurrentUserId()` / `getCurrentUserName()` / `getCurrentUser()` / `setCurrentUser($user)` / `unsetCurrentUser()`。
 
-框架自带 [`UserSessionTrait`](../reference/GlobalUser-UserSessionTrait.md) 把用户存进会话键 **`user`**（数组，含 `id`/`name`），配上第 2-9 章的 [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) 就是上面最小示例里的写法。要换成 JWT / Redis / 单点登录，就替换这一层——`id()`/`name()` 只认它的返回值。
+框架自带 [`UserSessionTrait`](../reference/GlobalUser-UserSessionTrait.md) 把用户存进会话键 **`user`**（数组，含 `id`/`name`），配上第 2-11 章的 [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) 就是上面最小示例里的写法。要换成 JWT / Redis / 单点登录，就替换这一层——`id()`/`name()` 只认它的返回值。
 
-> `$_SESSION` 里的键名要跟[第 2-18 章第 1 节](user.md)的调用方约定一致：`Helper::UserId()` 拿到的就是 `getCurrentUserId()` 的返回值，未登录时它返回 `0`（`UserSessionTrait` 里 `$user['id'] ?? 0`）。
+> `$_SESSION` 里的键名要跟[第 2-19 章第 1 节](user.md)的调用方约定一致：`Helper::UserId()` 拿到的就是 `getCurrentUserId()` 的返回值，未登录时它返回 `0`（`UserSessionTrait` 里 `$user['id'] ?? 0`）。
 
 ## 4. 本地服务：`UserServiceInterface`
 
@@ -146,7 +146,7 @@ class UserService implements UserServiceInterface, UserLoginServiceInterface
 | `log($user_id, string $string, ?string $type = null, array $ext = [])` | `Helper::User()->log()` |
 | `batchGetUsernames(array $ids): array` | `Helper::UserService()->batchGetUsernames()` |
 
-它同时是[第 2-18 章第 4 节](user.md)里「业务层怎么拿用户信息」的答案：业务层只有 `UserService`，所以要用「谁的权限/谁的名字」，就把 `$userId` 从控制器传进来。
+它同时是[第 2-19 章第 4 节](user.md)里「业务层怎么拿用户信息」的答案：业务层只有 `UserService`，所以要用「谁的权限/谁的名字」，就把 `$userId` 从控制器传进来。
 
 ## 5. 登录服务：`UserLoginServiceInterface`
 
@@ -158,13 +158,13 @@ class UserService implements UserServiceInterface, UserLoginServiceInterface
 | `login(array $post)` | `Helper::User()->login($post)` | 用户数组（同样会被写进会话） |
 | `logout($id)` | `Helper::User()->logout()`（`$id` 是 `id(false)` 的结果，未登录可能是 `0`） | 无 |
 
-⚠️ **组件不判断「登录成功没有」**：它把 `login()` 的返回值**原样** `setCurrentUser($user)` 写进会话，然后照常发完成事件、照常按 `globaluser_is_authed_redirect` 302。所以「用户名密码不对」这件事由**你的登录服务**决定表现——最常见的是返回空数组（会话里就是「没有用户」，[第 2-18 章第 1 节](user.md)的那些 Helper 于是走未登录分支），也可以自己抛异常或直接 `Show302` 回登录页。
+⚠️ **组件不判断「登录成功没有」**：它把 `login()` 的返回值**原样** `setCurrentUser($user)` 写进会话，然后照常发完成事件、照常按 `globaluser_is_authed_redirect` 302。所以「用户名密码不对」这件事由**你的登录服务**决定表现——最常见的是返回空数组（会话里就是「没有用户」，[第 2-19 章第 1 节](user.md)的那些 Helper 于是走未登录分支），也可以自己抛异常或直接 `Show302` 回登录页。
 
-组件会把「先后顺序 + 事件」串好（`EVENT_ACTION_USER_REGISTERING` → 服务 → `setCurrentUser()` → `EVENT_ACTION_USER_REGISTERED` → 可选的 302），所以**登录服务的实现里不要再发这几个事件**；要发的是 `EVENT_SERVICE_USER_*` 那一组（[第 2-12 章第 3 节](events.md)）。
+组件会把「先后顺序 + 事件」串好（`EVENT_ACTION_USER_REGISTERING` → 服务 → `setCurrentUser()` → `EVENT_ACTION_USER_REGISTERED` → 可选的 302），所以**登录服务的实现里不要再发这几个事件**；要发的是 `EVENT_SERVICE_USER_*` 那一组（[第 2-13 章第 3 节](events.md)）。
 
 ## 6. 未登录的自定义处理
 
-`Helper::UserId()` 这类调用在未登录时走 `GlobalUser::throwLoginOn()`，三选一（细节见[第 2-18 章第 2 节](user.md)）。默认是「302 到登录页」或「Ajax 出 JSON」，想改就配回调：
+`Helper::UserId()` 这类调用在未登录时走 `GlobalUser::throwLoginOn()`，三选一（细节见[第 2-19 章第 2 节](user.md)）。默认是「302 到登录页」或「Ajax 出 JSON」，想改就配回调：
 
 ```php
 'globaluser_need_login_callback' => function () {
@@ -210,5 +210,5 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-cov
 ## 下一步
 
 - [第 4-13 章 实现管理员系统](impl-admin.md)：后台那套的同构实现（少注册、多 `isSuper()`）。
-- [第 2-18 章 使用用户系统](user.md)：本章面向调用方的那一半。
+- [第 2-19 章 使用用户系统](user.md)：本章面向调用方的那一半。
 - 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[User](../reference/GlobalUser-User.md)、[UserSessionInterface](../reference/GlobalUser-UserSessionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserLoginServiceInterface](../reference/GlobalUser-UserLoginServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)

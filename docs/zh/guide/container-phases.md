@@ -84,7 +84,7 @@ public static function _($object = null)
 
 ### 测试辅助：`RestAllContainerForTesting()`
 
-`PhaseContainer::RestAllContainerForTesting()`（`src/Core/PhaseContainer.php` 33-36 行）把整个容器换成一个全新的——测试套件每个用例开头调用它，保证单例不跨用例泄漏。写自己的多应用测试时照抄这个模式即可（第 2-16 章）。
+`PhaseContainer::RestAllContainerForTesting()`（`src/Core/PhaseContainer.php` 33-36 行）把整个容器换成一个全新的——测试套件每个用例开头调用它，保证单例不跨用例泄漏。写自己的多应用测试时照抄这个模式即可（第 2-17 章）。
 
 ## 常见写法
 

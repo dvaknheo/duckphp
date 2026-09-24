@@ -1,7 +1,7 @@
-# 2-11 异常与错误处理
+# 2-12 异常与错误处理
 
 > 解决什么问题：异常怎么分层、条件抛怎么写、错误页怎么配、异常报告器怎么接。
-> 前置：[第 2-3 章 控制器](controllers.md)、[第 2-8 章 表单与数据验证](validator.md)。预计 20 分钟。
+> 前置：[第 2-5 章 控制器](controllers.md)、[第 2-10 章 表单与数据验证](validator.md)。预计 20 分钟。
 > 示例：`demo/src/Controller/ExceptionReporter.php`（报告器骨架）、`demo/view/_sys/error_404.php` / `error_500.php` / `error_maintain.php`（错误视图）。
 
 ## 最小示例
@@ -44,7 +44,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
         └─ MyProj\System\ControllerException
 ```
 
-框架自己的**登录与权限**场景不走异常类：错误码/消息是 [`User`](../reference/GlobalUser-User.md) / [`Admin`](../reference/GlobalAdmin-Admin.md) 上的常量（`User::EXCEPTION_CODE_USER_NEED_LOGIN`、`Admin::EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION` 等），处理方式是「未登录 → `throwLoginOn()`」「没权限 → 控制器的 `onNeedPermission()`」，两者都是**自定义回调 / 302 到登录页 / Ajax 出 JSON** 三选一然后 `exit()`（细节见[第 2-18 章](../guide/user.md)第 5 节与[第 2-19 章](../guide/admin.md)第 3–4 节）。所以工程侧不需要、也不应该为登录/权限再造异常类。
+框架自己的**登录与权限**场景不走异常类：错误码/消息是 [`User`](../reference/GlobalUser-User.md) / [`Admin`](../reference/GlobalAdmin-Admin.md) 上的常量（`User::EXCEPTION_CODE_USER_NEED_LOGIN`、`Admin::EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION` 等），处理方式是「未登录 → `throwLoginOn()`」「没权限 → 控制器的 `onNeedPermission()`」，两者都是**自定义回调 / 302 到登录页 / Ajax 出 JSON** 三选一然后 `exit()`（细节见[第 2-19 章](../guide/user.md)第 5 节与[第 2-20 章](../guide/admin.md)第 3–4 节）。所以工程侧不需要、也不应该为登录/权限再造异常类。
 
 树上那个 [`ExitException`](../reference/Core-ExitException.md) 属于**框架内部**：打开 `use_exit_exception` 选项后，[`SystemWrapper::exit()`](../reference/Core-SystemWrapper.md) 会抛它（`src/Core/SystemWrapper.php` 167-168 行），[`ExceptionManager`](../reference/Core-ExceptionManager.md) 把它原样放行（`src/Core/ExceptionManager.php` 90 行）——业务代码不要抛它。
 
@@ -223,7 +223,7 @@ ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) { /* 兜底 */ 
 
 ## 下一步
 
-- [第 2-12 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
-- [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：异常发生在请求时序的哪一环。
+- [第 2-13 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
+- [第 2-2 章 请求生命周期](lifecycle.md)：异常发生在请求时序的哪一环。
 - [第 1-6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 与日志分级的入门。
 - 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Core-ExitException](../reference/Core-ExitException.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md)、[Ext-ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)、[Ext\ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)

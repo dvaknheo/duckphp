@@ -1,7 +1,7 @@
-# 2-16 测试
+# 2-17 测试
 
 > 解决什么问题：给自己的应用写测试该放哪、怎么在不起服务器的情况下测业务、端到端怎么测、覆盖率怎么跑，以及本仓库测试基建的两个硬约束（WSL、`data_for_tests` 约定）。
-> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-6 章 模型层](model.md)。预计 20 分钟。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-8 章 模型层](model.md)。预计 20 分钟。
 > 示例：`tests/bootstrap.php`、`tests/ZThirdDemoTest.php`（端到端冒烟）、`tests/data_for_tests/`（示例数据目录）。
 
 ```bash
@@ -56,8 +56,8 @@ tests/
 
 | 手段                                                                                                      | 解决什么                                                                         |
 | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `system_wrapper_replace()`                                                                              | 替换 `header()`/`setcookie()`/`exit()` 等系统调用，让「输出/跳转」可断言（[第 2-7 章](helper.md)） |
-| [`Route::_()->PathInfo('note/show')`](../reference/Core-Route.md)                                       | 不起 HTTP 也能把「当前请求路径」设成任意值，直接测路由与控制器（[第 2-2 章](routing.md)）                    |
+| `system_wrapper_replace()`                                                                              | 替换 `header()`/`setcookie()`/`exit()` 等系统调用，让「输出/跳转」可断言（[第 2-9 章](helper.md)） |
+| [`Route::_()->PathInfo('note/show')`](../reference/Core-Route.md)                                       | 不起 HTTP 也能把「当前请求路径」设成任意值，直接测路由与控制器（[第 2-4 章](routing.md)）                    |
 | [`SuperGlobal`](../reference/Core-SuperGlobal.md) / [`Runtime`](../reference/Core-Runtime.md) 等组件的可替换单例 | GET/POST/Session 都能喂假数据；`Runtime` 还能开输出缓冲                                    |
 
 ```php
@@ -146,6 +146,6 @@ $this->assertSame('...', $this->fetch($app, '/shop/index'));
 
 ## 下一步
 
-- [第 2-17 章 安全与性能清单](security-performance.md)：上线前逐项自查。
+- [第 2-18 章 安全与性能清单](security-performance.md)：上线前逐项自查。
 - [参考手册维护指南](../reference-maintenance-guide.md)：`docs/zh/reference/` 与覆盖率流水线的完整流程。
 - 参考手册：[DuckPhp\HttpServer\HttpServer](../reference/HttpServer-HttpServer.md)、[DuckPhp\Core\Runtime](../reference/Core-Runtime.md)。

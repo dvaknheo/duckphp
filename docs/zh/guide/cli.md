@@ -1,7 +1,7 @@
-# 2-15 命令行与定时任务
+# 2-16 命令行与定时任务
 
 > 解决什么问题：怎么给应用加命令、内置命令有哪些、命令怎么和「相位/子应用」对上号、以及怎么把它挂进 crontab。
-> 前置：[第 2-10 章 请求生命周期与钩子点](lifecycle.md)（`execute()` 那条支线）。预计 20 分钟。
+> 前置：[第 2-2 章 请求生命周期](lifecycle.md)（`execute()` 那条支线）。预计 20 分钟。
 > 示例：`demo/cli.php`（工程 CLI 入口）+ `demo/src/System/App.php` 的 `command_hello()`。可直接跑：
 
 ```bash
@@ -65,7 +65,7 @@ RunQuickly() → init() → 分流：
    否则                              → serve()   → 路由
 ```
 
-所以 CLI 下**初始化一样完整**：`onPrepare()`/`onInit()`/`onInited()` 都会跑（[第 2-10 章](lifecycle.md)），设置、组件、单例容器都在。区别只在最后交给 [`Console`](../reference/Core-Console.md) 而不是 [`Route`](../reference/Core-Route.md)。
+所以 CLI 下**初始化一样完整**：`onPrepare()`/`onInit()`/`onInited()` 都会跑（[第 2-2 章](lifecycle.md)），设置、组件、单例容器都在。区别只在最后交给 [`Console`](../reference/Core-Console.md) 而不是 [`Route`](../reference/Core-Route.md)。
 
 - 想让 CLI 也走 Web 流程（在命令行里「请求」一个路径）：`'cli_enable' => false`；
 - 内置 `run` 命令反过来：它把 `cli_enable` 置回 `false` 再起内置 HTTP 服务器（[`Command::command_run()`](../reference/Component-Command.md)）。
@@ -89,7 +89,7 @@ RunQuickly() → init() → 分流：
 | `fetch`   | 在命令行里抓一个 URL（`--uri=…`、`--post=…`）                  |
 | `call`    | 直接调方法：`namespace/class@method arg1 --k=v`           |
 | `debug`   | 开关调试模式（`debug off`）                                 |
-> **`routes` 命令不在上面这个类里**：它实现于 [`DuckPhp\Ext\RouteLister::command_routes()`](../reference/Ext-RouteLister.md)（源码 `src/Ext/RouteLister.php` 第 27 行），属于 `Ext\*` 扩展，**不会自动装配**（见[第 2-10 章](lifecycle.md)）。要用就把它登记进应用的 `cmd`：
+> **`routes` 命令不在上面这个类里**：它实现于 [`DuckPhp\Ext\RouteLister::command_routes()`](../reference/Ext-RouteLister.md)（源码 `src/Ext/RouteLister.php` 第 27 行），属于 `Ext\*` 扩展，**不会自动装配**（见[第 2-3 章 路由钩子](route-hooks.md)）。要用就把它登记进应用的 `cmd`：
 
 ```php
 // src/System/App.php
@@ -205,7 +205,7 @@ php cli.php call MyProj/Controller/NoteCommands@reindex --verbose=1
 
 **⑤ 长任务注意收尾**
 
-命令行下 `echo` 即时可见；开了 `use_output_buffer`（[第 2-10 章](lifecycle.md)）时更要用 `Helper::exit()` 而不是 `exit`，保证收尾逻辑一致。
+命令行下 `echo` 即时可见；开了 `use_output_buffer`（[第 2-2 章](lifecycle.md)）时更要用 `Helper::exit()` 而不是 `exit`，保证收尾逻辑一致。
 
 ## 常见错误
 
@@ -222,7 +222,7 @@ php cli.php call MyProj/Controller/NoteCommands@reindex --verbose=1
 
 ## 下一步
 
-- [第 2-16 章 测试](testing.md)：命令行也是「不起服务器就能测业务」的入口。
+- [第 2-17 章 测试](testing.md)：命令行也是「不起服务器就能测业务」的入口。
 - [第 3-1 章 应用树与相位基础](advanced-phase.md)：命令组前缀背后的相位机制。
 - [第 3-6 章 安装器与 Web 安装流程](installer.md)：`bin/duckphp new` 与 Web 安装页。
 - 参考手册：[DuckPhp\Component\Command](../reference/Component-Command.md)、[DuckPhp\Component\CommandMetaInterface](../reference/Component-CommandMetaInterface.md)、[DuckPhp\Core\Console](../reference/Core-Console.md)。

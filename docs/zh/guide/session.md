@@ -1,7 +1,7 @@
-# 2-9 会话
+# 2-11 会话
 
 > 解决什么问题：Session 怎么读写、前缀怎么隔离、会话里该放什么、以及「会话」和「登录态」的分工。
-> 前置：[第 2-3 章 控制器](controllers.md)、[第 1-5 章 配置与设置](configuration.md)。预计 10 分钟。
+> 前置：[第 2-5 章 控制器](controllers.md)、[第 1-5 章 配置与设置](configuration.md)。预计 10 分钟。
 > 示例：`demo/src/Controller/Session.php`（框架骨架里最小的会话类）。
 
 ## 最小示例
@@ -44,7 +44,7 @@ public function remember()
 | `unset(string $key)` | 删 `session_prefix . $key` |
 | `checkSessionStart(): void` | 确保会话已启动并把 `session_prefix` 缓存下来（幂等，内部方法） |
 
-- 首次读写时自动 `session_start()`（经 [`SystemWrapper`](../reference/Core-SystemWrapper.md) 调用，测试里可以替换掉它，见[第 2-16 章](testing.md)）；
+- 首次读写时自动 `session_start()`（经 [`SystemWrapper`](../reference/Core-SystemWrapper.md) 调用，测试里可以替换掉它，见[第 2-17 章](testing.md)）；
 - 底层走 [DuckPhp\Core\SuperGlobal](../reference/Core-SuperGlobal.md) 的 `_SessionGet/_SessionSet/_SessionUnset`；
 - 三个方法都是 `protected`，**只给自己的类用**，不做成静态 API——会话读写应该收在工程的 `Controller\Session` 一类里。
 
@@ -73,8 +73,8 @@ public $options = [
 
 `SessionTrait` 只解决「怎么读写会话」。**当前是谁、怎么登录、未登录怎么办**是另一套东西：
 
-- 用户系统：[第 2-18 章 使用用户系统](user.md)（调用方视角）、[第 4-12 章 实现用户系统](impl-user.md)（`UserSessionTrait` 把当前用户存进会话键 `user`）；
-- 管理员系统：[第 2-19 章 使用管理员系统](admin.md)、[第 4-13 章 实现管理员系统](impl-admin.md)（`AdminSessionTrait`，键为 `admin`）。
+- 用户系统：[第 2-19 章 使用用户系统](user.md)（调用方视角）、[第 4-12 章 实现用户系统](impl-user.md)（`UserSessionTrait` 把当前用户存进会话键 `user`）；
+- 管理员系统：[第 2-20 章 使用管理员系统](admin.md)、[第 4-13 章 实现管理员系统](impl-admin.md)（`AdminSessionTrait`，键为 `admin`）。
 
 它们内部就是**组合 `SessionTrait`** 实现的——这也是为什么本章是那两章的前置。
 
@@ -131,7 +131,7 @@ Helper::Show302(Session::_()->get('url_back', 'home/index'));
 
 ## 下一步
 
-- [第 2-18 章 使用用户系统](user.md)：会话里放的那点「登录票据」怎么变成「当前用户」。
-- [第 2-19 章 使用管理员系统](admin.md)：后台登录、权限判断与菜单。
-- [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：这一次请求框架内部都做了什么。
+- [第 2-19 章 使用用户系统](user.md)：会话里放的那点「登录票据」怎么变成「当前用户」。
+- [第 2-20 章 使用管理员系统](admin.md)：后台登录、权限判断与菜单。
+- [第 2-2 章 请求生命周期](lifecycle.md)：这一次请求框架内部都做了什么。
 - 参考手册：[Foundation\Controller\SessionTrait](../reference/Foundation-Controller-SessionTrait.md)、[Core\SuperGlobal](../reference/Core-SuperGlobal.md)、[Core\SystemWrapper](../reference/Core-SystemWrapper.md)、[应用设置 Setting](../reference/setting.md)

@@ -324,7 +324,8 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
   - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含本轮 2 篇新页），剩下的是**逐条核对说明文字**是否仍准确；
   - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页已改由 `gen-options-docs.php` 生成，`--check` 为 up to date；
   - **`docs/zh/guide/` 的指南补齐**：第 16 轮留下的 7 个 `//TODO` + 4 个零散旧名**已全部处理完**（第 20 轮 / M11，见 `guide-maintenance-guide.md` §20：2-18/2-19 两章重写、2-12 事件常量表重写、3-5 视图级开关、附录 B 登录片段、2-11 登录/权限表述）。参考页与指南现在同源一致，`grep -rn '//TODO（参考手册同步轮' docs/zh/guide` = 0。
-  - **指南侧的「用/实现」分章**（第 21 轮 / M12，作者裁定）：2-18/2-19 只讲**怎么用**（`Helper::User*` / `Helper::Admin*` 入口、未登录表现、视图开关），**新写 4-12 `impl-user.md` / 4-13 `impl-admin.md`** 承接接入实现（三件实现 + 选项表 + `ext` 挂载）。全书 44 → **46 章**；写这两个体系的参考页时，示例应按「用侧链 2-18/2-19、实现侧链 4-12/4-13」交叉引用。
+  - **指南侧的「用/实现」分章**（第 21 轮 / M12，作者裁定）：2-18/2-19 只讲**怎么用**（`Helper::User*` / `Helper::Admin*` 入口、未登录表现、视图开关），**新写 4-12 `impl-user.md` / 4-13 `impl-admin.md`** 承接接入实现（三件实现 + 选项表 + `ext` 挂载）；写这两个体系的参考页时，示例应按「用侧链 2-18/2-19、实现侧链 4-12/4-13」交叉引用。
+  - **卷二章号在 M13 又重排过一次**（第 22 轮，作者裁定）：原 2-10「请求生命周期与钩子点」拆成 **2-2 请求生命周期**（`lifecycle.md`，含内置组件清单）+ **2-3 路由钩子**（`route-hooks.md`），其后各章顺次后移 ⇒ 现在是 `2-1`–`2-20`、全书 **47 章**；用侧两章随之变成 **2-19/2-20**。参考页里若要写「见指南第 N 章」，按新号写（老记录里的 2-1x 是当时的编号）。
 - **生成器已知缺陷（如需修复）**：`docs/scripts/gen-reference.php verify` 对含 trait 别名 override 的大文件（`Core/App.php`）会漏列方法；修好前请以 `drift.py` 为准。
 
 ## 9. 快速自检（冒烟）

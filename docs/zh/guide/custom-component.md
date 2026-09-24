@@ -1,7 +1,7 @@
 # 4-2 开发组件与扩展
 
 > 解决什么问题：怎么写一个自己的组件/扩展（声明选项、初始化、挂进路由），并通过 `ext` 选项装配进应用；怎么替换框架自带的组件。
-> 前置：[第 2-10 章 请求生命周期与钩子点](lifecycle.md)、[第 4-1 章 容器与相位内部机制](container-phases.md)。预计 20 分钟。
+> 前置：[第 2-2 章 请求生命周期](lifecycle.md)、[第 4-1 章 容器与相位内部机制](container-phases.md)。预计 20 分钟。
 > 本章引用的框架扩展全部来自 `src/Ext/`、`src/Component/`，装配示例来自 `tests/data_for_tests/ZThirdDemo` 与 `tests/data_for_tests/Ext/PermissionMenu`。
 
 ## 最小示例
@@ -94,7 +94,7 @@ if ($context !== null) { $this->initContext($context); }
 
 ### 扩展的生命周期挂钩点：`initContext()`
 
-扩展没有独立生命周期，它的「启动」就是 `init()`，而 `init()` 在应用 `initComponents()` 阶段被调用（第 2-10 章的时序图）。要介入请求处理，就在 `initContext()` 里挂路由钩子——这是框架扩展的标准姿势：
+扩展没有独立生命周期，它的「启动」就是 `init()`，而 `init()` 在应用 `initComponents()` 阶段被调用（[第 2-2 章](lifecycle.md)的时序图）。要介入请求处理，就在 `initContext()` 里挂路由钩子——这是框架扩展的标准姿势：
 
 ```php
 // src/Ext/RouteHookWebInstaller.php 75-78 行
@@ -112,7 +112,7 @@ protected function initContext(object $context): void
 }
 ```
 
-钩子的静态方法收 `$path_info`，返回真值表示「这条请求我处理了」（短路），返回 `false` 放行给后续钩子与默认路由。四个挂载位置与执行顺序见第 2-10 章。
+钩子的静态方法收 `$path_info`，返回真值表示「这条请求我处理了」（短路），返回 `false` 放行给后续钩子与默认路由。四个挂载位置与执行顺序见[第 2-3 章 路由钩子](route-hooks.md)。
 
 ### 替换框架组件
 

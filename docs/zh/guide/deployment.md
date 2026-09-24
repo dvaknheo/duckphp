@@ -102,7 +102,7 @@ server {
 **如果你的服务器环境实在拿不到 PATH_INFO**（部分 CGI/FastCGI 配置），开一个兼容模式即可，路由改从查询串解析：
 
 ```php
-'path_info_compact_enable' => true,     // 由 RouteHookPathInfoCompat 接管（第 2-2 章）
+'path_info_compact_enable' => true,     // 由 RouteHookPathInfoCompat 接管（第 2-4 章）
 ```
 
 ## 五、权限
@@ -148,7 +148,7 @@ class App extends DuckPhp
 - [ ] nginx/apache 的 rewrite 正确（随便访问一个深路径，确认不是全站 404）
 - [ ] 静态资源：放进 `public/` 由服务器直出，或确认 rewrite 后框架代发正常（第 3-3 章）
 - [ ] 日志轮转（`log_file_template` 按天/小时 + 外部 logrotate）
-- [ ] HTTPS 与 HSTS；Cookie 的 secure/httponly 按需（第 2-9 章）
+- [ ] HTTPS 与 HSTS；Cookie 的 secure/httponly 按需（第 2-11 章）
 - [ ] 部署后跑一遍冒烟：首页、一个列表页、一个 POST、一个 404
 
 ## 常见错误
@@ -164,5 +164,5 @@ class App extends DuckPhp
 
 ## 下一步
 
-- 第一卷到此结束。接着看[第二卷 · 单一应用](../guide/index.md)：从[第 2-1 章 四层架构与调用规范](layers.md) 起，一路读到第 2-17 章。
+- 第一卷到此结束。接着看[第二卷 · 单一应用](../guide/index.md)：从[第 2-1 章 四层架构与调用规范](layers.md) 起，一路读到第 2-18 章。
 - 相关：[第 3-6 章 安装器与 Web 安装流程](installer.md)、[第 4-6 章 多入口·多域名·多 SAPI](multi-entry.md)

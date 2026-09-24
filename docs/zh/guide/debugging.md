@@ -15,7 +15,7 @@
 | 变化 | 说明 |
 |---|---|
 | 异常页显示堆栈 | 走 `error_debug` 视图（没配就由框架内建渲染：异常类、消息、文件行号、完整调用栈） |
-| 开发期警告升级 | `_OnDevErrorHandler` 把 PHP 的 notice/warning 变成可见错误（第 2-11 章） |
+| 开发期警告升级 | `_OnDevErrorHandler` 把 PHP 的 notice/warning 变成可见错误（第 2-12 章） |
 | 404 页附带路由信息 | 会打印 route error（例如「can't Reflection class (…)」这类提示），比干巴巴的 404 好定位 |
 
 错误页的四个选项（都是**视图名**，相对 `path_view`）：
@@ -78,7 +78,7 @@ php vendor/bin/duckphp show     # 看当前安装情况
 php vendor/bin/duckphp help
 ```
 
-自定义命令就是在控制器层/命令类里写 `command_xxx()` 方法（第 2-15 章）；子应用的命令要加相位前缀（`php bin/cli.php shop-help`）。
+自定义命令就是在控制器层/命令类里写 `command_xxx()` 方法（第 2-16 章）；子应用的命令要加相位前缀（`php bin/cli.php shop-help`）。
 
 > `debug` 命令会去改写「额外选项文件」（[`ExtOptionsLoader`](../reference/Component-ExtOptionsLoader.md)，文件 `DuckPhpApps.config.php`），所以需要先开 `data_file_enable`，并把 `is_debug` 放进 `data_file_bump_keys`；否则它只会提示你去配。
 
@@ -117,5 +117,5 @@ var_dump(\DuckPhp\Core\App::_Setting());
 ## 下一步
 
 - [第 1-7 章 上线最小清单](deployment.md)：把调试开关关回去，并检查该检查的。
-- [第 2-11 章 异常与错误处理](exception.md)：异常分层与自定义处理。
-- [第 2-15 章 命令行与定时任务](cli.md)：命令类、参数解析、crontab。
+- [第 2-12 章 异常与错误处理](exception.md)：异常分层与自定义处理。
+- [第 2-16 章 命令行与定时任务](cli.md)：命令类、参数解析、crontab。

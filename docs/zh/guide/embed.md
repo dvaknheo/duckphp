@@ -61,7 +61,7 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
 
 [src/DuckPhpAllInOne.php](../../src/DuckPhpAllInOne.php) 里的 [`DuckPhp\DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 把**应用入口、控制器、视图回调、四组 Helper** 全部塞进一个类：
 
-- 用 `__callStatic` 把**四层 Helper 的并集**嵌进本类：调用本类上不存在的静态方法时，按 System → Controller → Business → Model 找第一个声明它的层 Helper 并转发（源码第 128–139 行）。所以在它的 `action_*` 方法里能直接 [`$this->Db()`](../reference/Db-Db.md)、`$this->Setting()`、`$this->Show()`——注意这些方法在反射层面并不存在（IDE 靠源码里 96 条 `@method` 注释），细节见[第 2-7 章](helper.md)。
+- 用 `__callStatic` 把**四层 Helper 的并集**嵌进本类：调用本类上不存在的静态方法时，按 System → Controller → Business → Model 找第一个声明它的层 Helper 并转发（源码第 128–139 行）。所以在它的 `action_*` 方法里能直接 [`$this->Db()`](../reference/Db-Db.md)、`$this->Setting()`、`$this->Show()`——注意这些方法在反射层面并不存在（IDE 靠源码里 96 条 `@method` 注释），细节见[第 2-9 章](helper.md)。
 
 
 - 构造函数里调 `embedMe()`（第 145 行起）注入一组默认选项：
@@ -74,7 +74,7 @@ if (!class_exists(\ProjectNameTemplate\System\App::class)) {
 | `controller_class_postfix` | `''` | 类名不再追加 `Controller` 后缀 |
 | `controller_method_prefix` | `'action_'` | 只有 `action_*` 方法才是动作 |
 | `cli_enable` | `true` | 同时是 CLI 入口 |
-| `path_info_compact_enable` | `true` | 无 PATH_INFO 也能跑（[第 2-2 章](routing.md)） |
+| `path_info_compact_enable` | `true` | 无 PATH_INFO 也能跑（[第 2-4 章](routing.md)） |
 | `duckphp_all_in_one_wrap_header_foot` | `true` | `_Show()` 时自动包 `view_head` / `view_foot` |
 
 - 视图不走视图文件，而是**类方法**：`viewToCallback()`（第 86–93 行）把视图名里的 `/` 换成 `_`，找 `view_<名字>` 方法；找到就当作可调用视图，找不到才回落到父类的文件视图。`_Show()`（第 94–109 行）按「head → 正文 → foot」顺序调用。所以子类只要写 `view_hello($data)` 就等于定义了 `hello` 视图。
@@ -135,7 +135,7 @@ class Tiny extends \DuckPhp\DuckPhpAllInOne
 Tiny::RunQuickly([]);
 ```
 
-访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。「登录后视图」（[第 2-18 章](user.md)）靠视图数据 `__use_logined_view_data` 打开，在子类里 `Helper::assignViewData('__use_logined_view_data', true)` 即可。
+访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。「登录后视图」（[第 2-19 章](user.md)）靠视图数据 `__use_logined_view_data` 打开，在子类里 `Helper::assignViewData('__use_logined_view_data', true)` 即可。
 
 ## 常见错误
 

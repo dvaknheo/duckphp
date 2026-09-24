@@ -1,7 +1,7 @@
-# 2-13 缓存与 Redis
+# 2-14 缓存与 Redis
 
 > 解决什么问题：给应用一个统一的缓存入口（[`Cache`](../reference/Component-Cache.md)），以及通过 Redis 拿到真正的分布式缓存能力；多 Redis 实例怎么配、子应用怎么各用各的。
-> 前置：[第 1-5 章 配置与设置](configuration.md)、[第 2-7 章 Helper 与全局函数](helper.md)。预计 15 分钟。
+> 前置：[第 1-5 章 配置与设置](configuration.md)、[第 2-9 章 Helper 与全局函数](helper.md)。预计 15 分钟。
 > 本章**没有可跑的示例工程**：`demo/` 与 `tests/data_for_tests/` 里只有配置样例与单元测试，没有完整的缓存演示页面。下文标注「示意」的代码段是**写法示范**，不是仓库里现成的文件。
 
 ## 最小示例
@@ -129,10 +129,10 @@ ThirdApp::class => ['local_redis' => true, 'redis_list' => [/* … */]],
 | 子应用改了 Redis 配置但主应用也变了 | 子应用改的是**共享**的 `RedisManager` | 给子应用加 `'local_redis' => true` |
 | `RedisManager::Redis(1)` 报错 | `redis_list` 只有一项，没有 tag 1 | 给 `redis_list` 配两项（第二项作读），或只用 tag 0 |
 | 存进去的数字/数组取出来类型不对 | `RedisCache` 走 JSON 编解码 | 这是特性：复杂结构直接存取；要精确控制类型就用原生 `RedisManager::Redis()` |
-| 单元测试在 Windows 下 Redis 相关假失败 | Windows 侧 PHP 没有 redis 扩展 | 测试一律走 WSL（见 [第 2-16 章](testing.md)） |
+| 单元测试在 Windows 下 Redis 相关假失败 | Windows 侧 PHP 没有 redis 扩展 | 测试一律走 WSL（见 [第 2-17 章](testing.md)） |
 
 ## 下一步
 
-- [第 2-14 章 国际化与文案](i18n.md)：缓存键里如果带语言代码，记得把 `lang_final` 编进 key。
+- [第 2-15 章 国际化与文案](i18n.md)：缓存键里如果带语言代码，记得把 `lang_final` 编进 key。
 - [第 3-4 章 组件共享与应用间通信](component-sharing.md)：`local_redis` 与共享容器的完整讨论。
 - 参考手册：[DuckPhp\Component\Cache](../reference/Component-Cache.md)、[DuckPhp\Component\RedisCache](../reference/Component-RedisCache.md)、[DuckPhp\Component\RedisManager](../reference/Component-RedisManager.md)。

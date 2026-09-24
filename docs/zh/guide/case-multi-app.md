@@ -64,7 +64,7 @@ class MainApp extends DuckPhp
 
         'ext' => [
             GlobalEvent::class => true,               // 事件总线默认关（第 3-4 章）
-            PermissionMenu::class => true,            // 后台菜单（第 2-9 章）
+            PermissionMenu::class => true,            // 后台菜单（第 2-11 章）
         ],
 
         'app' => [
@@ -82,7 +82,7 @@ class MainApp extends DuckPhp
                 'name' => 'api',
                 'controller_url_prefix' => 'api/',
                 'controller_resource_prefix' => 'res/',
-                'ext' => [JsonView::class => true],             // API 只出 JSON（第 2-4 章）
+                'ext' => [JsonView::class => true],             // API 只出 JSON（第 2-6 章）
             ],
         ],
     ];
@@ -133,7 +133,7 @@ class AdminMainController extends Base implements \DuckPhp\GlobalAdmin\AdminCont
 ```
 
 ```php
-// 生成菜单（第 2-9 章 + Ext-PermissionMenu）
+// 生成菜单（第 2-11 章 + Ext-PermissionMenu）
 PermissionMenu::_()->buildAndSaveToConfigJsonFile();   // 一次：把注释扫成菜单配置
 $tree = PermissionMenu::_()->loadAll();                // 每次请求：含所有子应用的菜单合并
 $side = PermissionMenu::_()->permissionMenuTreeToSideMenuTree($tree);
@@ -154,7 +154,7 @@ Helper::checkInstall();
 
 ```bash
 php bin/cli.php help            # 前台与公共命令
-php bin/cli.php admin-help      # 后台应用的命令（相位名前缀，第 2-15 章）
+php bin/cli.php admin-help      # 后台应用的命令（相位名前缀，第 2-16 章）
 php bin/cli.php api-help        # API 应用的命令
 ```
 
@@ -193,7 +193,7 @@ private function request(string $path_info): string
 | 资源 404 | 前缀斜杠规则：根 `'/res/'`、子应用 `'res/'`（第 3-3 章） |
 | 事件收不到 | [`GlobalEvent`](../reference/Component-GlobalEvent.md) 是否打开；`fire` 在哪个相位注册（第 3-4 章） |
 | 后台连了前台的库 | 忘了 `local_database => true`（第 3-4 章） |
-| 命令提示找不到 | 命令属于子应用 → 加相位前缀（第 2-15 章） |
+| 命令提示找不到 | 命令属于子应用 → 加相位前缀（第 2-16 章） |
 | 一直跳安装页 | `installed` 还是 `false`（第 3-6 章） |
 
 ## 收尾

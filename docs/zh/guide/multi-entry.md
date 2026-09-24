@@ -1,7 +1,7 @@
 # 4-6 多入口·多域名·多 SAPI
 
 > 解决什么问题：同一套 `src/` 怎么被多个入口（`index.php` / `demo.php` / `api.php` / `rpc.php` / `cli.php`）复用；按域名/子目录区分应用；web / cli / rpc 三种 SAPI 的分流点在哪。
-> 前置：[第 1-7 章 上线最小清单](deployment.md)、[第 2-2 章 路由进阶](routing.md)、[第 2-15 章 命令行与定时任务](cli.md)、[第 3-1 章 应用树与相位基础](advanced-phase.md)、[第 3-2 章 把外部应用挂进来](mount-app.md)。预计 20 分钟。
+> 前置：[第 1-7 章 上线最小清单](deployment.md)、[第 2-4 章 路由进阶](routing.md)、[第 2-16 章 命令行与定时任务](cli.md)、[第 3-1 章 应用树与相位基础](advanced-phase.md)、[第 3-2 章 把外部应用挂进来](mount-app.md)。预计 20 分钟。
 > 示例全部来自 `demo/public/` 与 `demo/src/System/`，可用 `php -S 127.0.0.1:8080 -t demo/public` 起服务后逐个入口访问。
 
 ## 最小示例
@@ -43,13 +43,13 @@ serve()   // 第 476–500 行：Runtime + Route 跑一遍，失败再 runChildr
 execute() // 第 534–545 行：Console::_()->run()
 ```
 
-所以「这个请求由谁处理」的第一道判断是：**SAPI 是不是 cli、根应用有没有开 `cli_enable`**。Web 请求永远走 `serve()`；CLI 请求在 `cli_enable=true` 时走 `execute()`，否则也走 `serve()`（可以用命令行「请求」一个 URL，见 [第 2-15 章](cli.md)）。
+所以「这个请求由谁处理」的第一道判断是：**SAPI 是不是 cli、根应用有没有开 `cli_enable`**。Web 请求永远走 `serve()`；CLI 请求在 `cli_enable=true` 时走 `execute()`，否则也走 `serve()`（可以用命令行「请求」一个 URL，见 [第 2-16 章](cli.md)）。
 
 ### `cli_enable` 的作用
 
 - `RunQuickly()` 里它决定 **CLI 下**是进 [Console](../reference/Core-Console.md) 还是进 Web 流程（`KernelTrait.php` 第 95 行）。
 - `run()` 里它决定**任何 SAPI** 的走向（第 470 行）。
-- 子应用不单独判断：根应用开了 `cli_enable`，整个进程（含所有子应用）的 CLI 命令都注册进同一个 Console，命令按相位加前缀（`php cli.php shop-<命令>`，见 [第 2-15 章](cli.md) 与 [第 3-1 章](advanced-phase.md)）。
+- 子应用不单独判断：根应用开了 `cli_enable`，整个进程（含所有子应用）的 CLI 命令都注册进同一个 Console，命令按相位加前缀（`php cli.php shop-<命令>`，见 [第 2-16 章](cli.md) 与 [第 3-1 章](advanced-phase.md)）。
 
 ### 多入口复用同一套 `src/`
 
@@ -80,20 +80,20 @@ protected function onPrepare(): void
 
 **B. 多个入口 + 子应用**（推荐，[第 3-1 章](advanced-phase.md)、[第 3-2 章](mount-app.md)）：每个域名/子目录一个入口文件，入口里 `RunQuickly` 同一个根应用，根应用把不同子应用挂到不同 `controller_url_prefix`。`dbtest.php` 被挂到 `/db_test/` 就是现成例子。
 
-`path` 与 `controller_url_prefix` 的关系：`path` 决定**文件从哪找**（视图/配置/控制器），`controller_url_prefix` 决定 **URL 从哪开始**匹配（[第 2-2 章](routing.md) 的 E001 规则：前缀对不上就直接失败，父应用才有机会把请求转给其它子应用）。两者互不替代——子目录部署时常常 `path` 不变、`controller_url_prefix` 变成子目录名。
+`path` 与 `controller_url_prefix` 的关系：`path` 决定**文件从哪找**（视图/配置/控制器），`controller_url_prefix` 决定 **URL 从哪开始**匹配（[第 2-4 章](routing.md) 的 E001 规则：前缀对不上就直接失败，父应用才有机会把请求转给其它子应用）。两者互不替代——子目录部署时常常 `path` 不变、`controller_url_prefix` 变成子目录名。
 
 ### 子目录部署
 
 应用不放在域名根、而放在 `/myapp/` 下时，三件事要对上：
 
-1. **URL 生成**：站内链接一律 `__url('about/me')`，它会自动带上 basepath（即子目录前缀），手写的 `/about/me` 会 404（[第 2-2 章](routing.md)）。
-2. **路由解析**：nginx/apache 的 rewrite 把 `/myapp/xxx` 转成 `index.php` 的 PATH_INFO；拿不到 PATH_INFO 的服务器开 `'path_info_compact_enable' => true` 改从查询串解析（[第 1-7 章](deployment.md)、[第 2-2 章](routing.md)）。
+1. **URL 生成**：站内链接一律 `__url('about/me')`，它会自动带上 basepath（即子目录前缀），手写的 `/about/me` 会 404（[第 2-4 章](routing.md)）。
+2. **路由解析**：nginx/apache 的 rewrite 把 `/myapp/xxx` 转成 `index.php` 的 PATH_INFO；拿不到 PATH_INFO 的服务器开 `'path_info_compact_enable' => true` 改从查询串解析（[第 1-7 章](deployment.md)、[第 2-4 章](routing.md)）。
 3. **静态资源**：由框架代发的资源走 `controller_resource_prefix`，前缀按 `'/' . controller_url_prefix . controller_resource_prefix` 拼（[第 3-3 章](static-resources.md)）；生产环境更推荐把资源直出到 docroot。
 
 ### 多 SAPI：web / cli / api / rpc
 
-- **web**：`serve()`，走 [Runtime](../reference/Core-Runtime.md) + [Route](../reference/Core-Route.md)（[第 2-10 章](lifecycle.md)）。
-- **cli**：`execute()`，走 Console（[第 2-15 章](cli.md)）。
+- **web**：`serve()`，走 [Runtime](../reference/Core-Runtime.md) + [Route](../reference/Core-Route.md)（[第 2-2 章](lifecycle.md)）。
+- **cli**：`execute()`，走 Console（[第 2-16 章](cli.md)）。
 - **api**：仍是 `serve()`，但由 [DuckPhp\Ext\RouteHookApiServer](../reference/Ext-RouteHookApiServer.md) 挂在 `prepend-inner` 位置**在默认路由前接管**：`api.php/test.foo2?a=1&b=2` → 调 `\Api\test::foo2(1, 2)`，按反射参数名取参，结果 JSON 输出。选项见 `demo/public/api.php` 的 `apiserver_namespace` / `apiserver_base_class`（`~BaseApi` 表示当前命名空间下的 `BaseApi`，服务类须实现它，否则按未命中处理）。
 - **rpc**：`demo/public/rpc.php` 一个文件同时演两端。[DuckPhp\Ext\JsonRpcExt](../reference/Ext-JsonRpcExt.md) 的 `onRpcCall($_POST)` 在服务端把 `Namespace.Service.method` 分发到本地服务类；客户端用 `JsonRpcExt::Wrap(服务类::class)` 或 `\JsonRpc\服务名::_()`（`jsonrpc_namespace` 前缀自动加载，类继承 [DuckPhp\Ext\JsonRpcClientBase](../reference/Ext-JsonRpcClientBase.md)），调用经 `jsonrpc_backend` POST 到服务端。
 
@@ -132,11 +132,11 @@ $options = [
 
 | 现象                             | 原因                                                          | 改法                                                                     |
 | ------------------------------ | ----------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `php cli.php` 进了 Web 流程而不是命令列表 | `cli_enable` 是 `false` 或没传                                  | 入口里给 `'cli_enable' => true`（[第 2-15 章](cli.md)）                          |
+| `php cli.php` 进了 Web 流程而不是命令列表 | `cli_enable` 是 `false` 或没传                                  | 入口里给 `'cli_enable' => true`（[第 2-16 章](cli.md)）                          |
 | API 入口全 404                    | `RouteHookApiServer` 没启用，或 `apiserver_namespace` 与实际命名空间不符 | 对照 `demo/public/api.php` 检查 `ext` 选项                                   |
 | API 类不满足基类约束 → 静默 404          | `apiserver_base_class` 写错或漏配                                  | 用 `~BaseApi` 形式（`~` = 当前 `namespace` + `apiserver_namespace`）             |
 | RPC 客户端报「找不到类」                 | `JsonRpc\` 前缀的自动加载没注册                                       | 确认 `JsonRpcExt` 在 `ext` 里且 `jsonrpc_enable_autoload` 为真                |
-| 子目录部署后所有站内链接 404               | 手写了 `/xxx` 绝对路径                                             | 一律 `__url()`（[第 2-2 章](routing.md)）                                      |
+| 子目录部署后所有站内链接 404               | 手写了 `/xxx` 绝对路径                                             | 一律 `__url()`（[第 2-4 章](routing.md)）                                      |
 | 子目录部署后路由全 404                  | rewrite 没把子目录剥掉，或 PATH_INFO 丢失                              | [第 1-7 章](deployment.md) 的 nginx/apache 写法；或开 `path_info_compact_enable` |
 | 多入口下「这个请求到底谁处理了」查不到            | 入口多、子应用多，没有判断顺序                                             | 按下面的排查顺序走一遍                                                            |
 

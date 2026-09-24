@@ -1,7 +1,7 @@
 # 3-1 应用树与相位基础
 
 > 解决什么问题：一个进程里如何跑起**多个应用**（主应用 + 挂进来的子应用），它们各自的单例、路由、视图怎么互不干扰。
-> 前置：[第 2-1 章 四层架构](layers.md)、[第 2-10 章 生命周期](lifecycle.md)。预计 15 分钟。
+> 前置：[第 2-1 章 四层架构](layers.md)、[第 2-2 章 请求生命周期](lifecycle.md)。预计 15 分钟。
 > 本卷全部代码来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑。
 
 ## 心智模型：应用树 + 相位
@@ -147,7 +147,7 @@ $name = App::_()->getThisPhaseName();     // 例如 ':shop'
 $cmd_prefix = App::_()->getThisCommandPrefix();  // CLI 命令前缀
 
 // 4) CLI：子应用的命令带前缀（phase 名里的 '/' 变成 '-'）
-//   php cli.php shop-<命令>     ← 命令组按相位区分，详见第 2-15 章
+//   php cli.php shop-<命令>     ← 命令组按相位区分，详见第 2-16 章
 ```
 
 ## 常见错误
@@ -166,7 +166,7 @@ $cmd_prefix = App::_()->getThisCommandPrefix();  // CLI 命令前缀
 - **子应用能再挂子应用吗？** 能，`app` 里继续写即可，相位名会变成 `:shop:sub`。
 - **视图能共享吗？** 默认各自用各自的 `path_view`；但父应用可以在自己的视图目录里**按子应用 name 建子目录覆盖子应用的视图**（第 3-5 章）。
 - **怎么读主应用的配置？** `App::Root()->options`、`App::_()->getProjectPath()`（见 [参考手册 Core-App](../reference/Core-App.md)）。
-- **子应用的异常谁处理？** 统一交给异常管理器（第 2-11 章），子应用不自己兜底。
+- **子应用的异常谁处理？** 统一交给异常管理器（第 2-12 章），子应用不自己兜底。
 
 ## 下一步
 

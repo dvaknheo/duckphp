@@ -1,7 +1,7 @@
-# 2-6 模型层
+# 2-8 模型层
 
 > 解决什么问题：模型里到底该写什么、[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 白送了什么、为什么它的 CRUD 方法是 `protected`、表名怎么推导、模型该向业务层暴露什么。
-> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-5 章 数据库](database.md)。预计 20 分钟。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-7 章 数据库](database.md)。预计 20 分钟。
 > 示例：`demo/src/Model/`（`Base.php` / `DemoModel.php`）、`demo/public/dbtest.php`（完整可跑：模型 + 分页 + 增删改查）、`tests/data_for_tests/ZAllDemo/src/Model/`。
 
 ```bash
@@ -155,7 +155,7 @@ class NoteModel extends Base
 
 ### 6. 跨库/多连接
 
-模型层没有「跨库模型」这种东西——要访问第二个库就按 tag 取连接（[第 2-5 章](database.md)）：
+模型层没有「跨库模型」这种东西——要访问第二个库就按 tag 取连接（[第 2-7 章](database.md)）：
 
 ```php
 class LogModel extends Base
@@ -179,7 +179,7 @@ class LogModel extends Base
 // Business 里
 $total = NoteModel::_()->countByUser($userId);
 $rows  = NoteModel::_()->listByUser($userId, $page);
-// 视图层配合分页：Helper::PageHtml($total)（第 2-5 章）
+// 视图层配合分页：Helper::PageHtml($total)（第 2-7 章）
 ```
 
 ## 常见写法
@@ -235,7 +235,7 @@ try {
     $pdo->commit();
 } catch (\Throwable $ex) {
     $pdo->rollBack();
-    throw $ex;                 // 交给异常机制（第 2-11 章）
+    throw $ex;                 // 交给异常机制（第 2-12 章）
 }
 ```
 
@@ -254,7 +254,7 @@ try {
 
 ## 下一步
 
-- [第 2-8 章 表单与数据验证](validator.md)：入库前的校验放在业务层。
-- [第 2-11 章 异常与错误处理](exception.md)：数据层错误怎么变成用户看得懂的响应。
+- [第 2-10 章 表单与数据验证](validator.md)：入库前的校验放在业务层。
+- [第 2-12 章 异常与错误处理](exception.md)：数据层错误怎么变成用户看得懂的响应。
 - [第 3-5 章 重写与覆盖](overriding.md)：模型/控制器的覆盖与替换。
 - 参考手册：[DuckPhp\Foundation\Model\ModelTrait](../reference/Foundation-Model-ModelTrait.md)、[DuckPhp\Foundation\Model\ModelHelperTrait](../reference/Foundation-Model-ModelHelperTrait.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)。

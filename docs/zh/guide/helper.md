@@ -1,4 +1,4 @@
-# 2-7 Helper 与全局函数
+# 2-9 Helper 与全局函数
 
 > 解决什么问题：四层的 Helper 分别是什么、该用哪一个、工程里怎么写自己的 Helper、`Helper::` 与全局函数怎么选，以及为什么「这一层 Helper 里没有这个方法」往往是在提示你越界了。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)。预计 15 分钟。
@@ -147,11 +147,11 @@ Helper::Show($data, 'x');     // ❌ Business 的 Helper 继承链里没有 Show
 | 函数                                                                  | 作用                                                                    |
 | ------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | `__h($str)`                                                         | HTML 转义                                                               |
-| `__l($str, $args, $fallback)`                                       | 翻译（[第 2-14 章](i18n.md)）                                               |
+| `__l($str, $args, $fallback)`                                       | 翻译（[第 2-15 章](i18n.md)）                                               |
 | `__hl($str, $args)`                                                 | 翻译 + 转义                                                               |
 | `__langtext($desc, $args)`                                          | 一段文本里的 `[[key\|fallback]]` 占位翻译                                       |
 | `__json($data, $options)`                                           | JSON 编码                                                               |
-| `__url($url)` / `__domain($use_scheme)` / `__res($url)`             | URL / 域名 / 资源地址（[第 2-2 章](routing.md)、[第 3-3 章](static-resources.md)） |
+| `__url($url)` / `__domain($use_scheme)` / `__res($url)`             | URL / 域名 / 资源地址（[第 2-4 章](routing.md)、[第 3-3 章](static-resources.md)） |
 | `__display(...)`                                                    | 调试输出                                                                  |
 | `__var_dump()` / `__var_log()` / `__trace_dump()` / `__debug_log()` | 调试与日志（[第 1-6 章](debugging.md)）                                        |
 | `__logger()`                                                        | 取日志器                                                                  |
@@ -228,13 +228,13 @@ Helper::assignRewrite('/legacy', 'home/index');
 | 业务层里 `Helper::GET()` 报错                         | 越界                                                | 参数由控制器取好传进来                                           |
 | 换了系统包装但业务没变化                                    | 业务代码直接用了原生函数或 `new`                               | 全部走 `Helper::`                                        |
 | 各层混用一个「大 Helper」                                | 边界失效：业务里能拿到输出/请求方法                                | 每层只继承本层的类；确需全量就用 `Foundation\Helper` 并知道代价            |
-| 业务层用 `Helper::Db()` 写裸 SQL                      | 越界：绕过模型层                                          | SQL 收进模型（[第 2-6 章](model.md)）                         |
+| 业务层用 `Helper::Db()` 写裸 SQL                      | 越界：绕过模型层                                          | SQL 收进模型（[第 2-8 章](model.md)）                         |
 | 找不到某个全局函数                                       | 它确实没定义（拼写/版本差异）                                   | 以 `src/Core/Functions.php` 为准，或改用 `Helper::` 对应方法     |
 
 ## 下一步
 
-- [第 2-8 章 表单与数据验证](validator.md)：`Helper::Validator*` 的用法。
-- [第 2-18 章 使用用户系统](user.md) / [第 2-19 章 使用管理员系统](admin.md)：`Helper::UserId()` / `AdminService()` 等。
+- [第 2-10 章 表单与数据验证](validator.md)：`Helper::Validator*` 的用法。
+- [第 2-19 章 使用用户系统](user.md) / [第 2-20 章 使用管理员系统](admin.md)：`Helper::UserId()` / `AdminService()` 等。
 - [第 4-11 章 过时与冷门的扩展类](deprecated-exts.md)：`@method` 之前的那些动态静态调用方案（`MyFacades*`、`ExtendableStaticCallTrait`）与它们的替代。
 - [DuckPhp\Core\Functions（全局函数参考）](../reference/Core-Functions.md)：完整函数清单与签名。
 - 参考手册：[`Controller\ControllerHelper`](../reference/Foundation-Controller-ControllerHelper.md)、[`Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)、[`Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)、[`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)、[`System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)、[`Foundation\Helper`（并集）](../reference/Foundation-Helper.md)。

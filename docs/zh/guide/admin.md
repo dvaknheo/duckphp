@@ -1,7 +1,7 @@
-# 2-19 使用管理员系统
+# 2-20 使用管理员系统
 
 > 解决什么问题：在你的后台控制器 / 业务代码里回答「现在这个管理员是谁」「他能不能做这件事」「他是不是超管」，以及后台菜单怎么生成。
-> 前置：[第 2-18 章 使用用户系统](user.md)（两套入口同构，本章只讲不同的地方）、[第 2-3 章 控制器](controllers.md)、[第 2-9 章 会话](session.md)。预计 20 分钟。
+> 前置：[第 2-19 章 使用用户系统](user.md)（两套入口同构，本章只讲不同的地方）、[第 2-5 章 控制器](controllers.md)、[第 2-11 章 会话](session.md)。预计 20 分钟。
 > 本章只讲**怎么用**；「管理员系统是怎么接进来的」（三个实现 + 选项 + `ext` 挂载）见[第 4-13 章 实现管理员系统](impl-admin.md)。**没接之前**这些入口会直接抛 `DuckPhpSystemException`。
 > 可跑资产：`tests/Foundation/Controller/AdminControllerBaseTest.php`、`tests/GlobalAdmin/GlobalAdminTest.php`。
 
@@ -43,7 +43,7 @@ public function export(int $adminId): array
 | Business | `Helper::AdminService()` | 同上，**同一个服务** |
 | 任何地方 | [`Admin::_()`](../reference/GlobalAdmin-Admin.md) | 当前管理员对象（`Helper::Admin()` 就是它） |
 
-`Helper::Admin()` 能做什么（与[第 2-18 章第 2 节](user.md)那张表同构，管理员侧少注册、多 `isSuper()`）：
+`Helper::Admin()` 能做什么（与[第 2-19 章第 2 节](user.md)那张表同构，管理员侧少注册、多 `isSuper()`）：
 
 | 方法 | 返回 | 说明 |
 |---|---|---|
@@ -56,7 +56,7 @@ public function export(int $adminId): array
 
 ### 2. 未登录时会发生什么
 
-与用户侧完全一样（[第 2-18 章第 3 节](user.md)）：`id()` / `name()` / `data()` 默认 `$check_login = true`，未登录时三选一——配了 `globaladmin_need_login_callback` 就跑回调、非 Ajax `302` 到 `urlForLogin(当前 path)`、Ajax 输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，**三条路最后都结束请求**。要自己判断就传 `false`：
+与用户侧完全一样（[第 2-19 章第 3 节](user.md)）：`id()` / `name()` / `data()` 默认 `$check_login = true`，未登录时三选一——配了 `globaladmin_need_login_callback` 就跑回调、非 Ajax `302` 到 `urlForLogin(当前 path)`、Ajax 输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，**三条路最后都结束请求**。要自己判断就传 `false`：
 
 ```php
 $adminId = Helper::AdminId(false);       // 未登录返回 0
@@ -82,7 +82,7 @@ class AdminBaseController extends AdminControllerBase
 }
 ```
 
-它同时会把 `__use_logined_view_data` 与 `__use_logined_header_footer_file` 置真（[第 2-18 章第 6 节](user.md)），所以后台页面的头尾是自动的。
+它同时会把 `__use_logined_view_data` 与 `__use_logined_header_footer_file` 置真（[第 2-19 章第 6 节](user.md)），所以后台页面的头尾是自动的。
 
 ### 4. 超管专属内容
 
@@ -105,7 +105,7 @@ if (Helper::Admin()->isSuper()) {
 | **落盘模式** | `buildAndSaveToConfigJsonFile()` 把树写进配置，运行时 `loadAdminPermissionMenu()` 读回，避免每请求扫路由 |
 
 ```php
-// 部署或定时任务里跑一次（CLI 里也行，见第 2-15 章）
+// 部署或定时任务里跑一次（CLI 里也行，见第 2-16 章）
 PermissionMenu::_()->buildAndSaveToConfigJsonFile();
 // 运行时读回
 $tree = PermissionMenu::_()->loadAdminPermissionMenu();
@@ -113,7 +113,7 @@ $tree = PermissionMenu::_()->loadAdminPermissionMenu();
 
 - `loadAll()` 会把根应用与各子应用的菜单合并成一棵整树（跨相位安全）；
 - 菜单文件由隐藏选项 `permission_menu_tree_for_admin` 指定；
-- CLI 里可以用 `RouteLister::_()->command_routes()` 看路由表（[第 2-15 章](cli.md)）。
+- CLI 里可以用 `RouteLister::_()->command_routes()` 看路由表（[第 2-16 章](cli.md)）。
 
 ## 常见写法
 
@@ -184,15 +184,15 @@ class ConfigController extends AdminControllerBase
 | 业务层里写 `Helper::AdminId()` 报「方法不存在」 | 业务层 Helper 只有 `AdminService()` | 由控制器把 `$adminId` 传进业务方法 |
 | `DuckPhpSystemException: No GlobalAdmin Provider.` | 管理员系统还没接（`ext` 没挂） | 见[第 4-13 章](impl-admin.md) |
 | `canAccess()` 无参时报路由上下文为空 | 不在路由动作里调用（CLI / 子相位） | 显式传 `canAccess($url, $class, $method)`（注意 `$url` 在前） |
-| 后台页面没有头尾 | 没继承 `AdminControllerBase`，或两个视图数据键没置真 | 继承它，或自己 `assignViewData`（[第 2-18 章第 6 节](user.md)） |
+| 后台页面没有头尾 | 没继承 `AdminControllerBase`，或两个视图数据键没置真 | 继承它，或自己 `assignViewData`（[第 2-19 章第 6 节](user.md)） |
 | 后台菜单是空的 | 控制器没实现 `AdminControllerInterface`，或没写 `@menu*` 注释 | 继承 `AdminControllerBase`；或写注释/用 `__permissionMenuMeta()` |
 | 越权时页面还是默认的 302/JSON | 重写 `onNeedPermission()` 的位置不对 | 在**自己的控制器基类**里重写（第 3 节） |
 
 ## 下一步
 
-- [第 2-18 章 使用用户系统](user.md)：前台那套入口。
+- [第 2-19 章 使用用户系统](user.md)：前台那套入口。
 - [第 4-13 章 实现管理员系统](impl-admin.md)：本项目的管理员系统由谁提供、选项怎么配。
-- [第 2-12 章 事件系统](events.md)：`EVENT_ACTION_ADMIN_*`（登录/登出前后）怎么监听。
-- [第 2-15 章 命令行与定时任务](cli.md)：用 CLI 跑菜单落盘、看路由表。
+- [第 2-13 章 事件系统](events.md)：`EVENT_ACTION_ADMIN_*`（登录/登出前后）怎么监听。
+- [第 2-16 章 命令行与定时任务](cli.md)：用 CLI 跑菜单落盘、看路由表。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉后台视图头尾。
 - 参考手册：[Admin](../reference/GlobalAdmin-Admin.md)、[AdminActionInterface](../reference/GlobalAdmin-AdminActionInterface.md)、[AdminLoginActionInterface](../reference/GlobalAdmin-AdminLoginActionInterface.md)、[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[AdminControllerInterface](../reference/GlobalAdmin-AdminControllerInterface.md)、[AdminServiceInterface](../reference/GlobalAdmin-AdminServiceInterface.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)、[Ext\RouteLister](../reference/Ext-RouteLister.md)

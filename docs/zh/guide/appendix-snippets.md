@@ -6,7 +6,7 @@
 
 ## 1. CRUD（模型层）
 
-来自 `demo/public/dbtest.php`（可跑）与[第 2-6 章](../guide/model.md)。
+来自 `demo/public/dbtest.php`（可跑）与[第 2-8 章](../guide/model.md)。
 
 ```php
 namespace MyProj\Model;
@@ -37,11 +37,11 @@ class NoteModel extends Base
 }
 ```
 
-要点：`` `'TABLE'` `` 是表名宏（自动加 `table_prefix`）；[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 的 CRUD 是 `protected`，所以要自己开 public 方法（[第 2-6 章](../guide/model.md)）。
+要点：`` `'TABLE'` `` 是表名宏（自动加 `table_prefix`）；[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 的 CRUD 是 `protected`，所以要自己开 public 方法（[第 2-8 章](../guide/model.md)）。
 
 ## 2. 分页（列表 + 分页条）
 
-来自 `demo/public/dbtest.php`（可跑）与[第 2-5 章](../guide/database.md)。
+来自 `demo/public/dbtest.php`（可跑）与[第 2-7 章](../guide/database.md)。
 
 ```php
 // 模型里
@@ -63,7 +63,7 @@ Helper::Show(get_defined_vars(), 'note/list');
 
 ## 3. 表单提交 + 校验 + 回显
 
-见[第 2-3 章](../guide/controllers.md)与[第 2-8 章](../guide/validator.md)。
+见[第 2-5 章](../guide/controllers.md)与[第 2-10 章](../guide/validator.md)。
 
 ```php
 public function create()
@@ -86,7 +86,7 @@ public function create()
 
 ## 4. JSON 接口
 
-见[第 2-3 章](../guide/controllers.md)。
+见[第 2-5 章](../guide/controllers.md)。
 
 ```php
 public function list()
@@ -97,11 +97,11 @@ public function list()
 }
 ```
 
-> 想统一包装成功/失败格式，用路由钩子包一层，或写个 `ApiControllerBase`（[第 2-10 章](../guide/lifecycle.md)）。
+> 想统一包装成功/失败格式，用路由钩子包一层，或写个 `ApiControllerBase`（[第 2-3 章 路由钩子](../guide/route-hooks.md)）。
 
 ## 5. 登录 / 登出 / 当前用户
 
-用法见[第 2-18 章 使用用户系统](../guide/user.md)；下面的选项属于**接入**配置，完整说明见[第 4-12 章 实现用户系统](../guide/impl-user.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
+用法见[第 2-19 章 使用用户系统](../guide/user.md)；下面的选项属于**接入**配置，完整说明见[第 4-12 章 实现用户系统](../guide/impl-user.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
 
 ```php
 // System/App.php 的选项
@@ -143,11 +143,11 @@ public function edit(int $noteId, int $userId): array
 }
 ```
 
-后台菜单靠控制器注释生成（`@menu_directory` 等），见[第 2-19 章](../guide/admin.md)与 [Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)。
+后台菜单靠控制器注释生成（`@menu_directory` 等），见[第 2-20 章](../guide/admin.md)与 [Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)。
 
 ## 7. 缓存热点数据
 
-见[第 2-13 章](../guide/cache.md)。
+见[第 2-14 章](../guide/cache.md)。
 
 ```php
 public function hotProducts(): array
@@ -164,7 +164,7 @@ public function hotProducts(): array
 
 ## 8. 事务
 
-见[第 2-5 章](../guide/database.md)。
+见[第 2-7 章](../guide/database.md)。
 
 ```php
 $pdo = Helper::Db()->PDO();
@@ -175,7 +175,7 @@ try {
     $pdo->commit();
 } catch (\Throwable $ex) {
     $pdo->rollBack();
-    throw $ex;                    // 交给异常机制（第 2-11 章）
+    throw $ex;                    // 交给异常机制（第 2-12 章）
 }
 ```
 
@@ -198,7 +198,7 @@ Helper::FireGlobalEvent('order.created', $orderId);
 
 ## 10. 统一给响应加东西（钩子）
 
-见[第 2-10 章](../guide/lifecycle.md)。
+见[第 2-3 章 路由钩子](../guide/route-hooks.md)。
 
 ```php
 // src/System/App.php 的 onInited() 里
@@ -210,7 +210,7 @@ Helper::addRouteHook(function (string $path_info) {
 
 ## 11. 强制 HTTPS ⚠️
 
-框架不提供，自己写 pre 钩子（[第 2-17 章](../guide/security-performance.md)）：
+框架不提供，自己写 pre 钩子（[第 2-18 章](../guide/security-performance.md)）：
 
 ```php
 Helper::addRouteHook(function (string $path_info) {
@@ -222,7 +222,7 @@ Helper::addRouteHook(function (string $path_info) {
 
 ## 12. CSRF 令牌 ⚠️
 
-框架**不提供**，需要自己实现（[第 2-17 章](../guide/security-performance.md)）：
+框架**不提供**，需要自己实现（[第 2-18 章](../guide/security-performance.md)）：
 
 ```php
 // 发令牌（控制器里）
@@ -239,7 +239,7 @@ Helper::BusinessThrowOn(
 
 ## 13. 文件上传 ⚠️
 
-取数据用 `Helper::FILES()`，**校验与落盘要自己写**（[第 2-17 章](../guide/security-performance.md)）：
+取数据用 `Helper::FILES()`，**校验与落盘要自己写**（[第 2-18 章](../guide/security-performance.md)）：
 
 ```php
 $file = Helper::FILES('avatar');
@@ -253,7 +253,7 @@ move_uploaded_file($file['tmp_name'], Helper::PathOfRuntime() . 'upload/' . $nam
 
 ## 14. 定时任务
 
-见[第 2-15 章](../guide/cli.md)。
+见[第 2-16 章](../guide/cli.md)。
 
 ```php
 class JobCommands
@@ -273,7 +273,7 @@ class JobCommands
 
 ## 15. 迁移/建表
 
-`demo/public/dbtest.php` 里的做法（可跑）：把建表 SQL 写在模型的 `init()` 里，由安装流程或控制器构造时调一次；需要导出 SQL 用 [`Ext\SqlDumper`](../reference/Ext-SqlDumper.md)（[第 2-5 章](../guide/database.md)、[第 3-6 章](../guide/installer.md)）。
+`demo/public/dbtest.php` 里的做法（可跑）：把建表 SQL 写在模型的 `init()` 里，由安装流程或控制器构造时调一次；需要导出 SQL 用 [`Ext\SqlDumper`](../reference/Ext-SqlDumper.md)（[第 2-7 章](../guide/database.md)、[第 3-6 章](../guide/installer.md)）。
 
 ```php
 public function init()

@@ -98,7 +98,7 @@ class NoteBusiness
     public function noteOr404(int $id): array
     {
         $note = NoteModel::_()->findOne($id);
-        Helper::BusinessThrowOn(!$note, '便签不存在', 404);   // 业务层的条件抛（第 2-11 章）
+        Helper::BusinessThrowOn(!$note, '便签不存在', 404);   // 业务层的条件抛（第 2-12 章）
         return $note;
     }
 }
@@ -106,7 +106,7 @@ class NoteBusiness
 
 `Helper` 是业务层自己的助手（`src/Business/Helper.php`，一行 [`extends DuckPhp\Foundation\Business\BusinessHelper`](../reference/Foundation-Business-BusinessHelper.md)），脚手架自带。
 
-**它的作用是把「业务层能用什么」固定成一个类**：`Helper::BusinessThrowOn()` / `Helper::Config()` / `Helper::Cache()` 这些静态方法都只是转发到对应组件（`CoreHelper`/`Configer`/`Cache`…），业务代码因此不必到处 `use` 框架类、也不直接 `new` 组件，测试里还能整体替换底层。同时**它只有本层的方法**：在这里写 `Helper::Show()`（输出）或 `Helper::GET()`（读请求）会直接「方法不存在」——这不是缺功能，而是**用类型系统表达的层边界**（[第 2-7 章](helper.md)）。完整方法表见 [Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)。
+**它的作用是把「业务层能用什么」固定成一个类**：`Helper::BusinessThrowOn()` / `Helper::Config()` / `Helper::Cache()` 这些静态方法都只是转发到对应组件（`CoreHelper`/`Configer`/`Cache`…），业务代码因此不必到处 `use` 框架类、也不直接 `new` 组件，测试里还能整体替换底层。同时**它只有本层的方法**：在这里写 `Helper::Show()`（输出）或 `Helper::GET()`（读请求）会直接「方法不存在」——这不是缺功能，而是**用类型系统表达的层边界**（[第 2-9 章](helper.md)）。完整方法表见 [Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)。
 
 ## 步骤 5：控制器（Controller）—— 收输入、出输出
 
@@ -132,7 +132,7 @@ class NoteController extends Base
 }
 ```
 
-输出一共四种（[第 2-3 章](controllers.md)会展开）：`Helper::Show($data, 'view')` 渲染视图、`Helper::ShowJson($data)` 出 JSON、`Helper::Show302($url)` 跳转、`Helper::Show404()` 出 404。
+输出一共四种（[第 2-5 章](controllers.md)会展开）：`Helper::Show($data, 'view')` 渲染视图、`Helper::ShowJson($data)` 出 JSON、`Helper::Show302($url)` 跳转、`Helper::Show404()` 出 404。
 
 ## 步骤 6：视图（View）—— 只做展示
 
@@ -164,7 +164,7 @@ php -S 127.0.0.1:8080 -t public
 | -------------------------------------- | ------------------------------------------- |
 | `http://127.0.0.1:8080/Note/index`     | 列表页                                         |
 | `http://127.0.0.1:8080/Note/show?id=1` | 详情页                                         |
-| `http://127.0.0.1:8080/`               | 走 `MainController::index()`（欢迎页控制器，第 2-2 章） |
+| `http://127.0.0.1:8080/`               | 走 `MainController::index()`（欢迎页控制器，第 2-4 章） |
 
 > URL 里的 `Note` 大小写要与类名一致（默认不做大小写宽松处理）。
 
@@ -189,7 +189,7 @@ public function create(array $post): int
 }
 ```
 
-表单校验的完整做法（过滤器 + 错误数组）见[第 2-8 章](validator.md)；这里只求把链路走通。
+表单校验的完整做法（过滤器 + 错误数组）见[第 2-10 章](validator.md)；这里只求把链路走通。
 
 ## 单文件版（不建工程也能跑）
 
@@ -224,5 +224,5 @@ class MainController          // 单文件示例：控制器写在同一文件�
 ## 下一步
 
 - [第 1-5 章 配置与设置](configuration.md)：把 `App.php` 的选项与 `config/` 的设置彻底分清。
-- [第 2-3 章 控制器](controllers.md)、[第 2-4 章 视图与模板](views.md)：这两层的完整能力。
-- [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：刚才这一次请求，框架内部都做了什么（想让框架在中间插一手时回来看）。
+- [第 2-5 章 控制器](controllers.md)、[第 2-6 章 视图与模板](views.md)：这两层的完整能力。
+- [第 2-2 章 请求生命周期](lifecycle.md)：刚才这一次请求，框架内部都做了什么（想让框架在中间插一手时回来看）。

@@ -1,6 +1,6 @@
 # 2-1 四层架构与调用规范
 
-> 解决什么问题：DuckPHP 把「谁可以调谁」当成**约定**而不是建议——这一章给你第二卷的总图和铁律，后面 2-2–2-9 章都是往这张图上挂东西。
+> 解决什么问题：DuckPHP 把「谁可以调谁」当成**约定**而不是建议——这一章给你第二卷的总图和铁律，后面 2-2–2-20 章都是往这张图上挂东西。
 > 前置：[第 1-3 章 目录结构与编码规则](project-structure.md)、[第 1-4 章 第一个页面](quickstart.md)。预计 20 分钟。
 > 示例：`demo/public/demo.php`（单文件五层示范，能直接跑）与 `tests/data_for_tests/ZAllDemo`（多文件骨架）。跑法：
 
@@ -9,15 +9,17 @@ php -S 127.0.0.1:8080 -t demo/public
 # 浏览器打开 http://127.0.0.1:8080/demo.php
 ```
 
-**本卷地图**——第二卷（2-1–2-17 章）就是往本章这张图上挂东西：
+**本卷地图**——第二卷（2-1–2-20 章）就是往本章这张图上挂东西：
 
 | 阶段 | 章 | 讲什么 |
 |---|---|---|
-| 规范 | **8** | 本章：四层各管什么、谁不能调谁 |
-| 请求路径 | 9–13 | [路由](routing.md) → [控制器](controllers.md) → [视图](views.md) → [数据库](database.md) → [模型](model.md) |
-| 横切能力 | 14–16 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话](session.md)、[使用用户系统](user.md)、[使用管理员系统](admin.md) |
-| 框架机制 | 17–19 | [生命周期与钩子](lifecycle.md)、[异常](exception.md)、[事件](events.md) |
-| 进阶 | 20–24 | [缓存](cache.md)、[国际化](i18n.md)、[命令行](cli.md)、[测试](testing.md)、[安全与性能](security-performance.md) |
+| 规范 | **2-1** | 本章：四层各管什么、谁不能调谁 |
+| 框架机制（先看懂时序） | 2-2–2-3 | [请求生命周期](lifecycle.md)（含框架默认装了哪些内置组件）→ [路由钩子](route-hooks.md) |
+| 请求路径 | 2-4–2-8 | [路由](routing.md) → [控制器](controllers.md) → [视图](views.md) → [数据库](database.md) → [模型](model.md) |
+| 横切能力 | 2-9–2-11 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话](session.md) |
+| 框架机制 | 2-12–2-13 | [异常](exception.md)、[事件](events.md) |
+| 进阶 | 2-14–2-18 | [缓存](cache.md)、[国际化](i18n.md)、[命令行](cli.md)、[测试](testing.md)、[安全与性能](security-performance.md) |
+| 用户 / 管理员体系（用法） | 2-19–2-20 | [使用用户系统](user.md)、[使用管理员系统](admin.md)（自己实现看[第 4-12](impl-user.md)、[4-13 章](impl-admin.md)） |
 
 ## 最小示例
 
@@ -136,7 +138,7 @@ HTTP 请求 → 路由 → MainController::index()
 
 这不是洁癖，有三个很具体的后果：
 
-1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 2-15 章](cli.md)）、定时任务、测试（[第 2-16 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
+1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 2-16 章](cli.md)）、定时任务、测试（[第 2-17 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
 2. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
 所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`、`Helper::Session()` 之类），Business 的入参一律显式传。
 
@@ -152,7 +154,7 @@ HTTP 请求 → 路由 → MainController::index()
 | 应用/接线      | `System\Helper`                     | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)                                                                                   | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
 |            |                                     |                                                                                                                                                                              |                                                        |
 
-工程侧的 `Xxx\Helper` 类本身极短（`demo/src/Controller/Helper.php` 就是 `extends` 一行 + 一个空类），也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-7 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
+工程侧的 `Xxx\Helper` 类本身极短（`demo/src/Controller/Helper.php` 就是 `extends` 一行 + 一个空类），也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-9 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 
 视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](../reference/Core-Functions.md)）：
 
@@ -162,7 +164,7 @@ HTTP 请求 → 路由 → MainController::index()
 | `__url($url)` / `__domain()`               | 生成站内 URL / 域名前缀                           |
 | `__res($url)`                              | 生成静态资源 URL（[第 3-3 章](static-resources.md)） |
 | `__json($data)`                            | JSON 编码                                   |
-| `__l($str)` / `__langtext()` / `__hl()`    | 多语言与转义组合（[第 2-14 章](i18n.md)）               |
+| `__l($str)` / `__langtext()` / `__hl()`    | 多语言与转义组合（[第 2-15 章](i18n.md)）               |
 | `__logger()`、`__debug_log()`、`__var_log()` | 日志（[第 1-6 章](debugging.md)）                 |
 
 ### 5. 框架其实不强制这套约定
@@ -220,12 +222,12 @@ new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 | 覆盖类/覆盖文件后没生效                             | 调用链上有 `new`、或直接从别的相位取实例                      | 全程用 `::_()`，跨相位用相位 API（第 3-1 章）                                   |
 | 控制器里 [`use DuckPhp\Core\App;`](../reference/Core-App.md) 越写越多        | 框架细节渗进了业务层                                   | 框架调用收进 System 层或对应层的 Helper                                      |
 | 同一个业务规则在控制器和 Business 里各写一份              | 边界没守住，规则有了第二实现                               | 规则只留在 Business，控制器只做参数整形                                         |
-| Model 里抛业务异常、写权限判断                       | 模型层做了业务层的活                                   | 判断留在 Business；Model 只返回数据（异常处理见[第 2-11 章](exception.md)）           |
+| Model 里抛业务异常、写权限判断                       | 模型层做了业务层的活                                   | 判断留在 Business；Model 只返回数据（异常处理见[第 2-12 章](exception.md)）           |
 
 ## 下一步
 
-- [第 2-2 章 路由进阶](routing.md)：先弄清请求是怎么落到某个控制器方法的。
-- [第 2-3 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
-- [第 2-4 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
-- [第 2-5 章 数据库](database.md) 与 [第 2-6 章 模型层](model.md)：模型层这一列往下的全部内容。
+- [第 2-4 章 路由进阶](routing.md)：先弄清请求是怎么落到某个控制器方法的。
+- [第 2-5 章 控制器](controllers.md)：输入怎么取、输出有哪几种方式。
+- [第 2-6 章 视图与模板](views.md)：视图定位、页眉页脚、转义。
+- [第 2-7 章 数据库](database.md) 与 [第 2-8 章 模型层](model.md)：模型层这一列往下的全部内容。
 - 参考手册：[DuckPhp\Foundation\Helper](../reference/Foundation-Helper.md)、[DuckPhp\Foundation\Controller\ControllerHelper](../reference/Foundation-Controller-ControllerHelper.md)、[DuckPhp\Foundation\Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)、四层基类 [Controller\Base](../reference/Foundation-Controller-Base.md) / [Business\Base](../reference/Foundation-Business-Base.md) / [Model\Base](../reference/Foundation-Model-Base.md)。

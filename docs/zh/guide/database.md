@@ -1,4 +1,4 @@
-# 2-5 数据库
+# 2-7 数据库
 
 > 解决什么问题：怎么配数据库连接、多库与读写分离怎么用、事务怎么写、分页与 SQL 导出怎么做、SQL 里的表名前缀宏是什么。
 > 前置：[第 1-5 章 配置与设置](configuration.md)、[第 2-1 章 四层架构与调用规范](layers.md)。预计 20 分钟。
@@ -53,7 +53,7 @@ class TestModel
 }
 ```
 
-三个要点：连接用 `database` 选项配、SQL 里用 `` `'TABLE'` `` 宏代替真表名、读写走 `fetch*` / `execute`（模型层的封装见[第 2-6 章](model.md)）。
+三个要点：连接用 `database` 选项配、SQL 里用 `` `'TABLE'` `` 宏代替真表名、读写走 `fetch*` / `execute`（模型层的封装见[第 2-8 章](model.md)）。
 
 ## 机制说明
 
@@ -96,7 +96,7 @@ $options = [
 ];
 ```
 
-约定：**读走读连接、写走写连接**——模型层的 `fetch*` / `execute` 已经这么分流（[第 2-6 章](model.md)）。
+约定：**读走读连接、写走写连接**——模型层的 `fetch*` / `execute` 已经这么分流（[第 2-8 章](model.md)）。
 
 ### 3. 执行 SQL：`Db` 的方法
 
@@ -128,7 +128,7 @@ $sql = "select * from `'TABLE'` where id=?";
 // table_prefix='app_'、模型表名 note → select * from `app_note` where id=?
 ```
 
-宏的字面量是 `` `'TABLE'` ``（含反引号），[`ModelTrait::prepare()`](../reference/Foundation-Model-ModelTrait.md) 负责替换（[第 2-6 章](model.md)），底层是 `Db::doTableNameMacro()`。
+宏的字面量是 `` `'TABLE'` ``（含反引号），[`ModelTrait::prepare()`](../reference/Foundation-Model-ModelTrait.md) 负责替换（[第 2-8 章](model.md)），底层是 `Db::doTableNameMacro()`。
 
 ### 5. 增删改的便捷方法
 
@@ -162,7 +162,7 @@ try {
     $pdo->commit();
 } catch (\Throwable $ex) {
     $pdo->rollBack();
-    throw $ex;                 // 交给异常机制（第 2-11 章）
+    throw $ex;                 // 交给异常机制（第 2-12 章）
 }
 ```
 
@@ -237,7 +237,7 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 
 ## 下一步
 
-- [第 2-6 章 模型层](model.md)：把这一章的能力封装成模型，业务层只看模型。
-- [第 2-8 章 表单与数据验证](validator.md)：数据入库前的校验。
+- [第 2-8 章 模型层](model.md)：把这一章的能力封装成模型，业务层只看模型。
+- [第 2-10 章 表单与数据验证](validator.md)：数据入库前的校验。
 - [第 3-6 章 安装器与 Web 安装流程](installer.md)：`SqlDumper` 与 `{prefix}` 的实际用法。
 - 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Component\PagerInterface](../reference/Component-PagerInterface.md)、[DuckPhp\Ext\SqlDumper](../reference/Ext-SqlDumper.md)、[DuckPhp\Ext\SqlDumperSupporter](../reference/Ext-SqlDumperSupporter.md)。

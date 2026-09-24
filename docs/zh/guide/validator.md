@@ -1,7 +1,7 @@
-# 2-8 表单与数据验证
+# 2-10 表单与数据验证
 
 > 解决什么问题：用户提交的数据怎么校验、错误怎么呈现、多余字段怎么剔除。
-> 前置：[第 2-3 章 控制器](controllers.md)、[第 2-7 章 Helper 与全局函数](helper.md)。预计 15 分钟。
+> 前置：[第 2-5 章 控制器](controllers.md)、[第 2-9 章 Helper 与全局函数](helper.md)。预计 15 分钟。
 > 本章示例均为最小片段，可直接放进 `MyProj` 工程的对应层；规则清单以 [Component\Validator](../reference/Component-Validator.md) 为准。
 
 ## 最小示例
@@ -33,7 +33,7 @@ class UserBusiness
 }
 ```
 
-校验失败时 `ValidatorFilter()` 直接抛异常，消息为各字段错误用 `'; '` 拼接；异常沿[第 2-11 章](exception.md)的机制变成错误页或 JSON，Controller 不用写 try/catch。
+校验失败时 `ValidatorFilter()` 直接抛异常，消息为各字段错误用 `'; '` 拼接；异常沿[第 2-12 章](exception.md)的机制变成错误页或 JSON，Controller 不用写 try/catch。
 
 ## 机制说明
 
@@ -74,9 +74,9 @@ class UserBusiness
 
 按[第 2-1 章 四层架构](layers.md)的铁律：
 
-- **Controller**（[第 2-3 章](controllers.md)）：只搬运 `Helper::POST()` 给业务层；若要走「错误数组回显表单」流程，可以在这里 `valid()` 拿错误、把 `$errors` 拼进视图数据。
+- **Controller**（[第 2-5 章](controllers.md)）：只搬运 `Helper::POST()` 给业务层；若要走「错误数组回显表单」流程，可以在这里 `valid()` 拿错误、把 `$errors` 拼进视图数据。
 - **Business**：规则与校验的主场。`filter()` 校验 + 剔除多余字段后交给 Model；业务规则用 `Helper::BusinessThrowOn()`。
-- **Model**：不做校验（第 2-6 章）。
+- **Model**：不做校验（第 2-8 章）。
 
 ## 常见写法
 
@@ -156,7 +156,7 @@ public static function checkUserExists($value, $data): bool
 Helper::Validator()
     ->init($rules)
     ->setMessage($messages)
-    ->setExceptionClass(BusinessException::class)   // 抛工程自己的异常（第 2-11 章）
+    ->setExceptionClass(BusinessException::class)   // 抛工程自己的异常（第 2-12 章）
     ->check(Helper::POST());
 ```
 
@@ -174,7 +174,7 @@ Helper::Validator()
 
 ## 下一步
 
-- [第 2-18 章 使用用户系统](user.md)：登录之后，怎么知道「当前是谁」。
-- [第 2-11 章 异常与错误处理](exception.md)：`check()`/`ThrowOn` 抛出的异常，框架怎么接住、怎么呈现。
-- [第 2-3 章 控制器](controllers.md)：`Helper::POST()` 与输出四方式。
+- [第 2-19 章 使用用户系统](user.md)：登录之后，怎么知道「当前是谁」。
+- [第 2-12 章 异常与错误处理](exception.md)：`check()`/`ThrowOn` 抛出的异常，框架怎么接住、怎么呈现。
+- [第 2-5 章 控制器](controllers.md)：`Helper::POST()` 与输出四方式。
 - 参考手册：[DuckPhp\Component\Validator](../reference/Component-Validator.md)、[DuckPhp\Foundation\Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)

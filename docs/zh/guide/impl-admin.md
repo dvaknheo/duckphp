@@ -1,7 +1,7 @@
 # 4-13 实现管理员系统
 
-> 解决什么问题：让[第 2-19 章 使用管理员系统](admin.md)里那些 `Helper::Admin*()` 真的有东西可用——你提供「会话 / 登录服务 / 本地服务」三件实现，再把组件挂进应用。
-> 前置：[第 2-19 章](admin.md)、[第 4-12 章 实现用户系统](impl-user.md)（两套实现同构，本章只讲不同的地方）、[第 2-9 章 会话](session.md)。预计 20 分钟。
+> 解决什么问题：让[第 2-20 章 使用管理员系统](admin.md)里那些 `Helper::Admin*()` 真的有东西可用——你提供「会话 / 登录服务 / 本地服务」三件实现，再把组件挂进应用。
+> 前置：[第 2-20 章](admin.md)、[第 4-12 章 实现用户系统](impl-user.md)（两套实现同构，本章只讲不同的地方）、[第 2-11 章 会话](session.md)。预计 20 分钟。
 > 可跑资产：`tests/GlobalAdmin/GlobalAdminTest.php`（`FakeAdminApp` / `FakeAdminSession` / `FakeAdminLoginService` / `FakeAdminService`）、`tests/Foundation/Controller/AdminControllerBaseTest.php`。
 
 ## 最小可跑接入
@@ -42,7 +42,7 @@ use DuckPhp\GlobalAdmin\AdminSessionTrait;
 
 class AdminSession implements AdminSessionInterface
 {
-    use SessionTrait;          // 带前缀的会话读写（第 2-9 章）
+    use SessionTrait;          // 带前缀的会话读写（第 2-11 章）
     use AdminSessionTrait;     // getCurrentAdminId/Name、getCurrentAdmin、setCurrentAdmin、unsetCurrentAdmin
 }
 ```
@@ -91,8 +91,8 @@ class AdminService implements AdminServiceInterface, AdminLoginServiceInterface
 | 本地服务 | [`UserServiceInterface`](../reference/GlobalUser-UserServiceInterface.md)：`canAccess()` / `log()` / `batchGetUsernames()` | [`AdminServiceInterface`](../reference/GlobalAdmin-AdminServiceInterface.md)：`canAccess()` / `log()` / **`isSuper()`** |
 | URL 选项 | `url_home` / `url_login` / `url_logout` / `url_register` | `url_home` / `url_login` / `url_logout`（无注册） |
 | 应用级覆盖选项 | `url_user_home` / `url_user_logout` | `url_admin_home` / `url_admin_logout` |
-| 事件常量 | `User::EVENT_ACTION_USER_*` / `EVENT_SERVICE_USER_*` | `Admin::EVENT_ACTION_ADMIN_*` / `EVENT_SERVICE_ADMIN_*`（[第 2-12 章第 3 节](events.md)） |
-| 后台专属 | — | 控制器实现 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 后会被 [`PermissionMenu`](../reference/Ext-PermissionMenu.md) 扫进菜单（[第 2-19 章第 5 节](admin.md)） |
+| 事件常量 | `User::EVENT_ACTION_USER_*` / `EVENT_SERVICE_USER_*` | `Admin::EVENT_ACTION_ADMIN_*` / `EVENT_SERVICE_ADMIN_*`（[第 2-13 章第 3 节](events.md)） |
+| 后台专属 | — | 控制器实现 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 后会被 [`PermissionMenu`](../reference/Ext-PermissionMenu.md) 扫进菜单（[第 2-20 章第 5 节](admin.md)） |
 
 错误码常量同样在顶层类上：[`Admin`](../reference/GlobalAdmin-Admin.md) 的 `EXCEPTION_CODE_ADMIN_NEED_LOGIN`、`EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION` 等。
 
@@ -123,7 +123,7 @@ class AdminService implements AdminServiceInterface, AdminLoginServiceInterface
 
 ## 4. 后端专属：`isSuper()` 与 `onNeedPermission()`
 
-- `isSuper()`：「这个管理员是不是超管」，管理员侧才有；每次调用都直接问你的 [`AdminServiceInterface`](../reference/GlobalAdmin-AdminServiceInterface.md) `isSuper($admin_id)`，框架不缓存也不替你判断。想在菜单/按钮上做「只有超管可见」，用它（[第 2-19 章第 3 节](admin.md)）。
+- `isSuper()`：「这个管理员是不是超管」，管理员侧才有；每次调用都直接问你的 [`AdminServiceInterface`](../reference/GlobalAdmin-AdminServiceInterface.md) `isSuper($admin_id)`，框架不缓存也不替你判断。想在菜单/按钮上做「只有超管可见」，用它（[第 2-20 章第 3 节](admin.md)）。
 - `onNeedPermission()`：**控制器的兜底钩子**。继承 [`AdminControllerBase`](../reference/Foundation-Controller-AdminControllerBase.md) 的控制器在 `canAccess()` 为假时会调它，默认实现是「非 Ajax 302 到登录页、Ajax 出 `{"error_code":-1,"error_message":"NEED_PERMISSION"}`」。要实现「返回 403 JSON」「记一条越权日志」这类行为，在自己的控制器基类里**重写这个方法**（无参，不要改签名）。
 
 ```php
@@ -143,7 +143,7 @@ class AdminBaseController extends AdminControllerBase
 
 ## 5. 和 `PermissionMenu` 的配合
 
-菜单是「用」侧的能力（[第 2-19 章第 5 节](admin.md)），实现侧只需要记住契约：**控制器实现 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 才会被扫进菜单**（该接口是空标记接口）。所以后台控制器的写法就两种：
+菜单是「用」侧的能力（[第 2-20 章第 5 节](admin.md)），实现侧只需要记住契约：**控制器实现 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 才会被扫进菜单**（该接口是空标记接口）。所以后台控制器的写法就两种：
 
 - 继承 `AdminControllerBase`（父类已经 `implements AdminControllerInterface`）；
 - 或者自己 `implements AdminControllerInterface`。
@@ -169,5 +169,5 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-cov
 ## 下一步
 
 - [第 4-12 章 实现用户系统](impl-user.md)：前台那套的同构实现。
-- [第 2-19 章 使用管理员系统](admin.md)：本章面向调用方的那一半。
+- [第 2-20 章 使用管理员系统](admin.md)：本章面向调用方的那一半。
 - 参考手册：[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[Admin](../reference/GlobalAdmin-Admin.md)、[AdminLoginActionInterface](../reference/GlobalAdmin-AdminLoginActionInterface.md)、[AdminSessionInterface](../reference/GlobalAdmin-AdminSessionInterface.md)、[AdminServiceInterface](../reference/GlobalAdmin-AdminServiceInterface.md)、[AdminLoginServiceInterface](../reference/GlobalAdmin-AdminLoginServiceInterface.md)、[AdminSessionTrait](../reference/GlobalAdmin-AdminSessionTrait.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)

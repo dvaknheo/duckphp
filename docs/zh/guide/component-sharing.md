@@ -106,7 +106,7 @@ API 一览：
 | `all()` | 看所有监听（排错用） |
 | `remove($event, $phase = null, $callback = null)` | 取消监听 |
 
-命名约定：事件名用「进行中 / 已完成」后缀（`registering` / `registered`、`logining` / `logined`），与框架内置事件一致（第 2-12 章）。
+命名约定：事件名用「进行中 / 已完成」后缀（`registering` / `registered`、`logining` / `logined`），与框架内置事件一致（第 2-13 章）。
 
 ## 共享数据放哪：一张决策表
 

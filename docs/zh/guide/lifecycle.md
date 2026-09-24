@@ -1,18 +1,13 @@
-# 2-10 请求生命周期与钩子点
+# 2-2 请求生命周期
 
-> 解决什么问题：一次请求从入口到输出，框架在**哪些点**允许你插手；钩子怎么挂、谁先谁后、什么时候该用钩子而不是继承基类。
-> 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-2 章 路由进阶](routing.md)。预计 25 分钟。
-> 分工：本章只讲**时序与钩子**。会话见[第 2-9 章](session.md)、异常见[第 2-11 章](exception.md)、事件见[第 2-12 章](events.md)、调试开关见[第 1-6 章](debugging.md)。
-> 示例：`demo/src/System/App.php`（真实的 `onPrepare()`/`onInited()` 覆盖）与 `tests/Ext/MyMiddlewareManagerTest.php`（中间件真实跑法）。
-
-```bash
-# 看钩子实际怎么跑
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Ext/MyMiddlewareManagerTest.php"
-```
+> 解决什么问题：一次请求从入口到输出，框架内部按什么顺序做了哪些事、**默认给你装了哪些内置组件**、你想插手时该覆盖哪个方法。
+> 前置：[第 2-1 章 四层架构与调用规范](layers.md)。预计 20 分钟。
+> 分工：本章只讲**时序与内置组件**。要「拦请求」看[第 2-3 章 路由钩子](route-hooks.md)；异常见[第 2-12 章](exception.md)、事件见[第 2-13 章](events.md)、CLI 支线见[第 2-16 章](cli.md)。
+> 示例：`demo/src/System/App.php`（真实的 `onPrepare()`/`onInited()` 覆盖）。
 
 ## 最小示例
 
-**① 覆盖生命周期钩子**——全部接线都写在 `src/System/App.php` 里（真实文件：`demo/src/System/App.php`）：
+**① 覆盖生命周期方法**——全部接线都写在 `src/System/App.php` 里（真实文件：`demo/src/System/App.php`）：
 
 ```php
 namespace MyProj\System;
@@ -24,37 +19,33 @@ class App extends DuckPhp
     public function onPrepare(): void
     {
         parent::onPrepare();
-        // 准备阶段：此时组件还没装配完，适合改选项、挂子应用
+        // 准备阶段：组件还没装配，只能改选项、挂子应用
         $this->options['app']['AdminApp'] = ['controller_url_prefix' => 'admin/'];
+    }
+    protected function onInit(): void
+    {
+        parent::onInit();
+        // 组件已就绪：注册事件、（必要时）路由钩子放这里
     }
     protected function onInited(): void
     {
         parent::onInited();
-        // 一切就绪，适合注册命令、事件、路由钩子
+        // 全部就绪：注册命令、做最后的接线
     }
 }
 ```
 
-**② 挂一个路由钩子**（在 `onInited()` 里，或任何组件就绪之后）：
+**② 看这个相位里到底有哪些组件**——排查时第一招，比读源码快：
 
 ```php
-use DuckPhp\Core\Route;
-
-Route::_()->addRouteHook(function (string $path_info) {
-    if ($path_info !== 'health') {
-        return false;          // 不处理，交给后面的钩子和默认路由
-    }
-    header('Content-Type: text/plain');   // 也可用 Helper::header()（可替换的系统包装，便于测试）
-    echo 'ok';
-    return true;               // 命中 → 路由到此为止，控制器不会执行
-}, 'prepend-outter');
+\DuckPhp\Core\PhaseContainer::_()->dumpAllObject();   // 打印当前相位容器里的实例清单
 ```
 
-**③ 效果**：请求 `/health` 时输出 `ok`，控制器完全不执行；请求其它路径时什么都不发生。这就是「钩子取代继承」的最小形态——不用为了两个特例去改控制器基类。
+下面第 2 节的组件表可以拿它的输出现场核对（`tests/Core/PhaseContainerTest.php` 里就是这么打印的）。
 
 ## 机制说明
 
-### 1. 启动：`init()` 的六步
+### 1. 启动：`init()` 的八步
 
 `RunQuickly($options, $after_init = null)` 做的事极简：`init()` → 跑你传的 `$after_init` 回调 → CLI 下走 `execute()`，否则走 `serve()`。
 
@@ -66,14 +57,60 @@ Route::_()->addRouteHook(function (string $path_info) {
 | 2 | `initContainer()`（内含 `onAfterCreatePhases()`） | 相位容器已建 | 极少数需要改容器的场景 |
 | 3 | `initException()` | 异常/错误处理器已就位 | — |
 | 4 | **`onPrepare()`** | 组件**还没**装配 | 改选项、挂子应用（`app`） |
-| 5 | `initComponents()` | 组件陆续装配 | 不建议在这里读组件 |
+| 5 | `initComponents()` | 组件陆续装配（见第 2 节） | 不建议在这里读组件 |
 | 6 | **`onInit()`** | 组件已就绪 | 注册事件/命令/钩子 |
 | 7 | `initChildren()` | 逐个初始化子应用（[第 3-1 章](advanced-phase.md)） | — |
 | 8 | **`onInited()`** | 全部就绪，`is_inited = true` | 最后的接线窗口 |
 
 注意 `onPrepare()` 在**根应用**里还有一件特殊事：框架的 [`App::onPrepare()`](../reference/Core-App.md) 会调用 `loadSetting()` 读设置文件，所以 `Setting()` 的键只在根应用、且只在 `onPrepare()` 之后可用（见[第 1-5 章](configuration.md)）。
 
-### 2. 请求：`serve()` 的完整时序
+### 2. 装配：框架默认给你装了哪些组件
+
+第 5 步 `initComponents()` 分三层装配，**装配范围（哪些相位共用一套）是理解后续一切行为的前提**：
+
+**① root 层**——只有根应用装配这一批，而且它们的类名会被登记成「公共类」，**各相位 `::_()` 拿到的都是根应用里那一个实例**：
+
+| 组件 | 装配方式 | 作用 |
+|---|---|---|
+| [`Console`](../reference/Core-Console.md) | 跟随应用选项 | CLI 命令根（[第 2-16 章](cli.md)） |
+| [`SystemWrapper`](../reference/Core-SystemWrapper.md) | 只建实例、不 `init()` | 可替换的系统调用包装（`header`/`exit`/`setcookie`…，[第 4-3 章](replace-behavior.md)） |
+| [`Logger`](../reference/Core-Logger.md) | 只建实例、不 `init()` | 日志 |
+| [`CoreHelper`](../reference/Core-CoreHelper.md) | 只建实例、不 `init()` | `Helper::` 静态门面的实现体 |
+| [`DbManager`](../reference/Component-DbManager.md) / [`RedisManager`](../reference/Component-RedisManager.md) | **只占位**；有 `database`/`redis`（或 setting 里的 `database_list`/`redis_list`）时才 `init()` | 连接管理（[第 2-7 章](database.md)、[第 2-14 章](cache.md)） |
+| [`Admin`](../reference/GlobalAdmin-Admin.md) / [`User`](../reference/GlobalUser-User.md) | **只占位** | 管理员/用户体系的容器键（[第 2-19 章](user.md)、[第 2-20 章](admin.md)） |
+| [`GlobalEvent`](../reference/Component-GlobalEvent.md) | **只占位** | 事件总线（[第 2-13 章](events.md)） |
+| [`ExtOptionsLoader`](../reference/Component-ExtOptionsLoader.md) | 仅 `data_file_enable` 为真时 | 运行时配置文件（选项落盘） |
+
+**② inner 层**——**每个相位各一套**（子应用有自己的路由与视图）：
+
+| 组件 | 装配方式 | 作用 |
+|---|---|---|
+| [`Route`](../reference/Core-Route.md) | 跟随应用选项 | 路由（[第 2-4 章](routing.md)） |
+| [`View`](../reference/Core-View.md) | 跟随应用选项 | 视图渲染（[第 2-6 章](views.md)） |
+| [`Configer`](../reference/Component-Configer.md) | 默认开 | 配置读取（`config/<名>.php`，[第 1-5 章](configuration.md)） |
+
+**③ ext 层**——应用选项 `ext` 里声明的那些。框架**默认打开**这几个：
+
+| 组件 | 作用 |
+|---|---|
+| [`Lang`](../reference/Component-Lang.md) | 多语言（[第 2-15 章](i18n.md)） |
+| [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) / [`RouteHookResource`](../reference/Component-RouteHookResource.md) / [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | 四个内置路由钩子（[第 2-3 章](route-hooks.md)），最后一个受 `path_info_compact_enable` 控制 |
+
+`ext` 里的写法（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*` 常量）与九种语义见[第 4-2 章 开发组件与扩展](custom-component.md)。
+
+**④ 另外两样不是「组件」但会就位**：
+
+- [`ExceptionManager`](../reference/Core-ExceptionManager.md)：在第 3 步 `initException()` 里就位，**早于组件**（[第 2-12 章](exception.md)）；
+- [`Runtime`](../reference/Core-Runtime.md)：用到时才创建，`use_output_buffer` 选项的输出缓冲就靠它（[第 2-18 章](security-performance.md)）。
+
+**读表要点**（这几条决定了「为什么我的替换在子应用里不生效」）：
+
+- **root 与 inner 的区别就是「跨相位共享」**：`DbManager`、`Admin`/`User`、`GlobalEvent` 是 root 级的，所以在子应用里调 `Admin::_()` 拿到的仍是根应用那一份；而 `Route::_()`、`View::_()` 在子应用里是**另一个实例**。
+- **「只占位」= 登记类名但不在这里创建**：框架用的装配值 `EXT_ROOT_HOLD_POSISION_ONLY`（值就是 `EXT_DISABLE`）只完成「登记成公共类」这一步，真正的创建留给第一次 `::_()`，所以没配数据库也不会白建一个 `DbManager`。
+- **「只建实例、不 `init()`」= `EXT_SKIP_INIT`**：`SystemWrapper`/`Logger`/`CoreHelper` 是纯工具，没有选项要读。
+- 被 `ext` 关掉的组件（例如默认不在表里的 `GlobalEvent`）**只是不装配**；`GlobalEvent::_()` 仍可用，只是它不会被框架预先 init（[第 2-13 章](events.md)）。
+
+### 3. 请求：`serve()` 的完整时序
 
 ```
 serve()
@@ -86,8 +123,8 @@ serve()
  │    └─ post_run_hook_list    默认路由没命中后的兜底（404 视图、资源等）
  ├─ runChildren()             父应用没命中 → 依次问每个子应用（第三卷）
  ├─ phaseToCurrent()          回到自己的相位
- ├─ !命中 → _On404()          404 处理（可被 error_404 选项替换，见第 2-11 章）
- ├─ 抛异常 → runException()   交给异常管理器（第 2-11 章）
+ ├─ !命中 → _On404()          404 处理（可被 error_404 选项替换，见第 2-12 章）
+ ├─ 抛异常 → runException()   交给异常管理器（第 2-12 章）
  └─ finally                   phaseToCurrent() + Route::_()->clear() + Runtime::_()->clear()
                               ↑ Route::clear() 里跑 finally_run_hook_list
 ```
@@ -96,143 +133,13 @@ serve()
 
 - **`onRequest()` 不是「每个进程一次」而是「每个应用一次」**：父应用没命中会把请求交给子应用，子应用的 `serve()` 又会跑一次自己的 `onRequest()`。
 - **[`Route::clear()`](../reference/Core-Route.md) 在 `finally` 里**，所以 `finally-inner`/`finally-outter` 钩子一定会执行（包括异常路径），适合做收尾、清理、统计上报。
-- **`run()` 是 `serve()` 与 `execute()` 的分流点**：`cli_enable` 为真且是 CLI 时走 [`Console::_()->run()`](../reference/Core-Console.md)（[第 2-15 章](cli.md)），Web 走 `serve()`。判断当前形态用 `App::_()->isCli()`，别去猜 `PHP_SAPI`。
+- **`run()` 是 `serve()` 与 `execute()` 的分流点**：`cli_enable` 为真且是 CLI 时走 [`Console::_()->run()`](../reference/Core-Console.md)（[第 2-16 章](cli.md)），Web 走 `serve()`。判断当前形态用 `App::_()->isCli()`，别去猜 `PHP_SAPI`。
 
-### 3. 输出：`onBeforeOutput()`
+> 时序里那三个钩子链表是下一章的主角：[第 2-3 章 路由钩子](route-hooks.md)。
+
+### 4. 输出：`onBeforeOutput()`
 
 `App::_Show()` 与 404/500 的错误视图路径都会先调 `onBeforeOutput()`，再交给 [`View`](../reference/Core-View.md) 渲染。它是**输出前最后一个钩子**，适合统一注入变量、埋点、或最后修改响应头。它会**被调用多次**（正常输出一次；错误视图路径各自一次），所以里面别写「只该跑一次」的逻辑。
-
-### 4. 路由钩子的六个位置与短路语义
-
-`Route::addRouteHook($callback, $position = 'append-outter', $once = true)`：
-
-| 位置 | 落在哪个链表 | 相对默认路由 | 语义 |
-|---|---|---|---|
-| `prepend-outter` | pre（**最前**） | 之前 | 最先跑：状态检查、URL 重写 |
-| `prepend-inner` | pre（最后） | 之前 | 靠近路由：路由映射 |
-| `append-inner` | post（最前） | 之后 | 兜底第一顺位 |
-| `append-outter` | post（最后） | 之后 | 最后的兜底（静态资源） |
-| `finally-inner` | finally（最前） | 请求收尾 | `Route::clear()` 时跑 |
-| `finally-outter` | finally（最后） | 请求收尾 | 同上，最后跑 |
-
-**短路是 pre 钩子的核心语义**：pre 链上任何一个钩子返回真值，`Route::run()` 立刻返回、控制器不再执行。返回假值（`false`/`null`）就是「我不处理，继续往下」。
-
-另外两个开关（都在 `Route` 上）：
-
-```php
-Route::_()->defaultToggleRouteCallback(false); // 关掉默认路由回调（自己接管路由）
-Route::_()->forceFail();                       // 强制本次路由算失败（让上层走 404/兜底）
-```
-
-子应用常用 `App::_()->skip404Handler()`：让没命中的子应用不要抢着输出 404，交给父应用决定。
-
-### 5. 钩子的增删改查
-
-```php
-use DuckPhp\Core\Route;
-use DuckPhp\Ext\RouteHookManager;
-
-Route::_()->addRouteHook($cb, 'prepend-inner');          // 直接挂（默认 append-outter）
-Helper::addRouteHook($cb, 'prepend-inner');              // 应用/接线层的 Helper（System\SystemHelper）
-
-
-RouteHookManager::_()->attachPreRun()                    // 拿 pre 链的引用，然后…
-    ->append([MyHook::class, 'Hook'])                    // 追加到末尾
-    ->insertBefore($new, $old)                           // 插到某个钩子前面
-    ->moveBefore($new, $old)                             // 已有钩子挪位
-    ->removeAll($old);                                   // 去掉某个钩子
-RouteHookManager::_()->attachPostRun();                  // 换成 post 链
-RouteHookManager::_()->dump();                           // ★ 排查：把三条链打印出来
-```
-
-排查顺序建议：先 `dump()` 看链上到底有哪些钩子、什么顺序，再怀疑自己的回调没被调用。
-
-### 6. 内置钩子都挂在哪
-
-框架自己的路由能力也是钩子，位置如下（都可用 `dump()` 看到）：
-
-| 钩子                                                                             | 位置                                | 作用                                            |
-| ------------------------------------------------------------------------------ | --------------------------------- | --------------------------------------------- |
-| [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | `prepend-outter`                  | PATH_INFO 兼容（`?_r=` 形式，[第 2-2 章](routing.md)） |
-| [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md)               | `prepend-outter`                  | URL 重写                                        |
-| [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md)             | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底）                             |
-| [`RouteHookApiServer`](../reference/Ext-RouteHookApiServer.md)（扩展）             | `prepend-inner`                   | API 服务                                        |
-| [`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md)（扩展）       | `prepend-inner`                   | Web 安装流程（[第 3-6 章](installer.md)）             |
-| [`RouteHookFunctionRoute`](../reference/Ext-RouteHookFunctionRoute.md)（扩展）     | `append-inner`                    | 函数式路由                                         |
-| [`RouteHookDirectoryMode`](../reference/Ext-RouteHookDirectoryMode.md)（扩展）     | `prepend-outter`                  | 目录模式（多入口）                                     |
-| [`RouteHookResource`](../reference/Component-RouteHookResource.md)             | `append-outter`                   | 静态资源代发（[第 3-3 章](static-resources.md)）        |
-> 表里标**（扩展）**的四行属于 `Ext\*`：**`Ext\` 下的组件不会自动装配**，必须写进应用的 `ext`（如 `'ext' => [\DuckPhp\Ext\RouteHookFunctionRoute::class => true]`）才会挂上。注意这与「类能不能被加载」是两件事：AutoLoader 只负责按需把类文件载进来，**装配进当前相位**要靠 `ext` 声明。不标（扩展）的几行是框架默认已装的（`src/DuckPhp.php` 的 `common_options['ext']` 里：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`）。
-### 7. 兼容性扩展：洋葱中间件（`Ext\MyMiddlewareManager`）
-
-说清楚定位：**中间件不是 DuckPHP 的主推路数**。框架的默认做法是「路由钩子 + 分层 Helper」，中间件只是给习惯了 Laravel/PSR-15 那种写法的人留的一层兼容，用得上就用，用不上不用管。
-
-它的接线方式（选项写在应用的 `$options` 里）：
-
-```php
-$options = [
-    'ext' => [
-        \DuckPhp\Ext\MyMiddlewareManager::class => true,
-    ],
-    // 自外向内：列表里**第一个是最外层**
-    'middleware' => [
-        \MyProj\Middleware\AuthMiddleware::class . '@handle',   // 走 Class::_() 单例
-        \MyProj\Middleware\LogMiddleware::class . '->handle',   // 走 new Class()
-        'MyProj\Middleware\StaticMiddleware::handle',           // 原生可调用字符串
-        function ($request, \Closure $next) { /* callable 也行 */ },
-    ],
-];
-```
-
-中间件的签名是 `handle($request, \Closure $next)`：`$request` 由管理器给你（默认是个空 `\stdClass`，可以用子类改成自己的请求对象），`$next($request)` 就是「继续往里走」，返回值是内层的结果。
-
-挂上之后，插在内置钩子的最内层（[`RouteHookManager::_()->attachPreRun()->append()`](../reference/Ext-RouteHookManager.md)），洋葱顺序实测如下（`tests/Ext/MyMiddlewareManagerTest.php` 里的 X/Y/Z 三个中间件）：
-
-```
-P1>  P2>  CTRL#1  P2<  P1<        ← 列表第一个最外层；控制器只执行一次
-```
-
-**这里有一个必须知道的坑**（实测，框架当前行为）：中间件里**不调 `$next` 直接 `return` 响应，是拦不住请求的**——`doHook()` 只认最内层 `runSelfMiddleware()` 的结果，短路时它仍是 `false`，于是 `Route::run()` 会**自己再跑一次默认路由回调**，结果是：
-
-- 控制器**照样执行**（你返回的那个响应被丢弃）；
-- 如果控制器本来就不存在，用户看到的是 **404**，而不是你在中间件里返回的内容。
-
-所以：
-
-| 你想做的事 | 该用什么 |
-|---|---|
-| 请求前后做对称处理（计时、日志、统一加响应头） | 洋葱中间件（它的强项） |
-| **拦截请求**（鉴权不通过就直接返回/跳转） | **路由钩子**：`prepend-outter` 里返回 `true` |
-| 更细的接管（换请求/响应对象、自己的收尾） | 继承 [`MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 覆盖 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`onPostMiddleware()` |
-
-细节见参考手册 [DuckPhp\Ext\MyMiddlewareManager](../reference/Ext-MyMiddlewareManager.md)。
-
-### 8. 附：`Ext\HookChain`（命中即停的链）
-
-[`DuckPhp\Ext\HookChain`](../reference/Ext-HookChain.md) 是一个小工具类：把一串回调装成对象，`__invoke()` 时按顺序执行、**遇到返回真值的就断**，并实现 `ArrayAccess` 可直接当数组读写。
-
-```php
-use DuckPhp\Ext\HookChain;
-
-$chain = new HookChain();
-$chain->add($callback1, true, true);    // (回调, 追加?, 去重?)
-$chain[] = $callback2;                  // ArrayAccess 追加
-$chain();                               // 顺序执行，遇真值 break
-
-HookChain::Hook($target, $callback3);   // 便捷：把已有回调/null 与新回调并成一条链写回 $target
-```
-
-它**没有被框架内部使用**（框架自己的钩子走 `Route` 的三个链表），属于「你想在自己的代码里表达『一组钩子、命中即停』时」的可选工具。参考页：[DuckPhp\Ext\HookChain](../reference/Ext-HookChain.md)。
-
-### 9. 选型：到底该用哪种介入方式
-
-| 需求 | 首选 | 为什么 |
-|---|---|---|
-| 某几个 URL 特例处理、拦截 | 路由钩子（pre） | 有短路语义，能真正拦住 |
-| 请求前后的对称逻辑 | 中间件（兼容扩展） | 洋葱结构天生适合「前/后」 |
-| 改某个控制器的行为 | 覆盖控制器类 / `controller_class_map`（[第 3-5 章](overriding.md)） | 精确到类，配置即生效 |
-| 广播「发生了某事」 | 全局事件（[第 2-12 章](events.md)） | 一对多、无返回值、可跨相位 |
-| 换掉框架某个能力 | 覆盖扩展 / 替换单例 | 从装配层解决（[第 4-3 章 替换框架行为](replace-behavior.md)） |
-| 统一给所有控制器加东西 | **先想钩子**，其次才是继承基类 | 继承会把「可变的能力」变成「不可变的血缘」 |
 
 ## 常见写法
 
@@ -249,46 +156,37 @@ protected function onRequest(): void
 }
 ```
 
-**③ 用 pre 钩子做拦截**（IP 白名单、强制改道、灰度分流）：
+**③ 在 `onBeforeOutput()` 里统一注入**（所有视图都拿得到的变量、最后改响应头）：
 
 ```php
-Route::_()->addRouteHook(function (string $path_info) {
-    if (strpos($path_info, 'admin/') !== 0) { return false; }   // 只管后台
-    $ip = App::_()->isCli() ? '' : ($_SERVER['REMOTE_ADDR'] ?? '');
-    if (preg_match('/^10\./', $ip)) { return false; }            // 内网放行，继续走默认路由
-    header('HTTP/1.1 403 Forbidden', true, 403);
-    echo 'Forbidden';
-    return true;                                                 // 拦住：控制器不会执行
-}, 'prepend-outter');
+public function onBeforeOutput()          // 注意：它是 public，覆盖时别收窄成 protected
+{
+    parent::onBeforeOutput();
+    // 应用类在 System 层，这一层没有 assignViewData()，直接用 View 组件
+    \DuckPhp\Core\View::_()->assignViewData('site_name', static::Setting('site_name', 'DuckPHP'));
+}
 ```
 
-> 「维护模式」不需要自己写钩子：框架已内置——`is_maintain` 选项或设置项 `duckphp_is_maintain`，配 `error_maintain` 指向错误视图（`demo/view/_sys/error_maintain.php` 就是现成的）。
-
-**④ 用 append/finally 钩子做兜底与收尾**：post 链适合自定义 404、动态资源；`finally` 链适合「无论成败都要做」的统计与清理。
-
-**⑤ 排查钩子顺序**：
-
-```php
-echo RouteHookManager::_()->dump();   // 三个链表全打印
-```
+**④ 排错时先问三件事**：`PhaseContainer::_()->dumpAllObject()`（这个相位里有什么）、`App::_()->isCli()`（走的是哪条支线）、`App::_()->isRoot()`（我是不是根应用）。
 
 ## 常见错误
 
 | 现象 | 原因 | 改法 |
 |---|---|---|
-| 覆盖 `onBeforeRun()`/`onAfterRun()` 完全不生效 | 这两个方法**不存在**（框架里没有这两个钩子） | 实际可用的是 `onAfterCreatePhases()`、`onPrepare()`、`onInit()`、`onInited()`、`onRequest()`、`onBeforeOutput()` |
-| 中间件里 `return` 了响应，页面却是 404 或控制器照跑 | 短路对中间件无效（见 §7 的坑） | 拦截改用路由钩子并 `return true`；中间件只做前后置装饰 |
-| 钩子里 `return;` 却发现控制器还是执行了 | pre 钩子必须返回**真值**才算命中 | 明确写 `return true;` |
-| 钩子被挂了两次、日志出现两遍 | 重复调用 `addRouteHook()` | 用第三个参数 `$once = true`（默认已开），或先 `RouteHookManager::_()->removeAll()` |
+| 覆盖 `onBeforeRun()`/`onAfterRun()` 完全不生效 | 这两个方法**不存在**（框架里没有这两个钩子） | 实际可用的是 `onAfterCreatePhases()`、`onPrepare()`、`onInit()`、`onInited()`、`onRequest()`（都是 `protected`）与 `onBeforeOutput()`（**`public`**）；覆盖时可见性只能放宽、不能收窄 |
 | `onPrepare()` 里读组件报错/读不到 | 组件此时还没装配完 | 改选项放 `onPrepare()`，读组件放 `onInit()`/`onInited()` |
 | `onBeforeOutput()` 里的逻辑跑了两次 | 错误视图路径也会调用它 | 用标志位判断，或把「只跑一次」的逻辑放到 `onRequest()` |
+| 子应用里 `Admin::_()`/`DbManager::_()` 拿到的和根应用是同一份，改了互相影响 | 这几个是 **root 级公共类**（跨相位共享） | 要每相位独立就用 inner 级组件，或自己 `new`（[第 4-1 章](container-phases.md)） |
+| 以为 `GlobalEvent::_()`/`Admin::_()` 已经初始化好了 | 它们在 root 表里只是**占位** | 用之前显式装配（`ext` 里声明）或别依赖它们已被 init |
+| 没配数据库，却想知道 `DbManager` 在哪 | 没配就不 init（只登记类名） | `::_()` 仍可用；要连接就配 `database`/`database_list` |
 | 用 `PHP_SAPI === 'cli'` 判断形态，子应用里判断错了 | 形态应由应用统一判断 | 用 `App::_()->isCli()` |
-| 开了 `use_output_buffer` 之后 `header()` 报「已发送输出」 | 输出缓冲会改变响应时序 | 需要发头的地方先 `header()`，或关掉缓冲 |
+| 开了 `use_output_buffer` 之后 `header()` 报「已发送输出」 | 输出缓冲会改变响应时序 | 需要发头的地方先 `header()`，或关掉缓冲（[第 2-18 章](security-performance.md)） |
 
 ## 下一步
 
-- [第 2-11 章 异常与错误处理](exception.md)：`_On404()`/`runException()` 之后的完整流程。
-- [第 2-12 章 事件系统](events.md)：广播式的介入点，和钩子的分工。
-- [第 2-15 章 命令行与定时任务](cli.md)：`execute()` 这条支线。
+- [第 2-3 章 路由钩子](route-hooks.md)：本章时序里那三个钩子链表怎么用、谁先谁后、怎么拦请求。
+- [第 2-12 章 异常与错误处理](exception.md)：`_On404()`/`runException()` 之后的完整流程。
+- [第 2-13 章 事件系统](events.md)：广播式的介入点。
+- [第 2-16 章 命令行与定时任务](cli.md)：`execute()` 这条支线。
 - [第 3-1 章 应用树与相位基础](advanced-phase.md)：`runChildren()` 背后的多应用机制。
-- 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)、[DuckPhp\Core\KernelTrait](../reference/Core-KernelTrait.md)、[DuckPhp\Ext\RouteHookManager](../reference/Ext-RouteHookManager.md)、[DuckPhp\Ext\MyMiddlewareManager](../reference/Ext-MyMiddlewareManager.md)。
+- 参考手册：[DuckPhp\Core\KernelTrait](../reference/Core-KernelTrait.md)、[DuckPhp\Core\App](../reference/Core-App.md)、[DuckPhp\Core\PhaseContainer](../reference/Core-PhaseContainer.md)。

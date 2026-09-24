@@ -89,7 +89,7 @@ RouteHookResource::_()->cloneResource(true);    // force=true：强制覆盖
 
 ```php
 __res('main.css');                 // 按 controller_resource_prefix 生成资源 URL
-Helper::Res('main.css');           // 等价写法（第 2-7 章）
+Helper::Res('main.css');           // 等价写法（第 2-9 章）
 __url('shop/');                    // 生成普通 URL
 ```
 
@@ -120,5 +120,5 @@ HttpServer::RunQuickly([
 ## 相关参考
 
 - [DuckPhp\Component\RouteHookResource](../reference/Component-RouteHookResource.md)（含 `cloneResource()` 细节）
-- [第 2-18 章 使用用户系统](user.md) 的 `__use_logined_view_data`（登录后视图）
+- [第 2-19 章 使用用户系统](user.md) 的 `__use_logined_view_data`（登录后视图）
 - [第 3-5 章 重写与覆盖](overriding.md)：`res/<name>/` 覆盖规则

@@ -54,7 +54,7 @@ App::RunQuickly(['override_class' => \MyProj\System\AppEx::class]);
 
 框架的动作是：把 `override_class` 的值当成新类，`$class::_(new $class)->init($options, $context)`（[`KernelTrait::init()`](../reference/Core-KernelTrait.md) 开头），并把 `override_from` 记成原类——所以覆盖类能拿到"我是从谁被换过来的"。
 
-控制器级更常用的是 `controller_class_map`（[第 2-2 章](routing.md)）：它是**类名 → 类名**的映射，在路由解析出类名之后、实例化之前生效。`Helper::replaceController()` 就是往这个映射里写一条。
+控制器级更常用的是 `controller_class_map`（[第 2-4 章](routing.md)）：它是**类名 → 类名**的映射，在路由解析出类名之后、实例化之前生效。`Helper::replaceController()` 就是往这个映射里写一条。
 
 ### 3. 单例级：`Xxx::_($new)`
 
@@ -86,7 +86,7 @@ Helper::system_wrapper_replace([
 ]);
 ```
 
-意义有两个：**测试**（输出/跳转可断言，[第 2-16 章](testing.md)）与**移植**（换掉某个平台不一致的行为）。框架内部所有输出都走它（`Helper::header()`、`Helper::setcookie()`、`Html`/`Json` 输出），所以替换一处、全局生效。
+意义有两个：**测试**（输出/跳转可断言，[第 2-17 章](testing.md)）与**移植**（换掉某个平台不一致的行为）。框架内部所有输出都走它（`Helper::header()`、`Helper::setcookie()`、`Html`/`Json` 输出），所以替换一处、全局生效。
 
 ### 5. 组件级：选项比继承更"框架友好"
 
@@ -171,7 +171,7 @@ $options = ['database_class' => \MyProj\Db\MyDb::class];
 | `controller_class_map` 不生效       | 键写的是短名                              | 键必须是**类的全限定名**（`MyProj\Controller\UserController`）                   |
 | `override_class` 导致配置看起来变了       | 换的是整个应用类                            | 注意新类的 `$options` 与 `override_from`；选项仍会合并（[第 1-5 章](configuration.md)） |
 | 覆盖视图没生效                          | 文件名/相位名不匹配                          | `getOverrideableFile()` 打印实际命中文件（[第 3-5 章](overriding.md)）            |
-| 换了 `Cache` 实现但取不到缓存              | `RedisCache` 需要 [`RedisManager`](../reference/Component-RedisManager.md) 也初始化 | 两个组件一起声明（[第 2-13 章](cache.md)）                                         |
+| 换了 `Cache` 实现但取不到缓存              | `RedisCache` 需要 [`RedisManager`](../reference/Component-RedisManager.md) 也初始化 | 两个组件一起声明（[第 2-14 章](cache.md)）                                         |
 
 ## 下一步
 

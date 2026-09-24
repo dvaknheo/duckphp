@@ -1,7 +1,7 @@
-# 2-18 使用用户系统
+# 2-19 使用用户系统
 
 > 解决什么问题：在你的控制器 / 业务代码里回答「现在是谁」「他能不能做这件事」「这几个 id 分别是谁」。
-> 前置：[第 2-3 章 控制器](controllers.md)、[第 2-9 章 会话](session.md)、[第 2-11 章 异常与错误处理](exception.md)。预计 15 分钟。
+> 前置：[第 2-5 章 控制器](controllers.md)、[第 2-11 章 会话](session.md)、[第 2-12 章 异常与错误处理](exception.md)。预计 15 分钟。
 > 本章只讲**怎么用**；「用户系统是怎么接进来的」（三个实现 + 选项 + `ext` 挂载）见[第 4-12 章 实现用户系统](impl-user.md)。**没接之前**这些入口会直接抛 `DuckPhpSystemException`（不会静默返回 0）。
 > 可跑资产：`tests/Foundation/Controller/UserControllerBaseTest.php`、`tests/GlobalUser/GlobalUserTest.php`。
 
@@ -125,7 +125,7 @@ public function logout()
 }
 ```
 
-三个动作都会**自动 302**（由 `globaluser_is_authed_redirect` 控制，默认开）；关掉它就可以自己决定跳哪。想监听「登录成功」，用事件而不是改这些方法：`EVENT_ACTION_USER_LOGINED` 等那组（[第 2-12 章](events.md)）。
+三个动作都会**自动 302**（由 `globaluser_is_authed_redirect` 控制，默认开）；关掉它就可以自己决定跳哪。想监听「登录成功」，用事件而不是改这些方法：`EVENT_ACTION_USER_LOGINED` 等那组（[第 2-13 章](events.md)）。
 
 ### 6. 用户页面的头尾：两个视图开关
 
@@ -207,8 +207,8 @@ $names = Helper::UserService()->batchGetUsernames($userIds);   // [id => 名字]
 
 ## 下一步
 
-- [第 2-19 章 使用管理员系统](admin.md)：后台那套入口，与本章同构。
+- [第 2-20 章 使用管理员系统](admin.md)：后台那套入口，与本章同构。
 - [第 4-12 章 实现用户系统](impl-user.md)：本项目的用户系统由谁提供、选项怎么配。
-- [第 2-12 章 事件系统](events.md)：`EVENT_ACTION_USER_*`（注册/登录/登出前后）怎么监听。
-- [第 2-11 章 异常与错误处理](exception.md)：登录失效、权限不够怎么变成跳转或错误页。
+- [第 2-13 章 事件系统](events.md)：`EVENT_ACTION_USER_*`（注册/登录/登出前后）怎么监听。
+- [第 2-12 章 异常与错误处理](exception.md)：登录失效、权限不够怎么变成跳转或错误页。
 - 参考手册：[User](../reference/GlobalUser-User.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[UserLoginActionInterface](../reference/GlobalUser-UserLoginActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)

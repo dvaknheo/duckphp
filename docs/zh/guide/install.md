@@ -115,7 +115,7 @@ foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../vendor/autoload
 ```
 
 ```bash
-php bin/cli.php help        # 列出所有可用命令（第 2-15 章）
+php bin/cli.php help        # 列出所有可用命令（第 2-16 章）
 php bin/cli.php version
 ```
 

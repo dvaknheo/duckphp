@@ -1,7 +1,7 @@
-# 2-17 安全与性能清单
+# 2-18 安全与性能清单
 
 > 解决什么问题：上线前逐项自查——**安全**（不该泄漏的别泄漏、该转义的转义、该自己做的自己做）与**性能**（哪些开关值钱、哪些开关有代价）。
-> 前置：[第 1-7 章 上线最小清单](deployment.md)（部署/文档根/权限，本章不重复）、[第 2-11 章 异常与错误处理](exception.md)。
+> 前置：[第 1-7 章 上线最小清单](deployment.md)（部署/文档根/权限，本章不重复）、[第 2-12 章 异常与错误处理](exception.md)。
 > 用法：上线前把两张清单过一遍，逐条打勾；每条都给了「依据」——能改的改，写「工程侧」的说明框架不提供、必须自己做。
 
 ## 最小示例
@@ -43,7 +43,7 @@ class App extends DuckPhp
 | 事项          | 框架怎么做的                                                                                                 | 依据                                                           |
 | ----------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
 | HTML 转义     | `__h()` / `__hl()`（[`CoreHelper::H()`](../reference/Core-CoreHelper.md)）                               | `src/Core/Functions.php`                                     |
-| SQL 注入      | 参数占位符 + [`Db::quote()`](../reference/Db-Db.md) / `quoteScheme()`；模型层不对外暴露 `execute()`                  | [第 2-5 章](database.md)、[第 2-6 章](model.md)                   |
+| SQL 注入      | 参数占位符 + [`Db::quote()`](../reference/Db-Db.md) / `quoteScheme()`；模型层不对外暴露 `execute()`                  | [第 2-7 章](database.md)、[第 2-8 章](model.md)                   |
 | 系统调用可替换     | [`SystemWrapper`](../reference/Core-SystemWrapper.md)（`header`/`setcookie`/`exit`/`session_start` 都走它） | `Helper::system_wrapper_replace()`                           |
 | Session 键隔离 | `session_prefix` 前缀，多应用同进程不串键                                                                          | `Foundation/SessionTrait.php`                                |
 | 错误信息不泄漏     | `is_debug` 为假时错误页只输出占位文本，不含堆栈/路径                                                                       | [`App::_OnDefaultException()`](../reference/Core-App.md)     |
@@ -59,8 +59,8 @@ class App extends DuckPhp
 | **CSRF 防护**         | 框架没有表单令牌机制                | 自己发令牌（Session 存 + 表单隐藏域 + 校验），至少给写操作加 SameSite Cookie                            |
 | **文件上传校验**          | 只提供 `Helper::FILES()` 取数据 | 校验 MIME/扩展名/大小、重命名存储、**别放进可执行目录**（[第 3-3 章](static-resources.md)）                |
 | **越权（水平/垂直）**       | 权限体系只解决「是不是登录/是不是管理员」     | 每条业务都要判断「这个资源是不是他的」——放 Business 层                                                |
-| **限流/防刷**           | 无内置                       | Redis 计数（[第 2-13 章](cache.md)）或网关层做                                              |
-| **强制 HTTPS / HSTS** | 无内置中间件                    | 用 pre 路由钩子判断 `$_SERVER['HTTPS']` 后 `Helper::Show302()`（[第 2-10 章](lifecycle.md)） |
+| **限流/防刷**           | 无内置                       | Redis 计数（[第 2-14 章](cache.md)）或网关层做                                              |
+| **强制 HTTPS / HSTS** | 无内置中间件                    | 用 pre 路由钩子判断 `$_SERVER['HTTPS']` 后 `Helper::Show302()`（[第 2-3 章](route-hooks.md)） |
 | **请求体大小/超时**        | PHP-FPM/nginx 的职责         | 在服务器配置里限制                                                                        |
 | **依赖与版本**           | `composer.lock` 是你的责任     | 上线前 `composer audit`，锁定版本再部署                                                     |
 
@@ -77,7 +77,7 @@ class App extends DuckPhp
 | `path_info_compact_enable = true`                                                    | ⬇ 变慢   | 兼容模式要走查询串解析；服务器配置好 rewrite 就关掉                                                                    |
 | `data_file_enable = true`                                                            | ⬇ 变慢   | 每次 init 多一次文件 IO（[`ExtOptionsLoader`](../reference/Component-ExtOptionsLoader.md)），还会多落一个 JSON 文件 |
 | `default_exception_do_log = true`（默认）                                                | ⬇ 磁盘涨  | 每次异常都写日志；确保 `runtime/` 有轮转，别把日志写到内存盘并撑满                                                           |
-| `use_output_buffer = true`                                                           | ⚠ 语义变化 | 会改变「何时发 headers」，不是越快越好，按需开（[第 2-10 章](lifecycle.md)）                                             |
+| `use_output_buffer = true`                                                           | ⚠ 语义变化 | 会改变「何时发 headers」，不是越快越好，按需开（[第 2-2 章](lifecycle.md)）                                             |
 | `view_skip_notice_error = true`（默认）                                                  | ⚠ 掩盖问题 | 视图里未定义变量不报警；开发期可临时关掉找 bug                                                                         |
 |                                                                                      |        |                                                                                                   |
 
@@ -96,18 +96,18 @@ class App extends DuckPhp
 |---|---|---|---|
 | ☐ | `is_debug` 为 `false`，且**没有任何子应用**把它打开 | 全局搜 `'is_debug' => true`；注意根应用与子应用是「或」关系 | `App::_IsDebug()` |
 | ☐ | 设置里 `duckphp_is_debug` 没被打开 | 查 `DuckPhpSettings.config.php` / `.env` | `_Setting('duckphp_is_debug')` |
-| ☐ | `error_404`/`error_500` 指向自己的错误页 | 视图里**用 `__is_debug()` 包住调试块** | [第 2-11 章](exception.md) |
+| ☐ | `error_404`/`error_500` 指向自己的错误页 | 视图里**用 `__is_debug()` 包住调试块** | [第 2-12 章](exception.md) |
 | ☐ | `installed` 已置 `true`（用安装流程的项目） | 或确保安装入口 `url_install` 不可公开访问 | `checkInstallToPage()` |
 | ☐ | `is_maintain` 为 `false`（除非正在维护） | 维护时置真，并配 `error_maintain` 视图 | `App::initComponents()` |
 | ☐ | 所有用户数据输出都过 `__h()` | 视图里搜 `<?=` 逐个看 | `CoreHelper::H()` |
-| ☐ | SQL 全部使用占位符 | 搜 `fetchAll(` / `execute(` 里的拼串 | [第 2-5 章](database.md) |
+| ☐ | SQL 全部使用占位符 | 搜 `fetchAll(` / `execute(` 里的拼串 | [第 2-7 章](database.md) |
 | ☐ | 写操作有 CSRF 防护 | **框架不提供**：自己发令牌 + 校验 | 工程侧 |
 | ☐ | 上传做了类型/大小/路径校验 | **框架不提供**：自己校验，存储目录不可执行 | 工程侧 |
 | ☐ | 越权判断写在 Business 层 | 每条资源访问都判断归属 | [第 2-1 章](layers.md) |
 | ☐ | Cookie 设了 `Secure`/`HttpOnly`/`SameSite` | 用 `Helper::setcookie(...)` 显式传参 | [`Controller\ControllerHelper::setcookie()`](../reference/Foundation-Controller-ControllerHelper.md) |
 
 | ☐ | Session 前缀不与其他应用冲突 | 配 `session_prefix` | `Foundation/SessionTrait.php` |
-| ☐ | HTTPS 强制跳转 + HSTS | 用 pre 路由钩子实现 | [第 2-10 章](lifecycle.md) |
+| ☐ | HTTPS 强制跳转 + HSTS | 用 pre 路由钩子实现 | [第 2-3 章](route-hooks.md) |
 | ☐ | 敏感配置不在代码库 | 走 `.env`（`use_env_file`）或设置文件，且该文件不进 git | [第 1-5 章](configuration.md) |
 | ☐ | `runtime/`、`config/` 不可被 Web 直接访问 | 文档根指向 `public/` | [第 1-7 章](deployment.md) |
 | ☐ | 依赖已审计/锁版本 | `composer audit` + 提交 `composer.lock` | 工程侧 |
@@ -121,8 +121,8 @@ class App extends DuckPhp
 | ☐ | 有 rewrite 就关掉 `path_info_compact_enable` | 置 `false` | [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) |
 | ☐ | 不用 ext 选项持久化就关 `data_file_enable` | 置 `false` | `ExtOptionsLoader` |
 | ☐ | 路由映射规则按命中频率排序、能用精确匹配就别用正则 | 调整 `route_map_important` 顺序 | `RouteHookRouteMap::matchRoute()` |
-| ☐ | 数据库：常用查询有索引；只读查询走读连接 | 建模 + `Helper::DbForRead()` | [第 2-5 章](database.md) |
-| ☐ | 热点数据有缓存且设了 TTL | [`Helper::Cache()->set($k, $v, $ttl)`](../reference/Component-Cache.md) | [第 2-13 章](cache.md) |
+| ☐ | 数据库：常用查询有索引；只读查询走读连接 | 建模 + `Helper::DbForRead()` | [第 2-7 章](database.md) |
+| ☐ | 热点数据有缓存且设了 TTL | [`Helper::Cache()->set($k, $v, $ttl)`](../reference/Component-Cache.md) | [第 2-14 章](cache.md) |
 | ☐ | 日志有轮转、级别不过度 | 调 `Logger` 选项与轮转策略 | `src/Core/Logger.php` |
 | ☐ | `use_output_buffer` 的取舍已确认 | 不确定就别开 | [`Runtime`](../reference/Core-Runtime.md) 选项 |
 | ☐ | 上线前跑过一轮压测/慢查询日志 | 开 `database_log_sql_query` 观察后关掉 | [`DbManager`](../reference/Component-DbManager.md) 选项 |
@@ -137,7 +137,7 @@ Helper::addRouteHook(function (string $path_info) {
     if (App::_()->isCli()) { return false; }
     if (!empty($_SERVER['HTTPS'])) { return false; }
     Helper::Show302('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    return true;                      // 拦住：控制器不执行（第 2-10 章）
+    return true;                      // 拦住：控制器不执行（第 2-3 章）
 }, 'prepend-outter');
 ```
 
@@ -204,6 +204,6 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 ## 下一步
 
 - [第 1-7 章 上线最小清单](deployment.md)：部署、文档根、目录权限——本章的前置。
-- [第 2-11 章 异常与错误处理](exception.md)：错误页与异常报告的完整机制。
+- [第 2-12 章 异常与错误处理](exception.md)：错误页与异常报告的完整机制。
 - [第 4-9 章 性能调优与排错手册](troubleshooting.md)：症状 → 排查路径。
 - 参考手册：[DuckPhp\Core\App](../reference/Core-App.md)、[options 速查](../reference/options.md)、[DuckPhp\Core\Logger](../reference/Core-Logger.md)。

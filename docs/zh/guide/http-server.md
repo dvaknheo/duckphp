@@ -1,7 +1,7 @@
 # 4-5 常驻进程与内嵌 HTTP
 
 > 解决什么问题：框架自带的 HTTP 服务器（`DuckPhp\HttpServer\HttpServer`）怎么起、怎么停、为什么它能跑通 RPC 回环；以及"一个进程处理多个请求"时哪些状态会残留。
-> 前置：[第 2-10 章 请求生命周期与钩子点](lifecycle.md)、[第 4-6 章 多入口·多域名·多 SAPI](multi-entry.md)。预计 20 分钟。
+> 前置：[第 2-2 章 请求生命周期](lifecycle.md)、[第 4-6 章 多入口·多域名·多 SAPI](multi-entry.md)。预计 20 分钟。
 > 示例：`tests/data_for_tests/ZAllDemoTest.config.php`（真起服务器 + curl 各入口的冒烟测试）、`demo/public/rpc.php`（多 worker 才能跑的回环示例）。
 
 ```bash
@@ -101,7 +101,7 @@ Runtime::_()->isOutputed(); // 是否已经输出过
 
 ### 6. 生产别用它
 
-内置服务器是**单进程（或少量 worker）的玩具服务器**：没有进程管理、没有超时/限流、不支持 HTTPS、并发能力有限。生产用 php-fpm + nginx（[第 1-7 章](deployment.md)、[第 2-17 章](security-performance.md)）。需要常驻高性能方案（RoadRunner/Swoole/FrankenPHP）时，框架**不内置**，需要你自己把 `RunQuickly` 接进它们的生命周期，并特别注意上一条的"状态残留"。
+内置服务器是**单进程（或少量 worker）的玩具服务器**：没有进程管理、没有超时/限流、不支持 HTTPS、并发能力有限。生产用 php-fpm + nginx（[第 1-7 章](deployment.md)、[第 2-18 章](security-performance.md)）。需要常驻高性能方案（RoadRunner/Swoole/FrankenPHP）时，框架**不内置**，需要你自己把 `RunQuickly` 接进它们的生命周期，并特别注意上一条的"状态残留"。
 
 ## 常见写法
 

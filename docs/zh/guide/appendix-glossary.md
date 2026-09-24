@@ -24,9 +24,9 @@
 | **挂载前缀**         | `controller_url_prefix`                                                                                      | 一个应用所有控制器 URL 的前缀；子应用也用它实现「挂到某个路径下」。（第 3-2 章）         |
 | **文档根**          | `path_document`                                                                                              | Web 服务器暴露的目录（如 `public/`）。决定 URL 里哪些路径由 Web 服务器直接吐文件。 |
 | **资源目录**         | `path_resource` / [`RouteHookResource`](../reference/Component-RouteHookResource.md)                         | 不做 rewrite 的部署环境下，由框架代发静态资源的目录。（第 3-3 章）              |
-| **重写**           | Rewrite / [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md)                                   | 把某个 URL 映射到另一个路由（不改变用户看到的地址）。（第 2-2 章）                |
-| **路由映射**         | [Route](../reference/Core-Route.md) Map / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | 把 URL 直接绑到「类@方法」，可标为「重要路由」优先匹配。（第 2-2 章）              |
-| **PATH_INFO 兼容** | [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md)                               | 无 PATH_INFO 的服务器上用查询串传递路由。（第 2-2 章）                   |
+| **重写**           | Rewrite / [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md)                                   | 把某个 URL 映射到另一个路由（不改变用户看到的地址）。（第 2-4 章）                |
+| **路由映射**         | [Route](../reference/Core-Route.md) Map / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | 把 URL 直接绑到「类@方法」，可标为「重要路由」优先匹配。（第 2-4 章）              |
+| **PATH_INFO 兼容** | [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md)                               | 无 PATH_INFO 的服务器上用查询串传递路由。（第 2-4 章）                   |
 
 ## 分层与命名
 
@@ -34,12 +34,12 @@
 | ---------- | ----------------------------------------------------------------- | ---------------------------------------------------- |
 | **四层**     | Controller / Business / Model / [View](../reference/Core-View.md) | 单向调用：控制器收输入出输出、业务放逻辑（无状态）、模型只做数据访问、视图只做显示。（第 2-1 章）  |
 | **系统层**    | System                                                            | 放应用配置与框架相关的接线，命名空间 `src/System`。（第 1-3 章）            |
-| **动作类**    | Action                                                            | 控制器层里可复用的无状态类，供多个控制器共享。（第 2-3 章）                     |
+| **动作类**    | Action                                                            | 控制器层里可复用的无状态类，供多个控制器共享。（第 2-5 章）                     |
 | **服务类**    | Service                                                           | 业务层里可复用的类，供多个 Business 共享。（第 2-1 章）                  |
-| **Helper** | `DuckPhp\Foundation\<层>\<层>Helper` / 工程的 `Helper`                 | 分层助手：`Helper::Show()` 等便捷入口，替代到处 `use` 框架类。（第 2-7 章） |
+| **Helper** | `DuckPhp\Foundation\<层>\<层>Helper` / 工程的 `Helper`                 | 分层助手：`Helper::Show()` 等便捷入口，替代到处 `use` 框架类。（第 2-9 章） |
 
 | **控制器后缀 / 方法前缀** | `controller_class_postfix` / `controller_method_prefix` | 决定 URL 与类名、方法名之间的换算；方法前缀默认为空。（第 9、10 章） |
-| **欢迎页** | `controller_welcome_class` / `_method` | 默认 `Main::index`：根路径与单段路径都先落到它。（第 2-2 章） |
+| **欢迎页** | `controller_welcome_class` / `_method` | 默认 `Main::index`：根路径与单段路径都先落到它。（第 2-4 章） |
 
 ## 组件与扩展
 
@@ -61,9 +61,9 @@
 | **可覆盖文件** | `getOverrideableFile()`                                                 | 按相位逐层回退查找文件：子应用可在自己的目录里「覆盖」父应用的同名视图/配置。（第 3-5 章）                                         |
 | **运行时目录** | `path_runtime`                                                          | 日志、缓存等可写目录。                                                                              |
 | **配置目录**  | `path_config`                                                           | `config/`，[`Configer`](../reference/Component-Configer.md) 与安装器从这里读文件。                   |
-| **事件**    | Event / [`GlobalEvent`](../reference/Component-GlobalEvent.md)          | 跨应用广播的命名事件；事件名用 `registering`/`registered` 这类「进行中/已完成」后缀。（第 2-12 章）                      |
-| **条件抛**   | `ThrowOn()` / `*ThrowOn()`                                              | 「满足条件就抛」的守卫式写法，来自 [`ThrowOnTrait`](../reference/Ext-ThrowOnTrait.md) 或 Helper。（第 2-11 章） |
-| **系统异常**  | [`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md) | **只**表示「框架自己出问题」，工程的业务/权限异常请直接继承 `\Exception`。（第 2-11 章）                                 |
+| **事件**    | Event / [`GlobalEvent`](../reference/Component-GlobalEvent.md)          | 跨应用广播的命名事件；事件名用 `registering`/`registered` 这类「进行中/已完成」后缀。（第 2-13 章）                      |
+| **条件抛**   | `ThrowOn()` / `*ThrowOn()`                                              | 「满足条件就抛」的守卫式写法，来自 [`ThrowOnTrait`](../reference/Ext-ThrowOnTrait.md) 或 Helper。（第 2-12 章） |
+| **系统异常**  | [`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md) | **只**表示「框架自己出问题」，工程的业务/权限异常请直接继承 `\Exception`。（第 2-12 章）                                 |
 
 ## 写作约定
 

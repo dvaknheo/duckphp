@@ -14,15 +14,15 @@
 
 | 类                                                                                | 源码标记              | 它做什么                         | 建议                                                |
 | -------------------------------------------------------------------------------- | ----------------- | ---------------------------- | ------------------------------------------------- |
-| [`Ext\ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md)                   | `@todo deprecate` | 把 PHP 错误包装成异常                | 用 `ExceptionManager`（[第 2-11 章](exception.md)）    |
-| [`Ext\HookChain`](../reference/Ext-HookChain.md)                                 | `@todo deprecate` | 洋葱式中间件链                      | 路由钩子与事件（[第 2-10 章](lifecycle.md)）                 |
+| [`Ext\ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md)                   | `@todo deprecate` | 把 PHP 错误包装成异常                | 用 `ExceptionManager`（[第 2-12 章](exception.md)）    |
+| [`Ext\HookChain`](../reference/Ext-HookChain.md)                                 | `@todo deprecate` | 洋葱式中间件链                      | 路由钩子与事件（[第 2-3 章](route-hooks.md)）                 |
 | [`Ext\StaticReplacer`](../reference/Ext-StaticReplacer.md)                       | `@todo deprecate` | 把 `$GLOBALS`/函数静态/类静态搬进组件    | 新代码别用，见 §2.1                                      |
 | [`Ext\MyFacadesBase`](../reference/Ext-MyFacadesBase.md)                         | `@todo deprecate` | 门面基类：`__callStatic()` 转发到真实类 | 用 `@method` 注解，见 §2.2                             |
 | [`Ext\MyFacadesAutoLoader`](../reference/Ext-MyFacadesAutoLoader.md)             | `@todo deprecate` | 自动 `eval` 出门面类               | 同上                                                |
 | [`Ext\ExtendableStaticCallTrait`](../reference/Ext-ExtendableStaticCallTrait.md) | `@todo deprecate` | 运行时给类登记静态方法                  | 手写 `__callStatic()`，见 §2.3                        |
 | [`Ext\MiniRoute`](../reference/Ext-MiniRoute.md)                                 | 无                 | `Core\Route` 的早期子集           | [`Core\Route`](../reference/Core-Route.md)，见 §2.4 |
 | [`Ext\Misc`](../reference/Ext-Misc.md)                                           | 无                 | 杂项工具集                        | 见 §2.5                                            |
-| [`Ext\ThrowOnTrait`](../reference/Ext-ThrowOnTrait.md)                           | 无                 | 给异常类加一行 `ThrowOn()`          | [第 2-11 章](exception.md) 的分层 `ThrowOn()`          |
+| [`Ext\ThrowOnTrait`](../reference/Ext-ThrowOnTrait.md)                           | 无                 | 给异常类加一行 `ThrowOn()`          | [第 2-12 章](exception.md) 的分层 `ThrowOn()`          |
 
 > `MiniRoute` / `Misc` **没有**废弃标记，但它们同样在推荐路径外：`grep -rn "MiniRoute" src/` 只命中它自己的文件——框架内部没有任何使用点。这也是本章要交代它们的原因。
 
@@ -46,9 +46,9 @@
 
 这对类是配套的：`MyFacadesAutoLoader` 注册 `spl_autoload_register()`，遇到 `facades_namespace`（默认 `MyFacades`）前缀或 `facades_map` 里的类名，就 **`eval`** 出一句 `namespace X { class Y extends MyFacadesBase {} }`（`src/Ext/MyFacadesAutoLoader.php` 55-56 行）；`MyFacadesBase::__callStatic()` 再把静态调用转发给 `getFacadesCallback()` 解析出的真实类，解析不到就抛 `\ErrorException("BadCall")`。
 
-**为什么过时**：它要解决的是"静态调用没有 IDE 补全"——为了实现补全而**在运行时 eval 代码**。现在同样的需求用纯注释就能满足：`@method static` 标签。本仓库自己就是这么做的，[`Foundation\Helper`](../reference/Foundation-Helper.md) 与 [`DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 上各有 96 条 `@method`（[第 2-7 章](helper.md)）。
+**为什么过时**：它要解决的是"静态调用没有 IDE 补全"——为了实现补全而**在运行时 eval 代码**。现在同样的需求用纯注释就能满足：`@method static` 标签。本仓库自己就是这么做的，[`Foundation\Helper`](../reference/Foundation-Helper.md) 与 [`DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 上各有 96 条 `@method`（[第 2-9 章](helper.md)）。
 
-⚠️ 反过来说：**`@method` 只是给 IDE 看的注释，`method_exists()`/反射看不到**这些方法。可调用的方法集合要看 `__callStatic()` 的分派顺序（[第 2-7 章](helper.md) 有 96 个方法的实测清单）。
+⚠️ 反过来说：**`@method` 只是给 IDE 看的注释，`method_exists()`/反射看不到**这些方法。可调用的方法集合要看 `__callStatic()` 的分派顺序（[第 2-9 章](helper.md) 有 96 个方法的实测清单）。
 
 ### 2.3 Ext\ExtendableStaticCallTrait：动态登记静态方法
 
@@ -60,7 +60,7 @@
 
 ### 2.4 Ext\MiniRoute：Core\Route 的早期子集
 
-`MiniRoute` 只做"PATH_INFO → 控制器类/方法 → 反射校验 → 调用"这一件事，**没有钩子链、没有重写、没有资源路由**（[`Core\Route`](../reference/Core-Route.md) 的完整能力见[第 2-2 章](routing.md)）。失败时它**不抛异常**，而是把错误码写进 `$route_error`（`E001` 前缀不符、`E003` 类不存在、`E005` 隐藏方法……），用 `getRouteError()` 读。
+`MiniRoute` 只做"PATH_INFO → 控制器类/方法 → 反射校验 → 调用"这一件事，**没有钩子链、没有重写、没有资源路由**（[`Core\Route`](../reference/Core-Route.md) 的完整能力见[第 2-4 章](routing.md)）。失败时它**不抛异常**，而是把错误码写进 `$route_error`（`E001` 前缀不符、`E003` 类不存在、`E005` 隐藏方法……），用 `getRouteError()` 读。
 
 **为什么在推荐路径外**：框架的路由是写死的 `Route::_()`（`src/DuckPhp.php` 174 行就是这么取的），**没有"换路由类"的选项**；`MiniRoute` 也不是 `Route` 的子类，无法借 `Route::_(new MiniRoute())` 顶上。要用它只能自己起一套：
 
@@ -78,7 +78,7 @@ $ok = \DuckPhp\Ext\MiniRoute::_()->run();      // 解析并调用控制器
 | 方法                                             | 实际行为                                                                                      | 现在用什么                                                                     |
 | ---------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `Import($file)`                                | `include_once {path}/{path_lib}/{file}.php`，`path_lib` 默认 `'lib'`                         | Composer 自动加载（`src/` 里除它自己**没有任何地方**读 `path_lib`）                         |
-| `RecordsetH($data, $cols)`                     | 对指定列做 HTML 转义                                                                             | `CoreHelper::H()` / 全局 `__h()`（[第 2-17 章](security-performance.md)）       |
+| `RecordsetH($data, $cols)`                     | 对指定列做 HTML 转义                                                                             | `CoreHelper::H()` / 全局 `__h()`（[第 2-18 章](security-performance.md)）       |
 | `RecordsetUrl($data, $cols_map)`               | 按 `{列名}` 模板替换后经 `Route::Url` 生成 URL                                                       | 可留用；等价的还有 `__url()`                                                       |
 | `DI($name, $object = null)`                    | 读/写组件**实例内**的一个数组（`$this->_di_container`）                                                 | 跨类共享请用相位容器（[第 4-1 章](container-phases.md)）——这个 DI 只在 `Misc::_()` 这一份实例里可见 |
 | `CallAPI($class, $method, $input, $interface)` | 反射调用：按参数名从 `$input` 取值、按 `bool/int/float/string` 过滤、缺参抛 `ReflectionException`、可选校验类实现了某接口 | 没有替代品；需要就照用                                                               |
@@ -99,7 +99,7 @@ trait ThrowOnTrait
 }
 ```
 
-给异常类加一个"条件抛"的静态入口。分层的 `Helper::ThrowOn()`（`ProjectThrowOn`/`BusinessThrowOn`/`ControllerThrowOn`）已在[第 2-11 章](exception.md)交代；这个 trait 是它的前身，**框架内部没有使用点**（`grep -rn ThrowOnTrait src/` 只命中 trait 自身）。要自定义异常类又想要同样的写法，直接抄这两行比 `use` 它更清楚。
+给异常类加一个"条件抛"的静态入口。分层的 `Helper::ThrowOn()`（`ProjectThrowOn`/`BusinessThrowOn`/`ControllerThrowOn`）已在[第 2-12 章](exception.md)交代；这个 trait 是它的前身，**框架内部没有使用点**（`grep -rn ThrowOnTrait src/` 只命中 trait 自身）。要自定义异常类又想要同样的写法，直接抄这两行比 `use` 它更清楚。
 
 ## 3. 还有几个"不是给业务用"的冷门页
 
@@ -108,16 +108,16 @@ trait ThrowOnTrait
 | 类/文件                                                                                                                                            | 定位                                                                                                            | 在哪儿讲到                   |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | [`Ext\RouteHookWebInstallerView`](../reference/Ext-RouteHookWebInstallerView.md)                                                                | 安装向导的**内置视图模板**（文件里没有任何 class/function，被 `RouteHookWebInstaller::show()` `include`）                           | [第 3-6 章](installer.md) |
-| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) | SQL 导出的方言实现，**默认映射里就有**这两个                                                                                    | [第 2-5 章](database.md)  |
-| [`Ext\SqlDumperSupporterByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md)                                                                | 同样是方言实现，但**默认映射里没有**它：要自己加 `database_driver_SqlDumperSupporter_map`（`src/Ext/SqlDumperSupporter.php` 16-19 行） | [第 2-5 章](database.md)  |
+| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) | SQL 导出的方言实现，**默认映射里就有**这两个                                                                                    | [第 2-7 章](database.md)  |
+| [`Ext\SqlDumperSupporterByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md)                                                                | 同样是方言实现，但**默认映射里没有**它：要自己加 `database_driver_SqlDumperSupporter_map`（`src/Ext/SqlDumperSupporter.php` 16-19 行） | [第 2-7 章](database.md)  |
 
 ## 4. 参考手册
 
 - [DuckPhp\Ext\StaticReplacer](../reference/Ext-StaticReplacer.md)、[MyFacadesBase](../reference/Ext-MyFacadesBase.md)、[MyFacadesAutoLoader](../reference/Ext-MyFacadesAutoLoader.md)、[ExtendableStaticCallTrait](../reference/Ext-ExtendableStaticCallTrait.md)、[MiniRoute](../reference/Ext-MiniRoute.md)、[Misc](../reference/Ext-Misc.md)、[ThrowOnTrait](../reference/Ext-ThrowOnTrait.md)
-- 已在前文交代过的过时类：[ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)（[第 2-11 章](exception.md)）、[HookChain](../reference/Ext-HookChain.md)（[第 2-10 章](lifecycle.md)）
+- 已在前文交代过的过时类：[ExceptionWrapper](../reference/Ext-ExceptionWrapper.md)（[第 2-12 章](exception.md)）、[HookChain](../reference/Ext-HookChain.md)（[第 2-3 章](route-hooks.md)）
 
 ## 下一步
 
-- [第 2-7 章 Helper 与全局函数](helper.md)：`@method` 与 `__callStatic` 的推荐做法。
+- [第 2-9 章 Helper 与全局函数](helper.md)：`@method` 与 `__callStatic` 的推荐做法。
 - [第 4-10 章 设计取舍与已知坑](design-notes.md)：哪些"看起来该改"的地方是刻意的。
 - [参考手册维护指南](../reference-maintenance-guide.md)：过时类怎么在文档里标注。
