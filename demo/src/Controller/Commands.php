@@ -2,13 +2,11 @@
 namespace ProjectNameTemplate\Controller;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Foundation\CommonCommandTrait;
 use DuckPhp\Foundation\SingletonTrait;
 
 class Commands
 {
     use SingletonTrait;
-    use CommonCommandTrait;
     /**
      * console command sample
      */
