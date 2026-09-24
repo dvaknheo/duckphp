@@ -369,13 +369,14 @@ python3 <tmp>/drift.py --all                                                    
 | `GlobalAdmin::_Show()` / `GlobalUser::_Show()`、`go_url()`、`addExtViewData()`、`getLoginBusiness()` | 全部删除；接管渲染的是 `DuckPhp::_Show()` → `Admin::_()`/`User::_()` 的 `mergeViewData()` |
 | 层 Helper 上的 `public static $EVENT_REGISTERING` 等属性 | 改成常量：定义在 `User`/`Admin` 上，层 Helper 里只留**同名别名常量**（值形如 `'ACTION_USER_LOGINED'`，不再是 `'registering'`） |
 
-**本轮做了什么**（11 个文件加 `//TODO`，6 处死链就地改成文字；**没有**重写任何一章）
+**本轮做了什么**（只动 11 个 guide 文件：其中 **7 个加了 `//TODO` 标记**、另 4 个只是零散旧名/行号就地改正；**没有**重写任何一章）
 
 - 顶部整块 TODO（篇幅最大、要整章重写）：`user.md`（49 处旧 API）、`admin.md`（30 处）；
-- 就地 TODO / 顺手改掉旧名：`events.md`（事件常量表整张过期）、`overriding.md`（视图级开关表 + 第 105-106 行示例）、`appendix-snippets.md`（登录片段）、`static-resources.md`、`exception.md`、`troubleshooting.md`、`appendix-faq.md`、`embed.md`、`helper.md`（`onLoginedException()` → `onNeedPermission()` 与源码行号）；
+- 就地 TODO / 顺手改掉旧名（带 `//TODO`）：`events.md`（事件常量表整张过期）、`overriding.md`（视图级开关表 + 第 105-106 行示例，两处标记）、`appendix-snippets.md`（登录片段）、`exception.md`（两个已删异常类）、`embed.md`；
+- 零散旧名**就地改正**（不留标记）：`static-resources.md`、`troubleshooting.md`、`appendix-faq.md`、`helper.md`（`onLoginedException()` → `onNeedPermission()` 与源码行号）；`user.md` / `admin.md` 里的死链与「未登录抛异常」两处也在标记之外顺手改了；
 - 6 处指向**已删除参考页**的链接（`GlobalUser-UserException.md` / `GlobalAdmin-AdminException.md`）已就地改成文字，保证 `check-doc-links.py` 仍为 0 死链（`user.md` 2 处、`admin.md` 2 处、`exception.md` 2 处）；
 - 参考页里的同名死链由本轮参考手册同步一并清掉（`Core-DuckPhpSystemException.md`）。
 
-**验收**：`check-doc-links.py docs/zh` → **2104 条链接 0 死链**；`docs/zh/guide/` 里 `//TODO` 命中 11 个文件（下次改指南的入口：`grep -rn '//TODO' docs/zh/guide`）。
+**验收**：`check-doc-links.py docs/zh` → **2104 条链接 0 死链**；`docs/zh/guide/` 里新增 `//TODO` 标记 **7 个文件**（下次改指南的入口：`grep -rn '//TODO（参考手册同步轮' docs/zh/guide`）。
 
 **下次改指南的建议顺序**：先 `user.md` / `admin.md`（旧 API 最集中，且两章互相引用），再 `events.md`（事件常量表），然后零散旧键名（`appendix-snippets.md` / `troubleshooting.md` / `appendix-faq.md` / `static-resources.md` / `embed.md` / `overriding.md` / `helper.md` / `exception.md`）；改完按 §4 跑链接检查与行数检查，并把对应 `//TODO` 删掉。
