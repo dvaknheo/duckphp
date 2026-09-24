@@ -27,26 +27,16 @@ interface AdminActionInterface
      */
     public function service();
     /**
-     * @return AdminServiceInterface
+     * @param array<string, mixed> $ext
      */
-    public function localService();
+    public function urlForLogin(?string $url_back = null): string;
+    /**
+     * @param array<string, mixed> $ext
+     */
+    public function urlForLogout(): string;
 
-    /**
-     * @param array<string, mixed> $ext
-     */
-    public function urlForLogin(?string $url_back = null, ?array $ext = null): string;
-    /**
-     * @param array<string, mixed> $ext
-     */
-    public function urlForLogout(?string $url_back = null, ?array $ext = null): string;
-    /**
-     * @param array<string, mixed> $ext
-     */
-    public function urlForHome(?string $url_back = null, ?array $ext = null): string;
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool;
+    public function urlForHome(): string;
+    public function canAccess(?string $url = null, ?string $class = null, ?string $method = null): bool;
     /**
      * @param array<string, mixed> $ext
      */
