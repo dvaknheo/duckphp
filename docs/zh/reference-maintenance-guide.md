@@ -79,6 +79,7 @@
 | `docs/scripts/gen-reference.php` | `facts <src-rel>` 打印解析结果；`skeleton [--out DIR] [--file REL]` 生成骨架；`verify --file <md>` 比对方法/选项 |
 | `docs/scripts/gen-route.php` | 极简版骨架生成（Route 风格，只抓声明/方法行/options 原文） |
 | `docs/scripts/find-unmentioned-classes.py` | **反查孤儿页**：扫 `docs/zh/guide/*.md` 里指向 `../reference/*.md` 的链接，报「指南从没链到」的类页（`--all` 另列只链 1 次的；纯链接判定，正文写了类名但没挂链接不算） |
+| `docs/scripts/covagg.php` | **汇总全量覆盖率**：遍历 `test_coveragedumps/` 的每个 dump，按源文件合并命中（xdebug3 的数组型命中值取并集），打印还有未执行行的文件与总 `lines x/y`；`--quiet-ok` 只报缺口。判全量覆盖率用它或 `test_reports/index.html`，别只看单个类的 dump |
 
 > ⚠️ **`gen-reference.php verify` 不可全信**：对 `Core/App.php` 这类“`use KernelTrait { … as … }` 并 override”的大文件，它可能漏列方法，从而把正确文档误报为“多了方法”。判定一致性请以下面第 6 节的**漂移扫描**为准。
 
@@ -187,7 +188,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bi
 - **必须给 `XDEBUG_MODE=coverage`**：不给的话 dump 里每一行的命中数都是 0，看起来像“一行都没跑到”。
 - dump 的文件名就是类路径：`test_coveragedumps/Ext/PermissionMenu.php`（该目录已被 `.gitignore`，不要提交）。
 - ⚠️ **不要同时给 PHPUnit 的 `--coverage-php/clover/html/text/crap4j`**：`LibCoverage::isSkip()` 一看到这些参数就**跳过自己的 dump**——该类的 dump 文件根本不会生成（看起来像“这个类没被测/没覆盖”）。查 LibCoverage 覆盖率只能用 `XDEBUG_MODE=coverage php vendor/bin/phpunit`。2026-09-22 实测踩过：加 `--coverage-php /dev/null` 后 `ModelHelperTrait.php` 的 dump 消失，去掉就回来了。
-- 薄壳类（只有 `class X extends Y {}` 或 `abstract class X { use A; use B; }`）的 dump **本来就可能是空的**：它们自己的文件没有可执行行，方法体算在 trait / 父类的文件里——这不是漏测。
+- 薄壳类（只有 `class X extends Y {}` 或 `abstract class X { use A; use B; }`）的 dump **本来就可能是空的**：它们自己的文件没有可执行行，方法体算在 trait / 父类的文件里——这不是漏测。**接口文件更是根本不进 dump**（`interface X { public function f(); }` 没有可执行行）：当前 `src/` 109 个 php 文件里有 19 个属于这种情况（18 个接口 + `Core/DuckPhpSystemException.php`，后者的类体只剩注释）。要确认「没漏测」就按「有可执行行的文件都 100%」来判定，别按文件数对齐。
 - dump 是序列化的 `CodeCoverage` 大对象、含二进制字节：**别 `cat`/`head`/`grep` 它**（刷屏、乱码，`grep` 只会回一句 `binary file matches`）。用脚本只打印“没执行的行”：
 
 ```python
@@ -278,7 +279,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 - **现状**（每轮只更新这一段；历轮细节看 `git log` 与各篇文档，**不要在这里堆流水账**）
   - `docs/zh/reference/` 共 **114 篇**：110 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板；`drift.py --all` **0 不一致**（`missing-*` / `extra-option` 全空，`extra-method` 只剩示例代码里的自定义方法）。
   - `enc` 检查 114 篇全 UTF-8；站内链接 0 死链。同步基线见第 9 节末的提示（最近一次基线是分支 `doced`，下次同步从 `66a93720` 之后算起）。
-  - 测试基线（WSL）：全量 `php vendor/bin/phpunit` → `OK (96 tests, 817 assertions)`；`XDEBUG_MODE=coverage` 跑完看 `test_reports/index.html` → **`Lines 4891/4891 (100.00%)`**（Functions/Methods 与 Classes/Traits 同为 100%）。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10438**（跟当前工作区 `src/` 的选项表绑定，见第 7 节那一行）。
+  - 测试基线（WSL）：全量 `php vendor/bin/phpunit` → `OK (96 tests, 823 assertions)`；`XDEBUG_MODE=coverage` 跑完看 `test_reports/index.html` → **`Lines 4895/4895 (100.00%)`**（Functions/Methods 与 Classes/Traits 同为 100%）。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10438**（跟当前工作区 `src/` 的选项表绑定，见第 7 节那一行）。
   - 最近几轮（每轮一句话，细节在 commit message 与对应文档里）：
     1. `doced` → HEAD 增量同步：`Component-Command`（命令收集钩子改名、两个收集方法去掉 `$phase` 形参）、`Core-KernelTrait`（`Root($switch_phase = false)`）。
     2. 新类 `Ext/PermissionMenu`：补齐测试 `tests/Ext/PermissionMenuTest.php`（覆盖率 298/298），修掉测试暴露的 6 个源码问题（3 个真 bug、2 处语义调整、1 处不可达 `catch` 加 `@codeCoverageIgnore`）。
@@ -310,7 +311,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
         - 补链落点：`Core\ExitException`（exception.md：`use_exit_exception` 下 `SystemWrapper::exit()` 抛它、`ExceptionManager` 原样放行）、`Component\PagerInterface`（database.md 分页节）、`HttpServer\HttpServerInterface`（http-server.md「换实现」节）、`GlobalUser\User{LoginAction,LoginService}Interface`（user.md 选项表 + 参考手册行）、`GlobalAdmin\Admin{LoginAction,LoginService,Service}Interface`（admin.md 同构）、`Foundation\Business\Base`（layers.md 四层基类）、`Ext\RouteHookWebInstallerView`（installer.md §③）、`Ext\SqlDumperSupporterByPgsql`/`BySqlite`（database.md SQL 导出表——并**纠正**原先把三者并列的误导：默认映射只有 mysql 与 sqlite，pgsql 要自己配 `database_driver_SqlDumperSupporter_map`）。
         - 7 个「指南从没写过的 Ext 类」另立一章：`guide/deprecated-exts.md`（4-11，122 行），判据是源码 `@todo deprecate`（`grep -rn` 命中 6 个类），`MiniRoute`/`Misc`/`ThrowOnTrait` 则如实标注「无废弃标记、但框架内部无使用点」。
     16. **全量覆盖测试 + `doced`→HEAD 参考手册同步（本轮；作者正在并行改同一工作区）**：
-        - 测试：全量 `OK (96 tests, 817 assertions)`；`XDEBUG_MODE=coverage` + `tests/support.php` → `test_reports/index.html` **`Lines 4891/4891 (100.00%)`**（函数/方法、类/Trait 同为 100%）。**不要**用陈旧 dump 判断缺口：`test_coveragedumps/` 里会留着改名/移动前的旧类 dump（例如 `Component/RouteLister.php`），它们会把总数算歪——本轮先 `rm -rf test_coveragedumps` 再全量跑。聚合脚本见第 5 节新增的 `covagg.php`（遍历全部 dump 并按源文件合并命中，数组型命中值要按 test 名取并集）。
+        - 测试：全量 `OK (96 tests, 823 assertions)`；`XDEBUG_MODE=coverage` + `tests/support.php` → `test_reports/index.html` **`Lines 4895/4895 (100.00%)`**（函数/方法、类/Trait 同为 100%；`src/` 109 个文件里 19 个是接口/空体类，本来就没有可执行行，见第 5 节）。**不要**用陈旧 dump 判断缺口：`test_coveragedumps/` 里会留着改名/移动前的旧类 dump（例如 `Component/RouteLister.php`），它们会把总数算歪——本轮先 `rm -rf test_coveragedumps` 再全量跑。聚合脚本见第 5 节新增的 `docs/scripts/covagg.php`（遍历全部 dump 并按源文件合并命中，数组型命中值要按 test 名取并集）。
         - 修 3 处源码：① `Admin::EVENT_ACTION_ADMIN_LOGED` → **`EVENT_ACTION_ADMIN_LOGINED`**（值本来就是 `'ACTION_ADMIN_LOGINED'`，而 `ControllerHelper` 引用的是 `Admin::EVENT_ACTION_ADMIN_LOGINED` ⇒ 常量名笔误；PHP 常量**懒求值**，类加载不报错、一被读到就 `Error: Undefined constant`；`GlobalAdmin::login()` 里的 `fire()` 同步改名）；② `GlobalAdmin/GlobalUser::mergeViewData()` 在 `$data['__logined_render_header_footer']` 为假时 `$header/$footer` **未定义**（会告警）→ 进 `if` 前先置 `null`；③ `GlobalUser::throwLoginOn()` 两个 `return` 补 `// @codeCoverageIgnore`（与 `GlobalAdmin` 镜像，`exit()` 之后那行本来不可达）。
         - 补覆盖的测试：`GlobalAdmin/GlobalUser` 的 `throwLoginOn()` 三条分支（自定义回调 / 非 Ajax 302 / Ajax JSON）、`DuckPhp::initComponentsOfRoot()` 的 redis 分支（配 `redis_list` 即触发，`RedisManager::init()` 只存配置不连接）、`ExtOptionsLoader::saveExtOptions()` 的抛异常分支（注意 `getRoot()` 返回的是**root 相位的 loader 组件**，读的是组件自己的 `data_file_enable`，不是 App 的）、`__logined_render_header_footer=false` 分支；`tests/Foundation/HelperTest.php` 的事件断言从「层 Helper 上的 `public static $EVENT_*` 属性」改成「层 Helper 上的**别名常量**」（`hasConstant` + 值等于 `User::`/`Admin::` 上的同名常量）。
         - `ZAllDemoTest` 的 `files` 期望长度 10567 → **10438**（`Admin`/`User` 落地为 root 组件 + `GlobalAdmin`/`GlobalUser` 瘦身后，选项表、容器类清单、包含文件表、调用栈行号都变）。**已 diff 两份 dump 确认差异只落在**：执行耗时、内存消耗、容器里的类清单（`GlobalAdmin`/`GlobalUser` → `Admin`/`User`）、调用栈行号、包含文件表——没有选项键层面的意外变化。
