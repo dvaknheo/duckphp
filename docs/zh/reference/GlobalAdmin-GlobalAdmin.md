@@ -2,155 +2,183 @@
 
 ## 简介
 
-`GlobalAdmin` 是 DuckPHP 的「全局管理员组件」：它实现 `AdminActionInterface`，把“当前管理员是谁 / 后台 URL / 后台视图 / 权限与日志”等能力集中到一个组件，并允许通过**选项回调（callback）**把具体实现外包给工程类（如 `AdminAction`、`AdminService`）。
+`GlobalAdmin` 是管理员体系的**完整实现**：它继承 `Admin`（常量与「默认不可用」的桩实现都在父类），实现 `AdminLoginActionInterface`，把「当前管理员是谁 / 后台 URL / 后台页眉页脚 / 权限与日志 / 登录登出」集中到一个组件里。
 
-典型接入方式：在应用选项中配置 `admin_callback_for_id/name/data/local_service`（以及若干 `url_*`/`admin_url_*`）指向工程实现；控制器侧经 `Helper`（`Admin()/AdminId()/…`）或直接 `GlobalAdmin::_()` 使用。`Foundation\Controller\AdminControllerBase` 与之配套使用。
+它自己**不碰数据库也不碰 `$_SESSION`**，而是把三件事外包出去（都通过选项回调）：
+
+1. **会话**（`globaladmin_login_session` → `AdminSessionInterface`）：`id()/name()/data()` 的唯一数据源；
+2. **服务**（`globaladmin_local_service` → `AdminServiceInterface`）：`canAccess()` 与 `log()` 的去处；
+3. **登录服务**（`globaladmin_login_service` → `AdminLoginServiceInterface`）：`login()` / `logout()` 的业务实现。
+
+`init()` 时会把自己包成 `PhaseProxy` 注册到父类名 `Admin::class` 这个容器键上（可关，见 `admin_provider_enable`），因此全框架（含 `Foundation\Controller\ControllerHelper::Admin()`、`Foundation\Controller\AdminControllerBase`）都通过 `Admin::_()` 用到它。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\GlobalAdmin`
-- 声明：`class GlobalAdmin extends DuckPhp\Core\ComponentBase implements AdminActionInterface, AdminLoginActionInterface`
+- 声明：`class GlobalAdmin extends DuckPhp\GlobalAdmin\Admin implements AdminActionInterface, AdminLoginActionInterface`
+- 父类：`DuckPhp\GlobalAdmin\Admin`（提供 `mergeViewData()` 的登录字段、`service()`/`log()`/`isSuper()` 的委托，以及全部常量）
 - 实现的接口：`AdminActionInterface`、`AdminLoginActionInterface`
-- 事件常量（`const`，共 12 个）：
-
-```php
-const EVENT_ACTION_ADMIN_REGISTERING  = 'ACTION_ADMIN_REGISTERING';
-const EVENT_ACTION_ADMIN_REGISTERED   = 'ACTION_ADMIN_REGISTERED';
-const EVENT_ACTION_ADMIN_LOGINING     = 'ACTION_ADMIN_LOGINING';
-const EVENT_ACTION_ADMIN_LOGED        = 'ACTION_ADMIN_LOGINED';
-const EVENT_ACTION_ADMIN_LOGOUTING    = 'ACTION_ADMIN_LOGOUTING';
-const EVENT_ACTION_ADMIN_LOGOUTED     = 'ACTION_ADMIN_LOGOUTED';
-const EVENT_SERVICE_ADMIN_REGISTERING = 'SERVICE_ADMIN_REGISTERING';
-const EVENT_SERVICE_ADMIN_REGISTERED  = 'SERVICE_ADMIN_REGISTERED';
-const EVENT_SERVICE_ADMIN_LOGINING    = 'SERVICE_ADMIN_LOGINING';
-const EVENT_SERVICE_ADMIN_LOGINED     = 'SERVICE_ADMIN_LOGINED';
-const EVENT_SERVICE_ADMIN_LOGOUTING   = 'SERVICE_ADMIN_LOGOUTING';
-const EVENT_SERVICE_ADMIN_LOGOUTED    = 'SERVICE_ADMIN_LOGOUTED';
-```
+- 使用的 trait：无
+- 常量：**本类不声明常量**，全部继承自 `Admin`（`EVENT_ACTION_ADMIN_*` 4 个、`EVENT_SERVICE_ADMIN_*` 4 个、`EXCEPTION_*` 4 个，见 [Admin](GlobalAdmin-Admin.md)）
 
 ## 选项
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `admin_url_home` | `null` | 后台首页 URL（未配回调时用 `__url()` 生成）。 |
-| `admin_url_login` | `null` | 后台登录 URL。 |
-| `admin_url_logout` | `null` | 后台退出 URL。 |
-| `admin_view_file_header` | `null` | 后台页头视图文件（渲染时并入 `__view_data.header`）。 |
-| `admin_view_file_footer` | `null` | 后台页脚视图文件（渲染时并入 `__view_data.footer`）。 |
-| `admin_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 数组时，是否先把类名转成 `类名::_()` 单例实例。 |
-| `admin_callback_for_id` | `null` | 取当前管理员 id 的回调。 |
-| `admin_callback_for_name` | `null` | 取当前管理员名的回调。 |
-| `admin_callback_for_data` | `null` | 取当前管理员数据（数组）的回调。 |
-| `admin_callback_for_local_service` | `null` | 返回本地 `AdminServiceInterface` 实现的回调。 |
-| `admin_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
-| `admin_callback_for_login_service` | `null` | 登录服务回调（`login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
-| `admin_callback_for_session` | `null` | 管理员会话实现回调（返回 `AdminSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
-| `admin_loginout_auto_redirect` | `true` | `login()/logout()` 完成后是否自动 302（登录跳 home、退出跳 login）。 |
-| `admin_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
-| `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
-| `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
+| `globaladmin_is_authed_redirect` | `true` | `login()`/`logout()` 完成后是否自动 302（登录跳 `urlForHome()`、退出跳 `urlForLogin()`）。 |
+| `globaladmin_url_home` | `null` | 后台首页 URL；未配时取 App 的同名上下文选项 `url_admin_home`，再退回 `'/'`。 |
+| `globaladmin_url_login` | `null` | 后台登录 URL；未配时退回 `'/'`（这是 `throwLoginOn()` 的 302 目标）。 |
+| `globaladmin_url_logout` | `null` | 后台退出 URL；未配时取 App 的上下文选项 `url_admin_logout`，再退回 `'/'`。 |
+| `globaladmin_view_file_header` | `null` | 后台页眉视图文件（非空才渲染，结果并入 `__view_data.header`）。 |
+| `globaladmin_view_file_footer` | `null` | 后台页脚视图文件（非空才渲染，结果并入 `__view_data.footer`）。 |
+| `globaladmin_enable_callback_singleton` | `true` | 回调是 `[类名, 方法]` 时，是否先把类名换成 `类名::_()` 单例实例。 |
+| `globaladmin_local_service` | `null` | 返回 `AdminServiceInterface` 实现的回调（键缺失时 `localService()` 抛异常）。 |
+| `globaladmin_login_service` | `null` | 返回 `AdminLoginServiceInterface` 实现的回调。 |
+| `globaladmin_login_session` | `null` | 返回 `AdminSessionInterface` 实现的回调。 |
+| `globaladmin_ext_view_data_callback` | `null` | 追加视图数据的回调（键缺失时**不报错**，跳过即可；与上面三个「必需」回调不同）。 |
+| `globaladmin_need_login_callback` | `null` | 未登录时的自定义处理；配了就**不会**走默认的 302/JSON，只回调再 `exit()`。 |
 
 ## 使用方式
 
 ```php
-// App 选项里配置 provider（工程示例）：
+// 应用选项里把三件事挂上（也可以只挂一部分，用不到的键不会报错）
 $options = [
-    'admin_callback_for_id'   => [AdminAction::class, 'id'],
-    'admin_callback_for_name' => [AdminAction::class, 'name'],
-    'admin_callback_for_data' => [AdminAction::class, 'data'],
-    'admin_callback_for_local_service' => [AdminAction::class, 'service'],
+    'ext' => [
+        \DuckPhp\GlobalAdmin\GlobalAdmin::class => true,
+    ],
+    'globaladmin_login_session' => [\MyProject\Admin\AdminSession::class, '_'],
+    'globaladmin_local_service' => [\MyProject\Admin\AdminService::class, '_'],
+    'globaladmin_login_service' => [\MyProject\Admin\AdminLoginService::class, '_'],
+    'url_admin_home'            => '/admin/',
 ];
 
-// 控制器内：
-$admin = GlobalAdmin::_();
-$id    = $admin->id();                    // 当前管理员 id（未登录抛错）
-if (!$admin->canAccess()) { /* 无权 */ }
-$admin->_Show($data, 'admin/index');      // 带后台头尾的渲染
+// 任何地方读「当前管理员」——注意用父类名 Admin，而不是 GlobalAdmin
+use DuckPhp\GlobalAdmin\Admin;
+
+$id   = Admin::_()->id(true);          // 未登录时按 throwLoginOn() 处理（302/JSON/自定义回调 + exit）
+$name = Admin::_()->name(false);       // check_login=false：未登录返回空串，不打断
+if (!Admin::_()->canAccess()) {        // 缺省参数＝当前路由的 class/method/PATH_INFO
+    // 无权限
+}
+Admin::_()->login($post);              // 登录：回调登录服务 + 写会话 + 触发事件 +（可选）302
+```
+
+## 配置示例
+
+```php
+// 让「未登录」不再 302，而是走你自己的逻辑（例如 API 返回 401、或记录审计日志）
+$options['globaladmin_need_login_callback'] = function () {
+    \DuckPhp\Core\SystemWrapper::_()->_header('HTTP/1.1 401 Unauthorized', true, 401);
+    echo json_encode(['error' => 'ADMIN_NEED_LOGIN']);
+};
+// 回调返回后组件会调用 SystemWrapper::exit()，请求到此为止。
+
+// 不想让登录/退出后自动跳转（例如自己控制跳转目标）
+$options['globaladmin_is_authed_redirect'] = false;
 ```
 
 ## 注意事项
 
-- **callback 机制**：`run_callback_by_key()` 先要求对应选项键已配置（否则 `ThrowOn "need app options 'key'"`），然后 `call_user_func($callback, ...$args)`；若回调是 `[类名, 方法]` 且 `admin_enable_callback_singleton` 开启，则把类名替换为 `类名::_()`。
-- `id()/name()` 未配置任何 provider（session / id / name 回调）时抛 `DuckPhpSystemException("No GlobalAdmin Provider.")`；配置了 session 而未登录时抛 `AdminException`。
-- `service()` 与 `localService()`：后者直接返回本 Phase 的服务；前者用 `PhaseProxy::CreatePhaseProxy` 包装，便于跨子应用 Phase 调用。
-- URL 生成优先回调；无回调时 `__url($options['admin_url_*'])`。
-- `_Show()` 会临时切到 `App::getLastPhase()`；头尾模板仅在 `admin_view_file_header/footer` 非空时解析；`$view` 为空时使用当前路由路径。
-- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`__logined_enable_header_footer`——它出现在 `_Show()` 的 `$data` 或 `View::_()->data` 里且为真时，才把 `admin_view_file_header/footer` 设为视图 head/foot（缺省 `false`）。注：早期的 `use_admin_view_header_footer` 选项源码里已无读取点，别再使用。
-- `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, $url, $class, $method)`（`$url` 在前）。
-- 组件经 `ComponentBase` 的 `_()` 取实例；`Foundation\Controller\AdminControllerBase`/`GlobalAdmin` 配套见 F 批相关文档。
+- **必需回调与可选回调**：`globaladmin_local_service` / `globaladmin_login_service` / `globaladmin_login_session` 是「按键取值，缺了就抛」——`run_callback_by_key()` 抛 `DuckPhpSystemException(" need ext options 'globaladmin_login_session'", -1)`（注意消息里 `need` 前有一个空格）；而 `globaladmin_ext_view_data_callback` / `globaladmin_need_login_callback` 用 `isset()` 判过，缺了只是跳过。
+- **`admin_provider_enable`（隐藏选项）**：`init()` 里 `$context->options['admin_provider_enable'] ?? true`，为假时**不**把自己注册到 `Admin::_()`，于是 `Admin::_()` 会是父类 `Admin` 的桩实例（调用即抛）。默认开着。
+- **上下文选项优先**：`urlForHome()` / `urlForLogout()` 先读 **App 的** `url_admin_home` / `url_admin_logout`，没有再退回组件自己的 `globaladmin_url_*`，最后退回 `'/'`；`urlForLogin()` 不看上下文选项，只认 `globaladmin_url_login`。
+- `urlForLogin($url_back)` 会把 `$url_back` 拼成 `'?b=' . urlencode($url_back)`（仅在传入时）。`throwLoginOn()` 的 302 分支就是这么把当前 `REQUEST_URI` 的 path 传进去的。
+- **`mergeViewData()` 的页眉页脚开关**：只有 `$data['__logined_render_header_footer']`（缺省视为 `true`）为真才渲染头尾文件；渲染结果同时放进 `__view_data.header/footer`（给视图用）与 `__logined_header_file/footer_file`（给 `View::setViewHeadFoot()` 用，由 `DuckPhp::_Show()` 消费）。
+- **自动接管渲染**：`DuckPhp::_Show()` 在 `__use_logined_view_data` 为真、且当前路由调用类实现 `AdminControllerInterface` 时，会自动调用本组件的 `mergeViewData()`；你通常不需要手动调它。
+- `canAccess()` 三个参数全为 `null` 时会**临时切到 `App::getLastPhase()`** 去读当前路由的 class/method/PATH_INFO，读完切回原相位；显式传参时不做这件事。
+- `id()/name()/data()` 的未登录处理统一走 `throwLoginOn()`：① 配了 `globaladmin_need_login_callback` → 回调 + `exit()`；② 非 Ajax → `Show302(urlForLogin(当前 path))` + `exit()`；③ Ajax（`X-Requested-With: XMLHttpRequest`）→ `ShowJson(['error_code' => -1, 'error_message' => 'NEED_LOGIN'])` + `exit()`。三种都会 `exit()`，所以**调用方拿不到返回值**；想避免打断就用 `check_login = false`。
+- `service()` / `log()` / `isSuper()` 继承自 `Admin`，内部都走 `localService()`；`mergeViewData()` 的 `__logined_*` 字段也由父类填，本类只追加页眉页脚。
+
+## 全部选项
+
+```php
+public $options = [
+    'globaladmin_is_authed_redirect' => true,
+
+    'globaladmin_url_home' => null,
+    'globaladmin_url_login' => null,
+    'globaladmin_url_logout' => null,
+
+    // 'inc-head',
+    'globaladmin_view_file_header' => null,
+    // 'inc-foot',
+    'globaladmin_view_file_footer' => null,
+
+    'globaladmin_enable_callback_singleton' => true,
+    //[AdminAction::class,'service'],
+    'globaladmin_local_service' => null,
+    //[AdminAction::class,'loginservice'],
+    'globaladmin_login_service' => null,
+    //[AdminAction::class,'loginsession'],
+    'globaladmin_login_session' => null,
+    //[AdminAction::class,'addExtViewData'],
+    'globaladmin_ext_view_data_callback' => null,
+    //[AdminAction::class,'needLogin'],
+    'globaladmin_need_login_callback' => null,
+];
+```
 
 ## 方法列表
 
 ### 公共方法
 
     public function init(array $options, ?object $context = null)
-初始化组件（覆盖父类）：读入 admin_* 选项并完成 provider 装配。
+初始化组件：读入 `globaladmin_*` 选项；`admin_provider_enable`（缺省真）为真时把自己包成 `PhaseProxy` 注册到 `Admin::class` 这个键上。
 
     public function id(bool $check_login = true)
-当前管理员 ID：配置了 `admin_callback_for_session` 时读会话（未登录且 `$check_login` 时抛 `AdminException(" NoLogin 1")`）；否则走 `admin_callback_for_id`；两者都未配置则抛 `DuckPhpSystemException("No GlobalAdmin Provider.")`。
+当前管理员 ID：读会话的 `getCurrentAdminId()`；取不到且 `$check_login` 时交给 `throwLoginOn()`（会 302/JSON/回调后 `exit()`）。
 
     public function name(bool $check_login = true): string
-当前管理员名：会话优先（未登录抛 `AdminException("NoLogin 2")`）；否则走 `admin_callback_for_name`；都未配置则抛 `DuckPhpSystemException`。
+当前管理员名：读会话的 `getCurrentAdminName()`；取不到且 `$check_login` 时交给 `throwLoginOn()`。
 
     public function data(bool $check_login = true): array
-当前管理员数据数组。
+当前管理员数据数组：读会话的 `getCurrentAdmin()`；取不到且 `$check_login` 时交给 `throwLoginOn()`。
 
     public function localService()
-返回本地（当前 Phase）的 `AdminServiceInterface` 实现（经 `admin_callback_for_local_service`）。
+返回本地（当前 Phase）的 `AdminServiceInterface` 实现：执行 `globaladmin_local_service` 回调（键缺失抛异常）。
 
-    public function urlForHome(?string $url_back = null, ?array $ext = null): string
-后台首页 URL：优先 callback，否则 `__url(admin_url_home)`。
+    public function urlForHome(): string
+后台首页 URL：App 的 `url_admin_home` → `globaladmin_url_home` → `'/'`，经 `__url()` 生成。
 
-    public function urlForLogin(?string $url_back = null, ?array $ext = null): string
-登录 URL。
+    public function urlForLogin(?string $url_back = null): string
+后台登录 URL：`__url(globaladmin_url_login ?? '/')`；传了 `$url_back` 时追加 `'?b=' . urlencode($url_back)`。
 
-    public function urlForLogout(?string $url_back = null, ?array $ext = null): string
-退出 URL。
+    public function urlForLogout(): string
+后台退出 URL：App 的 `url_admin_logout` → `globaladmin_url_logout` → `'/'`。
 
-    public function service()
-返回可跨 Phase 调用的管理员服务（`PhaseProxy` 包装 `localService()`）。
-
-    public function mergeViewData(array $input): array
-合并登录信息与后台头尾 HTML 到视图数据（`__logined_id/__logined_name/__logined_url_logout/__view_data`）。
-
-    public function _Show(array $data = [], string $view = '')
-以管理员页面方式渲染：切到 `App::getLastPhase()`、`onBeforeOutput()`、设置头尾（仅当 `admin_view_file_header/footer` 非空才解析文件），`$view` 为空时改用当前路由路径；结束后恢复原 Phase。
-
-    public function login(array $post)
-登录：触发 `EVENT_ACTION_ADMIN_LOGINING` → `getLoginBusiness()->login($post)` → 会话 `setCurrentAdmin()` → 触发 `EVENT_ACTION_ADMIN_LOGED`；`admin_loginout_auto_redirect` 为真时 302 到 `urlForHome()`。
-
-    public function logout()
-退出：取当前 id → 触发 `EVENT_ACTION_ADMIN_LOGOUTING` → `getLoginBusiness()->logout($admin_id)` → 清除会话 → 触发 `EVENT_ACTION_ADMIN_LOGOUTED`；`admin_loginout_auto_redirect` 为真时 302 到 `urlForLogin()`。
+    public function mergeViewData(array $data): array
+把后台视图数据补齐：先跑 `globaladmin_ext_view_data_callback`（若配），再按开关渲染页眉页脚文件并写入 `__view_data.header/footer` 与 `__logined_header_file/footer_file`，最后交给父类 `Admin::mergeViewData()` 填 `__logined_id/name/data/url_home/url_logout`。
 
     public function canAccess(?string $url = null, ?string $class = null, ?string $method = null): bool
-判断当前管理员能否访问；缺省参数取当前路由的 class/method/PATH_INFO，随后交给 `localService()->canAccess($id, $url, $class, $method)`（`$url` 在前）。
+判断当前管理员能否访问：未登录（`id(false)` 为假）直接 `false`；三个参数全空时取「当前路由的 class / method / PATH_INFO」（会临时切到 `getLastPhase()` 再切回）；最后委托 `localService()->canAccess($id, $url, $class, $method)`。
 
-    public function log(string $string, ?string $type = null, array $ext = [])
-记录管理员操作日志（委托 localService）。
+    public function login(array $post)
+登录：触发 `EVENT_ACTION_ADMIN_LOGINING` → `getLoginService()->login($post)` → 会话 `setCurrentAdmin()` → 触发 `EVENT_ACTION_ADMIN_LOGINED`；`globaladmin_is_authed_redirect` 为真时 `Show302(urlForHome())`。
 
-    public function isSuper(): bool
-当前管理员是否超级管理员（委托 localService）。
+    public function logout()
+退出：取当前 id（`id(false)`）→ 触发 `EVENT_ACTION_ADMIN_LOGOUTING` → `getLoginService()->logout($admin_id)` → 会话 `unsetCurrentAdmin()` → 触发 `EVENT_ACTION_ADMIN_LOGOUTED`；`globaladmin_is_authed_redirect` 为真时 `Show302(urlForLogin())`。
 
 ### 受保护方法
 
     protected function run_callback_by_key(string $key, ...$args)
-按选项键执行回调：键缺失抛错；`[类, 方法]` 且开启 singleton 时类名转实例。
+按选项键执行回调：键没配就抛 `DuckPhpSystemException(" need ext options '键名'", -1)`；回调是 `[类名, 方法]` 且 `globaladmin_enable_callback_singleton` 为真时，先把类名换成 `类名::_()`。
 
-    protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
-生成 URL 的公共逻辑：有 callback 用 callback，否则 `__url(options[key_url])`。
+    protected function throwLoginOn($flag)
+未登录的统一处理（`$flag` 为假时直接返回）：① `globaladmin_need_login_callback` → 回调 + `exit()`；② 非 Ajax → `Show302(urlForLogin(REQUEST_URI 的 path))`；③ Ajax → `ShowJson(['error_code' => -1, 'error_message' => 'NEED_LOGIN'])`；②③ 结尾都 `exit()`。
 
-    protected function addExtViewData(array $input): array
-追加视图数据：默认补 `__logined_id/name/url_logout`，可被 `admin_callback_for_add_ext_view_data` 覆盖。
-
-    protected function getLoginBusiness()
-取登录业务实现：执行 `admin_callback_for_login_service` 回调。
+    protected function getLoginService()
+取登录服务实现（`AdminLoginServiceInterface`）：执行 `globaladmin_login_service` 回调。
 
     protected function getSession()
-取会话实现（`AdminSessionInterface`）：执行 `admin_callback_for_session` 回调。
+取会话实现（`AdminSessionInterface`）：执行 `globaladmin_login_session` 回调。
 
 ## 相关链接
 
-- [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) — 本组件实现的接口
-- [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) — 服务侧契约
-- [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) — service() 的跨 Phase 代理
+- [DuckPhp\GlobalAdmin\Admin](GlobalAdmin-Admin.md) — 父类：常量与「默认不可用」的桩实现
+- [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) — 本组件实现的动作契约
+- [DuckPhp\GlobalAdmin\AdminLoginActionInterface](GlobalAdmin-AdminLoginActionInterface.md) — 登录/退出的动作契约
+- [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) — `globaladmin_local_service` 的契约
+- [DuckPhp\GlobalAdmin\AdminLoginServiceInterface](GlobalAdmin-AdminLoginServiceInterface.md) — `globaladmin_login_service` 的契约
+- [DuckPhp\GlobalAdmin\AdminSessionInterface](GlobalAdmin-AdminSessionInterface.md) — `globaladmin_login_session` 的契约
+- [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) — `init()` 注册自己时用的跨 Phase 代理
 - [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) — 用户侧同构组件

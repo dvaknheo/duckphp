@@ -107,7 +107,7 @@ class Helper extends ControllerHelper
 
 两点必须清楚：
 
-- **只对「经你工程类名」的调用生效**：`Helper::Show(...)` 命中你的实现；而框架内部有些地方是**直接写框架类名**调的（`UserControllerBase` / `AdminControllerBase` 里的 `ControllerHelper::checkInstall()`、`assignViewData()`、`Show302()`，源码 `src/Foundation/Controller/UserControllerBase.php` 20-37 行），那些调用**不会**因为你覆盖了子类而改变——静态方法没有虚派发。要改那类行为，用 `onLoginedException()` 这类现成钩子，或[第 4-3 章 替换框架行为](replace-behavior.md)。
+- **只对「经你工程类名」的调用生效**：`Helper::Show(...)` 命中你的实现；而框架内部有些地方是**直接写框架类名**调的（`UserControllerBase` / `AdminControllerBase` 里的 `ControllerHelper::checkInstall()`、`assignViewData()`、`Show302()`，源码 `src/Foundation/Controller/UserControllerBase.php` 18-31 行），那些调用**不会**因为你覆盖了子类而改变——静态方法没有虚派发。要改那类行为，用 `onNeedPermission()` 这类现成钩子，或[第 4-3 章 替换框架行为](replace-behavior.md)。
 - 覆盖要**签名兼容**（同名静态方法、参数与默认值一致），否则 PHP 加载类时直接致命错误：`Declaration of Helper::Show() must be compatible with ...`；想保留原行为就用 `parent::` 兜一下。
 
 模型基类走的是另一条路：[`DuckPhp\Foundation\Model\Base`](../reference/Foundation-Model-Base.md) 同时 `use ModelTrait` 与 [`ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)，所以模型子类里 `$this->Db()`、`$this->getList()` 都能用（`$model->Db()` 这种「静态方法经实例调用」也成立）。

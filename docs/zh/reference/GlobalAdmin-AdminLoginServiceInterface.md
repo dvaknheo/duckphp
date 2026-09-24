@@ -2,7 +2,7 @@
 
 ## 简介
 
-`AdminLoginServiceInterface` 是「管理员登录服务」契约接口，描述服务侧的登录/退出能力：`login(array $post)` 与 `logout()`。它是 `AdminLoginActionInterface` 的服务侧对应物，通常由工程里的 Service 类实现，并经 `GlobalAdmin` 的 `admin_callback_for_login_service` 选项挂载。
+`AdminLoginServiceInterface` 是「管理员登录服务」契约接口，描述服务侧的登录/退出能力：`login(array $post)` 与 `logout($id)`。它是 `AdminLoginActionInterface` 的服务侧对应物，通常由工程里的 Service 类实现，并经 `GlobalAdmin` 的 `admin_callback_for_login_service` 选项挂载。
 
 ## 类信息
 
@@ -22,9 +22,9 @@ class AdminLoginService implements AdminLoginServiceInterface
     {
         // 校验并返回管理员数据
     }
-    public function logout()
+    public function logout($id)
     {
-        // 退出清理
+        // 退出清理，$id 为管理员 ID
     }
 }
 
@@ -35,7 +35,8 @@ class AdminLoginService implements AdminLoginServiceInterface
 ## 注意事项
 
 - 该接口只声明登录/退出两个方法；权限判断、日志等仍属 `AdminServiceInterface`。
-- 与 `AdminLoginActionInterface` 的方法签名完全一致，区别在语义定位（Action 面向动作层，Service 面向服务层）。
+- `logout($id)` 的 `$id` 参数为 `int|string` 类型，表示要登出的管理员 ID。
+- 与 `AdminLoginActionInterface` 的方法签名一致，区别在语义定位（Action 面向动作层，Service 面向服务层）。
 
 ## 方法列表
 
@@ -44,8 +45,8 @@ class AdminLoginService implements AdminLoginServiceInterface
     public function login(array $post)
 执行登录并返回管理员数据。
 
-    public function logout()
-执行退出登录。
+    public function logout($id)
+执行退出登录；`$id` 为要登出的管理员 ID（`int|string`）。
 
 ## 相关链接
 

@@ -4,14 +4,17 @@
 
 `BusinessHelper` 是面向 **Business（业务层）** 的静态助手集合（方法就在本类里，不再有 trait）。业务层通过它访问：应用设置与路径（`Setting`/`AppOptions`/`PathOfProject`/`PathOfRuntime`）、配置（`Config`）、缓存（`Cache`）、校验（`Validator*`）、事件（`FireGlobalEvent`/`OnGlobalEvent`）、用户/管理员服务（`AdminService`/`UserService`）以及业务异常快速抛出（`BusinessThrowOn`）。
 
-本类自带 4 个事件名常量（`$EVENT_REGISTERING/$EVENT_REGISTERED/$EVENT_LOGINING/$EVENT_LOGINED`），供注册/登录等业务生命周期事件使用。
+本类自带 10 个事件名常量与 8 个异常码/异常消息常量，均为 `User`/`Admin` 对应常量的别名。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\Foundation\Business`
 - 声明：`class BusinessHelper`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
-- 事件名常量：`$EVENT_REGISTERING = 'registering'`、`$EVENT_REGISTERED = 'registered'`、`$EVENT_LOGINING = 'logining'`、`$EVENT_LOGINED = 'logined'`
+- 事件名常量（`User` 别名）：`EVENT_SERVICE_USER_REGISTERING` / `EVENT_SERVICE_USER_REGISTERED` / `EVENT_SERVICE_USER_LOGINING` / `EVENT_SERVICE_USER_LOGINED` / `EVENT_SERVICE_USER_LOGOUTING` / `EVENT_SERVICE_USER_LOGOUTED`
+- 事件名常量（`Admin` 别名）：`EVENT_SERVICE_ADMIN_LOGINING` / `EVENT_SERVICE_ADMIN_LOGINED` / `EVENT_SERVICE_ADMIN_LOGOUTING` / `EVENT_SERVICE_ADMIN_LOGOUTED`
+- 异常码/消息常量（`User` 别名）：`EXCEPTION_CODE_USER_NEED_LOGIN` / `EXCEPTION_MESSAGE_USER_NEED_LOGIN` / `EXCEPTION_CODE_USER_NEED_PERMISSION` / `EXCEPTION_MESSAGE_USER_NEED_PERMISSION`
+- 异常码/消息常量（`Admin` 别名）：`EXCEPTION_CODE_ADMIN_NEED_LOGIN` / `EXCEPTION_MESSAGE_ADMIN_NEED_LOGIN` / `EXCEPTION_CODE_ADMIN_NEED_PERMISSION` / `EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION`
 
 ## 使用方式
 
@@ -36,7 +39,7 @@ Helper::BusinessThrowOn(!$flag, '业务不允许', 10001);
 - `Setting`/`Options` 读取的是 App 的设置与选项；`PathOfProject`/`PathOfRuntime` 来自 App 的项目/运行时路径。
 - `Validator*` 三个方法分别是 `filter`/`check`/`valid` 的口径：`ValidatorFilter` 返回过滤后数据、`ValidatorCheck` 失败抛异常、`ValidatorValid` 返回错误数组。
 - `AdminService`/`UserService` 分别取 `GlobalAdmin`/`GlobalUser` 的 service，供业务层做认证服务调用。
-- 事件常量拼写已修正：`$EVENT_REGISTERING = 'registering'`、`$EVENT_REGISTERED = 'registered'`（旧名为 `REGISTING`/`registed`，工程侧若有监听旧名的代码需一并改）。登录侧沿用框架既有写法 `$EVENT_LOGINING/$EVENT_LOGINED`（与 `GlobalUser` 的 `EVENT_*_LOGINING/LOGINED` 一致），未改。
+- 本类的全部事件名常量与异常码/消息常量均为 `GlobalUser\User` / `GlobalAdmin\Admin` 对应常量的别名，直接复用框架既有值，无额外行为。
 
 ## 方法列表
 
@@ -52,7 +55,7 @@ Helper::BusinessThrowOn(!$flag, '业务不允许', 10001);
 读取 `config/` 下某配置文件的内容（经由 `Configer`）。
 
     public static function XpCall($callback, ...$args)
-以“异常封装”方式调用回调并透传结果（经由 `CoreHelper`，业务异常可在上层被统一捕获）。
+以"异常封装"方式调用回调并透传结果（经由 `CoreHelper`，业务异常可在上层被统一捕获）。
 
     public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 `$flag` 为真时抛业务异常（默认业务异常类，可指定 `$exception_class`）。

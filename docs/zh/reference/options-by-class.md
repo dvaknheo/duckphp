@@ -2,7 +2,7 @@
 
 > 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
-选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**218** 个选项（同名选项在不同类各自声明，合计 252 处；另有 9 个隐藏选项见文末）。
+选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**206** 个选项（同名选项在不同类各自声明，合计 240 处；另有 11 个隐藏选项见文末）。
 
 想按名字找？看 [应用选项（按字母顺序索引）](options-index.md)；选项机制见 [应用选项总览](options.md)。
 
@@ -18,7 +18,7 @@ DuckPhp\Core\App 的子类，本身不定义复杂的业务，而是
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `data_file_enable` | `false` | 是否打开“数据属性/外部扩展 options 文件”机制。开启后会在对应初始化阶段调用 `ExtOptionsLoader` 读取额外定义（如多应用共用配置）。 |
+| `data_file_enable` | `false` | 是否打开"数据属性/外部扩展 options 文件"机制。开启后会在对应初始化阶段调用 `ExtOptionsLoader` 读取额外定义（如多应用共用配置）。 |
 | `ext` | `[...]` | 本类默认启用的扩展钩子映射。值为源码 `ext` 五项：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`(=那个开关值)。 |
 | `database_driver` | `''` | 数据库驱动标签（如 `mysql`）。初始化后会把 `DbManager` 得到的真实驱动回填到该 options 供上层读取。 |
 | `cli_command_with_common` | `true` | 是否把内置默认 CLI 命令集（`DuckPhp\Component\Command`）登记进当前应用的命令列表。 |
@@ -597,60 +597,48 @@ DuckPHP 内置的“用 PHP 内置服务器跑项目”的启动器
 
 ### DuckPhp\GlobalAdmin\GlobalAdmin
 
-DuckPHP 的「全局管理员组件」
+管理员体系的**完整实现**
 
 类文档：[DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md)
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `admin_loginout_auto_redirect` | `true` | `login()/logout()` 完成后是否自动 302（登录跳 home、退出跳 login）。 |
-| `admin_url_home` | `null` | 后台首页 URL（未配回调时用 `__url()` 生成）。 |
-| `admin_url_login` | `null` | 后台登录 URL。 |
-| `admin_url_logout` | `null` | 后台退出 URL。 |
-| `admin_view_file_header` | `null` | 后台页头视图文件（渲染时并入 `__view_data.header`）。 |
-| `admin_view_file_footer` | `null` | 后台页脚视图文件（渲染时并入 `__view_data.footer`）。 |
-| `admin_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 数组时，是否先把类名转成 `类名::_()` 单例实例。 |
-| `admin_callback_for_id` | `null` | 取当前管理员 id 的回调。 |
-| `admin_callback_for_name` | `null` | 取当前管理员名的回调。 |
-| `admin_callback_for_data` | `null` | 取当前管理员数据（数组）的回调。 |
-| `admin_callback_for_local_service` | `null` | 返回本地 `AdminServiceInterface` 实现的回调。 |
-| `admin_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
-| `admin_callback_for_login_service` | `null` | 登录服务回调（`login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
-| `admin_callback_for_session` | `null` | 管理员会话实现回调（返回 `AdminSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
-| `admin_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `admin_url_home`）。 |
-| `admin_callback_for_url_for_login` | `null` | 生成登录 URL 的回调（优先于 `admin_url_login`）。 |
-| `admin_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调（优先于 `admin_url_logout`）。 |
+| `globaladmin_is_authed_redirect` | `true` | `login()`/`logout()` 完成后是否自动 302（登录跳 `urlForHome()`、退出跳 `urlForLogin()`）。 |
+| `globaladmin_url_home` | `null` | 后台首页 URL；未配时取 App 的同名上下文选项 `url_admin_home`，再退回 `'/'`。 |
+| `globaladmin_url_login` | `null` | 后台登录 URL；未配时退回 `'/'`（这是 `throwLoginOn()` 的 302 目标）。 |
+| `globaladmin_url_logout` | `null` | 后台退出 URL；未配时取 App 的上下文选项 `url_admin_logout`，再退回 `'/'`。 |
+| `globaladmin_view_file_header` | `null` | 后台页眉视图文件（非空才渲染，结果并入 `__view_data.header`）。 |
+| `globaladmin_view_file_footer` | `null` | 后台页脚视图文件（非空才渲染，结果并入 `__view_data.footer`）。 |
+| `globaladmin_enable_callback_singleton` | `true` | 回调是 `[类名, 方法]` 时，是否先把类名换成 `类名::_()` 单例实例。 |
+| `globaladmin_local_service` | `null` | 返回 `AdminServiceInterface` 实现的回调（键缺失时 `localService()` 抛异常）。 |
+| `globaladmin_login_service` | `null` | 返回 `AdminLoginServiceInterface` 实现的回调。 |
+| `globaladmin_login_session` | `null` | 返回 `AdminSessionInterface` 实现的回调。 |
+| `globaladmin_ext_view_data_callback` | `null` | 追加视图数据的回调（键缺失时**不报错**，跳过即可；与上面三个「必需」回调不同）。 |
+| `globaladmin_need_login_callback` | `null` | 未登录时的自定义处理；配了就**不会**走默认的 302/JSON，只回调再 `exit()`。 |
 
 ## 用户系统
 
 ### DuckPhp\GlobalUser\GlobalUser
 
-DuckPHP 的「全局用户组件」
+用户体系的**完整实现**
 
 类文档：[DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md)
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `user_enable` | `true` | 是否启用用户体系（关掉后 provider 相关分支不接管）。 |
-| `user_loginout_auto_redirect` | `true` | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
-| `user_url_home` | `null` | 站内首页 URL（未配回调时用 `__url()` 生成）。 |
-| `user_url_register` | `null` | 注册 URL（键名由旧 `user_url_regist` 更名）。 |
-| `user_url_login` | `null` | 登录 URL。 |
-| `user_url_logout` | `null` | 退出 URL。 |
-| `user_view_file_header` | `null` | 用户页头视图文件。 |
-| `user_view_file_footer` | `null` | 用户页脚视图文件。 |
-| `user_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 时是否先把类名转成 `类名::_()` 单例实例。 |
-| `user_callback_for_id` | `null` | 取当前用户 id 的回调。 |
-| `user_callback_for_name` | `null` | 取当前用户名的回调。 |
-| `user_callback_for_data` | `null` | 取当前用户数据（数组）的回调。 |
-| `user_callback_for_local_service` | `null` | 返回本地 `UserServiceInterface` 实现的回调。 |
-| `user_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
-| `user_callback_for_login_service` | `null` | 登录服务回调（`register()/login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
-| `user_callback_for_session` | `null` | 用户会话实现回调（返回 `UserSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
-| `user_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `user_url_home`）。 |
-| `user_callback_for_url_for_register` | `null` | 生成注册 URL 的回调（键名与 `urlForRegister()` 拼写一致）。 |
-| `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
-| `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
+| `globaluser_is_authed_redirect` | `true` | `register()`/`login()`/`logout()` 完成后是否自动 302（注册/登录跳 `urlForHome()`、退出跳 `urlForLogin()`）。 |
+| `globaluser_url_home` | `null` | 站内首页 URL；未配时取 App 的上下文选项 `url_user_home`，再退回 `'/'`。 |
+| `globaluser_url_register` | `null` | 注册页 URL；未配时退回 `'/'`。 |
+| `globaluser_url_login` | `null` | 登录页 URL；未配时退回 `'/'`（这是 `throwLoginOn()` 的 302 目标）。 |
+| `globaluser_url_logout` | `null` | 退出 URL；未配时取 App 的上下文选项 `url_user_logout`，再退回 `'/'`。 |
+| `globaluser_view_file_header` | `null` | 用户页眉视图文件（非空才渲染，结果并入 `__view_data.header`）。 |
+| `globaluser_view_file_footer` | `null` | 用户页脚视图文件（非空才渲染，结果并入 `__view_data.footer`）。 |
+| `globaluser_enable_callback_singleton` | `true` | 回调是 `[类名, 方法]` 时，是否先把类名换成 `类名::_()` 单例实例。 |
+| `globaluser_local_service` | `null` | 返回 `UserServiceInterface` 实现的回调（键缺失时 `localService()` 抛异常）。 |
+| `globaluser_login_service` | `null` | 返回 `UserLoginServiceInterface` 实现的回调。 |
+| `globaluser_login_session` | `null` | 返回 `UserSessionInterface` 实现的回调。 |
+| `globaluser_ext_view_data_callback` | `null` | 追加视图数据的回调（键缺失时**不报错**，跳过即可；与上面三个「必需」回调不同）。 |
+| `globaluser_need_login_callback` | `null` | 未登录时的自定义处理；配了就**不会**走默认的 302/JSON，只回调再 `exit()`。 |
 
 ## 隐藏选项
 
@@ -659,6 +647,8 @@ DuckPHP 的「全局用户组件」
 | 选项 | 默认值 | 出处 | 说明 |
 |---|---|---|---|
 | `not_empty` | `true` | DuckPhp::$common_options | 声明在默认选项里、但源码中没有任何读取点（历史遗留，可忽略）。 |
+| `url_admin_home` | `null` | GlobalAdmin\Admin::urlForHome() | 后台首页 URL 的「应用级」覆盖：优先于组件的 `globaladmin_url_home`。 |
+| `url_user_home` | `null` | GlobalUser\User::urlForHome() | 站内首页 URL 的「应用级」覆盖：优先于组件的 `globaluser_url_home`。 |
 | `session_prefix` | `''` | Foundation\Controller\SessionTrait | 会话名的前缀（根应用的设置也走这里）。 |
 | `table_prefix` | `''` | Ext\SqlDumper / Ext\RouteHookWebInstaller | 数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。 |
 | `exception_for_business` | `\Exception::class` | CoreHelper::_BusinessThrowOn() | `BusinessThrowOn()` 未显式指定时的异常类。 |

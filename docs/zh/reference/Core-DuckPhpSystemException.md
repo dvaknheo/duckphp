@@ -9,16 +9,18 @@
 > ⚠️ **只用于框架内部系统级错误，外部/业务异常不要继承它。**
 > 判断依据应该是「这是框架自己出的问题」还是「工程的业务/权限问题」：
 > - 框架内部机制出错（Phase 名冲突、直接 init 基类、缺 provider…）→ 抛 `DuckPhpSystemException`（或框架内部的子类）；
-> - 工程侧的业务/权限/登录异常 → 继承 `\Exception` 自己定义，例如 [AdminException](GlobalAdmin-AdminException.md)、[UserException](GlobalUser-UserException.md) 都是**直接继承 `\Exception`** 的。
+> - 工程侧的业务/权限/登录异常 → 继承 `\Exception` 自己定义（框架早期的 `AdminException` / `UserException` 就是这种写法，**这两个类已从源码删除**：登录/权限语义改用 `DuckPhp\GlobalAdmin\Admin` / `DuckPhp\GlobalUser\User` 上的 `EXCEPTION_CODE_*` / `EXCEPTION_MESSAGE_*` 常量，未登录由 `throwLoginOn()` 走 302/Ajax JSON/自定义回调后 `exit()`）。
 >
 > 原因：捕获 `DuckPhpSystemException` 等于「框架坏了」的兜底信号，业务异常混进来会让上层无法区分「该提示用户」还是「该报障」。
-> 想要 `ThrowOn()` 那种守卫式抛法不必继承本类——像 `AdminException` 那样 `use DuckPhp\Ext\ThrowOnTrait;` 即可。
+> 想要 `ThrowOn()` 那种守卫式抛法不必继承本类——在自己的异常类里 `use DuckPhp\Ext\ThrowOnTrait;` 即可。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\Core`
 - 声明：`class DuckPhpSystemException extends Exception`
 - 使用 Trait：`DuckPhp\Ext\ThrowOnTrait`
+
+> **尚未启用的常量草稿**：源码里还有一批被 `//` 注释掉的常量（`E_NO_INIT_BASE_CLASS`、`E_Command_Not_Found_In_All`、`E_X`、`E_X2`、`E_X4`、`E_C5`、`E_A1`、`E_A2`），属于尚未启用的设计草稿，**不作为正式常量列出**，请勿在工程代码中使用。
 
 ## 使用方式
 

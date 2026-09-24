@@ -2,7 +2,7 @@
 
 ## 简介
 
-`AdminServiceInterface` 是“管理员服务”的契约接口，定义后台服务侧需要实现的三件事：权限判断（`canAccess`）、操作日志（`log`）、超级管理员判断（`isSuper`）。`AdminActionInterface::localService()`/`service()` 返回的对象即实现本接口。
+`AdminServiceInterface` 是"管理员服务"的契约接口，定义后台服务侧需要实现的三件事：权限判断（`canAccess`）、操作日志（`log`）、超级管理员判断（`isSuper`）。`AdminActionInterface::service()` 返回的对象即实现本接口。
 
 工程上通常把鉴权与日志做成一个可替换的 Service 类，再通过选项（如 `admin_callback_for_local_service`）挂到 `GlobalAdmin` 上。
 
@@ -37,15 +37,16 @@ class AdminService implements AdminServiceInterface
 
 ## 注意事项
 
-- `canAccess` 的 `$admin_id` 可为 `int|string`；`$url` 为可空的回跳/当前 URL。
-- 本接口不含“当前管理员是谁”的查询——那是 `AdminActionInterface::id()/name()/data()` 的职责；本接口的三个方法都以 `$admin_id` 为参数显式传入。
+- `canAccess` 的 `$admin_id` 可为 `int|string`；`$url` 为可空的 URL。
+- 参数顺序与 `AdminActionInterface::canAccess()` 一致：**`$url` 在 `$class`/`$method` 之前**。这是破坏性变更：旧代码若按 `$class, $method, $url` 顺序传实参会静默错位，务必检查调用处。
+- 本接口不含"当前管理员是谁"的查询——那是 `AdminActionInterface::id()/name()/data()` 的职责；本接口的三个方法都以 `$admin_id` 为参数显式传入。
 
 ## 方法列表
 
 ### 公共方法
 
     public function canAccess($admin_id, ?string $url, string $class, string $method): bool
-判断指定管理员能否访问某 URL/控制器类/方法（参数顺序与 `AdminActionInterface::canAccess()` 一致：`$url` 在前）。
+判断指定管理员能否访问某 URL/控制器类/方法。参数顺序与 `AdminActionInterface::canAccess()` 一致：url 在前。
 
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
 记录指定管理员的一条操作日志。

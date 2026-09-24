@@ -103,6 +103,11 @@ public function list()
 
 配置见[第 2-18 章](../guide/user.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
 
+//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：本节片段里的键名全是旧名，下次改本章时按源码重写——
+//  · `user_url_*` → `globaluser_url_{home,register,login,logout}`；`user_callback_for_session` → `globaluser_login_session`；`user_callback_for_login_service` → `globaluser_login_service`；
+//  · 下面 ⚠️ 那句里的 `user_callback_for_id/name/data/local_service` **四个键都已不存在**：现在 id/name/data 只从会话（`globaluser_login_session`）取，服务走 `globaluser_local_service`；
+//  · `Helper::UserId()` 未登录时**不再抛 `UserException`**（该类已删除），而是走 `throwLoginOn()`：配了 `globaluser_need_login_callback` 就回调、非 Ajax 302 到登录页、Ajax 输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，三条路都 `exit()`。
+
 ```php
 // System/App.php 的选项
 'user_url_login'    => 'user/login',

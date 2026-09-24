@@ -46,6 +46,7 @@ ExtOptionsLoader::_()->saveExtOptions(['is_debug'=>false]);
 
 ## 注意事项
 
+- `saveExtOptions()` 在 root 相位里会检查 `data_file_enable`：若 root 组件未开启 `data_file_enable` 则抛 `DuckPhpSystemException("must enable 'data_file_enable' in root!")`（注意检查的是 **root** 组件自身的选项，不是当前实例的）。
 - JSON 文件的默认位置是 `runtime/DuckPhpData.config.json`（root `path_runtime`）；缺失即视为空对象，首次 save 时补 `__date__`。
 - 根/子区分用 App::Phase/A Root 语义；各 Phase 读自己段。
 - bump 规则是白名单而非全量；避免毒化别的 options（只有 bump_keys/prefix 允许的才写 App options 主表，另外整体写 `data`）。

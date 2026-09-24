@@ -60,6 +60,11 @@ Helper::RemoveEvent('third.ordered');                                      // = 
 
 ### 事件名约定：「进行中 / 已完成」后缀
 
+//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：下面这张表已过期，下次改本章时按源码重写——
+//  · 层 Helper 上那些 `public static $EVENT_*` **属性已从源码删除**；事件名现在是常量，定义在 [`User`](../reference/GlobalUser-User.md) / [`Admin`](../reference/GlobalAdmin-Admin.md) 上：`User::EVENT_ACTION_USER_{REGISTERING,REGISTERED,LOGINING,LOGINED,LOGOUTING,LOGOUTED}`、`User::EVENT_SERVICE_USER_*`、`Admin::EVENT_ACTION_ADMIN_{LOGINING,LOGINED,LOGOUTING,LOGOUTED}`、`Admin::EVENT_SERVICE_ADMIN_*`（值就是常量名本身，例如 `'ACTION_USER_LOGINED'`）。
+//  · `BusinessHelper` 只保留 `EVENT_SERVICE_*` 的同名别名常量、`ControllerHelper` 只保留 `EVENT_ACTION_*` 的同名别名常量（别名自 `User`/`Admin`）；旧值 `'registering'`/`'action_logined'` 那套小写串已不存在。
+//  · 引用行号（第 23–27 行 / 第 28–35 行）也要跟着改。
+
 框架内置的事件常量分两组（`src/Foundation/Business/BusinessHelper.php` 第 23–27 行、`src/Foundation/Controller/ControllerHelper.php` 第 28–35 行）：
 
 | 层 | 常量 | 值 |

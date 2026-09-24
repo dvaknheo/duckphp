@@ -352,3 +352,30 @@ python3 <tmp>/drift.py --all                                                    
 **修正记录**：本条第一版把 TODO ① 写成了「加**静态**方法、调用点始终 `Helper::`」——作者指出理解有误（是**加动态方法、单例调用**），随后按实测重写，并同步改了写法 A 的示例（`money()` 由 `static` 改为实例方法、示例里补 `Helper::_()->money(12.5)` 调用行）。教训：TODO 里的「动态方法」是 DuckPHP 的固定说法（相对「静态方法」），不要按「运行时可扩展」去自由发挥。
 
 **验收**：`docs/zh/guide` 里再无作者留的 `//TODO`（剩下 4 处命中都是「介绍源码 TODO」的正文，按约定保留）；`check-doc-links.py docs/zh` → **2105 条链接 0 死链**；`helper.md` **227 行**（≤400）。
+
+## 19. 本轮：`doced`→HEAD 代码变动波及指南 —— 只记 TODO，不改指南（作者裁定）
+
+**背景**：本轮任务是「全量覆盖测试 + 按 `doced` 以来的代码变化改参考手册」，作者明确指示：**指南（`docs/zh/guide/`）本轮不动**，凡是被代码改动弄失效的地方，就地留下 `//TODO` 标记，下次改指南时再处理。
+
+**为什么指南会失效**（一句话：`GlobalAdmin`/`GlobalUser` 被重写成「`Admin`/`User` + `globaladmin_*`/`globaluser_*` 选项族」，而指南第 2-18/2-19 章等是按旧 API 写的）：
+
+| 旧（指南里还在写） | 现（源码） |
+|---|---|
+| `user_callback_for_id/name/data/local_service/session/login_service/add_ext_view_data`、`user_url_*`、`user_enable`、`user_loginout_auto_redirect`、`user_view_file_*` | `globaluser_login_session` / `globaluser_local_service` / `globaluser_login_service` / `globaluser_ext_view_data_callback` / `globaluser_need_login_callback` / `globaluser_url_{home,register,login,logout}` / `globaluser_is_authed_redirect` / `globaluser_view_file_{header,footer}` / `globaluser_enable_callback_singleton`（admin 侧同构，前缀 `globaladmin_`） |
+| `GlobalUser::_()` / `GlobalAdmin::_()` | `User::_()` / `Admin::_()`（`GlobalUser`/`GlobalAdmin` 只是实现，注册在父类名这个键上） |
+| `UserException` / `AdminException` 两个类 | 类已删除；改用 `User::EXCEPTION_*` / `Admin::EXCEPTION_*` 常量；未登录由 `throwLoginOn()` 处理（自定义回调 / 302 / Ajax JSON + `exit()`） |
+| `onLoginedException(AdminException $ex)` / `onLoginedException(UserException $ex)` | `onNeedPermission()`（**无参**；Ajax 输出 `error_code: -1`(admin) / `-2`(user)、`error_message: 'NEED_PERMISSION'`） |
+| `__logined_enable_view` / `__logined_enable_header_footer` | `__use_logined_view_data` / `__use_logined_header_footer_file`；另有 `__logined_render_header_footer`（缺省真）控制是否渲染头尾文件 |
+| `GlobalAdmin::_Show()` / `GlobalUser::_Show()`、`go_url()`、`addExtViewData()`、`getLoginBusiness()` | 全部删除；接管渲染的是 `DuckPhp::_Show()` → `Admin::_()`/`User::_()` 的 `mergeViewData()` |
+| 层 Helper 上的 `public static $EVENT_REGISTERING` 等属性 | 改成常量：定义在 `User`/`Admin` 上，层 Helper 里只留**同名别名常量**（值形如 `'ACTION_USER_LOGINED'`，不再是 `'registering'`） |
+
+**本轮做了什么**（11 个文件加 `//TODO`，6 处死链就地改成文字；**没有**重写任何一章）
+
+- 顶部整块 TODO（篇幅最大、要整章重写）：`user.md`（49 处旧 API）、`admin.md`（30 处）；
+- 就地 TODO / 顺手改掉旧名：`events.md`（事件常量表整张过期）、`overriding.md`（视图级开关表 + 第 105-106 行示例）、`appendix-snippets.md`（登录片段）、`static-resources.md`、`exception.md`、`troubleshooting.md`、`appendix-faq.md`、`embed.md`、`helper.md`（`onLoginedException()` → `onNeedPermission()` 与源码行号）；
+- 6 处指向**已删除参考页**的链接（`GlobalUser-UserException.md` / `GlobalAdmin-AdminException.md`）已就地改成文字，保证 `check-doc-links.py` 仍为 0 死链（`user.md` 2 处、`admin.md` 2 处、`exception.md` 2 处）；
+- 参考页里的同名死链由本轮参考手册同步一并清掉（`Core-DuckPhpSystemException.md`）。
+
+**验收**：`check-doc-links.py docs/zh` → **2104 条链接 0 死链**；`docs/zh/guide/` 里 `//TODO` 命中 11 个文件（下次改指南的入口：`grep -rn '//TODO' docs/zh/guide`）。
+
+**下次改指南的建议顺序**：先 `user.md` / `admin.md`（旧 API 最集中，且两章互相引用），再 `events.md`（事件常量表），然后零散旧键名（`appendix-snippets.md` / `troubleshooting.md` / `appendix-faq.md` / `static-resources.md` / `embed.md` / `overriding.md` / `helper.md` / `exception.md`）；改完按 §4 跑链接检查与行数检查，并把对应 `//TODO` 删掉。

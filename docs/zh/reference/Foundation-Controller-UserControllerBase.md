@@ -5,10 +5,11 @@
 `UserControllerBase` 是工程「前台登录用户控制器」的推荐基类：`implements UserControllerInterface` 作标识，并在构造时自动执行登录/权限检查（`initController()`）：
 
 1. `Helper::checkInstall(null)`：未安装则跳安装页；
-2. `Helper::User()->canAccess()`：判断当前用户是否能访问当前路由；
-3. 无权限时：非 Ajax 请求 `Show302` 到登录页并 `exit()`；Ajax 请求则抛 `UserException("can not access", -1)`。
+2. `Helper::User()->id(true)`：确保已登录；
+3. `Helper::User()->canAccess()`：判断当前用户是否能访问当前路由；
+4. 无权时：非 Ajax 请求 `Show302` 到登录页并 `exit()`；Ajax 请求则返回 JSON `{error_code: -2, error_message: 'NEED_PERMISSION'}`。
 
-与 `AdminControllerBase` 结构完全同构，只是面向 `GlobalUser`/`UserException`。
+与 `AdminControllerBase` 结构完全同构，只是面向 `GlobalUser`。
 
 ## 类信息
 
@@ -34,7 +35,8 @@ class CenterController extends UserControllerBase
 
 ## 注意事项
 
-- 依赖 `GlobalUser` 已正确配置 provider；`UserException` 用于 Ajax 无权场景。
+- 依赖 `GlobalUser` 已正确配置 provider。
+- `onNeedPermission()` 的 Ajax 分支硬编码 `error_code => -2`、`error_message => 'NEED_PERMISSION'`；非 Ajax 分支用 `ControllerHelper::SERVER('REQUEST_URI','')` 取 `PHP_URL_PATH` 作为 `url_back` 传给 `urlForLogin()`。
 
 ## 方法列表
 
@@ -45,15 +47,14 @@ class CenterController extends UserControllerBase
 
 ### 受保护方法
 
-    protected function onLoginedException(UserException $ex)
-会话模式下的登录态异常钩子（子类可覆盖）。
+    protected function onNeedPermission()
+无权时统一处理钩子：非 Ajax 跳登录页，Ajax 返回 `error_code:-2` JSON。
 
     protected function initController()
-检查安装与权限：无权时非 Ajax 跳登录页，Ajax 抛 `UserException`。
+检查安装→强制登录→权限检查：无权时调用 `onNeedPermission()` 后 `exit()`。
 
 ## 相关链接
 
-- [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) — 权限与登录提供方
+- [DuckPhp\GlobalUser\User](GlobalUser-GlobalUser.md) — 权限与登录提供方
 - [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) — 标记接口
-- [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md) — Ajax 无权异常
 - [DuckPhp\Foundation\Controller\ControllerHelper](Foundation-Controller-ControllerHelper.md) — 内部使用的静态助手

@@ -15,14 +15,17 @@
 - 事件：`FireGlobalEvent/OnGlobalEvent`；
 - 用户/管理员：`Admin*`/`User*` 系列。
 
-本类自带 6 个“动作级”事件常量（`$EVENT_ACTION_*`），供控制器动作生命周期事件使用。
+本类自带 10 个动作级事件名常量与 8 个异常码/异常消息常量，均为 `User`/`Admin` 对应常量的别名。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\Foundation\Controller`
 - 声明：`class ControllerHelper`
 - 使用的 Trait：`DuckPhp\Core\SingletonExTrait`
-- 事件常量：`$EVENT_ACTION_REGISTERING/REGISTERED/LOGINING/LOGINED/LOGOUTING/LOGOUTED`（值为 `action_registering`、`action_registered`、`action_logining`、`action_logined`、`action_logouting`、`action_logouted`）
+- 事件名常量（`User` 别名）：`EVENT_ACTION_USER_REGISTERING` / `EVENT_ACTION_USER_REGISTERED` / `EVENT_ACTION_USER_LOGINING` / `EVENT_ACTION_USER_LOGINED` / `EVENT_ACTION_USER_LOGOUTING` / `EVENT_ACTION_USER_LOGOUTED`
+- 事件名常量（`Admin` 别名）：`EVENT_ACTION_ADMIN_LOGINING` / `EVENT_ACTION_ADMIN_LOGINED` / `EVENT_ACTION_ADMIN_LOGOUTING` / `EVENT_ACTION_ADMIN_LOGOUTED`
+- 异常码/消息常量（`User` 别名）：`EXCEPTION_CODE_USER_NEED_LOGIN` / `EXCEPTION_MESSAGE_USER_NEED_LOGIN` / `EXCEPTION_CODE_USER_NEED_PERMISSION` / `EXCEPTION_MESSAGE_USER_NEED_PERMISSION`
+- 异常码/消息常量（`Admin` 别名）：`EXCEPTION_CODE_ADMIN_NEED_LOGIN` / `EXCEPTION_MESSAGE_ADMIN_NEED_LOGIN` / `EXCEPTION_CODE_ADMIN_NEED_PERMISSION` / `EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION`
 
 ## 使用方式
 
@@ -55,7 +58,7 @@ public function action_login()
 - `Admin/AdminId/AdminName/User/UserId/UserName` 对应 `GlobalAdmin`/`GlobalUser` 的动作接口与登录查询；`AdminService/UserService` 取 service。
 - `PageHtml($total, $options)` 由 `Pager` 生成 HTML 分页条。
 - 控制器里建议用 `Show302/Show404` 而非直接 `exit`（更可测）；需直出时可 `exit()`（经 SystemWrapper）。
-- 事件常量拼写已修正：`$EVENT_ACTION_REGISTERING = 'action_registering'`、`$EVENT_ACTION_REGISTERED = 'action_registered'`（旧名为 `REGISTING`/`action_registing` 等，工程侧若有监听旧名的代码需一并改）。登录/登出侧沿用框架既有写法 `action_logining/action_logined/action_logouting/action_logouted`（与 `GlobalAdmin`/`GlobalUser` 的 `EVENT_*_LOGINING/LOGINED/LOGOUTING/LOGOUTED` 一致），未改。
+- 本类的全部事件名常量与异常码/消息常量均为 `GlobalUser\User` / `GlobalAdmin\Admin` 对应常量的别名，直接复用框架既有值，无额外行为。
 
 ## 方法列表
 

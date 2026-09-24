@@ -4,6 +4,13 @@
 > 前置：[第 2-9 章 会话](session.md)、[第 2-3 章 控制器](controllers.md)、[第 2-11 章 异常与错误处理](exception.md)。预计 20 分钟。
 > 示例片段基于 `MyProj` 工程；测试里的最小实现见 `tests/GlobalUser/GlobalUserTest.php` 的 `MyUser`/`MyUserAction`。
 
+//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：本章多处 API 已随 `doced..HEAD` 的源码改动失效，下次改本章时逐条按源码重写：
+//  · 选项族整体改名：`user_callback_for_*` / `user_url_*` / `user_loginout_auto_redirect` / `user_enable` / `user_view_file_*` → **`globaluser_*`**（`globaluser_login_session`、`globaluser_local_service`、`globaluser_login_service`、`globaluser_ext_view_data_callback`、`globaluser_need_login_callback`、`globaluser_url_{home,register,login,logout}`、`globaluser_is_authed_redirect`、`globaluser_view_file_{header,footer}`、`globaluser_enable_callback_singleton`），详见 [GlobalUser](../reference/GlobalUser-GlobalUser.md)。
+//  · 调用侧：现在是 [`User`](../reference/GlobalUser-User.md)（`GlobalUser` 只是它的完整实现），一律 `User::_()` 或 `Helper::User()/UserId()/UserName()`；不要再写 `GlobalUser::_()`。
+//  · `UserException` 类**已从源码删除**（本章 2 处链接指向已删页 `GlobalUser-UserException.md`）：异常码/消息改用 `User::EXCEPTION_CODE_USER_NEED_LOGIN`、`User::EXCEPTION_MESSAGE_USER_NEED_PERMISSION` 这类常量；**未登录不再抛异常**，而是走 `throwLoginOn()`——配了 `globaluser_need_login_callback` 就回调、非 Ajax 则 `302` 到 `urlForLogin(当前 path)`、Ajax 则输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，三条路最后都 `exit()`。
+//  · 视图级开关改名：`__logined_enable_view` → `__use_logined_view_data`，`__logined_enable_header_footer` → `__use_logined_header_footer_file`；另有 `__logined_render_header_footer`（缺省视为真）决定要不要渲染头尾文件。
+//  · `UserSessionTrait` 与会话键 `user` 未变，但 `user_callback_for_session` 这个键名已不存在，改成 `globaluser_login_session`。
+
 ## 最小示例
 
 一个工程类继承 [`DuckPhp\GlobalUser\GlobalUser`](../reference/GlobalUser-GlobalUser.md)，把「当前是谁」「登录服务」「会话实现」用**回调**接上；再在 `App` 的 `ext` 里挂上去：
@@ -109,7 +116,7 @@ class UserSession implements UserSessionInterface
 }
 ```
 
-`UserSessionTrait` 把当前用户存进会话键 **`user`**（数组，含 `id`/`name`）；配了 `user_callback_for_session` 之后，`Helper::UserId()` / `Helper::UserName()` 优先读会话，未登录时抛 [`UserException`](../reference/GlobalUser-UserException.md)（`check_login=false` 时返回 `0`/空）。
+`UserSessionTrait` 把当前用户存进会话键 **`user`**（数组，含 `id`/`name`）；配了 `globaluser_login_session` 之后，`Helper::UserId()` / `Helper::UserName()` 优先读会话，未登录时走 `throwLoginOn()`（旧文写的是「抛 `UserException`」，该类已删除；`check_login=false` 时返回 `0`/空）。
 
 ### 5. 未登录怎么办
 
@@ -193,6 +200,6 @@ $names = Helper::UserService()->batchGetUsernames([1, 2, 3]);   // [1 => '张三
 ## 下一步
 
 - [第 2-19 章 管理员体系](admin.md)：后台那套（登录、`canAccess`、菜单）。
-- [第 2-11 章 异常与错误处理](exception.md)：`UserException` 怎么被接住、怎么变成跳转或错误页。
+- [第 2-11 章 异常与错误处理](exception.md)：登录/权限异常现在怎么被接住、怎么变成跳转或错误页（旧文里的 `UserException` 已删除）。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉用户视图头尾。
-- 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[UserLoginActionInterface](../reference/GlobalUser-UserLoginActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserLoginServiceInterface](../reference/GlobalUser-UserLoginServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)、[UserException](../reference/GlobalUser-UserException.md)
+- 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[User](../reference/GlobalUser-User.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[UserLoginActionInterface](../reference/GlobalUser-UserLoginActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserLoginServiceInterface](../reference/GlobalUser-UserLoginServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)

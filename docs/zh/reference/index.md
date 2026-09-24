@@ -20,8 +20,8 @@
 |---|---|
 | 逐类参考页 | 109 篇 |
 | 声明了选项的类 | 42 个 |
-| 应用选项（去重后） | 218 个 |
-| 应用选项（隐藏） | 9 个 |
+| 应用选项（去重后） | 206 个 |
+| 应用选项（隐藏） | 11 个 |
 <!-- GEN:stats end -->
 
 ## 怎么用这本手册
@@ -165,27 +165,27 @@
 
 | 类 | 说明 |
 |---|---|
+| [DuckPhp\GlobalAdmin\Admin](GlobalAdmin-Admin.md) | 管理员体系的**基类（默认实现）** |
 | [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) | 「管理员会话动作」的契约接口 |
 | [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) | 一个**空的标记接口**（marker interface，不声明任何方法） |
-| [DuckPhp\GlobalAdmin\AdminException](GlobalAdmin-AdminException.md) | 管理员（后台）领域的异常类 |
 | [DuckPhp\GlobalAdmin\AdminLoginActionInterface](GlobalAdmin-AdminLoginActionInterface.md) | 「管理员登录动作」契约接口，与 AdminActionInterface 分离… |
 | [DuckPhp\GlobalAdmin\AdminLoginServiceInterface](GlobalAdmin-AdminLoginServiceInterface.md) | 「管理员登录服务」契约接口，描述服务侧的登录/退出能力 |
-| [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | “管理员服务”的契约接口，定义后台服务侧需要实现的三件事 |
+| [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | "管理员服务"的契约接口，定义后台服务侧需要实现的三件事 |
 | [DuckPhp\GlobalAdmin\AdminSessionInterface](GlobalAdmin-AdminSessionInterface.md) | 「管理员会话」契约接口 |
 | [DuckPhp\GlobalAdmin\AdminSessionTrait](GlobalAdmin-AdminSessionTrait.md) | AdminSessionInterface 的默认实现 Trait |
-| [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | DuckPHP 的「全局管理员组件」 |
+| [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 管理员体系的**完整实现** |
 
 ## 用户系统
 
 | 类 | 说明 |
 |---|---|
-| [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | DuckPHP 的「全局用户组件」 |
+| [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 用户体系的**完整实现** |
+| [DuckPhp\GlobalUser\User](GlobalUser-User.md) | 用户体系的**基类（默认实现）** |
 | [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) | 「用户会话动作」的契约接口 |
 | [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 一个**空的标记接口**（marker interface，不声明任何方法） |
-| [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md) | 用户（前台）领域的异常类 |
 | [DuckPhp\GlobalUser\UserLoginActionInterface](GlobalUser-UserLoginActionInterface.md) | 「用户登录动作」契约接口，与 UserActionInterface 分离，描… |
 | [DuckPhp\GlobalUser\UserLoginServiceInterface](GlobalUser-UserLoginServiceInterface.md) | 「用户登录服务」契约接口，描述服务侧的注册/登录/退出 |
-| [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | “用户服务”的契约接口，定义前台服务侧需要实现的三件事 |
+| [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | "用户服务"的契约接口，定义前台服务侧需要实现的三件事 |
 | [DuckPhp\GlobalUser\UserSessionInterface](GlobalUser-UserSessionInterface.md) | 「用户会话」契约接口 |
 | [DuckPhp\GlobalUser\UserSessionTrait](GlobalUser-UserSessionTrait.md) | UserSessionInterface 的默认实现 Trait |
 <!-- GEN:nav end -->
@@ -199,10 +199,10 @@
 | [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) | 「管理员会话动作」的契约接口 |
 | [DuckPhp\Foundation\Controller\AdminControllerBase](Foundation-Controller-AdminControllerBase.md) | 工程「后台管理员控制器」的推荐基类 |
 | [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) | 一个**空的标记接口**（marker interface，不声明任何方法） |
-| [DuckPhp\GlobalAdmin\AdminException](GlobalAdmin-AdminException.md) | 管理员（后台）领域的异常类 |
+| [DuckPhp\GlobalAdmin\Admin](GlobalAdmin-Admin.md) | 管理员体系的**基类（默认实现）** |
 | [DuckPhp\GlobalAdmin\AdminLoginActionInterface](GlobalAdmin-AdminLoginActionInterface.md) | 「管理员登录动作」契约接口，与 AdminActionInterface 分离… |
 | [DuckPhp\GlobalAdmin\AdminLoginServiceInterface](GlobalAdmin-AdminLoginServiceInterface.md) | 「管理员登录服务」契约接口，描述服务侧的登录/退出能力 |
-| [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | “管理员服务”的契约接口，定义后台服务侧需要实现的三件事 |
+| [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | "管理员服务"的契约接口，定义后台服务侧需要实现的三件事 |
 | [DuckPhp\GlobalAdmin\AdminSessionInterface](GlobalAdmin-AdminSessionInterface.md) | 「管理员会话」契约接口 |
 | [DuckPhp\GlobalAdmin\AdminSessionTrait](GlobalAdmin-AdminSessionTrait.md) | AdminSessionInterface 的默认实现 Trait |
 | [DuckPhp\Core\App](Core-App.md) | DuckPhp\Core\App |
@@ -238,9 +238,9 @@
 | [DuckPhp\Ext\ExtendableStaticCallTrait](Ext-ExtendableStaticCallTrait.md) | ExtendableStaticCallTrait 为类提供「外部扩展静态方法… |
 | [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md) | ExtOptionsLoader处理一类“要记得、要能在下次跑时仍生效”的动态… |
 | [DuckPhp\Core\Functions](Core-Functions.md) | src/Core/Functions.php 定义了一组以双下划线 __ 开头… |
-| [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | DuckPHP 的「全局管理员组件」 |
+| [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 管理员体系的**完整实现** |
 | [DuckPhp\Component\GlobalEvent](Component-GlobalEvent.md) | GlobalEvent extends ComponentBase 提供跨组件… |
-| [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | DuckPHP 的「全局用户组件」 |
+| [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 用户体系的**完整实现** |
 | [DuckPhp\Foundation\Helper](Foundation-Helper.md) | 「四层 Helper 并集」门面 |
 | [DuckPhp\Ext\HookChain](Ext-HookChain.md) | HookChain 表示一串「回调链」 |
 | [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | DuckPHP 内置的“用 PHP 内置服务器跑项目”的启动器 |
@@ -296,10 +296,10 @@
 | [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) | 「用户会话动作」的契约接口 |
 | [DuckPhp\Foundation\Controller\UserControllerBase](Foundation-Controller-UserControllerBase.md) | 工程「前台登录用户控制器」的推荐基类 |
 | [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 一个**空的标记接口**（marker interface，不声明任何方法） |
-| [DuckPhp\GlobalUser\UserException](GlobalUser-UserException.md) | 用户（前台）领域的异常类 |
+| [DuckPhp\GlobalUser\User](GlobalUser-User.md) | 用户体系的**基类（默认实现）** |
 | [DuckPhp\GlobalUser\UserLoginActionInterface](GlobalUser-UserLoginActionInterface.md) | 「用户登录动作」契约接口，与 UserActionInterface 分离，描… |
 | [DuckPhp\GlobalUser\UserLoginServiceInterface](GlobalUser-UserLoginServiceInterface.md) | 「用户登录服务」契约接口，描述服务侧的注册/登录/退出 |
-| [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | “用户服务”的契约接口，定义前台服务侧需要实现的三件事 |
+| [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | "用户服务"的契约接口，定义前台服务侧需要实现的三件事 |
 | [DuckPhp\GlobalUser\UserSessionInterface](GlobalUser-UserSessionInterface.md) | 「用户会话」契约接口 |
 | [DuckPhp\GlobalUser\UserSessionTrait](GlobalUser-UserSessionTrait.md) | UserSessionInterface 的默认实现 Trait |
 | [DuckPhp\Component\Validator](Component-Validator.md) | DuckPHP 的数据验证组件，采用“字段 => 规则字符串”的声明式写法 |

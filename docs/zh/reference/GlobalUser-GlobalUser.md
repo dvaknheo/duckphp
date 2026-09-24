@@ -2,167 +2,203 @@
 
 ## 简介
 
-`GlobalUser` 是 DuckPHP 的「全局用户组件」：它实现 `UserActionInterface`，把“当前用户是谁 / 站内 URL / 用户视图 / 权限与日志”等能力集中到一个组件，并允许通过**选项回调（callback）**把具体实现外包给工程类（如 `UserAction`、`UserService`）。
+`GlobalUser` 是用户体系的**完整实现**：它继承 `User`（常量与「默认不可用」的桩实现都在父类），实现 `UserLoginActionInterface`，把「当前用户是谁 / 站内 URL / 用户页眉页脚 / 权限与日志 / 注册登录退出」集中到一个组件里。
 
-典型接入方式：在应用选项中配置 `user_callback_for_id/name/data/local_service`（以及若干 `user_url_*`/`user_callback_for_url_for_*`）指向工程实现；控制器侧经 `Helper`（`User()/UserId()/…`）或直接 `GlobalUser::_()` 使用。`Foundation\Controller\UserControllerBase` 与之配套使用。
+它自己**不碰数据库也不碰 `$_SESSION`**，而是把三件事外包出去（都通过选项回调）：
 
-与 `GlobalAdmin` 的差异：面向“前台登录用户”场景，URL 含注册（`user_url_register` / `urlForRegister()`），服务含批量取用户名（`batchGetUsernames`），没有“超级管理员”。
+1. **会话**（`globaluser_login_session` → `UserSessionInterface`）：`id()/name()/data()` 的唯一数据源；
+2. **服务**（`globaluser_local_service` → `UserServiceInterface`）：`canAccess()` / `log()` / `batchGetUsernames()` 的去处；
+3. **登录服务**（`globaluser_login_service` → `UserLoginServiceInterface`）：`register()` / `login()` / `logout()` 的业务实现。
+
+`init()` 时会把自己包成 `PhaseProxy` 注册到父类名 `User::class` 这个容器键上（可关，见 `user_provider_enable`），因此全框架（含 `Foundation\Controller\ControllerHelper::User()`、`Foundation\Controller\UserControllerBase`）都通过 `User::_()` 用到它。
 
 ## 类信息
 
 - 命名空间：`DuckPhp\GlobalUser`
-- 声明：`class GlobalUser extends DuckPhp\Core\ComponentBase implements UserActionInterface, UserLoginActionInterface`
+- 声明：`class GlobalUser extends DuckPhp\GlobalUser\User implements UserActionInterface, UserLoginActionInterface`
+- 父类：`DuckPhp\GlobalUser\User`（提供 `mergeViewData()` 的登录字段、`service()`/`log()`/`batchGetUsernames()` 的委托，以及全部常量）
 - 实现的接口：`UserActionInterface`、`UserLoginActionInterface`
-- 事件常量（`const`，共 12 个）：
-
-```php
-const EVENT_ACTION_USER_REGISTERING  = 'ACTION_USER_REGISTERING';
-const EVENT_ACTION_USER_REGISTERED   = 'ACTION_USER_REGISTERED';
-const EVENT_ACTION_USER_LOGINING     = 'ACTION_USER_LOGINING';
-const EVENT_ACTION_USER_LOGINED      = 'ACTION_USER_LOGINED';
-const EVENT_ACTION_USER_LOGOUTING    = 'ACTION_USER_LOGOUTING';
-const EVENT_ACTION_USER_LOGOUTED     = 'ACTION_USER_LOGOUTED';
-const EVENT_SERVICE_USER_REGISTERING = 'SERVICE_USER_REGISTERING';
-const EVENT_SERVICE_USER_REGISTERED  = 'SERVICE_USER_REGISTERED';
-const EVENT_SERVICE_USER_LOGINING    = 'SERVICE_USER_LOGINING';
-const EVENT_SERVICE_USER_LOGINED     = 'SERVICE_USER_LOGINED';
-const EVENT_SERVICE_USER_LOGOUTING   = 'SERVICE_USER_LOGOUTING';
-const EVENT_SERVICE_USER_LOGOUTED    = 'SERVICE_USER_LOGOUTED';
-```
+- 使用的 trait：无
+- 常量：**本类不声明常量**，全部继承自 `User`（`EVENT_ACTION_USER_*` 6 个、`EVENT_SERVICE_USER_*` 6 个、`EXCEPTION_*` 4 个，见 [User](GlobalUser-User.md)）
 
 ## 选项
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `user_url_home` | `null` | 站内首页 URL（未配回调时用 `__url()` 生成）。 |
-| `user_url_register` | `null` | 注册 URL（键名由旧 `user_url_regist` 更名）。 |
-| `user_url_login` | `null` | 登录 URL。 |
-| `user_url_logout` | `null` | 退出 URL。 |
-| `user_view_file_header` | `null` | 用户页头视图文件。 |
-| `user_view_file_footer` | `null` | 用户页脚视图文件。 |
-| `user_enable` | `true` | 是否启用用户体系（关掉后 provider 相关分支不接管）。 |
-| `user_enable_callback_singleton` | `true` | 回调为 `[类名, 方法]` 时是否先把类名转成 `类名::_()` 单例实例。 |
-| `user_callback_for_id` | `null` | 取当前用户 id 的回调。 |
-| `user_callback_for_name` | `null` | 取当前用户名的回调。 |
-| `user_callback_for_data` | `null` | 取当前用户数据（数组）的回调。 |
-| `user_callback_for_local_service` | `null` | 返回本地 `UserServiceInterface` 实现的回调。 |
-| `user_callback_for_add_ext_view_data` | `null` | 追加视图数据的回调（不设时默认注入 `__logined_id/name/url_logout`）。 |
-| `user_callback_for_login_service` | `null` | 登录服务回调（`register()/login()/logout()` 经 `getLoginBusiness()` 调用它）。 |
-| `user_callback_for_session` | `null` | 用户会话实现回调（返回 `UserSessionInterface`）；配置后 `id()/name()` 优先读会话。 |
-| `user_loginout_auto_redirect` | `true` | `register()/login()/logout()` 完成后是否自动 302（注册/登录跳 home、退出跳 login）。 |
-| `user_callback_for_url_for_home` | `null` | 生成首页 URL 的回调（优先于 `user_url_home`）。 |
-| `user_callback_for_url_for_register` | `null` | 生成注册 URL 的回调（键名与 `urlForRegister()` 拼写一致）。 |
-| `user_callback_for_url_for_login` | `null` | 生成登录 URL 的回调。 |
-| `user_callback_for_url_for_logout` | `null` | 生成退出 URL 的回调。 |
+| `globaluser_is_authed_redirect` | `true` | `register()`/`login()`/`logout()` 完成后是否自动 302（注册/登录跳 `urlForHome()`、退出跳 `urlForLogin()`）。 |
+| `globaluser_url_home` | `null` | 站内首页 URL；未配时取 App 的上下文选项 `url_user_home`，再退回 `'/'`。 |
+| `globaluser_url_register` | `null` | 注册页 URL；未配时退回 `'/'`。 |
+| `globaluser_url_login` | `null` | 登录页 URL；未配时退回 `'/'`（这是 `throwLoginOn()` 的 302 目标）。 |
+| `globaluser_url_logout` | `null` | 退出 URL；未配时取 App 的上下文选项 `url_user_logout`，再退回 `'/'`。 |
+| `globaluser_view_file_header` | `null` | 用户页眉视图文件（非空才渲染，结果并入 `__view_data.header`）。 |
+| `globaluser_view_file_footer` | `null` | 用户页脚视图文件（非空才渲染，结果并入 `__view_data.footer`）。 |
+| `globaluser_enable_callback_singleton` | `true` | 回调是 `[类名, 方法]` 时，是否先把类名换成 `类名::_()` 单例实例。 |
+| `globaluser_local_service` | `null` | 返回 `UserServiceInterface` 实现的回调（键缺失时 `localService()` 抛异常）。 |
+| `globaluser_login_service` | `null` | 返回 `UserLoginServiceInterface` 实现的回调。 |
+| `globaluser_login_session` | `null` | 返回 `UserSessionInterface` 实现的回调。 |
+| `globaluser_ext_view_data_callback` | `null` | 追加视图数据的回调（键缺失时**不报错**，跳过即可；与上面三个「必需」回调不同）。 |
+| `globaluser_need_login_callback` | `null` | 未登录时的自定义处理；配了就**不会**走默认的 302/JSON，只回调再 `exit()`。 |
 
 ## 使用方式
 
 ```php
-// App 选项里配置 provider（工程示例）：
+// 应用选项里把三件事挂上（也可以只挂一部分，用不到的键不会报错）
 $options = [
-    'user_callback_for_id'   => [UserAction::class, 'id'],
-    'user_callback_for_name' => [UserAction::class, 'name'],
-    'user_callback_for_data' => [UserAction::class, 'data'],
-    'user_callback_for_local_service' => [UserAction::class, 'service'],
+    'ext' => [
+        \DuckPhp\GlobalUser\GlobalUser::class => true,
+    ],
+    'globaluser_login_session' => [\MyProject\User\UserSession::class, '_'],
+    'globaluser_local_service' => [\MyProject\User\UserService::class, '_'],
+    'globaluser_login_service' => [\MyProject\User\UserLoginService::class, '_'],
+    'url_user_home'            => '/',
 ];
 
-// 控制器内：
-$user = GlobalUser::_();
-$uid  = $user->id();                      // 当前用户 id（未登录抛错）
-if (!$user->canAccess()) { /* 无权 */ }
-$names = $user->batchGetUsernames([1, 2, 3]);
-$user->_Show($data, 'user/center');       // 带用户页头尾的渲染
+// 任何地方读「当前用户」——注意用父类名 User，而不是 GlobalUser
+use DuckPhp\GlobalUser\User;
+
+$id    = User::_()->id(true);          // 未登录时按 throwLoginOn() 处理（302/JSON/自定义回调 + exit）
+$name  = User::_()->name(false);       // check_login=false：未登录返回空串，不打断
+$url   = User::_()->urlForLogin('/order/1');   // 登录后回跳 /order/1 → 生成 '?b=%2Forder%2F1'
+if (!User::_()->canAccess()) {         // 缺省参数＝当前路由的 class/method/PATH_INFO
+    // 无权限
+}
+User::_()->register($post);            // 注册：回调登录服务 + 写会话 + 触发事件 +（可选）302
+User::_()->login($post);               // 登录
+User::_()->logout();                   // 退出
+```
+
+## 配置示例
+
+```php
+// 让「未登录」不再 302，而是走你自己的逻辑（例如 API 返回 401）
+$options['globaluser_need_login_callback'] = function () {
+    \DuckPhp\Core\SystemWrapper::_()->_header('HTTP/1.1 401 Unauthorized', true, 401);
+    echo json_encode(['error' => 'USER_NEED_LOGIN']);
+};
+// 回调返回后组件会调用 SystemWrapper::exit()，请求到此为止。
+
+// 想给用户页加统一页眉页脚（模板路径相对 path_view 解析）
+$options['globaluser_view_file_header'] = 'inc-head';
+$options['globaluser_view_file_footer'] = 'inc-foot';
 ```
 
 ## 注意事项
 
-- **callback 机制**：`run_callback_by_key()` 要求对应选项键已配置（否则 `ThrowOn "need app options 'key'"`）；回调是 `[类名, 方法]` 且 `user_enable_callback_singleton` 开启时，把类名替换为 `类名::_()`。
-- `id()/name()` 未配置任何 provider（session / id / name 回调）时抛 `DuckPhpSystemException("No GlobalUser Provider.")`；配置了 session 而未登录时抛 `UserException`。
-- `service()` 与 `localService()`：前者经 `PhaseProxy` 包装成可跨 Phase 调用的代理；后者返回当前 Phase 的服务。
-- URL 生成优先 callback；无 callback 时 `__url($options['user_url_*'])`。
-- `_Show()` 会临时切到 `App::getLastPhase()`；头尾模板仅在 `user_view_file_header/footer` 非空时解析；`$view` 为空时使用当前路由路径。
-- **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`__logined_enable_header_footer`——它出现在 `_Show()` 的 `$data` 或 `View::_()->data` 里且为真时，才把 `user_view_file_header/footer` 设为视图 head/foot（缺省 `false`）。注：早期的 `use_user_view_header_footer` 选项源码里已无读取点，别再使用。
-- `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, …)`。
-- 组件经 `ComponentBase` 的 `_()` 取实例。
+- **必需回调与可选回调**：`globaluser_local_service` / `globaluser_login_service` / `globaluser_login_session` 是「按键取值，缺了就抛」——`run_callback_by_key()` 抛 `DuckPhpSystemException(" need ext options 'globaluser_login_session'", -1)`（注意消息里 `need` 前有一个空格）；而 `globaluser_ext_view_data_callback` / `globaluser_need_login_callback` 用 `isset()` 判过，缺了只是跳过。
+- **`user_provider_enable`（隐藏选项）**：`init()` 里 `$context->options['user_provider_enable'] ?? true`，为假时**不**把自己注册到 `User::_()`，于是 `User::_()` 会是父类 `User` 的桩实例（调用即抛）。默认开着。
+- **上下文选项优先**：`urlForHome()` / `urlForLogout()` 先读 **App 的** `url_user_home` / `url_user_logout`（这两个是 `DuckPhp` 的隐藏选项，不在本页选项表里），没有再退回组件自己的 `globaluser_url_*`，最后退回 `'/'`；`urlForRegister()` / `urlForLogin()` 不看上下文选项。
+- **`$url_back` 与 `$ext`**：四个 `urlFor*()` 都接受 `(?string $url_back = null, ?array $ext = null)`，两者都由内部方法 `buildUrlBackQuery()` 拼成查询串——`$ext` 里的键值直接进查询串，`$url_back` 以 `b` 排在最后（`?b=...`）；两者都为空则不加 `?`。`throwLoginOn()` 的 302 分支就是把当前 `REQUEST_URI` 的 path 当作 `$url_back` 传进去的。
+- **`mergeViewData()` 的页眉页脚开关**：只有 `$data['__logined_render_header_footer']`（缺省视为 `true`）为真才渲染头尾文件；渲染结果同时放进 `__view_data.header/footer`（给视图用）与 `__logined_header_file/footer_file`（给 `View::setViewHeadFoot()` 用，由 `DuckPhp::_Show()` 消费）。
+- **自动接管渲染**：`DuckPhp::_Show()` 在 `__use_logined_view_data` 为真、且当前路由调用类实现 `UserControllerInterface` 时，会自动调用本组件的 `mergeViewData()`；你通常不需要手动调它。
+- `canAccess()` 三个参数全为 `null` 时会**临时切到 `App::getLastPhase()`** 去读当前路由的 class/method/PATH_INFO，读完切回原相位；显式传参时不做这件事。
+- `id()/name()/data()` 的未登录处理统一走 `throwLoginOn()`：① 配了 `globaluser_need_login_callback` → 回调 + `exit()`；② 非 Ajax → `Show302(urlForLogin(当前 path))` + `exit()`；③ Ajax（`X-Requested-With: XMLHttpRequest`）→ `ShowJson(['error_code' => -1, 'error_message' => 'NEED_LOGIN'])` + `exit()`。三种都会 `exit()`，所以**调用方拿不到返回值**；想避免打断就用 `check_login = false`。
+- `register()/login()/logout()` 的每一个都会先 `fire()` 事件再干活（`EVENT_ACTION_USER_*`）；服务侧的对应事件（`EVENT_SERVICE_USER_*`）由**你的登录服务**在需要时触发，组件本身不发。
+- `logout()` 用的是 `id(false)`：没登录时 id 为 `0`，仍然会照常调用登录服务的 `logout(0)` 与清会话——想避免就自己先判断 `id(false)`。
+- `service()` / `log()` / `batchGetUsernames()` 继承自 `User`，内部都走 `localService()`；`mergeViewData()` 的 `__logined_*` 字段也由父类填，本类只追加页眉页脚。
+
+## 全部选项
+
+```php
+public $options = [
+    'globaluser_is_authed_redirect' => true,
+
+    'globaluser_url_home' => null,
+    'globaluser_url_register' => null,
+    'globaluser_url_login' => null,
+    'globaluser_url_logout' => null,
+
+    // 'inc-head',
+    'globaluser_view_file_header' => null,
+    // 'inc-foot',
+    'globaluser_view_file_footer' => null,
+
+    'globaluser_enable_callback_singleton' => true,
+    //[UserAction::class,'service'],
+    'globaluser_local_service' => null,
+    //[UserAction::class,'loginservice'],
+    'globaluser_login_service' => null,
+    //[UserAction::class,'loginsession'],
+    'globaluser_login_session' => null,
+    //[UserAction::class,'addExtViewData'],
+    'globaluser_ext_view_data_callback' => null,
+    //[UserAction::class,'needLogin'],
+    'globaluser_need_login_callback' => null,
+];
+```
 
 ## 方法列表
 
 ### 公共方法
 
     public function init(array $options, ?object $context = null)
-初始化组件（覆盖父类）：读入 user_* 选项并完成 provider 装配。
+初始化组件：读入 `globaluser_*` 选项；`user_provider_enable`（缺省真）为真时把自己包成 `PhaseProxy` 注册到 `User::class` 这个键上。
 
     public function id(bool $check_login = true)
-当前用户 ID：配置了 `user_callback_for_session` 时读会话（未登录且 `$check_login` 时抛 `UserException("id(): NoLogin")`）；否则走 `user_callback_for_id`；都未配置则抛 `DuckPhpSystemException("id(): No GlobalUser Provider.")`。
+当前用户 ID：读会话的 `getCurrentUserId()`；取不到且 `$check_login` 时交给 `throwLoginOn()`（会 302/JSON/回调后 `exit()`）。
 
     public function name(bool $check_login = true): string
-当前用户名：会话优先（未登录抛 `UserException("name() NoLogin 2")`）；否则走 `user_callback_for_name`；都未配置则抛 `DuckPhpSystemException`。
+当前用户名：读会话的 `getCurrentUserName()`；取不到且 `$check_login` 时交给 `throwLoginOn()`。
 
     public function data(bool $check_login = true): array
-当前用户数据数组。
+当前用户数据数组：读会话的 `getCurrentUser()`；取不到且 `$check_login` 时交给 `throwLoginOn()`。
 
     public function localService()
-返回本地（当前 Phase）的 `UserServiceInterface` 实现。
+返回本地（当前 Phase）的 `UserServiceInterface` 实现：执行 `globaluser_local_service` 回调（键缺失抛异常）。
 
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
-站内首页 URL。
+站内首页 URL：App 的 `url_user_home` → `globaluser_url_home` → `'/'`，经 `__url()` 生成，再按 `$url_back`/`$ext` 拼查询串。
 
     public function urlForRegister(?string $url_back = null, ?array $ext = null): string
-注册 URL（由旧名 `urlForRegist` 更名；内部取 `user_url_register`）。
+注册页 URL：`__url(globaluser_url_register ?? '/')`，再按 `$url_back`/`$ext` 拼查询串。
 
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
-登录 URL。
+登录页 URL：`__url(globaluser_url_login ?? '/')`，再按 `$url_back`/`$ext` 拼查询串。
 
     public function urlForLogout(?string $url_back = null, ?array $ext = null): string
-退出 URL。
+退出 URL：App 的 `url_user_logout` → `globaluser_url_logout` → `'/'`，再按 `$url_back`/`$ext` 拼查询串。
 
-    public function service()
-返回可跨 Phase 调用的用户服务（`PhaseProxy` 包装 `localService()`）。
+    public function mergeViewData(array $data): array
+把用户视图数据补齐：先跑 `globaluser_ext_view_data_callback`（若配），再按开关渲染页眉页脚文件并写入 `__view_data.header/footer` 与 `__logined_header_file/footer_file`，最后交给父类 `User::mergeViewData()` 填 `__logined_id/name/data/url_home/url_logout`。
 
-    public function mergeViewData(array $input): array
-合并用户信息与页面头尾 HTML 到视图数据（`__logined_id/name/url_logout/__view_data`）。
-
-    public function _Show(array $data = [], string $view = '')
-以“登录用户页面”方式渲染：切到 `App::getLastPhase()`、`onBeforeOutput()`、设置头尾（仅当 `user_view_file_header/footer` 非空才解析文件），`$view` 为空时改用当前路由路径；结束后恢复原 Phase。
-
-    public function register(array $post)
-注册：触发 `EVENT_ACTION_USER_REGISTERING` → `getLoginBusiness()->register($post)` → 会话 `setCurrentUser()` → 触发 `EVENT_ACTION_USER_REGISTERED`；`user_loginout_auto_redirect` 为真时 302 到 `urlForHome()`。
-
-    public function login(array $post)
-登录：触发 `EVENT_ACTION_USER_LOGINING` → `getLoginBusiness()->login($post)` → 会话 `setCurrentUser()` → 触发 `EVENT_ACTION_USER_LOGINED`；`user_loginout_auto_redirect` 为真时 302 到 `urlForHome()`。
-
-    public function logout()
-退出：取当前 id → 触发 `EVENT_ACTION_USER_LOGOUTING` → `getLoginBusiness()->logout($user_id)` → 清除会话 → 触发 `EVENT_ACTION_USER_LOGOUTED`；`user_loginout_auto_redirect` 为真时 302 到 `urlForLogin()`。
-
-    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
-判断当前用户能否访问；缺省参数取当前路由的 class/method/PATH_INFO，随后交给 `localService()->canAccess($id, …)`。
-
-    public function log(string $string, ?string $type = null, array $ext = [])
-记录用户操作日志（委托 localService）。
+    public function canAccess(?string $url = null, ?string $class = null, ?string $method = null): bool
+判断当前用户能否访问：未登录（`id(false)` 为假）直接 `false`；三个参数全空时取「当前路由的 class / method / PATH_INFO」（会临时切到 `getLastPhase()` 再切回）；最后委托 `localService()->canAccess($id, $url, $class, $method)`。
 
     public function batchGetUsernames(array $ids): array
-按 ID 批量取用户名（委托 localService）。
+按 ID 批量取用户名：委托 `localService()->batchGetUsernames($ids)`。
+
+    public function register(array $post)
+注册：触发 `EVENT_ACTION_USER_REGISTERING` → `getLoginService()->register($post)` → 会话 `setCurrentUser()` → 触发 `EVENT_ACTION_USER_REGISTERED`；`globaluser_is_authed_redirect` 为真时 `Show302(urlForHome())`。
+
+    public function login(array $post)
+登录：触发 `EVENT_ACTION_USER_LOGINING` → `getLoginService()->login($post)` → 会话 `setCurrentUser()` → 触发 `EVENT_ACTION_USER_LOGINED`；`globaluser_is_authed_redirect` 为真时 `Show302(urlForHome())`。
+
+    public function logout()
+退出：取当前 id（`id(false)`）→ 触发 `EVENT_ACTION_USER_LOGOUTING` → `getLoginService()->logout($user_id)` → 会话 `unsetCurrentUser()` → 触发 `EVENT_ACTION_USER_LOGOUTED`；`globaluser_is_authed_redirect` 为真时 `Show302(urlForLogin())`。
 
 ### 受保护方法
 
     protected function run_callback_by_key(string $key, ...$args)
-按选项键执行回调：键缺失抛错；`[类, 方法]` 且开启 singleton 时类名转实例。
+按选项键执行回调：键没配就抛 `DuckPhpSystemException(" need ext options '键名'", -1)`；回调是 `[类名, 方法]` 且 `globaluser_enable_callback_singleton` 为真时，先把类名换成 `类名::_()`。
 
-    protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
-生成 URL 的公共逻辑：有 callback 用 callback，否则 `__url(options[key_url])`。
+    protected function throwLoginOn($flag)
+未登录的统一处理（`$flag` 为假时直接返回）：① `globaluser_need_login_callback` → 回调 + `exit()`；② 非 Ajax → `Show302(urlForLogin(REQUEST_URI 的 path))`；③ Ajax → `ShowJson(['error_code' => -1, 'error_message' => 'NEED_LOGIN'])`；②③ 结尾都 `exit()`。
 
-    protected function addExtViewData(array $input): array
-追加视图数据：默认补 `__logined_id/name/url_logout`，可被 `user_callback_for_add_ext_view_data` 覆盖。
+    protected function buildUrlBackQuery(?string $url_back, ?array $ext): string
+把 `$ext`（附加查询参数）与 `$url_back`（键名 `b`，排在最后）拼成 `?a=1&b=...` 形式的查询串；两者皆空时返回空串。
 
-    protected function getLoginBusiness()
-取登录业务实现：执行 `user_callback_for_login_service` 回调。
+    protected function getLoginService()
+取登录服务实现（`UserLoginServiceInterface`）：执行 `globaluser_login_service` 回调。
 
     protected function getSession()
-取会话实现（`UserSessionInterface`）：执行 `user_callback_for_session` 回调。
+取会话实现（`UserSessionInterface`）：执行 `globaluser_login_session` 回调。
 
 ## 相关链接
 
-- [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) — 本组件实现的接口
-- [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) — 服务侧契约
-- [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) — service() 的跨 Phase 代理
+- [DuckPhp\GlobalUser\User](GlobalUser-User.md) — 父类：常量与「默认不可用」的桩实现
+- [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) — 本组件实现的动作契约
+- [DuckPhp\GlobalUser\UserLoginActionInterface](GlobalUser-UserLoginActionInterface.md) — 注册/登录/退出的动作契约
+- [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) — `globaluser_local_service` 的契约
+- [DuckPhp\GlobalUser\UserLoginServiceInterface](GlobalUser-UserLoginServiceInterface.md) — `globaluser_login_service` 的契约
+- [DuckPhp\GlobalUser\UserSessionInterface](GlobalUser-UserSessionInterface.md) — `globaluser_login_session` 的契约
+- [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) — `init()` 注册自己时用的跨 Phase 代理
 - [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) — 管理员侧同构组件

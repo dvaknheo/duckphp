@@ -1,14 +1,14 @@
 # DuckPhp\DuckPhp
 
-框架最常用的入口类：继承 `DuckPhp\Core\App`，并把“默认加装哪些常用组件/选项”一次给好，是新项目最常见的起点。
+框架最常用的入口类：继承 `DuckPhp\Core\App`，并把"默认加装哪些常用组件/选项"一次给好，是新项目最常见的起点。
 
 ## 简介
 
 `DuckPhp` 是 `DuckPhp\Core\App` 的子类，本身不定义复杂的业务，而是：
 
-- 用 `protected $common_options` 声明一组“框架默认”的应用选项：默认开启多语言、Rewrite/Map/资源/兼容路由钩子；预留 DB 前缀、用户/管理视图、数据库/Redis provider 与 language 等。
+- 用 `protected $common_options` 声明一组"框架默认"的应用选项：默认开启多语言、Rewrite/Map/资源/兼容路由钩子；预留 DB 前缀、用户/管理视图、数据库/Redis provider 与 language 等。
 - 重写（override）`initComponentsOfRoot` / `initComponentsOfInner`，在父类（`App`）装 System 组件的基础上，把**框架内置的业务组件**逐步接入当前应用：
-  - 根组件阶段：`DbManager`、`RedisManager` 以 `EXT_DEFAULT` 建实例；`GlobalAdmin` 先 `SKIP_INIT`（仅创建单例），`GlobalUser`、`GlobalEvent` 默认 `EXT_DISABLE`（关闭，用到才开）。
+  - 根组件阶段：DbManager/RedisManager/Admin/User/GlobalEvent 全部以 `EXT_ROOT_HOLD_POSISION_ONLY` 建实例（仅创建单例，不自动初始化）；RedisManager/DbManager 有条件初始化（根据 `redis`/`redis_list` 或 `database`/`database_list` 是否存在）；DbManager 初始化后会把 `database_driver` 回填到 App 选项。
   - 内部阶段：注册默认命令行插件与 `Configer`；按 `local_database` / `local_redis` 决定是否为本 Phase 新建独立 DB/Redis；接 `data_file_enable`；并处理 `admin_provider` / `user_provider`。
 - 提供 `_Show()`（根据控制器类型转给用户/管理视图或父默认）、`lang()`（交给可选的 `lang_handler` 或 `Content\Lang`）等两个实例便捷口。
 
@@ -33,7 +33,7 @@ class MyApp extends \DuckPhp\DuckPhp { /* 覆盖/合并 $options */ }
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `data_file_enable` | `false` | 是否打开“数据属性/外部扩展 options 文件”机制。开启后会在对应初始化阶段调用 `ExtOptionsLoader` 读取额外定义（如多应用共用配置）。 |
+| `data_file_enable` | `false` | 是否打开"数据属性/外部扩展 options 文件"机制。开启后会在对应初始化阶段调用 `ExtOptionsLoader` 读取额外定义（如多应用共用配置）。 |
 | `ext` | 数组（见下） | 本类默认启用的扩展钩子映射。值为源码 `ext` 五项：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`(=那个开关值)。 |
 | `session_prefix` | `null` | Session 键命名前缀（宿主用来避免 / 多应用并发覆盖）。 |
 | `table_prefix` | `null` | 数据库表名前缀（DB 层在所需 CRUD 时用它拼接表名）。 |
@@ -46,6 +46,19 @@ class MyApp extends \DuckPhp\DuckPhp { /* 覆盖/合并 $options */ }
 | `lang_final` | `null` | 最终语言；设置后不再自动检测、直接以它为准。 |
 | `local_database` | `false` | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不计入公共容器共享，互不干扰）。 |
 | `local_redis` | `false` | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
+
+另外，本类还有一批隐藏选项（`$hidden_options`），框架会读取但不在 `$options` 中合并默认值，仅供工具/文档展示：
+
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `url_admin_home` | `null` | 管理员后台首页 URL（框架内部使用）。 |
+| `url_user_home` | `null` | 用户前台首页 URL（框架内部使用）。 |
+| `session_prefix` | `''` | Session 键前缀。 |
+| `table_prefix` | `''` | 数据库表前缀。 |
+| `exception_for_business` | `\Exception::class` | 业务异常基类。 |
+| `exception_for_controller` | `\Exception::class` | 控制器异常基类。 |
+| `permission_menu_tree_for_admin` | `null` | 管理员权限菜单树（供 PermissionMenu 组件使用）。 |
+| `duckcoverage_test_lister` | `null` | 覆盖测试枚举。 |
 
 ## 使用方式
 
@@ -71,7 +84,7 @@ class App extends DuckPhp {
 - `name → namespace` 自动反推项目目录/命名空间（由 Kernel 层核）。
 - 想用自己的控制器后缀/前缀，同样在 `$options` 覆盖（如 `controller_method_prefix => 'action_'`）。
 - 用户/管理后台默认关闭 —— 若 `user_provider` / `admin_provider` 是空的就直接不启用相应界面。
-- 「登录后视图」（把渲染转交 `GlobalUser`/`GlobalAdmin`）现在由 **`__logined_enable_view`** 开关：它在 `_Show()` 的 `$data` 或 `View::_()->data` 里为真时生效，框架的 `Controller\UserControllerBase`/`AdminControllerBase` 会自动 `assignViewData('__logined_enable_view', true)`。历史上用过的 `use_user_view` / `use_admin_view` 两个选项**源码已不再读取**（只在 `$common_options` 里留了注释行），不要再写。
+- 「登录后视图」（把渲染转交 `GlobalUser`/`GlobalAdmin`）现在由 **`__use_logined_view_data`** 开关：它在 `_Show()` 的 `$data` 或 `View::_()->data` 里为真时生效，框架的 `Controller\UserControllerBase`/`AdminControllerBase` 会自动 `assignViewData('__use_logined_view_data', true)`。历史上用过的 `use_user_view` / `use_admin_view` 两个选项**源码已不再读取**（只在 `$common_options` 里留了注释行），不要再写。
 - CLI 命令 <hint>默认提供；想只**关闭某个**可用 `cli_command_with_common=false`。</hint>
 
 ## 配置示例
@@ -101,16 +114,16 @@ DuckPhp::Setting('shop_name','demo');
 
 ## 注意事项
 
-1. 类别的“是否可直 init”：`App` 在 `haltInitInBaseClass` 会阻止不加继承的 base 初始化；`DuckPhp` 把这些钩子做合理默认，直接用即可。
+1. 类别的"是否可直 init"：`App` 在 `haltInitInBaseClass` 会阻止不加继承的 base 初始化；`DuckPhp` 把这些钩子做合理默认，直接用即可。
 2. 要关闭默认扩展：合并 `ext => [Lang::class => false, RouteHookRewrite::class => false, …]`（数组层会覆盖默认）。
-3. 开启 administrator/user：配 `user_provider` / `admin_provider`（为空即关闭）；「登录后视图」由 `__logined_enable_view` 触发（旧的 `use_admin_view/use_user_view` 已失效）。
+3. 开启 administrator/user：配 `user_provider` / `admin_provider`（为空即关闭）；「登录后视图」由 `__use_logined_view_data` 触发（旧的 `use_admin_view/use_user_view` 已失效）。
 4. 独立 DB/Redis：在多 app 或沙盒场景用 `local_database/local_redis`，否则共享根 Manager。
 5. 配置后参数 `database_driver` 会被框架回填（读到值而不是空）。
 6. 本类方法不多，框架主体在 `App`/`KernelTrait`；本文档的方法列表只列 `DuckPhp.php` 本身新增的钩子-外壳。
 
 ## 全部选项
 
-以下为 `protected $common_options` 的源码内“激活键”部分（本文件已把被注释掉的历史选项剔除不列）：
+以下为 `protected $common_options` 的源码内"激活键"部分（本文件已把被注释掉的历史选项剔除不列）：
 
 ```php
     protected $common_options = [
@@ -138,6 +151,22 @@ DuckPhp::Setting('shop_name','demo');
     ];
 ```
 
+`$hidden_options`（框架读取但不在 `$options` 中合并默认值）：
+
+```php
+    protected $hidden_options = [
+        'not_empty' => true,
+        'url_admin_home' => null,
+        'url_user_home' => null,
+        'session_prefix' => '',
+        'table_prefix' => '',
+        'exception_for_business' => \Exception::class,
+        'exception_for_controller' => \Exception::class,
+        'permission_menu_tree_for_admin' => null,
+        'duckcoverage_test_lister' => null,
+    ];
+```
+
 ## 方法列表
 
 > 只列 `DuckPhp.php` 中本类 override/新增的方法。继承自 Core-（App/KernelTrait/Route 等）的壳与静态写在各自文档：`Core-App`、`Core-KernelTrait`。
@@ -145,7 +174,7 @@ DuckPhp::Setting('shop_name','demo');
 ### 公共方法
 
     public function _Show(array $data, string $view = '')
-当 current calling controller 是 User/Admin 类型且 use_*_view 开启时，把渲染转发给 GlobalUser/GlobalAdmin；否则回落 parent::_Show()
+当 current calling controller 是 User/Admin 类型且 `__use_logined_view_data` 开启时，先取 `__logined_render_header_footer`，再调用 `User::_()->mergeViewData($data)` 或 `Admin::_()->mergeViewData($data)` 合并视图数据；`__use_logined_header_footer_file` 为真时同时设 head/foot 文件；最后回落 parent::_Show()
 
     public function lang($str, $args = [], $fallback = null)
 翻译：有 lang_handler 回调则委托；否则交给 Lang(_)::language()（可 fallback）
@@ -153,10 +182,10 @@ DuckPhp::Setting('shop_name','demo');
 ### 受保护方法
 
     protected function initComponentsOfRoot($components, $default): void
-父类完成后为本“根默认”补上 DbManager/RedisManager(EXT_DEFAULT)、GlobalAdmin(SKIP_INIT)、GlobalUser/GlobalEvent(disable)；开启时 init ExtOptionsLoader，并对 Db/Redis init 后回填 database_driver
+父类完成后补 SystemWrapper/Logger/CoreHelper(SKIP_INIT)；把 DbManager/RedisManager/Admin/User/GlobalEvent 全部以 EXT_ROOT_HOLD_POSISION_ONLY 并入组件列表；有 data_file_enable 时 init ExtOptionsLoader；有 redis/redis_list 配置时 init RedisManager；有 database/database_list 配置时 init DbManager（并把 database_driver 回填进 App 选项）
 
     protected function initComponentsOfInner($components, $default): void
-父内部装载基础上：子若 data_file_enable 引入外部；默认注册 Command/Configer；并在 local_database/local_redis=真(或驱动不符)时 createLocalObject 自有 Db/Redis
+父内部装载基础上：子若 data_file_enable 引入 ExtOptionsLoader；默认注册 Command/Configer；并在 local_database/local_redis=真(或驱动不符)时 createLocalObject 自有 Db/Redis（同时回填 database_driver）
 
     protected function initComponentsOfExt($classes, $default): void
 扩展装载：先走父类 `initComponentsByClasseOptions()` 处理 `ext` 表，再按 `admin_provider`/`user_provider` 把 GlobalAdmin/GlobalUser 指向工程自有实现（用 `PhaseProxy::CreatePhaseProxy()` 包一层挂到当前 Phase）

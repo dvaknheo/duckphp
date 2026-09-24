@@ -135,7 +135,9 @@ class Tiny extends \DuckPhp\DuckPhpAllInOne
 Tiny::RunQuickly([]);
 ```
 
-访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。「登录后视图」（[第 2-18 章](user.md)）靠视图数据 `__logined_enable_view` 打开，在子类里 `Helper::assignViewData('__logined_enable_view', true)` 即可。
+访问 `/…/tiny.php/hello` 即调用 `action_hello`，`_Show` 自动包上内置的 `view_head` / `view_foot`（除非把 `duckphp_all_in_one_wrap_header_foot` 关掉）。「登录后视图」（[第 2-18 章](user.md)）靠视图数据 `__use_logined_view_data` 打开，在子类里 `Helper::assignViewData('__use_logined_view_data', true)` 即可。
+
+//TODO（参考手册同步轮 2026-09-24 记）：本行下一句的旧名 `__logined_enable_view` 已废弃（现名 `__use_logined_view_data`，见 [第 2-18 章](user.md) 顶部 //TODO），上面的正文已顺手改，读到时若发现其他旧名一并处理。
 
 ## 常见错误
 

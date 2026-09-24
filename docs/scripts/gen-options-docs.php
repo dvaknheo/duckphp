@@ -53,6 +53,8 @@ const HIDDEN_DESC = [
     'permission_menu_tree_for_admin' => ['Ext\\PermissionMenu::getMenuJsonFileConfig()', '后台权限菜单树的配置文件（相对 `path_config`）。'],
     'duckcoverage_test_lister' => ['外部包 dvaknheo/duckcoverage', '配合该 composer 包做覆盖测试使用，框架自身不读。'],
     'not_empty' => ['DuckPhp::$common_options', '声明在默认选项里、但源码中没有任何读取点（历史遗留，可忽略）。'],
+    'url_admin_home' => ['GlobalAdmin\\Admin::urlForHome()', '后台首页 URL 的「应用级」覆盖：优先于组件的 `globaladmin_url_home`。'],
+    'url_user_home' => ['GlobalUser\\User::urlForHome()', '站内首页 URL 的「应用级」覆盖：优先于组件的 `globaluser_url_home`。'],
     'background' => ['HttpServer::run*()', '内置服务器是否后台运行；CLI 开关 `-b/--background` 会把它置 true。'],
 ];
 

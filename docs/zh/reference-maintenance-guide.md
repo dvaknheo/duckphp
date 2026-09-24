@@ -276,9 +276,9 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 ## 8. 当前状态与待办
 
 - **现状**（每轮只更新这一段；历轮细节看 `git log` 与各篇文档，**不要在这里堆流水账**）
-  - `docs/zh/reference/` 共 **117 篇**：113 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板；`drift.py --all` **0 不一致**（`missing-*` / `extra-option` 全空，`extra-method` 只剩示例代码里的自定义方法）。
-  - `enc` 检查 117 篇全 UTF-8；站内链接 0 死链。同步基线见第 9 节末的提示（最近一次基线是分支 `doced`）。
-  - 测试基线（WSL）：全量 `php vendor/bin/phpunit --no-coverage` → `OK (92 tests, 556 assertions)`；带覆盖率跑完看 `test_reports/index.html` → `Test Lines: 4815/4815 (100.00%)`。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10360**（跟当前工作区 `src/` 的选项表绑定，见第 7 节那一行）。
+  - `docs/zh/reference/` 共 **114 篇**：110 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板；`drift.py --all` **0 不一致**（`missing-*` / `extra-option` 全空，`extra-method` 只剩示例代码里的自定义方法）。
+  - `enc` 检查 114 篇全 UTF-8；站内链接 0 死链。同步基线见第 9 节末的提示（最近一次基线是分支 `doced`，下次同步从 `66a93720` 之后算起）。
+  - 测试基线（WSL）：全量 `php vendor/bin/phpunit` → `OK (96 tests, 817 assertions)`；`XDEBUG_MODE=coverage` 跑完看 `test_reports/index.html` → **`Lines 4891/4891 (100.00%)`**（Functions/Methods 与 Classes/Traits 同为 100%）。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10438**（跟当前工作区 `src/` 的选项表绑定，见第 7 节那一行）。
   - 最近几轮（每轮一句话，细节在 commit message 与对应文档里）：
     1. `doced` → HEAD 增量同步：`Component-Command`（命令收集钩子改名、两个收集方法去掉 `$phase` 形参）、`Core-KernelTrait`（`Root($switch_phase = false)`）。
     2. 新类 `Ext/PermissionMenu`：补齐测试 `tests/Ext/PermissionMenuTest.php`（覆盖率 298/298），修掉测试暴露的 6 个源码问题（3 个真 bug、2 处语义调整、1 处不可达 `catch` 加 `@codeCoverageIgnore`）。
@@ -309,12 +309,20 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
     15. **参考页孤儿清零（本轮）**：新增 `docs/scripts/find-unmentioned-classes.py`——**纯链接判定**（扫 `docs/zh/guide/*.md` 里所有指向 `../reference/*.md` 的链接，按页名反查，锚点/`./`/`../` 归一化），报「指南从没链到」的类页；正文写了类名但没挂链接**不算**命中，避免 `Helper`/`Base` 这类短名误判。首扫：**109 个类页 / 496 条指南→参考页链接 / 19 页从没被链到**（其中 17 页指南里连类名都没有）。补链 + 新增指南第 4-11 章后：**555 条链接、109/109 全被链到、孤儿 0**（`--all` 另列「只链 1 次」的 34 页，那是下一档的候选）。
         - 补链落点：`Core\ExitException`（exception.md：`use_exit_exception` 下 `SystemWrapper::exit()` 抛它、`ExceptionManager` 原样放行）、`Component\PagerInterface`（database.md 分页节）、`HttpServer\HttpServerInterface`（http-server.md「换实现」节）、`GlobalUser\User{LoginAction,LoginService}Interface`（user.md 选项表 + 参考手册行）、`GlobalAdmin\Admin{LoginAction,LoginService,Service}Interface`（admin.md 同构）、`Foundation\Business\Base`（layers.md 四层基类）、`Ext\RouteHookWebInstallerView`（installer.md §③）、`Ext\SqlDumperSupporterByPgsql`/`BySqlite`（database.md SQL 导出表——并**纠正**原先把三者并列的误导：默认映射只有 mysql 与 sqlite，pgsql 要自己配 `database_driver_SqlDumperSupporter_map`）。
         - 7 个「指南从没写过的 Ext 类」另立一章：`guide/deprecated-exts.md`（4-11，122 行），判据是源码 `@todo deprecate`（`grep -rn` 命中 6 个类），`MiniRoute`/`Misc`/`ThrowOnTrait` 则如实标注「无废弃标记、但框架内部无使用点」。
+    16. **全量覆盖测试 + `doced`→HEAD 参考手册同步（本轮；作者正在并行改同一工作区）**：
+        - 测试：全量 `OK (96 tests, 817 assertions)`；`XDEBUG_MODE=coverage` + `tests/support.php` → `test_reports/index.html` **`Lines 4891/4891 (100.00%)`**（函数/方法、类/Trait 同为 100%）。**不要**用陈旧 dump 判断缺口：`test_coveragedumps/` 里会留着改名/移动前的旧类 dump（例如 `Component/RouteLister.php`），它们会把总数算歪——本轮先 `rm -rf test_coveragedumps` 再全量跑。聚合脚本见第 5 节新增的 `covagg.php`（遍历全部 dump 并按源文件合并命中，数组型命中值要按 test 名取并集）。
+        - 修 3 处源码：① `Admin::EVENT_ACTION_ADMIN_LOGED` → **`EVENT_ACTION_ADMIN_LOGINED`**（值本来就是 `'ACTION_ADMIN_LOGINED'`，而 `ControllerHelper` 引用的是 `Admin::EVENT_ACTION_ADMIN_LOGINED` ⇒ 常量名笔误；PHP 常量**懒求值**，类加载不报错、一被读到就 `Error: Undefined constant`；`GlobalAdmin::login()` 里的 `fire()` 同步改名）；② `GlobalAdmin/GlobalUser::mergeViewData()` 在 `$data['__logined_render_header_footer']` 为假时 `$header/$footer` **未定义**（会告警）→ 进 `if` 前先置 `null`；③ `GlobalUser::throwLoginOn()` 两个 `return` 补 `// @codeCoverageIgnore`（与 `GlobalAdmin` 镜像，`exit()` 之后那行本来不可达）。
+        - 补覆盖的测试：`GlobalAdmin/GlobalUser` 的 `throwLoginOn()` 三条分支（自定义回调 / 非 Ajax 302 / Ajax JSON）、`DuckPhp::initComponentsOfRoot()` 的 redis 分支（配 `redis_list` 即触发，`RedisManager::init()` 只存配置不连接）、`ExtOptionsLoader::saveExtOptions()` 的抛异常分支（注意 `getRoot()` 返回的是**root 相位的 loader 组件**，读的是组件自己的 `data_file_enable`，不是 App 的）、`__logined_render_header_footer=false` 分支；`tests/Foundation/HelperTest.php` 的事件断言从「层 Helper 上的 `public static $EVENT_*` 属性」改成「层 Helper 上的**别名常量**」（`hasConstant` + 值等于 `User::`/`Admin::` 上的同名常量）。
+        - `ZAllDemoTest` 的 `files` 期望长度 10567 → **10438**（`Admin`/`User` 落地为 root 组件 + `GlobalAdmin`/`GlobalUser` 瘦身后，选项表、容器类清单、包含文件表、调用栈行号都变）。**已 diff 两份 dump 确认差异只落在**：执行耗时、内存消耗、容器里的类清单（`GlobalAdmin`/`GlobalUser` → `Admin`/`User`）、调用栈行号、包含文件表——没有选项键层面的意外变化。
+        - 参考手册：**新增 2 篇**（`GlobalAdmin-Admin`、`GlobalUser-User`）、**重写 2 篇**（`GlobalAdmin-GlobalAdmin`、`GlobalUser-GlobalUser`，旧页写的还是 `*_callback_for_*` / `go_url()` / `addExtViewData()` / `_Show()` 那套已删除的 API）、**更新 10 篇**（6 篇 GlobalAdmin/GlobalUser 接口页、`Core-App`、`Core-DuckPhpSystemException`、`Component-ExtOptionsLoader`、`DuckPhp`、`Ext-DuckPhpInstaller`、`Foundation-Business-BusinessHelper`、`Foundation-Controller-{AdminControllerBase,UserControllerBase,ControllerHelper}`）、**删除 2 篇**（`GlobalAdmin-AdminException`、`GlobalUser-UserException`——两个类已从源码删除，异常码/消息改由 `Admin::EXCEPTION_*` / `User::EXCEPTION_*` 常量承担）。
+        - 生成页：`gen-options-docs.php` 的 `HIDDEN_DESC` 补两条（`url_admin_home`、`url_user_home`，否则 `--check` 报「隐藏选项缺少说明」），随后重生成 `index.md` / `options*.md`，`--check` → up to date。新页会被自动收进 `<!-- GEN:nav -->` / `<!-- GEN:az -->`，**不要手改** index.md。
+        - **用户指南本轮不动**（作者裁定：只记 TODO）：11 个 guide 文件加了 `//TODO` 标记、6 处死链就地改成文字，清单与逐条原因见 `guide-maintenance-guide.md` §19。
 - **待办（本工作范围外）**：
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
   - ~~`docs/zh/guide/external-auth.md` 里还有一批旧键名未校~~ **已处理**：该章已拆成 `session.md`(2-9)/`user.md`(2-18)/`admin.md`(2-19)，键名与选项按当前源码逐条核对（旧键 `user_callback_get_*`、已废选项 `user_provider`/`admin_provider`/`*_default_exception_class` 都已在正文标注失效）；
-  - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含 3 篇新类文档与早期那 8 篇 GlobalAdmin/GlobalUser 接口文档），剩下的是**逐条核对说明文字**是否仍准确；
-  - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页（内容过时且行文损坏，建议改为由脚本生成）；
-  - `docs/zh/guide/` 教程与 reference 的交叉引用校对。
+  - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含本轮 2 篇新页），剩下的是**逐条核对说明文字**是否仍准确；
+  - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页已改由 `gen-options-docs.php` 生成，`--check` 为 up to date；
+  - **`docs/zh/guide/` 的 11 个 `//TODO`（清单见 `guide-maintenance-guide.md` §19）**：`user.md` / `admin.md` 两章最重（49 + 30 处旧 API），其余是零散旧键名。
 - **生成器已知缺陷（如需修复）**：`docs/scripts/gen-reference.php verify` 对含 trait 别名 override 的大文件（`Core/App.php`）会漏列方法；修好前请以 `drift.py` 为准。
 
 ## 9. 快速自检（冒烟）

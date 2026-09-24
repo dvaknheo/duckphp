@@ -44,6 +44,9 @@
 
 ### 公共方法
 
+    public function init(array $options, ?object $context = null)
+父 init 后注册自身命令类前缀（`regCommandClassSingle`）。
+
     public function command_new(): void
 `new` 命令：解析 CLI 参数后 `newProject()`（`--help` 时仅打印帮助）。
 

@@ -55,6 +55,8 @@ $this->options = array_replace_recursive($this->options, $options);
 | 隐藏选项 | 默认值 | 出处 | 说明 |
 |---|---|---|---|
 | `not_empty` | `true` | DuckPhp::$common_options | 声明在默认选项里、但源码中没有任何读取点（历史遗留，可忽略）。 |
+| `url_admin_home` | `null` | GlobalAdmin\Admin::urlForHome() | 后台首页 URL 的「应用级」覆盖：优先于组件的 `globaladmin_url_home`。 |
+| `url_user_home` | `null` | GlobalUser\User::urlForHome() | 站内首页 URL 的「应用级」覆盖：优先于组件的 `globaluser_url_home`。 |
 | `session_prefix` | `''` | Foundation\Controller\SessionTrait | 会话名的前缀（根应用的设置也走这里）。 |
 | `table_prefix` | `''` | Ext\SqlDumper / Ext\RouteHookWebInstaller | 数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。 |
 | `exception_for_business` | `\Exception::class` | CoreHelper::_BusinessThrowOn() | `BusinessThrowOn()` 未显式指定时的异常类。 |

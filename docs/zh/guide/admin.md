@@ -4,6 +4,14 @@
 > 前置：[第 2-9 章 会话](session.md)、[第 2-18 章 用户体系](user.md)、[第 2-3 章 控制器](controllers.md)。预计 20 分钟。
 > 示例片段基于 `MyProj` 工程；菜单的完整示例见 `tests/data_for_tests/Ext/PermissionMenu/Controller/AdminController.php`。
 
+//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：本章多处 API 已随 `doced..HEAD` 的源码改动失效，下次改本章时逐条按源码重写：
+//  · 选项族整体改名：`admin_callback_for_*` / `admin_url_*` / `admin_loginout_auto_redirect` / `admin_view_file_*` → **`globaladmin_*`**（`globaladmin_login_session`、`globaladmin_local_service`、`globaladmin_login_service`、`globaladmin_ext_view_data_callback`、`globaladmin_need_login_callback`、`globaladmin_url_{home,login,logout}`、`globaladmin_is_authed_redirect`、`globaladmin_view_file_{header,footer}`、`globaladmin_enable_callback_singleton`），详见 [GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)。
+//  · 调用侧：现在是 [`Admin`](../reference/GlobalAdmin-Admin.md)（`GlobalAdmin` 只是它的完整实现），一律 `Admin::_()` 或 `Helper::Admin()/AdminId()/AdminName()`；不要再写 `GlobalAdmin::_()`。
+//  · `AdminException` 类**已从源码删除**（本章 2 处链接指向已删页 `GlobalAdmin-AdminException.md`）：异常码/消息改用 `Admin::EXCEPTION_CODE_ADMIN_NEED_LOGIN`、`Admin::EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION` 这类常量；**未登录不再抛异常**，而是走 `throwLoginOn()`——配了 `globaladmin_need_login_callback` 就回调、非 Ajax 则 `302` 到 `urlForLogin(当前 path)`、Ajax 则输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，三条路最后都 `exit()`。
+//  · 视图级开关改名：`__logined_enable_view` → `__use_logined_view_data`，`__logined_enable_header_footer` → `__use_logined_header_footer_file`；另有 `__logined_render_header_footer`（缺省视为真）决定要不要渲染头尾文件。
+//  · `Foundation\Controller\AdminControllerBase` 的钩子改名：`onLoginedException()` → `onNeedPermission()`（无参；Ajax 分支硬编码 `error_code = -1`、`error_message = 'NEED_PERMISSION'`）。
+//  · `AdminSessionTrait` 与会话键 `admin` 未变，但 `admin_callback_for_session` 这个键名已不存在，改成 `globaladmin_login_session`。
+
 ## 最小示例
 
 与用户体系同构：一个工程类继承 [`DuckPhp\GlobalAdmin\GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)，用回调接上「当前是谁 / 登录服务 / 会话」，再挂进 `ext`：
@@ -99,7 +107,7 @@ class AdminSession implements AdminSessionInterface
 }
 ```
 
-[`AdminSessionTrait`](../reference/GlobalAdmin-AdminSessionTrait.md) 把当前管理员存进会话键 **`admin`**（数组，含 `id`/`name`）。未登录时 `Helper::AdminId()` 抛 [`AdminException`](../reference/GlobalAdmin-AdminException.md)（该异常类写死，没有可配的 `admin_default_exception_class`）。
+[`AdminSessionTrait`](../reference/GlobalAdmin-AdminSessionTrait.md) 把当前管理员存进会话键 **`admin`**（数组，含 `id`/`name`）。未登录时 `Helper::AdminId()` 走 `throwLoginOn()`（旧文写的是「抛 `AdminException`」，该类已删除；也没有可配的 `admin_default_exception_class`）。
 
 ### 5. 后台页面的头尾：`__logined_enable_view`
 
@@ -179,7 +187,7 @@ class AdminController implements AdminControllerInterface, PermissionMenuMetaInt
 
 ## 下一步
 
-- [第 2-11 章 异常与错误处理](exception.md)：`AdminException` 怎么被接住、怎么变成跳转或错误页。
+- [第 2-11 章 异常与错误处理](exception.md)：登录/权限异常现在怎么被接住、怎么变成跳转或错误页（旧文里的 `AdminException` 已删除）。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉后台视图头尾。
 - [第 2-15 章 命令行与定时任务](cli.md)：用 CLI 跑菜单落盘、看路由表。
-- 参考手册：[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[AdminActionInterface](../reference/GlobalAdmin-AdminActionInterface.md)、[AdminLoginActionInterface](../reference/GlobalAdmin-AdminLoginActionInterface.md)、[AdminServiceInterface](../reference/GlobalAdmin-AdminServiceInterface.md)、[AdminLoginServiceInterface](../reference/GlobalAdmin-AdminLoginServiceInterface.md)、[AdminSessionTrait](../reference/GlobalAdmin-AdminSessionTrait.md)、[AdminException](../reference/GlobalAdmin-AdminException.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)、[Ext\RouteLister](../reference/Ext-RouteLister.md)
+- 参考手册：[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[Admin](../reference/GlobalAdmin-Admin.md)、[AdminActionInterface](../reference/GlobalAdmin-AdminActionInterface.md)、[AdminLoginActionInterface](../reference/GlobalAdmin-AdminLoginActionInterface.md)、[AdminServiceInterface](../reference/GlobalAdmin-AdminServiceInterface.md)、[AdminLoginServiceInterface](../reference/GlobalAdmin-AdminLoginServiceInterface.md)、[AdminSessionTrait](../reference/GlobalAdmin-AdminSessionTrait.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)、[Ext\RouteLister](../reference/Ext-RouteLister.md)

@@ -20,7 +20,7 @@ DuckPHP 的应用基类：`use KernelTrait` 并叠加一批“系统级”能力
 - 声明：`class App extends ComponentBase`
 - 使用 Trait：`KernelTrait`
 - 用 `as` 改名再 override：`initComponents`→`Kernel_initComponents`、`prepareServe`→…、`initComponentsOfRoot`→…、`Inner`、`Dynmic`；然后在自身方法里调用 `Kernel_xxx()` 保持父骨架行为。
-- 常量：`VERSION=1.4.1` 、 `EXT_SKIP_INIT=-1`、`EXT_DISABLE=0`、`EXT_DEFAULT=1`、`EXT_FOLLOW_APP=2`、`EXT_RENEW=3`。
+- 常量：`VERSION=1.4.1` 、 `EXT_SKIP_INIT=-1`、`EXT_DISABLE=0`、`EXT_DEFAULT=1`、`EXT_FOLLOW_APP=2`、`EXT_RENEW=3`、`EXT_ROOT_HOLD_POSISION_ONLY=0`。
 - 公共属性：`$options`、`$setting`（由 `options['setting']` 起，叠加可选 `.env` 与设置文件合并而成）、加上 Kernel 内核态字段。
 
 ## 选项

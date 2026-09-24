@@ -44,7 +44,9 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
         └─ MyProj\System\ControllerException
 ```
 
-框架自带的 [UserException](../reference/GlobalUser-UserException.md) / [AdminException](../reference/GlobalAdmin-AdminException.md) 也是**直接继承 `\Exception`** 的（源码 `src/GlobalUser/UserException.php`、`src/GlobalAdmin/AdminException.php`），可作参照。
+//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：下面这句里的两个类**已从源码删除**（旧页 `GlobalUser-UserException.md`、`GlobalAdmin-AdminException.md` 也已删除，本行原有 2 处链接已失效），下次改本章时改写成「登录/权限异常已改为 `User`/`Admin` 上的 `EXCEPTION_*` 常量 + `throwLoginOn()` 的 302/JSON 处理」，去掉指向已删页的链接。
+
+框架自带的 `UserException` / `AdminException` 也是**直接继承 `\Exception`** 的（源码 `src/GlobalUser/UserException.php`、`src/GlobalAdmin/AdminException.php`），可作参照。
 
 树上那个 [`ExitException`](../reference/Core-ExitException.md) 属于**框架内部**：打开 `use_exit_exception` 选项后，[`SystemWrapper::exit()`](../reference/Core-SystemWrapper.md) 会抛它（`src/Core/SystemWrapper.php` 167-168 行），[`ExceptionManager`](../reference/Core-ExceptionManager.md) 把它原样放行（`src/Core/ExceptionManager.php` 90 行）——业务代码不要抛它。
 
