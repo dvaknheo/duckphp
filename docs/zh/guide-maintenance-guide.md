@@ -380,3 +380,26 @@ python3 <tmp>/drift.py --all                                                    
 **验收**：`check-doc-links.py docs/zh` → **2104 条链接 0 死链**；`docs/zh/guide/` 里新增 `//TODO` 标记 **7 个文件**（下次改指南的入口：`grep -rn '//TODO（参考手册同步轮' docs/zh/guide`）。
 
 **下次改指南的建议顺序**：先 `user.md` / `admin.md`（旧 API 最集中，且两章互相引用），再 `events.md`（事件常量表），然后零散旧键名（`appendix-snippets.md` / `troubleshooting.md` / `appendix-faq.md` / `static-resources.md` / `embed.md` / `overriding.md` / `helper.md` / `exception.md`）；改完按 §4 跑链接检查与行数检查，并把对应 `//TODO` 删掉。
+
+## 20. M11 / 本轮：照 §19 的清单把指南同步完（`//TODO` 清零）
+
+**背景**：作者看完 §19 的清单后说「现在开始改 guide 文件」——本轮就是按那个顺序把 13 个文件改完，`//TODO` 清零。
+
+**做了什么**
+
+- **`user.md`（2-18）与 `admin.md`（2-19）重写**（205/193 → **231/178 行**）：选项对照表整张换成 `globaluser_*` / `globaladmin_*`；调用侧改成 `User::_()` / `Admin::_()`；「未登录怎么办」改成 `throwLoginOn()` 三分支表（自定义回调 / 302 带 `?b=` / Ajax JSON，最后都 `exit()`）；新增「登录后视图：三份视图数据」小节（`__use_logined_view_data` / `__use_logined_header_footer_file` / `__logined_render_header_footer`，并写明判定与渲染都在 `DuckPhp::_Show()` 里）；admin 侧补 `onNeedPermission()` 钩子与 `isSuper()`；两章的示例都换成**实测过**的写法（应用级选项 + `ext` 三种写法，见下）。
+- **`events.md`（2-12）**：事件常量表从「层 Helper 上的 `public static $EVENT_*` 属性」改成「`User`/`Admin` 上的常量 + 两张分工表」——`EVENT_ACTION_*` 由框架派发（`GlobalUser`/`GlobalAdmin` 的登录注册登出），`EVENT_SERVICE_*` **框架不派发**、是留给服务层自己 `fire()` 的名字；补了两段监听/派发示例。
+- **`overriding.md`（3-5）**：视图级开关表与示例改成新键名，并写清「命中接口 → `Admin::_()`/`User::_()` 的 `mergeViewData()` → `View::setViewHeadFoot()`」这条链路；表里「本卷示例位置」由第 2-9 章改指第 2-18 章。
+- **`appendix-snippets.md`**：登录片段换成三个必需回调 + 「想自己接管跳转就传 `check_login=false`」；
+- **`exception.md`（2-11）**：删掉「框架自带 `UserException`/`AdminException` 继承 `\Exception`」那句，改成当前事实（登录/权限不用异常类，错误码在常量上，未登录/无权限由 `throwLoginOn()` / `onNeedPermission()` 处理）；
+- **`doc-maintenance.md`**：把「批量改名时的例外」那条的例子（旧键名链）改成「账本类文件才保留沿革」的通用说法；
+- 零散旧名/死链：`static-resources.md` / `troubleshooting.md` / `appendix-faq.md` / `helper.md` / `embed.md`（`onLoginedException()` → `onNeedPermission()`、源码行号、`__use_logined_view_data`、`globaluser_login_session`）。
+
+**示例全部实测**（不是照抄旧文）：本轮写了个临时脚本（跑完即删，仓库根 `tmp_verify_user.php`）在 WSL 里跑通 **19 条断言 / 0 失败**，覆盖两章正文里的每个断言性说法：
+① 应用级 `globaluser_*` 选项在 `'ext' => [MyUser::class => true]` 下确实落到组件；② `User::_()` 是工程子类的 `PhaseProxy`；③ `id()/name()` 读会话、`canAccess()` 走 Service、`service()->batchGetUsernames()` 经代理；④ `login()` 调登录服务 + 写会话 + 302 到 `globaluser_url_home`；⑤ 未登录 `id(true)` 302 到 `globaluser_url_login`、`id(false)` 返回 0；⑥ `__use_logined_view_data` + `__use_logined_header_footer_file` 把头尾套上（输出 3 个 `Block`）且视图数据里有 `__logined_id`；⑦ Admin 侧同样吃应用级 `globaladmin_*` 选项、`isSuper()` 走 Service；⑧ `Helper::OnGlobalEvent('ACTION_USER_LOGINED')` 能被 `login()` 触发，而 `EVENT_SERVICE_*` 监听不到（框架不派发）。
+
+**顺手学到的两条事实**（已写进两章）：
+- `globaluser_view_file_header/footer` 这类值是**按 `getOverrideableFile('view', …)` 解析**的，相对路径落在 **`<应用 path>/view/`** 下，**不是** `path_view` —— 一开始就是踩了这个才渲染失败（报 `include(.../view/block.php): Failed to open stream`）；
+- `App::_()` 之所以能拿到「当前应用」，是因为 `KernelTrait` 在初始化时 `(self::class)::_($this)` 把自己注册进容器；**换过相位容器后（`PhaseContainer::RestAllContainerForTesting()`）必须重新 init**，否则 `User::_()` / `App::_()` 会新建一个「默认的」实例，症状是莫名的 Internal Error。
+
+**验收**：`check-doc-links.py docs/zh` → **2109 条 0 死链**；`docs/zh/guide` 里同步轮的 `//TODO` **归零**；改动的 12 个文件 117–294 行（≤400）；「链接文字章号 vs 目标页 H1」**0 处不一致**；`find-unmentioned-classes.py` → **109/109 类页全被链到**；全量测试 `OK (96 tests, 823 assertions)`（本轮**未改 `src/` 与 `tests/`**，两条基线沿用上一轮的实测值）。

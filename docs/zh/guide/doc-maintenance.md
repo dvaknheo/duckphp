@@ -69,7 +69,7 @@ grep -rn "<旧名>" src tests docs | wc -l      # 先列全，改完再 grep = 0
 ```
 
 - 覆盖 `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`；
-- **例外**：文档里可能**故意**保留「由旧名 X 更名」的历史说明（例如 `user_callback_get_*` → `user_callback_for_*`），批量替换时要排除这类句子；
+- **例外**：账本类文件（本文件、`guide-rewrite-checklist.md`、两份维护指南）里**故意**保留「由旧名 X 更名」的沿革记录，批量替换时先排除它们；逐类参考页与用户指南里不写这类历史，只写当前写法；
 - `src/` 里不许出现中文/全角字符——最常见的来源是从中文文档复制粘贴（全角箭头 `→`、全角括号）。改完跑 `docs/scripts/check-non-ascii.sh`，期望 `Total non-ASCII lines: 0`。
 
 **改章号/章序**（本指南重排第二卷时踩过）：交叉引用必须**单遍替换 + 回调映射**（Python `re.subn`），用 `sed` 顺序替换会链式误改（`14→8` 之后 `8→17` 又把它改走）。改完用「文件名 → 章号」表反查所有「第 N 章 + 链接」是否一致。

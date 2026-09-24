@@ -44,9 +44,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
         └─ MyProj\System\ControllerException
 ```
 
-//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：下面这句里的两个类**已从源码删除**（旧页 `GlobalUser-UserException.md`、`GlobalAdmin-AdminException.md` 也已删除，本行原有 2 处链接已失效），下次改本章时改写成「登录/权限异常已改为 `User`/`Admin` 上的 `EXCEPTION_*` 常量 + `throwLoginOn()` 的 302/JSON 处理」，去掉指向已删页的链接。
-
-框架自带的 `UserException` / `AdminException` 也是**直接继承 `\Exception`** 的（源码 `src/GlobalUser/UserException.php`、`src/GlobalAdmin/AdminException.php`），可作参照。
+框架自己的**登录与权限**场景不走异常类：错误码/消息是 [`User`](../reference/GlobalUser-User.md) / [`Admin`](../reference/GlobalAdmin-Admin.md) 上的常量（`User::EXCEPTION_CODE_USER_NEED_LOGIN`、`Admin::EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION` 等），处理方式是「未登录 → `throwLoginOn()`」「没权限 → 控制器的 `onNeedPermission()`」，两者都是**自定义回调 / 302 到登录页 / Ajax 出 JSON** 三选一然后 `exit()`（细节见[第 2-18 章](../guide/user.md)第 5 节与[第 2-19 章](../guide/admin.md)第 3–4 节）。所以工程侧不需要、也不应该为登录/权限再造异常类。
 
 树上那个 [`ExitException`](../reference/Core-ExitException.md) 属于**框架内部**：打开 `use_exit_exception` 选项后，[`SystemWrapper::exit()`](../reference/Core-SystemWrapper.md) 会抛它（`src/Core/SystemWrapper.php` 167-168 行），[`ExceptionManager`](../reference/Core-ExceptionManager.md) 把它原样放行（`src/Core/ExceptionManager.php` 90 行）——业务代码不要抛它。
 

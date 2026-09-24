@@ -2,44 +2,41 @@
 
 > 解决什么问题：前台用户怎么接进来（当前是谁）、登录/注册/登出怎么做、未登录怎么跳、用户页面的头尾怎么来。
 > 前置：[第 2-9 章 会话](session.md)、[第 2-3 章 控制器](controllers.md)、[第 2-11 章 异常与错误处理](exception.md)。预计 20 分钟。
-> 示例片段基于 `MyProj` 工程；测试里的最小实现见 `tests/GlobalUser/GlobalUserTest.php` 的 `MyUser`/`MyUserAction`。
-
-//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：本章多处 API 已随 `doced..HEAD` 的源码改动失效，下次改本章时逐条按源码重写：
-//  · 选项族整体改名：`user_callback_for_*` / `user_url_*` / `user_loginout_auto_redirect` / `user_enable` / `user_view_file_*` → **`globaluser_*`**（`globaluser_login_session`、`globaluser_local_service`、`globaluser_login_service`、`globaluser_ext_view_data_callback`、`globaluser_need_login_callback`、`globaluser_url_{home,register,login,logout}`、`globaluser_is_authed_redirect`、`globaluser_view_file_{header,footer}`、`globaluser_enable_callback_singleton`），详见 [GlobalUser](../reference/GlobalUser-GlobalUser.md)。
-//  · 调用侧：现在是 [`User`](../reference/GlobalUser-User.md)（`GlobalUser` 只是它的完整实现），一律 `User::_()` 或 `Helper::User()/UserId()/UserName()`；不要再写 `GlobalUser::_()`。
-//  · `UserException` 类**已从源码删除**（本章 2 处链接指向已删页 `GlobalUser-UserException.md`）：异常码/消息改用 `User::EXCEPTION_CODE_USER_NEED_LOGIN`、`User::EXCEPTION_MESSAGE_USER_NEED_PERMISSION` 这类常量；**未登录不再抛异常**，而是走 `throwLoginOn()`——配了 `globaluser_need_login_callback` 就回调、非 Ajax 则 `302` 到 `urlForLogin(当前 path)`、Ajax 则输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，三条路最后都 `exit()`。
-//  · 视图级开关改名：`__logined_enable_view` → `__use_logined_view_data`，`__logined_enable_header_footer` → `__use_logined_header_footer_file`；另有 `__logined_render_header_footer`（缺省视为真）决定要不要渲染头尾文件。
-//  · `UserSessionTrait` 与会话键 `user` 未变，但 `user_callback_for_session` 这个键名已不存在，改成 `globaluser_login_session`。
+> 示例片段基于 `MyProj` 工程；仓库里能跑的最小实现见 `tests/GlobalUser/GlobalUserTest.php`（`UserTestApp` / `UserTestSession` / `UserTestService`），跑法：`wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/GlobalUser/GlobalUserTest.php"`。
 
 ## 最小示例
 
-一个工程类继承 [`DuckPhp\GlobalUser\GlobalUser`](../reference/GlobalUser-GlobalUser.md)，把「当前是谁」「登录服务」「会话实现」用**回调**接上；再在 `App` 的 `ext` 里挂上去：
+用户体系本身**不碰数据库、不碰 `$_SESSION`**，它把三件事外包给工程类，你只要一个子类 + 三个实现：
+
+| 外包什么 | 选项键 | 契约 |
+|---|---|---|
+| 当前是谁 | `globaluser_login_session` | [`UserSessionInterface`](../reference/GlobalUser-UserSessionInterface.md) |
+| 登录/注册/登出 | `globaluser_login_service` | [`UserLoginServiceInterface`](../reference/GlobalUser-UserLoginServiceInterface.md) |
+| 权限与日志 | `globaluser_local_service` | [`UserServiceInterface`](../reference/GlobalUser-UserServiceInterface.md) |
 
 ```php
 <?php declare(strict_types=1);
 namespace MyProj\System;
 
 use DuckPhp\DuckPhp;
-use MyProj\UserSystem\UserAction;
-use MyProj\UserSystem\UserService;
-use MyProj\UserSystem\UserSession;
+use MyProj\UserSystem\MyUser;          // extends \DuckPhp\GlobalUser\GlobalUser，只写这一行也行
+use MyProj\UserSystem\UserService;     // 实现 UserServiceInterface + UserLoginServiceInterface
+use MyProj\UserSystem\UserSession;     // 实现 UserSessionInterface（见第 4 节）
 
 class App extends DuckPhp
 {
     public $options = [
-        'user_url_login'    => 'user/login',
-        'user_url_logout'   => 'user/logout',
-        'user_url_home'     => 'user/center',
-        'user_url_register' => 'user/register',
+        'globaluser_url_home'     => 'user/center',
+        'globaluser_url_login'    => 'user/login',
+        'globaluser_url_logout'   => 'user/logout',
+        'globaluser_url_register' => 'user/register',
 
-        'user_callback_for_session'       => [UserSession::class, '_'],
-        'user_callback_for_login_service' => [UserService::class, '_'],
-        'user_callback_for_local_service' => [UserService::class, '_'],
-        'user_callback_for_id'            => [UserAction::class, 'id'],
-        'user_callback_for_name'          => [UserAction::class, 'name'],
+        'globaluser_login_session' => [UserSession::class, '_'],
+        'globaluser_login_service' => [UserService::class, '_'],
+        'globaluser_local_service' => [UserService::class, '_'],
 
         'ext' => [
-            MyUser::class => true,          // 把工程侧的 GlobalUser 子类挂成「用户组件」
+            MyUser::class => true,     // 把工程侧子类挂成「用户组件」
         ],
     ];
 }
@@ -49,58 +46,56 @@ class App extends DuckPhp
 // 控制器里：取当前用户
 public function center()
 {
-    $userId = Helper::UserId();            // 未登录抛 UserException（见下）
+    $userId = Helper::UserId();          // 未登录时按「未登录怎么办」处理（见第 5 节）
     Helper::Show(get_defined_vars(), 'user/center');
 }
 ```
 
+> 上面这段（应用级 `globaluser_*` 选项 + `ext` 里的子类）已实测：`User::_()` 拿到的是工程子类的 [`PhaseProxy`](../reference/Component-PhaseProxy.md)，`id()/name()` 读会话、`canAccess()` 走 Service、`login()` 写会话后 302 到 `globaluser_url_home`。
+
 ## 机制说明
 
-### 1. GlobalUser：一个组件 + 一组回调
+### 1. `User` 是「键」，`GlobalUser` 是实现
 
-[DuckPhp\GlobalUser\GlobalUser](../reference/GlobalUser-GlobalUser.md) 实现 [`UserActionInterface`](../reference/GlobalUser-UserActionInterface.md) 与 [`UserLoginActionInterface`](../reference/GlobalUser-UserLoginActionInterface.md)，把「当前是谁、站内 URL、视图头尾、登录/注册/登出流程」集中在一个组件里；**具体实现用选项回调外包给工程类**。
+全框架（含 `Helper::User()` 与 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md)）读的都是父类名 [DuckPhp\GlobalUser\User](../reference/GlobalUser-User.md) 这个容器键。`User` 自己是**桩**：没挂实现时任何能力调用都直接抛 `DuckPhpSystemException`（`id()`/`name()` 抛 `No GlobalUser Provider.`，其余抛 `Need Provider`），不会静默返回空值。
 
-- `Helper::User()` / `Helper::UserId()` / `Helper::UserName()` / `Helper::UserService()` 都进到它；
-- 默认它在 `ext` 里是**关闭**的（`src/DuckPhp.php` 的 `common_options` 里 `GlobalUser::class => EXT_DISABLE`），要显式挂上工程侧的子类才会启用。
+[DuckPhp\GlobalUser\GlobalUser](../reference/GlobalUser-GlobalUser.md) 是完整实现，`init()` 里把自己经 [`PhaseProxy`](../reference/Component-PhaseProxy.md) 注册到这个键上：
 
-**接入方式（现在只有这一条路）**：写一个 `class MyUser extends \DuckPhp\GlobalUser\GlobalUser {}`（配好 `user_callback_for_*` 选项），然后在应用里 `'ext' => [MyUser::class => true]`。它的 `init()` 会把自己注册成 `GlobalUser` 相位的实现（内部经 [`PhaseProxy`](../reference/Component-PhaseProxy.md) 包装），于是 `Helper::User()` 拿到的就是**你的**类。
+- 应用选项 `user_provider_enable`（默认 `true`）控制这次注册；设为 `false` 就退回桩（等于「明确地没有用户体系」）；
+- 所以**调用方一律写 `User::_()` / `Helper::User()`**，不要写 `GlobalUser::_()`——写具体类名会在别的相位/子应用里拿到不是你挂的那个实例。
 
-> ⚠️ 旧文档里的 `user_provider` 选项**在源码里已经不存在**（`src/DuckPhp.php` 里只剩注释）。另有应用选项 `user_provider_enable`（默认 `true`）用来整体关掉上面那次自我注册；`user_enable` 是组件自身 `$options` 里的开关。
+### 2. 接入方式
 
-### 2. 选项对照表（以 `src/GlobalUser/GlobalUser.php` 的 `$options` 为准）
+只有一条路：写 `class MyUser extends \DuckPhp\GlobalUser\GlobalUser {}`（选项可以写在应用里，也可以写在这个子类的 `$options` 里），然后 `'ext' => [MyUser::class => true]`。
 
-| 选项                                                                    | 默认     | 作用                                                                                                                                     |
-| --------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `user_url_home`                                                       | `null` | 站内首页 URL（未配回调时用 `__url()` 生成）                                                                                                          |
-| `user_url_login` / `user_url_logout`                                  | `null` | 登录 / 退出 URL                                                                                                                            |
-| `user_url_register`                                                   | `null` | 注册 URL（旧名 `user_url_regist` 已更名）                                                                                                       |
-| `user_view_file_header` / `user_view_file_footer`                     | `null` | 用户页面头/尾视图文件                                                                                                                            |
-| `user_enable`                                                         | `true` | 组件自身的启用开关                                                                                                                              |
-| `user_enable_callback_singleton`                                      | `true` | 回调写成 `[类名, 方法]` 时是否先转成 `类名::_()`                                                                                                       |
-| `user_callback_for_id` / `_for_name` / `_for_data`                    | `null` | 取当前 id / 名字 / 整个数据数组                                                                                                                   |
-| `user_callback_for_local_service`                                     | `null` | 返回本地 Service 实现（`Helper::UserService()` 用它）                                                                                            |
-| `user_callback_for_login_service`                                     | `null` | 登录服务（服务侧契约 [`UserLoginServiceInterface`](../reference/GlobalUser-UserLoginServiceInterface.md)）：`register()/login()/logout()` 经它做校验与落库 |
-| `user_callback_for_session`                                           | `null` | 会话实现（[`UserSessionInterface`](../reference/GlobalUser-UserSessionInterface.md)）；**配了它，`id()/name()` 优先读会话**                            |
-| `user_callback_for_add_ext_view_data`                                 | `null` | 追加视图数据                                                                                                                                 |
-| `user_callback_for_url_for_home` / `_login` / `_logout` / `_register` | `null` | 生成各 URL 的回调（优先于对应 `user_url_*`）                                                                                                        |
-| `user_loginout_auto_redirect`                                         | `true` | 登录/登出成功后自动 302                                                                                                                         |
+`ext` 的值有三种写法（见[第 4-2 章 开发组件与扩展](custom-component.md)）：
 
-> ⚠️ **旧键名已失效**：`user_callback_get_id` / `_get_name` / `_get_data` / `_get_service` 在源码里**不存在**，请用 `user_callback_for_*`。
+| 写法 | 效果 |
+|---|---|
+| `MyUser::class => true` | 跟随应用选项（上面最小示例用的就是它） |
+| `MyUser::class => ['globaluser_url_login' => 'u/login']` | 只给这个组件这批选项 |
+| `GlobalUser::class => true` | 不写子类，直接用框架实现（选项仍写在应用里） |
 
-### 3. 登录 / 注册 / 登出流程
+### 3. 选项对照表（以 `src/GlobalUser/GlobalUser.php` 的 `$options` 为准）
 
-`GlobalUser::login($post)` / `register($post)` / `logout()`（源码 `src/GlobalUser/GlobalUser.php` 第 256 / 268 / 279 行）的流程：
+| 选项 | 默认 | 作用 |
+|---|---|---|
+| `globaluser_login_session` | `null` | 会话实现；**必需**（`id()/name()/data()` 的唯一数据源） |
+| `globaluser_login_service` | `null` | 登录服务（注册/登录/登出）；**必需** |
+| `globaluser_local_service` | `null` | 本地 Service（`canAccess()` / `log()` / `batchGetUsernames()`）；**必需** |
+| `globaluser_url_home` | `null` | 站内首页 URL（`__url()` 生成） |
+| `globaluser_url_login` / `globaluser_url_logout` / `globaluser_url_register` | `null` | 登录 / 退出 / 注册 URL |
+| `globaluser_view_file_header` / `globaluser_view_file_footer` | `null` | 用户页面的头/尾视图文件（见第 6 节） |
+| `globaluser_enable_callback_singleton` | `true` | 回调写成 `[类名, 方法]` 时是否先换成 `类名::_()` 单例 |
+| `globaluser_ext_view_data_callback` | `null` | 追加视图数据的回调（可选，没配就跳过） |
+| `globaluser_need_login_callback` | `null` | 「未登录怎么办」的自定义处理（可选，见第 5 节） |
+| `globaluser_is_authed_redirect` | `true` | 注册/登录/登出成功后自动 302 |
 
-1. 触发事件（`EVENT_ACTION_USER_LOGINING` 等，见[第 2-12 章 事件系统](events.md)与 [GlobalUser 常量表](../reference/GlobalUser-GlobalUser.md)）；
-2. 调 `user_callback_for_login_service` 指定的登录服务做校验/落库；
-3. 调 `user_callback_for_session` 指定的会话实现 `setCurrentUser($user)`；
-4. 触发完成事件；`user_loginout_auto_redirect` 为真时自动 302 到 `user_url_home` / `user_url_login`。
+> 三个**必需**键没配时抛的是 `DuckPhpSystemException: need ext options 'globaluser_login_session'`；另两个可选键用 `isset()` 判过，没配只是跳过。
 
-工程侧的动作通常就是「校验输入 → 调 `Helper::User()->login($post)` → 完」。
+### 4. 会话实现：`UserSessionTrait`
 
-### 4. 会话实现：UserSessionTrait
-
-用户体系自己不存会话，而是要求你给一个实现 [`UserSessionInterface`](../reference/GlobalUser-UserSessionInterface.md) 的类，框架自带 [`UserSessionTrait`](../reference/GlobalUser-UserSessionTrait.md) 帮你写：
+框架自带 [`UserSessionTrait`](../reference/GlobalUser-UserSessionTrait.md)，配上第 2-9 章的 [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) 就是一个完整实现：
 
 ```php
 namespace MyProj\UserSystem;
@@ -112,43 +107,65 @@ use DuckPhp\GlobalUser\UserSessionTrait;
 class UserSession implements UserSessionInterface
 {
     use SessionTrait;          // 带前缀的会话读写（第 2-9 章）
-    use UserSessionTrait;      // getCurrentUserId/Name、setCurrentUser、getCurrentUser…
+    use UserSessionTrait;      // getCurrentUserId/Name、getCurrentUser、setCurrentUser、unsetCurrentUser
 }
 ```
 
-`UserSessionTrait` 把当前用户存进会话键 **`user`**（数组，含 `id`/`name`）；配了 `globaluser_login_session` 之后，`Helper::UserId()` / `Helper::UserName()` 优先读会话，未登录时走 `throwLoginOn()`（旧文写的是「抛 `UserException`」，该类已删除；`check_login=false` 时返回 `0`/空）。
+它把当前用户存进会话键 **`user`**（数组，含 `id`/`name`）。想用 JWT、Redis、单点登录都行——实现那五个方法即可。
 
-### 5. 未登录怎么办
+### 5. 未登录怎么办：`throwLoginOn()`
 
-- **异常**：会话模式下，`Helper::UserId()`（`$check_login = true`，默认）在未登录时抛 `UserException`（常量 `MESSAGE_NEED_LOGIN`/`CODE_NEED_LOGIN`）；这个类名是写死的，**没有** 可配的 `user_default_exception_class`（旧文档里的那个选项源码里不存在）。想换异常就换 provider 类或在回调里自己抛。
-- **跳转/输出**：继承 [`Foundation\Controller\UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) 的控制器，`initController()` 会替你兜底：不能访问时 Ajax 抛 `UserException`、非 Ajax `302` 到登录页。
-- 异常怎么被接住、怎么变成错误页见[第 2-11 章](exception.md)。
+`id(true)` / `name(true)` / `data(true)`（`check_login` 默认 `true`）取不到值时，统一交给 `GlobalUser::throwLoginOn()`，**三选一，三条路最后都会 `exit()`**：
 
-### 6. 登录后视图：`__logined_enable_view`
+| 条件 | 行为 |
+|---|---|
+| 配了 `globaluser_need_login_callback` | 跑你的回调，然后 `exit()` |
+| 非 Ajax 请求 | `302` 到 `urlForLogin(当前 REQUEST_URI 的 path)`（回跳参数是 `?b=…`），然后 `exit()` |
+| Ajax 请求（`X-Requested-With: XMLHttpRequest`） | 输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，然后 `exit()` |
 
-用户页面（用户中心、个人资料）通常要带用户头尾、要注入 `__logined_id/__logined_name/__logined_url_logout`。开关是一份**视图数据**：
-
-- `__logined_enable_view` 出现在 `_Show()` 的 `$data` 或 `View::_()->data` 里且为真时，`DuckPhp::_Show()`（源码 `src/DuckPhp.php` 第 168–183 行）才走「登录后视图」分支；
-- 当前路由的控制器实现 [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md) → 交给 `GlobalUser::_Show()`（渲染 `user_view_file_header/footer`、注入 `__logined_*`）；
-- 两个接口都不实现 → 回落父类 `_Show()`，就是普通渲染。
-
-继承 `UserControllerBase` 时**不用手写**：它的 `initController()` 会 `Helper::assignViewData('__logined_enable_view', true)`，并把 `__logined_enable_header_footer` 也置真（决定要不要把 `user_view_file_header/footer` 套到页面上）。要手动开或只对某次渲染开：
+因为会 `exit()`，**调用方拿不到返回值**：想自己接管跳转就用 `check_login = false`，自己判断：
 
 ```php
-Helper::assignViewData('__logined_enable_view', true);           // 全控制器（自己的基类里）
-Helper::Show(['__logined_enable_view' => true, 'note' => $n], 'user/profile');  // 只这一次
+$userId = Helper::UserId(false);        // 未登录返回 0，不跳转、不 exit
+if (!$userId) {
+    Helper::Show302(Helper::User()->urlForLogin('user/profile'));   // 回跳地址自己给
+    return;
+}
 ```
 
-> 旧选项 `use_user_view` **已失效**（源码只剩注释行）。同理的管理员侧见[第 2-19 章](admin.md)；头尾文件是**相位可覆盖**的视图名，见[第 3-5 章](overriding.md)。
+登录/权限**不用异常类**：错误码在 [`User`](../reference/GlobalUser-User.md) 的常量上（`User::EXCEPTION_CODE_USER_NEED_LOGIN`、`User::EXCEPTION_MESSAGE_USER_NEED_PERMISSION` 等），未登录由 `throwLoginOn()` 直接处理。
+
+继承 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) 的控制器还会替你兜住「没权限」：`initController()` 里 `checkInstall(null)`（应用没装就 302 到安装页并中断）→ `id(true)` → `canAccess()` 为假时调 `onNeedPermission()`——非 Ajax `302` 到登录页（带 `?b=` 回跳）、Ajax 输出 `{"error_code":-2,"error_message":"NEED_PERMISSION"}`，随后 `exit()`。想换表现就在自己的控制器基类里重写 `onNeedPermission()`（见[第 2-19 章第 4 节](admin.md)的写法）。
+
+### 6. 登录后视图：三份视图数据
+
+用户页面（用户中心、个人资料）要带用户头尾、要在视图里拿到 `__logined_id/__logined_name/__logined_url_logout`。开关是**视图数据**，不是应用选项：
+
+| 视图数据键 | 作用 |
+|---|---|
+| `__use_logined_view_data` | 为真才走「登录后视图」分支（否则就是普通渲染） |
+| `__use_logined_header_footer_file` | 为真才把 `globaluser_view_file_header/footer` 当成页面的头/尾 |
+| `__logined_render_header_footer` | 缺省视为真；为假时**不渲染**头尾文件，但仍注入 `__logined_*` |
+
+走这条分支时，是 [`DuckPhp::_Show()`](../reference/DuckPhp.md)（源码 `src/DuckPhp.php` 176–196 行）在做：当前路由的控制器实现 [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md) → 调 `User::_()->mergeViewData()`（注入 `__logined_*`、渲染头尾）；两个接口都不实现 → 回落普通 `_Show()`。
+
+继承 `UserControllerBase` 时**不用手写**，它的 `initController()` 会把前两个键都置真：
+
+```php
+Helper::assignViewData('__use_logined_view_data', true);         // 自己的基类里（要手动开时）
+Helper::Show(['__use_logined_view_data' => true, 'note' => $n], 'user/profile');  // 只这一次
+```
+
+头尾文件的值按 `getOverrideableFile('view', …)` 解析：相对路径落在 **`<应用 path>/view/`** 下（不是 `path_view`），而且**相位可覆盖**——第三个应用想换掉用户页头尾，按[第 3-5 章 重写与覆盖](overriding.md)的覆盖规则放同名文件即可。
 
 ## 常见写法
 
-**① 登录检查与跳转**
+**① 登录检查与跳转**（自己接管，不让它 `exit()`）
 
 ```php
 public function profile()
 {
-    $userId = Helper::UserId(false);        // false：不抛异常，未登录返回 0/null
+    $userId = Helper::UserId(false);
     if (!$userId) {
         Helper::Show302(Helper::User()->urlForLogin('user/profile'));
         return;
@@ -157,49 +174,58 @@ public function profile()
 }
 ```
 
-**② 登录 / 登出动作**
+**② 登录 / 注册 / 登出动作**
 
 ```php
 public function login()
 {
     if (Helper::POST()) {
-        Helper::User()->login(Helper::POST());      // 成功后自动 302 到 user_url_home
+        Helper::User()->login(Helper::POST());      // 校验+落库交给登录服务；成功后 302 到 globaluser_url_home
     }
     Helper::Show([], 'user/login');
 }
 public function logout()
 {
-    Helper::User()->logout();                        // 清会话，302 到 user_url_login
+    Helper::User()->logout();                        // 清会话，302 到 globaluser_url_login
 }
 ```
 
-**③ 批量取用户名（走 Service）**
+**③ 自定义「未登录」的表现**（例如 API 返回 401，而不是 302 到登录页）
 
 ```php
-$names = Helper::UserService()->batchGetUsernames([1, 2, 3]);   // [1 => '张三', …]
+'globaluser_need_login_callback' => function () {
+    SystemWrapper::_()->_header('HTTP/1.1 401 Unauthorized', true, 401);
+    echo json_encode(['error' => 'USER_NEED_LOGIN']);
+},
+// 回调返回后组件会 exit()，请求到此为止
 ```
 
-**④ 让 `id()/name()` 走会话**
+**④ 判权限、批量取用户名**
 
 ```php
-'user_callback_for_session' => [MyProj\UserSystem\UserSession::class, '_'],
+if (!Helper::User()->canAccess()) {      // 无参：取当前路由的类/方法/URL
+    // 无权限
+}
+$names = Helper::UserService()->batchGetUsernames([1, 2, 3]);   // 走 local_service
 ```
 
 ## 常见错误
 
-| 现象                                                         | 原因                                                          | 改法                                                                                         |
-| ---------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `DuckPhpSystemException: No GlobalUser Provider.`          | 没配任何回调（session / id / name 都没有）                             | 至少配 `user_callback_for_session` 或 `user_callback_for_id`+`_name`                           |
-| `need app options 'user_callback_for_xxx'`                 | 组件走到了未配置的回调键                                                | 对照选项表补齐；或改用自己的 provider 类                                                                  |
-| 旧代码 `user_callback_get_id` 报错                              | 键名已失效                                                       | 改成 `user_callback_for_id`（name/data/local_service 同理）                                      |
-| `user_provider` 选项没反应                                      | 该选项源码里已不存在                                                  | 用 `'ext' => [MyUser::class => true]` 挂工程侧子类                                                |
-| `urlForRegister()` 报「need app options 'user_url_register'」 | 还在用旧键 `user_url_regist`                                     | 改成 `user_url_register`                                                                     |
-| 开了 `__logined_enable_view` 却没走用户头尾                         | 控制器没实现 `UserControllerInterface`（或没继承 `UserControllerBase`） | 实现该接口，或继承 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) |
-| `Helper::UserId()` 未登录时行为不对                                | 会话模式与非会话模式不同                                                | 会话模式抛 `UserException`；回调模式由你的回调决定（`check_login=false` 时不抛）                                 |
+| 现象 | 原因 | 改法 |
+|---|---|---|
+| `DuckPhpSystemException: No GlobalUser Provider.` | `User::_()` 是桩：没挂 `ext`，或 `user_provider_enable` 被关 | 挂 `'ext' => [MyUser::class => true]`（见第 2 节） |
+| ` need ext options 'globaluser_login_session'` | 三个必需回调没配齐 | 配 `globaluser_login_session` / `globaluser_login_service` / `globaluser_local_service` |
+| 旧键 `user_callback_for_*` / `user_url_*` 没反应 | 那一族键名已不存在（选项族统一成 `globaluser_*`） | 按第 3 节对照表改名 |
+| 未登录时页面直接 302/JSON，后面代码不执行 | `throwLoginOn()` 结尾是 `exit()` | 用 `check_login = false` 自己判断（第 5 节） |
+| `Helper::UserId()` 未登录返回 0 却没跳转 | 用了 `check_login = false` | 想要默认跳转就传 `true`（默认） |
+| 页面没有用户头尾 | 控制器没实现 `UserControllerInterface`，或 `__use_logined_header_footer_file` 没置真 | 继承 [`UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md)，或两个视图数据键都置真 |
+| 头尾文件找不到 | 值按 `<应用 path>/view/` 解析，不是 `path_view` | 用相对 `<path>/view/` 的名字，或给绝对路径 |
+| `Class 'UserException' not found` | 该类已从源码删除 | 用 `User::EXCEPTION_*` 常量 + `throwLoginOn()` 的机制 |
 
 ## 下一步
 
-- [第 2-19 章 管理员体系](admin.md)：后台那套（登录、`canAccess`、菜单）。
-- [第 2-11 章 异常与错误处理](exception.md)：登录/权限异常现在怎么被接住、怎么变成跳转或错误页（旧文里的 `UserException` 已删除）。
+- [第 2-19 章 管理员体系](admin.md)：后台那套（登录、`canAccess`、菜单），与本章同构。
+- [第 2-11 章 异常与错误处理](exception.md)：权限不够、登录失效怎么变成跳转或错误页。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉用户视图头尾。
-- 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[User](../reference/GlobalUser-User.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[UserLoginActionInterface](../reference/GlobalUser-UserLoginActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserLoginServiceInterface](../reference/GlobalUser-UserLoginServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)
+- [第 2-12 章 事件系统](events.md)：`EVENT_ACTION_USER_*`（注册/登录/登出前后）怎么监听。
+- 参考手册：[User](../reference/GlobalUser-User.md)、[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[UserLoginActionInterface](../reference/GlobalUser-UserLoginActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserLoginServiceInterface](../reference/GlobalUser-UserLoginServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)

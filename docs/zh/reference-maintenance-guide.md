@@ -317,13 +317,13 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
         - `ZAllDemoTest` 的 `files` 期望长度 10567 → **10438**（`Admin`/`User` 落地为 root 组件 + `GlobalAdmin`/`GlobalUser` 瘦身后，选项表、容器类清单、包含文件表、调用栈行号都变）。**已 diff 两份 dump 确认差异只落在**：执行耗时、内存消耗、容器里的类清单（`GlobalAdmin`/`GlobalUser` → `Admin`/`User`）、调用栈行号、包含文件表——没有选项键层面的意外变化。
         - 参考手册：**新增 2 篇**（`GlobalAdmin-Admin`、`GlobalUser-User`）、**重写 2 篇**（`GlobalAdmin-GlobalAdmin`、`GlobalUser-GlobalUser`，旧页写的还是 `*_callback_for_*` / `go_url()` / `addExtViewData()` / `_Show()` 那套已删除的 API）、**更新 10 篇**（6 篇 GlobalAdmin/GlobalUser 接口页、`Core-App`、`Core-DuckPhpSystemException`、`Component-ExtOptionsLoader`、`DuckPhp`、`Ext-DuckPhpInstaller`、`Foundation-Business-BusinessHelper`、`Foundation-Controller-{AdminControllerBase,UserControllerBase,ControllerHelper}`）、**删除 2 篇**（`GlobalAdmin-AdminException`、`GlobalUser-UserException`——两个类已从源码删除，异常码/消息改由 `Admin::EXCEPTION_*` / `User::EXCEPTION_*` 常量承担）。
         - 生成页：`gen-options-docs.php` 的 `HIDDEN_DESC` 补两条（`url_admin_home`、`url_user_home`，否则 `--check` 报「隐藏选项缺少说明」），随后重生成 `index.md` / `options*.md`，`--check` → up to date。新页会被自动收进 `<!-- GEN:nav -->` / `<!-- GEN:az -->`，**不要手改** index.md。
-        - **用户指南本轮不动**（作者裁定：只记 TODO）：动了 11 个 guide 文件——其中 7 个加 `//TODO` 标记、另 4 个只是零散旧名就地改正；6 处死链就地改成文字。清单与逐条原因见 `guide-maintenance-guide.md` §19。
+        - **用户指南随后已补齐**（第 20 轮 / M11）：11 个 guide 文件先按「只记 TODO」处理（7 个 `//TODO` + 4 个零散旧名 + 6 处死链就地改成文字），紧接着的下一轮把它们全部改完（`user.md`/`admin.md` 重写、`events.md` 事件常量表重写等），`//TODO` 清零。清单与逐条原因见 `guide-maintenance-guide.md` §19（记录）与 §20（完成）。
 - **待办（本工作范围外）**：
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
   - ~~`docs/zh/guide/external-auth.md` 里还有一批旧键名未校~~ **已处理**：该章已拆成 `session.md`(2-9)/`user.md`(2-18)/`admin.md`(2-19)，键名与选项按当前源码逐条核对（旧键 `user_callback_get_*`、已废选项 `user_provider`/`admin_provider`/`*_default_exception_class` 都已在正文标注失效）；
   - `docs/zh/reference/index.md` 目录页：新增文档已全部登记（含本轮 2 篇新页），剩下的是**逐条核对说明文字**是否仍准确；
   - `options.md` / `options-by-class.md` / `options-index.md` 三个汇总页已改由 `gen-options-docs.php` 生成，`--check` 为 up to date；
-  - **`docs/zh/guide/` 的指南补齐（7 个 `//TODO` 标记 + 4 个零散旧名，清单见 `guide-maintenance-guide.md` §19）**：`user.md` / `admin.md` 两章最重（49 + 30 处旧 API）。
+  - **`docs/zh/guide/` 的指南补齐**：第 16 轮留下的 7 个 `//TODO` + 4 个零散旧名**已全部处理完**（第 20 轮 / M11，见 `guide-maintenance-guide.md` §20：2-18/2-19 两章重写、2-12 事件常量表重写、3-5 视图级开关、附录 B 登录片段、2-11 登录/权限表述）。参考页与指南现在同源一致，`grep -rn '//TODO（参考手册同步轮' docs/zh/guide` = 0。
 - **生成器已知缺陷（如需修复）**：`docs/scripts/gen-reference.php verify` 对含 trait 别名 override 的大文件（`Core/App.php`）会漏列方法；修好前请以 `drift.py` 为准。
 
 ## 9. 快速自检（冒烟）

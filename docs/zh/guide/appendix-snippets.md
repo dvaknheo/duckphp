@@ -103,29 +103,30 @@ public function list()
 
 配置见[第 2-18 章](../guide/user.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
 
-//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：本节片段里的键名全是旧名，下次改本章时按源码重写——
-//  · `user_url_*` → `globaluser_url_{home,register,login,logout}`；`user_callback_for_session` → `globaluser_login_session`；`user_callback_for_login_service` → `globaluser_login_service`；
-//  · 下面 ⚠️ 那句里的 `user_callback_for_id/name/data/local_service` **四个键都已不存在**：现在 id/name/data 只从会话（`globaluser_login_session`）取，服务走 `globaluser_local_service`；
-//  · `Helper::UserId()` 未登录时**不再抛 `UserException`**（该类已删除），而是走 `throwLoginOn()`：配了 `globaluser_need_login_callback` 就回调、非 Ajax 302 到登录页、Ajax 输出 `{"error_code":-1,"error_message":"NEED_LOGIN"}`，三条路都 `exit()`。
-
 ```php
 // System/App.php 的选项
-'user_url_login'    => 'user/login',
-'user_url_logout'   => 'user/logout',
-'user_url_register' => 'user/register',
-'user_callback_for_session'       => [MyProj\UserSystem\UserSession::class, '_'],
-'user_callback_for_login_service' => [MyProj\UserSystem\UserService::class, '_'],
+'globaluser_url_login'    => 'user/login',
+'globaluser_url_logout'   => 'user/logout',
+'globaluser_url_register' => 'user/register',
+'globaluser_login_session' => [MyProj\UserSystem\UserSession::class, '_'],
+'globaluser_login_service' => [MyProj\UserSystem\UserService::class, '_'],
+'globaluser_local_service' => [MyProj\UserSystem\UserService::class, '_'],
 ```
 
 ```php
 // 控制器里
-$userId = Helper::UserId();          // 未登录会抛 UserException（可被 302 到登录页接管）
+$userId = Helper::UserId();          // 未登录走 throwLoginOn()：302 到登录页 / Ajax 出 JSON，然后 exit()
 Helper::Show(get_defined_vars(), 'user/center');
 
-Helper::Show302(Helper::Url('user/logout'));   // 登出走后者的路由
+// 想自己接管跳转：传 false，未登录返回 0（不 exit）
+$userId = Helper::UserId(false);
+if (!$userId) {
+    Helper::Show302(Helper::User()->urlForLogin('user/center'));
+    return;
+}
 ```
 
-⚠️ 用户体系的回调键是 `user_callback_for_id` / `user_callback_for_name` / `user_callback_for_data` / `user_callback_for_local_service`（admin 侧把 `user` 换成 `admin`）。
+⚠️ 三个键是**必需**的：`globaluser_login_session`（当前是谁）、`globaluser_login_service`（注册/登录/登出）、`globaluser_local_service`（`canAccess()`/`log()`/`batchGetUsernames()`）；没配就抛 `need ext options '…'`。admin 侧把 `globaluser_` 换成 `globaladmin_`（没有注册那部分）。
 
 ## 6. 权限判断（后台 + 资源归属）
 

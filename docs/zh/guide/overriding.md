@@ -11,12 +11,8 @@
 | **文件级** | 父应用按「子应用 name」建同名子目录                            | 子应用的视图 / 配置 / 资源 | `view/shop/index.php`、`config/shop/greet.php`、`res/shop/third.css` |
 | **类级**  | `controller_class_map`（可从父应用注入给子应用）             | 某个控制器类的实现        | `src/Override/ShopControllerOverride.php`                          |
 | **路由级** | [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) / [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md)        | URL 的指向          | `MainApp::onInit()` 里的 `/legacy-shop`                              |
-| **视图级** | `__use_logined_view_data`（+ `__use_logined_header_footer_file`）视图数据，基类会自动置真     | `_Show()` 的渲染方式  | 第 2-9 章                                                             |
+| **视图级** | `__use_logined_view_data`（+ `__use_logined_header_footer_file`）视图数据，基类会自动置真     | `_Show()` 的渲染方式  | 第 2-18 章                                                             |
 | **组件级** | `ext` 表（`true` / 数组 / `'@方法'` / 选项键名 / `EXT_*`） | 组件与扩展的装配         | 第 4-2 章                                                             |
-
-//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：本节 3 处视图级开关名已随源码改名，下次改本章时一并处理——
-//  · 表里的 `__logined_enable_view` → `__use_logined_view_data`、`__logined_enable_header_footer` → `__use_logined_header_footer_file`（本文件第 105-106 行的 `Helper::assignViewData(...)` 示例同样是旧名）；
-//  · 另有第三个键 `__logined_render_header_footer`（缺省视为真）：为假时不渲染 `*_view_file_header/footer` 两个模板文件，但视图仍按「登录后」的方式渲染。详见 [GlobalUser](../reference/GlobalUser-GlobalUser.md) 的 `mergeViewData()`。
 
 ## 文件级覆盖：先讲清「谁赢」
 
@@ -106,17 +102,13 @@ RouteHookRewrite::_()->assignRewrite('/legacy-shop', 'shop/');
 
 ```php
 // 开关是视图数据，不是应用选项；写在自己的控制器基类里即可
-Helper::assignViewData('__logined_enable_view', true);          // _Show 交给 GlobalUser/GlobalAdmin
-Helper::assignViewData('__logined_enable_header_footer', true); // 顺手把头尾视图套上
+Helper::assignViewData('__use_logined_view_data', true);          // _Show 走「登录后视图」分支
+Helper::assignViewData('__use_logined_header_footer_file', true);  // 顺手把头尾视图套上
 ```
 
 > 继承 `Foundation\Controller\UserControllerBase` / `AdminControllerBase` 时这两句已经自动做了，不必手写。
 
-命中条件是「当前路由的控制器实现了 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) / [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md)」；头尾文件由 `admin_view_file_header/footer`、`user_view_file_header/footer` 指定（都是**相位可覆盖**的视图名，所以第三个应用也能换掉后台的头尾）。空视图名由 [`GlobalAdmin::_Show()`](../reference/GlobalAdmin-GlobalAdmin.md) / [`GlobalUser::_Show()`](../reference/GlobalUser-GlobalUser.md) 内部兜底成当前路由路径。
-
-//TODO（同上，下次改本章时一并处理）：上面这一段整体过期——
-//  · 三个键名与选项名：`__logined_enable_view` → `__use_logined_view_data`、`__logined_enable_header_footer` → `__use_logined_header_footer_file`、`admin_view_file_header/footer` → `globaladmin_view_file_header/footer`（用户侧同理 `globaluser_*`）；
-//  · `GlobalAdmin::_Show()` / `GlobalUser::_Show()` **已不存在**（也不再覆盖 `_Show()`）：接管渲染的是 [`DuckPhp::_Show()`](../reference/DuckPhp.md)，它按 `__use_logined_view_data` 判断后调 `Admin::_()` / `User::_()` 的 `mergeViewData()`；空视图名兜底在 `App::_Show()`。
+命中条件是「当前路由的控制器实现了 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) / [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md)」；头尾文件由 `globaladmin_view_file_header/footer`、`globaluser_view_file_header/footer` 指定（值是相对 `<应用 path>/view/` 的视图名，而且**相位可覆盖**，所以第三个应用也能换掉后台的头尾）。开关的判定与渲染都在 [`DuckPhp::_Show()`](../reference/DuckPhp.md) 里：它先取 `__use_logined_view_data`，命中接口就调 [`Admin::_()`](../reference/GlobalAdmin-Admin.md) / [`User::_()`](../reference/GlobalUser-User.md) 的 `mergeViewData()` 注入 `__logined_*` 并渲染头尾，最后按 `__use_logined_header_footer_file` 调 `View::setViewHeadFoot()`。空视图名由 `App::_Show()` 兜底成当前路由路径；想**只跳过**头尾而仍然注入 `__logined_*`，把视图数据 `__logined_render_header_footer` 置 `false`。
 
 ## 组件级覆盖：换装配
 

@@ -60,22 +60,43 @@ Helper::RemoveEvent('third.ordered');                                      // = 
 
 ### 事件名约定：「进行中 / 已完成」后缀
 
-//TODO（参考手册同步轮 2026-09-24 记：本轮只同步了 reference，本章未改）：下面这张表已过期，下次改本章时按源码重写——
-//  · 层 Helper 上那些 `public static $EVENT_*` **属性已从源码删除**；事件名现在是常量，定义在 [`User`](../reference/GlobalUser-User.md) / [`Admin`](../reference/GlobalAdmin-Admin.md) 上：`User::EVENT_ACTION_USER_{REGISTERING,REGISTERED,LOGINING,LOGINED,LOGOUTING,LOGOUTED}`、`User::EVENT_SERVICE_USER_*`、`Admin::EVENT_ACTION_ADMIN_{LOGINING,LOGINED,LOGOUTING,LOGOUTED}`、`Admin::EVENT_SERVICE_ADMIN_*`（值就是常量名本身，例如 `'ACTION_USER_LOGINED'`）。
-//  · `BusinessHelper` 只保留 `EVENT_SERVICE_*` 的同名别名常量、`ControllerHelper` 只保留 `EVENT_ACTION_*` 的同名别名常量（别名自 `User`/`Admin`）；旧值 `'registering'`/`'action_logined'` 那套小写串已不存在。
-//  · 引用行号（第 23–27 行 / 第 28–35 行）也要跟着改。
+框架内置的事件名是**常量**，定义在两处，值就是常量名本身：
 
-框架内置的事件常量分两组（`src/Foundation/Business/BusinessHelper.php` 第 23–27 行、`src/Foundation/Controller/ControllerHelper.php` 第 28–35 行）：
+- [`User`](../reference/GlobalUser-User.md)：`EVENT_ACTION_USER_REGISTERING` / `_REGISTERED` / `_LOGINING` / `_LOGINED` / `_LOGOUTING` / `_LOGOUTED`（值形如 `'ACTION_USER_LOGINED'`）与 `EVENT_SERVICE_USER_*`（同六个）；
+- [`Admin`](../reference/GlobalAdmin-Admin.md)：`EVENT_ACTION_ADMIN_LOGINING` / `_LOGINED` / `_LOGOUTING` / `_LOGOUTED` 与 `EVENT_SERVICE_ADMIN_LOGINED` 等四个（管理员没有注册）。
 
-| 层 | 常量 | 值 |
+两组的分工：
+
+| 组 | 谁派发 | 用途 |
 |---|---|---|
-| Business | `$EVENT_REGISTERING` / `$EVENT_REGISTERED` | `registering` / `registered` |
-| Business | `$EVENT_LOGINING` / `$EVENT_LOGINED` | `logining` / `logined` |
-| Controller | `$EVENT_ACTION_REGISTERING` / `$EVENT_ACTION_REGISTERED` | `action_registering` / `action_registered` |
-| Controller | `$EVENT_ACTION_LOGINING` / `$EVENT_ACTION_LOGINED` | `action_logining` / `action_logined` |
-| Controller | `$EVENT_ACTION_LOGOUTING` / `$EVENT_ACTION_LOGOUTED` | `action_logouting` / `action_logouted` |
+| `EVENT_ACTION_*`（Action＝动作） | 框架派发：[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 的 `register()/login()/logout()`、[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md) 的 `login()/logout()` | 监听「这次登录/注册/登出发生了什么」，例如登录后发站内信 |
+| `EVENT_SERVICE_*`（Service＝服务） | **框架不派发**，是你的登录服务自己 `fire()` 的名字 | 给你在 Service 层细分「校验前 / 落库后」这类阶段用（`src/Foundation/Business/BusinessHelper.php` 只提供同名别名常量） |
 
-**约定**：`xxxing` 表示「正在进行中」（还可以干预），`xxxed` 表示「已完成」（做善后）。自定义事件请沿用同一后缀，例如 `order.creating` / `order.created`。
+在 Action 层监听（登录成功做善后）：
+
+```php
+Helper::OnGlobalEvent('ACTION_USER_LOGINED', function ($post) {
+    // $post 就是传给 login() 的那份数据
+});
+Helper::OnGlobalEvent('ACTION_ADMIN_LOGOUTED', function ($admin_id) {
+    // 登出后拿到的是管理员 id
+});
+```
+
+在 Service 层自己派发（框架只给名字）：
+
+```php
+use DuckPhp\Component\GlobalEvent;
+use DuckPhp\GlobalUser\User;
+
+GlobalEvent::_()->fire(User::EVENT_SERVICE_USER_REGISTERING, $post);
+// …校验、落库…
+GlobalEvent::_()->fire(User::EVENT_SERVICE_USER_REGISTERED, $post);
+```
+
+> 事件名是**字符串常量**，用字面量 `'ACTION_USER_LOGINED'` 也能通，但建议用 `User::EVENT_ACTION_USER_LOGINED` 这类常量（改名时能立刻发现引用点）。
+
+**约定**：`xxxING` 表示「正在进行中」（还可以干预），`xxxED` 表示「已完成」（做善后）。自定义事件请沿用同一后缀，例如 `order.creating` / `order.created`。
 
 ### 与第 2-10 章钩子的分工
 

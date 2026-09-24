@@ -136,6 +136,11 @@
 | M6 章号改卷-章形式 + 类名首现链参考手册 + 清掉过时内容 | ✅ |
 | M7 第 4 轮重构后的指南同步（Helper 章重写 + `__logined_enable_view` 机制改写 + 各章旧名/旧选项） | ✅ |
 | M8 新增 4-11「过时与冷门的扩展类」+ 参考页孤儿清零（`find-unmentioned-classes.py` 反查 → 0） | ✅ |
+| M9 `RouteHookApiServer` 选项改名 `apiserver_*`（含 `src/` 与指南） | ✅ |
+| M10 落实 `helper.md` 的两条 `//TODO`（工程 Helper 的动态方法 + 静态覆盖） | ✅ |
+| M11 跟随 `GlobalAdmin`/`GlobalUser` 重写同步指南（2-18/2-19 重写、2-12 事件常量表、3-5 视图级开关、附录 B 登录片段、2-11 登录/权限表述） | ✅ |
 | Q1–Q4 待决策 | ✅ 全部已定并落地 |
+
+> **M11 收尾实测**（2026-09-24，详见 [用户指南维护指南](guide-maintenance-guide.md) §20）：`check-doc-links.py docs/zh` → **2109 条 0 死链**；`checkchap.py`（本轮临时脚本）→ 「链接文字章号 vs 目标 H1」**0 处不一致**、`index.md` 之外无缺章号 H1；`find-unmentioned-classes.py` → **109/109 类页全被链到、孤儿 0**；改动章行数 117–294（全部 ≤400）；`docs/zh/guide` 里同步轮留下的 `//TODO` **清零**；全量测试 `OK (96 tests, 823 assertions)`、覆盖率 `4895/4895`。
 
 > **用户指南重写任务至此完成**：`docs/zh/guide/` = `index.md` + 41 章 + 4 附录（章号 `1-1`…`4-10`，单数字形式已废弃）；`docs/zh` 站内链接 **1973 条 0 死链**、全 UTF-8；每个类名的首次出现都链到参考手册（新增 359 处，代码块内不插链接）；全量测试绿。三条新写作约定见 [用户指南维护指南](guide-maintenance-guide.md) §1 第 6/7/8 条；M6 的踩坑与校验结果见其 §14 与 [参考手册维护指南](reference-maintenance-guide.md) 第 14 条。
