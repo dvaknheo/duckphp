@@ -95,7 +95,7 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
             return;
         }
         if (!CoreHelper::IsAjax()) {
-            $url_back = parse_url(SuperGlobal::_()->_SERVER(('REQUEST_URI', ''), PHP_URL_PATH);
+            $url_back = parse_url(SuperGlobal::_()->_SERVER('REQUEST_URI', ''), PHP_URL_PATH);
             CoreHelper::Show302($this->urlForLogin($url_back));
         } else {
             CoreHelper::ShowJson([
