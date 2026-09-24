@@ -9,15 +9,13 @@ namespace DuckPhp\GlobalUser;
 use DuckPhp\Component\GlobalEvent;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\App;
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
-use DuckPhp\GlobalUser\UserActionInterface;
 use DuckPhp\GlobalUser\UserSessionInterface;
 
-class GlobalUser extends ComponentBase implements UserActionInterface, UserLoginActionInterface
+class GlobalUser extends User implements UserLoginActionInterface
 {
     const EVENT_ACTION_USER_REGISTERING = 'ACTION_USER_REGISTERING';
     const EVENT_ACTION_USER_REGISTERED = 'ACTION_USER_REGISTERED';
@@ -33,38 +31,33 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     const EVENT_SERVICE_USER_LOGOUTED = 'SERVICE_USER_LOGOUTED';
 
     public $options = [
-        'user_enable' => true,
-        'user_loginout_auto_redirect' => true,
+        'globaluser_is_authed_redirect' => true,
 
-        'user_url_home' => null,
-        'user_url_register' => null,
-        'user_url_login' => null,
-        'user_url_logout' => null,
+        'globaluser_url_home' => null,
+        'globaluser_url_register' => null,
+        'globaluser_url_login' => null,
+        'globaluser_url_logout' => null,
 
-        'user_view_file_header' => null, // 'inc-head',
-        'user_view_file_footer' => null, // 'inc-foot',
+        // 'inc-head',
+        'globaluser_view_file_header' => null,
+        // 'inc-foot',
+        'globaluser_view_file_footer' => null,
 
-        'user_enable_callback_singleton' => true,
-        'user_callback_for_id' => null, //[UserAction::class,'id'],
-        'user_callback_for_name' => null, //[UserAction::class,'name'],
-        'user_callback_for_data' => null, //[UserAction::class,'data'],
-        'user_callback_for_local_service' => null, //[UserAction::class,'service'],
-        'user_callback_for_add_ext_view_data' => null, //[UserAction::class,'addExtViewData'],
-        'user_callback_for_login_service' => null,
-        'user_callback_for_session' => null,
 
-        'user_callback_for_url_for_home' => null,
-        'user_callback_for_url_for_register' => null,
-        'user_callback_for_url_for_login' => null,
-        'user_callback_for_url_for_logout' => null,
+        'globaluser_enable_callback_singleton' => true,
+        //[UserAction::class,'service'],
+        'globaluser_local_service' => null,
+        //[UserAction::class,'loginservice'],
+        'globaluser_login_service' => null,
+        //[UserAction::class,'loginsession'],
+        'globaluser_login_session' => null,
+        //[UserAction::class,'addExtViewData'],
+        'globaluser_ext_view_data_callback' => null,
+
     ];
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        // if (!$this->options['user_enable']) {
-        //     $this->is_inited = false;
-        //     return $this;
-        // }
         if ($context->options['user_provider_enable'] ?? true) {
             GlobalUser::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
         }
@@ -73,19 +66,23 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     protected function run_callback_by_key(string $key, ...$args)
     {
         if (!isset($this->options[$key])) {
-            throw new DuckPhpSystemException(" need app options '$key'", -1);
+            throw new DuckPhpSystemException(" need ext options '$key'", -1);
         }
 
         $callback = $this->options[$key];
 
         if (\is_array($callback) && \is_string($callback[0])) {
             $class = $callback[0];
-            $flag = $this->options['user_enable_callback_singleton'] ?? true;
+            $flag = $this->options['globaluser_enable_callback_singleton'] ?? true;
             if ($flag) {
                 $callback[0] = $class::_();
             }
         }
         return \call_user_func($callback, ...$args);
+    }
+    protected function throwLoginOn($flag)
+    {
+        CoreHelper::ControllerThrowOn($flag, UserException::MESSAGE_NEED_LOGIN, UserException::CODE_NEED_LOGIN, UserException::class);
     }
     /**
      * @param bool $check_login
@@ -93,170 +90,98 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
      */
     public function id(bool $check_login = true)
     {
-        if (!$this->is_inited) {
-            throw new DuckPhpSystemException("Need Provider", -1);
-        }
-        if (isset($this->options['user_callback_for_session'])) {
-            $id = $this->getSession()->getCurrentUserId();
-            CoreHelper::ControllerThrowOn($check_login && !$id, UserException::MESSAGE_NEED_LOGIN, UserException::CODE_NEED_LOGIN, UserException::class);
-            return $id ?? 0;
-        } elseif (isset($this->options['user_callback_for_id'])) {
-            return $this->run_callback_by_key('user_callback_for_id', $check_login);
-        }
-        throw new DuckPhpSystemException("No GlobalUser Provider.", -1);
+        $ret = $this->getSession()->getCurrentUserId();
+        $this->throwLoginOn($check_login && !$ret);
+        return $ret;
     }
     public function name(bool $check_login = true): string
     {
-        if (!$this->is_inited) {
-            throw new DuckPhpSystemException("Need Provider", -1);
-        }
-        if (isset($this->options['user_callback_for_session'])) {
-            $name = $this->getSession()->getCurrentUserName();
-            CoreHelper::ControllerThrowOn($check_login && !$name, UserException::MESSAGE_NEED_LOGIN, UserException::CODE_NEED_LOGIN, UserException::class);
-            return $name;
-        } elseif (isset($this->options['user_callback_for_name'])) {
-            return $this->run_callback_by_key('user_callback_for_name', $check_login);
-        }
-        throw new DuckPhpSystemException("No GlobalUser Provider.", -2);
+        $ret = $this->getSession()->getCurrentUserName();
+        $this->throwLoginOn($check_login && !$ret);
+        return $ret;
     }
     public function data(bool $check_login = true): array
     {
-        return $this->run_callback_by_key('user_callback_for_data', $check_login);
+        $ret = $this->getSession()->getCurrentUser();
+        $this->throwLoginOn($check_login && !$ret);
+        return $ret;
     }
     public function localService()
     {
-        return $this->run_callback_by_key('user_callback_for_local_service');
+        return $this->run_callback_by_key('globaluser_local_service');
     }
     /**
-     * @param array<string, mixed> $ext
-     */
-    protected function go_url(string $key_callback, string $key_url, ?string $url_back, ?array $ext)
-    {
-        if (isset($this->options[$key_callback])) {
-            return $this->run_callback_by_key($key_callback, $url_back, $ext);
-        }
-        if (!isset($this->options[$key_url])) {
-            throw new DuckPhpSystemException("need app options '$key_url'", -1);
-        }
-        $url = $this->options[$key_url];
-        return __url($url);
-    }
-    /**
-     * @param array<string, mixed> $ext
+     * @param array<string, mixed> $ext reserved for the caller's own use
      */
     public function urlForHome(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_for_url_for_home', 'user_url_home', $url_back, $ext);
+        $url = $this->context()->options['url_user_home'] ?? null;
+        $url ??= $this->options['globaluser_url_home'] ?? '/';
+        return __url($url) . $this->buildUrlBackQuery($url_back, $ext);
     }
     /**
-     * @param array<string, mixed> $ext
+     * @param array<string, mixed> $ext reserved for the caller's own use
      */
     public function urlForRegister(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_for_url_for_register', 'user_url_register', $url_back, $ext);
+        $url = $this->options['globaluser_url_register'] ?? '/';
+        return __url($url) . $this->buildUrlBackQuery($url_back, $ext);
     }
     /**
-     * @param array<string, mixed> $ext
+     * @param array<string, mixed> $ext reserved for the caller's own use
      */
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_for_url_for_login', 'user_url_login', $url_back, $ext);
+        $url = $this->options['globaluser_url_login'] ?? '/';
+        return __url($url) . $this->buildUrlBackQuery($url_back, $ext);
     }
     /**
-     * @param array<string, mixed> $ext
+     * @param array<string, mixed> $ext reserved for the caller's own use
      */
-    public function urlForLogout(?string $url_back = null, ?array $ext = null):string
+    public function urlForLogout(?string $url_back = null, ?array $ext = null): string
     {
-        return $this->go_url('user_callback_for_url_for_logout', 'user_url_logout', $url_back, $ext);
+        $url = $this->context()->options['url_user_logout'] ?? null;
+        $url ??= $this->options['globaluser_url_logout'] ?? '/';
+        return __url($url) . $this->buildUrlBackQuery($url_back, $ext);
+    }
+    /**
+     * @param array<string, mixed>|null $ext reserved for the caller's own use
+     */
+    protected function buildUrlBackQuery(?string $url_back, ?array $ext): string
+    {
+        if ($url_back === null && !$ext) {
+            return '';
+        }
+        $query = $ext ?? [];
+        if ($url_back !== null) {
+            $query['b'] = $url_back;
+        }
+        return '?' . http_build_query($query);
     }
     ///////////////
-    public function service()
-    {
-        $service = $this->localService();
-        return PhaseProxy::CreatePhaseProxy($this->context()::Phase(), $service);
-    }
     /**
      * @param array<string, mixed> $data
      */
     public function mergeViewData(array $data): array
     {
-        if (isset($this->options['user_callback_for_add_ext_view_data'])) {
-            return $this->run_callback_by_key('user_callback_for_add_ext_view_data', $data);
+        if (isset($this->options['globaluser_ext_view_data_callback'])) {
+            $data = $this->run_callback_by_key('globaluser_ext_view_data_callback', $data);
         }
 
-        $full_header_file = $this->options['user_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['user_view_file_header'], true) : null;
-        $full_footer_file = $this->options['user_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['user_view_file_footer'], true) : null;
+        $full_header_file = $this->options['globaluser_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['globaluser_view_file_header'], true) : null;
+        $full_footer_file = $this->options['globaluser_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['globaluser_view_file_footer'], true) : null;
         $header = $full_header_file ? View::_()->_Render($full_header_file, $data) : null;
         $footer = $full_footer_file ? View::_()->_Render($full_footer_file, $data) : null;
-
         $data['__view_data']['header'] = $header;
         $data['__view_data']['footer'] = $footer;
-
-        $data['__logined_id'] = $this->id(true);
-        $data['__logined_name'] = $this->name(false);
-        $data['__logined_data'] = $this->data(false);
-        $data['__logined_url_home'] = $this->urlForHome();
-        $data['__logined_url_logout'] = $this->urlForLogout();
         $data['__logined_header_file'] = $full_header_file;
         $data['__logined_footer_file'] = $full_footer_file;
-
-        return $data;
-    }    ///////////////
-    protected function getLoginBusiness()
-    {
-        return $this->run_callback_by_key('user_callback_for_login_service');
+        return parent::mergeViewData($data);
     }
-    /**
-     * @return UserSessionInterface
-     */
-    protected function getSession()
-    {
-        return $this->run_callback_by_key('user_callback_for_session');
-    }
-    public function register(array $post)
-    {
-        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_REGISTERING, $post);
-        $user = $this->getLoginBusiness()->register($post);
-        $this->getSession()->setCurrentUser($user);
-        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_REGISTERED, $post);
-
-        if ($this->options['user_loginout_auto_redirect']) {
-            CoreHelper::Show302($this->urlForHome());
-        }
-    }
-
-    public function login(array $post)
-    {
-        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGINING, $post);
-        $user = $this->getLoginBusiness()->login($post);
-        $this->getSession()->setCurrentUser($user);
-        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGINED, $post);
-
-        if ($this->options['user_loginout_auto_redirect']) {
-            CoreHelper::Show302($this->urlForHome());
-        }
-    }
-    public function logout()
-    {
-        // $last_phase = App::_()->getLastPhase();
-        // if (empty(Helper::AppOptions('user_provider'))) {
-        //     Helper::Show302(Helper::User()->urlForHome());
-        //     return;
-        // }
-        $user_id = $this->id(false);
-        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTING, $user_id);
-        $this->getLoginBusiness()->logout($user_id);
-        $this->getSession()->unsetCurrentUser();
-        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTED, $user_id);
-        if ($this->options['user_loginout_auto_redirect']) {
-            CoreHelper::Show302($this->urlForLogin());
-        }
-    }
-    ///////////////
-    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
+    public function canAccess(?string $url = null, ?string $class = null, ?string $method = null): bool
     {
         $id = $this->id(false);
-        if (empty($id)) {
+        if (!$id) {
             return false;
         }
         if (\is_null($class) && \is_null($method) && \is_null($url)) {
@@ -269,14 +194,7 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
 
             App::Phase($old_phase);
         }
-        return $this->localService()->canAccess($id, $class, $method, $url);
-    }
-    /**
-     * @param array<string, mixed> $ext
-     */
-    public function log(string $string, ?string $type = null, array $ext = [])
-    {
-        return $this->localService()->log($this->id(), $string, $type, $ext);
+        return $this->localService()->canAccess($id, $url, $class, $method);
     }
     /**
      * @param array<string, mixed> $ids
@@ -285,4 +203,57 @@ class GlobalUser extends ComponentBase implements UserActionInterface, UserLogin
     {
         return $this->localService()->batchGetUsernames($ids);
     }
+
+    //////////////// UserLoginActionInterface
+    /**
+     * Summary of getLoginService
+     * @return UserLoginServiceInterface
+     */
+    protected function getLoginService()
+    {
+        return $this->run_callback_by_key('globaluser_login_service');
+    }
+
+    /**
+     * Summary of getSession
+     * @return UserSessionInterface
+     */
+    protected function getSession()
+    {
+        return $this->run_callback_by_key('globaluser_login_session');
+    }
+    public function register(array $post)
+    {
+        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_REGISTERING, $post);
+        $user = $this->getLoginService()->register($post);
+        $this->getSession()->setCurrentUser($user);
+        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_REGISTERED, $post);
+
+        if ($this->options['globaluser_is_authed_redirect']) {
+            CoreHelper::Show302($this->urlForHome());
+        }
+    }
+    public function login(array $post)
+    {
+        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGINING, $post);
+        $user = $this->getLoginService()->login($post);
+        $this->getSession()->setCurrentUser($user);
+        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGINED, $post);
+
+        if ($this->options['globaluser_is_authed_redirect']) {
+            CoreHelper::Show302($this->urlForHome());
+        }
+    }
+    public function logout()
+    {
+        $user_id = $this->id(false);
+        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTING, $user_id);
+        $this->getLoginService()->logout($user_id);
+        $this->getSession()->unsetCurrentUser();
+        GlobalEvent::_()->fire(self::EVENT_ACTION_USER_LOGOUTED, $user_id);
+        if ($this->options['globaluser_is_authed_redirect']) {
+            CoreHelper::Show302($this->urlForLogin());
+        }
+    }
+    ///////////////
 }

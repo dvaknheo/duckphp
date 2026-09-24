@@ -10,6 +10,10 @@ interface UserLoginServiceInterface
 {
     public function register(array $post);
     public function login(array $post);
-    public function logout();
+    /**
+     * Summary of logout
+     * @param int|string $id
+     */
+    public function logout($id);
 
 }

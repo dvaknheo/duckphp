@@ -178,49 +178,44 @@ PhaseContainer::RestAllContainerForTesting();
             $called[] = 'admin';
             return $input;
         };
-        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_add_ext_view_data'] = $user_cb;
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_add_ext_view_data'] = $admin_cb;
-        // 作者提交 838b42c9 起，GlobalUser/GlobalAdmin 的 _Show() 会把 __logined_id/name/url_logout
-        // 填进 View::_()->data（不再放在 addExtViewData 里），所以这里要给出这三个回调，
-        // 否则没有 provider 时会抛 "No GlobalUser Provider."，两个分支根本走不到。
-        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_id'] = function ($check_login = true) {
-            return 1;
+        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['globaluser_ext_view_data_callback'] = $user_cb;
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_ext_view_data_callback'] = $admin_cb;
+        // GlobalUser/GlobalAdmin 的 _Show() 会把 __logined_id/name/data/url_* 填进视图数据，
+        // 这些值现在统一从「登录会话」取，所以这里要给出会话回调（globaluser_/globaladmin_login_session），
+        // 否则没配会话时会抛 " need ext options 'globaluser_login_session'"，两个分支根本走不到。
+        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['globaluser_login_session'] = function () {
+            return FakeLoginedSession::_();
         };
-        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_name'] = function ($check_login = true) {
-            return 'test_user';
-        };
-        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['user_callback_for_url_for_logout'] = function ($url_back = null, $ext = null) {
-            return '/user_logout';
-        };
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_id'] = function ($check_login = true) {
-            return 1;
-        };
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_name'] = function ($check_login = true) {
-            return 'test_admin';
-        };
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['admin_callback_for_url_for_logout'] = function ($url_back = null, $ext = null) {
-            return '/admin_logout';
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_login_session'] = function () {
+            return FakeLoginedSession::_();
         };
 
         Route::_()->calling_class = FakeUserController::class;
         ob_start();
-        DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
+        DuckPhp::_()->_Show(['__use_logined_view_data' => true, 'A'=>'b'], $path.'view/block');
         $out_user_view = ob_get_clean();
         $this->assertStringContainsString('Block', $out_user_view);
         $this->assertSame(['user'], $called, 'UserControllerInterface 分支应由 GlobalUser::_Show() 接手');
 
         // use_admin_view 分支：路由调用类实现 AdminControllerInterface
+        // 同时带上 __use_logined_header_footer_file（控制器里由 assignViewData 设置），
+        // 让 _Show() 顺带走 View::setViewHeadFoot() 那一步；给出真实的头/尾视图文件以便断言。
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_header'] = $path.'view/block.php';
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_footer'] = $path.'view/block.php';
         Route::_()->calling_class = FakeAdminController::class;
         ob_start();
-        DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
+        DuckPhp::_()->_Show(['__use_logined_view_data' => true, '__use_logined_header_footer_file' => true, 'A'=>'b'], $path.'view/block');
         $out_admin_view = ob_get_clean();
-        $this->assertStringContainsString('Block', $out_admin_view);
+        $this->assertSame(3, substr_count($out_admin_view, 'Block'), '头/尾文件 + 正文各渲染一次');
         $this->assertSame(['user', 'admin'], $called, 'AdminControllerInterface 分支应由 GlobalAdmin::_Show() 接手');
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_header'] = null;
+        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_footer'] = null;
 
-        // 开了 __logined_enable_view，但调用类两个接口都不实现 → 回落父类 _Show
+        // 开了 __use_logined_view_data，但调用类两个接口都不实现 → 回落父类 _Show
+        // （_Show() 会把 $data 并进 View::_()->data，上一步的 header/footer 开关会粘住，这里显式关掉）
         Route::_()->calling_class = FakeController::class;
         ob_start();
-        DuckPhp::_()->_Show(['__logined_enable_view' => true, 'A'=>'b'], $path.'view/block');
+        DuckPhp::_()->_Show(['__use_logined_view_data' => true, '__use_logined_header_footer_file' => false, 'A'=>'b'], $path.'view/block');
         $out_plain_view = ob_get_clean();
         $this->assertStringContainsString('Block', $out_plain_view);
         $this->assertSame(['user', 'admin'], $called, '两个接口都不是时应回落父类 _Show，不经 GlobalUser/GlobalAdmin');
@@ -293,6 +288,58 @@ class FakeSession
 class FakeService
 {
     use SingletonExTrait;
+}
+class FakeLoginedSession
+{
+    use SingletonExTrait;
+
+    protected $user = ['id' => 1, 'name' => 'test_user'];
+    protected $admin = ['id' => 1, 'name' => 'test_admin'];
+
+    public function init($options = [], $context = null)
+    {
+        return $this;
+    }
+    public function setCurrentUser($user)
+    {
+        $this->user = $user;
+    }
+    public function unsetCurrentUser()
+    {
+        $this->user = null;
+    }
+    public function getCurrentUser()
+    {
+        return $this->user;
+    }
+    public function getCurrentUserName()
+    {
+        return 'test_user';
+    }
+    public function getCurrentUserId()
+    {
+        return 1;
+    }
+    public function setCurrentAdmin($admin)
+    {
+        $this->admin = $admin;
+    }
+    public function unsetCurrentAdmin()
+    {
+        $this->admin = null;
+    }
+    public function getCurrentAdmin()
+    {
+        return $this->admin;
+    }
+    public function getCurrentAdminName()
+    {
+        return 'test_admin';
+    }
+    public function getCurrentAdminId()
+    {
+        return 1;
+    }
 }
 class FakeObject 
 {

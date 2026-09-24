@@ -24,10 +24,6 @@ interface UserActionInterface
      * @return UserServiceInterface
      */
     public function service();
-    /**
-     * @return UserServiceInterface
-     */
-    public function localService();
 
     /**
      * @param array<string, mixed> $ext
@@ -46,7 +42,7 @@ interface UserActionInterface
      */
     public function urlForHome(?string $url_back = null, ?array $ext = null): string;
 
-    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool;
+    public function canAccess(?string $url = null, ?string $class = null, ?string $method = null): bool;
     /**
      * @param array<string, mixed> $ext
      */
