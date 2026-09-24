@@ -149,6 +149,8 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
 
         $full_header_file = $this->options['globaladmin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['globaladmin_view_file_header'], true) : null;
         $full_footer_file = $this->options['globaladmin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['globaladmin_view_file_footer'], true) : null;
+        $header = null;
+        $footer = null;
         if ($data['__logined_render_header_footer'] ?? true) {
             $header = $full_header_file ? View::_()->_Render($full_header_file, $data) : null;
             $footer = $full_footer_file ? View::_()->_Render($full_footer_file, $data) : null;
@@ -201,7 +203,7 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
         GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGINING, $post);
         $admin = $this->getLoginService()->login($post);
         $this->getSession()->setCurrentAdmin($admin);
-        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGED, $post);
+        GlobalEvent::_()->fire(self::EVENT_ACTION_ADMIN_LOGINED, $post);
 
         if ($this->options['globaladmin_is_authed_redirect']) {
             CoreHelper::Show302($this->urlForHome());

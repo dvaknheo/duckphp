@@ -86,6 +86,24 @@ $options['app'] = [
         $this->assertArrayNotHasKey('no_bump', DuckPhpEOL::_()->options);
         @unlink($file); clearstatcache();
         ////]]]]
+
+        ////[[[[ saveExtOptions()：root 相的 loader 没开 data_file_enable → 直接抛 DuckPhpSystemException
+        // 注意：这里的 getRoot() 返回的是「root 相位里的 ExtOptionsLoader 组件」而不是 App，
+        // 所以它读的是组件自己的 data_file_enable（默认 true），要显式关掉才会走到抛异常那行。
+        PhaseContainer::RestAllContainerForTesting();
+        $opts3 = [
+            'path' => $path,
+        ];
+        DuckPhpEOL::_(new DuckPhpEOL);
+        DuckPhpEOL::_()->init($opts3);
+        ExtOptionsLoader::_()->options['data_file_enable'] = false;
+        try {
+            ExtOptionsLoader::_()->saveExtOptions(['x' => 1]);
+            $this->fail('root 没开 data_file_enable 时保存扩展选项应抛异常');
+        } catch (\DuckPhp\Core\DuckPhpSystemException $ex) {
+            $this->assertStringContainsString("must enable 'data_file_enable' in root!", $ex->getMessage());
+        }
+        ////]]]]
         
         
         @unlink($path.'runtime/DuckPhpData.config.json');

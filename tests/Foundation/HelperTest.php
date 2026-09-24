@@ -8,6 +8,8 @@ use DuckPhp\Foundation\Business\BusinessHelper;
 use DuckPhp\Foundation\Controller\ControllerHelper;
 use DuckPhp\Foundation\Model\ModelHelper;
 use DuckPhp\Foundation\System\SystemHelper;
+use DuckPhp\GlobalAdmin\Admin;
+use DuckPhp\GlobalUser\User;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -63,10 +65,29 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         'UserService' => 'Controller',
     ];
 
-    const EVENT_PROPS = [
-        'EVENT_REGISTERING', 'EVENT_REGISTERED', 'EVENT_LOGINING', 'EVENT_LOGINED',
-        'EVENT_ACTION_REGISTERING', 'EVENT_ACTION_REGISTERED', 'EVENT_ACTION_LOGINING',
-        'EVENT_ACTION_LOGINED', 'EVENT_ACTION_LOGOUTING', 'EVENT_ACTION_LOGOUTED',
+    /**
+     * 事件常量 => 该常量唯一合法的宿主层。
+     *
+     * 源码现状（提交 3ed3b053 起）：顶层 `GlobalUser\User` / `GlobalAdmin\Admin` 各持 6+4 个
+     * 常量（`EVENT_ACTION_*` / `EVENT_SERVICE_*`），层 Helper 里只留**别名声明**
+     * （`BusinessHelper` 收 SERVICE_*、`ControllerHelper` 收 ACTION_*），旧的那批
+     * `public static $EVENT_REGISTERING = 'registering'` 属性已从 `src/` 删除。
+     */
+    const EVENT_CONSTS = [
+        'Business' => [
+            'EVENT_SERVICE_USER_REGISTERING', 'EVENT_SERVICE_USER_REGISTERED',
+            'EVENT_SERVICE_USER_LOGINING', 'EVENT_SERVICE_USER_LOGINED',
+            'EVENT_SERVICE_USER_LOGOUTING', 'EVENT_SERVICE_USER_LOGOUTED',
+            'EVENT_SERVICE_ADMIN_LOGINING', 'EVENT_SERVICE_ADMIN_LOGINED',
+            'EVENT_SERVICE_ADMIN_LOGOUTING', 'EVENT_SERVICE_ADMIN_LOGOUTED',
+        ],
+        'Controller' => [
+            'EVENT_ACTION_USER_REGISTERING', 'EVENT_ACTION_USER_REGISTERED',
+            'EVENT_ACTION_USER_LOGINING', 'EVENT_ACTION_USER_LOGINED',
+            'EVENT_ACTION_USER_LOGOUTING', 'EVENT_ACTION_USER_LOGOUTED',
+            'EVENT_ACTION_ADMIN_LOGINING', 'EVENT_ACTION_ADMIN_LOGINED',
+            'EVENT_ACTION_ADMIN_LOGOUTING', 'EVENT_ACTION_ADMIN_LOGOUTED',
+        ],
     ];
 
     const EXPECTED_UNION_SIZE = 96;
@@ -124,16 +145,24 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             Assert::assertSame([], array_keys($this->staticApi($class)), "$class 不应再显式声明 Helper 方法");
         }
 
-        // 事件属性只住在层 Helper 上（Business 4 个 + Controller 6 个）
-        foreach (self::EVENT_PROPS as $name) {
-            $owners = [];
-            foreach (self::LAYER_CLASS as $layer => $class) {
-                if ((new \ReflectionClass($class))->hasProperty($name)) {
-                    $owners[] = $layer;
+        // 事件常量只住在层 Helper 上（Business 10 个 SERVICE_* + Controller 10 个 ACTION_*），
+        // 且每个常量的值必须与顶层 User/Admin 的同名常量一致（层里写的是别名声明）。
+        foreach (self::EVENT_CONSTS as $layer => $names) {
+            foreach ($names as $name) {
+                $owners = [];
+                foreach (self::LAYER_CLASS as $l => $class) {
+                    if ((new \ReflectionClass($class))->hasConstant($name)) {
+                        $owners[] = $l;
+                    }
                 }
+                Assert::assertSame([$layer], $owners, "事件常量 $name 应恰好由 $layer 层持有");
+                $top = strpos($name, '_ADMIN_') !== false ? Admin::class : User::class;
+                Assert::assertSame(
+                    constant($top.'::'.$name),
+                    constant(self::LAYER_CLASS[$layer].'::'.$name),
+                    "$name 的值应与 $top 的同名常量一致"
+                );
             }
-            Assert::assertCount(1, $owners, "事件属性 $name 应恰好由一层持有");
-            Assert::assertContains($owners[0], ['Business', 'Controller'], "事件属性 $name 落错层");
         }
     }
 

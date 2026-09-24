@@ -79,7 +79,7 @@ class GlobalUser extends User implements UserLoginActionInterface
         if (isset($this->options['globaluser_need_login_callback'])) {
             $this->run_callback_by_key('globaluser_need_login_callback');
             SystemWrapper::exit();
-            return;
+            return; // @codeCoverageIgnore
         }
         if (!CoreHelper::IsAjax()) {
             $url_back = parse_url(SuperGlobal::_()->_SERVER('REQUEST_URI', ''), PHP_URL_PATH);
@@ -91,7 +91,7 @@ class GlobalUser extends User implements UserLoginActionInterface
             ]);
         }
         SystemWrapper::exit();
-        return;
+        return; // @codeCoverageIgnore
     }
     /**
      * @param bool $check_login
@@ -179,6 +179,8 @@ class GlobalUser extends User implements UserLoginActionInterface
 
         $full_header_file = $this->options['globaluser_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['globaluser_view_file_header'], true) : null;
         $full_footer_file = $this->options['globaluser_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['globaluser_view_file_footer'], true) : null;
+        $header = null;
+        $footer = null;
         if ($data['__logined_render_header_footer'] ?? true) {
             $header = $full_header_file ? View::_()->_Render($full_header_file, $data) : null;
             $footer = $full_footer_file ? View::_()->_Render($full_footer_file, $data) : null;

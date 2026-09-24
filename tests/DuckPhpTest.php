@@ -137,6 +137,14 @@ PhaseContainer::RestAllContainerForTesting();
             ]
         ]);
 
+        // 配了 redis_list → initComponentsOfRoot() 里会顺手 init 一次 RedisManager（只存配置，不连接）
+        PhaseContainer::RestAllContainerForTesting();
+        DuckPhp::_(new DuckPhp())->init([
+            'installed' => true,
+            'redis_list' => [['host' => '127.0.0.1', 'port' => 6379]],
+        ]);
+        $this->assertSame(6379, \DuckPhp\Component\RedisManager::_()->options['redis_list'][0]['port']);
+
         DuckPhp::_()->regConsoleCommand('MyClass','prefix_');
         
         __l("xx");

@@ -140,6 +140,15 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $ext_calls);
         $this->assertNull($data['__view_data']['header']);
         $this->assertNull($data['__view_data']['footer']);
+        // __logined_render_header_footer = false：不渲染头尾文件（但仍把文件名回报给调用方）
+        $admin->options['globaladmin_view_file_header'] = 'block.php';
+        $admin->options['globaladmin_view_file_footer'] = 'block.php';
+        $data = $admin->mergeViewData(['__logined_render_header_footer' => false]);
+        $this->assertNull($data['__view_data']['header'], '关掉渲染开关时 header 应为 null（而不是未定义变量）');
+        $this->assertNull($data['__view_data']['footer'], '关掉渲染开关时 footer 应为 null');
+        $this->assertStringContainsString('block.php', (string) $data['__logined_header_file'], '文件名照旧回报');
+        $admin->options['globaladmin_view_file_header'] = null;
+        $admin->options['globaladmin_view_file_footer'] = null;
 
         ////////////////////////////////////////////////////////////////////
         // 6) canAccess()
@@ -191,6 +200,38 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         $admin->login(['username' => 'u2']);
         $this->assertSame(['username' => 'u2'], FakeAdminLoginService::_()->last_login_post);
         $admin->logout();
+
+        ////////////////////////////////////////////////////////////////////
+        // 8) throwLoginOn()：配了 need_login_callback 时走回调，Ajax 时走 ShowJson
+        ////////////////////////////////////////////////////////////////////
+        // throwLoginOn() 是三选一：① 配了 globaladmin_need_login_callback → 回调 + exit；
+        // ② 非 Ajax → Show302 到登录页 + exit（第 3 节已覆盖）；③ Ajax → ShowJson + exit。
+        FakeAdminSession::_()->unsetCurrentAdmin();
+        $need_login_calls = 0;
+        $admin->options['globaladmin_need_login_callback'] = function () use (&$need_login_calls) {
+            $need_login_calls++;
+        };
+        try {
+            $admin->id(true);
+            $this->fail('配了 need_login_callback 时应在 exit() 处中断');
+        } catch (\DuckPhp\Core\ExitException $ex) {
+        }
+        $this->assertSame(1, $need_login_calls, 'globaladmin_need_login_callback 应被调用一次');
+        // 撤掉回调（置 null 等于没配，别 unset：App 的 options 数组少键会引发未定义索引）
+        $admin->options['globaladmin_need_login_callback'] = null;
+
+        // Ajax 分支：ShowJson 输出错误码与错误信息，然后 exit
+        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+        ob_start();
+        try {
+            $admin->name(true);
+            $this->fail('Ajax 未登录时应在 exit() 处中断');
+        } catch (\DuckPhp\Core\ExitException $ex) {
+        }
+        $json = ob_get_clean();
+        unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+        $this->assertStringContainsString('"error_code":-1', $json);
+        $this->assertStringContainsString('NEED_LOGIN', $json);
 
         $_SERVER = $__SERVER;
         PhaseContainer::RestAllContainerForTesting();

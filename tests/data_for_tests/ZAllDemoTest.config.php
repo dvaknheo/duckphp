@@ -18,8 +18,9 @@ return [
         //   master 的类移动（SessionTrait/ModelTrait/ExceptionReporterTrait 分目录）→ 10532
         //   Helper trait 并进 Foundation\Controller\Helper → 10531（作者后调为 10537）
         //   层 Helper 类改名为 Foundation\<层>\<层>Helper（路径变长）→ 10567
+        //   默认 Admin/User 类落地 + GlobalAdmin/GlobalUser 去掉自带常量/选项（选项表与文件清单都变）→ 10438
         // 依据：测试失败时自己 dump 的 tests/data_for_tests/ZAllDemoTest-<len>.txt。详见 helper-merge-checklist.md
-        'files'              => 10567,
+        'files'              => 10438,
         'demo.php'           => 406,
         'helloworld.php'     => 11,
         'just-route.php'     => 109,
