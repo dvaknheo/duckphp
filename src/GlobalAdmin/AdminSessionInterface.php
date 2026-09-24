@@ -10,7 +10,7 @@ interface AdminSessionInterface
 {
     public function setCurrentAdmin($admin);
     public function unsetCurrentAdmin();
-    public function getCurrentAdmin(bool $check_login = false);
-    public function getCurrentAdminName(bool $check_login = false);
-    public function getCurrentAdminId(bool $check_login = false);
+    public function getCurrentAdmin();
+    public function getCurrentAdminName();
+    public function getCurrentAdminId();
 }

@@ -76,7 +76,7 @@ $admin->_Show($data, 'admin/index');      // 带后台头尾的渲染
 - URL 生成优先回调；无回调时 `__url($options['admin_url_*'])`。
 - `_Show()` 会临时切到 `App::getLastPhase()`；头尾模板仅在 `admin_view_file_header/footer` 非空时解析；`$view` 为空时使用当前路由路径。
 - **隐藏选项**（读得到、但不在 `$options` 声明里，故本页选项表没有）：`__logined_enable_header_footer`——它出现在 `_Show()` 的 `$data` 或 `View::_()->data` 里且为真时，才把 `admin_view_file_header/footer` 设为视图 head/foot（缺省 `false`）。注：早期的 `use_admin_view_header_footer` 选项源码里已无读取点，别再使用。
-- `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, …)`。
+- `canAccess()` 缺省参数时取当前路由的 class/method/PATH_INFO，然后交给 `localService()->canAccess($id, $url, $class, $method)`（`$url` 在前）。
 - 组件经 `ComponentBase` 的 `_()` 取实例；`Foundation\Controller\AdminControllerBase`/`GlobalAdmin` 配套见 F 批相关文档。
 
 ## 方法列表
@@ -122,8 +122,8 @@ $admin->_Show($data, 'admin/index');      // 带后台头尾的渲染
     public function logout()
 退出：取当前 id → 触发 `EVENT_ACTION_ADMIN_LOGOUTING` → `getLoginBusiness()->logout($admin_id)` → 清除会话 → 触发 `EVENT_ACTION_ADMIN_LOGOUTED`；`admin_loginout_auto_redirect` 为真时 302 到 `urlForLogin()`。
 
-    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
-判断当前管理员能否访问；缺省参数取当前路由的 class/method/PATH_INFO，随后交给 `localService()->canAccess($id, …)`。
+    public function canAccess(?string $url = null, ?string $class = null, ?string $method = null): bool
+判断当前管理员能否访问；缺省参数取当前路由的 class/method/PATH_INFO，随后交给 `localService()->canAccess($id, $url, $class, $method)`（`$url` 在前）。
 
     public function log(string $string, ?string $type = null, array $ext = [])
 记录管理员操作日志（委托 localService）。

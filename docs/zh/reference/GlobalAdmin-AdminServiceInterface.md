@@ -20,9 +20,9 @@ use DuckPhp\GlobalAdmin\AdminServiceInterface;
 
 class AdminService implements AdminServiceInterface
 {
-    public function canAccess($admin_id, string $class, string $method, ?string $url = null): bool
+    public function canAccess($admin_id, ?string $url, string $class, string $method): bool
     {
-        // 返回该管理员能否访问 controller/method/url
+        // 返回该管理员能否访问 url/controller/method
     }
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
     {
@@ -44,8 +44,8 @@ class AdminService implements AdminServiceInterface
 
 ### 公共方法
 
-    public function canAccess($admin_id, string $class, string $method, ?string $url = null): bool
-判断指定管理员能否访问某控制器类/方法/URL。
+    public function canAccess($admin_id, ?string $url, string $class, string $method): bool
+判断指定管理员能否访问某 URL/控制器类/方法（参数顺序与 `AdminActionInterface::canAccess()` 一致：`$url` 在前）。
 
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
 记录指定管理员的一条操作日志。

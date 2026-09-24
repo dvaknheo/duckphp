@@ -9,9 +9,11 @@ namespace DuckPhp\GlobalAdmin;
 interface AdminServiceInterface
 {
     /**
+     * Same argument order as AdminActionInterface::canAccess(): $url comes first.
+     *
      * @param int|string $admin_id
      */
-    public function canAccess($admin_id, string $class, string $method, ?string $url = null): bool;
+    public function canAccess($admin_id, ?string $url, string $class, string $method): bool;
     /**
      * @param int|string $admin_id
      * @param array<string, mixed> $ext

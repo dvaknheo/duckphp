@@ -14,6 +14,7 @@ use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
+use DuckPhp\Foundation\Controller\ControllerHelper;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
 use DuckPhp\GlobalAdmin\AdminSessionInterface;
 
@@ -33,7 +34,7 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
     const EVENT_SERVICE_ADMIN_LOGOUTED = 'SERVICE_ADMIN_LOGOUTED';
 
     public $options = [
-        'admin_loginout_auto_redirect' => true,
+        'globaladmin_is_authed_redirect' => true,
 
         'globaladmin_url_home' => null,
         'globaladmin_url_login' => null,
@@ -44,8 +45,6 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
         // 'inc-foot',
         'globaladmin_view_file_footer' => null,
 
-        //[AdminAction::class,'addExtViewData'],
-        'globaladmin_ext_view_data_callback' => null,
 
         'globaladmin_enable_callback_singleton' => true,
         //[AdminAction::class,'service'],
@@ -54,6 +53,9 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
         'globaladmin_login_service' => null,
         //[AdminAction::class,'loginsession'],
         'globaladmin_login_session' => null,
+        //[AdminAction::class,'addExtViewData'],
+        'globaladmin_ext_view_data_callback' => null,
+
     ];
     public function init(array $options, ?object $context = null)
     {
@@ -73,12 +75,16 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
 
         if (\is_array($callback) && \is_string($callback[0])) {
             $class = $callback[0];
-            $flag = $this->options['admin_enable_callback_singleton'] ?? true;
+            $flag = $this->options['globaladmin_enable_callback_singleton'] ?? true;
             if ($flag) {
                 $callback[0] = $class::_();
             }
         }
         return \call_user_func($callback, ...$args);
+    }
+    protected function throwLoginOn($flag)
+    {
+        CoreHelper::ControllerThrowOn($flag, AdminException::MESSAGE_NEED_LOGIN, AdminException::CODE_NEED_LOGIN, AdminException::class);
     }
     /**
      * @param bool $check_login
@@ -86,19 +92,25 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
      */
     public function id(bool $check_login = true)
     {
-        return $this->getSession()->getCurrentAdminId($check_login);
+        $ret = $this->getSession()->getCurrentAdminId();
+        $this->throwLoginOn($check_login && !$ret);
+        return $ret;
     }
     public function name(bool $check_login = true): string
     {
-        return $this->getSession()->getCurrentAdminName();
+        $ret = $this->getSession()->getCurrentAdminName();
+        $this->throwLoginOn($check_login && !$ret);
+        return $ret;
     }
     public function data(bool $check_login = true): array
     {
-        return $this->getSession()->getCurrentAdmin($check_login);
+        $ret = $this->getSession()->getCurrentAdmin();
+        $this->throwLoginOn($check_login && !$ret);
+        return $ret;
     }
     public function localService()
     {
-        return $this->run_callback_by_key('globaladmin_callback_for_local_service');
+        return $this->run_callback_by_key('globaladmin_local_service');
     }
     public function urlForHome(): string
     {
@@ -128,8 +140,8 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
             $data = $this->run_callback_by_key('globaladmin_ext_view_data_callback', $data);
         }
 
-        $full_header_file = $this->options['globaladmin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_header'], true) : null;
-        $full_footer_file = $this->options['globaladmin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_footer'], true) : null;
+        $full_header_file = $this->options['globaladmin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['globaladmin_view_file_header'], true) : null;
+        $full_footer_file = $this->options['globaladmin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['globaladmin_view_file_footer'], true) : null;
         $header = $full_header_file ? View::_()->_Render($full_header_file, $data) : null;
         $footer = $full_footer_file ? View::_()->_Render($full_footer_file, $data) : null;
         $data['__view_data']['header'] = $header;

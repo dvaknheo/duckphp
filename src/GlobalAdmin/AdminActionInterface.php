@@ -26,13 +26,8 @@ interface AdminActionInterface
      * @return AdminServiceInterface
      */
     public function service();
-    /**
-     * @param array<string, mixed> $ext
-     */
+
     public function urlForLogin(?string $url_back = null): string;
-    /**
-     * @param array<string, mixed> $ext
-     */
     public function urlForLogout(): string;
 
     public function urlForHome(): string;

@@ -3,6 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+
+namespace DuckPhp\GlobalAdmin;
+
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\DuckPhpSystemException;
@@ -35,7 +38,7 @@ class Admin extends ComponentBase implements AdminActionInterface
     {
         throw new DuckPhpSystemException("Need Provider", -1);
     }
-    public function urlForLogout(?string $url_back = null):string
+    public function urlForLogout():string
     {
         throw new DuckPhpSystemException("Need Provider", -1);
     }
@@ -64,9 +67,9 @@ class Admin extends ComponentBase implements AdminActionInterface
         return PhaseProxy::CreatePhaseProxy($this->context()->getThisPhaseName(), $service);
     }
 
-    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
+    public function canAccess(?string $url = null, ?string $class = null, ?string $method = null): bool
     {
-        return $this->localService()->canAccess($this->id(), $class, $method, $url);
+        return $this->localService()->canAccess($this->id(), $url, $class, $method);
     }
     /**
      * @param array<string, mixed> $ext
