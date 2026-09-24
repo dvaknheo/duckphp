@@ -73,8 +73,8 @@ public $options = [
 
 `SessionTrait` 只解决「怎么读写会话」。**当前是谁、怎么登录、未登录怎么办**是另一套东西：
 
-- 用户体系：[第 2-18 章 用户体系](user.md)（`GlobalUser` + `UserSessionTrait`，把当前用户存进会话键 `user`）；
-- 管理员体系：[第 2-19 章 管理员体系](admin.md)（`AdminSessionTrait`，键为 `admin`）。
+- 用户系统：[第 2-18 章 使用用户系统](user.md)（调用方视角）、[第 4-12 章 实现用户系统](impl-user.md)（`UserSessionTrait` 把当前用户存进会话键 `user`）；
+- 管理员系统：[第 2-19 章 使用管理员系统](admin.md)、[第 4-13 章 实现管理员系统](impl-admin.md)（`AdminSessionTrait`，键为 `admin`）。
 
 它们内部就是**组合 `SessionTrait`** 实现的——这也是为什么本章是那两章的前置。
 
@@ -131,7 +131,7 @@ Helper::Show302(Session::_()->get('url_back', 'home/index'));
 
 ## 下一步
 
-- [第 2-18 章 用户体系](user.md)：会话里放的那点「登录票据」怎么变成「当前用户」。
-- [第 2-19 章 管理员体系](admin.md)：后台登录、权限判断与菜单。
+- [第 2-18 章 使用用户系统](user.md)：会话里放的那点「登录票据」怎么变成「当前用户」。
+- [第 2-19 章 使用管理员系统](admin.md)：后台登录、权限判断与菜单。
 - [第 2-10 章 请求生命周期与钩子点](lifecycle.md)：这一次请求框架内部都做了什么。
 - 参考手册：[Foundation\Controller\SessionTrait](../reference/Foundation-Controller-SessionTrait.md)、[Core\SuperGlobal](../reference/Core-SuperGlobal.md)、[Core\SystemWrapper](../reference/Core-SystemWrapper.md)、[应用设置 Setting](../reference/setting.md)

@@ -174,7 +174,7 @@ Helper::Validator()
 
 ## 下一步
 
-- [第 2-18 章 用户体系](user.md)：登录之后，怎么知道「当前是谁」。
+- [第 2-18 章 使用用户系统](user.md)：登录之后，怎么知道「当前是谁」。
 - [第 2-11 章 异常与错误处理](exception.md)：`check()`/`ThrowOn` 抛出的异常，框架怎么接住、怎么呈现。
 - [第 2-3 章 控制器](controllers.md)：`Helper::POST()` 与输出四方式。
 - 参考手册：[DuckPhp\Component\Validator](../reference/Component-Validator.md)、[DuckPhp\Foundation\Business\BusinessHelper](../reference/Foundation-Business-BusinessHelper.md)

@@ -15,7 +15,7 @@ php -S 127.0.0.1:8080 -t demo/public
 |---|---|---|
 | 规范 | **8** | 本章：四层各管什么、谁不能调谁 |
 | 请求路径 | 9–13 | [路由](routing.md) → [控制器](controllers.md) → [视图](views.md) → [数据库](database.md) → [模型](model.md) |
-| 横切能力 | 14–16 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话](session.md)、[用户体系](user.md)、[管理员体系](admin.md) |
+| 横切能力 | 14–16 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话](session.md)、[使用用户系统](user.md)、[使用管理员系统](admin.md) |
 | 框架机制 | 17–19 | [生命周期与钩子](lifecycle.md)、[异常](exception.md)、[事件](events.md) |
 | 进阶 | 20–24 | [缓存](cache.md)、[国际化](i18n.md)、[命令行](cli.md)、[测试](testing.md)、[安全与性能](security-performance.md) |
 

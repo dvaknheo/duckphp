@@ -120,5 +120,5 @@ HttpServer::RunQuickly([
 ## 相关参考
 
 - [DuckPhp\Component\RouteHookResource](../reference/Component-RouteHookResource.md)（含 `cloneResource()` 细节）
-- [第 2-18 章 用户体系](user.md) 的 `__use_logined_view_data`（登录后视图）
+- [第 2-18 章 使用用户系统](user.md) 的 `__use_logined_view_data`（登录后视图）
 - [第 3-5 章 重写与覆盖](overriding.md)：`res/<name>/` 覆盖规则

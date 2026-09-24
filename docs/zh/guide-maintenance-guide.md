@@ -16,9 +16,9 @@
 | 卷 | 读者状态 | 读完能做什么 | 章数 |
 |---|---|---|---|
 | 一 入门 | 没装过 | 跑起一个页面并上线 | 7 |
-| 二 单一应用 | 会跑 | 独立写完一个业务应用（覆盖主流框架的全部常见主题） | 17 |
+| 二 单一应用 | 会跑 | 独立写完一个业务应用（覆盖主流框架的全部常见主题） | 19（含 2-18/2-19「使用用户/管理员系统」） |
 | 三 使用第三方应用 | 会写单应用 | 把外部应用挂进来、共享组件、覆盖它的内容 | 7 |
-| 四 高级话题 | 会集成 | 改框架行为、调优、排错、维护文档 | 10 |
+| 四 高级话题 | 会集成 | 改框架行为、调优、排错、维护文档、自己实现用户/管理员体系 | 13（含 4-12/4-13「实现用户/管理员系统」） |
 
 **硬约束**（作者已裁定，别自行放宽）：
 
@@ -27,10 +27,11 @@
 3. **新写的章 ≤400 行**；改写章暂不限，但明显超长的要拆（见 Checklist 的 Q2）。
 4. **附录**：原先指南侧的 `appendix-global-functions.md` 与 `appendix-options.md` **已删除**——全局函数参考由 `docs/zh/reference/Core-Functions.md` 承接，应用选项参考由 `reference/options.md` / `options-by-class.md` / `options-index.md` 承接；指南里只留指向参考手册的链接。
 5. **不写**「升级与破坏性变更」章/附录。
-6. **章号一律用「卷-章」号**：`1-1`–`1-7`、`2-1`–`2-17`、`3-1`–`3-7`、`4-1`–`4-10`（附录仍是 A/B/C/D）。**不要再出现单数字章号**（例如写成「数字 + 章」的样子）。
+6. **章号一律用「卷-章」号**：`1-1`–`1-7`、`2-1`–`2-19`、`3-1`–`3-7`、`4-1`–`4-13`（附录仍是 A/B/C/D）。**不要再出现单数字章号**（例如写成「数字 + 章」的样子）。
 7. **类名第一次出现时，链接到参考手册对应页**（例如正文里写 `Route::_()` 时，首次出现处链成 `[Route](reference/Core-Route.md)`；`Base`/`Helper` 有多个同名页，必须用全限定名形式）。
 8. **不写旧文档的过时内容**：`architecture.md` / `components.md` / 两篇指南附录都已删除，指南里不要再出现「旧文档里是这么写的」「已废弃的 X」之类表述——只写当前事实，必要时直接给正确写法。
 9. `skeleton/` 的失真内容已在 Q3 轮修掉（`class_user`→`user_provider`、方法前缀默认值、`ProjectException extends \Exception` 等）；模板工程改动同样要跑测试（`tests/Foundation/ExceptionTraitTest.php` 有防回归断言）。
+10. **「怎么用」与「怎么实现」分章**（第 6 轮作者裁定）：卷二末尾的 2-18/2-19 只讲**调用方怎么用**（Helper 入口、未登录表现、视图开关）；「接入实现」（三个实现 + 选项 + `ext` 挂载）在第四卷的 4-12/4-13。以后写涉及用户/管理员的内容按这条分家，别把选项表塞回 2-18/2-19。
 
 ## 2. 每章模板（全卷统一，照抄结构）
 
@@ -176,7 +177,7 @@ python3 <tmp>/drift.py --all                                                    
 ## 9. 第二卷章序与章号重排（作者裁定）
 
 > **章号形式**：作者后来要求**不再用单一数字，统一改成「卷-章」号**（例：早先的单数字 11 → 现在的 **2-4**）。现在的对应关系：
-> 第一卷 `1-1`–`1-7`；第二卷 `2-1`–`2-17`；第三卷 `3-1`–`3-7`；第四卷 `4-1`–`4-10`；附录仍是 A/B/C/D。**单数字形式已全部废弃**，文档里不要再写成「数字 + 章」的样子（历史叙述里提旧编号时也只写数字）。
+> 第一卷 `1-1`–`1-7`；第二卷 `2-1`–`2-19`；第三卷 `3-1`–`3-7`；第四卷 `4-1`–`4-13`（4-12/4-13 是第 6 轮新加的两章「实现用户/管理员系统」）；附录仍是 A/B/C/D。**单数字形式已全部废弃**，文档里不要再写成「数字 + 章」的样子（历史叙述里提旧编号时也只写数字）。
 
 **第一次裁定（重排顺序）**：第二卷不再按「生命周期打头、四层架构靠后」，改成**先立规范 → 再走请求路径 → 再补横切能力 → 最后框架机制与进阶**。最终结果（下表用现在的卷-章号；「最初」列是被废除的单数字）：
 
@@ -191,8 +192,8 @@ python3 <tmp>/drift.py --all                                                    
 | 2-7 | Helper 与全局函数 | `helper.md` | 15 |
 | 2-8 | 表单与数据验证 | `validator.md` | 16 |
 | 2-9 | 会话 | `session.md` | 17 |
-| 2-18 | 用户体系（原 2-9 拆出，放在卷二末尾） | `user.md` | — |
-| 2-19 | 管理员体系（原 2-9 拆出，放在卷二末尾） | `admin.md` | — |
+| 2-18 | 使用用户系统（原 2-9 拆出，放在卷二末尾；第 6 轮起只讲用法） | `user.md` | — |
+| 2-19 | 使用管理员系统（同上） | `admin.md` | — |
 | 2-10 | 请求生命周期与钩子点（含兼容扩展：洋葱中间件 + 钩子链） | `lifecycle.md` | 8 |
 | 2-11 | 异常与错误处理 | `exception.md` | 19 |
 | 2-12 | 事件系统 | `events.md` | 20 |
@@ -403,3 +404,35 @@ python3 <tmp>/drift.py --all                                                    
 - `App::_()` 之所以能拿到「当前应用」，是因为 `KernelTrait` 在初始化时 `(self::class)::_($this)` 把自己注册进容器；**换过相位容器后（`PhaseContainer::RestAllContainerForTesting()`）必须重新 init**，否则 `User::_()` / `App::_()` 会新建一个「默认的」实例，症状是莫名的 Internal Error。
 
 **验收**：`check-doc-links.py docs/zh` → **2109 条 0 死链**；`docs/zh/guide` 里同步轮的 `//TODO` **归零**；改动的 12 个文件 117–294 行（≤400）；「链接文字章号 vs 目标页 H1」**0 处不一致**；`find-unmentioned-classes.py` → **109/109 类页全被链到**；全量测试 `OK (96 tests, 823 assertions)`（本轮**未改 `src/` 与 `tests/`**，两条基线沿用上一轮的实测值）。
+
+## 21. M12 / 本轮：2-18/2-19 改成「使用」章，实现另立 4-12/4-13（作者裁定）
+
+**背景**：M11 把两章同步到新 API 后，作者反馈「**user.md 这章写得不好，应该是怎么用先**，也就是 `(Controller)Helper::User/UserId/UserName/UserService` 和 `(Business)Helper::UserService` 的使用；后面才讲实现，**甚至可能实现要放到高级内容**」。追问后的裁定是：**2-18 = 使用用户系统、2-19 = 使用管理员系统；高级卷分为 4-12 实现用户系统、4-13 实现管理员系统**。
+
+**怎么分的家**
+
+| | 卷二（怎么用） | 卷四（怎么实现） |
+|---|---|---|
+| 读者 | 在控制器/业务里调 API 的人 | 项目搭建者、要换会话/服务实现的人 |
+| 内容 | `Helper::User()/UserId()/UserName()/UserService()`（控制器）与 `Helper::UserService()`（业务）的入口表、`Helper::User()` 方法一览、未登录的三条路与 `check_login=false`、登录/注册/登出三个动作、两个视图开关、常见写法与错误 | 三件实现（会话/登录服务/本地服务）的骨架、`ext` 三种写法、`User` 是键 `GlobalUser` 是实现、全部选项表、`UserSessionTrait`、服务的每个方法被谁调用、`need_login_callback`、`ext_view_data_callback`、头尾文件解析规则、自检四条 |
+| 行数 | `user.md` 231、`admin.md` 178（M11 时） → **本轮重写后 214 / 198** | 新写 `impl-user.md` 214、`impl-admin.md` 173 |
+
+**两章使用章的结构**（照 §2 模板，但把「机制说明」写成了调用方视角）：
+
+1. 最小示例：控制器里 `Helper::UserId()/UserName()`，业务里 `Helper::UserService()->batchGetUsernames()`；
+2. 入口表：**控制器拿「人」、业务拿「服务」**——并写清为什么业务层没有 `User()/UserId()`（「现在是谁」是请求上下文，业务方法要用户信息就显式传参，这样 CLI/队列也能复用）；
+3. 未登录三选一表 + `check_login=false`；
+4. `Helper::UserService()`（控制器与业务都能用，`$user_id` 显式传参）；
+5. 登录/注册/登出三个动作（自动 302 由 `globaluser_is_authed_redirect` 控制）；
+6. 两个视图开关 + 继承 `UserControllerBase` 时已自动置真。
+
+**顺带查清的两件事**
+
+- **两个入口的实现其实一样**：`ControllerHelper::UserService()` 与 `BusinessHelper::UserService()` 都是 `User::_()->service()`（`src/Foundation/Controller/ControllerHelper.php` 265-268、`src/Foundation/Business/BusinessHelper.php` 101-104），但**只有控制器层**有 `User()/UserId()/UserName()`。业务层要「谁」只能由控制器传参——这条以前没人写清，现在写在 2-18 第 1 节。
+- **组件不判断「登录成功没有」**：`GlobalUser::login()` 把登录服务的返回值**原样** `setCurrentUser()` 写进会话，再发完成事件、再 302；所以「密码不对」的表现由登录服务决定（返回空数组最省事）。这条写在 4-12 第 5 节。
+
+**示例实测**：临时脚本（跑完即删 `tmp_verify_usage.php`）**13 条断言 / 0 失败**，逐条对着使用章的正文：`Helper::User() === User::_()`、`UserId()/UserName()/data()` 读会话、`Helper::User()->canAccess()`（无参＝当前路由）与 `log()` 走 Service、`Helper::UserService()` 与 `BusinessHelper::UserService()` 都能批量取名字、未登录时 `UserId(false)` 返回 0 而 `UserId()` 302 到登录页、`login()` 写会话并 302 到 `globaluser_url_home`、控制器置真两个视图键后头/正文/尾都渲染。
+
+**连带改动**（新增两章要动的账）：`guide/index.md` 的第四卷表加 4-12/4-13 行、章数 44 → **46**、「第 1-1–4-11」→「第 1-1–4-13」、2-18/2-19 两行标题改成「使用…」；`guide-maintenance-guide.md` §1 卷表章数、硬约束 6 的章号范围、新增硬约束 10（用/实现分家）、§9 章序表 2-18/2-19 行；`guide-rewrite-checklist.md` 第四卷表 + M12 行；全库 5 处「第 2-18 章 用户体系 / 第 2-19 章 管理员体系」的链接文字（`controllers`/`helper`/`session`/`static-resources`/`validator`）批量改名；`session.md`、`appendix-snippets.md`、`appendix-migration.md`、`troubleshooting.md`、`layers.md` 的指向改成「用/实现」两处；`controllers.md` 里那段 `UserAction::_()->login($name, $password)` + `Session::_()->setUserId()`（两个都不存在的 API）换成 `NoteAction` 的真实写法。
+
+**校验**：见下一轮收尾（链接/章号/行数/orphan 四项一起跑）。

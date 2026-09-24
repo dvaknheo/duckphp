@@ -102,18 +102,18 @@ Helper::assignViewData('site_name', 'MyProj'); // ③ 预置变量，之后每�
 ```php
 namespace MyProj\Controller;
 
-class UserAction extends ActionBase      // 只调 Business 与 Session，不直接调 Model
+class NoteAction extends ActionBase      // 只调 Business 与 Session，不直接调 Model
 {
-    public function login(string $name, string $password): array
+    public function save(array $post): array
     {
-        $user = UserBusiness::_()->login($name, $password);
-        Session::_()->setUserId($user['id']);
-        return $user;
+        $note = NoteBusiness::_()->save($post);
+        Session::_()->set('last_note_id', $note['id']);   // 带前缀的会话读写（第 2-9 章）
+        return $note;
     }
 }
 ```
 
-控制器里只留输入输出：`$user = UserAction::_()->login($name, $password);`（Action 的完整分工见[第 2-18 章](user.md)）。
+控制器里只留输入输出：`$note = NoteAction::_()->save(Helper::POST());`（分层规则见[第 2-1 章](layers.md)；登录这类标准动作不用自己写 Action，直接用[第 2-18 章](user.md)的 `Helper::User()->login()`）。
 
 ## 常见写法
 
@@ -200,5 +200,5 @@ Mailer::_()->send($user['email'], '欢迎', $body);
 
 - [第 2-4 章 视图与模板](views.md)：视图文件怎么定位、页眉页脚、转义。
 - [第 2-8 章 表单与数据验证](validator.md)：输入校验的三种口径。
-- [第 2-18 章 用户体系](user.md) / [第 2-19 章 管理员体系](admin.md)：`UserControllerBase` / `AdminControllerBase` 与 Action。
+- [第 2-18 章 使用用户系统](user.md) / [第 2-19 章 使用管理员系统](admin.md)：`UserControllerBase` / `AdminControllerBase` 与 Action。
 - 参考手册：[DuckPhp\Foundation\Controller\ControllerHelper](../reference/Foundation-Controller-ControllerHelper.md)、[DuckPhp\Foundation\Controller\Base](../reference/Foundation-Controller-Base.md)、[DuckPhp\Core\SuperGlobal](../reference/Core-SuperGlobal.md)。
