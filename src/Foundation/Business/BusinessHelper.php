@@ -13,18 +13,35 @@ use DuckPhp\Component\Validator;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonExTrait;
-use DuckPhp\GlobalAdmin\GlobalAdmin;
-use DuckPhp\GlobalUser\GlobalUser;
+use DuckPhp\GlobalAdmin\Admin;
+use DuckPhp\GlobalUser\User;
 
 class BusinessHelper
 {
     use SingletonExTrait;
 
-    public static $EVENT_REGISTERING = 'registering';
-    public static $EVENT_REGISTERED = 'registered';
+    const EVENT_SERVICE_USER_REGISTERING = User::EVENT_SERVICE_USER_REGISTERING;
+    const EVENT_SERVICE_USER_REGISTERED = User::EVENT_SERVICE_USER_REGISTERED;
+    const EVENT_SERVICE_USER_LOGINING = User::EVENT_SERVICE_USER_LOGINING;
+    const EVENT_SERVICE_USER_LOGINED = User::EVENT_SERVICE_USER_LOGINED;
+    const EVENT_SERVICE_USER_LOGOUTING = User::EVENT_SERVICE_USER_LOGOUTING;
+    const EVENT_SERVICE_USER_LOGOUTED = User::EVENT_SERVICE_USER_LOGOUTED;
 
-    public static $EVENT_LOGINING = 'logining';
-    public static $EVENT_LOGINED = 'logined';
+    const EXCEPTION_CODE_USER_NEED_LOGIN = User::EXCEPTION_CODE_USER_NEED_LOGIN;
+    const EXCEPTION_MESSAGE_USER_NEED_LOGIN = User::EXCEPTION_MESSAGE_USER_NEED_LOGIN;
+    const EXCEPTION_CODE_USER_NEED_PERMISSION = User::EXCEPTION_CODE_USER_NEED_PERMISSION;
+    const EXCEPTION_MESSAGE_USER_NEED_PERMISSION = User::EXCEPTION_MESSAGE_USER_NEED_PERMISSION;
+
+    const EVENT_SERVICE_ADMIN_LOGINING = Admin::EVENT_SERVICE_ADMIN_LOGINING;
+    const EVENT_SERVICE_ADMIN_LOGINED = Admin::EVENT_SERVICE_ADMIN_LOGINED;
+    const EVENT_SERVICE_ADMIN_LOGOUTING = Admin::EVENT_SERVICE_ADMIN_LOGOUTING;
+    const EVENT_SERVICE_ADMIN_LOGOUTED = Admin::EVENT_SERVICE_ADMIN_LOGOUTED;
+
+    const EXCEPTION_CODE_ADMIN_NEED_LOGIN = Admin::EXCEPTION_CODE_ADMIN_NEED_LOGIN;
+    const EXCEPTION_MESSAGE_ADMIN_NEED_LOGIN = Admin::EXCEPTION_MESSAGE_ADMIN_NEED_LOGIN;
+    const EXCEPTION_CODE_ADMIN_NEED_PERMISSION = Admin::EXCEPTION_CODE_ADMIN_NEED_PERMISSION;
+    const EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION = Admin::EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION;
+
 
     public static function Setting($key = null, $default = null)
     {
@@ -76,14 +93,14 @@ class BusinessHelper
      */
     public static function AdminService()
     {
-        return GlobalAdmin::_()->service();
+        return Admin::_()->service();
     }
     /**
      * @return \DuckPhp\GlobalUser\UserServiceInterface
      */
     public static function UserService()
     {
-        return GlobalUser::_()->service();
+        return User::_()->service();
     }
     //////////////////////
     // Validator data validation

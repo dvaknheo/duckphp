@@ -18,21 +18,34 @@ use DuckPhp\Core\SingletonExTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
-use DuckPhp\GlobalAdmin\GlobalAdmin;
-use DuckPhp\GlobalUser\GlobalUser;
+use DuckPhp\GlobalAdmin\Admin;
+use DuckPhp\GlobalUser\User;
 
 class ControllerHelper
 {
     use SingletonExTrait;
 
-    public static $EVENT_ACTION_REGISTERING = 'action_registering';
-    public static $EVENT_ACTION_REGISTERED = 'action_registered';
+    const EVENT_ACTION_USER_REGISTERING = User::EVENT_ACTION_USER_REGISTERING;
+    const EVENT_ACTION_USER_REGISTERED = User::EVENT_ACTION_USER_REGISTERED;
+    const EVENT_ACTION_USER_LOGINING = User::EVENT_ACTION_USER_LOGINING;
+    const EVENT_ACTION_USER_LOGINED = User::EVENT_ACTION_USER_LOGINED;
+    const EVENT_ACTION_USER_LOGOUTING = User::EVENT_ACTION_USER_LOGOUTING;
+    const EVENT_ACTION_USER_LOGOUTED = User::EVENT_ACTION_USER_LOGOUTED;
 
-    public static $EVENT_ACTION_LOGINING = 'action_logining';
-    public static $EVENT_ACTION_LOGINED = 'action_logined';
+    const EXCEPTION_CODE_USER_NEED_LOGIN = User::EXCEPTION_CODE_USER_NEED_LOGIN;
+    const EXCEPTION_MESSAGE_USER_NEED_LOGIN = User::EXCEPTION_MESSAGE_USER_NEED_LOGIN;
+    const EXCEPTION_CODE_USER_NEED_PERMISSION = User::EXCEPTION_CODE_USER_NEED_PERMISSION;
+    const EXCEPTION_MESSAGE_USER_NEED_PERMISSION = User::EXCEPTION_MESSAGE_USER_NEED_PERMISSION;
 
-    public static $EVENT_ACTION_LOGOUTING = 'action_logouting';
-    public static $EVENT_ACTION_LOGOUTED = 'action_logouted';
+    const EVENT_ACTION_ADMIN_LOGINING = Admin::EVENT_ACTION_ADMIN_LOGINING;
+    const EVENT_ACTION_ADMIN_LOGINED = Admin::EVENT_ACTION_ADMIN_LOGINED;
+    const EVENT_ACTION_ADMIN_LOGOUTING = Admin::EVENT_ACTION_ADMIN_LOGOUTING;
+    const EVENT_ACTION_ADMIN_LOGOUTED = Admin::EVENT_ACTION_ADMIN_LOGOUTED;
+
+    const EXCEPTION_CODE_ADMIN_NEED_LOGIN = Admin::EXCEPTION_CODE_ADMIN_NEED_LOGIN;
+    const EXCEPTION_MESSAGE_ADMIN_NEED_LOGIN = Admin::EXCEPTION_MESSAGE_ADMIN_NEED_LOGIN;
+    const EXCEPTION_CODE_ADMIN_NEED_PERMISSION = Admin::EXCEPTION_CODE_ADMIN_NEED_PERMISSION;
+    const EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION = Admin::EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION;
 
     public static function Setting($key = null, $default = null)
     {
@@ -214,43 +227,43 @@ class ControllerHelper
      */
     public static function Admin()
     {
-        return GlobalAdmin::_();
+        return Admin::_();
     }
     public static function AdminId(bool $check_login = true)
     {
-        return GlobalAdmin::_()->id($check_login);
+        return Admin::_()->id($check_login);
     }
     public static function AdminName(bool $check_login = true)
     {
-        return GlobalAdmin::_()->name($check_login);
+        return Admin::_()->name($check_login);
     }
     /**
      * @return \DuckPhp\GlobalAdmin\AdminServiceInterface
      */
     public static function AdminService()
     {
-        return GlobalAdmin::_()->service();
+        return Admin::_()->service();
     }
     /**
      * @return \DuckPhp\GlobalUser\UserActionInterface
      */
     public static function User()
     {
-        return GlobalUser::_();
+        return User::_();
     }
     public static function UserId(bool $check_login = true)
     {
-        return GlobalUser::_()->id($check_login);
+        return User::_()->id($check_login);
     }
     public static function UserName(bool $check_login = true)
     {
-        return GlobalUser::_()->name($check_login);
+        return User::_()->name($check_login);
     }
     /**
      * @return \DuckPhp\GlobalUser\UserServiceInterface
      */
     public static function UserService()
     {
-        return GlobalUser::_()->service();
+        return User::_()->service();
     }
 }

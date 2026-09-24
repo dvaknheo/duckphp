@@ -26,9 +26,9 @@ use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
+use DuckPhp\GlobalAdmin\Admin;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
-use DuckPhp\GlobalAdmin\GlobalAdmin;
-use DuckPhp\GlobalUser\GlobalUser;
+use DuckPhp\GlobalUser\User;
 use DuckPhp\GlobalUser\UserControllerInterface;
 
 class DuckPhp extends App
@@ -114,8 +114,8 @@ class DuckPhp extends App
         $my_components = [
             DbManager::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
             RedisManager::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
-            GlobalAdmin::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
-            GlobalUser::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
+            Admin::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
+            User::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
             GlobalEvent::class => self::EXT_ROOT_HOLD_POSISION_ONLY,
         ];
         $components = array_merge($components, $my_components);
@@ -181,11 +181,11 @@ class DuckPhp extends App
         }
         if (\is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
             $data['__logined_render_header_footer'] = $data['__logined_render_header_footer'] ?? (View::_()->data['__logined_render_header_footer'] ?? null);
-            $data = GlobalUser::_()->mergeViewData($data);
+            $data = User::_()->mergeViewData($data);
         }
         if (\is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
             $data['__logined_render_header_footer'] = $data['__logined_render_header_footer'] ?? (View::_()->data['__logined_render_header_footer'] ?? null);
-            $data = GlobalAdmin::_()->mergeViewData($data);
+            $data = Admin::_()->mergeViewData($data);
         }
         $enable_header_footer = $data['__use_logined_header_footer_file'] ?? (View::_()->data['__use_logined_header_footer_file'] ?? null);
         if ($enable_header_footer ?? false) {
