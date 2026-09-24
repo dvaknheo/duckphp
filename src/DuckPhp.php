@@ -172,9 +172,11 @@ class DuckPhp extends App
             return parent::_Show($data, $view);
         }
         if (\is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
+            $data['__logined_render_header_footer'] = $data['__logined_render_header_footer'] ?? (View::_()->data['__logined_render_header_footer'] ?? null);
             $data = GlobalUser::_()->mergeViewData($data);
         }
         if (\is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
+            $data['__logined_render_header_footer'] = $data['__logined_render_header_footer'] ?? (View::_()->data['__logined_render_header_footer'] ?? null);
             $data = GlobalAdmin::_()->mergeViewData($data);
         }
         $enable_header_footer = $data['__use_logined_header_footer_file'] ?? (View::_()->data['__use_logined_header_footer_file'] ?? null);

@@ -12,6 +12,8 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\DuckPhpSystemException;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 use DuckPhp\GlobalUser\UserSessionInterface;
 
@@ -53,7 +55,8 @@ class GlobalUser extends User implements UserLoginActionInterface
         'globaluser_login_session' => null,
         //[UserAction::class,'addExtViewData'],
         'globaluser_ext_view_data_callback' => null,
-
+        //[UserAction::class,'needLogin'],
+        'globaluser_need_login_callback' => null,
     ];
     public function init(array $options, ?object $context = null)
     {
@@ -82,7 +85,25 @@ class GlobalUser extends User implements UserLoginActionInterface
     }
     protected function throwLoginOn($flag)
     {
-        CoreHelper::ControllerThrowOn($flag, UserException::MESSAGE_NEED_LOGIN, UserException::CODE_NEED_LOGIN, UserException::class);
+        if (!$flag) {
+            return;
+        }
+        if (isset($this->options['globaluser_need_login_callback'])) {
+            $this->run_callback_by_key('globaluser_need_login_callback');
+            SystemWrapper::exit();
+            return;
+        }
+        if (!CoreHelper::IsAjax()) {
+            $url_back = parse_url(SuperGlobal::_()->_SERVER('REQUEST_URI', ''), PHP_URL_PATH);
+            CoreHelper::Show302($this->urlForLogin($url_back));
+        } else {
+            CoreHelper::ShowJson([
+                'error_code' => -1,
+                'error_message' => 'NEED_LOGIN',
+            ]);
+        }
+        SystemWrapper::exit();
+        return;
     }
     /**
      * @param bool $check_login
@@ -170,8 +191,10 @@ class GlobalUser extends User implements UserLoginActionInterface
 
         $full_header_file = $this->options['globaluser_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['globaluser_view_file_header'], true) : null;
         $full_footer_file = $this->options['globaluser_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['globaluser_view_file_footer'], true) : null;
-        $header = $full_header_file ? View::_()->_Render($full_header_file, $data) : null;
-        $footer = $full_footer_file ? View::_()->_Render($full_footer_file, $data) : null;
+        if ($data['__logined_render_header_footer'] ?? true) {
+            $header = $full_header_file ? View::_()->_Render($full_header_file, $data) : null;
+            $footer = $full_footer_file ? View::_()->_Render($full_footer_file, $data) : null;
+        }
         $data['__view_data']['header'] = $header;
         $data['__view_data']['footer'] = $footer;
         $data['__logined_header_file'] = $full_header_file;
