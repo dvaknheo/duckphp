@@ -29,7 +29,7 @@ class SuperGlobal extends ComponentBase
     {
         // Reload superglobals on every init, so multi-phase requests keep seeing their data.
         $this->_LoadSuperGlobalAll();
-        
+
         if ($this->options['superglobal_auto_define']) {
             static::DefineSuperGlobalContext();
         }

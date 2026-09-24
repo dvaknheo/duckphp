@@ -62,21 +62,21 @@ public function center()
 
 ### 2. 选项对照表（以 `src/GlobalUser/GlobalUser.php` 的 `$options` 为准）
 
-| 选项 | 默认 | 作用 |
-|---|---|---|
-| `user_url_home` | `null` | 站内首页 URL（未配回调时用 `__url()` 生成） |
-| `user_url_login` / `user_url_logout` | `null` | 登录 / 退出 URL |
-| `user_url_register` | `null` | 注册 URL（旧名 `user_url_regist` 已更名） |
-| `user_view_file_header` / `user_view_file_footer` | `null` | 用户页面头/尾视图文件 |
-| `user_enable` | `true` | 组件自身的启用开关 |
-| `user_enable_callback_singleton` | `true` | 回调写成 `[类名, 方法]` 时是否先转成 `类名::_()` |
-| `user_callback_for_id` / `_for_name` / `_for_data` | `null` | 取当前 id / 名字 / 整个数据数组 |
-| `user_callback_for_local_service` | `null` | 返回本地 Service 实现（`Helper::UserService()` 用它） |
-| `user_callback_for_login_service` | `null` | 登录服务（服务侧契约 [`UserLoginServiceInterface`](../reference/GlobalUser-UserLoginServiceInterface.md)）：`register()/login()/logout()` 经它做校验与落库 |
-| `user_callback_for_session` | `null` | 会话实现（[`UserSessionInterface`](../reference/GlobalUser-UserSessionInterface.md)）；**配了它，`id()/name()` 优先读会话** |
-| `user_callback_for_add_ext_view_data` | `null` | 追加视图数据 |
-| `user_callback_for_url_for_home` / `_login` / `_logout` / `_register` | `null` | 生成各 URL 的回调（优先于对应 `user_url_*`） |
-| `user_loginout_auto_redirect` | `true` | 登录/登出成功后自动 302 |
+| 选项                                                                    | 默认     | 作用                                                                                                                                     |
+| --------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `user_url_home`                                                       | `null` | 站内首页 URL（未配回调时用 `__url()` 生成）                                                                                                          |
+| `user_url_login` / `user_url_logout`                                  | `null` | 登录 / 退出 URL                                                                                                                            |
+| `user_url_register`                                                   | `null` | 注册 URL（旧名 `user_url_regist` 已更名）                                                                                                       |
+| `user_view_file_header` / `user_view_file_footer`                     | `null` | 用户页面头/尾视图文件                                                                                                                            |
+| `user_enable`                                                         | `true` | 组件自身的启用开关                                                                                                                              |
+| `user_enable_callback_singleton`                                      | `true` | 回调写成 `[类名, 方法]` 时是否先转成 `类名::_()`                                                                                                       |
+| `user_callback_for_id` / `_for_name` / `_for_data`                    | `null` | 取当前 id / 名字 / 整个数据数组                                                                                                                   |
+| `user_callback_for_local_service`                                     | `null` | 返回本地 Service 实现（`Helper::UserService()` 用它）                                                                                            |
+| `user_callback_for_login_service`                                     | `null` | 登录服务（服务侧契约 [`UserLoginServiceInterface`](../reference/GlobalUser-UserLoginServiceInterface.md)）：`register()/login()/logout()` 经它做校验与落库 |
+| `user_callback_for_session`                                           | `null` | 会话实现（[`UserSessionInterface`](../reference/GlobalUser-UserSessionInterface.md)）；**配了它，`id()/name()` 优先读会话**                            |
+| `user_callback_for_add_ext_view_data`                                 | `null` | 追加视图数据                                                                                                                                 |
+| `user_callback_for_url_for_home` / `_login` / `_logout` / `_register` | `null` | 生成各 URL 的回调（优先于对应 `user_url_*`）                                                                                                        |
+| `user_loginout_auto_redirect`                                         | `true` | 登录/登出成功后自动 302                                                                                                                         |
 
 > ⚠️ **旧键名已失效**：`user_callback_get_id` / `_get_name` / `_get_data` / `_get_service` 在源码里**不存在**，请用 `user_callback_for_*`。
 

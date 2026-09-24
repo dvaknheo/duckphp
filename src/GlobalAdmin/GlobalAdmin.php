@@ -66,7 +66,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     protected function run_callback_by_key(string $key, ...$args)
     {
         if (!isset($this->options[$key])) {
-            throw new DuckPhpSystemException(" need app options '$key'", -1);
+            throw new DuckPhpSystemException(" need ext options '$key'", -1);
         }
 
         $callback = $this->options[$key];
@@ -86,10 +86,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
      */
     public function id(bool $check_login = true)
     {
-        if (!$this->is_inited) {
-            throw new DuckPhpSystemException("Need Provider", -1);
-        }
-
         if (isset($this->options['admin_callback_for_session'])) {
             $id = $this->getSession()->getCurrentAdminId();
             CoreHelper::ControllerThrowOn($check_login && !$id, AdminException::MESSAGE_NEED_LOGIN, AdminException::CODE_NEED_LOGIN, AdminException::class);
@@ -101,11 +97,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     }
     public function name(bool $check_login = true): string
     {
-        if (!$this->is_inited) {
-            throw new DuckPhpSystemException("Need Provider", -1);
-        }
         if (isset($this->options['admin_callback_for_session'])) {
-
             $name = $this->getSession()->getCurrentAdminName();
             CoreHelper::ControllerThrowOn($check_login && !$name, AdminException::MESSAGE_NEED_LOGIN, AdminException::CODE_NEED_LOGIN, AdminException::class);
             return $name;
@@ -116,10 +108,13 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
     }
     public function data(bool $check_login = true): array
     {
-        if (!$this->is_inited) {
-            throw new DuckPhpSystemException("Need Provider", -1);
+        return [];
+        if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
+            return $this->run_callback_by_key('admin_callback_for_data', $check_login);
         }
-        return $this->run_callback_by_key('admin_callback_for_data', $check_login);
+        $data = $this->getSession()->getCurrentAdmin();
+        CoreHelper::ControllerThrowOn($check_login && !$data, AdminException::MESSAGE_NEED_LOGIN, AdminException::CODE_NEED_LOGIN, AdminException::class);
+        return $data;
     }
     public function localService()
     {
@@ -134,7 +129,7 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
             return $this->run_callback_by_key($key_callback, $url_back, $ext);
         }
         if (!isset($this->options[$key_url])) {
-            throw new DuckPhpSystemException("need app options '$key_url'", -1);
+            throw new DuckPhpSystemException("need ext options '$key_url'", -1);
         }
         $url = $this->options[$key_url];
         return __url($url);
@@ -167,72 +162,31 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface, AdminLo
         return PhaseProxy::CreatePhaseProxy($this->context()::Phase(), $service);
     }
     /**
-     * @param array<string, mixed> $input
-     * @param array<string, mixed> $input
-     * @param array<string, mixed> $input
-     * @param array<string, mixed> $input
-     */
-    public function mergeViewData(array $input): array
-    {
-        $input = $this->addExtViewData($input);
-        return $input;
-    }
-    /**
-     * @param array<string, mixed> $input
-     */
-    protected function addExtViewData(array $input): array
-    {
-        if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
-            return $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $input);
-        }
-        return $input;
-    }
-    /**
      * @param array<string, mixed> $data
      */
-    public function _Show(array $data = [], string $view = '')
+    public function mergeViewData(array $data): array
     {
-        $last_phase = App::_()->getLastPhase();
-
-        $data = $this->addExtViewData($data);
-        $header = '';
-        $footer = '';
-        $full_header_file = null;
-        $full_footer_file = null;
-        if (isset($this->options['admin_view_file_header'])) {
-            $header = View::_()->_Render($this->options['admin_view_file_header'], $data);
-            $full_header_file = $this->options['admin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_header'], true) : '';
-
+        if (isset($this->options['admin_callback_for_add_ext_view_data'])) {
+            $data = $this->run_callback_by_key('admin_callback_for_add_ext_view_data', $data);
         }
-        if (isset($this->options['admin_view_file_footer'])) {
-            $footer = View::_()->_Render($this->options['admin_view_file_footer'], $data);
-            $full_footer_file = $this->options['admin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_footer'], true) : '';
-        }
+        
+        $full_header_file = $this->options['admin_view_file_header'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_header'], true) : null;
+        $full_footer_file = $this->options['admin_view_file_footer'] ? App::_()->getOverrideableFile('view', $this->options['admin_view_file_footer'], true) : null;
+        $header = $full_header_file ? View::_()->_Render($full_header_file, $data) : null;
+        $footer = $full_footer_file ? View::_()->_Render($full_footer_file, $data) : null;
 
-        View::_()->data['__view_data']['header'] = $header;
-        View::_()->data['__view_data']['footer'] = $footer;
-        // Write into $data too: _Show() merges $data into View::_()->data at the end, so when an
-        // addExtViewData callback has already set __view_data, writing only View::_()->data would be
-        // overwritten by that merge and the header/footer would never reach the view.
         $data['__view_data']['header'] = $header;
         $data['__view_data']['footer'] = $footer;
-
-        View::_()->data['__logined_id'] ??= $this->id(true);
-        View::_()->data['__logined_name'] ??= $this->name(true);
-        View::_()->data['__logined_url_logout'] ??= $this->urlForLogout();
-        View::_()->data['__logined_enable_header_footer'] ??= false;
-
-        $old_phase = App::Phase($last_phase);
-        App::_()->onBeforeOutput();
-        $enable_header_footer = $data['__logined_enable_header_footer'] ?? (View::_()->data['__logined_enable_header_footer'] ?? null);
-        if ($enable_header_footer ?? false) {
-            View::_()->setViewHeadFoot($full_header_file, $full_footer_file);
-        }
-        $view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;
-        $ret = View::_()->_Show($data, $view);
-        App::Phase($old_phase);
-        return $ret;
+        $data['__logined_id'] = $this->id(true);
+        $data['__logined_name'] = $this->name(false);
+        $data['__logined_data'] = $this->data(false);
+        $data['__logined_url_home'] = $this->urlForHome();
+        $data['__logined_url_logout'] = $this->urlForLogout();
+        $data['__logined_header_file'] = $full_header_file;
+        $data['__logined_footer_file'] = $full_footer_file;
+        return $data;
     }
+
     ///////////////
     protected function getLoginBusiness()
     {

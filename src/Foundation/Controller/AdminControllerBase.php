@@ -27,8 +27,8 @@ class AdminControllerBase implements AdminControllerInterface
             $this->onLoginedException($ex);
             ControllerHelper::exit();
         }
-        ControllerHelper::assignViewData('__logined_enable_view', true);
-        ControllerHelper::assignViewData('__logined_enable_header_footer', true);
+        ControllerHelper::assignViewData('__use_logined_view_data', true);
+        ControllerHelper::assignViewData('__use_logined_header_footer_file', true);
     }
     protected function onLoginedException(AdminException $ex)
     {

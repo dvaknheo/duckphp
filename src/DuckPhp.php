@@ -167,19 +167,22 @@ class DuckPhp extends App
      */
     public function _Show(array $data, string $view = '')
     {
-        $enable = $data['__logined_enable_view'] ?? (View::_()->data['__logined_enable_view'] ?? null);
+        $enable = $data['__use_logined_view_data'] ?? (View::_()->data['__use_logined_view_data'] ?? null);
         if (!($enable ?? false)) {
             return parent::_Show($data, $view);
         }
         if (\is_a(Route::_()->getRouteCallingClass(), UserControllerInterface::class, true)) {
-            GlobalUser::_()->_Show($data, $view);
-            return;
+            $data = GlobalUser::_()->mergeViewData($data);
         }
         if (\is_a(Route::_()->getRouteCallingClass(), AdminControllerInterface::class, true)) {
-            GlobalAdmin::_()->_Show($data, $view);
-            return;
+            $data = GlobalAdmin::_()->mergeViewData($data);
         }
-        parent::_Show($data, $view);
+        $enable_header_footer = $data['__use_logined_header_footer_file'] ?? (View::_()->data['__use_logined_header_footer_file'] ?? null);
+        if ($enable_header_footer ?? false) {
+            View::_()->setViewHeadFoot($data['__logined_header_file'], $data['__logined_footer_file']);
+        }
+
+        return parent::_Show($data, $view);
     }
 
     protected function isLocalDatabase(): bool
