@@ -50,7 +50,7 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
     {
         parent::init($options, $context);
         if ($context->options['admin_provider_enable'] ?? true) {
-            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
+            Admin::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
         }
         return $this;
     }

@@ -50,7 +50,7 @@ class GlobalUser extends User implements UserLoginActionInterface
     {
         parent::init($options, $context);
         if ($context->options['user_provider_enable'] ?? true) {
-            GlobalUser::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
+            User::_(PhaseProxy::CreatePhaseProxy($context->getThisPhaseName(), $this));
         }
         return $this;
     }
