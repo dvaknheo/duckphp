@@ -19,7 +19,7 @@ class UserControllerBase implements UserControllerInterface
     {
         ControllerHelper::checkInstall(null);
         ControllerHelper::User()->id(true);
-        $flag = ControllerHelper::Admin()->canAccess();
+        $flag = ControllerHelper::User()->canAccess();
         if (!$flag) {
             $this->onNeedPermission();
             ControllerHelper::exit();

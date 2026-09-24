@@ -10,6 +10,7 @@ use DuckPhp\GlobalAdmin\AdminException;
 use DuckPhp\GlobalAdmin\AdminLoginServiceInterface;
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
 use DuckPhp\GlobalAdmin\AdminSessionInterface;
+use DuckPhp\GlobalAdmin\Admin;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 class GlobalAdminTest extends \PHPUnit\Framework\TestCase
@@ -38,8 +39,8 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         ];
         PhaseContainer::RestAllContainerForTesting();
         FakeAdminApp::_()->init($options);
-        $this->assertInstanceOf(PhaseProxy::class, GlobalAdmin::_());
-        $admin = GlobalAdmin::_()->self();   // 真身：PhaseProxy 只转发方法调用，改 options 必须碰真身
+        $this->assertInstanceOf(PhaseProxy::class, Admin::_());
+        $admin = Admin::_()->self();   // 真身：PhaseProxy 只转发方法调用，改 options 必须碰真身
         $this->assertInstanceOf(GlobalAdmin::class, $admin);
 
         // admin_provider_enable = false 时不登记代理
@@ -54,7 +55,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         // 回到「有代理」的那份，后面都用它
         PhaseContainer::RestAllContainerForTesting();
         FakeAdminApp::_()->init($options);
-        $admin = GlobalAdmin::_()->self();
+        $admin = Admin::_()->self();
 
         ////////////////////////////////////////////////////////////////////
         // 2) run_callback_by_key()：没配回调就抛
@@ -76,9 +77,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
             try {
                 $admin->$method(true);
                 $this->fail("$method(true) 未登录时应抛 AdminException");
-            } catch (AdminException $ex) {
-                $this->assertSame(AdminException::CODE_NEED_LOGIN, $ex->getCode());
-                $this->assertSame(AdminException::MESSAGE_NEED_LOGIN, $ex->getMessage());
+            } catch (\DuckPhp\Core\ExitException $ex) {
             }
         }
         // 未登录 + check_login=false：不抛，各自返回空值

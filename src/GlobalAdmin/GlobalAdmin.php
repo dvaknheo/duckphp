@@ -79,7 +79,7 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
         if (isset($this->options['globaladmin_need_login_callback'])) {
             $this->run_callback_by_key('globaladmin_need_login_callback');
             SystemWrapper::exit();
-            return;
+            return; // @codeCoverageIgnore
         }
         if (!CoreHelper::IsAjax()) {
             $url_back = parse_url(SuperGlobal::_()->_SERVER('REQUEST_URI', ''), PHP_URL_PATH);
@@ -91,7 +91,7 @@ class GlobalAdmin extends Admin implements AdminActionInterface, AdminLoginActio
             ]);
         }
         SystemWrapper::exit();
-        return;
+        return; // @codeCoverageIgnore
     }
     /**
      * @param bool $check_login

@@ -178,15 +178,15 @@ PhaseContainer::RestAllContainerForTesting();
             $called[] = 'admin';
             return $input;
         };
-        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['globaluser_ext_view_data_callback'] = $user_cb;
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_ext_view_data_callback'] = $admin_cb;
+        \DuckPhp\GlobalUser\User::_()->self()->options['globaluser_ext_view_data_callback'] = $user_cb;
+        \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_ext_view_data_callback'] = $admin_cb;
         // GlobalUser/GlobalAdmin 的 _Show() 会把 __logined_id/name/data/url_* 填进视图数据，
         // 这些值现在统一从「登录会话」取，所以这里要给出会话回调（globaluser_/globaladmin_login_session），
         // 否则没配会话时会抛 " need ext options 'globaluser_login_session'"，两个分支根本走不到。
-        \DuckPhp\GlobalUser\GlobalUser::_()->self()->options['globaluser_login_session'] = function () {
+        \DuckPhp\GlobalUser\User::_()->self()->options['globaluser_login_session'] = function () {
             return FakeLoginedSession::_();
         };
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_login_session'] = function () {
+        \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_login_session'] = function () {
             return FakeLoginedSession::_();
         };
 
@@ -200,16 +200,16 @@ PhaseContainer::RestAllContainerForTesting();
         // use_admin_view 分支：路由调用类实现 AdminControllerInterface
         // 同时带上 __use_logined_header_footer_file（控制器里由 assignViewData 设置），
         // 让 _Show() 顺带走 View::setViewHeadFoot() 那一步；给出真实的头/尾视图文件以便断言。
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_header'] = $path.'view/block.php';
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_footer'] = $path.'view/block.php';
+        \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_view_file_header'] = $path.'view/block.php';
+        \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_view_file_footer'] = $path.'view/block.php';
         Route::_()->calling_class = FakeAdminController::class;
         ob_start();
         DuckPhp::_()->_Show(['__use_logined_view_data' => true, '__use_logined_header_footer_file' => true, 'A'=>'b'], $path.'view/block');
         $out_admin_view = ob_get_clean();
         $this->assertSame(3, substr_count($out_admin_view, 'Block'), '头/尾文件 + 正文各渲染一次');
         $this->assertSame(['user', 'admin'], $called, 'AdminControllerInterface 分支应由 GlobalAdmin::_Show() 接手');
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_header'] = null;
-        \DuckPhp\GlobalAdmin\GlobalAdmin::_()->self()->options['globaladmin_view_file_footer'] = null;
+        \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_view_file_header'] = null;
+        \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_view_file_footer'] = null;
 
         // 开了 __use_logined_view_data，但调用类两个接口都不实现 → 回落父类 _Show
         // （_Show() 会把 $data 并进 View::_()->data，上一步的 header/footer 开关会粘住，这里显式关掉）

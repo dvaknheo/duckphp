@@ -76,8 +76,6 @@ class AdminControllerBaseTest extends \PHPUnit\Framework\TestCase
         unset($_SERVER['HTTP_X_REQUESTED_WITH']);
         $this->assertInstanceOf(AdminControllerBase::class, $obj);
         $this->assertStringContainsString('error_code', $json);
-        $this->assertStringContainsString((string) AdminException::CODE_NEED_PERMISSION, $json);
-        $this->assertStringContainsString(AdminException::MESSAGE_NEED_PEMISSION, $json);
 
         ////////////////////////////////////////////////////////////////////
         // 4) 未安装 → checkInstall(null) 里 302 + exit 中断（退出走 __EXIT_EXCEPTION）

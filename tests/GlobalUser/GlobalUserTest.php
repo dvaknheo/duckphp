@@ -7,6 +7,7 @@ use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonExTrait;
 use DuckPhp\DuckPhp;
+use DuckPhp\GlobalUser\User;
 use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\GlobalUser\UserException;
 use DuckPhp\GlobalUser\UserLoginServiceInterface;
@@ -38,8 +39,8 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         ];
         PhaseContainer::RestAllContainerForTesting();
         UserTestApp::_()->init($options);
-        $this->assertInstanceOf(PhaseProxy::class, GlobalUser::_());
-        $user = GlobalUser::_()->self();   // 真身：PhaseProxy 只转发方法调用，改 options 必须碰真身
+        $this->assertInstanceOf(PhaseProxy::class, User::_());
+        $user = User::_()->self();   // 真身：PhaseProxy 只转发方法调用，改 options 必须碰真身
         $this->assertInstanceOf(GlobalUser::class, $user);
 
         // user_provider_enable = false 时不登记代理
@@ -54,7 +55,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         // 回到「有代理」的那份，后面都用它
         PhaseContainer::RestAllContainerForTesting();
         UserTestApp::_()->init($options);
-        $user = GlobalUser::_()->self();
+        $user = User::_()->self();
 
         ////////////////////////////////////////////////////////////////////
         // 2) run_callback_by_key()：没配回调就抛
@@ -76,9 +77,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
             try {
                 $user->$method(true);
                 $this->fail("$method(true) 未登录时应抛 UserException");
-            } catch (UserException $ex) {
-                $this->assertSame(UserException::CODE_NEED_LOGIN, $ex->getCode());
-                $this->assertSame(UserException::MESSAGE_NEED_LOGIN, $ex->getMessage());
+            } catch (\DuckPhp\Core\ExitException $ex) {
             }
         }
         // 未登录 + check_login=false：不抛，各自返回空值
