@@ -575,7 +575,7 @@ SqlDumper 的驱动适配基类
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `database_driver_SqlDumperSupporter_map` | `[...]` | 驱动名 → 适配子类映射。 |
+| `database_driver_SqlDumperSupporter_map` | `[...]` | 驱动名 → 适配子类映射（驱动名就是 DSN 里 `:` 前面那段，或 `database_driver` 选项的值）。 |
 
 ## HTTP 服务器
 

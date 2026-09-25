@@ -318,7 +318,7 @@ python3 <tmp>/drift.py --all                                                    
 - 顺手核实并写进正文的两个事实：`MiniRoute` 无法通过选项替换框架路由（`DuckPhp.php` 174 行直接取 `Route::_()`，且它不是 `Route` 子类）；`Core\ComponentBase` **没有**真的 `implements ComponentInterface`（`src/Core/ComponentBase.php` 12 行是注释掉的）——所以那是「鸭子类型」契约。
 - 总目录 `index.md`：加 4-11 行，章数 43 → 44（`index.md` 顶部那句是全库唯一的活章数声明）。
 - 接口/冷门页按「链到实现章」补链：`user.md`（`UserLoginActionInterface`、`UserLoginServiceInterface`）、`admin.md`（`AdminLoginActionInterface`、`AdminServiceInterface`、`AdminLoginServiceInterface`）、`database.md`（`PagerInterface`）、`http-server.md`（`HttpServerInterface`，换实现要满足的四个方法）、`custom-component.md`（`ComponentInterface`）、`layers.md`（`Business\Base`，顺带把四层基类补齐）、`installer.md`（`RouteHookWebInstallerView`：纯视图文件、改外观走 `web_installer_view`）、`exception.md`（`ExitException`：`use_exit_exception` 下 `SystemWrapper::exit()` 抛它、`ExceptionManager` 原样放行）。
-- 同时**纠正一处误导**：`database.md` 的 SQL 导出表原来把 `ByMysql`/`ByPgsql`/`BySqlite` 并列成一行，实际 `SqlDumperSupporter` 的默认映射只有 mysql 与 sqlite（`src/Ext/SqlDumperSupporter.php` 16-19 行），pgsql 要自己加 `database_driver_SqlDumperSupporter_map`。
+- 同时**纠正一处误导**：`database.md` 的 SQL 导出表原来把 `ByMysql`/`ByPgsql`/`BySqlite` 并列成一行，实际 `SqlDumperSupporter` 的默认映射只有 mysql 与 sqlite（`src/Ext/SqlDumperSupporter.php` 16-19 行），pgsql 要自己加 `database_driver_SqlDumperSupporter_map`。**（M14 已把 pgsql 补进默认映射，这条只作历史记录）**
 
 **验收**：`find-unmentioned-classes.py` → **109/109 个类页全被链到、孤儿 0**（补链前 19）；`check-doc-links.py docs/zh` → **2099 条链接 0 死链**；`deprecated-exts.md` **122 行**（≤400）；`src/` 未改动（`git diff -- src` 为空，无需跑测试）。新工具已登记进 `coverage.md`（§5 工具表）与两份维护指南。
 

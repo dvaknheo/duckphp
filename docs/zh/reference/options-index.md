@@ -72,7 +72,7 @@
 | `database` | `null` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 单个连接配置（dsn/…）便捷。 |
 | `database_class` | `''` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 自定义连接类空则 `Db`。 |
 | `database_driver` | `''` | [DuckPhp\Component\DbManager](Component-DbManager.md) / [DuckPhp\DuckPhp](DuckPhp.md) | 驱动返回（init/setting 推导并回填）。 |
-| `database_driver_SqlDumperSupporter_map` | `[...]` | [DuckPhp\Ext\SqlDumperSupporter](Ext-SqlDumperSupporter.md) | 驱动名 → 适配子类映射。 |
+| `database_driver_SqlDumperSupporter_map` | `[...]` | [DuckPhp\Ext\SqlDumperSupporter](Ext-SqlDumperSupporter.md) | 驱动名 → 适配子类映射（驱动名就是 DSN 里 `:` 前面那段，或 `database_driver` 选项的值）。 |
 | `database_list` | `null` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 连接配置列表(数组)。给此项优先。 |
 | `database_list_reload_by_setting` | `true` | [DuckPhp\Component\DbManager](Component-DbManager.md) | 未显式 configuration 时（不提供 database）允许从 setting 取 database_list。 |
 | `database_list_try_single` | `true` | [DuckPhp\Component\DbManager](Component-DbManager.md) | database_list 空时可回退 单 `database`/`setting.database` 包数组。 |

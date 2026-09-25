@@ -188,8 +188,9 @@ $pager = Helper::PageHtml($total);                                              
 | 类 | 支持 |
 |---|---|
 | `Ext\SqlDumper` | 通用导出器（表前缀被写成 `{prefix}` 占位） |
-| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) | 各驱动方言；**默认映射里就有**这两个（`src/Ext/SqlDumperSupporter.php` 16-19 行） |
-| [`Ext\SqlDumperSupporterByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md) | 同样是方言实现，但**默认映射里没有**它：要自己加进 `database_driver_SqlDumperSupporter_map` |
+| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) / [`ByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md) | 各驱动方言；三个都**默认映射里就有**（`src/Ext/SqlDumperSupporter.php` 的 `database_driver_SqlDumperSupporter_map`：`mysql` / `sqlite` / `pgsql`，键就是 DSN 里 `:` 前面那段） |
+
+要支持别的驱动（或换掉某个方言实现），继承 `SqlDumperSupporter` 实现两个方法，再覆盖 `database_driver_SqlDumperSupporter_map` 即可。
 
 导出的 SQL 里用 `{prefix}` 表示表前缀，Web 安装流程（[第 3-6 章](installer.md)）执行时会换成实际前缀。
 

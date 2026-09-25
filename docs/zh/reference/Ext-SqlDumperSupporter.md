@@ -2,7 +2,7 @@
 
 ## 简介
 
-`SqlDumperSupporter` 是 `SqlDumper` 的驱动适配基类：把“按驱动取全部表 / 取某表建表结构”的差异隔离到子类。默认提供 `mysql`/`sqlite` 两个驱动的映射；其它驱动需扩展 `database_driver_SqlDumperSupporter_map` 或实现子类。
+`SqlDumperSupporter` 是 `SqlDumper` 的驱动适配基类：把“按驱动取全部表 / 取某表建表结构”的差异隔离到子类。默认提供 `mysql` / `sqlite` / `pgsql` 三个驱动的映射；其它驱动需扩展 `database_driver_SqlDumperSupporter_map` 或实现子类。
 
 基类 `getAllTable()`/`getSchemeByTable()` 抛 `No Impelement` 占位，真正实现见各子类。
 
@@ -15,7 +15,7 @@
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `database_driver_SqlDumperSupporter_map` | `['mysql' => SqlDumperSupporterByMysql::class, 'sqlite' => SqlDumperSupporterBySqlite::class]` | 驱动名 → 适配子类映射。 |
+| `database_driver_SqlDumperSupporter_map` | `['mysql' => SqlDumperSupporterByMysql::class, 'sqlite' => SqlDumperSupporterBySqlite::class, 'pgsql' => SqlDumperSupporterByPgsql::class]` | 驱动名 → 适配子类映射（驱动名就是 DSN 里 `:` 前面那段，或 `database_driver` 选项的值）。 |
 
 ## 使用方式
 
@@ -27,7 +27,7 @@ $ddl    = $supporter->getSchemeByTable($table);
 
 ## 注意事项
 
-- `Current()`（静态）与 `getSqlDumperSupporter()`：以 `DbManager::getDatabaseDriver()` 为键查映射；无匹配驱动抛 `Exception`（例如 pgsql 需自己把 `SqlDumperSupporterByPgsql` 加入 map）。
+- `Current()`（静态）与 `getSqlDumperSupporter()`：以 `DbManager::getDatabaseDriver()` 为键查映射；无匹配驱动抛 `Exception`（形如 `[驱动名]  No getSqlDumperSupporter`）。
 - 需要支持新驱动时，继承本类实现两个方法，并把类加进 `database_driver_SqlDumperSupporter_map`。
 
 ## 方法列表

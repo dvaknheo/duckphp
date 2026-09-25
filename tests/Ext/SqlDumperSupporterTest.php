@@ -23,7 +23,12 @@ class SqlDumperSupporterTest extends \PHPUnit\Framework\TestCase
             'database_driver'=>'mysql',
         ];
         DuckPhp::_()->init($options);
-        SqlDumperSupporter::Current();
+        // 默认映射里的三个方言都要能取到（pgsql 曾漏配，取不到就抛异常）
+        $this->assertSame(\DuckPhp\Ext\SqlDumperSupporterByMysql::_(), SqlDumperSupporter::Current());
+        DbManager::_()->options['database_driver']="sqlite";
+        $this->assertSame(\DuckPhp\Ext\SqlDumperSupporterBySqlite::_(), SqlDumperSupporter::Current());
+        DbManager::_()->options['database_driver']="pgsql";
+        $this->assertInstanceOf(\DuckPhp\Ext\SqlDumperSupporterByPgsql::class, SqlDumperSupporter::Current());
 
         $options =[
             'database_driver'=>'no_exists',

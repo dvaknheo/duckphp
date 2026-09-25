@@ -108,8 +108,8 @@ trait ThrowOnTrait
 | 类/文件                                                                                                                                            | 定位                                                                                                            | 在哪儿讲到                   |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | [`Ext\RouteHookWebInstallerView`](../reference/Ext-RouteHookWebInstallerView.md)                                                                | 安装向导的**内置视图模板**（文件里没有任何 class/function，被 `RouteHookWebInstaller::show()` `include`）                           | [第 3-6 章](installer.md) |
-| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) | SQL 导出的方言实现，**默认映射里就有**这两个                                                                                    | [第 2-7 章](database.md)  |
-| [`Ext\SqlDumperSupporterByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md)                                                                | 同样是方言实现，但**默认映射里没有**它：要自己加 `database_driver_SqlDumperSupporter_map`（`src/Ext/SqlDumperSupporter.php` 16-19 行） | [第 2-7 章](database.md)  |
+| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) / [`ByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md) | SQL 导出的方言实现，**三个都在默认映射里**（`database_driver_SqlDumperSupporter_map`：`mysql`/`sqlite`/`pgsql`） | [第 2-7 章](database.md) |
+|                                                                                                                                                 |                                                                                                               |                         |
 
 ## 4. 参考手册
 

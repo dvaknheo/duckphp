@@ -16,6 +16,7 @@ class SqlDumperSupporter extends ComponentBase
         'database_driver_SqlDumperSupporter_map' => [
           'mysql' => SqlDumperSupporterByMysql::class,
           'sqlite' => SqlDumperSupporterBySqlite::class,
+          'pgsql' => SqlDumperSupporterByPgsql::class,
           ],
           // change.
     ];

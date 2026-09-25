@@ -7,7 +7,7 @@
 - `getAllTable()`：查 `pg_tables`（`schemaname='public'`）收集表名；
 - `getSchemeByTable()`：从 `information_schema.columns` 读取列定义、主键（`key_column_usage`）等信息，手工拼出 `CREATE TABLE "表名" (…)` 语句。
 
-源码标记为 `@codeCoverageIgnore`。注意默认 `SqlDumperSupporter::$options` 的驱动映射只含 `mysql`/`sqlite`，用 pgsql 时需要把本类加进 `database_driver_SqlDumperSupporter_map`。
+源码标记为 `@codeCoverageIgnore`。本类**已在默认 `database_driver_SqlDumperSupporter_map` 里**（键 `pgsql`），只要 DSN 是 `pgsql:…`（或显式配 `database_driver` 为 `pgsql`）就能直接用，不必手工注册。
 
 ## 类信息
 
@@ -17,10 +17,16 @@
 ## 使用方式
 
 ```php
+// DSN 是 pgsql:… 时开箱即用
+$supporter = \DuckPhp\Ext\SqlDumperSupporter::Current();   // → SqlDumperSupporterByPgsql
+$tables = $supporter->getAllTable();
+
+// 要改成自己的实现，就覆盖映射（注意把 mysql/sqlite 一起写上，别丢）
 \DuckPhp\Ext\SqlDumperSupporter::_()->init([
     'database_driver_SqlDumperSupporter_map' => [
-        'pgsql' => \DuckPhp\Ext\SqlDumperSupporterByPgsql::class,
-        // mysql / sqlite 的映射保留或自行补充
+        'mysql' => \DuckPhp\Ext\SqlDumperSupporterByMysql::class,
+        'sqlite' => \DuckPhp\Ext\SqlDumperSupporterBySqlite::class,
+        'pgsql' => \MyProj\Ext\PgsqlSupporter::class,
     ],
 ], $app);
 ```
