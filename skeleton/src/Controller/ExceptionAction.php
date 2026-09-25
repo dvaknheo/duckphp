@@ -4,7 +4,7 @@
  *
  * To enable exception reporting, uncomment these application options in
  * YourProjectName\System\App:
- *   'exception_reporter'       => ExceptionReporter::class,
+ *   'exception_reporter'       => ExceptionAction::class,
  *   'exception_for_project'    => ProjectException::class,
  *   'exception_for_business'   => BusinessException::class,
  *   'exception_for_controller' => ControllerException::class
@@ -17,7 +17,7 @@
  * Helper::ControllerThrowOn() calls onControllerException().
  * Any other exception is shown by the error_500 view.
  */
-namespace YourProjectName\System;
+namespace YourProjectName\Controller;
 
 use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 

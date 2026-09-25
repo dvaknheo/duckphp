@@ -614,11 +614,11 @@ Helper::ControllerThrowOn(!$user, '请先登录', 403);
 
 ```php
 <?php
-namespace YourProject\Controller;
+namespace YourProjectName\Controller;
 
 use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 
-class ExceptionReporter
+class ExceptionAction
 {
     use ExceptionReporterTrait;
 
@@ -643,7 +643,7 @@ class ExceptionReporter
 方法命名规则：`on{异常类名}($ex)`。在 `App.php` 中配置：
 
 ```php
-'exception_reporter' => ExceptionReporter::class,
+'exception_reporter' => ExceptionAction::class,
 ```
 
 ### 调试信息
