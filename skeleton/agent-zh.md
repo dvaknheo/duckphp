@@ -632,18 +632,13 @@ class ExceptionAction
         // 权限异常 → 重定向登录
         Helper::Show302('login');
     }
-    public function defaultException($ex)
-    {
-        // 兜底：调用框架默认处理
-        App::Current()->_OnDefaultException($ex);
-    }
 }
 ```
 
-方法命名规则：`on{异常类名}($ex)`。在 `App.php` 中配置：
+方法命名规则：`on{异常类名}($ex)`；没有对应方法时兜底 `App::_()->_OnDefaultException()`。在 `App.php` 中配置（值必须是**可调用**的，裸类名不是 callable，会启动即抛 `config error`）：
 
 ```php
-'exception_reporter' => ExceptionAction::class,
+'exception_reporter' => [ExceptionAction::class, 'OnException'],
 ```
 
 ### 调试信息

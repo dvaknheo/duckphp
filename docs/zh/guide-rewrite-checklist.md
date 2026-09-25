@@ -148,6 +148,7 @@
 | M14 `SqlDumperSupporter` 默认映射补 pgsql（作者指出的源码 bug）+ 参考页/指南同步 | ✅ |
 | M15 1-3 与 2-1 合并（四层规范并入 `project-structure.md`，330 行），2-1 留成 38 行指路页以免重排章号 | ✅ |
 | M16 清掉 25 处「`tests/data_for_tests/ZAllDemo`」假路径（该目录从未存在）→ 改指 `skeleton/` 与 `demo/` | ✅ |
+| M17 `demo` 的异常报告器跟 `skeleton` 统一改名 `ExceptionAction`，并修掉统一过程中撞出的两个真 bug（`exception_reporter` 示例写成裸类名不可调用；报告器类缺 `_()`，异常真抛时 `Call to undefined method …::_()`） | ✅ |
 | Q1–Q4 待决策 | ✅ 全部已定并落地 |
 
 > **M11 收尾实测**（2026-09-24，详见 [用户指南维护指南](guide-maintenance-guide.md) §20）：`check-doc-links.py docs/zh` → **2109 条 0 死链**；`checkchap.py`（本轮临时脚本）→ 「链接文字章号 vs 目标 H1」**0 处不一致**、`index.md` 之外无缺章号 H1；`find-unmentioned-classes.py` → **109/109 类页全被链到、孤儿 0**；改动章行数 117–294（全部 ≤400）；`docs/zh/guide` 里同步轮留下的 `//TODO` **清零**；全量测试 `OK (96 tests, 823 assertions)`、覆盖率 `4895/4895`。
@@ -157,5 +158,7 @@
 > **M13 收尾实测**（详见 [用户指南维护指南](guide-maintenance-guide.md) §22）：原 2-10 拆成 `lifecycle.md`(191 行，新增「内置组件清单」一节) + 新文件 `route-hooks.md`(213 行)；卷二重排为 `2-1`…`2-20`（映射 `{2:4,…,9:11,11:12,…,19:20}`，老 2-10 的 44 处引用逐条分派到 2-2/2-3）；章数 46 → **47**；`check-doc-links.py docs/zh` → 0 死链；章号一致性 0 处不符、`grep -h '^# 2-' docs/zh/guide/*.md` 恰好 `2-1`…`2-20` 二十行；`find-unmentioned-classes.py` → 109/109 类页全被链到；新增/改写章 ≤400 行；`src/`、`tests/` 未改动。
 
 > **M14 / M15 收尾实测**（详见 [参考手册维护指南](reference-maintenance-guide.md) 第 17 条与 [用户指南维护指南](guide-maintenance-guide.md) §23）：M14 =`src/Ext/SqlDumperSupporter.php` 默认映射补 `pgsql`（1 行）+ 回归测试三个方言都断言（撤掉修复跑一遍确认会红）+ 4 处文档同步；M15 = `project-structure.md` 330 行（1-3 目录结构与四层架构）、`layers.md` 38 行（2-1 指路页 + 五层速查表 + 本卷地图），**章数仍是 47**、33 处「第 2-1 章」引用未动。校验：`check-doc-links.py docs/zh` → **2247 条 0 死链**；章号一致性 0 处不符；`find-unmentioned-classes.py` → 109/109 被链到、孤儿 0；`gen-options-docs.php --check` up to date；`check-non-ascii.sh` 0。
+
+> **M16 / M17 收尾实测**（详见 [用户指南维护指南](guide-maintenance-guide.md) §24、§25）：M16 = 25 处假路径改指真实资产（11 章 + 4 账本）、`ZAllDemoTest*` 未动、`docs/zh` 0 死链；M17 = `git mv demo/src/Controller/ExceptionReporter.php → ExceptionAction.php` + 3 处 `use` + 2 处选项值 + 指南 5 处改名，外加两处实跑才暴露的 bug（`is_callable('…\ExceptionAction')` = false → 全部示例改成 `[类::class, 'OnException']`；报告器补 `use DuckPhp\Foundation\SingletonTrait;` 后 `OnException(new BusinessException)` 实测分派到 `onBusinessException`）、`ZAllDemoTest` 期望长度 10438 → **10432**（类名短 2 字节 × 3 处）。校验：`check-doc-links.py` → **2381 条、`docs/zh` 0 死链**；章号一致性 0 处不符；`find-unmentioned-classes.py` → 109/109 被链到、孤儿 0；`gen-options-docs.php --check` up to date；`check-non-ascii.sh` 0；排版检查本轮 3 个文件均为预期 `CONTENT`。`tests/ZAllDemoTest.php` 绿；`src/` 未改动、未跑全量测试。
 
 > **用户指南重写任务至此完成**：`docs/zh/guide/` = `index.md` + 47 章 + 4 附录（章号 `1-1`…`4-13`，单数字形式已废弃；卷二 `2-1`–`2-20`：2-2/2-3 是生命周期与路由钩子，末尾 2-19/2-20 是「使用」章；卷四末尾 4-12/4-13 是「实现」章）；`docs/zh` 站内链接 0 死链、全 UTF-8；每个类名的首次出现都链到参考手册（代码块内不插链接）；全量测试绿。写作约定见 [用户指南维护指南](guide-maintenance-guide.md) §1 的硬约束（第 6/7/8 条是章号/类名链接/不写旧内容，第 10 条是「用」与「实现」分家）；M6 的踩坑与校验结果见其 §14 与 [参考手册维护指南](reference-maintenance-guide.md) 第 14 条。

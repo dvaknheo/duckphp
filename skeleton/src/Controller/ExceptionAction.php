@@ -4,7 +4,7 @@
  *
  * To enable exception reporting, uncomment these application options in
  * YourProjectName\System\App:
- *   'exception_reporter'       => ExceptionAction::class,
+ *   'exception_reporter'       => [ExceptionAction::class, 'OnException'],
  *   'exception_for_project'    => ProjectException::class,
  *   'exception_for_business'   => BusinessException::class,
  *   'exception_for_controller' => ControllerException::class
@@ -20,9 +20,11 @@
 namespace YourProjectName\Controller;
 
 use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class ExceptionAction
 {
+    use SingletonTrait;
     use ExceptionReporterTrait;
 
     public function onBusinessException($ex)

@@ -6,14 +6,12 @@
 namespace ProjectNameTemplate\Controller;
 
 use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
-class ExceptionReporter
+class ExceptionAction
 {
+    use SingletonTrait;
     use ExceptionReporterTrait;
-    //public function defaultException($ex)
-    //{
-    //return App::Current()->_OnDefaultException($ex);
-    //}
     public function onBusinessException($ex)
     {
         var_dump(__METHOD__);

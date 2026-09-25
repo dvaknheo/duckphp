@@ -275,13 +275,14 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 | 指南里的示例没实跑过 | 本仓约定：新指南的示例必须能跑。第三卷（3-1–3-7 章）全部挂在 `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php`（36 断言）上，改示例就重跑它；第一/二卷的兜底是 `demo/`（`tests/ZAllDemoTest.php` 起内置服务器跑它）与 `skeleton/`（脚手架骨架）。**别引用 `tests/data_for_tests/ZAllDemo`——那个目录从未存在**（见第 18 条）。 |
 | **正文里写的仓库路径是假的** | 死链检查只查 `.md` 之间的链接，**查不出「正文里引用的源码/测试路径不存在」**——它不报错，只骗读者。实测：`tests/data_for_tests/ZAllDemo` 被指南引用了 25 处（五层骨架、示例应用、dump 页……），而**这个目录从未进过 git、磁盘上也没有**（是写章节时按测试名 `ZAllDemoTest` 拼出来的）；同类还有 `layers.md` 的 `ZAllDemo/src/Controller/Helper.php`。**规矩：引用路径前先 `Test-Path`（或 `git ls-files`）验证一次**；批量核查看正文里的反引号路径（`grep -o '`[a-z][^`]*\.php`'`）。见第 18 条。 |
 | 多应用相关的斜杠坑（写示例时必踩） | ① `RouteHookRewrite::assignRewrite()` 的**键必须带前导 `/`**；② `controller_resource_prefix`：根应用写 `'/res/'`、子应用写 `'res/'`（前缀按 `'/'.controller_url_prefix.controller_resource_prefix` 拼，子应用的挂载前缀已带尾斜杠，再带前导斜杠就变成 `//`）；③ 相位名不是类名（子应用是 `:<name>`，不是 `\X\System\App`）。 |
+| **选项写成裸类名 / 报告器类少个 `_()`——启动都不报错，异常真抛出来才炸** | M17 实测的两个真 bug，都属于「只看形状的检查骗人」：① `exception_reporter` 写 `ExceptionAction::class`（裸类名）时 `is_callable()` = **false** ⇒ 启动即抛 `'exception_reporter' config error!`，必须写 `[ExceptionAction::class, 'OnException']`（类名里有没有静态 `OnException()` 不影响这个判断）；② `ExceptionReporterTrait::OnException()` 内部是 `static::_()->_OnException($ex)`，而该 Trait **不 use 任何单例 Trait** ⇒ 组合方（`skeleton`/`demo` 的报告器、你照抄写的类）必须自己 `use DuckPhp\Foundation\SingletonTrait;`（或继承 `Controller\Base`），否则异常抛出的那一刻报 `Error: Call to undefined method …::_()`。**规矩：文档里写「可调用选项 / 骨架类」时，先在 `php -r` 里真调一次**（`is_callable()` / `class_exists()` 不算验证）。见第 19 条。 |
 
 ## 8. 当前状态与待办
 
 - **现状**（每轮只更新这一段；历轮细节看 `git log` 与各篇文档，**不要在这里堆流水账**）
   - `docs/zh/reference/` 共 **114 篇**：110 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板；`drift.py --all` **0 不一致**（`missing-*` / `extra-option` 全空，`extra-method` 只剩示例代码里的自定义方法）。
   - `enc` 检查 114 篇全 UTF-8；站内链接 0 死链。同步基线见第 9 节末的提示（最近一次基线是分支 `doced`，下次同步从 `66a93720` 之后算起）。
-  - 测试基线（WSL）：全量 `php vendor/bin/phpunit` → `OK (96 tests, 823 assertions)`；`XDEBUG_MODE=coverage` 跑完看 `test_reports/index.html` → **`Lines 4895/4895 (100.00%)`**（Functions/Methods 与 Classes/Traits 同为 100%）。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10438**（跟当前工作区 `src/` 的选项表绑定，见第 7 节那一行）。
+  - 测试基线（WSL）：全量 `php vendor/bin/phpunit` → `OK (96 tests, 823 assertions)`；`XDEBUG_MODE=coverage` 跑完看 `test_reports/index.html` → **`Lines 4895/4895 (100.00%)`**（Functions/Methods 与 Classes/Traits 同为 100%）。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10432**（跟当前工作区 `src/` 的选项表绑定，见第 7 节那一行）。
   - 最近几轮（每轮一句话，细节在 commit message 与对应文档里）：
     1. `doced` → HEAD 增量同步：`Component-Command`（命令收集钩子改名、两个收集方法去掉 `$phase` 形参）、`Core-KernelTrait`（`Root($switch_phase = false)`）。
     2. 新类 `Ext/PermissionMenu`：补齐测试 `tests/Ext/PermissionMenuTest.php`（覆盖率 298/298），修掉测试暴露的 6 个源码问题（3 个真 bug、2 处语义调整、1 处不可达 `catch` 加 `@codeCoverageIgnore`）。
@@ -329,6 +330,13 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
         - 真实资产：五层骨架片段来自 **`skeleton/`**（`YourProjectName` 命名空间与 `DemoBusiness::_()->foo()` 等逐字对得上）；「第二卷示例应用」是 **`demo/`**（`tests/ZAllDemoTest.php` 起内置服务器 + curl 各路由比长度，宿主一直是 `demo/`）；「示例首页 dump options/单例」是 **`demo/view/files.php`**（`/files` 路由）。
         - 改动 25 处、只动 `docs/`：指南 11 个文件 + 账本 4 个文件（`guide-maintenance-guide.md` 硬约束 2/资产表/模板/§6/§10、`guide-rewrite-checklist.md`、本文件 §7 陷阱表与历史记录、`helper-merge-checklist.md`）。**`ZAllDemoTest*` 这些真文件一律没动**。逐条清单见 `guide-maintenance-guide.md` §24。
         - **教训（已写进第 7 节陷阱表）**：引用路径前先 `Test-Path` / `git ls-files` 验证存在——**死链检查只查 `.md` 之间的链接，查不出「正文里写的仓库路径是假的」**，这种错误不报错、只骗读者。
+    19. **M17 / 本轮：`demo` 的异常报告器跟 `skeleton` 统一改名 `ExceptionAction`（作者裁定「统一」），并修掉统一过程中撞出的两个真 bug**：
+        - **改名与统一**：`demo/src/Controller/ExceptionReporter.php` → `ExceptionAction.php`（`git mv`）、类名同步；3 处 `use`（`demo/src/System/{App,AppWithAllOptions,PureApp}.php`）与 `AppWithAllOptions.php` 的选项值跟着改；`docs/zh/guide/exception.md` 5 处；`demo` 那份里注释掉的 `defaultException()` 死代码删掉（Trait 里这个方法早已不存在）。参考页里**保持泛指**的两处不动：`Core-ExceptionManager.md` 的 `\App\ExceptionReporter`（那是示例类名）、`Foundation\Controller\ExceptionReporterTrait`（框架 Trait 没改名）。
+        - **bug 1（示例写法错）**：`exception_reporter` 的示例全写成了**裸类名** `ExceptionAction::class`，而 `src/DuckPhp.php` 第 140–146 行先 `is_callable()` 不过就抛 `'exception_reporter' config error!`。实测 `is_callable('…\ExceptionAction')` = **false**（类里就算有静态 `OnException()` 也不算可调用），`is_callable([…::class,'OnException'])` = **true**。受影响 7 处全部改成数组写法：`skeleton/src/Controller/{ExceptionAction.php(文档块),…}`、`skeleton/src/System/App.php`（注释行）、`skeleton/agent-zh.md`、`demo/src/System/AppWithAllOptions.php`、`guide/exception.md`（常见写法 §1 + 常见错误表）、`reference/Core-ExceptionManager.md`、`reference/Foundation-Controller-ExceptionReporterTrait.md`。错误表那行原来还写着「类名（有静态 `OnException()`）」也算可调用——**这句本身是错的**，一并改掉。
+        - **bug 2（报告器缺 `_()`）**：`ExceptionReporterTrait::OnException()` 的实现是 `static::_()->_OnException($ex)`；`git log` 显示 Trait 在 `f0f52283` 创建时自带 `use SingletonExTrait;`，`33e8fcf5`（「100% 测试通过」）删掉了它、把 demo 的选项改成数组写法，**但没给报告器类补 `_()`** ⇒ 从那时起 `demo`/`skeleton` 的报告器一直是坏的：`is_callable()` 能过（`OnException` 存在），真调用时 `Error: Call to undefined method …::_()`。修法是照框架自己的测试夹具（`tests/Foundation/Controller/ExceptionReporterTraitTest.php` 的 `MyExceptionReporter`）给两个类补 `use DuckPhp\Foundation\SingletonTrait;`——**不动 `src/`**（那行是作者刻意删的）。修后实测：`OnException(new BusinessException('boom'))` → `string(67) "…\ExceptionAction::onBusinessException"`（分派真的走到）；`ProjectException` 这种没有对应方法的落 `App::_()->_OnDefaultException()` 出错误页。
+        - **整页重写 `Foundation-Controller-ExceptionReporterTrait.md`**（正文停在旧 Trait）：删掉「按命名空间判断是不是项目异常」「兜底 `defaultException()` → `defaultSystemException()`」以及方法列表里那两个**源码里已不存在**的方法；改成与源码一致（只按短类名分派、静态方法也能命中、方法名撞 `OnException`/`_OnException` 走递归保护、兜底固定 `App::_()->_OnDefaultException()`），「类信息」写明本 Trait **不 use 任何 Trait**、组合方必须自带 `_()`。**`gen-reference.php verify` 的 `extra-method` 漏了这两个过期条目**——该页方法列表是 4 空格缩进，而扫描器要求反引号开头的行，压根没读到（第 8 节那条「生成器已知缺陷」的同类问题）。
+        - `ZAllDemoTest` 的 `files` 期望长度 10438 → **10432**（类名短 2 字节 × 3 处：选项表两次 + 包含文件清单一次；两份 dump 逐行 diff 只有这 3 处 + 一行 `执行耗时` 时间戳）。
+        - 校验：`docs/zh` 站内链接 2381 条 **0 死链**；章号一致性 0 处不符；孤儿页 0（109/109 被链到）；`gen-options-docs.php --check` up to date；`check-non-ascii.sh` 0；排版检查只有本轮 3 个文件是 `CONTENT`；`tests/ZAllDemoTest.php` 绿。**`src/`、`tests/` 未改动，未跑全量测试。**
 - **待办（本工作范围外）**：
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
   - ~~`docs/zh/guide/external-auth.md` 里还有一批旧键名未校~~ **已处理**：该章已拆成 `session.md`(2-9)/`user.md`(2-18)/`admin.md`(2-19)，键名与选项按当前源码逐条核对（旧键 `user_callback_get_*`、已废选项 `user_provider`/`admin_provider`/`*_default_exception_class` 都已在正文标注失效）；
@@ -357,6 +365,12 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/find-unmentio
 
 # 2c) 提交前：这次改动里有没有「只有排版」的文件（编辑器/并行会话改的噪声，直接 git checkout 丢掉）
 python3 docs/scripts/check-md-layout.py
+
+# 2d) 改了 demo/ 或 skeleton/ 时（含报告器、选项示例）：这两个是现成的端到端冒烟
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZAllDemoTest.php"
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Foundation/Controller/ExceptionReporterTraitTest.php"
+# 报告器这种「配置对了、调用时才炸」的东西（第 7 节新增的那行陷阱），另在 php -r 里真调一次；
+# 内联 php -r 的引号在 PowerShell→wsl 两层里很容易打架，存成临时 .php 再跑更稳。
 
 # 3) 本次改了 src/ 或 tests/ 时（一律走 WSL，按单个测试文件跑，见第 5 节末）：
 wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"

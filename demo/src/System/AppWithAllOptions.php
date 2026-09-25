@@ -6,7 +6,7 @@
 namespace ProjectNameTemplate\System;
 
 use DuckPhp\DuckPhp;
-use ProjectNameTemplate\Controller\ExceptionReporter;
+use ProjectNameTemplate\Controller\ExceptionAction;
 
 class AppWithAllOptions extends DuckPhp
 {
@@ -16,7 +16,7 @@ class AppWithAllOptions extends DuckPhp
         //'path_info_compact_enable' => false,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        'exception_reporter' => ExceptionReporter::class,
+        'exception_reporter' => [ExceptionAction::class, 'OnException'],
         //'ext' => [],
     ];
     //@override

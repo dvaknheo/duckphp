@@ -61,7 +61,7 @@ $em->clear();   // restore 掉
 
 ```php
 // 在业务 app options…
-'exception_reporter'   => \App\ExceptionReporter::class,  // class with OnException()
+'exception_reporter'   => [\App\ExceptionReporter::class, 'OnException'],  // 必须可调用；裸类名不是 callable
 'exception_for_project'=> \App\BusinessException::class,
 ```
 

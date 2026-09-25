@@ -6,7 +6,7 @@
 namespace ProjectNameTemplate\System;
 
 use DuckPhp\DuckPhp;
-use ProjectNameTemplate\Controller\ExceptionReporter;
+use ProjectNameTemplate\Controller\ExceptionAction;
 
 class App extends DuckPhp
 {
@@ -21,7 +21,7 @@ class App extends DuckPhp
         'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,
         'exception_for_controller'  => ControllerException::class,
-        'exception_reporter' =>  [ExceptionReporter::class,'OnException'],
+        'exception_reporter' =>  [ExceptionAction::class,'OnException'],
         
         'controller_method_prefix' => 'action_',
         'app' => [],

@@ -6,7 +6,7 @@
 namespace ProjectNameTemplate\System;
 
 use DuckPhp\DuckPhp;
-use ProjectNameTemplate\Controller\ExceptionReporter;
+use ProjectNameTemplate\Controller\ExceptionAction;
 
 class PureApp extends DuckPhp
 {

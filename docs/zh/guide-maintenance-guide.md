@@ -32,6 +32,7 @@
 8. **不写旧文档的过时内容**：`architecture.md` / `components.md` / 两篇指南附录都已删除，指南里不要再出现「旧文档里是这么写的」「已废弃的 X」之类表述——只写当前事实，必要时直接给正确写法。
 9. `skeleton/` 的失真内容已在 Q3 轮修掉（`class_user`→`user_provider`、方法前缀默认值、`ProjectException extends \Exception` 等）；模板工程改动同样要跑测试（`tests/Foundation/ExceptionTraitTest.php` 有防回归断言）。
 10. **「怎么用」与「怎么实现」分章**（第 6 轮作者裁定）：卷二末尾的 2-18/2-19 只讲**调用方怎么用**（Helper 入口、未登录表现、视图开关）；「接入实现」（三个实现 + 选项 + `ext` 挂载）在第四卷的 4-12/4-13。以后写涉及用户/管理员的内容按这条分家，别把选项表塞回 2-18/2-19。
+11. **照抄 `skeleton/`、`demo/` 的代码前先真的跑一次**（M17）：把骨架片段写进指南时，先在 `php -r` 里把它调通。`is_callable()`、`class_exists()` 这类只校验「形状」的检查会骗人——选项写成裸类名时启动不报错、报告器类少个 `_()` 时启动也不报错，**都要等异常真抛出来才炸**。示例里的选项值一律写 `[类::class, '方法']`（或闭包），别写裸类名。
 
 ## 2. 每章模板（全卷统一，照抄结构）
 
@@ -516,3 +517,47 @@ python3 <tmp>/drift.py --all                                                    
 **验收**：`docs/zh` 里除本轮更正说明与两处历史记录外，`ZAllDemo` 只剩 `ZAllDemoTest*` 这些真文件；`check-doc-links.py docs/zh` → **0 死链**；章号一致性、孤儿页、生成页、ASCII、UTF-8、排版六项全绿；`src/`、`tests/` 未改动。
 
 **紧跟着的骨架调整（作者提交 `a3208ddb`）**：作者把 `skeleton/src/System/ExceptionReporter.php` 移到 `skeleton/src/Controller/ExceptionAction.php` 并把类名改成 `ExceptionAction`（对齐「控制器层复用类叫 `{名字}Action`」的约定，也与 `demo/src/Controller/ExceptionReporter.php` 的位置一致）。**但文件里的 `namespace YourProjectName\System;` 没跟着改**，于是 `App.php` 新写的 `use YourProjectName\Controller\ExceptionAction;` 取不到类：实测 `class_exists('YourProjectName\Controller\ExceptionAction')` = **MISSING**（PSR-4 把 `\Controller\ExceptionAction` 映到 `src/Controller/ExceptionAction.php`，文件被 include 后却只定义了 `\System\ExceptionAction` 这个副作用；因为是注释掉的选项，平时不报错，一取消注释才炸）。已修并复核：namespace 改 `YourProjectName\Controller`（修后 `class_exists` = true），文件内 docblock 的 `ExceptionReporter::class` → `ExceptionAction::class`，`skeleton/RULES.md` 的目录树（该文件从 `System/` 挪到 `Controller/` 组）与「默认未启用」清单、`skeleton/agent-zh.md` 的示例类名与选项行同步改名（顺手把它示例里 `namespace YourProject\…` 少写 `Name` 的笔误改成 `YourProjectName`）。**教训：移动类文件时 namespace 必须一起改**——这正是 1-3 那条「类文件必须落在与命名空间一致的目录里」要防的事。
+
+## 25. M17 / 本轮：`demo` 的异常报告器跟着 `skeleton` 改名并**真的跑通**（作者裁定「统一」）
+
+**背景**：作者对「小分叉」那边的回复是**统一**——`skeleton` 已经把它那份报告器改名成 `ExceptionAction`（上一节），`demo` 还叫 `ExceptionReporter`，两边分叉。本轮把 `demo` 对齐，并顺手把「统一」过程中撞出来的两个**真 bug**修掉。
+
+**改动 1：改名（`demo` → `skeleton`）**
+
+- `git mv demo/src/Controller/ExceptionReporter.php demo/src/Controller/ExceptionAction.php`，类名 `ExceptionReporter` → `ExceptionAction`；
+- 三处 `use ProjectNameTemplate\Controller\ExceptionReporter;` → `…\ExceptionAction;`（`demo/src/System/{App,AppWithAllOptions,PureApp}.php`）、`App.php` 的 `'exception_reporter' => [ExceptionAction::class,'OnException']`；
+- `demo/src/Controller/ExceptionAction.php` 里那段注释掉的 `defaultException()` 死代码删掉（写它的时候 Trait 还有这个方法，现在没有了——**统一就该把这种「只在一边留着的过时注释」一起清掉**）；
+- `docs/zh/guide/exception.md` 5 处（示例路径、小节标题、代码块路径、`class ExceptionAction`、选项行）跟着改；
+- 参考手册里**保持泛指**的两处不改：`Core-ExceptionManager.md` 的 `\App\ExceptionReporter`（那是示例类名，不是本仓的类）、`Foundation\Controller\ExceptionReporterTrait` 页（框架 Trait 本身没改名）。
+
+**改动 2：`exception_reporter` 的示例写法是错的（裸类名不是 callable）**
+
+`src/DuckPhp.php` 第 140–146 行 `initComponentsOfInner()` 里先 `is_callable($this->options['exception_reporter'])`，不过就抛 `DuckPhpSystemException("'exception_reporter' config error!:…")`。而实测 `is_callable('YourProjectName\Controller\ExceptionAction')` = **false**（哪怕类里有静态 `OnException()`；PHP 的类名字符串要可调用得有 `__invoke()`），`is_callable([…::class,'OnException'])` 才是 **true**。于是这些「照抄就炸」的示例全部改掉：
+
+| 文件 | 原写法 | 现写法 |
+|---|---|---|
+| `skeleton/src/Controller/ExceptionAction.php`（docblock） | `ExceptionAction::class` | `[ExceptionAction::class, 'OnException']` |
+| `skeleton/src/System/App.php`（注释行） | 同上 | 同上（并注明 must be callable） |
+| `skeleton/agent-zh.md` | 同上 | 同上（另删掉过时的 `defaultException()` 示例方法） |
+| `demo/src/System/AppWithAllOptions.php` | 同上 | 同上（`App.php` 早就是数组写法） |
+| `docs/zh/guide/exception.md`（常见写法 §1、常见错误表） | 同上 | 同上；错误表那行原来还写着「类名（有静态 `OnException()`）」也算可调用——**这句是错的**，已改 |
+| `docs/zh/reference/Core-ExceptionManager.md`、`Foundation-Controller-ExceptionReporterTrait.md` | 同上 | 同上（类名保持泛指的 `\App\ExceptionReporter`） |
+
+**改动 3：报告器类少了 `_()`，异常真抛出来时必炸**
+
+`ExceptionReporterTrait::OnException()` 的实现是 `static::_()->_OnException($ex)`。`git log` 显示 Trait 在 `f0f52283` 创建时**自带** `use SingletonExTrait;`，`33e8fcf5`（「100% 测试通过」）把它删了、同时把 demo 的选项改成 `[ExceptionReporter::class,'OnException']`——但**没给这两个报告器类补上 `_()`**，于是从那时起 `demo`/`skeleton` 的报告器一直是坏的：`is_callable()` 校验能过（`OnException` 确实存在），真调用时 `static::_()` 找不到方法。实测：
+
+```text
+php -r '…\ProjectNameTemplate\Controller\ExceptionAction::OnException(new ProjectException("boom"));'
+→ Error: Call to undefined method ProjectNameTemplate\Controller\ExceptionAction::_()
+```
+
+修法是照框架自己的测试夹具（`tests/Foundation/Controller/ExceptionReporterTraitTest.php` 的 `MyExceptionReporter`）的样子，给两个报告器类补 `use DuckPhp\Foundation\SingletonTrait;`（`Controller\Base` 给的也是这个）——**不动 `src/`**，不去替作者恢复 Trait 里那行（那是他刻意删的）。修完实测：`ExceptionAction::OnException(new BusinessException('boom'))` → `string(67) "ProjectNameTemplate\Controller\ExceptionAction::onBusinessException"`（分派真的走到了）；`ProjectException` 这种没有对应方法的 → 落 `App::_()->_OnDefaultException()` 出错误页，与文档一致。
+
+**改动 4：`Foundation-Controller-ExceptionReporterTrait.md` 整页重写**
+
+这页的正文还停在**旧 Trait**：说「按命名空间判断是不是项目异常」「兜底走 `defaultException()` → `defaultSystemException()`」，方法列表里也留着这两个**源码里已经不存在**的方法（`a04ab534` 那轮只改了 7 行，正文没跟上；`gen-reference.php verify` 的 `extra-method` 正是漏了它们——因为该页方法列表是 4 空格缩进而不是反引号开头，扫描器根本没读到）。重写后与源码一致：分派只按**短类名**、静态方法也能命中、方法名撞上 `OnException`/`_OnException` 时走递归保护、兜底固定 `App::_()->_OnDefaultException()`；「类信息」写明本 Trait **不 use 任何 Trait**、组合方必须自带 `_()`。
+
+**顺带**：`tests/data_for_tests/ZAllDemoTest.config.php` 的 `files` 期望长度 10438 → **10432**。类名短 2 字节 × 3 处（选项表出现两次 + 包含文件清单一次）= 6；两份 dump 逐行 diff 只有这 3 处加一行时间戳（`执行耗时`），没有别的漂移。注释行里补了这次的来历。
+
+**验收**：`tests/ZAllDemoTest.php` 绿；六道闸门绿（`docs/zh` 0 死链 2381 条、章号一致性 0 处不符、孤儿页 0、`gen-options-docs --check` up to date、`src/` 非 ASCII 0 行、排版检查只有本轮这 3 个文件是 `CONTENT`）；报告器的两条运行实测见「改动 3」。**没有跑全量测试**（本轮只改 `demo/`、`skeleton/` 与 `docs/`，`src/` 与 `tests/` 未动）。
