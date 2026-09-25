@@ -1,7 +1,7 @@
 # 附录 B · 代码片段库
 
 > 用途：**能直接抄进工程**的片段，按「要做的事」索引。每段都标了它在哪一章被展开，以及是"仓库里能跑的"还是"示意写法"。
-> 命名空间约定：`MyProj`。示例资产：`demo/`、`tests/data_for_tests/ZAllDemo`、`tests/data_for_tests/ZThirdDemo`。
+> 命名空间约定：`MyProj`。示例资产：`demo/`（多入口示例应用，`tests/ZAllDemoTest.php` 跑它）、`skeleton/`（脚手架骨架）、`tests/data_for_tests/ZThirdDemo`（第三卷示例工程）。
 > ⚠️ 标 ⚠️ 的片段是**示意**：仓库里没有现成示例对应它（框架也不内置该能力，需要你自己实现）。
 
 ## 1. CRUD（模型层）

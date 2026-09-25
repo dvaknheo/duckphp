@@ -57,7 +57,7 @@
 - [x] 2-18 安全与性能清单 —— `security-performance.md`（框架做了/不提供两张表 + 安全清单 16 项 + 性能清单 10 项 + 常见写法）
 - [x] 2-19 使用用户系统（第 5 轮从 2-9 拆出；M12 改成**只讲怎么用**：`Helper::User()/UserId()/UserName()/UserService()` 的入口表、未登录三条路、登录/注册/登出、两个视图开关；实现搬去 4-12）—— `user.md`
 - [x] 2-20 使用管理员系统（同上：`Helper::Admin*()`、`canAccess/log/isSuper`、`onNeedPermission()`、后台菜单 PermissionMenu；实现搬去 4-13）—— `admin.md`
-- [x] 本卷收尾校验（M13 重排后）：`docs/zh` 站内链接 **0 死链**、20 章全部 **≤400 行**、H1 恰好是 `2-1`…`2-20`、示例全部指向现成 `demo/`／`ZAllDemo`／`ZThirdDemo`
+- [x] 本卷收尾校验（M13 重排后）：`docs/zh` 站内链接 **0 死链**、20 章全部 **≤400 行**、H1 恰好是 `2-1`…`2-20`、示例全部指向现成 `demo/`／`skeleton/`／`ZThirdDemo`
 
 ## 第三卷 · 使用第三方应用 —— ✅ 已完成
 
@@ -121,7 +121,7 @@
 - [x] `python3 docs/scripts/check-doc-links.py docs` → `docs/zh` 0 坏链（M5 收尾实测：**1622 条 0 死链**；`docs/old/`、`docs/en/index.md` 的历史死链不属本任务，`docs/en/` 有自己的同名副本不受本次删除影响）
 - [x] 新增/修改的 md 全是 UTF-8（无 GBK）（`docs/zh` 逐字节校验通过）
 - [x] 本卷新写的章都 ≤400 行（第四卷 10 章 **80–206 行**；附录 B/C/D 117–288 行；全书 41 章 7001 行）
-- [x] 改过的示例都在 WSL 里实跑通过（各卷示例仍挂在 `demo/`、`ZAllDemo`、`ZThirdDemo` 上；第四卷新增片段均为现有资产的真实引用或明确标注 ⚠️ 示意）
+- [x] 改过的示例都在 WSL 里实跑通过（各卷示例仍挂在 `demo/`、`skeleton/`、`ZThirdDemo` 上；第四卷新增片段均为现有资产的真实引用或明确标注 ⚠️ 示意）
 - [x] 全量 `php vendor/bin/phpunit --no-coverage` 通过（当前基线 `OK (93 tests, 565 assertions)`——Q3/Q4 各补了回归断言后的新基线；原基线为 `92/556`）
 - [x] 本文件的复选框与状态图例已更新
 
@@ -147,6 +147,7 @@
 | M13 拆开「请求生命周期与钩子点」→ 2-2 请求生命周期（含内置组件清单）+ 路由钩子（落在 2-4，与 2-3 路由进阶对调），卷二顺延为 2-1–2-20 | ✅ |
 | M14 `SqlDumperSupporter` 默认映射补 pgsql（作者指出的源码 bug）+ 参考页/指南同步 | ✅ |
 | M15 1-3 与 2-1 合并（四层规范并入 `project-structure.md`，330 行），2-1 留成 38 行指路页以免重排章号 | ✅ |
+| M16 清掉 25 处「`tests/data_for_tests/ZAllDemo`」假路径（该目录从未存在）→ 改指 `skeleton/` 与 `demo/` | ✅ |
 | Q1–Q4 待决策 | ✅ 全部已定并落地 |
 
 > **M11 收尾实测**（2026-09-24，详见 [用户指南维护指南](guide-maintenance-guide.md) §20）：`check-doc-links.py docs/zh` → **2109 条 0 死链**；`checkchap.py`（本轮临时脚本）→ 「链接文字章号 vs 目标 H1」**0 处不一致**、`index.md` 之外无缺章号 H1；`find-unmentioned-classes.py` → **109/109 类页全被链到、孤儿 0**；改动章行数 117–294（全部 ≤400）；`docs/zh/guide` 里同步轮留下的 `//TODO` **清零**；全量测试 `OK (96 tests, 823 assertions)`、覆盖率 `4895/4895`。

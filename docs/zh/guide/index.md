@@ -1,7 +1,7 @@
 # DuckPHP 用户指南
 
 > 本指南按四个梯度组织：**入门 → 单一应用 → 使用第三方应用 → 高级话题**。
-> 每章都是「先给能跑的最小示例，再讲机制」，示例来自仓库里的 `demo/`、`tests/data_for_tests/ZAllDemo`、`tests/data_for_tests/ZThirdDemo`。
+> 每章都是「先给能跑的最小示例，再讲机制」，示例来自仓库里真实存在的资产：`demo/`（多入口示例应用）、`skeleton/`（脚手架骨架）与 `tests/data_for_tests/ZThirdDemo`（第三卷示例工程）。
 >
 > 想知道「某个类有什么方法/选项」请查 [参考手册](../reference/index.md)；本指南只讲**怎么做**，并链到对应参考页。
 >

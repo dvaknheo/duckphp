@@ -2,7 +2,7 @@
 
 > 解决什么问题：模型里到底该写什么、[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 白送了什么、为什么它的 CRUD 方法是 `protected`、表名怎么推导、模型该向业务层暴露什么。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-7 章 数据库](database.md)。预计 20 分钟。
-> 示例：`demo/src/Model/`（`Base.php` / `DemoModel.php`）、`demo/public/dbtest.php`（完整可跑：模型 + 分页 + 增删改查）、`tests/data_for_tests/ZAllDemo/src/Model/`。
+> 示例：`demo/src/Model/`（`Base.php` / `DemoModel.php`）、`demo/public/dbtest.php`（完整可跑：模型 + 分页 + 增删改查）、`skeleton/src/Model/`（脚手架里的模型骨架）。
 
 ```bash
 php -S 127.0.0.1:8080 -t demo/public

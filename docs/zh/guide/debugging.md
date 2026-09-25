@@ -85,7 +85,7 @@ php vendor/bin/duckphp help
 ## 四、出问题时的四板斧
 
 ```php
-// 1) 现在有哪些单例、在哪个相位（ZAllDemo 的首页视图就是这么展示的）
+// 1) 现在有哪些单例、在哪个相位（demo 的 /files 页 demo/view/files.php 就是这么展示的）
 \DuckPhp\Core\PhaseContainer::Dump();          // 或 PhaseContainer::_()->dumpAllObject()
 
 // 2) 现在有哪些路由（排查 404 的第一站）

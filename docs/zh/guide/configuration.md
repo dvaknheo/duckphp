@@ -52,7 +52,7 @@ KernelTrait::$kernel_options → App::$core_options → 入口类的 $common_opt
 ```php
 var_dump(App::_()->options);                       // 当前生效的全部选项
 var_dump(App::_()->options['error_404']);          // 某个键
-// 示例应用 ZAllDemo 的首页视图就是把 options / 单例容器直接 dump 出来看的
+// 示例应用 demo 的 /files 页（demo/view/files.php）就是把选项 / 单例容器直接 dump 出来看的
 ```
 
 ## 应用设置

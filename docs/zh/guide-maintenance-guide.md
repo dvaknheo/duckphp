@@ -23,7 +23,7 @@
 **硬约束**（作者已裁定，别自行放宽）：
 
 1. **一页总目录** = `docs/zh/guide/index.md`；`docs/zh/index.md` 只做指路，不复制章表。
-2. **示例只用现有代码**：`demo/`、`tests/data_for_tests/ZAllDemo`、`tests/data_for_tests/ZThirdDemo`；不新建示例工程（`ZThirdDemo` 是唯一获准新增的）。
+2. **示例只用现有代码**：`demo/`（多入口示例应用）、`skeleton/`（脚手架骨架）、`tests/data_for_tests/ZThirdDemo`（第三卷示例工程），以及 `tests/data_for_tests/` 下的测试夹具；不新建示例工程（`ZThirdDemo` 是唯一获准新增的）。⚠️ 老文档里写的 `tests/data_for_tests/ZAllDemo` **从未存在过**（见 §24），别照着它写。
 3. **新写的章 ≤400 行**；改写章暂不限，但明显超长的要拆（见 Checklist 的 Q2）。
 4. **附录**：原先指南侧的 `appendix-global-functions.md` 与 `appendix-options.md` **已删除**——全局函数参考由 `docs/zh/reference/Core-Functions.md` 承接，应用选项参考由 `reference/options.md` / `options-by-class.md` / `options-index.md` 承接；指南里只留指向参考手册的链接。
 5. **不写**「升级与破坏性变更」章/附录。
@@ -41,7 +41,7 @@
 > 解决什么问题 · 前置章节 · 预计阅读时间
 > （若本章有示例工程）一句话说明示例在哪、怎么跑
 
-## 最小示例          ← 能跑；标明来源（demo/ 或 ZAllDemo 或 ZThirdDemo）
+## 最小示例          ← 能跑；标明来源（`demo/` 或 `skeleton/` 或 `ZThirdDemo`）
 ## 机制说明          ← 讲为什么；链到 reference 对应篇
 ## 常见写法          ← 3~5 个片段
 ## 常见错误          ← 表格：现象 / 原因 / 改法
@@ -61,7 +61,7 @@
 | 资产 | 服务哪几卷 | 怎么跑 |
 |---|---|---|
 | `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php` | 第三卷 3-1–3-7 | `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` |
-| `tests/data_for_tests/ZAllDemo` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由） | 同上换文件名；它是「起内置服务器 + curl 各路由比字节长度」的重型冒烟，改 `src/` 后长度会变（见 §5） |
+| `demo/` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由/多入口） | `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZAllDemoTest.php"`；它「起内置服务器 + curl 各路由比字节长度」，改 `src/` 后长度会变（见 §5）。**注意**：老文档里写的 `tests/data_for_tests/ZAllDemo` 正文目录从未存在，被测宿主一直是 `demo/`（见 §24） |
 | `demo/`（`public/` 多入口 + `src/System/AppWithAllOptions.php`） | 第一卷、第二卷 | `php -S 127.0.0.1:8080 -t demo/public` 后访问各入口 |
 | `docs/scripts/`（8 个文档工具） | 全卷校验/生成 | `python3 docs/scripts/check-doc-links.py docs/zh`、`python3 docs/scripts/find-unmentioned-classes.py`、`bash docs/scripts/check-non-ascii.sh` 等；**脚本随文档一起提交**，都从仓库根目录跑 |
 
@@ -151,7 +151,7 @@ python3 <tmp>/drift.py --all                                                    
 # 2) 改哪一章就守 §2 的四条约定：
 #    · 章号用卷-章号（1-1 … 4-13），引用写「第 2-4 章」或范围「第 2-1–2-20 章」
 #    · 类名第一次出现链到 ../reference/ 对应页（Base/Helper 用全限定名）
-#    · 代码块里不插链接；示例仍只用 demo/、ZAllDemo、ZThirdDemo
+#    · 代码块里不插链接；示例仍只用 demo/、skeleton/、ZThirdDemo
 #    · 不写旧文档的过时内容（旧文已删，只写当前事实）
 
 # 3) 新增一章时的完整动作：
@@ -227,7 +227,7 @@ python3 <tmp>/drift.py --all                                                    
   其中 2-9 原为「会话与用户/管理员体系」一篇（228 行），第 5 轮按作者裁定拆成三章：会话留在 2-9，用户体系与管理员体系放到卷二末尾（2-18/2-19）。
   其中**新写 6 篇**（controllers / views / events / cache / i18n / security-performance），其余 11 篇为改写；`layers.md` 由 581 行拆成「四层规范」并把控制器/视图内容交给 10/11 两章。
 - 分工与执行：先由 5 个子代理并行改写（第 15/16/18/19/20/21 章共 6 篇由子代理完成），**其余 11 篇因子代理连续失败改由主代理亲自写**（`routing`/`controllers`/`views`/`database`/`model`/`helper`/`lifecycle` 及 `cli`/`testing`/`security-performance`/`layers`）。教训：子代理适合「一章一文件、明确验收」的活；并行超过 3 个或单个任务超过 4 章时失败率明显上升，**重试前先确认它对文件没有半途写入**。
-- 示例策略（守硬约束 2，不新建示例工程）：全部指向现成资产 —— `demo/public/demo.php`（单文件五层 + 路由 + 函数式视图）、`demo/public/dbtest.php`（模型/分页/CRUD 全链路）、`demo/src/*`、`tests/data_for_tests/ZAllDemo`、`tests/data_for_tests/ZThirdDemo`。
+- 示例策略（守硬约束 2，不新建示例工程）：全部指向现成资产 —— `demo/public/demo.php`（单文件五层 + 路由 + 函数式视图）、`demo/public/dbtest.php`（模型/分页/CRUD 全链路）、`demo/src/*`、`skeleton/`、`tests/data_for_tests/ZThirdDemo`。
 - **本轮实测过的命令**（写进章首「怎么跑」）：
   - `php demo/cli.php help|routes|version|DbTestApp:version` —— 用来确认内置七命令、命令组前缀与相位的关系；
   - 临时脚本（跑完即删，未入库）验证 `regConsoleCommand()` + `command_xxx()` + `@command_desc` 能让命令出现在 help 里，以及 `--k=v` 解析成 `['k'=>'v']`、位置参数在 `['--']`；
@@ -303,7 +303,7 @@ python3 <tmp>/drift.py --all                                                    
 
 - `helper.md` 整章重写（198 行）：四层四个类的对照表、两种工程写法（`extends` / `use … as Helper`）、并集 `__callStatic` 的顺序与代价、`Model\Base` 走 trait 的说明；常见错误表新增 4 行（并集未定义方法、胜出方不符预期、反射看不到、`__logined_enable_view`）。
 - `external-auth.md` 的「视图级开关」整节改成 `__logined_enable_view` 机制（含手动开关写法与「继承 `UserControllerBase` 即自动开」）；随后按作者裁定**把这一章拆成三章**：`session.md`（2-9 会话）、`user.md`（2-18 用户体系）、`admin.md`（2-19 管理员体系，含 PermissionMenu），并顺手核对了两处源码已改的事实（`user_provider`/`admin_provider` 选项已不存在、未登录异常类写死为 `UserException`/`AdminException`）；`overriding.md`（表格行 + 示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`、`layers.md`、`model.md`、`events.md`、`cache.md`、`lifecycle.md`、`security-performance.md`、`project-structure.md` 的旧名/旧选项一并改。
-- 顺手修掉 `layers.md` 里那个**不存在**的示例路径 `tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`。
+- 顺手修掉 `layers.md` 里那个**不存在**的示例路径 `tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`。（M16 复查：`tests/data_for_tests/ZAllDemo` 这个目录**从来没进过 git、磁盘上也没有**，当年只改了这**一处**；其余二十来处留到 M16 才全部改指 `skeleton/` 与 `demo/`，见 §24。）
 
 **踩坑（重要，写脚本改文档的人都该知道）**：分两批替换时，第二批把「新文案」当成「旧文案」单独传了进去（少传了第三个参数），`String.Replace(old, $null)` **直接删掉了 5 行正文**（`cache.md`/`appendix-glossary.md`/`lifecycle.md`/`security-performance.md`/`embed.md`）。教训：批量改文档**每条都必须传「旧→新」两个字符串**，脚本要打印「命中/未命中」计数；`命中数 = 配对数` 是能立刻发现「误删」的唯一信号，改完还要 grep 复查一次目标串。
 
@@ -487,3 +487,30 @@ python3 <tmp>/drift.py --all                                                    
 **连带改动**：`guide/index.md` 两行（1-3 标题与一句话、2-1 标注「指路页」）；`install.md`、`quickstart.md` 里「第 1-3 章 目录结构与编码规则」的链接文字（新标题）；`guide-maintenance-guide.md` §9 章号表 2-1 行；`guide-rewrite-checklist.md` 卷一 1-3 条目与卷二 2-1 条目。**「第 2-1 章」的 33 处引用一律不动**——它们现在落到指路页，再一跳进 1-3。
 
 **验收**：`check-doc-links.py docs/zh` → **2247 条 0 死链**；章号一致性 **0 处不符**；`find-unmentioned-classes.py` → **109/109 类页全被链到、孤儿 0**；`project-structure.md` **330 行**、`layers.md` **38 行**（全书最大章 294 行以外还有本章 330 行，仍 ≤400）；章数不变（47）；`src/`、`tests/` 未改动。
+
+## 24. M16 / 本轮：清掉「`tests/data_for_tests/ZAllDemo`」这个**从来不存在**的示例路径（作者发现）
+
+**背景**：作者问「`tests/data_for_tests/ZAllDemo` 找不到，没在 git 里，需要重建？」——查证结论是**不需要重建，因为它从来就不存在**：
+
+- `git log --all -- tests/data_for_tests/ZAllDemo*` 里只有 `ZAllDemoTest.config.php` 与几份 `ZAllDemoTest-<长度>.txt` 产物，**没有任何 `ZAllDemo/` 目录**；
+- 磁盘上也没有（`tests/data_for_tests/` 下是 `Component/ Core/ Db/ DuckPhp/ Ext/ Foundation/ Helper/ HttpServer/ ZThirdDemo/` + `setting.php`）；
+- 它也不被 `.gitignore` 忽略——就是**文档里编出来的路径**：指南的 AI 作者拿测试名 `ZAllDemoTest` 拼了一个「第二卷示例工程」出来；
+- 当年有一轮**已经**发现过其中一处是假的（`ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`），但只改了那一处，其余二十来处留到今天。
+
+**真实资产是谁**（本轮逐条改指）：
+
+| 老文档写的 | 真实在哪 |
+|---|---|
+| `tests/data_for_tests/ZAllDemo/src/Controller/MainController.php`、`src/Business/DemoBusiness.php`、`src/Model/DemoModel.php`、`view/main.php`、`public/index.php` | **`skeleton/`** —— 五层骨架的片段就是照它抄的（`YourProjectName` 命名空间、`DemoBusiness::_()->foo()`、`Helper::Show(get_defined_vars(), 'main')`、`DATE(DATE_ATOM)` 全部逐字对得上） |
+| 泛指的「第二卷示例应用」 | **`demo/`** —— 多入口示例应用，`tests/ZAllDemoTest.php` 起内置服务器 + curl 各路由比字节长度（它读 `tests/data_for_tests/ZAllDemoTest.config.php`，其中 `path_app` 指向 `demo/`） |
+| 「首页视图把 options / 单例 dump 出来」 | **`demo/view/files.php`**（`/files` 路由）——里面有「执行时间 / 全部单例 / 已加载文件 / 调用栈」几个 fieldset |
+
+**改动清单**（25 处，只动 `docs/`）：
+
+- 指南 11 个文件：`controllers.md`(4)、`views.md`(3)、`install.md`(2)、`project-structure.md`(2)、`quickstart.md`、`model.md`、`configuration.md`、`debugging.md`、`appendix-glossary.md`、`appendix-snippets.md`、`index.md`；
+- 账本 4 个文件：`guide-maintenance-guide.md`（硬约束 2、资产表、模板里的「标明来源」、§6 起手动作、§10 记录）、`guide-rewrite-checklist.md`(2)、`reference-maintenance-guide.md`（§7 陷阱表那条「指南里的示例没实跑过」+ 历史记录加更正注）、`helper-merge-checklist.md`（历史记录加注）；
+- **`ZAllDemoTest` / `ZAllDemoTest.config.php` 一律没动**——它们是真文件（脚本按 `ZAllDemo/` 带斜杠与整句精确匹配，跑完 grep 复核过）。
+
+**教训**（写进参考手册维护指南第 18 条）：**引用一个路径之前先验证它存在**（`Test-Path` / `git ls-files`）。指南的示例路径最容易出这种错：写章节的 AI 会按「测试名 + 惯性目录名」编出看起来很像的路径，而**死链检查只查 `.md` 之间的链接，查不出「正文里的文件路径写错」**——它不报错，只是一直骗读者。
+
+**验收**：`docs/zh` 里除本轮更正说明与两处历史记录外，`ZAllDemo` 只剩 `ZAllDemoTest*` 这些真文件；`check-doc-links.py docs/zh` → **0 死链**；章号一致性、孤儿页、生成页、ASCII、UTF-8、排版六项全绿；`src/`、`tests/` 未改动。

@@ -2,7 +2,7 @@
 
 > 解决什么问题：视图文件放在哪、怎么被找到；页眉页脚（布局）怎么加；数据怎么传进来；输出怎么转义；以及不用 PHP 文件写视图的几种办法。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-5 章 控制器](controllers.md)。预计 20 分钟。
-> 示例：`tests/data_for_tests/ZAllDemo/view/main.php`（最小视图）、`demo/view/`（含错误页 `_sys/`）、`tests/data_for_tests/ZThirdDemo/view/shop/index.php`（被覆盖的视图）。
+> 示例：`skeleton/view/main.php`（最小视图）、`demo/view/`（含错误页 `_sys/`）、`tests/data_for_tests/ZThirdDemo/view/shop/index.php`（被覆盖的视图）。
 
 ```bash
 php -S 127.0.0.1:8080 -t demo/public
@@ -11,7 +11,7 @@ php -S 127.0.0.1:8080 -t demo/public
 
 ## 最小示例
 
-控制器（`tests/data_for_tests/ZAllDemo/src/Controller/MainController.php`）：
+控制器（`skeleton/src/Controller/MainController.php`）：
 
 ```php
 public function index()
@@ -21,7 +21,7 @@ public function index()
 }
 ```
 
-视图（`tests/data_for_tests/ZAllDemo/view/main.php`）：
+视图（`skeleton/view/main.php`）：
 
 ```php
 <h1><?= $var ?></h1>

@@ -1,7 +1,7 @@
 # 1-2 安装与最小示例
 
 > 目标：装好、跑起一个页面、知道每个文件为什么存在。预计 12 分钟。
-> 本章示例取自仓库里的真实文件：脚手架 `skeleton/`、示例应用 `tests/data_for_tests/ZAllDemo`、单文件示例 `demo/public/helloworld.php`。
+> 本章示例取自仓库里的真实文件：脚手架 `skeleton/`、示例应用 `demo/`、单文件示例 `demo/public/helloworld.php`。
 
 ## 环境要求
 
@@ -41,7 +41,7 @@ foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../vendor/autoload
 ]);
 ```
 
-> 这就是 `tests/data_for_tests/ZAllDemo/public/index.php` 的写法（有测试兜底）。「找两处 vendor」是为了兼容「框架装在项目里」和「项目在框架仓库里」两种布局。
+> 这就是 `skeleton/public/index.php` 的写法（脚手架里那个文件，同样有测试兜底）。「找两处 vendor」是为了兼容「框架装在项目里」和「项目在框架仓库里」两种布局。
 
 **② `src/System/App.php` —— 应用类（整个应用的配置中枢）**
 

@@ -2,11 +2,11 @@
 
 > 解决什么问题：控制器里怎么取输入、怎么把结果送出去（四种方式）、怎么跳转和报 404，以及哪些东西**不该**写在控制器里。
 > 前置：[第 2-1 章 四层架构与调用规范](layers.md)、[第 2-3 章 路由进阶](routing.md)。预计 20 分钟。
-> 示例：`tests/data_for_tests/ZAllDemo/src/Controller/MainController.php`（五层骨架里的真实控制器）与 `demo/public/demo.php`（单文件版，含登录/跳转写法）。
+> 示例：`skeleton/src/Controller/MainController.php`（五层骨架里的真实控制器）与 `demo/public/demo.php`（单文件版，含登录/跳转写法）。
 
 ## 最小示例
 
-`tests/data_for_tests/ZAllDemo` 的控制器全文（这就是「控制器该有多薄」的样板）：
+`skeleton/src/Controller/MainController.php` 的控制器全文（这就是「控制器该有多薄」的样板）：
 
 ```php
 namespace YourProjectName\Controller;
@@ -30,7 +30,7 @@ class MainController extends Base
 }
 ```
 
-`Base` 是工程自己的控制器基类（`tests/data_for_tests/ZAllDemo/src/Controller/Base.php`），只有 [`use SingletonTrait;`](../reference/Foundation-SingletonTrait.md) 一行——**为了 `MainController::_()` 能当单例用**。
+`Base` 是工程自己的控制器基类（`skeleton/src/Controller/Base.php`），只有 [`use SingletonTrait;`](../reference/Foundation-SingletonTrait.md) 一行——**为了 `MainController::_()` 能当单例用**。
 
 ## 机制说明
 
@@ -51,7 +51,7 @@ class MainController extends Base
 | [`DuckPhp\Foundation\Controller\UserControllerBase`](../reference/Foundation-Controller-UserControllerBase.md) | 同上目录 | 前台用户控制器（[第 2-19 章](user.md)） |
 | [`DuckPhp\Foundation\Controller\AdminControllerBase`](../reference/Foundation-Controller-AdminControllerBase.md) | 同上目录 | 后台管理员控制器（[第 2-20 章](admin.md)） |
 
-方法名前缀由 `controller_method_prefix` 决定（默认 `''`）。`demo/src/System/App.php` 配的是 `'action_'`，所以 demo 里的方法写成 `action_login()`；ZAllDemo 没配，所以是 `index()`。**改了前缀，URL 不变，但控制器方法名要跟着改**。
+方法名前缀由 `controller_method_prefix` 决定（默认 `''`）。`demo/src/System/App.php` 配的是 `'action_'`，所以 demo 里的方法写成 `action_login()`；`skeleton/` 那套骨架没配前缀，所以是 `index()`。**改了前缀，URL 不变，但控制器方法名要跟着改**。
 
 ### 3. 输入的获取
 
