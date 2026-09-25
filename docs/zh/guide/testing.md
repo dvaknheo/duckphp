@@ -5,8 +5,9 @@
 > 示例：`tests/bootstrap.php`、`tests/ZThirdDemoTest.php`（端到端冒烟）、`tests/data_for_tests/`（示例数据目录）。
 
 ```bash
+# 以下命令都在仓库根目录下执行（Windows 上经 WSL 跑，理由见上）
 # 跑单个测试文件（推荐：全量很慢）
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"
+wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"
 ```
 
 ## 最小示例
@@ -97,13 +98,13 @@ Helper::system_wrapper_replace([
 **① 单文件测试（日常）**
 
 ```bash
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Ext/PermissionMenuTest.php"
+wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/Ext/PermissionMenuTest.php"
 ```
 
 **② 带覆盖率跑一个类**
 
 ```bash
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php"
+wsl -e bash -lc "XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php"
 # 然后看 test_coveragedumps/ 里对应类的 dump
 ```
 

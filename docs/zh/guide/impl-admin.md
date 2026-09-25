@@ -151,7 +151,7 @@ class AdminBaseController extends AdminControllerBase
 ## 6. 怎么验证自己接对了
 
 ```bash
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/GlobalAdmin/GlobalAdminTest.php"
+wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/GlobalAdmin/GlobalAdminTest.php"
 ```
 
 自检四条与用户侧同构：`Helper::AdminId(false)` 未登录返回 `0`；`Helper::Admin()->isSuper()` 走你的 Service；`Helper::Admin()->login($post)` 后 `Helper::AdminId()` 有值且 302 到 `globaladmin_url_home`；把 `ext` 里那行注释掉，`Helper::AdminId()` 抛 `DuckPhpSystemException: No GlobalAdmin Provider.`。

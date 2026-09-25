@@ -2,7 +2,7 @@
 
 > 解决什么问题：在**不改动对方代码**的前提下，让应用的各个部分（甚至跨应用的组件）能对「某件事发生了」作出响应。
 > 前置：[第 2-4 章 路由钩子](route-hooks.md)、[第 2-9 章 Helper 与全局函数](helper.md)。预计 15 分钟。
-> 示例来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑。
+> 示例来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑（**在仓库根目录下**跑）。
 
 ## 最小示例
 

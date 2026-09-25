@@ -5,10 +5,11 @@
 > 相关：`docs/zh/reference-maintenance-guide.md` §5（覆盖率与文档一致性流程的完整命令）。
 
 ```bash
+# 以下命令都在仓库根目录下执行
 # 日常：只跑单个测试文件（全量很慢，见下）
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Core/AppTest.php"
+wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/Core/AppTest.php"
 # 全量（约 5~6 分钟，最后会打印 Test Lines 与报告路径）
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage"
+wsl -e bash -lc "php vendor/bin/phpunit --no-coverage"
 ```
 
 ## 最小示例
@@ -106,7 +107,7 @@ XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php
 **① 只跑改了的那一块**
 
 ```bash
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Ext/MyMiddlewareManagerTest.php"
+wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/Ext/MyMiddlewareManagerTest.php"
 ```
 
 **② 跑完看某一类的覆盖 dump**

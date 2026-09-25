@@ -2,7 +2,7 @@
 
 > 解决什么问题：`ClassName::_()` 拿到的实例到底存在哪、按什么规则找；多应用/多相位下实例为什么「同名不同物」；出问题时怎么看容器里有什么、怎么排查。
 > 前置：[第 3-1 章 应用树与相位基础](advanced-phase.md)、[第 3-4 章 组件共享与应用间通信](component-sharing.md)。预计 20 分钟。
-> 本章示例来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑。
+> 本章示例来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑（**在仓库根目录下**跑）。
 
 ## 最小示例
 

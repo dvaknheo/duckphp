@@ -3,7 +3,7 @@
 > 解决什么问题：要在请求进入控制器**之前**拦住它、在没命中时**兜底**、或者在请求收尾时做统计——用路由钩子，而不是去继承控制器基类。
 > 前置：[第 2-2 章 请求生命周期](lifecycle.md)（钩子插在时序的哪个位置）、[第 2-3 章 路由进阶](routing.md)。预计 20 分钟。
 > 示例：`demo/src/System/App.php`（真实接线）、`tests/Ext/MyMiddlewareManagerTest.php`（中间件实跑，含洋葱顺序）。
-> 想跑一遍：`wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Ext/MyMiddlewareManagerTest.php"`
+> 想跑一遍：`wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/Ext/MyMiddlewareManagerTest.php"`（**在仓库根目录下**跑）
 
 ## 最小示例
 

@@ -10,8 +10,9 @@
 改完一个类的源码后，最小的一套自检：
 
 ```bash
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-doc-links.py docs/zh"   # 期望 broken: 0
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash docs/scripts/check-non-ascii.sh"              # src/ 改过就跑，期望 0
+# 以下命令都在仓库根目录下执行
+wsl -e bash -lc "python3 docs/scripts/check-doc-links.py docs/zh"   # 期望 broken: 0
+wsl -e bash -lc "bash docs/scripts/check-non-ascii.sh"              # src/ 改过就跑，期望 0
 # 漂移扫描：把 drift.py 存到临时目录后运行（脚本见维护指南 §5）
 python3 <tmp>/drift.py --all
 ```

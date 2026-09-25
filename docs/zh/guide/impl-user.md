@@ -186,7 +186,7 @@ class UserService implements UserServiceInterface, UserLoginServiceInterface
 最快是照抄仓库里的可跑实现，然后跑测试：
 
 ```bash
-wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/GlobalUser/GlobalUserTest.php"
+wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/GlobalUser/GlobalUserTest.php"
 ```
 
 自己接完可以照这四条自检（前三条是调用方视角，第四条是「没接好」的兜底）：

@@ -2,7 +2,7 @@
 
 > 解决什么问题：一个进程里如何跑起**多个应用**（主应用 + 挂进来的子应用），它们各自的单例、路由、视图怎么互不干扰。
 > 前置：[第 2-1 章 四层架构](layers.md)、[第 2-2 章 请求生命周期](lifecycle.md)。预计 15 分钟。
-> 本卷全部代码来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑。
+> 本卷全部代码来自 `tests/data_for_tests/ZThirdDemo`，可用 `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` 实跑（**在仓库根目录下**跑）。
 
 ## 心智模型：应用树 + 相位
 
