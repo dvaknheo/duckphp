@@ -155,6 +155,6 @@ project/
 
 ## 下一步
 
-- [第 1-3 章 目录结构与编码规则](project-structure.md)：把项目摆成「框架期望的样子」。
+- [第 1-3 章 目录结构与四层架构](project-structure.md)：把项目摆成「框架期望的样子」，并弄清四层谁不能调谁。
 - [第 1-4 章 第一个页面](quickstart.md)：路由 → 控制器 → 业务 → 模型 → 视图 走通一遍。
 - 参考手册：[DuckPhp\DuckPhp](../reference/DuckPhp.md)、[DuckPhp\Ext\DuckPhpInstaller](../reference/Ext-DuckPhpInstaller.md)
