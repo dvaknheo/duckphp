@@ -21,7 +21,7 @@ namespace YourProjectName\System;
 
 use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
 
-class ExceptionReporter
+class ExceptionAction
 {
     use ExceptionReporterTrait;
 

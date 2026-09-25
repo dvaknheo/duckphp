@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace YourProjectName\System;
 
 use DuckPhp\DuckPhp;
+use YourProjectName\Controller\AppAction;
 use YourProjectName\Controller\CommandAction;
+use YourProjectName\Controller\ExceptionAction;
 
 class App extends DuckPhp
 {
@@ -32,7 +34,7 @@ class App extends DuckPhp
         // 'cmd' => [CommandAction::class => true],    // enable `php ./cli.php hello` (key = command class, value = method prefix or true)
         // 'cli_command_with_common' => true,                          // also show built-in CLI commands
 
-        // 'exception_reporter' => ExceptionReporter::class,        // turn on to use the custom reporter
+        // 'exception_reporter' => ExceptionAction::class,        // turn on to use the custom reporter
         // 'exception_for_project' => ProjectException::class,        // reporter only handles this class and its subclasses
         // 'exception_for_business' => BusinessException::class,      // extends ProjectException; thrown by Helper::BusinessThrowOn()
         // 'exception_for_controller' => ControllerException::class,  // extends ProjectException; thrown by Helper::ControllerThrowOn()
