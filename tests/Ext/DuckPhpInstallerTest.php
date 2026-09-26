@@ -128,12 +128,17 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         }
         $this->assertSame([], $not_loaded, '骨架类应能全部加载（签名不兼容会在这里暴露）');
 
-        // 入口文件里也不能留下**旧命名空间**或**没改名的 App 类**：安装器把 `src/System/App.php`
-        // 改名为 `{NS}App.php` 之后，凡是提到这个类的地方都要跟着改——曾只改了 public/index.php，
-        // 于是新工程跑 `php bin/cli.php help` 直接 `Class "…\System\App" not found`。
+        // 入口与随附文档里也不能留下**旧命名空间**或**没改名的 App 类**：安装器把
+        // `src/System/App.php` 改名为 `{NS}App.php` 之后，凡是提到这个类的地方都要跟着改——
+        // 曾只改了 public/index.php，于是新工程跑 `php bin/cli.php help` 直接
+        // `Class "…\System\App" not found`；`AGENTS.md` 的目录树同样要跟着改。
         $entry_files = array_merge(
             glob($path_nsx . '/src/*/*.php') ?: [],
-            [$path_nsx . '/bin/cli.php', $path_nsx . '/public/index.php']
+            [
+                $path_nsx . '/bin/cli.php',
+                $path_nsx . '/public/index.php',
+                $path_nsx . '/AGENTS.md',
+            ]
         );
         $stale = [];
         foreach ($entry_files as $file) {
@@ -143,6 +148,16 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
             }
         }
         $this->assertSame([], $stale, '生成的文件里不该再留下旧命名空间或未改名的 App 类引用');
+
+        // 生成的 AGENTS.md 里那条 `src/System/{NS}App.php` 必须真的存在（旧写法是 `App.php`），
+        // 而且工程根目录不该有 `cli.php` 这种陈旧路径（入口在 bin/cli.php）。
+        $agents = (string) file_get_contents($path_nsx . '/AGENTS.md');
+        $this->assertStringContainsString('src/System/NSXApp.php', $agents);
+        $this->assertFileExists($path_nsx . '/src/System/NSXApp.php');
+        $this->assertFileExists($path_nsx . '/AGENTS.md');
+        $this->assertFileExists($path_nsx . '/CLAUDE.md');
+        $this->assertFileDoesNotExist($path_nsx . '/cli.php');
+        $this->assertFileDoesNotExist($path_nsx . '/RULES.md');
 
         // 端到端冒烟：先补一个 composer 本会给它的 autoload（单测里不跑 composer），
         // 再按用户的方式跑生成工程自己的 CLI 入口。

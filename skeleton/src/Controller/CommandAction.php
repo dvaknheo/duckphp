@@ -5,7 +5,7 @@
  * To enable this command class, uncomment the following application option:
  *   'cmd' => [CommandAction::class => true]
  *
- * Provides a sample CLI command. Run `php ./cli.php hello` to execute
+ * Provides a sample CLI command. Run `php bin/cli.php hello` to execute
  * CommandAction::_()->command_hello().
  */
 namespace YourProjectName\Controller;

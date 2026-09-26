@@ -21,7 +21,7 @@
 **硬约束**（作者已裁定，别自行放宽）：
 
 1. **一页总目录** = `docs/zh/guide/index.md`；`docs/zh/index.md` 只做指路，不复制章表。
-2. **示例只用现有代码**：`demo/`（多入口示例应用）、`skeleton/`（脚手架骨架）、`tests/data_for_tests/ZThirdDemo`（第三卷示例工程），以及 `tests/data_for_tests/` 下的测试夹具；**不新建示例工程**（`ZThirdDemo` 是唯一获准新增的）。⚠️ 老文档里写的 `tests/data_for_tests/ZAllDemo` **从未存在过**（是写章节时按测试名 `ZAllDemoTest` 拼出来的假路径）——**引用任何路径前先验证它存在**（`git ls-files`/`Test-Path`），死链检查只看 `.md` 之间的链接，查不出正文里的假路径。
+2. **示例只用现有代码**：`demo/`（多入口示例应用）、`skeleton/`（脚手架骨架）、`tests/data_for_tests/ZThirdDemo`（第三卷示例工程），以及 `tests/data_for_tests/` 下的测试夹具；**不新建示例工程**（`ZThirdDemo` 是唯一获准新增的）。⚠️ 老文档里写的 `tests/data_for_tests/ZAllDemo` **从未存在过**（是写章节时按测试名 `ZAllDemoTest` 拼出来的假路径）——**引用任何路径前先验证它存在**（`git ls-files`/`Test-Path`），死链检查只看 `.md` 之间的链接，查不出正文里的假路径。另外：**文件级目录树与工程约定只写在 `skeleton/AGENTS.md` 一份**（改名/加文件都会牵动它，改完跑 `docs/scripts/check-skeleton-tree.py`）。
 3. **章 ≤400 行**；明显超长的要拆。拆/并章要连带改总目录、全库章号引用、参考页里的「见第 N 章」。
 4. **附录**：指南侧不再有 `appendix-global-functions.md` / `appendix-options.md`——全局函数参考在 `reference/Core-Functions.md`，应用选项参考在 `reference/options.md` / `options-by-class.md` / `options-index.md`；指南里只留指向参考手册的链接。
 5. **不写**「升级与破坏性变更」章/附录。
@@ -62,8 +62,10 @@
 | `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php` | 第三卷 3-1–3-7 | `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` |
 | `demo/` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由/多入口） | `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZAllDemoTest.php"`；它「起内置服务器 + curl 各路由比字节长度」，改 `src/` 或 `demo/` 后长度会变（见 §5）。被测宿主一直是 `demo/` |
 | `demo/`（`public/` 多入口 + `src/System/AppWithAllOptions.php`） | 第一卷、第二卷 | `php -S 127.0.0.1:8080 -t demo/public` 后访问各入口 |
-| `skeleton/` | 第一卷（1-3 目录结构与四层架构）、新工程起步 | 读代码；改动后跑 `tests/Foundation/ExceptionTraitTest.php` 与 `tests/ZAllDemoTest.php` |
-| `docs/scripts/`（文档工具：链接检查、排版检查、非 ASCII、孤儿页反查、选项/参考页生成） | 全卷校验 | 见 §4；**脚本随文档一起提交**，都从仓库根目录跑 |
+| `skeleton/` | 第一卷（1-3 目录结构与四层架构）、新工程起步 | 读代码；改动后跑 `tests/Foundation/ExceptionTraitTest.php`、`tests/ZAllDemoTest.php`、`python3 docs/scripts/check-skeleton-tree.py` |
+| `docs/scripts/`（文档工具：链接检查、排版检查、非 ASCII、孤儿页反查、骨架目录树、选项/参考页生成） | 全卷校验 | 见 §4；**脚本随文档一起提交**，都从仓库根目录跑 |
+
+**分工（别写串）**：框架怎么用 → `docs/zh/guide/`；某方法签名/选项默认值 → `docs/zh/reference/`；**「这个工程里有哪些文件、该建什么、不许做什么」→ 只写在 `skeleton/AGENTS.md` 一份**（它随包发给用户，生成工程时就在用户项目根目录）。1-3 章讲目录与四层的**机制**，文件级清单别再抄一份；README 只画顶层目录。
 
 **约定：章里每一段示例代码，都要能在上述资产里指出出处，或已实跑过。** 第三卷的 7 章就是这么做的——每条章内结论都对应 `ZThirdDemoTest` 里的一条断言。
 
@@ -94,6 +96,9 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-md-l
 # ③c 章号一致性：扫 `docs/zh/guide/*.md` 里「链接文字带章号」的引用，按「文件名 → 章号」表反查，期望 0 处不一致
 #     （没有现成脚本，让 AI 现写一个十几行的即可；判据见 §7）
 
+# ③d 改过 skeleton/ 就跑：随工程的 AGENTS.md 里那张目录树必须与实际文件一致（双向比对，可 --fix）
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-skeleton-tree.py"
+
 # ④ 改过 src/ 或 tests/ 时：跑相关单测；改过示例就重跑示例测试
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"
 
@@ -103,7 +108,7 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-cov
 
 **当前基线**（2026-09-26 全量实测）：
 
-- 全量 `php vendor/bin/phpunit --no-coverage` → **`OK (97 tests, 837 assertions)`**（约 5.5 分钟）；
+- 全量 `php vendor/bin/phpunit --no-coverage` → **`OK (97 tests, 843 assertions)`**（约 5.5 分钟）；
 - 覆盖率 **`4900/4900 (100.00%)`**：`XDEBUG_MODE=coverage php vendor/bin/phpunit`（跑全量、顺便写 `test_coveragedumps/`）→ 再 `XDEBUG_MODE=coverage php vendor/bin/phpunit tests/support.php` 生成 `test_reports/index.html`；判「有没有漏测」用 `php docs/scripts/covagg.php`（按源文件合并全部 dump，输出 `TOTAL … lines x/y` 与有缺口的文件）。⚠️ **中途 Fatal 的测试不会写自己的 dump**，覆盖率会假降（实测见过 `4774/4898 (97.47%)`）——先确认全量没有红，再信覆盖率；
 - `docs/zh` 相对链接 **0 坏链**、`docs/` 下只有归档目录 `docs/old/` 与陈旧副本 `docs/en/` 还有历史坏链（不属本工作范围）；[`find-unmentioned-classes.py`](../scripts/find-unmentioned-classes.py) → 109 个类页全部被指南链到、孤儿 0。
 

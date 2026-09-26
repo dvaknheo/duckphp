@@ -295,56 +295,20 @@ This example replaces the implementation of `__h()` and shows DuckPhp's flexibil
 
 ## 3. Regular Project
 
-When you create a project with `./vendor/bin/duckphp new`, you get the following skeleton files. See `RULES.md` for more details.
+When you create a project with `./vendor/bin/duckphp new`, you get a skeleton application (a copy of `skeleton/`):
 
 ```
 project/
-├── composer.json
-├── config/
-│   └── DuckPhpSettings.config.php  # global settings
-├── public/
-│   └── index.php                     # web entry
-├── src/
-│   ├── Controller/                   # controller layer: HTTP/CLI entry
-│   │   ├── Base.php
-│   │   ├── CommandAction.php        # CLI command example (disabled by default)
-│   │   ├── ExceptionReporter.php     # exception reporter (disabled by default)
-│   │   ├── Helper.php
-│   │   ├── MainController.php
-│   │   ├── Session.php               # session management
-│   │   ├── SomeAction.php            # action example
-│   │   └── testController.php        # test controller
-│   ├── Business/                     # business layer: business logic
-│   │   ├── Base.php
-│   │   ├── DemoBusiness.php          # business example
-│   │   ├── Helper.php
-│   │   └── SomeService.php           # service example
-│   ├── Model/                        # model layer: data access
-│   │   ├── Base.php
-│   │   └── DemoModel.php             # model example
-│   └── System/                       # system layer: config and exceptions
-│       ├── App.php                   # main application config
-│       ├── BusinessException.php     # business exception (disabled by default)
-│       ├── ControllerException.php   # controller exception (disabled by default)
-│       └── ProjectException.php      # project exception base class (disabled by default)
-├── view/                             # view directory
-│   ├── _sys/                         # system views
-│   │   ├── error_404.php
-│   │   └── error_500.php
-│   └── main.php                      # default view example
-├── runtime/                          # runtime directory (logs, etc.)
-├── cli.php                           # CLI entry
-├── RULES.md                          # rules documentation
+├── public/index.php     # web entry
+├── bin/cli.php          # CLI entry
+├── config/              # global settings (database and other secrets)
+├── src/                 # System / Controller / Business / Model
+├── view/                # views (including _sys/ error pages)
+├── runtime/             # runtime directory (logs; must stay writable)
 └── vendor/
 ```
 
-> **Note**:
-> - `SomeAction.php`, `testController.php`, `DemoBusiness.php`, `SomeService.php`, and `DemoModel.php` are sample files. In a real project, delete them and write similar classes for your business.
-> - `CommandAction.php`, `ExceptionReporter.php`, `BusinessException.php`, `ControllerException.php`, and `ProjectException.php` are disabled by default. You can:
->   - Simplify the project by deleting the files you do not need.
->   - Enable the feature by uncommenting the matching option in `src/System/App.php` (`cli_command_classes`, `exception_reporter`, `exception_for_project` / `exception_for_business` / `exception_for_controller`).
->
-> The `runtime/` directory needs write permission.
+**The file-by-file list and the project conventions — which files not to edit, which are samples, which are disabled by default, plus the naming and layering rules — live in `AGENTS.md`**, which ships in the generated project. That is the only copy.
 
 **DuckPhp projects have clear layers and no cross-layer calls.**
 

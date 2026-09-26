@@ -81,6 +81,7 @@
 | `docs/scripts/find-unmentioned-classes.py` | **反查孤儿页**：扫 `docs/zh/guide/*.md` 里指向 `../reference/*.md` 的链接，报「指南从没链到」的类页（`--all` 另列只链 1 次的；纯链接判定，正文写了类名但没挂链接不算） |
 | `docs/scripts/covagg.php` | **汇总全量覆盖率**：遍历 `test_coveragedumps/` 的每个 dump，按源文件合并命中（xdebug3 的数组型命中值取并集），打印还有未执行行的文件与总 `lines x/y`；`--quiet-ok` 只报缺口。判全量覆盖率用它或 `test_reports/index.html`，别只看单个类的 dump |
 | `docs/scripts/check-md-layout.py` | **判「这次改动是不是只有排版」**：把工作区与 `HEAD` 逐文件比对，归一化空白 / 表格补位 / 多余空单元格后仍相同就报 `layout-only`（可以放心 `git checkout --` 丢掉），真改了内容才报 `CONTENT`。默认只看 `git status` 里改动的 md，`--all` 看全部，也可显式给文件路径 |
+| `docs/scripts/check-skeleton-tree.py` | **盯住 `skeleton/AGENTS.md` 的目录树**：树里的条目必须真实存在、`skeleton/` 下的文件必须都在树里（双向比对，`runtime/` 忽略），另查文档里 `vendor/dvaknheo/duckphp/…` 指针是否真实存在；`--fix` 删失效条目/补缺失条目（幂等）。改过 `skeleton/` 后必须跑 |
 
 > ⚠️ **`gen-reference.php verify` 不可全信**：对 `Core/App.php` 这类“`use KernelTrait { … as … }` 并 override”的大文件，它可能漏列方法，从而把正确文档误报为“多了方法”。判定一致性请以下面第 6 节的**漂移扫描**为准。
 
@@ -274,6 +275,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 | 改公共名字（方法名／选项键／参数名）没改干净 | 一次性覆盖 `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`：先 `grep -rn "<旧名>" src tests docs` 列全，改完再 grep 残留 = 0。别漏调用处（`Ext/SqlDumper` 在调 `Db::quoteInsertArray()`）。**产物不用动**：`docker/test-php84/test_reports/`、`test_coveragedumps/`、`tests/data_for_tests/*.txt` 都是跑测试生成的。另外文档里可能故意保留「由旧名 X 更名」的历史说明，`sed` 批量替换时要先排除这类句子。 |
 | `ZAllDemoTest` 报 `Failed: <路由> => A(B)` | 该用例把 demo 各路由的**输出字节长度**跟 `tests/data_for_tests/ZAllDemoTest.config.php` 里的期望值硬比，而 `files` 路由会 dump App 的**选项表**（「应用的选项」「全部选项」两个 fieldset，含 `合计 N个`）、方法表、包含文件表与**调用栈行号**——**源码一动（加/删方法或选项、行号漂移、`$options` 与 `$hidden_options` 之间搬家）长度就变**。改完 `src/` 后若只有它红：把 config 里的期望值改成括号里的 B 即可（实际内容同时被写到 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可直接 `diff` 新旧两份 dump 看差在哪，尾部的 `执行耗时/内存消耗` 数字位数也会让长度抖 ±1）。**别先怀疑自己的改动**——先确认自己没碰 `src/`，再 `git stash push -- src` 跑一遍确认是否本来就在红；跟别的会话并行改同一个工作区时，这个数字会互相打架（当前基线见第 8/9 节）。 |
 | 旧指南里的 API／示例可能早就失效 | 实测：`docs/zh/guide/advanced-phase.md` 里 3 处 `App::Root()->getOverridingClass()`（源码里**没有**这个方法）；`helper.md` 的 `assignRewrite('article/123', …)` 少了前导 `/`，钩子内部拿 `'/'.$path_info` 比较 → 永不命中；`Configer` 读的是 `config/<名>.php`（不是 `<名>.config.php`）。**改写旧章前先核对源码，别原样搬旧示例**。 |
+| **同一件事写成两份 → 必然漂移** | 实测：骨架工程里「项目目录树 + 命名表 + 分层规则」曾在 4 个地方各写一份（`skeleton/RULES.md`、`skeleton/agent-zh.md` 里两份、两份 README、外加 1-3 章），于是 `cli.php`（实际是 `bin/cli.php`）在 4 处一起错、`RULES.md` 说「骨架把 `controller_method_prefix` 配成 `'action_'`」而代码里那行是注释掉的、`agent-zh.md` 把 `error_debug` 默认值写成 `'_sys/error-debug.php'`（源码是 `null`）、三份树都漏了 `view/test/done.php`。**规矩：目录树/命名表/工程约定只留一份**（现在在 `skeleton/AGENTS.md`，由 `check-skeleton-tree.py` 双向盯着），1-3 章只讲机制，README 只画顶层目录。 |
 | **写死的「类名单 / 文件清单」会随改名过期** | 实测：`tests/Ext/DuckPhpInstallerTest.php` 写死一张 15 个类的名单来断言「生成的骨架类都能加载」，作者把 `skeleton` 的 `ExceptionReporter` 改名并挪到 `Controller/ExceptionAction` 之后，名字在生成工程里不存在 ⇒ 该断言一直红，直到下一次全量跑才暴露（单文件跑测试不会碰它）。改法：**从生成目录 `glob('src/*/*.php')` 推类名**（文件 basename 即类名、子目录即子命名空间），以后改名自动跟着走。凡文档/测试里写死的清单都应这样对待——**跨文件的漂移只有全量跑才看得见**。 |
 | 指南里的示例没实跑过 | 本仓约定：指南与参考页的示例必须能跑。第三卷（3-1–3-7 章）全部挂在 `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php`（36 断言）上，改示例就重跑它；第一/二卷的兜底是 `demo/`（`tests/ZAllDemoTest.php` 起内置服务器跑它）与 `skeleton/`（脚手架骨架）。**别引用 `tests/data_for_tests/ZAllDemo`——那个目录从未存在。** |
 | **正文里写的仓库路径是假的** | 死链检查只查 `.md` 之间的链接，**查不出「正文里引用的源码/测试路径不存在」**——它不报错，只骗读者。实测：`tests/data_for_tests/ZAllDemo` 被指南引用了 25 处（五层骨架、示例应用、dump 页……），而**这个目录从未进过 git、磁盘上也没有**（是写章节时按测试名 `ZAllDemoTest` 拼出来的）；同类还有 `layers.md` 的 `ZAllDemo/src/Controller/Helper.php`。**规矩：引用路径前先 `Test-Path`（或 `git ls-files`）验证一次**；批量核查看正文里的反引号路径（`grep -o '`[a-z][^`]*\.php`'`）。 |
@@ -288,9 +290,10 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
   - `docs/zh/reference/` 共 **114 篇**：110 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板。
   - 漂移扫描 `drift.py --all` **只剩 3 条已判读的假报**：`Core/Functions.php` 与 `Ext/RouteHookWebInstallerView.php` 的 `HEAD-MISMATCH`（函数文件/无类声明的文件，脚本局限），`DuckPhpAllInOne.php` 的 `extra-option` + `extra-method`（embedMe 键表与「使用方式」示例里的自定义方法）。
   - 站内链接 0 死链；114 篇全 UTF-8；`src/` 非 ASCII 0 行；`gen-options-docs.php --check` up to date。
-  - 测试基线（WSL，2026-09-26 全量实测）：`php vendor/bin/phpunit --no-coverage` → **`OK (97 tests, 837 assertions)`**；覆盖率 **`4900/4900 (100.00%)`**（`XDEBUG_MODE=coverage` 跑完全量后，再跑 `tests/support.php` 生成 `test_reports/index.html`；聚合判定用 `docs/scripts/covagg.php`）。⚠️ 中途 Fatal 的测试不写自己的 dump ⇒ 覆盖率会假降（实测见过 `97.47%`），**先确认全量没有红**。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10432**（跟当前工作区的选项表绑定，见第 7 节那一行）。
+  - 测试基线（WSL，2026-09-26 全量实测）：`php vendor/bin/phpunit --no-coverage` → **`OK (97 tests, 843 assertions)`**；覆盖率 **`4900/4900 (100.00%)`**（`XDEBUG_MODE=coverage` 跑完全量后，再跑 `tests/support.php` 生成 `test_reports/index.html`；聚合判定用 `docs/scripts/covagg.php`）。⚠️ 中途 Fatal 的测试不写自己的 dump ⇒ 覆盖率会假降（实测见过 `97.47%`），**先确认全量没有红**。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10432**（跟当前工作区的选项表绑定，见第 7 节那一行）。
   - 同步基线：分支 `doced`（= `3ece976b`）。下次同步从它之后算起（见第 9 节末的提示）。
   - **默认不动**：`docs/en/`（陈旧英文副本）、`docs/old/`、`docs/duckphp.gv`（陈旧生成物）、`README*.md`——它们不随中文文档同步。
+  - **`skeleton/` 的文档只剩一份**：`skeleton/AGENTS.md`（英文）= 工程约定唯一权威（目录树 / 命名后缀表 / 分层与越界规则 / 加功能四步 / 常见坑），配一个 3 行的 `skeleton/CLAUDE.md` 指路；原来的 `RULES.md` 与 `agent-zh.md` 已删除合并。1-3 章讲机制、README 只画顶层目录——文件级清单不再有第二份。
 - **待办**
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
   - `docs/zh/reference/index.md` 目录页的说明文字逐条核对（新页都已自动登记进 `<!-- GEN:nav -->`/`<!-- GEN:az -->`，剩下的是「一句话说明是否仍准确」）。

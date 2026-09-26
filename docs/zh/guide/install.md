@@ -24,8 +24,10 @@ php vendor/bin/duckphp show       # 把**框架自带的 demo/ 应用**跑起来
 
 生成时有两处改名，别被吓到：
 
-- `src/System/App.php` → `src/System/{命名空间末段}App.php`（类名 `App` → `MySiteApp`），凡是提到它的地方（`public/index.php`、`bin/cli.php`、随附的 `RULES.md` / `agent-zh.md`）会一起改写；
+- `src/System/App.php` → `src/System/{命名空间末段}App.php`（类名 `App` → `MySiteApp`），凡是提到它的地方（`public/index.php`、`bin/cli.php`、随附的 `AGENTS.md`）会一起改写；
 - 其余文件只把 `YourProjectName\` 换成你的命名空间。
+
+生成出来的工程里有 `AGENTS.md`（外加一个给 Claude Code 用的 3 行 `CLAUDE.md` 指路）：那是**你项目自己的**约定清单——文件级目录树、命名后缀表、分层与越界规则、加功能的四步与常见坑。**框架怎么用、某个方法签名与选项默认值，一律查随包文档**：`vendor/dvaknheo/duckphp/docs/zh/guide/`（47 章）与 `.../reference/`（一类一页）。两边分工就这一句：约定看 `AGENTS.md`，API 看参考手册。
 
 ```bash
 php vendor/bin/duckphp new --verbose          # 打印每个落地的文件

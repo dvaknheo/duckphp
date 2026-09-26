@@ -86,33 +86,16 @@ HTTP 请求 → 路由 → MainController::index()
 
 ```
 project/
-├── public/
-│   └── index.php          ← Web 入口。只有几行「加载 + 启动」，勿改
-├── bin/
-│   └── cli.php            ← CLI 入口。同样是「加载 + 启动」，勿改
-├── config/
-│   └── DuckPhpSettings.config.php   ← 设置文件：数据库/Redis 等敏感信息（第 1-5 章）
-├── src/
-│   ├── System/
-│   │   └── App.php        ← 应用类：项目的配置中枢（选项都写这里）
-│   ├── Controller/
-│   │   ├── Base.php       ← 控制器基类（勿改）
-│   │   ├── Helper.php     ← 控制器侧助手（勿改；或直接用 Foundation\Controller\ControllerHelper as Helper）
-│   │   ├── MainController.php       ← 欢迎页/短路由
-│   │   ├── Session.php    ← 会话读写集中在这里
-│   │   └── *Controller.php / *Action.php   ← 你的控制器与可复用动作类
-│   ├── Business/
-│   │   ├── Base.php  Helper.php      ← 勿改
-│   │   └── *Business.php / *Service.php    ← 你的业务类
-│   └── Model/
-│       ├── Base.php       ← 模型基类（勿改，已集成 table()/find()/add()/getList() 等）
-│       └── *Model.php     ← 你的模型类（一个数据库表一个）
-├── view/                  ← 视图
-│   ├── _sys/              ← 系统视图：error_404.php / error_500.php
-│   └── {控制器名}/{动作名}.php        ← 普通页面
-├── runtime/               ← 日志等可写目录（要可写，别提交进版本库）
+├── public/index.php     ← Web 入口：只有几行「加载 + 启动」，勿改
+├── bin/cli.php          ← CLI 入口：同样是「加载 + 启动」，勿改
+├── config/              ← 设置文件：数据库/Redis 等敏感信息（第 1-5 章）
+├── src/                 ← 代码：System / Controller / Business / Model（下一节讲谁不能调谁）
+├── view/                ← 视图（含 _sys/ 错误页）
+├── runtime/             ← 日志等可写目录（要可写，别提交进版本库）
 └── vendor/
 ```
+
+每个目录里**具体有哪些文件**（哪些「勿改」、哪些是示例、哪些默认未启用）只在随工程的 [`skeleton/AGENTS.md`](../../../skeleton/AGENTS.md) 里维护一份——用脚手架建项目时它就在你的工程根目录，是唯一一份文件级清单。上面这张只画到「顶层七个目录」，讲的是为什么这么分。
 
 **框架为什么能找得到这些东西**（四条例）：
 
@@ -127,30 +110,21 @@ project/
 
 ### 2. 命名规范
 
-| 类型          | 规则                                    | 例子                                        |
-| ----------- | ------------------------------------- | ----------------------------------------- |
-| 控制器         | `{名字}Controller`，方法名就是 URL 段          | `NoteController::index()` → `/Note/index` |
-| 动作类（控制器层复用） | `{名字}Action`，必须有无参 `__construct()`    | `ExportAction`                            |
-| 业务类         | `{名字}Business`                        | `NoteBusiness`                            |
-| 服务类（业务层复用）  | `{名字}Service`                         | `MailService`                             |
-| 模型类         | `{名字}Model`，**类名决定表名**：去掉 `Model` 再小写 | `NoteModel` → 表 `note`                    |
-| 异常类         | `{名字}Exception`                       | `ProjectException`                        |
-| 会话类         | `Session`                             | `Session`                                 |
-| CLI 命令方法    | `command_{名字}`                        | `command_sync()` → `php bin/cli.php sync` |
+各类文件的后缀表（`Controller` / `Action` / `Business` / `Service` / `Model` / `Exception` / `Session` / `command_`）与逐个例子，只在 [`skeleton/AGENTS.md`](../../../skeleton/AGENTS.md) 里维护一份。这里只说三条最容易踩的：
 
-容易踩的细节：
-
+- **`{名字}Model` 的类名决定表名**：`NoteModel` → 表 `note`；表名不同就在模型里写 `protected $table_name = 'notes';`。
+- **Action 必须有无参 `__construct()`**：用来覆盖基类的构造，避免它被当成控制器入口去初始化（见「常见写法 ②」）。
 - **URL 大小写敏感**：默认不会把 `/note/list` 自动转成 `/Note/list`；要宽松匹配就配 `controller_class_adjust`（[第 2-3 章](routing.md)）。
 
 ### 3. 五层各自的职责与边界
 
 | 层                                     | 职责        | 可以做                                            | **不可以做**                                      |
 | ------------------------------------- | --------- | ---------------------------------------------- | --------------------------------------------- |
+| **System**                            | 接线 + 共享内核（不属于四层） | 配置、注册事件/命令、**经 `*Action` 调用业务**、装配应用类；四层可以**引用**它里面的定义（项目异常类、配置） | 被四层反向调用它的**接线动作**（注册路由/事件/命令）                  |
 | **Controller**                        | 请求的入口与出口  | 取输入、调 Business、把数据交给视图、跳转、404                  | 写业务规则、直接查数据库、拼 SQL                            |
 | **Business**                          | 业务逻辑编排    | 调 Model、调 Service、条件抛业务异常                      | 读写 `$_GET`/`$_POST`/`$_SERVER`/Session，依赖当前请求 |
 | **Model**                             | 数据访问      | 调 [Db](../reference/Db-Db.md)、按表做 CRUD、返回数组/对象 | 写业务判断、抛业务异常、调 Business                        |
 | **[View](../reference/Core-View.md)** | 显示        | 用 Helper 与全局函数输出、读控制器给的数据                      | 查数据库、调 Business、写业务逻辑                         |
-| **System**                            | 接线（不属于四层） | 配置、注册事件/命令、装配应用类                               | 混进业务代码里被四层反向依赖                                |
 
 > **编码规则**：`Controller`、`Business`、`Model`、`View` 四层里，除 Helper 与全局函数外，**不要直接 `use` `DuckPhp\*` 的框架类**；框架相关的调用集中在 `System` 层，或由 `Helper` 代劳。这条规则的意义在第三卷会体现：包装配（`ext`、覆盖、相位）全都发生在 `System` 层，业务代码因此可以整片复用。
 
@@ -206,18 +180,25 @@ class NoteModel extends Base
 
 左列「调用方」去调右列「被调方」，✅ 允许、⚠️ 有条件、❌ 禁止：
 
-| 调用方 ↓ / 被调方 →  | Controller       | Business       | Service | Model     | Db         | View                 | Session      |
-| -------------- | ---------------- | -------------- | ------- | --------- | ---------- | -------------------- | ------------ |
-| **Controller** | ⚠️ 仅同层复用走 Action | ✅              | ✅       | ❌         | ❌          | ✅（通过 `Helper::Show`） | ⚠️ 只经 Helper |
-| **Business**   | ❌                | ⚠️ 同层走 Service | ✅       | ✅         | ❌（经 Model） | ❌                    | ❌            |
-| **Service**    | ❌                | ❌              | ✅       | ✅         | ❌          | ❌                    | ❌            |
-| **Model**      | ❌                | ❌              | ❌       | ⚠️ 跨库模型例外 | ✅          | ❌                    | ❌            |
-| **View**       | ❌                | ❌              | ❌       | ❌         | ❌          | —                    | ❌            |
-| **System**     | ⚠️ 只在接线时         | ⚠️ 只在接线时       | ⚠️      | ⚠️        | ✅          | ✅                    | ✅            |
+| 调用方 ↓ / 被调方 →  | Controller           | Business             | Model                    |
+| -------------- | -------------------- | -------------------- | ------------------------ |
+| **System**     | ✅ **只经 `*Action`**    | ❌（要经 Action）          | ❌（要经 Action）              |
+| **Controller** | ⚠️ 仅同层复用走 Action     | ✅                    | ❌                        |
+| **Business**   | ❌                    | ⚠️ 同层复用抽 `*Service`   | ✅                        |
+| **Model**      | ❌                    | ❌                    | ⚠️ 跨库模型例外                |
 
-矩阵的行/列按**目录 + 后缀**判定归属：`Controller/` 下的 `*Controller`、`Business/` 下的 `*Business` 与 `*Service`、`Model/` 下的 `*Model`（目录与后缀约定见 `skeleton/RULES.md`）。**不带这些层后缀、也不在上述目录里的类不属于四层**——它没有「本层」可依托，因此不能被别的层跨层调用，只能放进 `System/`（接线处）或与调用方同层。
+`Db` / `Session` / `Service` / `View` 都不是「会互相调用的层」，所以不占行列，规矩用下面几句说清：
 
-`System` 那一行标 ⚠️ 的含义是「只在接线时」：它可以装配和调用各层，但**正规做法是调 Controller 的 Action**（CLI 命令、异常报告器都是这个路子），不要跳过 Action 直接去读 Business——否则「请求入口」的职责会摊到接线层。
+- **`Db`**：数据库只有 Model 碰——[`Model\Base`](../reference/Foundation-Model-Base.md) 已经给了 `Db()` / `find()` / `add()` / `getList()`；别的层里出现 `Helper::Db()` 或裸 SQL 就是越界。System 层只在接线时做连接级动作（例如 `Helper::DbCloseAll()`）。
+- **`Session`**：只在 Controller 层经 `Controller\Session` 读写——[`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) 的 `get()`/`set()`/`unset()` 是 `protected`，所以要在那个类里加公开方法，外面用 `Session::_()->你的方法()`；System 层只在装配登录体系时碰；Business / Service / Model / View 都不碰（Business 为什么必须无状态见 §6）。
+- **`Service`**：不是第五层，是**业务层内部**的复用——由 `*Business` 调用；**Controller 不直接调 Service**（要经 Business）。
+- **View**：控制器用 `Helper::Show($data, $view)` 把数据交出去；视图只显示（`__h()`、`__url()` 这类全局函数），不查库、不调 Business。
+
+矩阵的行按**目录 + 后缀**判定归属：`Controller/` 下的 `*Controller` 与 `*Action`、`Business/` 下的 `*Business` 与 `*Service`（`*Service` 归业务层）、`Model/` 下的 `*Model`（目录与后缀清单见随工程的 `AGENTS.md`）。**不带这些后缀、也不在上述目录里的类不属于四层**——它没有「本层」可依托，因此不能被别的层跨层调用，只能放进 `System/`（接线处）或与调用方同层。
+
+`System` 那一行是**硬要求**：它**必须**经 Controller 层的 `*Action` 去调业务——CLI 命令（[第 2-16 章](cli.md)）、异常报告器（[第 2-12 章](exception.md)）、事件回调、路由钩子都写在这个位置，骨架里的 `AppAction`、`CommandAction`、`ExceptionAction` 就是它。不要跳过 Action 直接去读 Business/Model，否则「请求入口」的职责会摊到接线层。
+
+**被 System 层调用的 Action 可以引用 System 层的东西**（项目异常类、配置、装配代码）——这是它和普通控制器的差别：Action 是接线的一部分。反过来，**普通控制器与业务代码不要反向调用 System 的接线动作**（注册路由、事件、命令），否则会出现循环装配。
 
 三条最容易记错的：
 
@@ -232,7 +213,7 @@ class NoteModel extends Base
 1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 2-16 章](cli.md)）、定时任务、测试（[第 2-17 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
 2. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
 
-所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`、`Helper::Session()` 之类），Business 的入参一律显式传。
+所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`；会话在 `Controller\Session` 里包一层公开方法），Business 的入参一律显式传。
 
 ### 7. Helper 的分层：四层各有一套
 

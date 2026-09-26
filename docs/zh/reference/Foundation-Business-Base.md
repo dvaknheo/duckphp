@@ -32,7 +32,7 @@ class UserBusiness extends Base
 ## 注意事项
 
 - 本类未定义任何业务方法；业务方法由子类提供。
-- 分层约定见 `docs/zh/guide/layers.md`：Business 只依赖 System 层与 Model，不直接触碰请求上下文。
+- 分层约定见 `docs/zh/guide/project-structure.md` §5 的越界矩阵：Business **可以引用** System 层里的定义（项目异常类、配置）与 Model，但不直接触碰请求上下文；**不要反向调用 System 层的接线动作**（注册路由/事件/命令）。
 
 ## 方法列表
 

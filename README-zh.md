@@ -305,56 +305,20 @@ ExtApp::RunQuickly($options);
 
 ## 三、常规项目
 
-当你使用 `./vendor/bin/duckphp new` 创建项目时，会得到以下骨架文件。更多详情请参见 `RULES.md`。
+当你使用 `./vendor/bin/duckphp new` 创建项目时，会得到一套骨架工程（`skeleton/` 的拷贝）：
 
 ```
 project/
-├── composer.json
-├── config/
-│   └── DuckPhpSettings.config.php  # 全局设置
-├── public/
-│   └── index.php                   # Web 入口
-├── src/
-│   ├── Controller/                 # 控制器层：HTTP/CLI 请求入口
-│   │   ├── Base.php
-│   │   ├── CommandAction.php      # CLI 子命令示例（默认未启用）
-│   │   ├── ExceptionReporter.php   # 异常报告器（默认未启用）
-│   │   ├── Helper.php
-│   │   ├── MainController.php
-│   │   ├── Session.php             # Session 管理
-│   │   ├── SomeAction.php          # Action 示例
-│   │   └── testController.php      # 测试控制器
-│   ├── Business/                   # 业务层：业务逻辑
-│   │   ├── Base.php
-│   │   ├── DemoBusiness.php        # Business 示例
-│   │   ├── Helper.php
-│   │   └── SomeService.php         # Service 示例
-│   ├── Model/                      # 模型层：数据访问
-│   │   ├── Base.php
-│   │   └── DemoModel.php           # Model 示例
-│   └── System/                     # 系统层：应用配置与异常
-│       ├── App.php                 # 应用核心配置
-│       ├── BusinessException.php   # Business 异常（默认未启用）
-│       ├── ControllerException.php # Controller 异常（默认未启用）
-│       └── ProjectException.php    # 项目异常基类（默认未启用）
-├── view/                           # 视图目录
-│   ├── _sys/                       # 系统视图
-│   │   ├── error_404.php
-│   │   └── error_500.php
-│   └── main.php                    # 默认视图示例
-├── runtime/                        # 运行时目录（日志等）
-├── cli.php                         # CLI 入口
-├── RULES.md                        # 规则说明文件
+├── public/index.php     # Web 入口
+├── bin/cli.php          # CLI 入口
+├── config/              # 全局设置（数据库等敏感信息）
+├── src/                 # System / Controller / Business / Model
+├── view/                # 视图（含 _sys/ 错误页）
+├── runtime/             # 运行时目录（日志等，需可写）
 └── vendor/
 ```
 
-> **注意**：
-> - `SomeAction.php`、`testController.php`、`DemoBusiness.php`、`SomeService.php` 和 `DemoModel.php` 是示例文件。在实际项目中，删除它们并编写适合业务的类似类。
-> - `CommandAction.php`、`ExceptionReporter.php`、`BusinessException.php`、`ControllerException.php` 和 `ProjectException.php` 默认禁用。你可以：
->   - 删除不需要的文件以简化项目。
->   - 在 `src/System/App.php` 中取消注释对应的选项（`cli_command_classes`、`exception_reporter`、`exception_for_project` / `exception_for_business` / `exception_for_controller`）来启用功能。
->
-> `runtime/` 目录需要写入权限。
+**文件级清单与工程约定**（哪些文件勿改、哪些是示例、哪些默认未启用，以及命名与分层规则）**见随工程的 `AGENTS.md`** —— 它就在生成出来的工程根目录，是唯一一份。
 
 **DuckPhp 项目层次清晰，没有跨层调用。**
 
