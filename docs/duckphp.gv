@@ -7,7 +7,7 @@ edge [fontsize="9"];
 
 subgraph cluster_legend {
     label = "[Legend]";
-    label_legend [label="Shapes: box=class / box3d=abstract class / note=interface / diamond=trait\nEdges: solid=extends / dashed=implements / dotted=use trait / bold blue=assembled in initComponents*()",shape="plaintext",fontsize="10"];
+    label_legend [label="Shapes: box=class / box3d=abstract class / note=interface / diamond=trait\nEdges: solid=extends / dashed=implements / dotted=use trait / bold blue=assembled in initComponents*() / red dashed=replaces a singleton (X::_($this))",shape="plaintext",fontsize="10"];
 }
 
 subgraph cluster_DuckPhp {
@@ -59,6 +59,7 @@ subgraph cluster_DuckPhp_Component {
     DuckPhp_Component_Pager -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Component_Pager -> DuckPhp_Component_PagerInterface [style="dashed"];
     DuckPhp_Component_RedisCache -> DuckPhp_Core_ComponentBase [style="solid"];
+    DuckPhp_Component_RedisCache -> DuckPhp_Component_Cache [style="dashed",color="#d62728",penwidth=2,label="replaces"];
     DuckPhp_Component_RedisManager -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Component_RouteHookPathInfoCompat -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Component_RouteHookResource -> DuckPhp_Core_ComponentBase [style="solid"];
@@ -159,13 +160,16 @@ subgraph cluster_DuckPhp_Ext {
     DuckPhp_Ext_ThrowOnTrait [label="ThrowOnTrait",shape="diamond",tooltip="src/Ext/ThrowOnTrait.php"];
 
     DuckPhp_Ext_CallableView -> DuckPhp_Core_View [style="solid"];
+    DuckPhp_Ext_CallableView -> DuckPhp_Core_View [style="dashed",color="#d62728",penwidth=2,label="replaces"];
     DuckPhp_Ext_DuckPhpInstaller -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Ext_EmptyView -> DuckPhp_Core_View [style="solid"];
+    DuckPhp_Ext_EmptyView -> DuckPhp_Core_View [style="dashed",color="#d62728",penwidth=2,label="replaces"];
     DuckPhp_Ext_EventManager -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Ext_ExceptionWrapper -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Ext_JsonRpcClientBase -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Ext_JsonRpcExt -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Ext_JsonView -> DuckPhp_Core_View [style="solid"];
+    DuckPhp_Ext_JsonView -> DuckPhp_Core_View [style="dashed",color="#d62728",penwidth=2,label="replaces"];
     DuckPhp_Ext_MyFacadesAutoLoader -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Ext_MyFacadesBase -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Ext_MyMiddlewareManager -> DuckPhp_Core_ComponentBase [style="solid"];

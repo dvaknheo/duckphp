@@ -82,6 +82,7 @@ function collectClasses(string $src_dir, $parser): array
                 'implements' => [],
                 'traits' => [],
                 'assembles' => [],
+                'replaces' => [],
             ];
             if ($node instanceof Node\Stmt\Interface_) {
                 $info['kind'] = 'interface';
@@ -119,9 +120,41 @@ function collectClasses(string $src_dir, $parser): array
                     $finder->traverse([$stmt]);
                 }
             }
+            // Replaces-a-singleton edges: `SomeClass::_($this)` / `SomeClass::_(static::_())`.
+            // KernelTrait's dynamic forms (`(self::class)::_($this)`, `($options['override_from'])::_($this)`)
+            // are not a static class reference, so they are (correctly) not drawn.
+            $replacer = new NodeTraverser();
+            $replacer->addVisitor(new class ($info['replaces']) extends \PhpParser\NodeVisitorAbstract {
+                public function __construct(public array &$out) {}
+                public function enterNode(Node $node) {
+                    if (!($node instanceof Node\Expr\StaticCall)) {
+                        return null;
+                    }
+                    if (!($node->class instanceof Node\Name) || !($node->name instanceof Node\Identifier)) {
+                        return null;
+                    }
+                    if ($node->name->toString() !== '_' || count($node->args) !== 1) {
+                        return null;
+                    }
+                    $arg = $node->args[0]->value;
+                    $is_this = $arg instanceof Node\Expr\Variable && $arg->name === 'this';
+                    $is_static_self = $arg instanceof Node\Expr\StaticCall
+                        && $arg->class instanceof Node\Name
+                        && in_array(strtolower($arg->class->toString()), ['static', 'self'], true)
+                        && $arg->name instanceof Node\Identifier
+                        && $arg->name->toString() === '_';
+                    if ($is_this || $is_static_self) {
+                        $this->out[] = $node->class->toString();
+                    }
+                    return null;
+                }
+            });
+            $replacer->traverse([$node]);
+
             $info['traits'] = array_values(array_unique($info['traits']));
             $info['implements'] = array_values(array_unique($info['implements']));
             $info['assembles'] = array_values(array_unique($info['assembles']));
+            $info['replaces'] = array_values(array_unique($info['replaces']));
             $classes[$fqcn] = $info;
         }
     }
@@ -187,7 +220,7 @@ $out[] = '';
 
 $out[] = 'subgraph cluster_legend {';
 $out[] = '    label = "[Legend]";';
-$out[] = '    label_legend [label="Shapes: box=class / box3d=abstract class / note=interface / diamond=trait\nEdges: solid=extends / dashed=implements / dotted=use trait / bold blue=assembled in initComponents*()",shape="plaintext",fontsize="10"];';
+$out[] = '    label_legend [label="Shapes: box=class / box3d=abstract class / note=interface / diamond=trait\nEdges: solid=extends / dashed=implements / dotted=use trait / bold blue=assembled in initComponents*() / red dashed=replaces a singleton (X::_($this))",shape="plaintext",fontsize="10"];';
 $out[] = '}';
 $out[] = '';
 
@@ -219,6 +252,11 @@ foreach ($by_ns as $ns => $items) {
         foreach ($info['assembles'] as $a) {
             if ($exists($a) && $a !== $info['fqcn']) {
                 $out[] = '    ' . $id . ' -> ' . $nodeId($a) . ' [style="bold",color="#1f77b4",label="assembles"];';
+            }
+        }
+        foreach ($info['replaces'] as $r) {
+            if ($exists($r) && $r !== $info['fqcn']) {
+                $out[] = '    ' . $id . ' -> ' . $nodeId($r) . ' [style="dashed",color="#d62728",penwidth=2,label="replaces"];';
             }
         }
     }
