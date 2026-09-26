@@ -225,14 +225,18 @@ Helper::addRouteHook(function (string $path_info) {
 框架**不提供**，需要自己实现（[第 2-18 章](../guide/security-performance.md)）：
 
 ```php
+// 会话类里先包两层公开方法（Trait 的 get/set 是 protected，见第 2-11 章）：
+//   public function setCsrfToken(string $t): void { $this->set('csrf_token', $t); }
+//   public function getCsrfToken(): string { return (string)$this->get('csrf_token'); }
+
 // 发令牌（控制器里）
 $token = bin2hex(random_bytes(16));
-Session::_()->set('csrf_token', $token);
+Session::_()->setCsrfToken($token);
 Helper::Show(['csrf' => $token], 'note/form');
 
 // 校验（POST 入口）
 Helper::BusinessThrowOn(
-    !hash_equals((string)Session::_()->get('csrf_token'), (string)Helper::POST('_token')),
+    !hash_equals(Session::_()->getCsrfToken(), (string)Helper::POST('_token')),
     '会话已过期，请重新提交', 419
 );
 ```

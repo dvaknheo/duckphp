@@ -107,7 +107,7 @@ class NoteAction extends ActionBase      // 只调 Business 与 Session，不直
     public function save(array $post): array
     {
         $note = NoteBusiness::_()->save($post);
-        Session::_()->set('last_note_id', $note['id']);   // 带前缀的会话读写（第 2-11 章）
+        Session::_()->setLastNoteId((int)$note['id']);   // 公开方法包在会话类里（第 2-11 章）
         return $note;
     }
 }

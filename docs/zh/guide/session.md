@@ -6,7 +6,7 @@
 
 ## 最小示例
 
-会话能力就是一个 trait + 一个薄壳类：
+会话能力就是一个 trait + 一个薄壳类。注意：**Trait 给的是 `protected` 的 `get()`/`set()`/`unset()`，所以要在会话类里包一层公开的语义化方法**——键名收在类里，调用点只看方法名：
 
 ```php
 <?php declare(strict_types=1);
@@ -17,19 +17,25 @@ use DuckPhp\Foundation\Controller\SessionTrait;
 class Session
 {
     use SessionTrait;
-    // 自行加语义化方法，如 setCurrentUser()/getCurrentUser()
+
+    public function setLastNote(int $id): void { $this->set('last_note', $id); }
+    public function getLastNote(): ?int        { return $this->get('last_note') ?: null; }
 }
 ```
 
-控制器里直接调它：
+控制器里只调那些公开方法：
 
 ```php
 public function remember()
 {
-    Session::_()->set('last_note', (int)Helper::POST('id'));
-    Helper::Show(['last' => Session::_()->get('last_note')], 'note/index');
+    Session::_()->setLastNote((int)Helper::POST('id'));
+    Helper::Show(['last' => Session::_()->getLastNote()], 'note/index');
 }
 ```
+
+> ⚠️ 别在控制器里直接写 `Session::_()->set('k', $v)`：Trait 的方法是 `protected`，会报
+> `Error: Call to protected method`。骨架 `skeleton/src/Controller/Session.php`（= `demo/src/Controller/Session.php`）
+> 里的示例方法默认是注释掉的，你自己加。
 
 ## 机制说明
 
@@ -55,7 +61,7 @@ public function remember()
 ```php
 // 子应用的 App 里
 public $options = [
-    'session_prefix' => 'shop_',      // 于是 Session::set('uid', 1) 实际写的是 shop_uid
+    'session_prefix' => 'shop_',      // 于是会话类里的 $this->set('uid', 1) 实际写的是 shop_uid
 ];
 ```
 
@@ -65,7 +71,7 @@ public $options = [
 
 | 放什么 | 例子 | 为什么 |
 |---|---|---|
-| ✅ 标识 | `Session::set('uid', $id)` | 会话是客户端凭据，越少越好 |
+| ✅ 标识 | 会话类里的 `$this->set('uid', $id)` | 会话是客户端凭据，越少越好 |
 | ✅ 一次性提示 | flash 消息、`url_back` | 下次请求即用即丢 |
 | ❌ 业务数据快照 | 整个订单数组 | 会过期、会膨胀、会和数据库不一致 |
 
@@ -93,13 +99,21 @@ class Session
 }
 ```
 
-**② 一次性提示（flash）**
+**② 一次性提示（flash）：写入 + 取出即清**
 
 ```php
-Session::_()->set('flash', '保存成功');     // 写入
-// 下一个动作里
-$msg = Session::_()->get('flash');
-Session::_()->unset('flash');               // 立即清掉，避免重复显示
+// 会话类里：一对方法，取出时顺手 unset
+public function flash(string $msg): void { $this->set('flash', $msg); }
+public function takeFlash(): ?string
+{
+    $msg = (string)$this->get('flash');
+    $this->unset('flash');
+    return $msg ?: null;
+}
+
+// 控制器里
+Session::_()->flash('保存成功');     // 写入
+$msg = Session::_()->takeFlash();    // 取出并立刻清掉，避免重复显示
 ```
 
 **③ 换掉会话实现（测试 / 常驻进程）**
@@ -113,10 +127,17 @@ Helper::system_wrapper_replace([
 **④ 用会话接住「登录后回到原页」**
 
 ```php
+// 会话类里
+public function setUrlBack(string $url): void { $this->set('url_back', $url); }
+public function takeUrlBack(string $fallback = 'home/index'): string
+{
+    return (string)$this->get('url_back', $fallback);
+}
+
 // 未登录跳转前
-Session::_()->set('url_back', Helper::PathInfo());
+Session::_()->setUrlBack(Helper::PathInfo());
 // 登录成功后
-Helper::Show302(Session::_()->get('url_back', 'home/index'));
+Helper::Show302(Session::_()->takeUrlBack());
 ```
 
 ## 常见错误
@@ -126,7 +147,7 @@ Helper::Show302(Session::_()->get('url_back', 'home/index'));
 | 写了读不到 | 两次请求的 `session_prefix` 不同（多应用/多子目录） | 前缀不同就是不同的键；对齐前缀或改用同一应用 |
 | `session_start()` 报「headers already sent」 | 输出先于会话启动（视图里 `echo` 的副作用） | 让会话第一次读写在输出之前；或继承 `SessionTrait` 的类在构造函数里先探一次 |
 | 测试里会话状态串味 | 会话是进程/全局状态 | 用 `system_wrapper_replace` 替换 `session_*`，或 `Session::_()` 换成本地实现 |
-| 调用 `Session::get()` 报 `protected` 错 | `SessionTrait` 的三个方法是 `protected` | 在会话类里包一层 `public` 语义化方法（见常见写法①） |
+| 调用 `Session::_()->set('k', $v)` 报 `Call to protected method` | `SessionTrait` 的三个方法是 `protected`，只能在会话类内部调 | 在会话类里包一层 `public` 语义化方法，调用点只用那些方法（见「常见写法」①②④） |
 | 会话里塞了大数组后变慢 | 会话每请求全量读写、还要序列化 | 只存标识，数据放数据库/缓存 |
 
 ## 下一步
