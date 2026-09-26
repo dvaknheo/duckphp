@@ -63,7 +63,7 @@ define('__SYSTEM_WRAPPER_REPLACER', MyReplacer::class);
 ## 注意事项
 
 1. CLI/已 headers 的 SAPI：`_header` 在 cli 或 headers_sent 时静默 return，不炸。
-2. `_exit`：定义了以 `__SYSTEM_WRAPPER..` 且 exit_class 为 \Throwable → throw `new __EXIT_EXCEPTION`（而不是 process-exit）；否则真 exit。
+2. `_exit`：定义了 `__EXIT_EXCEPTION` 且它是 `\Throwable` 的子类时 → `throw new $exit_class($code)`（而不是 process-exit）；否则真 exit。
 3. `_setcookie` 要求字符串参数等，有 domain/secure/flags。
 4. 每方法都先走 check/call (look at REPLACER/handler/delay) —— 看到可替换性设计，并非总是断言命名规则，具体看源码 `system_wrapper_call*`。
 5. 受保护 `getMimeData()` 内含内置常用 mime types 表（扩展名→mime），供无 `mime_content_type` 的环境。
@@ -159,7 +159,7 @@ MIME 实现：无 `mime_content_type` 函数时按扩展名查内置表；可被
 
 ## 相关链接
 
-- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) —— header/cake 由 cookie 发
+- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) —— 请求数据的读取侧（`_GET`/`_POST`/`_COOKIE`/`_SERVER` 的隔离访问）；本类管 header/cookie 的写出与 `exit`
 - [DuckPhp\Core\App](Core-App.md) —— error handler / exit exception使用
 - [DuckPhp\Core\ExitException](Core-ExitException.md) —— `__EXIT_EXCEPTION`语义（exit 转异常）
 - guide：testing —— 测试隔离 header/session

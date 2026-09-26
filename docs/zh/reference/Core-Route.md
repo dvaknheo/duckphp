@@ -220,7 +220,7 @@ finally 收尾钩子逐个执行；任一返回真即停
 整批覆盖路由参数
 
     public function getRouteError()
-取最后一次 route_error 文本（`E0xx`），undefined 为
+取最后一次 route_error 文本（`E0xx`）；没有错误时是空串。
 
     public function getRouteCallingPath()
 取本次匹配到的（去掉前缀的）路径段

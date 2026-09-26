@@ -106,7 +106,7 @@ try{ return Console::run(); } catch(Throwable){ runException(); return true; }
 ## 注意事项
 
 1. 根与子判定：`static::class === self::class` 或 is-a `self::class` 且无 context —— `is_root` 结果影响是否能 execute 与阶段组件装载；应在 init 后通过 `isRoot()` 查询而不是凭想象。
-2. Phase 唯一性：子阶段名字重复会在 `initContainer` 抛 `DuckPhpSystemException` 提示 “set … 'name'options”。给同名子应用子不同的 `name`。
+2. Phase 唯一性：子阶段名字重复会在 `initContainer` 抛 `DuckPhpSystemException` 提示 “set … 'name'options”。给同名子应用不同的 `name`。
 3. 所有 `on_*` 系列回调优先于钩子方法又被钩子调用：不要既传 `on_init` 回调又 override `onInit()` 造成双跑。
 4. `run()` 语义：Root CLI 且 `cli_enable` 才会走 execute；否则 Web。强制“CLI 也进 serve”用 `cli_enable=false`。
 5. 覆盖注意：要让某个钩子生效记得 `parent::`（若想要父骨架逻辑）按需调用。

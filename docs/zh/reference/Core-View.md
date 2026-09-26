@@ -59,7 +59,7 @@ View::_()->assignViewData(['title'=>'首页', 'extra'=>1]);  // 数组批量
 $viewData = View::_()->getViewData();
 ```
 
-> `_Show()` 会 area_merge 自带的 `$data` 与已 assign 的数据后 `extract` —— 对应 view 文件内这些名字就是变量。
+> `_Show()` 会 array_merge 自带的 `$data` 与已 assign 的数据后 `extract` —— 对应 view 文件内这些名字就是变量。
 
 ### head/foot 绕头尾
 

@@ -159,7 +159,7 @@ Built-in MIME type table (heredoc), the fallback for `_mime_content_type`.
 
 ## Related links
 
-- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) — cookies are sent through this wrapper
+- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) — the *reading* side of request data (isolated access to `_GET`/`_POST`/`_COOKIE`/`_SERVER`); this class handles the writing of headers/cookies and `exit`
 - [DuckPhp\Core\App](Core-App.md) — uses the error handler / exit exception
 - [DuckPhp\Core\ExitException](Core-ExitException.md) — the `__EXIT_EXCEPTION` semantics (exit turned into an exception)
 - guide: testing — isolating headers/sessions in tests

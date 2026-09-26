@@ -51,7 +51,7 @@ Logger::_()->error('db failed: {err}', ['err' => $e]);
 ```php
 // 项目 options
 'path_log' => 'runtime',
-'log_file_template' => 'log_%Y-%m_%d_%H_%i.log',   // 与默认同逻辑的示例
+'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',   // 与默认一致（也可以换成按月/按小时等其它模板）
 'log_prefix'         => 'Shop',
 ```
 

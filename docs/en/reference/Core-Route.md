@@ -220,7 +220,7 @@ Exports the pre/run/post hook groups (var_export) for hook debugging
 Overwrites the route parameters wholesale
 
     public function getRouteError()
-Gets the last route_error text (`E0xx`)
+Gets the last route_error text (`E0xx`); it is an empty string when there is no error.
 
     public function getRouteCallingPath()
 Gets this match's path segment (prefix stripped)

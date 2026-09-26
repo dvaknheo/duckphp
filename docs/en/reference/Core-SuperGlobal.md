@@ -168,4 +168,4 @@ The actual fetch: context first reads the context object's property, otherwise `
 - [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md) — the low level that sends cookies
 - [DuckPhp\Core\App](Core-App.md) — deployment/debug/platform reads mostly use this
 - See also the related constant `__SUPERGLOBAL_CONTEXT`;
-- [Core-SingletonExTrait], super global for sub-request isolation/testing demos/tests.
+- [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md) — the singleton entry point; the isolated access is used for sub-requests and in tests (`demo/`, `tests/`).

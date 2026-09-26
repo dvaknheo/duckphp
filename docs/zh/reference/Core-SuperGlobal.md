@@ -168,4 +168,4 @@ SuperGlobal::_()->_CookieSet('theme','dark', 3600);   // 底层走 SystemWrapper
 - [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md) — Cookie 发底层
 - [DuckPhp\Core\App](Core-App.md) 部署/Debug/平台读多用此
 - 相关常量 `__SUPERGLOBAL_CONTEXT` 参考；
-- [Core-SingletonExTrait]，Super global for 子请求隔离/测试 demo/tests.
+- [DuckPhp\Core\SingletonExTrait](Core-SingletonExTrait.md) —— 单例入口；隔离访问用于子请求与测试（`demo/`、`tests/` 里的用法）

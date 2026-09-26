@@ -51,7 +51,7 @@ Advanced (context expansion) values are var_export'ed into PHP expressions for t
 ```php
 // project options
 'path_log' => 'runtime',
-'log_file_template' => 'log_%Y-%m_%d_%H_%i.log',   // example with the same logic as the default
+'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',   // same as the default (you can also use a monthly/hourly template)
 'log_prefix'         => 'Shop',
 ```
 
