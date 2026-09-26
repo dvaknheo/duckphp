@@ -27,7 +27,7 @@ App::Phase('');
 ### 想让某个东西共享 / 想让它独立
 
 ```php
-// 共享：在根应用的 ext 里声明（框架会把它标成 public）
+// 共享：在根应用的 ext 里声明（框架会把它标成共享）
 'ext' => [ \DuckPhp\Component\GlobalEvent::class => true ],
 
 // 独立：在当前相位新建一份，别用共享的那个
