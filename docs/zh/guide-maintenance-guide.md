@@ -140,7 +140,7 @@ for p, t in bad:
 
 | 坑 | 说明 |
 |---|---|
-| **未写的章不要挂链接** | 还没落稿的章在总目录里用 `⏳ + 纯文本`，写完再换成链接；否则链接校验一直红。 |
+| **未写的章不要挂链接** | 还没落稿的章在总目录里用**纯文本 + `⏳`**、不挂链接（写完再换成链接），否则链接校验一直红。当前 47 章 + 4 附录已全部落稿，所以 `⏳` 只会出现在**新增**章节还没写完的时候。 |
 | 旧章里的 API 可能早就不存在 | 实测：`advanced-phase.md` 有 3 处 `App::Root()->getOverridingClass()`（源码里没有）；`helper.md` 的 `assignRewrite('article/123', …)` 少了前导 `/` 因而永不命中；`Configer` 读 `config/<名>.php` 而不是 `<名>.config.php`。**改之前先核对源码。** |
 | **正文里写的路径/类名可能是假的** | 死链检查查不出这一类。实测 `tests/data_for_tests/ZAllDemo` 被引用了 25 处而它**从未存在**；同类还有 `layers.md` 里假想出来的 `ZAllDemo/src/Controller/Helper.php`。**引用前先 `git ls-files` / `Test-Path`；示例里的类名先 `class_exists()`。** |
 | **示例「能跑」的标准是真调用一次** | 只做静态检查（类存在、`is_callable()` 为真）会放过两种必炸写法：选项写裸类名（`ExceptionAction::class` 不是 callable，启动即抛 `config error`）、报告器类少 `_()`（`ExceptionReporterTrait::OnException()` 内部是 `static::_()->…`，异常真抛出时 `Call to undefined method …::_()`）。见硬约束 11。 |

@@ -106,7 +106,7 @@
 | 子目录部署后链接 404 | [第 2-3 章](../guide/routing.md) | 手写绝对路径，没用 `__url()` |
 | 测试在 Windows 上假失败 | [第 2-17 章](../guide/testing.md) | 环境差异（redis 等），换 WSL |
 | `ZAllDemoTest` 的 `files` 变红 | [第 2-17 章](../guide/testing.md) | 输出字节长度随源码变化，更新期望值 |
-| 文档链接校验报坏链 | [第 4-8 章](../guide/doc-maintenance.md) | 指向了未写的页；未写的用「纯文本 + ⏳」 |
+| 文档链接校验报坏链 | [第 4-8 章](../guide/doc-maintenance.md) | 目标还没写完 → 改成「纯文本 + `⏳`」、写完再换链接；路径写错 → 直接改对 |
 | 参考页与源码不一致 | [第 4-8 章](../guide/doc-maintenance.md) | 只改源码没改文档；跑漂移扫描 |
 
 ## 三、还是找不到？
