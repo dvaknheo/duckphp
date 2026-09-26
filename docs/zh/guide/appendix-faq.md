@@ -13,7 +13,7 @@
 | 能不能塞进一个老项目里只加一个页面？ | 能：一个入口文件 + `RunQuickly()`，或用 [`DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) 单文件形态 | [第 4-4 章](../guide/embed.md) |
 | 有 ORM / 迁移工具 / 队列吗？ | 都没有。数据访问用 [`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) + 手写 SQL；建表 SQL 自己放安装流程；队列自己接 | [第 2-7 章](../guide/database.md) |
 | 支持 PHP 版本？ | `>=7.4`（仓库同时在 7.4 与 8.4 容器里跑测试） | [第 4-7 章](../guide/coverage.md) |
-| 和 Laravel 的心智模型差在哪？ | 没有 PSR-7/15、没有注入容器、没有注释路由；换来相位隔离与覆盖机制 | [附录 C](appendix-migration.md) |
+| 和 Laravel / ThinkPHP 的心智模型差在哪？ | 没有 PSR-7/15、没有注入容器、没有注释路由、没有 ORM 与模板引擎；换来相位隔离与覆盖机制 | [附录 C](appendix-migration.md) |
 
 ### 结构与规范
 

@@ -15,6 +15,6 @@
 
 - 第一次接触： [用户指南 · 第一卷 入门](guide/index.md)
 - 要把现成的外部应用挂进本项目： [用户指南 · 第三卷 使用第三方应用](guide/index.md)
-- 从 Laravel / Yii2 / CodeIgniter 过来：用户指南附录 C「迁移对照」（⏳ 撰写中）
+- 从 Laravel / Yii2 / CodeIgniter / ThinkPHP 过来： [用户指南 · 附录 C 迁移对照](guide/appendix-migration.md)
 
 > 本页只做指路，章节目录不再复制一份 —— 完整目录见 [用户指南首页](guide/index.md)。

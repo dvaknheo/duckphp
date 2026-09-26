@@ -10,7 +10,7 @@
 ## 怎么用这本指南
 
 - 完全没接触过：从第一卷顺序读到第二卷结束，就能独立写完一个业务应用。
-- 已有 Laravel / Yii2 / CodeIgniter 经验：先看附录 C 的迁移对照，再按卷二章名跳读。
+- 已有 Laravel / Yii2 / CodeIgniter / ThinkPHP 经验：先看附录 C 的迁移对照，再按卷二章名跳读。
 - 要把现成的外部应用、老项目挂进来：直接进第三卷，它是本框架最有特色的一卷。
 - 只想问「这个功能能不能做」：翻附录 D 的排错索引，或查参考手册。
 
@@ -30,7 +30,7 @@
 
 ## 第二卷 · 单一应用
 
-> 覆盖主流 PHP 框架的常见主题（四层规范/请求生命周期/路由钩子/路由/控制器/视图/数据/模型/Helper/验证/会话/异常/事件/缓存/i18n/CLI/测试/安全），并给出与 Yii2、CodeIgniter、Laravel 的对应关系。中间件不是本框架的主推能力，只在[第 2-4 章](route-hooks.md)作为**兼容性扩展**交代。
+> 覆盖主流 PHP 框架的常见主题（四层规范/请求生命周期/路由钩子/路由/控制器/视图/数据/模型/Helper/验证/会话/异常/事件/缓存/i18n/CLI/测试/安全），并给出与 Yii2、CodeIgniter、Laravel、ThinkPHP 的对应关系。中间件不是本框架的主推能力，只在[第 2-4 章](route-hooks.md)作为**兼容性扩展**交代。
 
 | 章    | 标题                                 | 一句话                                           |
 | ---- | ---------------------------------- | --------------------------------------------- |
@@ -96,7 +96,7 @@
 |---|---|
 | [A 术语表](appendix-glossary.md) | 应用／子应用／相位／挂载前缀／共享容器／覆盖……全书统一 |
 | [B 代码片段库](appendix-snippets.md) | CRUD、分页、上传、登录、权限、跨应用调用 |
-| [C 从 Yii2 / CodeIgniter / Laravel 迁移](appendix-migration.md) | 概念映射与写法对照 |
+| [C 从 Yii2 / CodeIgniter / Laravel / ThinkPHP 迁移](appendix-migration.md) | 概念映射与写法对照 |
 | [D FAQ 与排错索引](appendix-faq.md) | 按症状查 |
 
 > **全局函数参考**见 [DuckPhp\Core\Functions](../reference/Core-Functions.md)；**应用选项参考**见 [选项速查](../reference/options.md)、[按类汇总](../reference/options-by-class.md) 与 [按索引](../reference/options-index.md)。（原先指南侧的两篇附录已删除，内容已并入参考手册。）

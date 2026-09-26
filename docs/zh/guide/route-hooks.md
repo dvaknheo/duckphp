@@ -100,7 +100,7 @@ RouteHookManager::_()->dump();                           // ★ 排查：把三�
 
 ### 5. 兼容性扩展：洋葱中间件（`Ext\MyMiddlewareManager`）
 
-说清楚定位：**中间件不是 DuckPHP 的主推路数**。框架的默认做法是「路由钩子 + 分层 Helper」，中间件只是给习惯了 Laravel/PSR-15 那种写法的人留的一层兼容，用得上就用，用不上不用管。
+说清楚定位：**中间件不是 DuckPHP 的主推路数**。框架的默认做法是「路由钩子 + 分层 Helper」，中间件只是给习惯了 Laravel / ThinkPHP 的中间件写法（或 PSR-15）的人留的一层兼容，用得上就用，用不上不用管。
 
 它的接线方式（选项写在应用的 `$options` 里）：
 
