@@ -1,19 +1,18 @@
 version: "3"
 
 services:
-  fulltest84:
+  fulltest:
+    image: duckphp/test-php84:latest
     build:
       context: ../..
       dockerfile: docker/test-php84/Dockerfile
     working_dir: /DATA
     volumes:
       - ../../:/DATA
+      - vendor:/DATA/vendor
+      - composer-cache:/tmp/composer
       - ./test_reports:/DATA/test_reports
       - ./test_coveragedumps:/DATA/test_coveragedumps
-      - ../../composer-test-php84.json:/DATA/composer.json
-      - ../../composer-test-php84.lock:/DATA/composer.lock
-      - vendor84:/DATA/vendor
-      - composer-cache84:/tmp/composer
     entrypoint:
       - /bin/sh
       - -c
@@ -24,12 +23,16 @@ services:
       - XDEBUG_MODE=coverage
     extra_hosts:
       - "redis:127.0.0.1"
-    command: >
-      sh -c "
-        ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist) &&
-        composer run-script --timeout=0 fulltest
-      "
-
+    # 与 test-php74 的唯一差别：最后一步用 vendor/bin/phpunit，而不是 composer exec phpunit
+    # （本镜像装的是 Composer 2.8，`exec` 子命令在 2.x 后续版本里已经被移除）。
+    command:
+      - sh
+      - -c
+      - |
+        cd /DATA &&
+        rm -f /DATA/composer.lock &&
+        composer update --no-interaction --prefer-dist --no-scripts &&
+        vendor/bin/phpunit
 volumes:
-  composer-cache84:
-  vendor84:
+  composer-cache:
+  vendor:

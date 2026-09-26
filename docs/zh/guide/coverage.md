@@ -77,11 +77,14 @@ XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php
 | 资产 | 内容 |
 |---|---|
 | `docker/docker-compose.yml` | 顶层编排 |
-| `docker/test-php74/` | PHP 7.4 的 Dockerfile + compose（**注意：这个目录里没有 `.sh` 脚本**） |
-| `docker/test-php84/` | PHP 8.4 的 Dockerfile + compose + `start-docker.sh`/`exec-docker.sh`/`stop-docker.sh`/`end-docker.sh` |
-| `composer-test-php84.json` | 8.4 环境下的 composer 脚本：`fulltest`（cs-fixer + phpstan + phpunit + genoptions）、`singletest`、`genoptions` |
+| `docker/test-php74/` | PHP 7.4 的 Dockerfile + compose（**这个目录里没有 `.sh` 脚本**） |
+| `docker/test-php84/` | PHP 8.4 的 Dockerfile + compose，与 7.4 那份逐行对齐（同样没有 `.sh` 脚本） |
 
-容器化的意义：**redis 扩展**、不同 PHP 版本的语法差异（本框架支持 `>=7.4`）都要在真实环境里验一遍。Windows 侧跑会在 redis 相关用例上假失败（详见[第 2-17 章](testing.md)）。
+两个目录用法一样：`cd docker/test-phpXX && docker-compose run --rm fulltest`。它把整个仓库挂到 `/DATA`、起一个带密码的 redis、`rm -f composer.lock && composer update`（用的是**根目录那一份 `composer.json`**，按当前 PHP 版本解依赖）、再跑 `vendor/bin/phpunit` 全量；`XDEBUG_MODE=coverage` 已经设好，覆盖率 dump 与 `test_reports/` 汇总都会挂回目录里。
+
+8.4 那份与 7.4 只有一处写法不同：最后一步是 `vendor/bin/phpunit`，不是 `composer exec phpunit`——php84 镜像装的 Composer 2.8 **已移除 `exec` 子命令**（php74 镜像里的 Composer 2.2 还有）。
+
+容器化的意义：**redis 扩展**、不同 PHP 版本的语法差异（本框架支持 `>=7.4`）都要在真实环境里验一遍。Windows 侧跑会在 redis 相关用例上假失败（详见[第 2-17 章](testing.md)）。两个容器当前都能跑完全量：**`OK (95 tests, 875 assertions)`、覆盖率 `4735/4735 (100.00%)`**，与 WSL 基线一致。
 
 ### 5. 生成器与闸门脚本
 
@@ -147,7 +150,7 @@ composer run-script fulltest
 | 全量测试偶发失败                                | `ZAllDemoTest` 起内置服务器占固定端口 9802，与其它实例/残留进程冲突                      | 确认没有并行跑；必要时改为顺序执行                                                                        |
 | 改了 `src/` 后 `ZAllDemoTest` 的 `files` 变红 | 它比的是输出**字节长度**（含选项表与方法表）                                          | 改 `tests/data_for_tests/ZAllDemoTest.config.php` 里对应期望值（dump 存成 `ZAllDemoTest-<长度>.txt`） |
 | `gen-reference.php verify` 报「多了方法」      | 大文件的 trait 别名 override 让脚本漏列（已知缺陷）                                | 以漂移扫描为准，不要照着删文档                                                                          |
-| docker 目录下找不到 `start-docker.sh`（php74）  | 脚本**只在 `docker/test-php84/`** 里                                   | 用 8.4 的那套脚本，或直接用 `docker-compose` 起 php74                                                |
+| 想单独在容器里手工跑命令（php74 里找不到 `start-docker.sh` 之类）  | 那套起停脚本（只存在于 php84 目录的四个 `.sh`）**已经删掉**，两个目录都只用 `docker-compose`                 | `docker-compose run --rm fulltest sh` 进容器，或 `docker-compose run --rm fulltest <命令>` 单跑一条                             |
 | `tests/support.php` 跑不起来                | 没先跑过任何测试（没有 dump 可汇总）或 bootstrap 失败                               | 先跑至少一个测试文件                                                                               |
 
 ## 下一步

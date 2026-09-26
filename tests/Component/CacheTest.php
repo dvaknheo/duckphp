@@ -24,7 +24,6 @@ class CacheTest extends \PHPUnit\Framework\TestCase
         Cache::_()->getMultiple($keys, $default);
         Cache::_()->setMultiple($values, $ttl);
         Cache::_()->deleteMultiple($keys);
-        Cache::_()->redis=null;
         Cache::_()->get($key, $default);
         Cache::_()->set($key, $value, $ttl );
         Cache::_()->delete($key);
