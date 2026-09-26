@@ -61,7 +61,7 @@ $this->options = array_replace_recursive($this->options, $options);
 | `table_prefix` | `''` | Ext\SqlDumper / Ext\RouteHookWebInstaller | 数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。 |
 | `exception_for_business` | `\Exception::class` | CoreHelper::_BusinessThrowOn() | `BusinessThrowOn()` 未显式指定时的异常类。 |
 | `exception_for_controller` | `\Exception::class` | CoreHelper::_ControllerThrowOn() | `ControllerThrowOn()` 未显式指定时的异常类。 |
-| `duckphp_all_in_one_wrap_header_foot` | `false` | DuckPhpAllInOne::onInited() | AllInOne 入口是否给 `_Show()` 包 head/foot 视图（该类自己会置 true）。 |
+| `duckphp_all_in_one_wrap_header_footer` | `false` | DuckPhpAllInOne::onInited() | AllInOne 入口是否给 `_Show()` 包页眉/页脚视图（该类自己会置 true）。 |
 | `permission_menu_tree_for_admin` | `null` | Ext\PermissionMenu::getMenuJsonFileConfig() | 后台权限菜单树的配置文件（相对 `path_config`）。 |
 | `duckcoverage_test_lister` | `null` | 外部包 dvaknheo/duckcoverage | 配合该 composer 包做覆盖测试使用，框架自身不读。 |
 | `background` | `false` | HttpServer::run*() | 内置服务器是否后台运行；CLI 开关 `-b/--background` 会把它置 true。 |

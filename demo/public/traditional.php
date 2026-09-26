@@ -140,7 +140,7 @@ extract($xxx);
 
 error_reporting(error_reporting() & ~E_NOTICE);
 
-if (isset($view_head)) {
+if (isset($view_header)) {
     ?>
 <!doctype html>
 <html>
@@ -199,7 +199,7 @@ if ($view === 'dialog') { ?>
 <?php
 }
 
-if (isset($view_foot)) {
+if (isset($view_footer)) {
     ?>
 	<hr />
 	</div>

@@ -55,7 +55,7 @@ public function index()
 
 ```
 1. view_skip_notice_error 默认为 true → 渲染期间屏蔽 E_NOTICE（未定义变量不再刷屏）
-2. 解析 view / head_file / foot_file 三个文件路径
+2. 解析 view / header_file / footer_file 三个文件路径
 3. $this->data = array_merge($this->data, $data)   ← assignViewData 的预置数据 + 本次传入
 4. extract($this->data)  → 数组键变成视图里的变量
 5. include 头视图 → include 主视图 → include 尾视图
@@ -118,7 +118,7 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 
 | 扩展 | 视图长什么样 | 关键选项 |
 |---|---|---|
-| [`Ext\CallableView`](../reference/Ext-CallableView.md) | **函数/方法**：`Views::main_view($data)` | `callable_view_class`、`callable_view_head/foot`、`callable_view_is_object_call`、`callable_view_prefix` |
+| [`Ext\CallableView`](../reference/Ext-CallableView.md) | **函数/方法**：`Views::main_view($data)` | `callable_view_class`、`callable_view_header/footer`、`callable_view_is_object_call`、`callable_view_prefix` |
 | [`Ext\EmptyView`](../reference/Ext-EmptyView.md) | 视图名即要输出的字符串（占位/降级） | `empty_view_key_view`、`empty_view_key_wellcome_class`、`empty_view_trim_view_wellcome` |
 | [`Ext\JsonView`](../reference/Ext-JsonView.md) | 把数据直接 JSON 输出 | `json_view_skip_vars` |
 

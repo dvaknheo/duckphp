@@ -12,7 +12,7 @@
 
 适用对象：想用“一个文件解释整个 demo 应用”时的教程/乐园写法（见 README 的 sample1），或特小型原型。较大项目更倾向于继承 `DuckPhp`、配合 `Foundation/*` 分层。
 
-行为速览：类被解析为自控制器；URL 根路径渲染 `action_index`，调 `view_index` 显示 → 依据 `instanceof`？——不会。它把解析出欢迎动作即自身；显示经 `view_index()`/`view_head()`/`view_foot()` 拼装。
+行为速览：类被解析为自控制器；URL 根路径渲染 `action_index`，调 `view_index` 显示 → 依据 `instanceof`？——不会。它把解析出欢迎动作即自身；显示经 `view_index()`/`view_header()`/`view_footer()` 拼装。
 
 ## 类信息
 
@@ -41,7 +41,7 @@ public static function __callStatic($method, $args)
 
 12 个跨层重名方法因此按顺序判定胜负（`ThrowOn` → System，`Setting` 一组 → Controller，`header/setcookie/exit` → System，`AdminService/UserService` → Controller）；完整对照表与「与旧 `insteadof` 写法的差异」见 [DuckPhp\Foundation\Helper](Foundation-Helper.md#注意事项)。
 
-另有 `protected $head_view='head'`、`protected $foot_view='foot'`，作为 `_Show()` 包头脚模板名。
+另有 `protected $header_view='header'`、`protected $footer_view='footer'`，作为 `_Show()` 包页眉/页脚的模板名（视图名）。
 
 ## 运行时由 embedMe / onInited 使用的键
 
@@ -56,8 +56,8 @@ public static function __callStatic($method, $args)
 | `controller_method_prefix` | embedMe | `'action_'`。 |
 | `cli_enable` | embedMe | true。 |
 | `path_info_compact_enable` | embedMe | true（URL 紧凑映射）。 |
-| `duckphp_all_in_one_wrap_header_foot` | embedMe/onInited | true；为真时 head_view/foot_view 会参与 `_Show` 拼装。 |
-| head_view / foot_view | `onInited()` 依据 wrap 设置 | `'head'`/`'foot'`。 |
+| `duckphp_all_in_one_wrap_header_footer` | embedMe/onInited | true；为真时 header_view/footer_view 会参与 `_Show` 拼装。 |
+| header_view / footer_view | `onInited()` 依据 wrap 设置 | `'header'`/`'footer'`。 |
 | cmd | `onPrepare()` | 把 `static::class` 及（若 cli_command_with_common）`DuckPhp\Component\Command` 都登记为命令入口。 |
 
 > 其它所有可行选项（db/redis/路由重写……）来自父 `DuckPhp::$common_options` + Kernel `kernel_options`：见 `DuckPhp.md` / `Core-KernelTrait.md`。
@@ -82,7 +82,7 @@ class MyApi extends DuckPhpAllInOne {
 MyApi::RunQuickly([]);
 ```
 
-因此 `view_head()/view_index()/view_foot()` 类内置模板可用，但你不必按它们写：在子类定义 `view_{name}` 即为 `name` 视图回调。
+因此 `view_header()/view_index()/view_footer()` 类内置模板可用，但你不必按它们写：在子类定义 `view_{name}` 即为 `name` 视图回调。
 
 ## 配置示例
 
@@ -104,13 +104,13 @@ Tiny::RunQuickly([]);
 
 1. DB / Setting / Session 之类的便捷来自 `__callStatic` 派发到四层 Helper（不是 trait 合成）：想改某个方法的行为，**覆写本类**的同名方法，或改对应层 Helper；本类不再自带 10 个 `$EVENT_*` 静态属性（它们住在 `Business\BusinessHelper` / `Controller\ControllerHelper` 上）。
 2. 欢迎类就是 `static::class`：路由内部把空 URL 当作调用本类的 `action_index`。
-3. `duckphp_all_in_one_wrap_header_foot=false` 时，`_Show` 仍会匹配一个无 head/foot 的直接回调。
+3. `duckphp_all_in_one_wrap_header_footer=false` 时，`_Show` 仍会匹配一个不包头尾的直接回调。
 4. 全类不新增 options：想要完整通用配置，仍落在父类一层（下链参考）。
 5. 反射看不到派发来的那 96 个方法（`method_exists` 为 false）；源码带 96 条 `@method` 注释供 IDE 用。
 
 ## 可用显示用内置视图方法（作为模板示意）
 
-`view_head($data)` 输出 `<html>…<body>`、`view_foot($data)` 输出 `</body></html>`；欢迎首页 `view_index($data)` 打印 “`类名` main page work at…”——这些可在子类以同名方法覆盖。
+`view_header($data)` 输出 `<html>…<body>`、`view_footer($data)` 输出 `</body></html>`；欢迎首页 `view_index($data)` 打印 “`类名` main page work at…”——这些可在子类以同名方法覆盖。
 
 ## 方法列表
 
@@ -125,22 +125,22 @@ Tiny::RunQuickly([]);
 先 call embedMe() 注入默认（欢迎类=本类/action_/wrap 等），再 parent::__construct()
 
     public function onInited(): void
-若 duckphp_all_in_one_wrap_header_foot 为真 → 把 head_view='head'、foot_view='foot' 生效（否则 不包）
+若 duckphp_all_in_one_wrap_header_footer 为真 → 把 header_view='header'、footer_view='footer' 生效（否则 不包）
 
     public function action_index()
 根动作：默认把当前可见变量作 data 渲染 'index' 视图：
 
     public function _Show(array $data, string $view = '')
-视图框口：views 转成类方法回调 view_;匹配失败则让 parent 继续；否则按 head/call/foot 顺序输出
+视图框口：views 转成类方法回调 view_；匹配失败则让 parent 继续；否则按 页眉 → 正文 → 页脚 顺序输出
 
-    public function view_head($data)
-内置页头字符串（<html><head>…<body>）
+    public function view_header($data)
+内置页眉字符串（<html><head>…<body>）
 
     public function view_index($data)
 内置欢迎正文：打印 类名 main page …，加实现时间用于扫视图
 
-    public function view_foot($data)
-内置页尾（</body></html>）
+    public function view_footer($data)
+内置页脚（</body></html>）
 
 ### 受保护方法
 

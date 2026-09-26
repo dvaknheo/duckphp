@@ -342,10 +342,10 @@ class AppWithAllOptions extends DuckPhp
             $options['callable_view_class'] = NULL;
 
             // CallableView 页脚函数
-            $options['callable_view_foot'] = NULL;
+            $options['callable_view_footer'] = NULL;
 
             // CallableView 页眉函数
-            $options['callable_view_head'] = NULL;
+            $options['callable_view_header'] = NULL;
 
             // 
             $options['callable_view_is_object_call'] = true;

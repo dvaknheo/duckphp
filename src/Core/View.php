@@ -20,9 +20,9 @@ class View extends ComponentBase
     public $data = [];
 
     /** @var ?string */
-    protected $head_file;
+    protected $header_file;
     /** @var ?string */
-    protected $foot_file;
+    protected $footer_file;
     /** @var ?string */
     protected $view_file;
     /** @var ?int */
@@ -63,8 +63,8 @@ class View extends ComponentBase
         }
 
         $this->view_file = $this->getViewFile($view);
-        $this->head_file = $this->getViewFile($this->head_file);
-        $this->foot_file = $this->getViewFile($this->foot_file);
+        $this->header_file = $this->getViewFile($this->header_file);
+        $this->footer_file = $this->getViewFile($this->footer_file);
 
         $this->data = array_merge($this->data, $data);
 
@@ -72,14 +72,14 @@ class View extends ComponentBase
         unset($view);
         extract($this->data);
 
-        if ($this->head_file) {
-            include $this->head_file;
+        if ($this->header_file) {
+            include $this->header_file;
         }
 
         include $this->view_file;
 
-        if ($this->foot_file) {
-            include $this->foot_file;
+        if ($this->footer_file) {
+            include $this->footer_file;
         }
         if ($this->options['view_skip_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();
@@ -114,8 +114,8 @@ class View extends ComponentBase
     }
     public function reset()
     {
-        $this->head_file = null;
-        $this->foot_file = null;
+        $this->header_file = null;
+        $this->footer_file = null;
         $this->data = [];
         $this->view_file = null;
         $this->temp_view_file = null;
@@ -128,10 +128,10 @@ class View extends ComponentBase
     {
         return $this->data;
     }
-    public function setViewHeaderFooter(?string $head_file, ?string $foot_file): void
+    public function setViewHeaderFooter(?string $header_file, ?string $footer_file): void
     {
-        $this->head_file = $head_file;
-        $this->foot_file = $foot_file;
+        $this->header_file = $header_file;
+        $this->footer_file = $footer_file;
     }
     /**
      *

@@ -102,7 +102,7 @@ class DuckPhp extends App
         'exception_for_business' => \Exception::class,
         'exception_for_controller' => \Exception::class,
         // DuckPhpAllInOne::embedMe() sets it to true
-        'duckphp_all_in_one_wrap_header_foot' => false,
+        'duckphp_all_in_one_wrap_header_footer' => false,
 
         'permission_menu_tree_for_admin' => null,
 

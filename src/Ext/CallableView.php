@@ -11,8 +11,8 @@ use DuckPhp\Core\View;
 class CallableView extends View
 {
     public $options = [
-        'callable_view_head' => null,
-        'callable_view_foot' => null,
+        'callable_view_header' => null,
+        'callable_view_footer' => null,
         'callable_view_class' => null,
         'callable_view_is_object_call' => true,
         'callable_view_prefix' => null,
@@ -67,8 +67,8 @@ class CallableView extends View
             parent::_Show($data, $view);
             return;
         }
-        $header = $this->viewToCallback($this->options['callable_view_head']?:$this->head_file);
-        $footer = $this->viewToCallback($this->options['callable_view_foot']?:$this->foot_file);
+        $header = $this->viewToCallback($this->options['callable_view_header']?:$this->header_file);
+        $footer = $this->viewToCallback($this->options['callable_view_footer']?:$this->footer_file);
         if (null !== $header) {
             ($header)($data);
         }

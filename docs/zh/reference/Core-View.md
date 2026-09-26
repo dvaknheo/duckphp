@@ -68,7 +68,7 @@ View::_()->setViewHeaderFooter('_layout/head', '_layout/foot');
 View::_()->_Show(['name'=>'D'], 'another'); // hence: head、主体、foot 依次输出
 ```
 
-注意 `_Show` 用传入（对象级的 `$head_file/ $foot_file`）默认取当前设置；不设时只有主体。
+注意 `_Show` 用传入（对象级的 `$header_file`/`$footer_file`）默认取当前设置；不设时只有主体。
 
 #### reset
 
@@ -132,7 +132,7 @@ $viewOptions = [
     public function getViewData(): array
 返回当前已 assign 数据数组
 
-    public function setViewHeaderFooter(?string $head_file, ?string $foot_file): void
+    public function setViewHeaderFooter(?string $header_file, ?string $footer_file): void
 设置渲染包裹用的页眉/页脚模板（视图名；`_Show()` 时按 头 → 主体 → 尾 依次输出）
 
     public function assignViewData($key, $value = null): void
@@ -148,5 +148,5 @@ $viewOptions = [
 - [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 组件 init
 - [DuckPhp\Core\App](Core-App.md) — host 层 `_Show` 视图入口会调用 View
 - [DuckPhp\Ext\CallableView](Ext-CallableView.md)、[DuckPhp\Ext\JsonView](Ext-JsonView.md) — 其它视图风格组件
-- 层级解释：[Foundation\Controller](Foundation-Controller-Base.md) ; 页面 shell 见 DuckPhpAllInOne view_head/foot
+- 层级解释：[Foundation\Controller](Foundation-Controller-Base.md) ; 页面 shell 见 DuckPhpAllInOne 的 view_header/view_footer
 - guide：[layers](../guide/layers.md)

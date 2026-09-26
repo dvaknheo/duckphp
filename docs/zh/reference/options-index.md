@@ -30,8 +30,8 @@
 | 选项 | 默认值 | 来源类 | 说明 |
 |---|---|---|---|
 | `callable_view_class` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 提供视图回调的类（可为类名字符串或对象）。 |
-| `callable_view_foot` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | foot 视图回调名（缺省用父类 `foot_file`）。 |
-| `callable_view_head` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | head 视图回调名（缺省用父类 `head_file`）。 |
+| `callable_view_footer` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 页脚视图回调名（缺省用父类 `View::$footer_file`）。 |
+| `callable_view_header` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 页眉视图回调名（缺省用父类 `View::$header_file`）。 |
 | `callable_view_is_object_call` | `true` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 类名为字符串且可 `_()` 时转为单例实例，否则 `new`。 |
 | `callable_view_prefix` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 视图名加工前缀（如 `view_`，与 `/`→`_` 替换）。 |
 | `callable_view_skip_replace` | `false` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 为 `true` 时不把自身替换成全局 `View` 单例。 |
@@ -316,7 +316,7 @@
 ## 按前缀分组（便于成组记忆）
 
 - **`apiserver_*`**（5）：`apiserver_404_as_exception`、`apiserver_base_class`、`apiserver_class_postfix`、`apiserver_namespace`、`apiserver_use_singletonex`
-- **`callable_*`**（6）：`callable_view_class`、`callable_view_foot`、`callable_view_head`、`callable_view_is_object_call`、`callable_view_prefix`、`callable_view_skip_replace`
+- **`callable_*`**（6）：`callable_view_class`、`callable_view_footer`、`callable_view_header`、`callable_view_is_object_call`、`callable_view_prefix`、`callable_view_skip_replace`
 - **`console_*`**（4）：`console_command_classes`、`console_command_default`、`console_command_phase`、`console_readlines_logfile`
 - **`controller_*`**（13）：`controller_class_adjust`、`controller_class_base`、`controller_class_map`、`controller_class_postfix`、`controller_fix_mistake_path_info`、`controller_method_prefix`、`controller_path_ext`、`controller_prefix_post`、`controller_resource_prefix`、`controller_url_prefix`、`controller_welcome_class`、`controller_welcome_class_visible`、`controller_welcome_method`
 - **`data_*`**（5）：`data_file_bump_allowed`、`data_file_bump_keys`、`data_file_bump_prefix_keys`、`data_file_enable`、`data_file_json_file`

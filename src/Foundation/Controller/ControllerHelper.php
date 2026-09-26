@@ -106,9 +106,9 @@ class ControllerHelper
         App::_()->checkInstallToPage($url_install);
     }
 
-    public static function setViewHeaderFooter($head_file = null, $foot_file = null)
+    public static function setViewHeaderFooter($header_file = null, $footer_file = null)
     {
-        return View::_()->setViewHeaderFooter($head_file, $foot_file);
+        return View::_()->setViewHeaderFooter($header_file, $footer_file);
     }
     public static function assignViewData($key, $value = null)
     {

@@ -11,8 +11,8 @@ class CallableViewTest extends \PHPUnit\Framework\TestCase
         
         $path_view=\LibCoverage\LibCoverage::G()->getClassTestPath(CallableView::class);
         $options=[
-            'callable_view_head'=>'head',
-            'callable_view_foot'=>'foot',
+            'callable_view_header'=>'header',
+            'callable_view_footer'=>'footer',
             'callable_view_class'=>null,
             'callable_view_prefix'=>'test_CallableView_',
             'callable_view_skip_replace'=>false,
@@ -57,11 +57,11 @@ function test_CallableView_main($data)
 {
     //
 }
-function test_CallableView_head($data)
+function test_CallableView_header($data)
 {
     //
 }
-function test_CallableView_foot($data)
+function test_CallableView_footer($data)
 {
     //
 }

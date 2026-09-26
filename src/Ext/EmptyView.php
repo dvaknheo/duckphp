@@ -47,8 +47,8 @@ class EmptyView extends View
             }
         }
         $this->data[$this->options['empty_view_key_view']] = $view; //$this->getViewFile($view);
-        $this->data[$this->options['empty_view_key_view'].'_head'] = $this->getViewFile($this->head_file);
-        $this->data[$this->options['empty_view_key_view'].'_foot'] = $this->getViewFile($this->foot_file);
+        $this->data[$this->options['empty_view_key_view'].'_header'] = $this->getViewFile($this->header_file);
+        $this->data[$this->options['empty_view_key_view'].'_footer'] = $this->getViewFile($this->footer_file);
     }
     //@override
     /**

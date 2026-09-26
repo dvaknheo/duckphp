@@ -367,8 +367,8 @@ Core\View 的扩展
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `callable_view_head` | `null` | head 视图回调名（缺省用父类 `head_file`）。 |
-| `callable_view_foot` | `null` | foot 视图回调名（缺省用父类 `foot_file`）。 |
+| `callable_view_header` | `null` | 页眉视图回调名（缺省用父类 `View::$header_file`）。 |
+| `callable_view_footer` | `null` | 页脚视图回调名（缺省用父类 `View::$footer_file`）。 |
 | `callable_view_class` | `null` | 提供视图回调的类（可为类名字符串或对象）。 |
 | `callable_view_is_object_call` | `true` | 类名为字符串且可 `_()` 时转为单例实例，否则 `new`。 |
 | `callable_view_prefix` | `null` | 视图名加工前缀（如 `view_`，与 `/`→`_` 替换）。 |
@@ -653,7 +653,7 @@ DuckPHP 内置的“用 PHP 内置服务器跑项目”的启动器
 | `table_prefix` | `''` | Ext\SqlDumper / Ext\RouteHookWebInstaller | 数据库表名前缀，导出/安装 SQL 时用 `{prefix}` 占位替换。 |
 | `exception_for_business` | `\Exception::class` | CoreHelper::_BusinessThrowOn() | `BusinessThrowOn()` 未显式指定时的异常类。 |
 | `exception_for_controller` | `\Exception::class` | CoreHelper::_ControllerThrowOn() | `ControllerThrowOn()` 未显式指定时的异常类。 |
-| `duckphp_all_in_one_wrap_header_foot` | `false` | DuckPhpAllInOne::onInited() | AllInOne 入口是否给 `_Show()` 包 head/foot 视图（该类自己会置 true）。 |
+| `duckphp_all_in_one_wrap_header_footer` | `false` | DuckPhpAllInOne::onInited() | AllInOne 入口是否给 `_Show()` 包页眉/页脚视图（该类自己会置 true）。 |
 | `permission_menu_tree_for_admin` | `null` | Ext\PermissionMenu::getMenuJsonFileConfig() | 后台权限菜单树的配置文件（相对 `path_config`）。 |
 | `duckcoverage_test_lister` | `null` | 外部包 dvaknheo/duckcoverage | 配合该 composer 包做覆盖测试使用，框架自身不读。 |
 | `background` | `false` | HttpServer::run*() | 内置服务器是否后台运行；CLI 开关 `-b/--background` 会把它置 true。 |

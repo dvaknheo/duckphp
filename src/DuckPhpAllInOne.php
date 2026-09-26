@@ -76,7 +76,7 @@ use DuckPhp\Foundation\Helper;
  * @method static mixed Render($view, $data = null)
  * @method static mixed Show($data = [], $view = '')
  * @method static mixed checkInstall(?string $url_install = null)
- * @method static mixed setViewHeaderFooter($head_file = null, $foot_file = null)
+ * @method static mixed setViewHeaderFooter($header_file = null, $footer_file = null)
  * @method static mixed assignViewData($key, $value = null)
  * @method static mixed IsAjax()
  * @method static mixed Show302($url)
@@ -140,8 +140,8 @@ class DuckPhpAllInOne extends DuckPhp
         }
         trigger_error("Call to undefined method " . static::class . "::$method()", E_USER_ERROR);
     }
-    protected $head_view = 'head';
-    protected $foot_view = 'foot';
+    protected $header_view = 'header';
+    protected $footer_view = 'footer';
     protected function embedMe(): void
     {
         // embed welcome page to this class
@@ -156,7 +156,7 @@ class DuckPhpAllInOne extends DuckPhp
             'controller_method_prefix' => 'action_',
             'cli_enable' => true,
             'path_info_compact_enable' => true,
-            'duckphp_all_in_one_wrap_header_foot' => true,
+            'duckphp_all_in_one_wrap_header_footer' => true,
         ];
 
         $this->options = array_merge($this->options, $ext_options);
@@ -177,9 +177,9 @@ class DuckPhpAllInOne extends DuckPhp
     }
     public function onInited(): void
     {
-        if ($this->options['duckphp_all_in_one_wrap_header_foot']) {
-            $this->head_view = 'head';
-            $this->foot_view = 'foot';
+        if ($this->options['duckphp_all_in_one_wrap_header_footer']) {
+            $this->header_view = 'header';
+            $this->footer_view = 'footer';
         }
     }
     /////////////// controller ///////////////
@@ -203,18 +203,18 @@ class DuckPhpAllInOne extends DuckPhp
         if (null === $callback) {
             return parent::_Show($data, $view);
         }
-        $head = $this->viewToCallback($this->head_view ?: 'head');
-        $foot = $this->viewToCallback($this->foot_view ?: 'foot');
-        if (null !== $head) {
-            ($head)($data);
+        $header = $this->viewToCallback($this->header_view ?: 'header');
+        $footer = $this->viewToCallback($this->footer_view ?: 'footer');
+        if (null !== $header) {
+            ($header)($data);
         }
         ($callback)($data);
-        if (null !== $foot) {
-            ($foot)($data);
+        if (null !== $footer) {
+            ($footer)($data);
         }
     }
     ///////////////
-    public function view_head($data)
+    public function view_header($data)
     {
         echo <<<EOT
 <html><head><meta charset="UTF-8"><title>demo</title></head><body>
@@ -224,7 +224,7 @@ EOT;
     {
         echo  static::class. " main page work at".DATE(DATE_ATOM);
     }
-    public function view_foot($data)
+    public function view_footer($data)
     {
         echo <<<EOT
 </body></html>
