@@ -25,7 +25,7 @@ DuckPhp\Core\App 的子类，本身不定义复杂的业务，而是
 | `lang_default` | `null` | 多语言默认语言（与 Lang 组件共享；不做进一步检测的兜底）。 |
 | `lang_final` | `null` | 最终语言；设置后不再自动检测、直接以它为准。 |
 | `local_database` | `false` | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不进共享桶 `#shared`，互不干扰）。 |
-| `local_redis` | `false` | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
+| `local_redis` | `false` | Redis 同理：为 `true` 时新建一份独立的 `RedisManager`。 |
 | `exception_reporter` | `null` | （该类文档未写说明） |
 | `exception_for_project` | `null` | （该类文档未写说明） |
 
@@ -519,7 +519,7 @@ RouteLister extends ComponentBase 提供“把系…
 
 | 选项 | 默认值 | 说明 |
 |---|---|---|
-| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
+| `classes_to_get_controller_path` | `[]` | 额外「待尝试的类/控制器文件」候选：仅用于**定位控制器目录**（与欢迎类、`path_config` 同属候选；候选文件不存在就试下一个），定位到目录后再递归枚举其下的 `.php` 判定哪些是 Controller。 |
 
 ### DuckPhp\Ext\SqlDumper
 

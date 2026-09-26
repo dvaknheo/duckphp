@@ -35,7 +35,7 @@
 | `callable_view_is_object_call` | `true` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 类名为字符串且可 `_()` 时转为单例实例，否则 `new`。 |
 | `callable_view_prefix` | `null` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 视图名加工前缀（如 `view_`，与 `/`→`_` 替换）。 |
 | `callable_view_skip_replace` | `false` | [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 为 `true` 时不把自身替换成全局 `View` 单例。 |
-| `classes_to_get_controller_path` | `[]` | [DuckPhp\Ext\RouteLister](Ext-RouteLister.md) | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
+| `classes_to_get_controller_path` | `[]` | [DuckPhp\Ext\RouteLister](Ext-RouteLister.md) | 额外「待尝试的类/控制器文件」候选：仅用于**定位控制器目录**（与欢迎类、`path_config` 同属候选；候选文件不存在就试下一个），定位到目录后再递归枚举其下的 `.php` 判定哪些是 Controller。 |
 | `cli_command_with_common` | `true` | [DuckPhp\DuckPhp](DuckPhp.md) | 是否把内置默认 CLI 命令集（`DuckPhp\Component\Command`）登记进当前应用的命令列表。 |
 | `cli_enable` | `true` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | CLI 环境下是否进入命令处理（`execute()`）。为 `false` 即使 CLI 也走 Web。 |
 | `close_resource_at_output` | `false` | [DuckPhp\Core\App](Core-App.md) | 输出结束是否统一关闭/回收资源（默认关闭）。 |
@@ -192,7 +192,7 @@
 | `lang_url_param` | `'lang'` | [DuckPhp\Component\Lang](Component-Lang.md) | url 探测参数名（例如 `?lang=zh_CN`）。 |
 | `lang_warn_on_missing` | `false` | [DuckPhp\Component\Lang](Component-Lang.md) | 缺句时是否 `Logger::_()->warning("No Language sentence Dectected {key}")`；默认关。 |
 | `local_database` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不进共享桶 `#shared`，互不干扰）。 |
-| `local_redis` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
+| `local_redis` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | Redis 同理：为 `true` 时新建一份独立的 `RedisManager`。 |
 | `log_file_template` | `'log_%Y-%m-%d_%H_%i.log'` | [DuckPhp\Core\Logger](Core-Logger.md) | 日志文件名模板；`%X` 由 `date(X)` 展开。 |
 | `log_prefix` | `'DuckPhpLog'` | [DuckPhp\Core\Logger](Core-Logger.md) | 写到行的前缀标识。 |
 

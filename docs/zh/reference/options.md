@@ -52,7 +52,7 @@ $this->options = array_replace_recursive($this->options, $options);
 框架会读、但**故意不写进任何 `$options`** 的键。它们可以像普通选项一样用（写进应用类 `$options`，或在 `init($options)` 里给），只是不进上面的正式清单——因为它们是「框架内部开关」或「给外部工具用的钩子」，不想让人当成常规配置项。
 
 <!-- GEN:hidden start -->
-| 隐藏选项 | 默认值 | 出处 | 说明 |
+| 选项 | 默认值 | 出处 | 说明 |
 |---|---|---|---|
 | `not_empty` | `true` | DuckPhp::$common_options | 声明在默认选项里、但源码中没有任何读取点（历史遗留，可忽略）。 |
 | `url_admin_home` | `null` | GlobalAdmin\Admin::urlForHome() | 后台首页 URL 的「应用级」覆盖：优先于组件的 `globaladmin_url_home`。 |
