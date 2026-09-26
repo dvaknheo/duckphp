@@ -65,8 +65,10 @@ class App extends DuckPhp
 {
     public $options = [
         'path' => __DIR__ . '/../../',      // 项目根：view/ config/ runtime/ 都相对它
-        'error_404' => '_sys/error_404',    // 404 视图（相对 view/）
-        'error_500' => '_sys/error_500',
+        // 下面两个**只在视图文件真的存在时**才配：写了 `error_404` 却没有 view/_sys/error_404.php，
+        // 404 会变成 500（框架得先渲染你指定的错误页）。留空则用框架内置的占位页。
+        //'error_404' => '_sys/error_404',  // 404 视图（相对 view/）
+        //'error_500' => '_sys/error_500',
     ];
 }
 ```
@@ -168,6 +170,7 @@ project/
 | `Failed opening required vendor/autoload.php` | 入口的相对路径写错                                  | 照抄上面入口里的「两处 vendor」写法                                                                     |
 | `php -S` 下除了首页都 404                           | 忘了 `-t public`，或访问了 `/index.php/foo` 之外的路径 | 用 `-t public`；短路径由框架接管（第 1-7 章讲服务器配置）                                                     |
 | CLI 里跑到 Web 分支                                | 入口没传 `cli_enable`，而 `cli_enable` 被关掉了      | CLI 入口传 `['cli_enable' => true]`                                                          |
+| 手写工程里随便访问一个不存在的 URL 得到 **500** 而不是 404      | 配了 `error_404` 但 `view/_sys/error_404.php` 不存在 | 补上错误页视图（照抄 `skeleton/view/_sys/`），或去掉这个选项——框架会给内置占位页 |
 
 ## 下一步
 
