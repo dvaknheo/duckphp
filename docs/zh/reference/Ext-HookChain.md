@@ -72,4 +72,4 @@ HookChain::Hook($target, function () { /* … */ });
 
 ## 相关链接
 
-- [DuckPhp\Ext\Misc](Ext-Misc.md) — 其它杂项工具扩展
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 本类继承的基类

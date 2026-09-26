@@ -40,7 +40,7 @@ php bin/cli.php routes        # 装好之后就能列路由表了（第 2-16 章
 |---|---|---|
 | **常用（要主动装配）** | `RouteHookManager`、`MyMiddlewareManager`、`RouteLister`、`PermissionMenu`、`SqlDumper`/`SqlDumperSupporter*`、`CallableView`/`EmptyView`/`JsonView`、`RouteHook*` 家族、`DuckPhpInstaller` | 需要中间件、路由表、后台菜单、SQL 导出、换视图实现时 |
 | **兼容层（能用，不在推荐路径上）** | `EventManager`、`ExceptionWrapper`、`MyFacadesBase`/`MyFacadesAutoLoader`、`ExtendableStaticCallTrait` | 只在老代码里碰到，或明确知道自己要什么 |
-| **过时与冷门** | `HookChain`、`ThrowOnTrait`、`StaticReplacer`、`MiniRoute`、`Misc` | 在参考手册翻到它们时，知道自己站在哪一边 |
+| **过时与冷门** | `HookChain`、`ThrowOnTrait`、`StaticReplacer` | 在参考手册翻到它们时，知道自己站在哪一边 |
 | **不是给业务用的页** | `RouteHookWebInstallerView`、`PermissionMenuMetaInterface`、`RouteHookDirectoryMode` | 改安装向导外观、菜单元数据模式、目录模式路由时 |
 
 判断「过时」的依据只有源码里的标记，跑一次就知道当前名单：
@@ -49,7 +49,7 @@ php bin/cli.php routes        # 装好之后就能列路由表了（第 2-16 章
 grep -rn "@todo deprecate" src/     # 写作时命中 6 个类
 ```
 
-⚠️ **「不推荐」不等于「会删」**：这些类都有测试兜底（覆盖率是本仓库的硬指标，[第 4-7 章](coverage.md)），1.x 里不会移除。
+⚠️ **「不推荐」不等于「会删」**：上表这些类都有测试兜底（覆盖率是本仓库的硬指标，[第 4-7 章](coverage.md)），1.x 里不打算移除。真正删掉的只有 `Ext\MiniRoute` 与 `Ext\Misc`（作者判定「没人用 / 不需要了」，源码、测试、参考页一起删）——所以**别照 `docs/en/` 那类陈旧副本里出现过的类名写配置**。
 
 ## 常用扩展
 
@@ -257,34 +257,7 @@ trait ThrowOnTrait
 
 **两个已知陷阱**（参考页也写了，动手前务必看）：`_CLASS_STATICS()` 返回的是**副本**，改它不会写回真实类静态属性；`_STATICS()` 的槽位按**调用位置**区分，同一个名字在不同函数里是两个槽。
 
-### 18. `Ext\MiniRoute`：`Core\Route` 的早期子集
-
-[`Ext\MiniRoute`](../reference/Ext-MiniRoute.md) 只做「PATH_INFO → 控制器类/方法 → 反射校验 → 调用」这一件事，**没有钩子链、没有重写、没有资源路由**（[`Core\Route`](../reference/Core-Route.md) 的完整能力见[第 2-3 章](routing.md)）。失败时它**不抛异常**，而是把错误码写进 `$route_error`（`E001` 前缀不符、`E003` 类不存在、`E005` 隐藏方法……），用 `getRouteError()` 读。
-
-**为什么在推荐路径外**：框架的路由是写死的 `Route::_()`（`src/DuckPhp.php` 174 行就是这么取的），**没有「换路由类」的选项**；`MiniRoute` 也不是 `Route` 的子类，无法借 `Route::_(new MiniRoute())` 顶上。要用它只能自己起一套：
-
-```php
-\DuckPhp\Ext\MiniRoute::_()->init(['namespace' => 'MyProject'], $app);
-$ok = \DuckPhp\Ext\MiniRoute::_()->run();      // 解析并调用控制器
-```
-
-也就是说：**进了 DuckPHP 的应用，就别再引 MiniRoute**；只有「我只想要一个路由解析器、不要整个框架」时才可能用它。
-
-### 19. `Ext\Misc`：一个能力都还在，但都不再是唯一选择
-
-[`Ext\Misc`](../reference/Ext-Misc.md) 是若干杂项工具的大杂烩，逐项看就明白它为什么被边缘化：
-
-| 方法 | 实际行为 | 现在用什么 |
-|---|---|---|
-| `Import($file)` | `include_once {path}/{path_lib}/{file}.php`，`path_lib` 默认 `'lib'` | Composer 自动加载（`src/` 里除它自己**没有任何地方**读 `path_lib`） |
-| `RecordsetH($data, $cols)` | 对指定列做 HTML 转义 | `CoreHelper::H()` / 全局 `__h()`（[第 2-18 章](security-performance.md)） |
-| `RecordsetUrl($data, $cols_map)` | 按 `{列名}` 模板替换后经 `Route::Url` 生成 URL | 可留用；等价的还有 `__url()` |
-| `DI($name, $object = null)` | 读/写组件**实例内**的一个数组（`$this->_di_container`） | 跨类共享请用相位容器（[第 4-1 章](container-phases.md)）——这个 DI 只在 `Misc::_()` 这一份实例里可见 |
-| `CallAPI($class, $method, $input, $interface)` | 反射调用：按参数名从 `$input` 取值、按 `bool/int/float/string` 过滤、缺参抛 `ReflectionException`、可选校验类实现了某接口 | 没有替代品；需要就照用 |
-
-**唯一还值得了解的**是 `CallAPI()`：它做的是「把 `$_POST` 按目标方法的签名喂进去」，这在 RPC / 表单服务化的场景里比手写 `func_get_args()` 稳。其余四项用上一列的现代写法更省事。
-
-### 20. 几个「不是给业务用」的冷门页
+### 18. 几个「不是给业务用」的冷门页
 
 它们**没有过时**，只是用途固定：
 
@@ -304,6 +277,7 @@ $ok = \DuckPhp\Ext\MiniRoute::_()->run();      // 解析并调用控制器
 | 后台菜单空着 | 控制器没实现 `AdminControllerInterface`，或菜单文件路径没配 | 继承 `AdminControllerBase`；配 `permission_menu_tree_for_admin`（§6） |
 | 换视图实现后页面没变 | 忘了 `*_skip_replace`，或没在 `init()` 里 `View::_(static::_())` | 见各扩展参考页（§8） |
 | 在 `$GLOBALS`/静态属性上做隔离，测试还是串味 | 用的是 `Ext\StaticReplacer` 那套老办法 | 换相位或换实例（[第 4-1 章](container-phases.md)） |
+| `ext` 里写 `DuckPhp\Ext\MiniRoute` / `DuckPhp\Ext\Misc` → 启动抛 `ext [...] not exists` | 这两个类**已经删除**（作者判定没人用 / 不需要了） | 把那行从 `ext` 里删掉：路由用 `Core\Route`（[第 2-3 章](routing.md)），引入库文件用 Composer、转义用 `__h()`、共享实例用相位容器 |
 
 ## 下一步
 

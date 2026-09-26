@@ -2,7 +2,7 @@
 
 > 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
-选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**208** 个选项（同名选项在不同类各自声明，合计 242 处；另有 11 个隐藏选项见文末）。
+选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **40** 个类、**207** 个选项（同名选项在不同类各自声明，合计 229 处；另有 11 个隐藏选项见文末）。
 
 想按名字找？看 [应用选项（按字母顺序索引）](options-index.md)；选项机制见 [应用选项总览](options.md)。
 
@@ -432,37 +432,6 @@ Core\View 的扩展
 |---|---|---|
 | `json_view_skip_replace` | `false` | 为 `true` 时不替换全局 `View::_()`。 |
 | `json_view_skip_vars` | `[]` | 输出前需要从 `$data` 中剔除的键列表。 |
-
-### DuckPhp\Ext\MiniRoute
-
-极简版 MVC 路由（Core\Route 的子集）
-
-类文档：[DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
-
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `namespace` | `''` | 应用命名空间。 |
-| `namespace_controller` | `'Controller'` | 控制器子命名空间。 |
-| `controller_path_ext` | `''` | 路径后缀要求（如 `.php`，为空不校验）。 |
-| `controller_welcome_class` | `'Main'` | 欢迎控制器（空路径时用）。 |
-| `controller_welcome_class_visible` | `false` | 欢迎类是否允许通过 URL 显式访问。 |
-| `controller_welcome_method` | `'index'` | 欢迎方法。 |
-| `controller_class_postfix` | `''` | 控制器类后缀。 |
-| `controller_method_prefix` | `''` | 方法名前缀（如 `action_`）。 |
-| `controller_class_map` | `[]` | 类名映射（替换）。 |
-| `controller_resource_prefix` | `''` | 资源前缀（保留）。 |
-| `controller_url_prefix` | `''` | URL 前缀（剥除）。 |
-
-### DuckPhp\Ext\Misc
-
-Misc 收集若干“杂项”工具
-
-类文档：[DuckPhp\Ext\Misc](Ext-Misc.md)
-
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `path` | `''` | 项目根路径（拼接相对 `path_lib` 用）。 |
-| `path_lib` | `'lib'` | 库目录；以 `/` 开头视为绝对目录，否则拼在 `path` 下。 |
 
 ### DuckPhp\Ext\MyFacadesAutoLoader
 

@@ -79,37 +79,37 @@ class AppWithAllOptions extends DuckPhp
         //  (DuckPhp\Core\Route)
         // $options['controller_class_base'] = '';
 
-        //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route)
         // $options['controller_class_map'] = array ( );
 
-        //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route)
         // $options['controller_class_postfix'] = '';
 
         //  (DuckPhp\Core\Route)
         // $options['controller_fix_mistake_path_info'] = true;
 
-        //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route)
         // $options['controller_method_prefix'] = '';
 
-        //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route)
         // $options['controller_path_ext'] = '';
 
         //  (DuckPhp\Core\Route)
         // $options['controller_prefix_post'] = 'do_';
 
-        //  (DuckPhp\Core\Route, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route, DuckPhp\Component\RouteHookResource)
         // $options['controller_resource_prefix'] = '';
 
-        //  (DuckPhp\Core\Route, DuckPhp\Component\RouteHookRewrite, DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route, DuckPhp\Component\RouteHookRewrite, DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookResource)
         // $options['controller_url_prefix'] = '';
 
-        //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route)
         // $options['controller_welcome_class'] = 'Main';
 
-        //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route)
         // $options['controller_welcome_class_visible'] = false;
 
-        //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route)
         // $options['controller_welcome_method'] = 'index';
 
         // 数据库，单一数据库配置 (DuckPhp\Component\DbManager)
@@ -226,10 +226,10 @@ class AppWithAllOptions extends DuckPhp
         // 日志前缀 (DuckPhp\Core\Logger)
         // $options['log_prefix'] = 'DuckPhpLog';
 
-        // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\Route, DuckPhp\Ext\DuckPhpInstaller, DuckPhp\Ext\MiniRoute, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
+        // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\Route, DuckPhp\Ext\DuckPhpInstaller, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
         // $options['namespace'] = '';
 
-        // 控制器命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute, DuckPhp\Ext\StrictCheck)
+        // 控制器命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['namespace_controller'] = 'Controller';
 
         // 初始化完成后处理回调 (DuckPhp\Core\App)
@@ -247,7 +247,7 @@ class AppWithAllOptions extends DuckPhp
         // `override_class`切过去的时候会在此保存旧的`override_class` (DuckPhp\Core\App)
         // $options['override_class_from'] = NULL;
 
-        // 工程路径 (DuckPhp\Core\App, DuckPhp\Core\Logger, DuckPhp\Core\View, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\CallableView, DuckPhp\Ext\DuckPhpInstaller, DuckPhp\Ext\EmptyView, DuckPhp\Ext\JsonView, DuckPhp\Ext\Misc)
+        // 工程路径 (DuckPhp\Core\App, DuckPhp\Core\Logger, DuckPhp\Core\View, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\CallableView, DuckPhp\Ext\DuckPhpInstaller, DuckPhp\Ext\EmptyView, DuckPhp\Ext\JsonView)
         // $options['path'] = '';
 
         // 文档路径 (DuckPhp\Component\RouteHookResource)
@@ -469,51 +469,6 @@ class AppWithAllOptions extends DuckPhp
 
             // 【共享】关闭  View 视图的 notice 警告，以避免麻烦的处理。
             // $options['view_skip_notice_error'] = true;
-
-        //*/
-        /*
-        $options['ext']['DuckPhp\\Ext\\MiniRoute'] = true;
-            // 【共享】
-            // $options['controller_class_map'] = array ( );
-
-            // 【共享】
-            // $options['controller_class_postfix'] = '';
-
-            // 【共享】
-            // $options['controller_method_prefix'] = '';
-
-            // 【共享】
-            // $options['controller_path_ext'] = '';
-
-            // 【共享】
-            // $options['controller_resource_prefix'] = '';
-
-            // 【共享】
-            // $options['controller_url_prefix'] = '';
-
-            // 【共享】
-            // $options['controller_welcome_class'] = 'Main';
-
-            // 【共享】
-            // $options['controller_welcome_class_visible'] = false;
-
-            // 【共享】
-            // $options['controller_welcome_method'] = 'index';
-
-            // 【共享】命名空间
-            // $options['namespace'] = '';
-
-            // 【共享】控制器命名空间
-            // $options['namespace_controller'] = 'Controller';
-
-        //*/
-        /*
-        $options['ext']['DuckPhp\\Ext\\Misc'] = true;
-            // 【共享】工程路径
-            // $options['path'] = '';
-
-            // 导入的 Import 库目录路径
-            $options['path_lib'] = 'lib';
 
         //*/
         /*

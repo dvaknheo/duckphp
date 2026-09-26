@@ -2,7 +2,7 @@
 
 > 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
-一共 **208** 个选项；同名选项出现在多个类时**合并为一行**，来源类并列。隐藏选项见 [按类分组](options-by-class.md#隐藏选项) 文末（本页只收正式选项）。
+一共 **207** 个选项；同名选项出现在多个类时**合并为一行**，来源类并列。隐藏选项见 [按类分组](options-by-class.md#隐藏选项) 文末（本页只收正式选项）。
 
 按类查看：[应用选项（按类分组）](options-by-class.md) · 选项机制：[应用选项总览](options.md)
 
@@ -46,17 +46,17 @@
 | `console_readlines_logfile` | `''` | [DuckPhp\Core\Console](Core-Console.md) | 若给路径：`readLines` 在每次输入回显后把它写入该文件（相对 `path_runtime`）；相对实际 `path_runtime`。 |
 | `controller_class_adjust` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 类名/方法名**归一化规则**。字符串可含多个分号分隔指令：`uc_class`（路径最后一块 ucfirst）、`uc_method`（方法名 ucfirst）、`uc_full_class`（每段都 ucfirst）。也支持给它传数组。 |
 | `controller_class_base` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 控制器基类约束。设置后目标控制器必须 `is_subclass_of` 该基类，否则 `E004`。字符串里可用 `~` 占位并在判断时替换为控制器命名空间前缀。 |
-| `controller_class_map` | `[]` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制器类名映射表：`旧全名 => 新全名`。可静态配置；也可运行时用 `replaceController()` 写入。 |
-| `controller_class_postfix` | `'Controller'` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 类名后缀（读路径得到的块再补上它）。 |
+| `controller_class_map` | `[]` | [DuckPhp\Core\Route](Core-Route.md) | 控制器类名映射表：`旧全名 => 新全名`。可静态配置；也可运行时用 `replaceController()` 写入。 |
+| `controller_class_postfix` | `'Controller'` | [DuckPhp\Core\Route](Core-Route.md) | 类名后缀（读路径得到的块再补上它）。 |
 | `controller_fix_mistake_path_info` | `true` | [DuckPhp\Core\Route](Core-Route.md) | 当没有 PATH_INFO 且脚本即 `/index.php` 时，自动从 `REQUEST_URI` 的 path 补齐并回写 PATH_INFO。 |
-| `controller_method_prefix` | `''` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 方法名前缀。留空意味着读到的路径方法段原样成为要调用的方法；很多宿主（如 `DuckPhp` 应用）把它配成 `action_`。 |
-| `controller_path_ext` | `''` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 路径扩展名过滤（如 `.html`）。设置后只有路径带此后缀才通过匹配，匹配成功后该后缀会被剔除。留空表示不校验。 |
+| `controller_method_prefix` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 方法名前缀。留空意味着读到的路径方法段原样成为要调用的方法；很多宿主（如 `DuckPhp` 应用）把它配成 `action_`。 |
+| `controller_path_ext` | `''` | [DuckPhp\Core\Route](Core-Route.md) | 路径扩展名过滤（如 `.html`）。设置后只有路径带此后缀才通过匹配，匹配成功后该后缀会被剔除。留空表示不校验。 |
 | `controller_prefix_post` | `'do_'` | [DuckPhp\Core\Route](Core-Route.md) | POST 专用次级前缀。POST 请求时先尝试 `prefix + do_ + 方法名`（即 `action_do_*`），命中才替换调用。留空则不启用该逻辑。 |
-| `controller_resource_prefix` | `''` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) / [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 访问前缀（例如 `res/` 或 `//cdn/…`）；决定 hook/clone 行为。 |
-| `controller_url_prefix` | `null` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) / [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md) / [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md) / [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 路由资源 URL 前缀段（可选）。 |
-| `controller_welcome_class` | `'Main'` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | “欢迎控制器”：URL 很短 / 路径块为空时使用的控制器类名段。 |
-| `controller_welcome_class_visible` | `false` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 是否允许路径真正显式写 `Main/…` 这一段。`false` 时显式出现欢迎控制器名会判 `E009` 并 404。 |
-| `controller_welcome_method` | `'index'` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 当 URL 末尾“方法段”为空时作为默认方法名。 |
+| `controller_resource_prefix` | `''` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) / [DuckPhp\Core\Route](Core-Route.md) | 访问前缀（例如 `res/` 或 `//cdn/…`）；决定 hook/clone 行为。 |
+| `controller_url_prefix` | `null` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) / [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md) / [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md) / [DuckPhp\Core\Route](Core-Route.md) | 路由资源 URL 前缀段（可选）。 |
+| `controller_welcome_class` | `'Main'` | [DuckPhp\Core\Route](Core-Route.md) | “欢迎控制器”：URL 很短 / 路径块为空时使用的控制器类名段。 |
+| `controller_welcome_class_visible` | `false` | [DuckPhp\Core\Route](Core-Route.md) | 是否允许路径真正显式写 `Main/…` 这一段。`false` 时显式出现欢迎控制器名会判 `E009` 并 404。 |
+| `controller_welcome_method` | `'index'` | [DuckPhp\Core\Route](Core-Route.md) | 当 URL 末尾“方法段”为空时作为默认方法名。 |
 | `current` | `null` | [DuckPhp\Component\Pager](Component-Pager.md) | 手动指定当前页；缺省由 GET {page_key} 得。 |
 
 ## d
@@ -208,8 +208,8 @@
 | 选项 | 默认值 | 来源类 | 说明 |
 |---|---|---|---|
 | `name` | `''` | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 该应用的短名；用于子应用 Phase 命名。 |
-| `namespace` | `''` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) / [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) / [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) / [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 应用主命名空间（如 `App`）。非空且 `skip_app_autoload` 为假时，会把 `namespace` 指到 `path_namespace`。 |
-| `namespace_controller` | `'Controller'` | [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 控制器所在子命名空间；以 `\\` 开头表示绝对子命名空间（不需拼上 `namespace`）。 |
+| `namespace` | `''` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) / [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) / [DuckPhp\Core\Route](Core-Route.md) / [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) / [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 应用主命名空间（如 `App`）。非空且 `skip_app_autoload` 为假时，会把 `namespace` 指到 `path_namespace`。 |
+| `namespace_controller` | `'Controller'` | [DuckPhp\Core\Route](Core-Route.md) | 控制器所在子命名空间；以 `\\` 开头表示绝对子命名空间（不需拼上 `namespace`）。 |
 
 ## o
 
@@ -227,13 +227,12 @@
 |---|---|---|---|
 | `page_key` | `'page'` | [DuckPhp\Component\Pager](Component-Pager.md) | 当前页 URL 参数名。 |
 | `page_size` | `30` | [DuckPhp\Component\Pager](Component-Pager.md) | 每页条数。 |
-| `path` | `''` | [DuckPhp\Component\Configer](Component-Configer.md) / [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) / [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) / [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) / [DuckPhp\Core\View](Core-View.md) / [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) / [DuckPhp\Ext\Misc](Ext-Misc.md) / [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) / [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 项目根路径（相对路径基准）。 |
+| `path` | `''` | [DuckPhp\Component\Configer](Component-Configer.md) / [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) / [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) / [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) / [DuckPhp\Core\View](Core-View.md) / [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) / [DuckPhp\Ext\SqlDumper](Ext-SqlDumper.md) / [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 项目根路径（相对路径基准）。 |
 | `path_config` | `'config'` | [DuckPhp\Component\Configer](Component-Configer.md) / [DuckPhp\Core\App](Core-App.md) | 配置目录名（相对 `path`，可给绝对覆盖）。 |
 | `path_document` | `'public'` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) / [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 发布根目录名（clone 目标）。 |
 | `path_info_compact_action_key` | `'_r'` | [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 动作路由所在的 query 键。 |
 | `path_info_compact_class_key` | `''` | [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 可选“模块（类路径段）”所在 query 键；留空则整路径都放 action键。 |
 | `path_info_compact_enable` | `true` | [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 开关（init 才装 hook/url handler）。 |
-| `path_lib` | `'lib'` | [DuckPhp\Ext\Misc](Ext-Misc.md) | 库目录；以 `/` 开头视为绝对目录，否则拼在 `path` 下。 |
 | `path_log` | `'runtime'` | [DuckPhp\Core\Logger](Core-Logger.md) | 日志目录（可绝对，可相对根）。 |
 | `path_namespace` | `'app'` | [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 应用目录（主命名空间对应目录），可绝对；相对则相对 `path`。默认把 `app/` → `${namespace}\`。 |
 | `path_resource` | `'res'` | [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 资源源目录（默认 `res`）。 |
@@ -334,7 +333,7 @@
 - **`jsonrpc_*`**（9）：`jsonrpc_backend`、`jsonrpc_check_token_handler`、`jsonrpc_enable_autoload`、`jsonrpc_is_debug`、`jsonrpc_namespace`、`jsonrpc_service_interface`、`jsonrpc_service_namespace`、`jsonrpc_timeout`、`jsonrpc_wrap_auto_adjust`
 - **`lang_*`**（11）：`lang_cookie_name`、`lang_default`、`lang_detect_mode`、`lang_file_path`、`lang_final`、`lang_follow_root`、`lang_frags`、`lang_handler`、`lang_simple_mode_only_sentences`、`lang_url_param`、`lang_warn_on_missing`
 - **`on_*`**（3）：`on_init`、`on_inited`、`on_request`
-- **`path_*`**（12）：`path_config`、`path_document`、`path_info_compact_action_key`、`path_info_compact_class_key`、`path_info_compact_enable`、`path_lib`、`path_log`、`path_namespace`、`path_resource`、`path_runtime`、`path_sql_dump`、`path_view`
+- **`path_*`**（11）：`path_config`、`path_document`、`path_info_compact_action_key`、`path_info_compact_class_key`、`path_info_compact_enable`、`path_log`、`path_namespace`、`path_resource`、`path_runtime`、`path_sql_dump`、`path_view`
 - **`redis_*`**（5）：`redis_cache_prefix`、`redis_cache_skip_replace`、`redis_list`、`redis_list_reload_by_setting`、`redis_list_try_single`
 - **`setting_*`**（3）：`setting_file`、`setting_file_enable`、`setting_file_ignore_exists`
 - **`skip_*`**（3）：`skip_404`、`skip_app_autoload`、`skip_exception_check`

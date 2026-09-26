@@ -79,7 +79,7 @@
 | `docs/scripts/gen-reference.php` | `facts <src-rel>` 打印解析结果；`skeleton [--out DIR] [--file REL]` 生成骨架；`verify --file <md>` 比对方法/选项 |
 | `docs/scripts/gen-route.php` | 极简版骨架生成（Route 风格，只抓声明/方法行/options 原文） |
 | `docs/scripts/find-unmentioned-classes.py` | **反查孤儿页**：扫 `docs/zh/guide/*.md` 里指向 `../reference/*.md` 的链接，报「指南从没链到」的类页（`--all` 另列只链 1 次的；纯链接判定，正文写了类名但没挂链接不算） |
-| `docs/scripts/covagg.php` | **汇总全量覆盖率**：遍历 `test_coveragedumps/` 的每个 dump，按源文件合并命中（xdebug3 的数组型命中值取并集），打印还有未执行行的文件与总 `lines x/y`；`--quiet-ok` 只报缺口。判全量覆盖率用它或 `test_reports/index.html`，别只看单个类的 dump |
+| `docs/scripts/covagg.php` | **汇总全量覆盖率**：遍历 `test_coveragedumps/` 的每个 dump，按源文件合并命中（xdebug3 的数组型命中值取并集），打印还有未执行行的文件与总 `lines x/y`；`--quiet-ok` 只报缺口。判全量覆盖率用它或 `test_reports/index.html`，别只看单个类的 dump。⚠️ 它读的是**目录里现有的所有 dump**：删类/改名/换测试文件后，旧 dump 还在，`files/dumps/lines` 会虚高（实测删掉 `Ext\MiniRoute`+`Ext\Misc` 后仍是 `82 files / 4926 lines`，清空目录重跑才是真的 `80 files / 4726 lines`）——**动过类文件就先 `rm -rf test_coveragedumps` 再跑全量**。 |
 | `docs/scripts/check-md-layout.py` | **判「这次改动是不是只有排版」**：把工作区与 `HEAD` 逐文件比对，归一化空白 / 表格补位 / 多余空单元格后仍相同就报 `layout-only`（可以放心 `git checkout --` 丢掉），真改了内容才报 `CONTENT`。默认只看 `git status` 里改动的 md，`--all` 看全部，也可显式给文件路径 |
 | `docs/scripts/check-skeleton-tree.py` | **盯住 `skeleton/AGENTS.md` 的目录树**：树里的条目必须真实存在、`skeleton/` 下的文件必须都在树里（双向比对，`runtime/` 忽略），另查文档里 `vendor/dvaknheo/duckphp/…` 指针是否真实存在；`--fix` 删失效条目/补缺失条目（幂等）。改过 `skeleton/` 后必须跑 |
 
@@ -287,10 +287,10 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 > 每轮只更新这一段，**别堆流水账**；过程与逐文件清单属于 commit message 与对应文档，历史看 `git log`。
 
 - **现状**
-  - `docs/zh/reference/` 共 **114 篇**：110 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板。
+  - `docs/zh/reference/` 共 **112 篇**：108 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板。
   - 漂移扫描 `drift.py --all`（§5 脚本）**只剩假报**：`DuckPhpAllInOne.php` 的 `extra-option`（embedMe 键表）与 `extra-method`（「使用方式」示例里的自定义方法）；其他页面报的 `extra-method` 也都是示例方法，不是过期条目。上一轮记的 `Core/Functions.php`、`Ext/RouteHookWebInstallerView.php` 两条在本版本脚本下已报 `ok`（函数文件/无类声明的文件本来就扫不出方法集）。
-  - 站内链接 0 死链；114 篇全 UTF-8；`src/` 非 ASCII 0 行；`gen-options-docs.php --check` up to date。
-  - 测试基线（WSL，2026-09-26 全量实测）：`php vendor/bin/phpunit --no-coverage` → **`OK (97 tests, 864 assertions)`**；覆盖率 **`4926/4926 (100.00%)`**（`XDEBUG_MODE=coverage` 跑完全量后，再跑 `tests/support.php` 生成 `test_reports/index.html`；聚合判定用 `docs/scripts/covagg.php`）。⚠️ 中途 Fatal 的测试不写自己的 dump ⇒ 覆盖率会假降（实测见过 `97.47%`），**先确认全量没有红**。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10432**（**只跟根应用自己声明的选项数有关**：dump 里 `合计 N个` 是 `App::$kernel_options + $core_options + $common_options + $options` 的键，组件自己的选项（如 Logger 的 `path_log`）不进这张表，`Logger` 只出现在「全部单例」与「包含文件」清单里；所以 2026-09-26 的 `Logger::class => EXT_DEFAULT` 修复没有改变这个长度）。
+  - 站内链接 0 死链；112 篇全 UTF-8；`src/` 非 ASCII 0 行；`gen-options-docs.php --check` up to date。删除一个类时要一起去掉的四处：`src/` 类文件、`tests/` 那个测试文件、`docs/zh/reference/` 参考页、指南里讲它的段落（`Ext\MiniRoute`/`Ext\Misc` 就是这么删的，另外 `demo/src/System/AppWithAllOptions.php` 里点名类名的注释也要清）。
+  - 测试基线（WSL，2026-09-26 全量实测）：`php vendor/bin/phpunit --no-coverage` → **`OK (95 tests, 862 assertions)`**；覆盖率 **`80 files, 86 dumps, 4726/4726 (100.00%)`**（`XDEBUG_MODE=coverage` 跑完全量后，再跑 `tests/support.php` 生成 `test_reports/index.html`；聚合判定用 `docs/scripts/covagg.php`）。⚠️ 中途 Fatal 的测试不写自己的 dump ⇒ 覆盖率会假降（实测见过 `97.47%`），**先确认全量没有红**；删过类就先清空 `test_coveragedumps/`（旧 dump 会让总数虚高，见第 5 节那一行）。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10432**（**只跟根应用自己声明的选项数有关**：dump 里 `合计 N个` 是 `App::$kernel_options + $core_options + $common_options + $options` 的键，组件自己的选项（如 Logger 的 `path_log`）不进这张表，`Logger` 只出现在「全部单例」与「包含文件」清单里；所以 `Logger::class => EXT_DEFAULT` 的修复、以及删除 `Ext\MiniRoute`/`Ext\Misc`（demo 根本没加载它们）都没有改变这个长度）。
   - 同步基线：分支 `doced`（= `3ece976b`）。下次同步从它之后算起（见第 9 节末的提示）。
   - **默认不动**：`docs/en/`（陈旧英文副本）、`docs/old/`、`docs/duckphp.gv`（陈旧生成物）、`README*.md`——它们不随中文文档同步。
   - **`skeleton/` 的文档只剩一份**：`skeleton/AGENTS.md`（英文）= 工程约定唯一权威（目录树 / 命名后缀表 / 分层与越界规则 / 加功能四步 / 常见坑），配一个 3 行的 `skeleton/CLAUDE.md` 指路；原来的 `RULES.md` 与 `agent-zh.md` 已删除合并。1-3 章讲机制、README 只画顶层目录——文件级清单不再有第二份。

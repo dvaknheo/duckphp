@@ -18,9 +18,9 @@
 <!-- GEN:stats start -->
 | 项目 | 数量 |
 |---|---|
-| 逐类参考页 | 109 篇 |
-| 声明了选项的类 | 42 个 |
-| 应用选项（去重后） | 208 个 |
+| 逐类参考页 | 107 篇 |
+| 声明了选项的类 | 40 个 |
+| 应用选项（去重后） | 207 个 |
 | 应用选项（隐藏） | 11 个 |
 <!-- GEN:stats end -->
 
@@ -103,8 +103,6 @@
 | [DuckPhp\Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md) | JSON-RPC **客户端**基类 |
 | [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | JSON-RPC 扩展的总控 |
 | [DuckPhp\Ext\JsonView](Ext-JsonView.md) | Core\View 的扩展 |
-| [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 极简版 MVC 路由（Core\Route 的子集） |
-| [DuckPhp\Ext\Misc](Ext-Misc.md) | Misc 收集若干“杂项”工具 |
 | [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) | MyFacadesAutoLoader 实现“Facade（门面）命名空间自动… |
 | [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md) | Facade（门面）类的基类 |
 | [DuckPhp\Ext\MyMiddlewareManager](Ext-MyMiddlewareManager.md) | 中间件管理器扩展 |
@@ -251,8 +249,6 @@
 | [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | KernelTrait 把“一个应用是什么、怎么跑”这件事写在一个 Trait… |
 | [DuckPhp\Component\Lang](Component-Lang.md) | Lang extends ComponentBase 提供简单而完整的界面翻译 |
 | [DuckPhp\Core\Logger](Core-Logger.md) | Logger（PSR-3 注释，非 implements，尽力对齐接口）适合“… |
-| [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 极简版 MVC 路由（Core\Route 的子集） |
-| [DuckPhp\Ext\Misc](Ext-Misc.md) | Misc 收集若干“杂项”工具 |
 | [DuckPhp\Foundation\Model\ModelHelper](Foundation-Model-ModelHelper.md) | 数据层的**薄壳类** |
 | [DuckPhp\Foundation\Model\ModelHelperTrait](Foundation-Model-ModelHelperTrait.md) | 面向 **Model（数据层）** 的静态助手集合 |
 | [DuckPhp\Foundation\Model\ModelTrait](Foundation-Model-ModelTrait.md) | 数据模型（Model）的常用能力封装，被 Foundation\Model\B… |
