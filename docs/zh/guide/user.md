@@ -2,7 +2,7 @@
 
 > 解决什么问题：在你的控制器 / 业务代码里回答「现在是谁」「他能不能做这件事」「这几个 id 分别是谁」。
 > 前置：[第 2-5 章 控制器](controllers.md)、[第 2-11 章 会话](session.md)、[第 2-12 章 异常与错误处理](exception.md)。预计 15 分钟。
-> 本章只讲**怎么用**；「用户系统是怎么接进来的」（三个实现 + 选项 + `ext` 挂载）见[第 4-12 章 实现用户系统](impl-user.md)。**没接之前**这些入口会直接抛 `DuckPhpSystemException`（不会静默返回 0）。
+> 本章只讲**怎么用**；「用户系统是怎么接进来的」（三个实现 + 选项 + `ext` 挂载）见[第 4-11 章 实现用户系统](impl-user.md)。**没接之前**这些入口会直接抛 `DuckPhpSystemException`（不会静默返回 0）。
 > 可跑资产：`tests/Foundation/Controller/UserControllerBaseTest.php`、`tests/GlobalUser/GlobalUserTest.php`。
 
 ## 最小示例
@@ -146,7 +146,7 @@ Helper::assignViewData('__use_logined_header_footer_file', true);
 
 判定与渲染都在 [`DuckPhp::_Show()`](../reference/DuckPhp.md) 里：当前路由的控制器实现 [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md) 时才接管，头尾模板来自 `globaluser_view_file_header/footer`（**相位可覆盖**，第三个应用能换掉它，见[第 3-5 章](overriding.md)）。
 
-> 头尾模板本身怎么配属于「实现」侧：[第 4-12 章第 7 节](impl-user.md)。
+> 头尾模板本身怎么配属于「实现」侧：[第 4-11 章第 7 节](impl-user.md)。
 
 ## 常见写法
 
@@ -200,7 +200,7 @@ $names = Helper::UserService()->batchGetUsernames($userIds);   // [id => 名字]
 |---|---|---|
 | 调用 `Helper::UserId()` 页面直接 302 走了 | `$check_login` 默认为 `true`，未登录就跳登录页并结束请求 | 要自己判断就传 `false`（第 3 节） |
 | 业务层里写 `Helper::UserId()` 报「方法不存在」 | 业务层 Helper 没有这个方法（只有 `UserService()`） | 由控制器把 `$userId` 传进业务方法 |
-| `DuckPhpSystemException: No GlobalUser Provider.` | 用户系统还没接（`ext` 没挂） | 见[第 4-12 章](impl-user.md) |
+| `DuckPhpSystemException: No GlobalUser Provider.` | 用户系统还没接（`ext` 没挂） | 见[第 4-11 章](impl-user.md) |
 | `Helper::User()->canAccess()` 总返回 `false` | 未登录，或你的 `UserServiceInterface::canAccess()` 规则如此 | 先确认 `Helper::UserId(false)`，再查服务实现 |
 | 页面没有用户头尾 | 控制器没实现 `UserControllerInterface`，或两个视图数据键没置真 | 继承 `UserControllerBase`，或自己 `assignViewData`（第 6 节） |
 | 视图里 `$__logined_name` 未定义 | `__use_logined_view_data` 没开（走的是普通渲染） | 开这个键，或改用 `Helper::UserName(false)` |
@@ -208,7 +208,7 @@ $names = Helper::UserService()->batchGetUsernames($userIds);   // [id => 名字]
 ## 下一步
 
 - [第 2-20 章 使用管理员系统](admin.md)：后台那套入口，与本章同构。
-- [第 4-12 章 实现用户系统](impl-user.md)：本项目的用户系统由谁提供、选项怎么配。
+- [第 4-11 章 实现用户系统](impl-user.md)：本项目的用户系统由谁提供、选项怎么配。
 - [第 2-13 章 事件系统](events.md)：`EVENT_ACTION_USER_*`（注册/登录/登出前后）怎么监听。
 - [第 2-12 章 异常与错误处理](exception.md)：登录失效、权限不够怎么变成跳转或错误页。
 - 参考手册：[User](../reference/GlobalUser-User.md)、[UserActionInterface](../reference/GlobalUser-UserActionInterface.md)、[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[UserLoginActionInterface](../reference/GlobalUser-UserLoginActionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)

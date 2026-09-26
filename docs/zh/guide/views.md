@@ -120,7 +120,7 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 - [`Ext\EmptyView`](../reference/Ext-EmptyView.md)：视图名即要输出的字符串（占位/降级）；
 - [`Ext\JsonView`](../reference/Ext-JsonView.md)：把数据直接 JSON 输出。
 
-三者的选项表、接线方式与完整示例见[第 4-14 章](ext-classes.md) §8——它们是 `Ext\*` 扩展，**不会自动装配**。
+三者的选项表、接线方式与完整示例见[第 4-13 章](ext-classes.md) §8——它们是 `Ext\*` 扩展，**不会自动装配**。
 
 ### 6. 视图也能被覆盖
 
@@ -178,4 +178,4 @@ Helper::assignViewData(['site_name' => 'MyProj', 'year' => date('Y')]);
 - [第 2-15 章 国际化与文案](i18n.md)：视图里的 `__l()` / `__hl()`。
 - [第 3-3 章 静态资源与文档根](static-resources.md)：`__res()` 与资源目录。
 - [第 3-5 章 重写与覆盖](overriding.md)：视图级覆盖的完整规则。
-- 参考手册：[DuckPhp\Core\View](../reference/Core-View.md)；三种替换实现的参考页见[第 4-14 章](ext-classes.md) §8。
+- 参考手册：[DuckPhp\Core\View](../reference/Core-View.md)；三种替换实现的参考页见[第 4-13 章](ext-classes.md) §8。

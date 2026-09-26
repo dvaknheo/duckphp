@@ -20,7 +20,7 @@ class ControllerException extends ProjectException {}
 ```php
 // Business 层
 Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
-// 等价于：BusinessException::ThrowOn(...)（在自定义异常类上加静态守卫的写法见第 4-14 章 §16）
+// 等价于：BusinessException::ThrowOn(...)（在自定义异常类上加静态守卫的写法见第 4-13 章 §16）
 ```
 
 异常沿框架的异常管理器（[DuckPhp\Core\ExceptionManager](../reference/Core-ExceptionManager.md)）走一圈：命中已注册处理器 → 执行；否则交给默认出口 `_OnDefaultException()` 出 500 页或调试详情。
@@ -29,7 +29,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 
 ### 异常分层：一条铁律
 
-> ⚠️ **[`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md) 只表示「框架自己出了问题」**（相位重名、直接 init 基类、缺 provider 等），工程的业务/权限/登录异常请**直接 `extends \Exception`**。想要守卫式抛法不必继承它——用 `Helper::ThrowOn($flag, 'msg', $code, MyException::class)`（在异常类上 `use Ext\ThrowOnTrait` 是老写法，见[第 4-14 章](ext-classes.md) §16）。详见 Core-DuckPhpSystemException。
+> ⚠️ **[`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md) 只表示「框架自己出了问题」**（相位重名、直接 init 基类、缺 provider 等），工程的业务/权限/登录异常请**直接 `extends \Exception`**。想要守卫式抛法不必继承它——用 `Helper::ThrowOn($flag, 'msg', $code, MyException::class)`（在异常类上 `use Ext\ThrowOnTrait` 是老写法，见[第 4-13 章](ext-classes.md) §16）。详见 Core-DuckPhpSystemException。
 
 ```
 \Exception                              ← PHP 内置
@@ -56,7 +56,7 @@ Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
 | `Helper::ControllerThrowOn($flag, 'msg', $code)` | 选项 `exception_for_controller`（缺省 `\Exception`） |
 | `Helper::ThrowOn($flag, 'msg', $code, MyException::class)` | 第 4 个参数直接点名异常类 |
 
-> ⚠️ **不再推荐**「在异常类上 `use DuckPhp\Ext\ThrowOnTrait`，然后 `MyException::ThrowOn(...)`」这种写法（[第 4-14 章](ext-classes.md) §16 讲了为什么）：条件抛一律走 Helper——异常类由选项集中决定，测试里也能整族换掉。
+> ⚠️ **不再推荐**「在异常类上 `use DuckPhp\Ext\ThrowOnTrait`，然后 `MyException::ThrowOn(...)`」这种写法（[第 4-13 章](ext-classes.md) §16 讲了为什么）：条件抛一律走 Helper——异常类由选项集中决定，测试里也能整族换掉。
 
 `demo/src/Controller/ExceptionAction.php` 是骨架：
 
@@ -93,7 +93,7 @@ class ExceptionAction
 - 「一处调用不想让整条流程炸掉」→ 用 `Helper::XpCall($cb, ...$args)`（异常当返回值拿回）；
 - 「真需要处理异常」→ 直接 `try/catch`，别把异常混进正常返回值。
 
-老代码已经在用的可以继续用——它的机制（只捕 `\Exception`、不捕 `\Error`）与示例见[第 4-14 章](ext-classes.md) §12。
+老代码已经在用的可以继续用——它的机制（只捕 `\Exception`、不捕 `\Error`）与示例见[第 4-13 章](ext-classes.md) §12。
 
 ## 常见写法
 
@@ -171,4 +171,4 @@ ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) { /* 兜底 */ 
 - [第 2-13 章 事件系统](events.md)：登录/登出、异常前后都能挂事件。
 - [第 2-2 章 请求生命周期](lifecycle.md)：异常发生在请求时序的哪一环。
 - [第 1-6 章 调试、日志与 CLI 初体验](debugging.md)：`is_debug` 与日志分级的入门。
-- 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Core-ExitException](../reference/Core-ExitException.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md)；`Ext\ExceptionWrapper` / `Ext\ThrowOnTrait` 见[第 4-14 章](ext-classes.md)
+- 参考手册：[Core-ExceptionManager](../reference/Core-ExceptionManager.md)、[Core-App](../reference/Core-App.md)、[Core-ExitException](../reference/Core-ExitException.md)、[Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md)；`Ext\ExceptionWrapper` / `Ext\ThrowOnTrait` 见[第 4-13 章](ext-classes.md)

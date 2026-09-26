@@ -101,7 +101,7 @@ public function list()
 
 ## 5. 登录 / 登出 / 当前用户
 
-用法见[第 2-19 章 使用用户系统](../guide/user.md)；下面的选项属于**接入**配置，完整说明见[第 4-12 章 实现用户系统](../guide/impl-user.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
+用法见[第 2-19 章 使用用户系统](../guide/user.md)；下面的选项属于**接入**配置，完整说明见[第 4-11 章 实现用户系统](../guide/impl-user.md)（[`GlobalUser`](../reference/GlobalUser-GlobalUser.md) 用**回调**把实现外包给工程类）。
 
 ```php
 // System/App.php 的选项

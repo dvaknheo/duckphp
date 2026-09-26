@@ -2,7 +2,7 @@
 
 > 解决什么问题：在你的后台控制器 / 业务代码里回答「现在这个管理员是谁」「他能不能做这件事」「他是不是超管」，以及后台菜单怎么生成。
 > 前置：[第 2-19 章 使用用户系统](user.md)（两套入口同构，本章只讲不同的地方）、[第 2-5 章 控制器](controllers.md)、[第 2-11 章 会话](session.md)。预计 20 分钟。
-> 本章只讲**怎么用**；「管理员系统是怎么接进来的」（三个实现 + 选项 + `ext` 挂载）见[第 4-13 章 实现管理员系统](impl-admin.md)。**没接之前**这些入口会直接抛 `DuckPhpSystemException`。
+> 本章只讲**怎么用**；「管理员系统是怎么接进来的」（三个实现 + 选项 + `ext` 挂载）见[第 4-12 章 实现管理员系统](impl-admin.md)。**没接之前**这些入口会直接抛 `DuckPhpSystemException`。
 > 可跑资产：`tests/Foundation/Controller/AdminControllerBaseTest.php`、`tests/GlobalAdmin/GlobalAdminTest.php`。
 
 ## 最小示例
@@ -111,7 +111,7 @@ PermissionMenu::_()->buildAndSaveToConfigJsonFile();
 $tree = PermissionMenu::_()->loadAdminPermissionMenu();
 ```
 
-菜单文件路径由隐藏选项 `permission_menu_tree_for_admin` 指定；`loadAll()` 会把根应用与各子应用的菜单合并成一棵整树（跨相位安全）。装配方式、元数据契约与「用 `RouteLister::_()->command_routes()` 排查」见[第 4-14 章](ext-classes.md) §6。
+菜单文件路径由隐藏选项 `permission_menu_tree_for_admin` 指定；`loadAll()` 会把根应用与各子应用的菜单合并成一棵整树（跨相位安全）。装配方式、元数据契约与「用 `RouteLister::_()->command_routes()` 排查」见[第 4-13 章](ext-classes.md) §6。
 
 ## 常见写法
 
@@ -180,7 +180,7 @@ class ConfigController extends AdminControllerBase
 |---|---|---|
 | 调用 `Helper::AdminId()` 页面直接 302 走了 | `$check_login` 默认为 `true`，未登录就跳登录页并结束请求 | 要自己判断就传 `false`（第 2 节） |
 | 业务层里写 `Helper::AdminId()` 报「方法不存在」 | 业务层 Helper 只有 `AdminService()` | 由控制器把 `$adminId` 传进业务方法 |
-| `DuckPhpSystemException: No GlobalAdmin Provider.` | 管理员系统还没接（`ext` 没挂） | 见[第 4-13 章](impl-admin.md) |
+| `DuckPhpSystemException: No GlobalAdmin Provider.` | 管理员系统还没接（`ext` 没挂） | 见[第 4-12 章](impl-admin.md) |
 | `canAccess()` 无参时报路由上下文为空 | 不在路由动作里调用（CLI / 子相位） | 显式传 `canAccess($url, $class, $method)`（注意 `$url` 在前） |
 | 后台页面没有头尾 | 没继承 `AdminControllerBase`，或两个视图数据键没置真 | 继承它，或自己 `assignViewData`（[第 2-19 章第 6 节](user.md)） |
 | 后台菜单是空的 | 控制器没实现 `AdminControllerInterface`，或没写 `@menu*` 注释 | 继承 `AdminControllerBase`；或写注释/用 `__permissionMenuMeta()` |
@@ -189,7 +189,7 @@ class ConfigController extends AdminControllerBase
 ## 下一步
 
 - [第 2-19 章 使用用户系统](user.md)：前台那套入口。
-- [第 4-13 章 实现管理员系统](impl-admin.md)：本项目的管理员系统由谁提供、选项怎么配。
+- [第 4-12 章 实现管理员系统](impl-admin.md)：本项目的管理员系统由谁提供、选项怎么配。
 - [第 2-13 章 事件系统](events.md)：`EVENT_ACTION_ADMIN_*`（登录/登出前后）怎么监听。
 - [第 2-16 章 命令行与定时任务](cli.md)：用 CLI 跑菜单落盘、看路由表。
 - [第 3-5 章 重写与覆盖](overriding.md)：换掉后台视图头尾。

@@ -100,7 +100,7 @@ public $options = [
 ];
 ```
 
-之后 `php bin/cli.php routes --with_children=0 --only_admin=1` 就能用了（`cmd` 的值也可以写成前缀字符串如 `'command_'`，写 `false` 或删掉就是关闭）；参数说明与 `listAll()` 见[第 4-14 章](ext-classes.md) §5。
+之后 `php bin/cli.php routes --with_children=0 --only_admin=1` 就能用了（`cmd` 的值也可以写成前缀字符串如 `'command_'`，写 `false` 或删掉就是关闭）；参数说明与 `listAll()` 见[第 4-13 章](ext-classes.md) §5。
 
 **框架自带的 `bin/duckphp`** 是另一回事：它是**安装器 CLI**，只有 `new`/`help`/`show` 三个命令，用来建新项目（[第 1-2 章](install.md)），不提供上面那套常用命令。
 

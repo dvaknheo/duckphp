@@ -28,7 +28,7 @@
 | 横切能力 | 2-9–2-11 | [Helper 与全局函数](helper.md)、[表单与验证](validator.md)、[会话](session.md) |
 | 框架机制 | 2-12–2-13 | [异常](exception.md)、[事件](events.md) |
 | 进阶 | 2-14–2-18 | [缓存](cache.md)、[国际化](i18n.md)、[命令行](cli.md)、[测试](testing.md)、[安全与性能](security-performance.md) |
-| 用户 / 管理员体系（用法） | 2-19–2-20 | [使用用户系统](user.md)、[使用管理员系统](admin.md)（自己实现看[第 4-12](impl-user.md)、[4-13 章](impl-admin.md)） |
+| 用户 / 管理员体系（用法） | 2-19–2-20 | [使用用户系统](user.md)、[使用管理员系统](admin.md)（自己实现看[第 4-11](impl-user.md)、[4-12 章](impl-admin.md)） |
 
 ## 下一步
 

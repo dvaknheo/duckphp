@@ -126,7 +126,7 @@ class NoteController extends Base
 4. **补业务层**：把控制器里的业务判断下移到 Business，控制器只留输入输出（[第 2-1 章](../guide/layers.md)）；
 5. **搬视图**：模板语法换成 PHP；输出一律 `__h()`（[第 2-6 章](../guide/views.md)）；
 6. **搬横切**：中间件/filter → 钩子或（必要时）[`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md)（[第 2-4 章 路由钩子](../guide/route-hooks.md)）；
-7. **会话与登录**：会话见[第 2-11 章](../guide/session.md)；用户/管理员体系的用法见[第 2-19 章](../guide/user.md)与[第 2-20 章](../guide/admin.md)，接入实现见[第 4-12 章](../guide/impl-user.md)与[第 4-13 章](../guide/impl-admin.md)；
+7. **会话与登录**：会话见[第 2-11 章](../guide/session.md)；用户/管理员体系的用法见[第 2-19 章](../guide/user.md)与[第 2-20 章](../guide/admin.md)，接入实现见[第 4-11 章](../guide/impl-user.md)与[第 4-12 章](../guide/impl-admin.md)；
 8. **补自己实现的部分**：CSRF、上传、限流、队列（框架不提供）（[第 2-18 章](../guide/security-performance.md)）；
 9. **写冒烟测试**：照 `ZAllDemoTest` 的方式起内置服务器 + curl 各入口（[第 2-17 章](../guide/testing.md)）。
 

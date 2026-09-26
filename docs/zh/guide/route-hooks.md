@@ -62,7 +62,7 @@ echo Route::_()->dumpAllRouteHooksAsString();            // ★ 排查：把三�
 
 排查顺序建议：先 dump 看链上到底有哪些钩子、什么顺序，再怀疑自己的回调没被调用。
 
-> **想「按名字挂 / 挪位 / 摘掉」**（`append()`、`insertBefore()`、`moveBefore()`、`removeAll()`）就用 [`Ext\RouteHookManager`](../reference/Ext-RouteHookManager.md)——它是 `Ext\*` 扩展，写进应用的 `ext` 才装配；用法见[第 4-14 章](ext-classes.md) §3。
+> **想「按名字挂 / 挪位 / 摘掉」**（`append()`、`insertBefore()`、`moveBefore()`、`removeAll()`）就用 [`Ext\RouteHookManager`](../reference/Ext-RouteHookManager.md)——它是 `Ext\*` 扩展，写进应用的 `ext` 才装配；用法见[第 4-13 章](ext-classes.md) §3。
 
 ### 3. 内置钩子都挂在哪
 
@@ -75,14 +75,14 @@ echo Route::_()->dumpAllRouteHooksAsString();            // ★ 排查：把三�
 | [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底） |
 | [`RouteHookResource`](../reference/Component-RouteHookResource.md) | `append-outter` | 静态资源代发（[第 3-3 章](static-resources.md)） |
 
-> 这四条都在 `common_options['ext']` 里、**开箱即用**（另外还有 `Lang`）。`Ext\` 下还有四个钩子——`RouteHookApiServer`、`RouteHookWebInstaller`、`RouteHookFunctionRoute`、`RouteHookDirectoryMode`——它们**不会自动装配**，要写进应用的 `ext` 才挂上（见[第 4-14 章](ext-classes.md) §9）。注意这与「类能不能被加载」是两件事：AutoLoader 只负责按需把类文件载进来，**装配进当前相位**要靠 `ext` 声明。
+> 这四条都在 `common_options['ext']` 里、**开箱即用**（另外还有 `Lang`）。`Ext\` 下还有四个钩子——`RouteHookApiServer`、`RouteHookWebInstaller`、`RouteHookFunctionRoute`、`RouteHookDirectoryMode`——它们**不会自动装配**，要写进应用的 `ext` 才挂上（见[第 4-13 章](ext-classes.md) §9）。注意这与「类能不能被加载」是两件事：AutoLoader 只负责按需把类文件载进来，**装配进当前相位**要靠 `ext` 声明。
 
 ### 4. 选型：到底该用哪种介入方式
 
 | 需求 | 首选 | 为什么 |
 |---|---|---|
 | 某几个 URL 特例处理、拦截 | 路由钩子（pre） | 有短路语义，能真正拦住 |
-| 请求前后的对称逻辑 | 中间件（[`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md)，见[第 4-14 章](ext-classes.md) §4） | 洋葱结构天生适合「前/后」 |
+| 请求前后的对称逻辑 | 中间件（[`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md)，见[第 4-13 章](ext-classes.md) §4） | 洋葱结构天生适合「前/后」 |
 | 改某个控制器的行为 | 覆盖控制器类 / `controller_class_map`（[第 3-5 章](overriding.md)） | 精确到类，配置即生效 |
 | 广播「发生了某事」 | 全局事件（[第 2-13 章](events.md)） | 一对多、无返回值、可跨相位 |
 | 换掉框架某个能力 | 覆盖扩展 / 替换单例 | 从装配层解决（[第 4-3 章 替换框架行为](replace-behavior.md)） |
@@ -103,7 +103,7 @@ $options = [
 
 - **拦截请求**（鉴权不通过就返回/跳转）→ 中间件短路 `return '内容'`，或路由钩子 `prepend-outter` 里 `return true`（见本章 §1、§2）；
 - **请求前后做对称处理**（计时、日志、统一加响应头）→ 中间件；
-- 短路响应的三条边界（只按字符串输出、内层跑过后不再加工、`null`/`false` 放行）、接线细节、洋葱顺序实测、可覆盖的 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`outputResponse()` 见[第 4-14 章](ext-classes.md) §4。
+- 短路响应的三条边界（只按字符串输出、内层跑过后不再加工、`null`/`false` 放行）、接线细节、洋葱顺序实测、可覆盖的 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`outputResponse()` 见[第 4-13 章](ext-classes.md) §4。
 
 ## 常见写法
 
@@ -143,8 +143,8 @@ echo Route::_()->dumpAllRouteHooksAsString();   // 三条链全打印
 | 现象 | 原因 | 改法 |
 |---|---|---|
 | 钩子里 `return;` 却发现控制器还是执行了 | pre 钩子必须返回**真值**才算命中 | 明确写 `return true;` |
-| 钩子被挂了两次、日志出现两遍 | 重复调用 `addRouteHook()` | 用第三个参数 `$once = true`（默认已开），或先按名字摘掉（`Ext\RouteHookManager`，[第 4-14 章](ext-classes.md) §3） |
-| 中间件里 `return` 了响应，控制器还是执行了 | 返回的是 `null`/`false`（或压根没写返回值），那按「没处理」放行了 | 短路要返回响应本身或 `true`；另见[第 4-14 章](ext-classes.md) §4 的边界表 |
+| 钩子被挂了两次、日志出现两遍 | 重复调用 `addRouteHook()` | 用第三个参数 `$once = true`（默认已开），或先按名字摘掉（`Ext\RouteHookManager`，[第 4-13 章](ext-classes.md) §3） |
+| 中间件里 `return` 了响应，控制器还是执行了 | 返回的是 `null`/`false`（或压根没写返回值），那按「没处理」放行了 | 短路要返回响应本身或 `true`；另见[第 4-13 章](ext-classes.md) §4 的边界表 |
 | `Ext\` 下的钩子写了却完全没反应 | `Ext\` 组件不会自动装配 | 在应用 `ext` 里声明（如 `'ext' => [RouteHookFunctionRoute::class => true]`） |
 | post 钩子里的 404 视图被别人的 404 抢先输出 | 子应用先兜底了 | 子应用里 `App::_()->skip404Handler()`，交给父应用决定 |
 | 想知道「这条请求到底被谁处理了」 | 三个链表都是动态的 | 先 `Route::_()->dumpAllRouteHooksAsString()`，再怀疑自己的回调 |
@@ -156,4 +156,4 @@ echo Route::_()->dumpAllRouteHooksAsString();   // 三条链全打印
 - [第 2-3 章 路由进阶](routing.md)：`route_map`/`route_map_important` 与钩子的关系。
 - [第 2-13 章 事件系统](events.md)：广播式介入点，与钩子的分工。
 - [第 3-5 章 重写与覆盖](overriding.md)：不写钩子也能换掉某个控制器的实现。
-- 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)；`Ext\` 那几个（`RouteHookManager`/`MyMiddlewareManager`/`HookChain`）见[第 4-14 章](ext-classes.md)。
+- 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)；`Ext\` 那几个（`RouteHookManager`/`MyMiddlewareManager`/`HookChain`）见[第 4-13 章](ext-classes.md)。

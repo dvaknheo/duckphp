@@ -1,4 +1,4 @@
-# 4-12 实现用户系统
+# 4-11 实现用户系统
 
 > 解决什么问题：让[第 2-19 章 使用用户系统](user.md)里那些 `Helper::User*()` 真的有东西可用——你提供「会话 / 登录服务 / 本地服务」三件实现，再把组件挂进应用。
 > 前置：[第 2-19 章](user.md)（先知道调用方怎么用）、[第 2-11 章 会话](session.md)、[第 4-2 章 开发组件与扩展](custom-component.md)。预计 25 分钟。
@@ -209,6 +209,6 @@ wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/GlobalUser/GlobalUse
 
 ## 下一步
 
-- [第 4-13 章 实现管理员系统](impl-admin.md)：后台那套的同构实现（少注册、多 `isSuper()`）。
+- [第 4-12 章 实现管理员系统](impl-admin.md)：后台那套的同构实现（少注册、多 `isSuper()`）。
 - [第 2-19 章 使用用户系统](user.md)：本章面向调用方的那一半。
 - 参考手册：[GlobalUser](../reference/GlobalUser-GlobalUser.md)、[User](../reference/GlobalUser-User.md)、[UserSessionInterface](../reference/GlobalUser-UserSessionInterface.md)、[UserServiceInterface](../reference/GlobalUser-UserServiceInterface.md)、[UserLoginServiceInterface](../reference/GlobalUser-UserLoginServiceInterface.md)、[UserSessionTrait](../reference/GlobalUser-UserSessionTrait.md)

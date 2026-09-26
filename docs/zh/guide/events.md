@@ -112,7 +112,7 @@ GlobalEvent::_()->fire(User::EVENT_SERVICE_USER_REGISTERED, $post);
 
 ### `Ext\EventManager`（**不推荐**）
 
-⚠️ **新代码别用它**：API 与 `GlobalEvent` 类似，但**不带相位概念**（跨相位事件处理不了），框架内部也没有任何引用。要用事件就用 `GlobalEvent`（本章其余部分）——完整理由见[第 4-14 章](ext-classes.md) §11。
+⚠️ **新代码别用它**：API 与 `GlobalEvent` 类似，但**不带相位概念**（跨相位事件处理不了），框架内部也没有任何引用。要用事件就用 `GlobalEvent`（本章其余部分）——完整理由见[第 4-13 章](ext-classes.md) §11。
 
 ## 常见写法
 

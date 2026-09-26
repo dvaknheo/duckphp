@@ -1,7 +1,7 @@
-# 4-13 实现管理员系统
+# 4-12 实现管理员系统
 
 > 解决什么问题：让[第 2-20 章 使用管理员系统](admin.md)里那些 `Helper::Admin*()` 真的有东西可用——你提供「会话 / 登录服务 / 本地服务」三件实现，再把组件挂进应用。
-> 前置：[第 2-20 章](admin.md)、[第 4-12 章 实现用户系统](impl-user.md)（两套实现同构，本章只讲不同的地方）、[第 2-11 章 会话](session.md)。预计 20 分钟。
+> 前置：[第 2-20 章](admin.md)、[第 4-11 章 实现用户系统](impl-user.md)（两套实现同构，本章只讲不同的地方）、[第 2-11 章 会话](session.md)。预计 20 分钟。
 > 可跑资产：`tests/GlobalAdmin/GlobalAdminTest.php`（`FakeAdminApp` / `FakeAdminSession` / `FakeAdminLoginService` / `FakeAdminService`）、`tests/Foundation/Controller/AdminControllerBaseTest.php`。
 
 ## 最小可跑接入
@@ -82,7 +82,7 @@ class AdminService implements AdminServiceInterface, AdminLoginServiceInterface
 
 ## 1. 与用户系统的差异清单
 
-| 项 | 用户系统（[第 4-12 章](impl-user.md)） | 管理员系统 |
+| 项 | 用户系统（[第 4-11 章](impl-user.md)） | 管理员系统 |
 |---|---|---|
 | 容器键 / 实现 | `User` / `GlobalUser` | `Admin` / `GlobalAdmin` |
 | 选项前缀 | `globaluser_` | `globaladmin_` |
@@ -110,7 +110,7 @@ class AdminService implements AdminServiceInterface, AdminLoginServiceInterface
 | `globaladmin_need_login_callback` | `null` | 「未登录怎么办」的自定义处理（可选） |
 | `globaladmin_is_authed_redirect` | `true` | 登录/登出成功后自动 302 |
 
-`ext` 的三种写法、`admin_provider_enable`（默认 `true`，关掉就退回桩）与用户侧逐字相同，见[第 4-12 章第 1 节](impl-user.md)。
+`ext` 的三种写法、`admin_provider_enable`（默认 `true`，关掉就退回桩）与用户侧逐字相同，见[第 4-11 章第 1 节](impl-user.md)。
 
 ## 3. 登录服务：`AdminLoginServiceInterface`
 
@@ -168,6 +168,6 @@ wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/GlobalAdmin/GlobalAd
 
 ## 下一步
 
-- [第 4-12 章 实现用户系统](impl-user.md)：前台那套的同构实现。
+- [第 4-11 章 实现用户系统](impl-user.md)：前台那套的同构实现。
 - [第 2-20 章 使用管理员系统](admin.md)：本章面向调用方的那一半。
 - 参考手册：[GlobalAdmin](../reference/GlobalAdmin-GlobalAdmin.md)、[Admin](../reference/GlobalAdmin-Admin.md)、[AdminLoginActionInterface](../reference/GlobalAdmin-AdminLoginActionInterface.md)、[AdminSessionInterface](../reference/GlobalAdmin-AdminSessionInterface.md)、[AdminServiceInterface](../reference/GlobalAdmin-AdminServiceInterface.md)、[AdminLoginServiceInterface](../reference/GlobalAdmin-AdminLoginServiceInterface.md)、[AdminSessionTrait](../reference/GlobalAdmin-AdminSessionTrait.md)、[Ext\PermissionMenu](../reference/Ext-PermissionMenu.md)

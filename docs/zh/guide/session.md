@@ -79,8 +79,8 @@ public $options = [
 
 `SessionTrait` 只解决「怎么读写会话」。**当前是谁、怎么登录、未登录怎么办**是另一套东西：
 
-- 用户系统：[第 2-19 章 使用用户系统](user.md)（调用方视角）、[第 4-12 章 实现用户系统](impl-user.md)（`UserSessionTrait` 把当前用户存进会话键 `user`）；
-- 管理员系统：[第 2-20 章 使用管理员系统](admin.md)、[第 4-13 章 实现管理员系统](impl-admin.md)（`AdminSessionTrait`，键为 `admin`）。
+- 用户系统：[第 2-19 章 使用用户系统](user.md)（调用方视角）、[第 4-11 章 实现用户系统](impl-user.md)（`UserSessionTrait` 把当前用户存进会话键 `user`）；
+- 管理员系统：[第 2-20 章 使用管理员系统](admin.md)、[第 4-12 章 实现管理员系统](impl-admin.md)（`AdminSessionTrait`，键为 `admin`）。
 
 它们内部就是**组合 `SessionTrait`** 实现的——这也是为什么本章是那两章的前置。
 

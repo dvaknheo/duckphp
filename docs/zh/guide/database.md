@@ -185,7 +185,7 @@ $pager = Helper::PageHtml($total);                                              
 
 需要把表结构/数据导出成 SQL（安装器、备份）时用 [`Ext\SqlDumper`](../reference/Ext-SqlDumper.md)，方言由 `SqlDumperSupporter*` 提供（`mysql`/`sqlite`/`pgsql` 三个都在默认映射里）。导出的 SQL 里用 `{prefix}` 表示表前缀，Web 安装流程（[第 3-6 章](installer.md)）执行时换成实际前缀。
 
-它是 `Ext\*` 扩展（不会自动装配）：完整的类表、换方言实现的办法见[第 4-14 章](ext-classes.md) §7。
+它是 `Ext\*` 扩展（不会自动装配）：完整的类表、换方言实现的办法见[第 4-13 章](ext-classes.md) §7。
 
 ## 常见写法
 
@@ -234,4 +234,4 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 - [第 2-8 章 模型层](model.md)：把这一章的能力封装成模型，业务层只看模型。
 - [第 2-10 章 表单与数据验证](validator.md)：数据入库前的校验。
 - [第 3-6 章 安装器与 Web 安装流程](installer.md)：`SqlDumper` 与 `{prefix}` 的实际用法。
-- 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Component\PagerInterface](../reference/Component-PagerInterface.md)。SQL 导出用的 `Ext\SqlDumper*` 见[第 4-14 章](ext-classes.md) §7。
+- 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Component\PagerInterface](../reference/Component-PagerInterface.md)。SQL 导出用的 `Ext\SqlDumper*` 见[第 4-13 章](ext-classes.md) §7。
