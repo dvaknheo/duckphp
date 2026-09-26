@@ -10,7 +10,7 @@
 
 ## 类信息
 
-- 命名空间：`DuckPhp\Core`
+- 命名空间：`DuckPhp\Ext`
 - 声明：`trait ThrowOnTrait`
 - 典型宿主：`DuckPhp\Core\DuckPhpSystemException`。任何类都要能 `use` 后获得 `static::ThrowOn(...)`。
 
