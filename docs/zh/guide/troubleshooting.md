@@ -59,7 +59,7 @@ init()（onPrepare → onInit → onInited） → serve()（onRequest → Route:
 | `assignRewrite()` 不生效 | 键是否带前导 `/` | 必须写 `'/legacy'`（[第 2-3 章](routing.md)） |
 | `route_map` 里 `Class::method` 无效 | 回调写法 | 只支持 `Class@method` / `Class->method` / callable |
 | 子应用永远接不到请求 | 入口 URL | 缺 `controller_url_prefix`，或父应用先抢到了（[第 3-2 章](mount-app.md)） |
-| 每条请求都跑两遍控制器 | 是否装了中间件 | [`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 的短路坑：不调 `$next` 就 return 会让 `Route::run()` 再跑一次默认回调（[第 2-4 章](route-hooks.md)） |
+| 每条请求都跑两遍控制器 | 中间件短路时返回了什么 | [`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md)：短路要返回响应或 `true`；返回 `null`/`false` 会被当成「没处理」，`Route::run()` 于是再跑一次默认回调（[第 2-4 章](route-hooks.md)） |
 
 ### B. 输出与视图
 

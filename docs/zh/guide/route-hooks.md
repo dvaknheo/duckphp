@@ -99,11 +99,11 @@ $options = [
 ];
 ```
 
-⚠️ **它的短路拦不住请求**（实测，框架当前行为）：中间件里不调 `$next` 直接 `return` 响应时，`Route::run()` 仍会再跑一次默认路由回调，**控制器照样执行**（你返回的响应被丢弃），控制器不存在时用户看到的是 404。所以：
+中间件里**不调 `$next`、直接 `return` 一个响应**就是短路：管理器会把响应输出出去并声明「请求已处理」——控制器不会再执行。注意 **`return null`/`false` 视为「我没处理」**，那条路会照旧放行给默认路由。所以：
 
-- **拦截请求**（鉴权不通过就返回/跳转）→ 用路由钩子，`prepend-outter` 里 `return true`（见本章 §1、§2）；
+- **拦截请求**（鉴权不通过就返回/跳转）→ 中间件短路 `return '内容'`，或路由钩子 `prepend-outter` 里 `return true`（见本章 §1、§2）；
 - **请求前后做对称处理**（计时、日志、统一加响应头）→ 中间件；
-- 接线细节、洋葱顺序实测、可覆盖的 `getRequest()`/`getResponse()`/`runSelfMiddleware()` 见[第 4-14 章](ext-classes.md) §4。
+- 短路响应的三条边界（只按字符串输出、内层跑过后不再加工、`null`/`false` 放行）、接线细节、洋葱顺序实测、可覆盖的 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`outputResponse()` 见[第 4-14 章](ext-classes.md) §4。
 
 ## 常见写法
 
@@ -144,7 +144,7 @@ echo Route::_()->dumpAllRouteHooksAsString();   // 三条链全打印
 |---|---|---|
 | 钩子里 `return;` 却发现控制器还是执行了 | pre 钩子必须返回**真值**才算命中 | 明确写 `return true;` |
 | 钩子被挂了两次、日志出现两遍 | 重复调用 `addRouteHook()` | 用第三个参数 `$once = true`（默认已开），或先按名字摘掉（`Ext\RouteHookManager`，[第 4-14 章](ext-classes.md) §3） |
-| 中间件里 `return` 了响应，页面却是 404 或控制器照跑 | 短路对中间件无效（本章 §5 / [第 4-14 章](ext-classes.md) §4 的坑） | 拦截改用路由钩子并 `return true`；中间件只做前后置装饰 |
+| 中间件里 `return` 了响应，控制器还是执行了 | 返回的是 `null`/`false`（或压根没写返回值），那按「没处理」放行了 | 短路要返回响应本身或 `true`；另见[第 4-14 章](ext-classes.md) §4 的边界表 |
 | `Ext\` 下的钩子写了却完全没反应 | `Ext\` 组件不会自动装配 | 在应用 `ext` 里声明（如 `'ext' => [RouteHookFunctionRoute::class => true]`） |
 | post 钩子里的 404 视图被别人的 404 抢先输出 | 子应用先兜底了 | 子应用里 `App::_()->skip404Handler()`，交给父应用决定 |
 | 想知道「这条请求到底被谁处理了」 | 三个链表都是动态的 | 先 `Route::_()->dumpAllRouteHooksAsString()`，再怀疑自己的回调 |

@@ -20,6 +20,12 @@ class MyMiddlewareManager extends ComponentBase
     public $response;
 
     protected $defaultResult = false;
+    /**
+     * Whether runSelfMiddleware() ran in the current doHook() call.
+     * Still false when a middleware short-circuits (never calls $next).
+     * @var bool
+     */
+    protected $ranInner = false;
 
     public function __construct()
     {
@@ -41,6 +47,9 @@ class MyMiddlewareManager extends ComponentBase
     {
         $middleware = array_reverse($this->options['middleware']);
 
+        $this->defaultResult = false;
+        $this->ranInner = false;
+
         $callback = array_reduce($middleware, function ($carry, $pipe) {
             return function () use ($carry, $pipe) {
                 if (is_string($pipe) && !\is_callable($pipe)) {
@@ -57,11 +66,42 @@ class MyMiddlewareManager extends ComponentBase
                 return $response;
             };
         }, function () {
+            // Set here (not inside runSelfMiddleware) so overriding runSelfMiddleware()
+            // -- a documented extension point -- cannot lose the flag.
+            $this->ranInner = true;
             return $this->runSelfMiddleware();
         });
-        $callback();
+        $response = $callback();
         $this->onPostMiddleware();
+
+        if (!$this->ranInner && $this->isHandledResponse($response)) {
+            // A middleware short-circuited (it never called $next), so the default
+            // route callback did not run: emit its response and tell Route::run()
+            // that this request is handled -- otherwise Route runs the controller anyway.
+            $this->outputResponse($response);
+            return true;
+        }
         return $this->defaultResult;
+    }
+    /**
+     * Is this response a short-circuit result? null/false means "not handled",
+     * so the route keeps going the old way (the default callback still runs).
+     * @param mixed $response
+     */
+    protected function isHandledResponse($response): bool
+    {
+        return $response !== null && $response !== false;
+    }
+    /**
+     * Send the short-circuit response out. Subclasses may override this
+     * (e.g. to feed a response object of their own).
+     * @param mixed $response
+     */
+    protected function outputResponse($response): void
+    {
+        if (is_string($response) && $response !== '') {
+            echo $response;
+        }
     }
     protected function runSelfMiddleware(): string
     {

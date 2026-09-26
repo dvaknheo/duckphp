@@ -97,18 +97,28 @@ $options = [
 P1>  P2>  CTRL#1  P2<  P1<        ← 列表第一个最外层；控制器只执行一次
 ```
 
-**这里有一个必须知道的坑**（实测，框架当前行为）：中间件里**不调 `$next` 直接 `return` 响应，是拦不住请求的**——`doHook()` 只认最内层 `runSelfMiddleware()` 的结果，短路时它仍是 `false`，于是 `Route::run()` 会**自己再跑一次默认路由回调**，结果是：
+**短路（拦截请求）现在是能用的**：中间件里**不调 `$next`、直接 `return` 一个响应**，管理器会把这个响应输出出去，并告诉路由「请求已处理」——控制器不会再执行。
 
-- 控制器**照样执行**（你返回的那个响应被丢弃）；
-- 如果控制器本来就不存在，用户看到的是 **404**，而不是你在中间件里返回的内容。
+| 中间件怎么写 | 控制器 | 用户看到 | `doHook()` |
+|---|---|---|---|
+| 不调 `$next`，`return '内容'` | **不执行** | 管理器输出的 `内容` | `true` |
+| 不调 `$next`，`return true`（内容你自己 `echo`/`Show302` 过） | **不执行** | 你自己输出的 | `true` |
+| 不调 `$next`，`return null` / `false` | 照常执行 | 控制器输出（或 404） | `false` |
+| 调 `$next` 并返回它的结果 | 执行一次 | 控制器输出 | `defaultResult` |
+
+三条边界要记住：
+
+- **响应只按字符串处理**（`echo` 出去）；要交给别的响应对象就覆盖 `outputResponse()`。
+- **内层跑过之后中间件的返回值不参与输出**：控制器是边跑边 `echo` 的，等链返回时内容已经发出去了。想加工响应，得自己在中间件里用输出缓冲包住 `$next()`。
+- `null`/`false` 意味着「我没处理」——这是给「忘了调 `$next`」留的缓冲，不会突然变成白屏。
 
 所以：
 
 | 你想做的事 | 该用什么 |
 |---|---|
 | 请求前后做对称处理（计时、日志、统一加响应头） | 洋葱中间件（它的强项） |
-| **拦截请求**（鉴权不通过就直接返回/跳转） | **路由钩子**：`prepend-outter` 里返回 `true`（[第 2-4 章](route-hooks.md)） |
-| 更细的接管（换请求/响应对象、自己的收尾） | 继承 [`MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 覆盖 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`onPostMiddleware()` |
+| 拦截请求（鉴权不通过就直接返回/跳转） | 中间件短路（上表前两行），或路由钩子 `prepend-outter` 里返回 `true`（[第 2-4 章](route-hooks.md)） |
+| 更细的接管（换请求/响应对象、自己的收尾） | 继承 [`MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 覆盖 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`onPostMiddleware()`/`outputResponse()` |
 
 ### 5. `Ext\RouteLister`：把路由表列出来
 
@@ -272,7 +282,7 @@ trait ThrowOnTrait
 | 现象 | 原因 | 改法 |
 |---|---|---|
 | `Ext\` 下的组件写了却完全没反应 | `Ext\` 组件不会自动装配 | 写进应用的 `ext`（§1、[第 2-4 章](route-hooks.md)） |
-| 中间件里 `return` 了响应，控制器还是执行了 | 中间件短路无效（框架当前行为） | 要拦截用路由钩子 `prepend-outter` 返回 `true`（§4） |
+| 中间件里 `return` 了响应，控制器还是执行了 | 短路时把响应放在了 `null`/`false` 上（或者中间件没写返回值） | 短路要**返回响应本身**（字符串）或 `true`；`null`/`false` 一律当「没处理」放行（§4） |
 | `php bin/cli.php routes` 说命令不存在 | `routes` 由 `Ext\RouteLister` 提供，不在内置七命令里 | 登记进 `cmd`（§5） |
 | 后台菜单空着 | 控制器没实现 `AdminControllerInterface`，或菜单文件路径没配 | 继承 `AdminControllerBase`；配 `permission_menu_tree_for_admin`（§6） |
 | 换视图实现后页面没变 | 忘了 `*_skip_replace`，或没在 `init()` 里 `View::_(static::_())` | 见各扩展参考页（§8） |
