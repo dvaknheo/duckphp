@@ -6,29 +6,29 @@ node [fontsize="10";shape="box"];
 edge [fontsize="9"];
 
 subgraph cluster_legend {
-    label = "[图例]";
-    label_legend [label="形状：box=类 / box3d=抽象类 / note=接口 / diamond=trait\n边：实线=extends / 虚线=implements / 点线=use trait / 粗线=initComponents*() 装配",shape="plaintext",fontsize="10"];
+    label = "[Legend]";
+    label_legend [label="Shapes: box=class / box3d=abstract class / note=interface / diamond=trait\nEdges: solid=extends / dashed=implements / dotted=use trait / bold blue=assembled in initComponents*()",shape="plaintext",fontsize="10"];
 }
 
 subgraph cluster_DuckPhp {
-    label = "[DuckPhp] 2 个";
+    label = "[DuckPhp] 2 types";
 
     DuckPhp_DuckPhp [label="DuckPhp",shape="box",tooltip="src/DuckPhp.php"];
     DuckPhp_DuckPhpAllInOne [label="DuckPhpAllInOne",shape="box",tooltip="src/DuckPhpAllInOne.php"];
 
     DuckPhp_DuckPhp -> DuckPhp_Core_App [style="solid"];
-    DuckPhp_DuckPhp -> DuckPhp_Component_DbManager [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_DuckPhp -> DuckPhp_Component_RedisManager [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_DuckPhp -> DuckPhp_GlobalAdmin_Admin [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_DuckPhp -> DuckPhp_GlobalUser_User [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_DuckPhp -> DuckPhp_Component_GlobalEvent [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_DuckPhp -> DuckPhp_Component_Command [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_DuckPhp -> DuckPhp_Component_Configer [style="bold",color="#1f77b4",label="装配"];
+    DuckPhp_DuckPhp -> DuckPhp_Component_DbManager [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_DuckPhp -> DuckPhp_Component_RedisManager [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_DuckPhp -> DuckPhp_GlobalAdmin_Admin [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_DuckPhp -> DuckPhp_GlobalUser_User [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_DuckPhp -> DuckPhp_Component_GlobalEvent [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_DuckPhp -> DuckPhp_Component_Command [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_DuckPhp -> DuckPhp_Component_Configer [style="bold",color="#1f77b4",label="assembles"];
     DuckPhp_DuckPhpAllInOne -> DuckPhp_DuckPhp [style="solid"];
 }
 
 subgraph cluster_DuckPhp_Component {
-    label = "[DuckPhp\\Component] 18 个";
+    label = "[DuckPhp\\Component] 18 types";
 
     DuckPhp_Component_Cache [label="Cache",shape="box",tooltip="src/Component/Cache.php"];
     DuckPhp_Component_Command [label="Command",shape="box",tooltip="src/Component/Command.php"];
@@ -68,7 +68,7 @@ subgraph cluster_DuckPhp_Component {
 }
 
 subgraph cluster_DuckPhp_Core {
-    label = "[DuckPhp\\Core] 20 个";
+    label = "[DuckPhp\\Core] 20 types";
 
     DuckPhp_Core_App [label="App",shape="box",tooltip="src/Core/App.php"];
     DuckPhp_Core_AutoLoader [label="AutoLoader",shape="box",tooltip="src/Core/AutoLoader.php"];
@@ -93,18 +93,18 @@ subgraph cluster_DuckPhp_Core {
 
     DuckPhp_Core_App -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Core_App -> DuckPhp_Core_KernelTrait [style="dotted"];
-    DuckPhp_Core_App -> DuckPhp_Core_SystemWrapper [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_Core_App -> DuckPhp_Core_CoreHelper [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_Core_App -> DuckPhp_Core_Logger [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_Core_App -> DuckPhp_Core_View [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_Core_App -> DuckPhp_Core_SuperGlobal [style="bold",color="#1f77b4",label="装配"];
+    DuckPhp_Core_App -> DuckPhp_Core_SystemWrapper [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_Core_App -> DuckPhp_Core_CoreHelper [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_Core_App -> DuckPhp_Core_Logger [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_Core_App -> DuckPhp_Core_View [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_Core_App -> DuckPhp_Core_SuperGlobal [style="bold",color="#1f77b4",label="assembles"];
     DuckPhp_Core_ComponentBase -> DuckPhp_Core_SingletonExTrait [style="dotted"];
     DuckPhp_Core_Console -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Core_CoreHelper -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Core_ExceptionManager -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Core_ExitException -> DuckPhp_Core_DuckPhpSystemException [style="solid"];
-    DuckPhp_Core_KernelTrait -> DuckPhp_Core_Console [style="bold",color="#1f77b4",label="装配"];
-    DuckPhp_Core_KernelTrait -> DuckPhp_Core_Route [style="bold",color="#1f77b4",label="装配"];
+    DuckPhp_Core_KernelTrait -> DuckPhp_Core_Console [style="bold",color="#1f77b4",label="assembles"];
+    DuckPhp_Core_KernelTrait -> DuckPhp_Core_Route [style="bold",color="#1f77b4",label="assembles"];
     DuckPhp_Core_Logger -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Core_Route -> DuckPhp_Core_ComponentBase [style="solid"];
     DuckPhp_Core_Route -> DuckPhp_Core_Route_UrlManager [style="dotted"];
@@ -116,7 +116,7 @@ subgraph cluster_DuckPhp_Core {
 }
 
 subgraph cluster_DuckPhp_Db {
-    label = "[DuckPhp\\Db] 3 个";
+    label = "[DuckPhp\\Db] 3 types";
 
     DuckPhp_Db_Db [label="Db",shape="box",tooltip="src/Db/Db.php"];
     DuckPhp_Db_DbAdvanceTrait [label="DbAdvanceTrait",shape="diamond",tooltip="src/Db/DbAdvanceTrait.php"];
@@ -127,7 +127,7 @@ subgraph cluster_DuckPhp_Db {
 }
 
 subgraph cluster_DuckPhp_Ext {
-    label = "[DuckPhp\\Ext] 28 个";
+    label = "[DuckPhp\\Ext] 28 types";
 
     DuckPhp_Ext_CallableView [label="CallableView",shape="box",tooltip="src/Ext/CallableView.php"];
     DuckPhp_Ext_DuckPhpInstaller [label="DuckPhpInstaller",shape="box",tooltip="src/Ext/DuckPhpInstaller.php"];
@@ -185,7 +185,7 @@ subgraph cluster_DuckPhp_Ext {
 }
 
 subgraph cluster_DuckPhp_Foundation {
-    label = "[DuckPhp\\Foundation] 2 个";
+    label = "[DuckPhp\\Foundation] 2 types";
 
     DuckPhp_Foundation_Helper [label="Helper",shape="box",tooltip="src/Foundation/Helper.php"];
     DuckPhp_Foundation_SingletonTrait [label="SingletonTrait",shape="diamond",tooltip="src/Foundation/SingletonTrait.php"];
@@ -194,7 +194,7 @@ subgraph cluster_DuckPhp_Foundation {
 }
 
 subgraph cluster_DuckPhp_Foundation_Business {
-    label = "[DuckPhp\\Foundation\\Business] 2 个";
+    label = "[DuckPhp\\Foundation\\Business] 2 types";
 
     DuckPhp_Foundation_Business_Base [label="Base",shape="box3d",tooltip="src/Foundation/Business/Base.php"];
     DuckPhp_Foundation_Business_BusinessHelper [label="BusinessHelper",shape="box",tooltip="src/Foundation/Business/BusinessHelper.php"];
@@ -204,7 +204,7 @@ subgraph cluster_DuckPhp_Foundation_Business {
 }
 
 subgraph cluster_DuckPhp_Foundation_Controller {
-    label = "[DuckPhp\\Foundation\\Controller] 7 个";
+    label = "[DuckPhp\\Foundation\\Controller] 7 types";
 
     DuckPhp_Foundation_Controller_ActionBase [label="ActionBase",shape="box3d",tooltip="src/Foundation/Controller/ActionBase.php"];
     DuckPhp_Foundation_Controller_AdminControllerBase [label="AdminControllerBase",shape="box",tooltip="src/Foundation/Controller/AdminControllerBase.php"];
@@ -223,7 +223,7 @@ subgraph cluster_DuckPhp_Foundation_Controller {
 }
 
 subgraph cluster_DuckPhp_Foundation_Model {
-    label = "[DuckPhp\\Foundation\\Model] 4 个";
+    label = "[DuckPhp\\Foundation\\Model] 4 types";
 
     DuckPhp_Foundation_Model_Base [label="Base",shape="box3d",tooltip="src/Foundation/Model/Base.php"];
     DuckPhp_Foundation_Model_ModelHelper [label="ModelHelper",shape="box",tooltip="src/Foundation/Model/ModelHelper.php"];
@@ -238,7 +238,7 @@ subgraph cluster_DuckPhp_Foundation_Model {
 }
 
 subgraph cluster_DuckPhp_Foundation_System {
-    label = "[DuckPhp\\Foundation\\System] 1 个";
+    label = "[DuckPhp\\Foundation\\System] 1 types";
 
     DuckPhp_Foundation_System_SystemHelper [label="SystemHelper",shape="box",tooltip="src/Foundation/System/SystemHelper.php"];
 
@@ -246,7 +246,7 @@ subgraph cluster_DuckPhp_Foundation_System {
 }
 
 subgraph cluster_DuckPhp_GlobalAdmin {
-    label = "[DuckPhp\\GlobalAdmin] 9 个";
+    label = "[DuckPhp\\GlobalAdmin] 9 types";
 
     DuckPhp_GlobalAdmin_Admin [label="Admin",shape="box",tooltip="src/GlobalAdmin/Admin.php"];
     DuckPhp_GlobalAdmin_AdminActionInterface [label="AdminActionInterface",shape="note",tooltip="src/GlobalAdmin/AdminActionInterface.php"];
@@ -266,7 +266,7 @@ subgraph cluster_DuckPhp_GlobalAdmin {
 }
 
 subgraph cluster_DuckPhp_GlobalUser {
-    label = "[DuckPhp\\GlobalUser] 9 个";
+    label = "[DuckPhp\\GlobalUser] 9 types";
 
     DuckPhp_GlobalUser_GlobalUser [label="GlobalUser",shape="box",tooltip="src/GlobalUser/GlobalUser.php"];
     DuckPhp_GlobalUser_User [label="User",shape="box",tooltip="src/GlobalUser/User.php"];
@@ -285,7 +285,7 @@ subgraph cluster_DuckPhp_GlobalUser {
 }
 
 subgraph cluster_DuckPhp_HttpServer {
-    label = "[DuckPhp\\HttpServer] 2 个";
+    label = "[DuckPhp\\HttpServer] 2 types";
 
     DuckPhp_HttpServer_HttpServer [label="HttpServer",shape="box",tooltip="src/HttpServer/HttpServer.php"];
     DuckPhp_HttpServer_HttpServerInterface [label="HttpServerInterface",shape="note",tooltip="src/HttpServer/HttpServerInterface.php"];

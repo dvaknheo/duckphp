@@ -1,27 +1,30 @@
 <?php declare(strict_types=1);
 /**
- * gen-architecture-gv.php —— 从 src/ 生成架构图源文件 docs/duckphp.gv
+ * gen-architecture-gv.php -- generate the architecture diagram source docs/duckphp.gv from src/.
  *
- * 为什么要有这个脚本：docs/duckphp.gv 原来是手写的，最后一次更新在 2024-04，
- * 里面还留着 DuckPhp\Helper / HelperX / HelperY / FastInstaller / Foundation\Core /
- * Foundation\Component 这些早已不存在的命名空间，而 Foundation\Business|Controller|Model|System、
- * GlobalAdmin、GlobalUser 一个都没画。手写图必然烂，改成生成。
+ * Why this exists: docs/duckphp.gv used to be hand written and was last touched in 2024-04.
+ * It still contained long-gone namespaces (DuckPhp\Helper / HelperX / HelperY / FastInstaller /
+ * Foundation\Core / Foundation\Component) and nodes for already deleted classes, while the current
+ * Foundation\Business|Controller|Model|System, GlobalAdmin and GlobalUser were missing entirely.
+ * A hand drawn diagram rots; this one is generated. Everything the diagram prints is English
+ * (labels, legend, edge labels) so it renders with any font.
  *
- * 画什么（全部从代码推导，没有人工名单）：
- *   - 一个命名空间一个 cluster，标签带类数；
- *   - 节点形状按声明种类：class=box、abstract class=box3d、interface=note、trait=diamond；
- *   - 边按关系：extends=实线、implements=虚线、use <Trait>=点线；
- *     另有「装配」粗线：initComponents*() 里出现的 ::class 引用（谁把谁装进容器）；
- *   - 悬停提示（SVG 里可见）是该类的源文件路径。
+ * What is drawn (everything derived from code, no hand kept class list):
+ *   - one cluster per namespace, the label carries the type count;
+ *   - node shape by declaration: class=box, abstract class=box3d, interface=note, trait=diamond;
+ *   - edges by relation: extends=solid, implements=dashed, use <Trait>=dotted, plus a bold blue
+ *     "assembles" edge for every ::class mentioned inside initComponents*() (who wires whom up);
+ *   - tooltips (visible in the SVG) carry the source file path.
  *
- * 用法：
- *   php docs/scripts/gen-architecture-gv.php            # 写入 docs/duckphp.gv
- *   php docs/scripts/gen-architecture-gv.php --check     # 只校验是否最新（过期退出码 1）
- *   php docs/scripts/gen-architecture-gv.php --stdout    # 打印到标准输出
+ * Usage:
+ *   php docs/scripts/gen-architecture-gv.php            # write docs/duckphp.gv
+ *   php docs/scripts/gen-architecture-gv.php --check     # only verify it is current (exit 1 when stale)
+ *   php docs/scripts/gen-architecture-gv.php --stdout    # print to stdout
  *
- * 渲染成 SVG（本仓用 dot；没装 graphviz 时可用 npm 上的 WASM 版 graphviz）：
+ * Render it (canonical: graphviz; when `dot` is unavailable the WASM build on npm works too):
  *   dot docs/duckphp.gv -T svg -O
- *   npx -y @viz-js/viz ...   # 见 docs/zh/reference-maintenance-guide.md 的脚本表
+ *   npm i @viz-js/viz   # then renderString(src, {format:'svg'}) in Node -- see the script table
+ *                       # of docs/zh/reference-maintenance-guide.md
  */
 require __DIR__ . '/../../vendor/autoload.php';
 
@@ -149,7 +152,7 @@ function findClassLikes(array $stmts): array
 
 $classes = collectClasses($src_dir, $parser);
 
-// 只保留 src/ 里真实存在的目标（::class 可能指向外部类）
+// keep only targets that really exist in src/ (::class may point to an outside class)
 $exists = static fn(string $fqcn): bool => isset($classes[$fqcn]);
 $nodeId = static fn(string $fqcn): string => str_replace('\\', '_', $fqcn);
 
@@ -183,14 +186,14 @@ $out[] = 'edge [fontsize="9"];';
 $out[] = '';
 
 $out[] = 'subgraph cluster_legend {';
-$out[] = '    label = "[图例]";';
-$out[] = '    label_legend [label="形状：box=类 / box3d=抽象类 / note=接口 / diamond=trait\n边：实线=extends / 虚线=implements / 点线=use trait / 粗线=initComponents*() 装配",shape="plaintext",fontsize="10"];';
+$out[] = '    label = "[Legend]";';
+$out[] = '    label_legend [label="Shapes: box=class / box3d=abstract class / note=interface / diamond=trait\nEdges: solid=extends / dashed=implements / dotted=use trait / bold blue=assembled in initComponents*()",shape="plaintext",fontsize="10"];';
 $out[] = '}';
 $out[] = '';
 
 foreach ($by_ns as $ns => $items) {
     $out[] = 'subgraph cluster_' . preg_replace('/[^A-Za-z0-9_]/', '_', $ns) . ' {';
-    $out[] = '    label = "[' . str_replace('\\', '\\\\', $ns) . '] ' . count($items) . ' 个";';
+    $out[] = '    label = "[' . str_replace('\\', '\\\\', $ns) . '] ' . count($items) . ' types";';
     $out[] = '';
     ksort($items);
     foreach ($items as $short => $info) {
@@ -215,7 +218,7 @@ foreach ($by_ns as $ns => $items) {
         }
         foreach ($info['assembles'] as $a) {
             if ($exists($a) && $a !== $info['fqcn']) {
-                $out[] = '    ' . $id . ' -> ' . $nodeId($a) . ' [style="bold",color="#1f77b4",label="装配"];';
+                $out[] = '    ' . $id . ' -> ' . $nodeId($a) . ' [style="bold",color="#1f77b4",label="assembles"];';
             }
         }
     }
@@ -242,4 +245,4 @@ if ($check) {
 file_put_contents($target, $text);
 $n_nodes = count($classes);
 $n_ns = count($by_ns);
-echo "written: docs/duckphp.gv ($n_ns 个命名空间, $n_nodes 个类型)\n";
+echo "written: docs/duckphp.gv ($n_ns namespaces, $n_nodes types)\n";
