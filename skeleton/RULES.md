@@ -102,7 +102,7 @@ Model 层 (纯无状态)
 | Model 类 | `{Name}Model` | `UserModel` | 数据访问 |
 | 异常类 | `{Name}Exception` | `ProjectException` | 异常层级 |
 
-{action_prefix} 由应用选项 `controller_method_prefix` 决定：**DuckPHP 1.3.6 起默认值已由 `action_` 改为空串**，也就是 URL 段名就是方法名（`/user/profile` → `userController::profile()`）。本骨架的 `src/System/App.php` 里把它配成 `'action_'`，所以控制器方法写作 `action_index()`；不配就是 `index()`。
+{action_prefix} 由应用选项 `controller_method_prefix` 决定：**DuckPHP 1.3.6 起默认值已由 `action_` 改为空串**，也就是 URL 段名就是方法名（`/user/profile` → `userController::profile()`）。**本骨架没有配这个选项**（`src/System/App.php` 里那行是注释掉的），所以控制器方法直接写作 `index()`、`done()`；想用 `action_` 前缀就取消那行的注释，方法名与 URL 一起改。
 
 ### 核心原则
 

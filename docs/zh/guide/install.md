@@ -16,11 +16,21 @@
 
 ```bash
 composer require dvaknheo/duckphp
-php vendor/bin/duckphp new        # 交互式：问命名空间，然后把 skeleton/ 拷到当前目录
-php vendor/bin/duckphp show       # 看生成结果与当前配置
+php vendor/bin/duckphp new        # 把 skeleton/ 拷成你的工程（命名空间见下）
+php vendor/bin/duckphp show       # 把**框架自带的 demo/ 应用**跑起来看（默认 8080，不是你的工程）
 ```
 
-`duckphp` 这个命令只有三个子命令：`new` / `show` / `help`（它由 [`DuckPhpInstaller`](../reference/Ext-DuckPhpInstaller.md) 提供）。`new` 做的事情很朴素：**把 `skeleton/` 目录整个拷成你的工程**，所以生成的结构与 `skeleton/` 一致。
+`duckphp` 这个命令只有三个子命令：`new` / `show` / `help`（它由 [`DuckPhpInstaller`](../reference/Ext-DuckPhpInstaller.md) 提供）。`new` 做的事情很朴素：**把 `skeleton/` 目录整个拷成你的工程**，所以生成的结构与 `skeleton/` 一致。命名空间**优先取你 `composer.json` 里 `autoload.psr-4` 指向 `src` 的那一条**（例如 `"MySite\\": "src"` → `MySite`），取不到才交互式问一句（默认 `Demo`）；也可以直接 `--namespace=MySite`。
+
+生成时有两处改名，别被吓到：
+
+- `src/System/App.php` → `src/System/{命名空间末段}App.php`（类名 `App` → `MySiteApp`），凡是提到它的地方（`public/index.php`、`bin/cli.php`、随附的 `RULES.md` / `agent-zh.md`）会一起改写；
+- 其余文件只把 `YourProjectName\` 换成你的命名空间。
+
+```bash
+php vendor/bin/duckphp new --verbose          # 打印每个落地的文件
+php vendor/bin/duckphp new --force            # 目标目录已有同名文件时覆盖（默认会停下来提示）
+```
 
 ## 路线 B：手写最小工程（3 个文件）
 
@@ -102,7 +112,13 @@ php bin/cli.php run --port=9000     # 换端口
 
 > 这两种启动方式都只把「不像文件」的路径交给 `index.php`：`/`、`/Note/index` 能跑通；**带后缀的 URL**（如框架代发的 `/res/main.css`）需要额外一个 router 脚本 —— 见[第 1-7 章 §二](deployment.md)。
 
-浏览器打开 `http://127.0.0.1:8080/`，看到 `Hello DuckPHP` 就成了。
+浏览器打开 `http://127.0.0.1:8080/`，看到 `Hello DuckPHP` 就成了。脚手架还自带一条**串起四层**的示例路由，生成后直接可访问：
+
+| URL | 走的路 |
+|---|---|
+| `/` | `MainController::index()` → `Business\DemoBusiness::_()->foo()` → `Model\DemoModel` → `view/main.php` |
+| `/test/done` | `Controller\testController::done()`（同样过业务/模型）→ 按路由找到 `view/test/done.php` |
+| 其它 | `view/_sys/error_404.php`（`error_404` 选项） |
 
 命令行入口 `bin/cli.php` 与 Web 入口共用同一套代码：
 

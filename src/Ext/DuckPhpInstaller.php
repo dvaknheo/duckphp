@@ -113,9 +113,19 @@ EOT;
         $this->dumpDir($source, $dest, $this->options['force']);
     }
 
+    /**
+     * Directory served by the `show` command: the bundled demo application.
+     * It used to be `template/`, renamed to `demo/` long ago -- with a missing directory the
+     * command only printed "Directory ... does not exist." and served nothing.
+     */
+    protected function getDemoPath(): string
+    {
+        return __DIR__ . '/../../demo';
+    }
+
     public function runDemo(): void
     {
-        $source = __DIR__ .'/../../template';
+        $source = $this->getDemoPath();
         $options = [
             'path' => $source,
         ];
@@ -159,31 +169,36 @@ EOT;
             return; // @codeCoverageIgnore
         }
         $is_in_full = false;
+        $ns_basename = $this->getNamespaceBasename();
 
         foreach ($files as $file => $short_file_name) {
+            $is_app_file = (str_replace('\\', '/', $short_file_name) === 'src/System/App.php');
             $dest_file_name = $short_file_name;
-            if (str_replace('\\', '/', $short_file_name) === 'src/System/App.php') {
+            if ($is_app_file) {
                 // rename src/System/App.php to src/System/{namespace_basename}App.php
-                $dest_file_name = 'src'.DIRECTORY_SEPARATOR.'System'.DIRECTORY_SEPARATOR.$this->getNamespaceBasename().'App.php';
+                $dest_file_name = 'src'.DIRECTORY_SEPARATOR.'System'.DIRECTORY_SEPARATOR.$ns_basename.'App.php';
             }
             $dest_file = $dest.$dest_file_name;
             $data = (string)file_get_contents(''.$file);
             $data = $this->filteText($data, $is_in_full, $short_file_name);
-            if (str_replace('\\', '/', $short_file_name) === 'src/System/App.php') {
+            if ($ns_basename !== '') {
+                // The app class is renamed to {namespace_basename}App, so every mention of it has to follow:
+                // not only public/index.php -- bin/cli.php and the shipped *.md also say
+                // `System\App` / `System/App.php`. (Missed once: a fresh project's `php bin/cli.php help`
+                // died with `Class "..\System\App" not found`.)
+                $data = str_replace(
+                    ['System\\App', 'System/App'],
+                    ['System\\'.$ns_basename.'App', 'System/'.$ns_basename.'App'],
+                    $data
+                );
+                // Bare path mentions in prose / tree diagrams, e.g. "|  `-- App.php" or "`App.php`"
+                $data = (string)preg_replace('~(?<=[/\s`])App\.php~', $ns_basename.'App.php', $data);
+            }
+            if ($is_app_file) {
                 // rename class App to class {namespace_basename}App to match the new file name
-                $ns_basename = $this->getNamespaceBasename();
-                $data = str_replace('class App extends', 'class '.$ns_basename.'App extends', $data);
+                $data = (string)preg_replace('/\bclass App\b/', 'class '.$ns_basename.'App', $data);
             }
             $flag = file_put_contents($dest_file, $data);
-
-            if (str_replace('\\', '/', $short_file_name) === 'public/index.php') {
-                // rename class App to class {namespace_basename}App to match the new file name
-                $ns_basename = $this->getNamespaceBasename();
-                $data = str_replace('System\\App', "System\\{$ns_basename}App", $data);
-            }
-            $flag = file_put_contents($dest_file, $data);
-
-
 
             if ($this->options['verbose']) {
                 echo $dest_file;

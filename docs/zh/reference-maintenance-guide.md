@@ -288,7 +288,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
   - `docs/zh/reference/` 共 **114 篇**：110 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`）。逐类文档全部按第 3 节模板。
   - 漂移扫描 `drift.py --all` **只剩 3 条已判读的假报**：`Core/Functions.php` 与 `Ext/RouteHookWebInstallerView.php` 的 `HEAD-MISMATCH`（函数文件/无类声明的文件，脚本局限），`DuckPhpAllInOne.php` 的 `extra-option` + `extra-method`（embedMe 键表与「使用方式」示例里的自定义方法）。
   - 站内链接 0 死链；114 篇全 UTF-8；`src/` 非 ASCII 0 行；`gen-options-docs.php --check` up to date。
-  - 测试基线（WSL，2026-09-26 全量实测）：`php vendor/bin/phpunit --no-coverage` → **`OK (97 tests, 829 assertions)`**；覆盖率 **`4895/4895 (100.00%)`**（`XDEBUG_MODE=coverage` 跑完全量后，再跑 `tests/support.php` 生成 `test_reports/index.html`；聚合判定用 `docs/scripts/covagg.php`）。⚠️ 中途 Fatal 的测试不写自己的 dump ⇒ 覆盖率会假降（实测见过 `97.47%`），**先确认全量没有红**。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10432**（跟当前工作区的选项表绑定，见第 7 节那一行）。
+  - 测试基线（WSL，2026-09-26 全量实测）：`php vendor/bin/phpunit --no-coverage` → **`OK (97 tests, 837 assertions)`**；覆盖率 **`4900/4900 (100.00%)`**（`XDEBUG_MODE=coverage` 跑完全量后，再跑 `tests/support.php` 生成 `test_reports/index.html`；聚合判定用 `docs/scripts/covagg.php`）。⚠️ 中途 Fatal 的测试不写自己的 dump ⇒ 覆盖率会假降（实测见过 `97.47%`），**先确认全量没有红**。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10432**（跟当前工作区的选项表绑定，见第 7 节那一行）。
   - 同步基线：分支 `doced`（= `3ece976b`）。下次同步从它之后算起（见第 9 节末的提示）。
   - **默认不动**：`docs/en/`（陈旧英文副本）、`docs/old/`、`docs/duckphp.gv`（陈旧生成物）、`README*.md`——它们不随中文文档同步。
 - **待办**

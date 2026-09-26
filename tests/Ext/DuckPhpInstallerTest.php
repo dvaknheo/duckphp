@@ -48,6 +48,16 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
             '-','run', '--http-server=tests/DuckPhp/Ext/Console_HttpServer',
         ];
         DuckPhpInstaller::_()->command_show();
+
+        // `show` 服务的目录必须真的存在：它曾指向早已改名成 `demo/` 的 `template/`，
+        // 于是命令只打印 `Directory ... does not exist.`，靠上面那个 stub HttpServer 是查不出来的。
+        $rm_demo = new \ReflectionMethod(\DuckPhp\Ext\DuckPhpInstaller::class, 'getDemoPath');
+        if (version_compare(PHP_VERSION, '8.1.0', '<')) {
+            $rm_demo->setAccessible(true);
+        }
+        $demo_path = (string) $rm_demo->invoke(DuckPhpInstaller::_());
+        $this->assertDirectoryExists($demo_path, 'show 命令服务的 demo 目录应当存在');
+        $this->assertFileExists($demo_path . '/public/index.php');
         
         $_SERVER['argv']=[
             '-','new','--help',
@@ -117,6 +127,53 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
             }
         }
         $this->assertSame([], $not_loaded, '骨架类应能全部加载（签名不兼容会在这里暴露）');
+
+        // 入口文件里也不能留下**旧命名空间**或**没改名的 App 类**：安装器把 `src/System/App.php`
+        // 改名为 `{NS}App.php` 之后，凡是提到这个类的地方都要跟着改——曾只改了 public/index.php，
+        // 于是新工程跑 `php bin/cli.php help` 直接 `Class "…\System\App" not found`。
+        $entry_files = array_merge(
+            glob($path_nsx . '/src/*/*.php') ?: [],
+            [$path_nsx . '/bin/cli.php', $path_nsx . '/public/index.php']
+        );
+        $stale = [];
+        foreach ($entry_files as $file) {
+            $data = (string) file_get_contents($file);
+            if (strpos($data, 'YourProjectName') !== false || strpos($data, 'System\\App::') !== false) {
+                $stale[] = substr($file, strlen($path_nsx) + 1);
+            }
+        }
+        $this->assertSame([], $stale, '生成的文件里不该再留下旧命名空间或未改名的 App 类引用');
+
+        // 端到端冒烟：先补一个 composer 本会给它的 autoload（单测里不跑 composer），
+        // 再按用户的方式跑生成工程自己的 CLI 入口。
+        @mkdir($path_nsx . '/vendor');
+        file_put_contents($path_nsx . '/vendor/autoload.php', str_replace(
+            ['@AUTOLOAD@', '@SRCDIR@'],
+            [var_export(realpath(__DIR__ . '/../../vendor/autoload.php'), true), var_export($path_nsx . '/src/', true)],
+            <<<'EOT'
+<?php
+require @AUTOLOAD@;
+spl_autoload_register(function ($class) {
+    if (strpos($class, 'NSX\\') !== 0) {
+        return;
+    }
+    $file = @SRCDIR@ . str_replace('\\', '/', substr($class, 4)) . '.php';
+    if (is_file($file)) {
+        require $file;
+    }
+});
+EOT
+        ));
+        $cli_out = (string) shell_exec('php ' . escapeshellarg($path_nsx . '/bin/cli.php') . ' help 2>&1');
+        $this->assertStringContainsString('DuckPhp', $cli_out, '生成的 bin/cli.php 应当能跑起来并打印 CLI 帮助');
+        $this->assertStringNotContainsString('not found', $cli_out);
+        $this->assertStringNotContainsString('Fatal error', $cli_out);
+
+        // 骨架自带的示例路由 `/test/done` 必须连同视图一起生成（`testController::done()` 不给视图名，
+        // 框架按路由找 view/test/done.php；少了这个文件该路由就是 500）。
+        $this->assertFileExists($path_nsx . '/view/test/done.php');
+        $this->assertFileExists($path_nsx . '/view/main.php');
+
         // Model\Base 的 6 个数据层助手是显式声明，实例式调用应可用
         $model = new class extends \NSX\Model\Base {
         };

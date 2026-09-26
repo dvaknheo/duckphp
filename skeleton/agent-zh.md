@@ -635,7 +635,7 @@ class ExceptionAction
 }
 ```
 
-方法命名规则：`on{异常类名}($ex)`；没有对应方法时兜底 `App::_()->_OnDefaultException()`。在 `App.php` 中配置（值必须是**可调用**的，裸类名不是 callable，会启动即抛 `config error`）：
+方法命名规则：`on{异常类名}($ex)`；没有对应方法时兜底 `\YourProjectName\System\App::_()->_OnDefaultException()`（写成全限定名，装到别的命名空间时会被一起改写）。在 `App.php` 中配置（值必须是**可调用**的，裸类名不是 callable，会启动即抛 `config error`）：
 
 ```php
 'exception_reporter' => [ExceptionAction::class, 'OnException'],
