@@ -53,7 +53,7 @@ public function action_login()
 ```
 ## 注意事项
 
-- `Show($data, $view)` 最终走 `App::_()->_Show()`（含 head/foot 包裹与视图文件查找）；`Render` 走 `View::_Render()`（不含 head/foot）。
+- `Show($data, $view)` 最终走 `App::_()->_Show()`（含页眉页脚包裹与视图文件查找）；`Render` 走 `View::_Render()`（不含页眉页脚）。
 - `GET/POST/REQUEST/COOKIE/SERVER` 均来自 `SuperGlobal`，返回 `$default` 兜底。
 - `Admin/AdminId/AdminName/User/UserId/UserName` 对应 `GlobalAdmin`/`GlobalUser` 的动作接口与登录查询；`AdminService/UserService` 取 service。
 - `PageHtml($total, $options)` 由 `Pager` 生成 HTML 分页条。
@@ -101,7 +101,7 @@ public function action_login()
 渲染视图并返回（`View::_Render`）。
 
     public static function Show($data = [], $view = '')
-渲染页面并输出（走 `App::_Show`，含 head/foot）。
+渲染页面并输出（走 `App::_Show`，含页眉页脚）。
 
     public static function checkInstall(?string $url_install = null)
 未安装时跳转到安装页（`App::checkInstallToPage`）。

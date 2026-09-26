@@ -46,7 +46,7 @@ class MyView
 ## 注意事项
 
 - `viewToCallback()`：把视图名中的 `/` 换成 `_` 并加前缀；有 `callable_view_class` 时组装 `[$obj, $func]`；不可调用返回 `null`（此时回退父类 `_Show` 走模板）。
-- `_Show`：header/footer 也按回调解析并先/后调用；`_Display` 同理（无 head/foot）。
+- `_Show`：header/footer 也按回调解析并先/后调用；`_Display` 同理（无页眉页脚）。
 - 通过 `init()` 默认替换全局 `View::_()`（除非 `callable_view_skip_replace`），框架内 `Helper::Show()` 等即走向本实现。
 
 ## 方法列表
@@ -60,7 +60,7 @@ class MyView
 初始化（父类流程）；默认把 `View::_()` 替换为本实例。
 
     public function _Show(array $data, string $view)
-把视图解析成回调并带 head/foot 调用；不可调用则回退父类模板渲染。
+把视图解析成回调并带页眉页脚调用；不可调用则回退父类模板渲染。
 
     public function _Display(string $view, ?array $data = null): void
 把视图解析成回调直接调用；不可调用回退父类。

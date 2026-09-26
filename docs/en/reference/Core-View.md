@@ -1,6 +1,6 @@
 # DuckPhp\Core\View
 
-The view component: renders the data a controller/logic wants to show into output (template include), with head/foot wrapping, data assignment, and "render to string" capture.
+The view component: renders the data a controller/logic wants to show into output (template include), with header/footer wrapping, data assignment, and "render to string" capture.
 
 ## Introduction
 
@@ -8,7 +8,7 @@ The view component: renders the data a controller/logic wants to show into outpu
 
 Core abilities:
 
-- `extract()` a piece of data into local variables, then `include` the view (plus optional head/foot) for output;
+- `extract()` a piece of data into local variables, then `include` the view (plus optional header/footer) for output;
 - The rendering trio `Show` (immediate output), `Display` (output a given template), `Render` (capture → string) — each has a static shell (calling `View::Show(...)` from a Controller/Helper is the easiest);
 - Data: `assignViewData()`/`getViewData()` pre-assign data into the instance's context;
 - View-file location is based on `options[path]/options[path_view]` + `getOverrideableFile()` (supports phase-level override subdirectories).
@@ -61,7 +61,7 @@ $viewData = View::_()->getViewData();
 
 > `_Show()` array-merges its own `$data` with the assigned data, then `extract`s — inside the view file these names are the variables.
 
-### head/foot wrapping
+### header/footer wrapping
 
 ```php
 View::_()->setViewHeaderFooter('_layout/head', '_layout/foot');
@@ -72,7 +72,7 @@ Note: `_Show` defaults the passed (object-level `$header_file`/`$footer_file`) t
 
 #### reset
 
-After a cycle, call `View::_()->reset()` to clear the head/foot/data/view state, giving each request/test a zero state.
+After a cycle, call `View::_()->reset()` to clear the header/footer/data/view state, giving each request/test a zero state.
 
 ## Configuration example
 
@@ -118,7 +118,7 @@ Static shell → `static::_()->_Display(...)`
 Static shell: renders and captures the return string
 
     public function _Show(array $data, string $view)
-(Core) If view_skip_notice_error, temporarily lowers E_NOTICE; resolves the view/head/foot files, merges data and extracts; includes in head → main view → foot order; restores the reporting boundary after rendering
+(Core) If view_skip_notice_error, temporarily lowers E_NOTICE; resolves the view/header/footer files, merges data and extracts; includes in header → main view → footer order; restores the reporting boundary after rendering
 
     public function _Display(string $view, ?array $data = null): void
 Outputs the given template as a single file (with merged data, excluding the 'this' key) and includes it
@@ -127,7 +127,7 @@ Outputs the given template as a single file (with merged data, excluding the 'th
 Captures the "output" as a string: ob start → _Display → ob get contents → end
 
     public function reset()
-Resets the instance: clears head/foot/view and temp files/old error level, giving every cycle a zero state
+Resets the instance: clears header/footer/view and temp files/old error level, giving every cycle a zero state
 
     public function getViewData(): array
 Returns the currently assigned data array

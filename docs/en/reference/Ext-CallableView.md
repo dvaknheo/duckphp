@@ -46,7 +46,7 @@ class MyView
 ## Caveats
 
 - `viewToCallback()`: replaces `/` in the view name with `_` and adds the prefix; when `callable_view_class` is set, assembles `[$obj, $func]`; returns `null` when not callable (then it falls back to the parent `_Show` and renders the template).
-- `_Show`: header/footer are also resolved as callbacks and called before/after; same for `_Display` (no head/foot).
+- `_Show`: header/footer are also resolved as callbacks and called before/after; same for `_Display` (no header/footer).
 - `init()` replaces the global `View::_()` by default (unless `callable_view_skip_replace`), so `Helper::Show()` etc. inside the framework route into this implementation.
 
 ## Methods
@@ -60,7 +60,7 @@ Constructs after merging the parent `View` default options.
 Initializes (parent flow); replaces `View::_()` with this instance by default.
 
     public function _Show(array $data, string $view)
-Resolves the view into a callback and calls it with head/foot; falls back to the parent template rendering when not callable.
+Resolves the view into a callback and calls it with header/footer; falls back to the parent template rendering when not callable.
 
     public function _Display(string $view, ?array $data = null): void
 Resolves the view into a callback and calls it directly; falls back to the parent when not callable.

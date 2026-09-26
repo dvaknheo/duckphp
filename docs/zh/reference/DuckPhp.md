@@ -174,7 +174,7 @@ DuckPhp::Setting('shop_name','demo');
 ### 公共方法
 
     public function _Show(array $data, string $view = '')
-当 current calling controller 是 User/Admin 类型且 `__use_logined_view_data` 开启时，先取 `__logined_render_header_footer`，再调用 `User::_()->mergeViewData($data)` 或 `Admin::_()->mergeViewData($data)` 合并视图数据；`__use_logined_header_footer_file` 为真时同时设 head/foot 文件；最后回落 parent::_Show()
+当 current calling controller 是 User/Admin 类型且 `__use_logined_view_data` 开启时，先取 `__logined_render_header_footer`，再调用 `User::_()->mergeViewData($data)` 或 `Admin::_()->mergeViewData($data)` 合并视图数据；`__use_logined_header_footer_file` 为真时同时设页眉页脚文件；最后回落 parent::_Show()
 
     public function lang($str, $args = [], $fallback = null)
 翻译：有 lang_handler 回调则委托；否则交给 Lang(_)::language()（可 fallback）

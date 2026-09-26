@@ -8,7 +8,7 @@
 
 核心能力：
 
-- 把一段数据 `extract()` 成“局部变量作用出来”，再 `include` 视图(以及可选 head/foot)输出；
+- 把一段数据 `extract()` 成“局部变量作用出来”，再 `include` 视图(以及可选页眉页脚)输出；
 - 渲染接口三兄弟 `Show`(立即输出) `Display`(输出指定模板) `Render`(捕获 → 字符串) —— 每个都有静态壳（入 Controller/Helper 里调 `View::Show(...)` 等最容易用）；
 - 数据相关：`assignViewData()`/`getViewData()`，可把数据事先预分配到实例的上下文中；
 - 视图文件定位基于 `options[path]/options[path_view]` + `getOverrideableFile()`（支持 Phase 级覆盖子目录）。
@@ -61,18 +61,18 @@ $viewData = View::_()->getViewData();
 
 > `_Show()` 会 array_merge 自带的 `$data` 与已 assign 的数据后 `extract` —— 对应 view 文件内这些名字就是变量。
 
-### head/foot 绕头尾
+### 页眉页脚包裹
 
 ```php
 View::_()->setViewHeaderFooter('_layout/head', '_layout/foot');
-View::_()->_Show(['name'=>'D'], 'another'); // hence: head、主体、foot 依次输出
+View::_()->_Show(['name'=>'D'], 'another'); // 页眉、主体、页脚依次输出
 ```
 
 注意 `_Show` 用传入（对象级的 `$header_file`/`$footer_file`）默认取当前设置；不设时只有主体。
 
 #### reset
 
-处理完一个周期后调用 `View::_()->reset()` 清除 head/foot/data/view 状态，便于每个请求/测试零状态。
+处理完一个周期后调用 `View::_()->reset()` 清除页眉页脚/data/view 状态，便于每个请求/测试零状态。
 
 ## 配置示例
 
@@ -118,7 +118,7 @@ $viewOptions = [
 静态壳：渲染并捕获返回字符串
 
     public function _Show(array $data, string $view)
-(核心) 若 view_skip_notice_error 临时降 E_NOTICE；解析 view/head/foot 文件、合并数据并 extract；按 head → 主view → foot 顺序 include 输出；渲染后恢复 reporting 边界
+(核心) 若 view_skip_notice_error 临时降 E_NOTICE；解析 view/页眉/页脚文件、合并数据并 extract；按 页眉 → 主view → 页脚 顺序 include 输出；渲染后恢复 reporting 边界
 
     public function _Display(string $view, ?array $data = null): void
 单文件输出指定模板（合并好 data,排除 'this' 键）并 include
@@ -127,7 +127,7 @@ $viewOptions = [
 捕获"输出"为字符串：ob start→ _Display → ob 取内容 → 结束
 
     public function reset()
-重置实例：清空 head/foot/view 与临时文件/旧 error level，让每个周期零状态
+重置实例：清空页眉页脚/view 与临时文件/旧 error level，让每个周期零状态
 
     public function getViewData(): array
 返回当前已 assign 数据数组
