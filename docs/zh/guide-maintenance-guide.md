@@ -102,6 +102,9 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-skel
 # ④ 改过 src/ 或 tests/ 时：跑相关单测；改过示例就重跑示例测试
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"
 
+# ④b 改过任何中文页时：同步改完英文对应页，再跑英文树闸门（判据见 §8）
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-en-docs.py --all"
+
 # ⑤ 收尾（全量，约 5.5 分钟，建议后台跑）
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage"
 ```
@@ -188,3 +191,35 @@ python3 <tmp>/drift.py --all                     # reference 与源码一致性�
 - **唯一事实来源是总目录** [`guide/index.md`](guide/index.md)：章号、文件名、一句话都在那里。本文件只记「形式」与下面这些改号姿势。
 - **改号的落地姿势**：单遍替换 + 回调映射（见 §5）；替换范围只对总目录的表格行与各章 H1 生效，别全库套用。
 - **改完的判据**：① 扫 `docs/zh/guide/*.md` 里所有「链接文字带 `第 X-Y 章`」的引用，用「文件名 → 章号」表反查 → **0 处不一致**；② 总目录每行的章号与目标文件的 H1 对得上；③ `python3 docs/scripts/check-doc-links.py docs/zh` 仍 0 死链；④ 各章 H1 无重号、无缺号（卷四现在是连续的 `4-1`–`4-13`）。
+
+## 8. 英文树（`docs/en/`）：中文为准，同改同提交
+
+**约定（作者裁定）**：中文是唯一事实来源；改中文时必须在**同一次改动里**更新 `docs/en/` 的对应页。两棵树**文件名一一对应**（`docs/zh/guide/x.md` ↔ `docs/en/guide/x.md`，`docs/zh/reference/Y.md` ↔ `docs/en/reference/Y.md`），例外只有两篇维护指南（`guide-maintenance-guide.md`、`reference-maintenance-guide.md`）——它们是中文-only，不翻译。
+
+| 事项 | 做法 |
+|---|---|
+| 只改了中文页 | 同一次提交里把英文对应页一起改；否则英文树开始漂移，`check-en-docs.py --missing` 会把「中文有、英文没有」的页列出来 |
+| 新增/删除页 | 两棵树同名同步建/删 |
+| 生成页 | `index.md`/`options.md`/`options-by-class.md`/`options-index.md`/`setting.md` 由生成器产出：中文 `php docs/scripts/gen-options-docs.php`，英文 `php docs/scripts/gen-options-docs.php --lang=en`；**两棵树里的这 5 页都别手改** |
+| 术语与版式 | 用 [`docs/en/TRANSLATION.md`](../en/TRANSLATION.md) 的术语表；标题层级、表格行列数、围栏代码与中文页一一对应（围栏里纯代码行必须逐字节一致） |
+| 译文里发现中文有错 | **不要在英文侧单方面「改好」**：报给作者，中文侧定稿后两边一起改（否则同一件事两棵树说法不一致） |
+| 代码注释/示例字符串 | 一并翻译（这是既定口径）；命令、选项名、类名、路径不动 |
+
+**校验命令**（与 §4 同一套，只是多一条英文闸门）：
+
+```bash
+# 英文树闸门：围栏外的中文（error）/ 表格行数 / 标题层级 / 相对链接 / 锚点 / 与中文页围栏对齐
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-en-docs.py --all"
+
+# 中文有、英文没有的页（期望只剩 2 篇维护指南）
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-en-docs.py --missing"
+
+# 只看某几页
+python3 docs/scripts/check-en-docs.py docs/en/guide/routing.md
+
+# 英文生成页是否最新（会与 zh 侧分开检查）
+php docs/scripts/gen-options-docs.php --lang=en --check
+```
+
+- `--cjk` 列出「围栏内仍有中文」的位置；`docs/en/TRANSLATION.md` §5 说明了哪些文件允许保留中文（`ALLOW_CJK_FILES`：英文首页、术语表、迁移附录，以及不翻译的生成页）。
+- 英文树目前**没有**自己的目录页之外的手写导航：`docs/en/index.md` 是首页，章节表与中文一致但链接指向 `docs/en/`。

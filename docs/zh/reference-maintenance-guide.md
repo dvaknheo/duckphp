@@ -21,6 +21,8 @@
 
 规则：去掉 `src/` 与 `.php`，路径分隔符 `/` 换成 `-`。当前共 110 篇逐类文档 + 4 个汇总页（`index.md`、`options.md`、`options-by-class.md`、`options-index.md`，**不在逐类文档范围内**）。
 
+**英文树同名**：`docs/en/reference/` 与中文树文件名一一对应（包括 `index.md` / `options*.md` / `setting.md` 五个生成页）。中文是事实来源，改中文要同步改英文，见第 11 节。
+
 ## 3. 单篇结构模板（与 Core-Route.md 一致）
 
 ```
@@ -295,7 +297,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
   - 容器复核：`docker/test-php74`（PHP 7.4）与 `docker/test-php84`（PHP 8.4）两份 compose 现在逐行对齐，都用根目录那份 `composer.json`、跑完 `vendor/bin/phpunit` 全量；php84 实测 **`OK (95 tests, 875 assertions)` + 覆盖率 `4735/4735 (100.00%)`**，与 WSL 基线一致。当初 php84 跑不通的三个原因：① 它自带一份 `composer-test-php84.json`（已删）把 libcoverage 锁在 1.0.7 + PHPUnit 11 + php-code-coverage 11，而 `LibCoverage::_()` 到 1.0.8 才有、1.0.8 又只支持 php-code-coverage ^9；② 命令用了 `composer exec phpunit`，php84 镜像的 Composer 2.8 已删掉 `exec` 子命令；③ `tests/Component/CacheTest.php` 里 `Cache::_()->redis=null;` 在 PHP 8.2+ 是动态属性弃用（PHPUnit 转成异常），已删（`Cache` 根本没这个属性）。
   - 测试基线（WSL，2026-09-26 全量实测）：`php vendor/bin/phpunit --no-coverage` → **`OK (95 tests, 875 assertions)`**；覆盖率 **`80 files, 86 dumps, 4735/4735 (100.00%)`**（`XDEBUG_MODE=coverage` 跑完全量后，再跑 `tests/support.php` 生成 `test_reports/index.html`；聚合判定用 `docs/scripts/covagg.php`）。⚠️ 中途 Fatal 的测试不写自己的 dump ⇒ 覆盖率会假降（实测见过 `97.47%`），**先确认全量没有红**；删过类就先清空 `test_coveragedumps/`（旧 dump 会让总数虚高，见第 5 节那一行）。`tests/data_for_tests/ZAllDemoTest.config.php` 里 `files` 的期望长度是 **10431**（**只跟根应用自己声明的选项数有关**：dump 里 `合计 N个` 是 `App::$kernel_options + $core_options + $common_options + $options` 的键，组件自己的选项（如 Logger 的 `path_log`）不进这张表，`Logger` 只出现在「全部单例」与「包含文件」清单里；所以 `Logger::class => EXT_DEFAULT` 的修复、以及删除 `Ext\MiniRoute`/`Ext\Misc`（demo 根本没加载它们）都没有改变这个长度。唯一会动它的是 `dumpAllObject()` 的**文案**：`publics:` → `shared:` 少 1 字节 ⇒ 10432 → 10431，而 `#public` → `#shared`、`* is public` → `* is shared` 等长）。
   - 同步基线：分支 `doced`（= `3ece976b`）。下次同步从它之后算起（见第 9 节末的提示）。
-  - **默认不动**：`docs/en/`（陈旧英文副本）、`docs/old/`、`README*.md`——它们不随中文文档同步。（`docs/duckphp.gv` + `docs/duckphp.gv.svg` **已不在这一列**：现在是生成物，改过 `src/` 就重生成 + 重渲染。）
+  - **`docs/en/` 是活的平行树**（2026-09-26 起）：`docs/en/reference/` 与 `docs/zh/reference/` **文件名一一对应**，中文仍是唯一事实来源，改中文就要在同一次改动里改英文（见第 11 节）。`docs/old/`、`README*.md` 仍**默认不动**。（`docs/duckphp.gv` + `docs/duckphp.gv.svg` **已不在这一列**：现在是生成物，改过 `src/` 就重生成 + 重渲染。）
   - **`skeleton/` 的文档只剩一份**：`skeleton/AGENTS.md`（英文）= 工程约定唯一权威（目录树 / 命名后缀表 / 分层与越界规则 / 加功能四步 / 常见坑），配一个 3 行的 `skeleton/CLAUDE.md` 指路；原来的 `RULES.md` 与 `agent-zh.md` 已删除合并。1-3 章讲机制、README 只画顶层目录——文件级清单不再有第二份。
 - **待办**
   - `Ext/PermissionMenu` 的进一步调整（作者说自己稍后再看）；
@@ -331,6 +333,10 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-covera
 # 3) 本次改了 src/ 或 tests/ 时（一律走 WSL，按单个测试文件跑，见第 5 节末）：
 wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/Component/CommandTest.php"
 wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && bash docs/scripts/check-non-ascii.sh"   # 期望 Total non-ASCII lines: 0
+
+# 4) 改过任何中文页时（含五个生成页）：英文树闸门（判据见第 11 节）
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-en-docs.py --all"
+wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-en-docs.py --missing"   # 期望只剩 2 篇维护指南
 ```
 
 ```python
@@ -360,3 +366,30 @@ print('non-utf8:', bad if bad else 'none')
 **判定为真缺（必须补）**：以上形式都正常、且该名字在源码里确实存在时，就是文档少写了条目/选项。
 
 **另一类假报来自 `gen-reference.php verify` 本身**：它读 md 里的方法条目时要求**行首是反引号**，而本仓按第 3 节统一用 4 空格缩进 ⇒ `verify --all` 会把几乎每篇都报成 `method missing in md`（实测 1022 条），**别照着它删改**。它反过来还会**漏掉真过期条目**（文档里写着、源码已删的方法）：`Foundation-Controller-ExceptionReporterTrait.md` 的 `defaultException()` / `defaultSystemException()` 就是这样存活了很久（该页方法列表同样是 4 空格缩进，扫描器压根没读到），最后靠人对着源码重写才发现。**判一致性只认 `drift.py`**，`verify` 只在修某个具体页时当参考。
+
+## 11. 英文树（`docs/en/reference/`）与 `check-en-docs.py`
+
+**口径（作者裁定）**：中文是唯一事实来源；改中文页必须**在同一次改动里**改英文对应页；英文页的标题层级、表格行列数、围栏代码块与中文页一一对应（围栏里**纯代码行必须逐字节一致**，含 `→` 这类符号）。代码注释与示例字符串一并翻译；命令、选项名、类名、路径不译。
+
+**五个生成页不要手写**：`index.md` / `options.md` / `options-by-class.md` / `options-index.md` / `setting.md` 由生成器产出，英文侧靠 `--lang=en`：
+
+```bash
+php docs/scripts/gen-options-docs.php                 # 写中文 5 页
+php docs/scripts/gen-options-docs.php --check         # 中文生成页是否最新
+php docs/scripts/gen-options-docs.php --lang=en       # 写英文 5 页
+php docs/scripts/gen-options-docs.php --lang=en --check
+```
+
+两个语言的文案都在该脚本的 `LANG_PACK` 里；逐类页的描述分别从 `docs/<lang>/reference/` 同名页的「## 选项」/「## Options」表读取，`short_role()` 也按语言取「简介」/「Introduction」。
+
+**英文树闸门**（`docs/scripts/check-en-docs.py`）：围栏外的中文记 error、围栏内的记 warn；此外还查表格行数与中文页是否一致、标题层级序列、相对链接、`#锚点`，以及围栏逐行对齐。
+
+```bash
+python3 docs/scripts/check-en-docs.py --all       # 全量，期望 0 error
+python3 docs/scripts/check-en-docs.py --missing   # 中文有、英文没有的页，期望只剩 2 篇维护指南
+python3 docs/scripts/check-en-docs.py --cjk       # 列出围栏内仍有中文的位置
+python3 docs/scripts/check-en-docs.py docs/en/guide/routing.md
+```
+
+- 允许保留中文的文件在脚本的 `ALLOW_CJK_FILES` 里（英文首页、术语表与迁移附录）。
+- 译文里若发现**中文页本身有错**：不要在英文侧单方面改好——报给作者，中文定稿后两边一起改；本次翻译就是这样处理了 30 多处（详见各次提交信息）。
