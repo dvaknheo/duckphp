@@ -10,5 +10,9 @@ use DuckPhp\Foundation\Controller\ControllerHelper as HelperBase;
 
 class Helper extends HelperBase
 {
-    // your helper methods
+    // your helper methods must not be static: call them as Helper::_()->myHelper()
+    public function myHelper()
+    {
+
+    }
 }

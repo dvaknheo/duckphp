@@ -48,9 +48,8 @@ project/
         └── error_500.php
 ```
 
-A `*` marks a sample file or a feature that is **disabled by default**: delete what you do not use,
-or enable one by uncommenting the matching option in `src/System/App.php`. `runtime/` must stay
-writable.
+A `*` marks a sample file or a feature **disabled by default**: delete what you do not use, or enable
+one by uncommenting the matching option in `src/System/App.php`. `runtime/` must stay writable.
 
 ## 2. Naming
 
@@ -183,6 +182,7 @@ class NoteController extends Base {
 | `Helper::Show('main', $data)` | the signature is `Show($data, $view)` | `Helper::Show($data, 'main')` |
 | `Session::_()->set('k', $v)` from a controller | the trait setters are protected | add a public method in `Controller\Session` |
 | Editing `Base.php` / `Helper.php` | they hold the layer conventions | extend them in your own classes |
+| A `public static function foo()` in your `Xxx\Helper` | the framework's own Helper methods are static, so user statics mix into that API and lose the per-phase/override semantics | write it as an instance method (`public function foo()`) and call `Helper::_()->foo()` |
 
 ## 7. Errors and exceptions
 

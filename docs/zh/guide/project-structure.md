@@ -226,7 +226,7 @@ class NoteModel extends Base
 | Model      | `Model\Helper`                      | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳；方法在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)） | `Db()`、`DbForRead()`、`SqlForPager()`                   |
 | 应用/接线      | `System\Helper`                     | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)                                                                                   | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
 
-工程侧的 `Xxx\Helper` 类本身极短（`skeleton/src/Controller/Helper.php` 就是 `extends` 一行 + 一个空类），也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-9 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
+工程侧的 `Xxx\Helper` 类本身极短：`extends` 框架对应层的 Helper 一行，其余按需加。但**自定义方法要写成动态方法**——`public function foo()`，调用点写 `Helper::_()->foo()`；**别加静态方法**，因为框架自己的 Helper 方法全是静态的，混在一起既容易撞名，也丢掉实例侧才有的「相位 / 被覆盖替换」语义（`skeleton/src/Controller/Helper.php` 里就放了一个这样的示例方法）。也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-9 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 
 视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](../reference/Core-Functions.md)）：
 
