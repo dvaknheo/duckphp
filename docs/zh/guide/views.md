@@ -69,12 +69,12 @@ public function index()
 | `Helper::Render($view, $data)` | **不带** | 字符串 | 邮件、片段、二次加工 |
 | `View::_()->_Display($view, $data)` | 不带 | 直接输出 | 极简输出 |
 
-### 3. 页眉页脚：`setViewHeadFoot()`
+### 3. 页眉页脚：`setViewHeaderFooter()`
 
 ```php
 public function __construct()
 {
-    Helper::setViewHeadFoot('header', 'footer');   // 视图名，同样相对 path_view
+    Helper::setViewHeaderFooter('header', 'footer');   // 视图名，同样相对 path_view
 }
 ```
 

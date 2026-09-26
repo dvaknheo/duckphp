@@ -39,7 +39,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         
         
         $key="key";
-        Helper::setViewHeadFoot($head_file=null, $foot_file=null);
+        Helper::setViewHeaderFooter($head_file=null, $foot_file=null);
         Helper::assignViewData($key, $value=null);
         Helper::PathInfo();
         Helper::Domain();

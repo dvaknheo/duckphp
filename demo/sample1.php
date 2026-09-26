@@ -18,9 +18,9 @@ class MyApp extends DuckPhpAllInOne
         // ...
     ];
     //@override
-    public function onInited()
+    public function onInited(): void
     {
-        Helper::setViewHeadFoot('', '');
+        Helper::setViewHeaderFooter('', '');
     }
     public function action_index()
     {

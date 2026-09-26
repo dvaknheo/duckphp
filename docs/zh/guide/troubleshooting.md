@@ -69,7 +69,7 @@ init()（onPrepare → onInit → onInited） → serve()（onRequest → Route:
 | 视图找不到 | 视图名 vs `path_view` | 视图名 = 相对 `view/` 的路径；根路径省略视图名时会找 `Main/index`（[第 2-6 章](views.md)） |
 | 视图里变量全是 `null` 且不报错 | `view_skip_notice_error` 默认 true | 变量没传进 `Show()`；调试期可临时关掉该选项 |
 | `Helper::Show('main', $data)` 白屏 | 参数顺序 | 真实签名 `Show($data = [], $view = '')` |
-| 页眉页脚不出现 | 是否在构造函数里 `setViewHeadFoot()` | 头尾视图名同样相对 `path_view`；`Render()` **不带**头尾 |
+| 页眉页脚不出现 | 是否在构造函数里 `setViewHeaderFooter()` | 头尾视图名同样相对 `path_view`；`Render()` **不带**头尾 |
 | `header()` 报「已发送输出」 | 输出时序 | 先发头再输出；或开 `use_output_buffer`（注意语义变化） |
 | 页面出现 `Maintaining.` / `Internal Error` 占位 | `is_maintain` / 没配 `error_*` | 配 `error_maintain`/`error_500` 视图（[第 2-12 章](exception.md)） |
 | 生产环境看到堆栈 | `is_debug`（含子应用）与 setting | `App::_IsDebug()` 是「设置 or 根 or 本应用」的**或**；错误视图里用 `__is_debug()` 包调试块 |

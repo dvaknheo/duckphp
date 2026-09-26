@@ -33,7 +33,7 @@
 | 怎么把 URL 绑到指定类@方法？ | `route_map_important`（优先）或 `route_map`（兜底），回调写 `Class@method` | [第 2-3 章](../guide/routing.md) |
 | 旧链接怎么兼容？ | `assignRewrite('/old', 'new/path')`——**键必须带前导 `/`** | [第 2-3 章](../guide/routing.md) |
 | 视图文件放哪、怎么被找到？ | `view/<视图名>.php`，查找按相位逐层回退（可被父应用覆盖） | [第 2-6 章](../guide/views.md) |
-| 怎么加统一的页眉页脚？ | 控制器构造函数里 `Helper::setViewHeadFoot('header', 'footer')` | [第 2-6 章](../guide/views.md) |
+| 怎么加统一的页眉页脚？ | 控制器构造函数里 `Helper::setViewHeaderFooter('header', 'footer')` | [第 2-6 章](../guide/views.md) |
 | 输出只有「渲染视图」一种吗？ | 四种：视图、`Render()` 取字符串、`ShowJson()`、直接 `echo`；另有 `Show302`/`Show404` | [第 2-5 章](../guide/controllers.md) |
 | 怎么防 XSS？ | 所有输出用 `__h()`（翻译+转义用 `__hl()`） | [第 2-6 章](../guide/views.md) |
 

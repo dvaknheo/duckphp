@@ -66,7 +66,7 @@ namespace MySpace\Controller
         public function __construct()
         {
             // 在构造函数设置页眉页脚。
-            Helper::setViewHeadFoot('header', 'footer');
+            Helper::setViewHeaderFooter('header', 'footer');
         }
         public function index()
         {
@@ -81,7 +81,7 @@ namespace MySpace\Controller
         public function me()
         {
             $url_main = __url(''); //默认URL
-            Helper::setViewHeadFoot('header', 'footer');
+            Helper::setViewHeaderFooter('header', 'footer');
             Helper::Show(get_defined_vars()); // 默认视图 about/me ，可省略
         }
     }

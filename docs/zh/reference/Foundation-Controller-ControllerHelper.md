@@ -106,8 +106,8 @@ public function action_login()
     public static function checkInstall(?string $url_install = null)
 未安装时跳转到安装页（`App::checkInstallToPage`）。
 
-    public static function setViewHeadFoot($head_file = null, $foot_file = null)
-设置视图 head/foot 模板（转发 `View::setViewHeadFoot`）。
+    public static function setViewHeaderFooter($head_file = null, $foot_file = null)
+设置视图的页眉/页脚模板（转发 `View::setViewHeaderFooter`；参数是**视图名**，相对 `path_view`）。
 
     public static function assignViewData($key, $value = null)
 向视图数据赋值（转发 `View::assignViewData`）。

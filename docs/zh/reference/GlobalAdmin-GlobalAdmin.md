@@ -83,7 +83,7 @@ $options['globaladmin_is_authed_redirect'] = false;
 - **`admin_provider_enable`（隐藏选项）**：`init()` 里 `$context->options['admin_provider_enable'] ?? true`，为假时**不**把自己注册到 `Admin::_()`，于是 `Admin::_()` 会是父类 `Admin` 的桩实例（调用即抛）。默认开着。
 - **上下文选项优先**：`urlForHome()` / `urlForLogout()` 先读 **App 的** `url_admin_home` / `url_admin_logout`，没有再退回组件自己的 `globaladmin_url_*`，最后退回 `'/'`；`urlForLogin()` 不看上下文选项，只认 `globaladmin_url_login`。
 - `urlForLogin($url_back)` 会把 `$url_back` 拼成 `'?b=' . urlencode($url_back)`（仅在传入时）。`throwLoginOn()` 的 302 分支就是这么把当前 `REQUEST_URI` 的 path 传进去的。
-- **`mergeViewData()` 的页眉页脚开关**：只有 `$data['__logined_render_header_footer']`（缺省视为 `true`）为真才渲染头尾文件；渲染结果同时放进 `__view_data.header/footer`（给视图用）与 `__logined_header_file/footer_file`（给 `View::setViewHeadFoot()` 用，由 `DuckPhp::_Show()` 消费）。
+- **`mergeViewData()` 的页眉页脚开关**：只有 `$data['__logined_render_header_footer']`（缺省视为 `true`）为真才渲染头尾文件；渲染结果同时放进 `__view_data.header/footer`（给视图用）与 `__logined_header_file/footer_file`（给 `View::setViewHeaderFooter()` 用，由 `DuckPhp::_Show()` 消费）。
 - **自动接管渲染**：`DuckPhp::_Show()` 在 `__use_logined_view_data` 为真、且当前路由调用类实现 `AdminControllerInterface` 时，会自动调用本组件的 `mergeViewData()`；你通常不需要手动调它。
 - `canAccess()` 三个参数全为 `null` 时会**临时切到 `App::getLastPhase()`** 去读当前路由的 class/method/PATH_INFO，读完切回原相位；显式传参时不做这件事。
 - `id()/name()/data()` 的未登录处理统一走 `throwLoginOn()`：① 配了 `globaladmin_need_login_callback` → 回调 + `exit()`；② 非 Ajax → `Show302(urlForLogin(当前 path))` + `exit()`；③ Ajax（`X-Requested-With: XMLHttpRequest`）→ `ShowJson(['error_code' => -1, 'error_message' => 'NEED_LOGIN'])` + `exit()`。三种都会 `exit()`，所以**调用方拿不到返回值**；想避免打断就用 `check_login = false`。

@@ -207,7 +207,7 @@ PhaseContainer::RestAllContainerForTesting();
 
         // use_admin_view 分支：路由调用类实现 AdminControllerInterface
         // 同时带上 __use_logined_header_footer_file（控制器里由 assignViewData 设置），
-        // 让 _Show() 顺带走 View::setViewHeadFoot() 那一步；给出真实的头/尾视图文件以便断言。
+        // 让 _Show() 顺带走 View::setViewHeaderFooter() 那一步；给出真实的头/尾视图文件以便断言。
         \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_view_file_header'] = $path.'view/block.php';
         \DuckPhp\GlobalAdmin\Admin::_()->self()->options['globaladmin_view_file_footer'] = $path.'view/block.php';
         Route::_()->calling_class = FakeAdminController::class;

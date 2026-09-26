@@ -189,7 +189,7 @@ class DuckPhp extends App
         }
         $enable_header_footer = $data['__use_logined_header_footer_file'] ?? (View::_()->data['__use_logined_header_footer_file'] ?? null);
         if ($enable_header_footer ?? false) {
-            View::_()->setViewHeadFoot($data['__logined_header_file'], $data['__logined_footer_file']);
+            View::_()->setViewHeaderFooter($data['__logined_header_file'], $data['__logined_footer_file']);
         }
 
         return parent::_Show($data, $view);

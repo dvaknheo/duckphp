@@ -16,18 +16,18 @@ class ViewTest extends \PHPUnit\Framework\TestCase
             'path_view'=>$path_view,
         ];
         \DuckPhp\Core\View::_()->init($options,new App());
-        View::_()->setViewHeadFoot('head', 'foot');
+        View::_()->setViewHeaderFooter('head', 'foot');
         View::_()->assignViewData('A','aa');
         View::_()->assignViewData(['B'=>'bb','C'=>'cc']);
         View::Show(['D'=>'ddddddd'],"view");
-        View::_()->setViewHeadFoot(null, null);
+        View::_()->setViewHeaderFooter(null, null);
         View::Show(['D'=>'ddddddd'],"view");
         
         View::Display("block",['A'=>'b']);
         View::Render("block",['A'=>'b']);
         View::_()->getViewData();
         //View::_()->getViewPath();
-        View::_()->setViewHeadFoot(null,null);
+        View::_()->setViewHeaderFooter(null,null);
         
         View::_()->isInited();
         $options=[

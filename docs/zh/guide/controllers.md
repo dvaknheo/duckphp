@@ -93,7 +93,7 @@ Helper::Show(['title' => $t], 'main');        // ② 显式数组
 Helper::assignViewData('site_name', 'MyProj'); // ③ 预置变量，之后每次 Show 都带上
 ```
 
-页眉页脚（布局）用 `Helper::setViewHeadFoot('header', 'footer')` 指定，通常写在控制器的 `__construct()` 里——`demo/public/demo.php` 的 `MainController::__construct()` 就是这么做的（渲染顺序是 头 → 视图 → 尾，详见[第 2-6 章](views.md)）。
+页眉页脚（布局）用 `Helper::setViewHeaderFooter('header', 'footer')` 指定，通常写在控制器的 `__construct()` 里——`demo/public/demo.php` 的 `MainController::__construct()` 就是这么做的（渲染顺序是 头 → 视图 → 尾，详见[第 2-6 章](views.md)）。
 
 ### 6. Action：控制器之间复用「编排」
 

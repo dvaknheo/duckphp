@@ -76,7 +76,7 @@ use DuckPhp\Foundation\Helper;
  * @method static mixed Render($view, $data = null)
  * @method static mixed Show($data = [], $view = '')
  * @method static mixed checkInstall(?string $url_install = null)
- * @method static mixed setViewHeadFoot($head_file = null, $foot_file = null)
+ * @method static mixed setViewHeaderFooter($head_file = null, $foot_file = null)
  * @method static mixed assignViewData($key, $value = null)
  * @method static mixed IsAjax()
  * @method static mixed Show302($url)

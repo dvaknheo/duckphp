@@ -64,7 +64,7 @@ $viewData = View::_()->getViewData();
 ### head/foot 绕头尾
 
 ```php
-View::_()->setViewHeadFoot('_layout/head', '_layout/foot');
+View::_()->setViewHeaderFooter('_layout/head', '_layout/foot');
 View::_()->_Show(['name'=>'D'], 'another'); // hence: head、主体、foot 依次输出
 ```
 
@@ -132,8 +132,8 @@ $viewOptions = [
     public function getViewData(): array
 返回当前已 assign 数据数组
 
-    public function setViewHeadFoot(?string $head_file, ?string $foot_file): void
-设置渲染包裹的头/脚模板
+    public function setViewHeaderFooter(?string $head_file, ?string $foot_file): void
+设置渲染包裹用的页眉/页脚模板（视图名；`_Show()` 时按 头 → 主体 → 尾 依次输出）
 
     public function assignViewData($key, $value = null): void
 预分配变量：数组($value null)整体 merge，或单项 $key=>$value

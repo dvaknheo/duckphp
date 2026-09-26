@@ -128,7 +128,7 @@ class View extends ComponentBase
     {
         return $this->data;
     }
-    public function setViewHeadFoot(?string $head_file, ?string $foot_file): void
+    public function setViewHeaderFooter(?string $head_file, ?string $foot_file): void
     {
         $this->head_file = $head_file;
         $this->foot_file = $foot_file;

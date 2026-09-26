@@ -19,10 +19,10 @@ class MyCoreHelper extends CoreHelper
 class ExtApp extends DuckPhpAllInOne
 {
     //@override
-    public function onInited()
+    public function onInited(): void
     {
         CoreHelper::_(MyCoreHelper::_());
-        ExtApp::setViewHeadFoot('', '');
+        ExtApp::setViewHeaderFooter('', '');
     }
     public function action_index()
     {

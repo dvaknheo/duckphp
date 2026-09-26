@@ -14,7 +14,7 @@
 | 控制器 | `yii\web\Controller` | `BaseController` | `App\Http\Controllers\Controller` | `Controller\XxxController`（建议继承 `Foundation\Controller\Base`）（[第 2-5 章](../guide/controllers.md)） |
 | 请求对象 | `Yii::$app->request` | `$this->request` | `Request $request` 注入 | **没有请求对象**：`Helper::GET()/POST()/Parameter()`（[第 2-5 章](../guide/controllers.md)） |
 | 响应对象 | `$this->asJson()` 等 | `$this->response` | `response()` / `Response` | `Helper::Show()` / `ShowJson()` / `Show302()` / `Show404()`（[第 2-5 章](../guide/controllers.md)） |
-| 视图 | `$this->render()` + `layouts/` | `view()` + `layout` | Blade `view()` + `@extends` | PHP 文件 + `Helper::Show()` + `setViewHeadFoot()`（**没有模板语法**）（[第 2-6 章](../guide/views.md)） |
+| 视图 | `$this->render()` + `layouts/` | `view()` + `layout` | Blade `view()` + `@extends` | PHP 文件 + `Helper::Show()` + `setViewHeaderFooter()`（**没有模板语法**）（[第 2-6 章](../guide/views.md)） |
 | 模型 | ActiveRecord（`yii\db\ActiveRecord`） | `Model` + `Entity` | Eloquent | **没有 ORM**：[`ModelTrait`](../reference/Foundation-Model-ModelTrait.md) 提供表名/读写分流/CRUD 原语，SQL 自己写（[第 2-8 章](../guide/model.md)） |
 | 迁移 | `yii migrate` | `spark migrate` | `artisan migrate` | 无内置；建表 SQL 写在模型的 `init()` 或安装流程里（[第 2-7 章](../guide/database.md)） |
 | 查询构造器 | `Yii::$app->db->createCommand()` | `$db->table()` | `DB::table()` | [`Helper::Db()->fetchAll($sql, ...)`](../reference/Db-Db.md) + `` `'TABLE'` `` 宏 + [`DbAdvanceTrait`](../reference/Db-DbAdvanceTrait.md) 的片段拼装（[第 2-7 章](../guide/database.md)） |

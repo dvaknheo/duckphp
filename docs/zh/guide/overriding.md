@@ -108,7 +108,7 @@ Helper::assignViewData('__use_logined_header_footer_file', true);  // 顺手把�
 
 > 继承 `Foundation\Controller\UserControllerBase` / `AdminControllerBase` 时这两句已经自动做了，不必手写。
 
-命中条件是「当前路由的控制器实现了 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) / [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md)」；头尾文件由 `globaladmin_view_file_header/footer`、`globaluser_view_file_header/footer` 指定（值是相对 `<应用 path>/view/` 的视图名，而且**相位可覆盖**，所以第三个应用也能换掉后台的头尾）。开关的判定与渲染都在 [`DuckPhp::_Show()`](../reference/DuckPhp.md) 里：它先取 `__use_logined_view_data`，命中接口就调 [`Admin::_()`](../reference/GlobalAdmin-Admin.md) / [`User::_()`](../reference/GlobalUser-User.md) 的 `mergeViewData()` 注入 `__logined_*` 并渲染头尾，最后按 `__use_logined_header_footer_file` 调 `View::setViewHeadFoot()`。空视图名由 `App::_Show()` 兜底成当前路由路径；想**只跳过**头尾而仍然注入 `__logined_*`，把视图数据 `__logined_render_header_footer` 置 `false`。
+命中条件是「当前路由的控制器实现了 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) / [`UserControllerInterface`](../reference/GlobalUser-UserControllerInterface.md)」；头尾文件由 `globaladmin_view_file_header/footer`、`globaluser_view_file_header/footer` 指定（值是相对 `<应用 path>/view/` 的视图名，而且**相位可覆盖**，所以第三个应用也能换掉后台的头尾）。开关的判定与渲染都在 [`DuckPhp::_Show()`](../reference/DuckPhp.md) 里：它先取 `__use_logined_view_data`，命中接口就调 [`Admin::_()`](../reference/GlobalAdmin-Admin.md) / [`User::_()`](../reference/GlobalUser-User.md) 的 `mergeViewData()` 注入 `__logined_*` 并渲染头尾，最后按 `__use_logined_header_footer_file` 调 `View::setViewHeaderFooter()`。空视图名由 `App::_Show()` 兜底成当前路由路径；想**只跳过**头尾而仍然注入 `__logined_*`，把视图数据 `__logined_render_header_footer` 置 `false`。
 
 ## 组件级覆盖：换装配
 
