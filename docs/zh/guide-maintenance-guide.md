@@ -160,6 +160,7 @@ $env:WSL_UTF8=1
 # 1) 基线复核（改前改后各跑一次）
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-doc-links.py docs/zh"   # 期望 broken: 0
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/find-unmentioned-classes.py"  # 期望「从没被链到: 0」
+wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php docs/scripts/gen-architecture-gv.php --check"  # 架构图源文件是否最新（动过 src/ 就重生成 + 重渲染 SVG）
 python3 <tmp>/drift.py --all                     # reference 与源码一致性（脚本见参考手册维护指南 §5）
 
 # 2) 改哪一章就守 §2 的约定：
