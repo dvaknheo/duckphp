@@ -9,7 +9,7 @@
 - 已安装（`$installed` 非空）：显示“安装完成”与 5 秒后跳转首页；
 - 未安装：显示环境检查表（`$checks`）、数据库/Redis 配置表单（含 `controller_resource_prefix` 提示）、`web_installer_force` 复选与自定义区块。
 
-所有 UI 文案均经 `__hl('webinstaller.*')` 取多语言句（默认句来自 `RouteHookWebInstaller::builtin_default_sentences`，真实翻译优先）。
+所有 UI 文案均经 `__hl('webinstaller.*')` 取多语言句（默认句来自 `RouteHookWebInstaller::builtin_default_sentences`，可以用 `config/lang-{locale}-for_webinstaller.php` 或主语言文件覆盖）。
 
 ## 类信息
 

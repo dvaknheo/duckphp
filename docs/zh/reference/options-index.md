@@ -2,7 +2,7 @@
 
 > 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
-一共 **206** 个选项；同名选项出现在多个类时**合并为一行**，来源类并列。隐藏选项见 [按类分组](options-by-class.md#隐藏选项) 文末（本页只收正式选项）。
+一共 **208** 个选项；同名选项出现在多个类时**合并为一行**，来源类并列。隐藏选项见 [按类分组](options-by-class.md#隐藏选项) 文末（本页只收正式选项）。
 
 按类查看：[应用选项（按类分组）](options-by-class.md) · 选项机制：[应用选项总览](options.md)
 
@@ -183,12 +183,14 @@
 | `lang_cookie_name` | `'lang'` | [DuckPhp\Component\Lang](Component-Lang.md) | cookie 名。 |
 | `lang_default` | `null` | [DuckPhp\Component\Lang](Component-Lang.md) / [DuckPhp\DuckPhp](DuckPhp.md) | 兜底：别的方式都不中时返回它。 |
 | `lang_detect_mode` | `['url', 'cookie','header', 'cli','default']` | [DuckPhp\Component\Lang](Component-Lang.md) | 探测顺序与可用入口名单。 |
-| `lang_file_path` | `'lang/'` | [DuckPhp\Component\Lang](Component-Lang.md) | 语言目录（相对配置，实际由 Configer 拼 `{path}.php`）。 |
+| `lang_file_path` | `'lang-'` | [DuckPhp\Component\Lang](Component-Lang.md) | 语言文件名前缀：`lang-zh_CN.php`（实际由 Configer 拼 `{前缀}{locale}.php`）。老工程要 `config/lang/<locale>.php` 就设回 `'lang/'`。 |
 | `lang_final` | `null` | [DuckPhp\Component\Lang](Component-Lang.md) / [DuckPhp\DuckPhp](DuckPhp.md) | 最终语言，设就别再探测；非根子层 follow root 会取根值。 |
 | `lang_follow_root` | `true` | [DuckPhp\Component\Lang](Component-Lang.md) | 子应用时候跟随根 Final。 |
+| `lang_frags` | `[]` | [DuckPhp\Component\Lang](Component-Lang.md) | 一次性加入的 frag 名列表：`['for_myext1']` 读 `lang-zh_CN-for_myext1.php`。 |
 | `lang_handler` | `null` | [DuckPhp\Core\App](Core-App.md) | 传入后 `lang()`/`langText()` 将优先走它，而不再 fallback 简易替换。 |
-| `lang_simple_mode_only_sentences` | `[]` | [DuckPhp\Component\Lang](Component-Lang.md) | 简单模式句子集：语言=>[key=>sentence]。非空则不读配置直接用它。 |
+| `lang_simple_mode_only_sentences` | `[]` | [DuckPhp\Component\Lang](Component-Lang.md) | 简单模式句子集：语言=>[key=>sentence]。非空则不读任何文件（frag 也不读）直接用它。 |
 | `lang_url_param` | `'lang'` | [DuckPhp\Component\Lang](Component-Lang.md) | url 探测参数名（例如 `?lang=zh_CN`）。 |
+| `lang_warn_on_missing` | `false` | [DuckPhp\Component\Lang](Component-Lang.md) | 缺句时是否 `Logger::_()->warning("No Language sentence Dectected {key}")`；默认关。 |
 | `local_database` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不计入公共容器共享，互不干扰）。 |
 | `local_redis` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
 | `log_file_template` | `'log_%Y-%m-%d_%H_%i.log'` | [DuckPhp\Core\Logger](Core-Logger.md) | 日志文件名模板；`%X` 由 `date(X)` 展开。 |
@@ -330,7 +332,7 @@
 - **`globaluser_*`**（13）：`globaluser_enable_callback_singleton`、`globaluser_ext_view_data_callback`、`globaluser_is_authed_redirect`、`globaluser_local_service`、`globaluser_login_service`、`globaluser_login_session`、`globaluser_need_login_callback`、`globaluser_url_home`、`globaluser_url_login`、`globaluser_url_logout`、`globaluser_url_register`、`globaluser_view_file_footer`、`globaluser_view_file_header`
 - **`handle_*`**（3）：`handle_all_dev_error`、`handle_all_exception`、`handle_exception_on_init`
 - **`jsonrpc_*`**（9）：`jsonrpc_backend`、`jsonrpc_check_token_handler`、`jsonrpc_enable_autoload`、`jsonrpc_is_debug`、`jsonrpc_namespace`、`jsonrpc_service_interface`、`jsonrpc_service_namespace`、`jsonrpc_timeout`、`jsonrpc_wrap_auto_adjust`
-- **`lang_*`**（9）：`lang_cookie_name`、`lang_default`、`lang_detect_mode`、`lang_file_path`、`lang_final`、`lang_follow_root`、`lang_handler`、`lang_simple_mode_only_sentences`、`lang_url_param`
+- **`lang_*`**（11）：`lang_cookie_name`、`lang_default`、`lang_detect_mode`、`lang_file_path`、`lang_final`、`lang_follow_root`、`lang_frags`、`lang_handler`、`lang_simple_mode_only_sentences`、`lang_url_param`、`lang_warn_on_missing`
 - **`on_*`**（3）：`on_init`、`on_inited`、`on_request`
 - **`path_*`**（12）：`path_config`、`path_document`、`path_info_compact_action_key`、`path_info_compact_class_key`、`path_info_compact_enable`、`path_lib`、`path_log`、`path_namespace`、`path_resource`、`path_runtime`、`path_sql_dump`、`path_view`
 - **`redis_*`**（5）：`redis_cache_prefix`、`redis_cache_skip_replace`、`redis_list`、`redis_list_reload_by_setting`、`redis_list_try_single`

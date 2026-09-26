@@ -10,7 +10,7 @@
 - 重写（override）`initComponentsOfRoot` / `initComponentsOfInner`，在父类（`App`）装 System 组件的基础上，把**框架内置的业务组件**逐步接入当前应用：
   - 根组件阶段：DbManager/RedisManager/Admin/User/GlobalEvent 全部以 `EXT_ROOT_HOLD_POSISION_ONLY` 建实例（仅创建单例，不自动初始化）；RedisManager/DbManager 有条件初始化（根据 `redis`/`redis_list` 或 `database`/`database_list` 是否存在）；DbManager 初始化后会把 `database_driver` 回填到 App 选项。
   - 内部阶段：注册默认命令行插件与 `Configer`；按 `local_database` / `local_redis` 决定是否为本 Phase 新建独立 DB/Redis；接 `data_file_enable`；并处理 `admin_provider` / `user_provider`。
-- 提供 `_Show()`（根据控制器类型转给用户/管理视图或父默认）、`lang()`（交给可选的 `lang_handler` 或 `Content\Lang`）等两个实例便捷口。
+- 提供 `_Show()`（根据控制器类型转给用户/管理视图或父默认）、`lang()`（交给可选的 `lang_handler` 或 `DuckPhp\Component\Lang`）等两个实例便捷口。
 
 绝大多数项目只需要：
 

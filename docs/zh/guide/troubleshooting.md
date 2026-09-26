@@ -130,7 +130,7 @@ init()（onPrepare → onInit → onInited） → serve()（onRequest → Route:
 
 | 症状 | 看什么 | 大概率原因 / 改法 |
 |---|---|---|
-| 一直显示原 key | `lang_final` 与语言文件名 | 规范化后要是 `zh_CN` 这种；文件放 `config/lang/`（[第 2-15 章](i18n.md)） |
+| 一直显示原 key | `lang_final` 与语言文件名 | 规范化后要是 `zh_CN` 这种；文件放 `config/lang-zh_CN.php`（老摆法 `config/lang/zh_CN.php` 需配 `'lang_file_path' => 'lang/'`）（[第 2-15 章](i18n.md)） |
 | `?lang=xx` 没反应 | `lang_final` 已算好 | 运行期改 `$_GET` 无效；在 `onPrepare` 期或直接配 `lang_final` |
 | 事件监听不到 | [`GlobalEvent`](../reference/Component-GlobalEvent.md) 是否开启 | 默认 `EXT_DISABLE`，要在 `ext` 里打开（[第 2-13 章](events.md)） |
 | 事件回调里 `::_()` 拿错实例 | 相位绑定 | `fire()` 会切到**注册时**的相位执行（[第 2-13 章](events.md)） |

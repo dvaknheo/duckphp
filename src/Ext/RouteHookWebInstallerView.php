@@ -9,10 +9,11 @@
  *
  * i18n: all UI texts are translated via __hl('webinstaller.*') language keys.
  * - Default (English) sentences are provided by RouteHookWebInstaller::builtin_default_sentences
- *   and imported into Lang via importDefaultSentences() at init().
+ *   and imported into Lang via loadLanguageFrag('for_webinstaller', ...) at init().
  * - Override built-in defaults with the option 'web_installer_default_sentences'.
- * - Provide real translations per language via 'lang_simple_mode_only_sentences'
- *   or config/lang/{language}.php (real translations always win over defaults).
+ * - Provide real translations per language via 'lang_simple_mode_only_sentences',
+ *   config/lang-{locale}.php, or the frag file config/lang-{locale}-for_webinstaller.php
+ *   (the main language file always wins, a frag only fills in missing keys).
  */
 
 ?>

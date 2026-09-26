@@ -34,7 +34,8 @@ class RouteHookWebInstaller extends ComponentBase
     protected $drivers = null;
     /**
      * Built-in default sentences (English) used as fallback for the install view.
-     * Override via option 'web_installer_default_sentences' (empty option keeps built-in).
+     * Override via option 'web_installer_default_sentences' (empty option keeps built-in),
+     * or per locale by the frag file config/lang-{locale}-for_webinstaller.php .
      * @var array<string, string>
      */
     protected $builtin_default_sentences = [
@@ -88,7 +89,7 @@ class RouteHookWebInstaller extends ComponentBase
         if (empty($sentences)) {
             $sentences = $this->builtin_default_sentences;
         }
-        Lang::_()->importDefaultSentences($sentences);
+        Lang::_()->loadLanguageFrag('for_webinstaller', $sentences);
         return $this;
     }
     protected function getInstallPath(): string

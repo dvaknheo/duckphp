@@ -134,6 +134,58 @@ PhaseContainer::RestAllContainerForTesting();
         $this->assertSame('Another', Lang::_()->language('another'));
         $this->assertSame(Lang::_(), Lang::_()->importDefaultSentences(['x' => 'y']));
         
+        // ===== lang_file_path / lang_frags / loadLanguageFrag / lang_warn_on_missing =====
+        // 语言文件按新约定读 config/lang-<locale>.php
+        Lang::_()->options['lang_simple_mode_only_sentences'] = [];
+        Lang::_()->options['lang_final'] = 'zh_CN';
+        $this->assertSame('你好', Lang::_()->language('BBB'));
+        // loadLanguageFrag：frag 补上主文件没有的 key
+        Lang::_()->loadLanguageFrag('for_test');
+        $this->assertSame('frag zh', Lang::_()->language('FRAG'));
+        // 主文件赢：BBB 在主文件和 frag 里都有
+        $this->assertSame('你好', Lang::_()->language('BBB'));
+        // 后加载的 frag 赢：FRAG 在 for_test 和 for_second 里都有
+        Lang::_()->loadLanguageFrag('for_second');
+        $this->assertSame('frag zh second', Lang::_()->language('FRAG'));
+        $this->assertSame('second', Lang::_()->language('FRAG2'));
+        // 重复的 frag 名只算一次
+        Lang::_()->loadLanguageFrag('for_second');
+        $this->assertSame('frag zh second', Lang::_()->language('FRAG'));
+        // 空名字是空操作，返回 $this
+        $this->assertSame(Lang::_(), Lang::_()->loadLanguageFrag(''));
+        
+        // lang_frags 选项一次性加入：写不写 .php 都行，空串/重复/不存在的文件都跳过
+        Lang::_()->options['lang_frags'] = ['for_third.php', 'for_third', '', '.php', 'no_such_frag'];
+        $this->assertSame('third', Lang::_()->language('THIRD'));
+        $this->assertSame('no_such_sentence', Lang::_()->language('no_such_sentence'));
+        // $default：frag 没有对应文件时用它兜底（等同 importDefaultSentences）
+        Lang::_()->loadLanguageFrag('no_such_frag_either', ['only_frag_default' => 'Frag Default']);
+        $this->assertSame('Frag Default', Lang::_()->language('only_frag_default'));
+        $this->assertSame('Frag Default', Lang::_()->language('only_frag_default', [], 'FALLBACK_TEXT'));
+        
+        // 简单模式不读文件，frag 也不读
+        Lang::_()->options['lang_simple_mode_only_sentences'] = ['zh_CN' => ['AAA' => 'simple AAA']];
+        $this->assertSame('simple AAA', Lang::_()->language('AAA'));
+        $this->assertSame('THIRD', Lang::_()->language('THIRD'));
+        
+        // lang_warn_on_missing：默认关，打开后缺句打 Logger warning
+        $log_dir = $path.'runtime/';
+        if (!is_dir($log_dir)) {
+            @mkdir($log_dir);
+        }
+        $this->assertFalse(Lang::_()->options['lang_warn_on_missing']);
+        $this->assertSame('WARN_MARKER_OFF', Lang::_()->language('WARN_MARKER_OFF'));
+        Lang::_()->options['lang_warn_on_missing'] = true;
+        $this->assertSame('WARN_MARKER_ON', Lang::_()->language('WARN_MARKER_ON'));
+        $logs = '';
+        foreach ((array)glob($log_dir.'log_*.log') as $log_file) {
+            $logs .= (string)file_get_contents($log_file);
+        }
+        $this->assertStringNotContainsString('WARN_MARKER_OFF', $logs);
+        $this->assertStringContainsString('No Language sentence Dectected WARN_MARKER_ON', $logs);
+        Lang::_()->options['lang_warn_on_missing'] = false;
+        Lang::_()->options['lang_frags'] = [];
+        
         \LibCoverage\LibCoverage::End();
     }
 }

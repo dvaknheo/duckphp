@@ -38,7 +38,7 @@
 
 - `newProject()`：命名空间优先级 = CLI `--namespace` → composer.json `psr-4`（取 `src/` 对应项，经 `getNameSpaceByComposer`）→ 控制台询问（`getNamespaceByConsole`）。
 - `dumpDir()`：递归复制 `skeleton`；`src/System/App.php` 会重命名为 `{NamespaceBasename}App.php` 并把 `class App extends` 改为对应类名；文件内容经 `filteText`（含命名空间/宏过滤）处理；`force=false` 且目标有同名文件时中止（`checkFilesExist`）。
-- `runDemo()`：以内置模板目录为源，用 `HttpServer::RunQuickly($options)` 起服务；支持 `--port` 与自定义 `--http_server`。
+- `runDemo()`：以内置 `demo/` 目录（`getDemoPath()`）为源，用 `HttpServer::RunQuickly($options)` 起服务；支持 `--port` 与自定义 `--http_server`。
 
 ## 方法列表
 
@@ -63,9 +63,12 @@
 创建新工程：确定命名空间并复制/改写骨架。
 
     public function runDemo(): void
-以模板为源启动 HttpServer demo。
+以内置 `demo/` 目录为源启动 HttpServer demo。
 
 ### 受保护方法
+
+    protected function getDemoPath(): string
+`show`/`runDemo` 服务的目录：框架自带的 `demo/`（历史上叫 `template/`，改名后这里没跟着改，曾导致命令什么都服务不了）。
 
     protected function getNameSpaceByComposer(string $path): string
 从 composer.json 的 `psr-4`（`src/`）推断命名空间。

@@ -2,7 +2,7 @@
 
 > 本页由 `docs/scripts/gen-options-docs.php` 生成，**请勿手改**：改选项请改 `src/` 与对应类文档，然后重跑生成器。
 
-选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**206** 个选项（同名选项在不同类各自声明，合计 240 处；另有 11 个隐藏选项见文末）。
+选项来自各类的 `$options` / `$core_options` / `$kernel_options` / `$common_options`；**默认值取自源码**，说明取自该类的参考文档。共 **42** 个类、**208** 个选项（同名选项在不同类各自声明，合计 242 处；另有 11 个隐藏选项见文末）。
 
 想按名字找？看 [应用选项（按字母顺序索引）](options-index.md)；选项机制见 [应用选项总览](options.md)。
 
@@ -256,8 +256,10 @@ Lang extends ComponentBase 提供简单而完整的界面翻译
 | `lang_follow_root` | `true` | 子应用时候跟随根 Final。 |
 | `lang_url_param` | `'lang'` | url 探测参数名（例如 `?lang=zh_CN`）。 |
 | `lang_cookie_name` | `'lang'` | cookie 名。 |
-| `lang_file_path` | `'lang/'` | 语言目录（相对配置，实际由 Configer 拼 `{path}.php`）。 |
-| `lang_simple_mode_only_sentences` | `[]` | 简单模式句子集：语言=>[key=>sentence]。非空则不读配置直接用它。 |
+| `lang_file_path` | `'lang-'` | 语言文件名前缀：`lang-zh_CN.php`（实际由 Configer 拼 `{前缀}{locale}.php`）。老工程要 `config/lang/<locale>.php` 就设回 `'lang/'`。 |
+| `lang_frags` | `[]` | 一次性加入的 frag 名列表：`['for_myext1']` 读 `lang-zh_CN-for_myext1.php`。 |
+| `lang_simple_mode_only_sentences` | `[]` | 简单模式句子集：语言=>[key=>sentence]。非空则不读任何文件（frag 也不读）直接用它。 |
+| `lang_warn_on_missing` | `false` | 缺句时是否 `Logger::_()->warning("No Language sentence Dectected {key}")`；默认关。 |
 
 ### DuckPhp\Component\Pager
 

@@ -39,7 +39,7 @@
 
 ## 注意事项
 
-- 文案体系：视图内所有 UI 文本用 `__hl('webinstaller.*')`；默认句由 `builtin_default_sentences` 提供并在 `init()` 时导入 Lang，真实翻译（`lang_simple_mode_only_sentences` 或 `config/lang/…`）优先。
+- 文案体系：视图内所有 UI 文本用 `__hl('webinstaller.*')`；默认句由 `builtin_default_sentences` 提供，`init()` 时经 `Lang::_()->loadLanguageFrag('for_webinstaller', …)` 导入 Lang，于是每语言都能用 `config/lang-{locale}-for_webinstaller.php` 给安装页配文案。真实翻译优先：主语言文件 > 该 frag 文件 > 默认句。
 - 安装动作：先 `checkEnv()`（PHP 扩展等）→ Redis/数据库检查 → custom 回调（若配置）→ 写配置（经 `ExtOptionsLoader` 等）→ 执行 `{driver}.sql` 建表（`doSchema`/`executeSqlFile`）；`web_installer_force` 时先执行 clean。
 - 未安装/已安装的判定与跳转细节以源码 `_Hook`/`installAction` 为准；本组件主要面向框架内置安装页场景。
 

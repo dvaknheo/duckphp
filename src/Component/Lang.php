@@ -29,8 +29,13 @@ class Lang extends ComponentBase
         'lang_url_param' => 'lang',
         // Cookie name
         'lang_cookie_name' => 'lang',
-        'lang_file_path' => 'lang/',
+        // prefix of the language file: lang-zh_CN.php ; a frag is lang-zh_CN-xxx.php
+        'lang_file_path' => 'lang-',
+        // extra translation files (frag names), e.g. ['for_myext1'] reads lang-zh_CN-for_myext1.php
+        'lang_frags' => [],
         'lang_simple_mode_only_sentences' => [],
+        // log a warning when a sentence is missing and no fallback is given
+        'lang_warn_on_missing' => false,
     ];
     /**
      * Default sentences imported via importDefaultSentences().
@@ -38,6 +43,11 @@ class Lang extends ComponentBase
      * @var array<string, string>
      */
     protected $default_sentences = [];
+    /**
+     * Frag names added by loadLanguageFrag(), loaded after the lang_frags option.
+     * @var array<int, string>
+     */
+    protected $language_frags = [];
     /**
      * Import default sentences. Existing translations are NOT overwritten:
      * this only fills in keys that have no sentence in the active language.
@@ -47,6 +57,27 @@ class Lang extends ComponentBase
     public function importDefaultSentences(array $sentences)
     {
         $this->default_sentences = array_merge($this->default_sentences, $sentences);
+        return $this;
+    }
+    /**
+     * Load one more language file (a frag) for an extension.
+     * The file name is {lang_file_path}{language}-{filename}.php :
+     * 'for_myext1' with zh_CN means config/lang-zh_CN-for_myext1.php.
+     * The main language file always wins, a frag only fills in the missing keys;
+     * a frag loaded later wins over the earlier ones.
+     * $default is imported as default sentences (see importDefaultSentences()),
+     * so a frag can ship built-in sentences for a language it has no file for.
+     * @param array<string, string> $default
+     * @return static
+     */
+    public function loadLanguageFrag(string $filename, array $default = [])
+    {
+        if ($filename !== '') {
+            $this->language_frags[] = $filename;
+        }
+        if (!empty($default)) {
+            $this->importDefaultSentences($default);
+        }
         return $this;
     }
     /**
@@ -76,12 +107,62 @@ class Lang extends ComponentBase
         $configs = Configer::_()->_Config($this->options['lang_file_path'].basename($language), null, null);
         return $configs;
     }
+    /**
+     * Frag sentences of a language, null if the frag file is missing.
+     * @return array<string, mixed>|null
+     */
+    protected function getFragSentenceFromConfig(string $language, string $frag): ?array
+    {
+        $name = $this->options['lang_file_path'].basename($language).'-'.basename($frag);
+        return Configer::_()->_Config($name, null, null);
+    }
+    /**
+     * All frag names: the lang_frags option first, then the loadLanguageFrag() ones.
+     * A trailing .php is allowed, duplicates are ignored.
+     * @return array<int, string>
+     */
+    protected function getFragNames(): array
+    {
+        $frags = array_merge((array)$this->options['lang_frags'], $this->language_frags);
+        $ret = [];
+        foreach ($frags as $frag) {
+            $frag = preg_replace('/\.php$/i', '', (string)$frag);
+            if ($frag === '' || in_array($frag, $ret, true)) {
+                continue;
+            }
+            $ret[] = $frag;
+        }
+        return $ret;
+    }
+    /**
+     * Sentences of a language: the main language file merged with the frags.
+     * Priority: main file > frag loaded later > frag loaded earlier.
+     * @return array<string, mixed>
+     */
+    protected function getSentences(string $language): array
+    {
+        $sentences = $this->getSentenceFromConfig($language);
+        $sentences = empty($sentences) ? [] : $sentences;
+        if (!empty($this->options['lang_simple_mode_only_sentences'])) {
+            // simple mode reads no file at all, frags included
+            return $sentences;
+        }
+        $frag_sentences = [];
+        foreach ($this->getFragNames() as $frag) {
+            $configs = $this->getFragSentenceFromConfig($language, $frag);
+            if (empty($configs)) {
+                continue;
+            }
+            $frag_sentences = array_merge($frag_sentences, $configs);
+        }
+        return array_merge($frag_sentences, $sentences);
+    }
     protected function loadLanguage(string $str, ?string $fallback = null): ?string
     {
         $language = $this->options['lang_final'];
         if (isset($language)) {
-            $configs = $this->getSentenceFromConfig($language);
-            if (!empty($configs) && isset($configs[$str])) {
+            $configs = $this->getSentences($language);
+            if (isset($configs[$str])) {
                 return $configs[$str];
             }
         }
@@ -91,7 +172,7 @@ class Lang extends ComponentBase
         if ($language === null) {
             return $fallback;
         }
-        if ($fallback === null) {
+        if ($fallback === null && !empty($this->options['lang_warn_on_missing'])) {
             Logger::_()->warning("No Language sentence Dectected $str");
         }
         return $fallback;
