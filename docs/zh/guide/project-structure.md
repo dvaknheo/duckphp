@@ -2,7 +2,7 @@
 
 > 解决什么问题：把项目摆成「框架期望的样子」（目录、命名、编码规则），并弄清四层各管什么、谁不能调谁、越界之后会失去什么。
 > 前置：[第 1-2 章](install.md)。预计 25 分钟。
-> 本章结构与 `skeleton/`（脚手架实际生成的工程）一致；下面的骨架片段就取自 `skeleton/src/`，另可对照 `demo/public/demo.php`（把五层塞进一个文件）。
+> 本章结构与 `skeleton/`（脚手架实际生成的工程）一致；下面的骨架片段就取自 `skeleton/`。
 > 卷二开头还有一页[第 2-1 章 四层架构与调用规范](layers.md)——那是**指路页**，内容只在本章。
 
 ## 最小示例
@@ -78,7 +78,7 @@ HTTP 请求 → 路由 → MainController::index()
                   Helper::Show(数据, 视图)  ← 渲染，结束
 ```
 
-想看得更全一点，`demo/public/demo.php` 把五层塞进了一个文件里（应用类 `MySpace\System\App`、控制器 `MySpace\Controller\MainController`、业务 `MySpace\Business\MyBusiness`、模型 `MySpace\Model\MyModel`、可调用视图 `MySpace\View\Views`），适合对照着看「同一件事在四层里分别长什么样」。
+想看得更全一点：`skeleton/` 里每个文件都很短，顺着读一遍就是完整的一条链路——入口 `public/index.php` → 应用类 `src/System/App.php` → `src/Controller/MainController.php` → `src/Business/DemoBusiness.php` → `src/Model/DemoModel.php` → 视图 `view/main.php`（`view/test/done.php` 是另一条同样短的链路，对应 URL `/test/done`）。
 
 ## 机制说明
 
@@ -211,7 +211,7 @@ class NoteModel extends Base
 这不是洁癖，有三个很具体的后果：
 
 1. **同一个 Business 会被多个入口复用**：Web 请求、CLI 命令（[第 2-16 章](cli.md)）、定时任务、测试（[第 2-17 章](testing.md)）都会调它。一旦它读 `$_GET` 或 Session，CLI 下就必然出错。
-2. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（`demo/` 与 `tests/data_for_tests/*` 的测试就是这么写的）。
+2. **可测性**：无状态 + 参数入、返回值出，才能不起服务器直接单测（[第 2-17 章](testing.md) 里的业务/模型测试就是这么写的）。
 
 所以约定是：**请求上下文只允许出现在 Controller 层与 Helper 里**（`Helper::GET()`、`Helper::Parameter()`；会话在 `Controller\Session` 里包一层公开方法），Business 的入参一律显式传。
 
@@ -226,7 +226,7 @@ class NoteModel extends Base
 | Model      | `Model\Helper`                      | [`DuckPhp\Foundation\Model\ModelHelper`](../reference/Foundation-Model-ModelHelper.md)（薄壳；方法在 [`Model\ModelHelperTrait`](../reference/Foundation-Model-ModelHelperTrait.md)） | `Db()`、`DbForRead()`、`SqlForPager()`                   |
 | 应用/接线      | `System\Helper`                     | [`DuckPhp\Foundation\System\SystemHelper`](../reference/Foundation-System-SystemHelper.md)                                                                                   | `addRouteHook()`、`OnGlobalEvent()`、`FireGlobalEvent()` |
 
-工程侧的 `Xxx\Helper` 类本身极短（`demo/src/Controller/Helper.php` 就是 `extends` 一行 + 一个空类），也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-9 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
+工程侧的 `Xxx\Helper` 类本身极短（`skeleton/src/Controller/Helper.php` 就是 `extends` 一行 + 一个空类），也可以直接用框架现成的类；想把四层并成一个入口，用 [`DuckPhp\Foundation\Helper`](../reference/Foundation-Helper.md)（`__callStatic` 派发，见[第 2-9 章](helper.md)）。**反过来更重要**：某个方法不在你这一层的 Helper 里，通常就是框架在提示你「这件事不该在这一层做」。
 
 视图里则用**全局函数**（`src/Core/Functions.php` 定义，见 [全局函数参考](../reference/Core-Functions.md)）：
 
@@ -253,7 +253,7 @@ class NoteModel extends Base
 ## 常见写法
 
 **① Service：给多个 Business 共享的逻辑**
-Service 没有专门的基类或注册机制，就是「放在 `Business/` 目录下、被多个 Business 调用、且不碰请求上下文」的普通类；`demo/src/Business/CommonService.php` 是它的占位样板（目前是空壳，用来告诉你文件该放哪）：
+Service 没有专门的基类或注册机制，就是「放在 `Business/` 目录下、被多个 Business 调用、且不碰请求上下文」的普通类——`skeleton/src/Business/SomeService.php` 就在这个位置上（骨架的示例文件，用完删掉）。形状大致是：
 
 ```php
 namespace MyProj\Business;
@@ -268,10 +268,10 @@ class CommonService
 ```
 
 **② Action：给多个 Controller 共享的编排**
-控制器之间要复用的**编排**（不是业务规则）抽成 Action，避免控制器互相继承；同样只是约定位置（`demo/src/Controller/CommonAction.php` 也是空壳样板），关键是 Action **只能调 Business 与 Session，不能直接调 Model**。
+控制器之间要复用的**编排**（不是业务规则）抽成 Action，避免控制器互相继承；`skeleton/src/Controller/SomeAction.php` 是它的样板（无参 `__construct()` 是必须的），关键是 Action **只能调 Business 与 Session，不能直接调 Model**。
 
 **③ System 层只做接线**
-配置、异常/错误页、命令注册、事件注册、以及 `app` 里的子应用声明都写在 `src/System/`：`demo/src/System/App.php` 就是全部接线的样板（选项、异常类、`controller_method_prefix`、`app`）。
+配置、异常/错误页、命令注册、事件注册、以及 `app` 里的子应用声明都写在 `src/System/`：`skeleton/src/System/App.php` 就是全部接线的样板（选项、错误页、`cmd`/`exception_reporter` 等注释示例、`app`）。
 
 **④ 层内复用靠 `::_()` 单例，而不是 `new`**
 
@@ -288,13 +288,12 @@ new DemoBusiness();         // ❌ 绕过容器：覆盖与共享都失效
 | 现象                                       | 原因                                           | 改法                                                               |
 | ---------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------- |
 | 新增控制器 404                                | 文件名/命名空间/后缀不匹配          | `src/Controller/NoteController.php` + `class NoteController` + 后缀默认 `Controller` |
-| 模型找不到表                                   | 表名与类名推导不一致              | `NoteModel` → 表 `note`；表名不同就在模型里 `protected $table_name = 'notes';` |
 | 视图找不到                                    | 视图名与文件路径不一致             | `Helper::Show($data)` 用当前路由路径；显式指定时写 `'note/index'` → `view/note/index.php` |
+| `Helper::Show('main', $data)` 页面白屏或视图找不到 | 参数顺序写反了：真实签名是 `Show($data = [], $view = '')` | 改成 `Helper::Show($data, 'main')`；用 `get_defined_vars()` 传当前变量最省事 |
 | 改了 `Base.php`/`Helper.php` 后框架异常          | 那是框架约定文件                | 要扩展就在自己的子类里加，别改基类 |
 | 控制器里出现 `DemoModel::_()` 或 SQL            | 越界：跳过了业务层                                    | 把查询挪进 Business，控制器只调 Business                                    |
 | Business 里 `$_GET['id']` 报「未定义」          | Business 读了请求上下文，CLI/测试下没有这些超全局              | 由控制器取值后**当参数传进** Business                                        |
 | 视图里查库，页面变得很慢或数据不一致                       | 视图里又跑了一次业务                                   | 数据由控制器准备，视图只渲染                                                   |
-| `Helper::Show('main', $data)` 页面白屏或视图找不到 | 参数顺序写反了：真实签名是 `Show($data = [], $view = '')` | 改成 `Helper::Show($data, 'main')`；用 `get_defined_vars()` 传当前变量最省事 |
 | 覆盖类/覆盖文件后没生效                             | 调用链上有 `new`、或直接从别的相位取实例                      | 全程用 `::_()`，跨相位用相位 API（[第 3-1 章](advanced-phase.md)）                                   |
 | 控制器里 [`use DuckPhp\Core\App;`](../reference/Core-App.md) 越写越多        | 框架细节渗进了业务层                                   | 框架调用收进 System 层或对应层的 Helper                                      |
 | 同一个业务规则在控制器和 Business 里各写一份              | 边界没守住，规则有了第二实现                               | 规则只留在 Business，控制器只做参数整形                                         |
