@@ -54,21 +54,15 @@ Route::_()->forceFail();                       // 强制本次路由算失败（
 
 ```php
 use DuckPhp\Core\Route;
-use DuckPhp\Ext\RouteHookManager;
 
 Route::_()->addRouteHook($cb, 'prepend-inner');          // 直接挂（默认 append-outter）
 Helper::addRouteHook($cb, 'prepend-inner');              // 应用/接线层的 Helper（System\SystemHelper）
-
-RouteHookManager::_()->attachPreRun()                    // 拿 pre 链的引用，然后…
-    ->append([MyHook::class, 'Hook'])                    // 追加到末尾
-    ->insertBefore($new, $old)                           // 插到某个钩子前面
-    ->moveBefore($new, $old)                             // 已有钩子挪位
-    ->removeAll($old);                                   // 去掉某个钩子
-RouteHookManager::_()->attachPostRun();                  // 换成 post 链
-RouteHookManager::_()->dump();                           // ★ 排查：把三条链打印出来
+echo Route::_()->dumpAllRouteHooksAsString();            // ★ 排查：把三条链打印出来
 ```
 
-排查顺序建议：先 `dump()` 看链上到底有哪些钩子、什么顺序，再怀疑自己的回调没被调用。
+排查顺序建议：先 dump 看链上到底有哪些钩子、什么顺序，再怀疑自己的回调没被调用。
+
+> **想「按名字挂 / 挪位 / 摘掉」**（`append()`、`insertBefore()`、`moveBefore()`、`removeAll()`）就用 [`Ext\RouteHookManager`](../reference/Ext-RouteHookManager.md)——它是 `Ext\*` 扩展，写进应用的 `ext` 才装配；用法见[第 4-14 章](ext-classes.md) §3。
 
 ### 3. 内置钩子都挂在哪
 
@@ -79,85 +73,37 @@ RouteHookManager::_()->dump();                           // ★ 排查：把三�
 | [`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) | `prepend-outter` | PATH_INFO 兼容（`?_r=` 形式，[第 2-3 章](routing.md)） |
 | [`RouteHookRewrite`](../reference/Component-RouteHookRewrite.md) | `prepend-outter` | URL 重写 |
 | [`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md) | `prepend-inner` + `append-outter` | 路由映射（前段匹配 + 后段兜底） |
-| [`RouteHookApiServer`](../reference/Ext-RouteHookApiServer.md)（扩展） | `prepend-inner` | API 服务 |
-| [`RouteHookWebInstaller`](../reference/Ext-RouteHookWebInstaller.md)（扩展） | `prepend-inner` | Web 安装流程（[第 3-6 章](installer.md)） |
-| [`RouteHookFunctionRoute`](../reference/Ext-RouteHookFunctionRoute.md)（扩展） | `append-inner` | 函数式路由 |
-| [`RouteHookDirectoryMode`](../reference/Ext-RouteHookDirectoryMode.md)（扩展） | `prepend-outter` | 目录模式（多入口） |
 | [`RouteHookResource`](../reference/Component-RouteHookResource.md) | `append-outter` | 静态资源代发（[第 3-3 章](static-resources.md)） |
 
-> 表里标**（扩展）**的四行属于 `Ext\*`：**`Ext\` 下的组件不会自动装配**，必须写进应用的 `ext`（如 `'ext' => [\DuckPhp\Ext\RouteHookFunctionRoute::class => true]`）才会挂上。注意这与「类能不能被加载」是两件事：AutoLoader 只负责按需把类文件载进来，**装配进当前相位**要靠 `ext` 声明。不标（扩展）的几行是框架默认已装的（`src/DuckPhp.php` 的 `common_options['ext']` 里：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`）。
+> 这四条都在 `common_options['ext']` 里、**开箱即用**（另外还有 `Lang`）。`Ext\` 下还有四个钩子——`RouteHookApiServer`、`RouteHookWebInstaller`、`RouteHookFunctionRoute`、`RouteHookDirectoryMode`——它们**不会自动装配**，要写进应用的 `ext` 才挂上（见[第 4-14 章](ext-classes.md) §9）。注意这与「类能不能被加载」是两件事：AutoLoader 只负责按需把类文件载进来，**装配进当前相位**要靠 `ext` 声明。
 
 ### 4. 选型：到底该用哪种介入方式
 
 | 需求 | 首选 | 为什么 |
 |---|---|---|
 | 某几个 URL 特例处理、拦截 | 路由钩子（pre） | 有短路语义，能真正拦住 |
-| 请求前后的对称逻辑 | 中间件（兼容扩展，见第 5 节） | 洋葱结构天生适合「前/后」 |
+| 请求前后的对称逻辑 | 中间件（[`Ext\MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md)，见[第 4-14 章](ext-classes.md) §4） | 洋葱结构天生适合「前/后」 |
 | 改某个控制器的行为 | 覆盖控制器类 / `controller_class_map`（[第 3-5 章](overriding.md)） | 精确到类，配置即生效 |
 | 广播「发生了某事」 | 全局事件（[第 2-13 章](events.md)） | 一对多、无返回值、可跨相位 |
 | 换掉框架某个能力 | 覆盖扩展 / 替换单例 | 从装配层解决（[第 4-3 章 替换框架行为](replace-behavior.md)） |
 | 统一给所有控制器加东西 | **先想钩子**，其次才是继承基类 | 继承会把「可变的能力」变成「不可变的血缘」 |
 
-### 5. 兼容性扩展：洋葱中间件（`Ext\MyMiddlewareManager`）
+### 5. 中间件呢？（`Ext\MyMiddlewareManager`）
 
-说清楚定位：**中间件不是 DuckPHP 的主推路数**。框架的默认做法是「路由钩子 + 分层 Helper」，中间件只是给习惯了 Laravel / ThinkPHP 的中间件写法（或 PSR-15）的人留的一层兼容，用得上就用，用不上不用管。
-
-它的接线方式（选项写在应用的 `$options` 里）：
+中间件不是 DuckPHP 的主推路数：默认做法是「路由钩子 + 分层 Helper」，中间件只是给习惯了 Laravel / ThinkPHP 写法（或 PSR-15）的人留的一层兼容。要用就在应用的 `ext` 里挂上，再把中间件写进 `middleware` 选项（列表里第一个是最外层）：
 
 ```php
 $options = [
-    'ext' => [
-        \DuckPhp\Ext\MyMiddlewareManager::class => true,
-    ],
-    // 自外向内：列表里**第一个是最外层**
-    'middleware' => [
-        \MyProj\Middleware\AuthMiddleware::class . '@handle',   // 走 Class::_() 单例
-        \MyProj\Middleware\LogMiddleware::class . '->handle',   // 走 new Class()
-        'MyProj\Middleware\StaticMiddleware::handle',           // 原生可调用字符串
-        function ($request, \Closure $next) { /* callable 也行 */ },
-    ],
+    'ext' => [\DuckPhp\Ext\MyMiddlewareManager::class => true],
+    'middleware' => [\MyProj\Middleware\AuthMiddleware::class . '@handle'],
 ];
 ```
 
-中间件的签名是 `handle($request, \Closure $next)`：`$request` 由管理器给你（默认是个空 `\stdClass`，可以用子类改成自己的请求对象），`$next($request)` 就是「继续往里走」，返回值是内层的结果。
+⚠️ **它的短路拦不住请求**（实测，框架当前行为）：中间件里不调 `$next` 直接 `return` 响应时，`Route::run()` 仍会再跑一次默认路由回调，**控制器照样执行**（你返回的响应被丢弃），控制器不存在时用户看到的是 404。所以：
 
-挂上之后，插在内置钩子的最内层（[`RouteHookManager::_()->attachPreRun()->append()`](../reference/Ext-RouteHookManager.md)），洋葱顺序实测如下（`tests/Ext/MyMiddlewareManagerTest.php` 里的 X/Y/Z 三个中间件）：
-
-```
-P1>  P2>  CTRL#1  P2<  P1<        ← 列表第一个最外层；控制器只执行一次
-```
-
-**这里有一个必须知道的坑**（实测，框架当前行为）：中间件里**不调 `$next` 直接 `return` 响应，是拦不住请求的**——`doHook()` 只认最内层 `runSelfMiddleware()` 的结果，短路时它仍是 `false`，于是 `Route::run()` 会**自己再跑一次默认路由回调**，结果是：
-
-- 控制器**照样执行**（你返回的那个响应被丢弃）；
-- 如果控制器本来就不存在，用户看到的是 **404**，而不是你在中间件里返回的内容。
-
-所以：
-
-| 你想做的事 | 该用什么 |
-|---|---|
-| 请求前后做对称处理（计时、日志、统一加响应头） | 洋葱中间件（它的强项） |
-| **拦截请求**（鉴权不通过就直接返回/跳转） | **路由钩子**：`prepend-outter` 里返回 `true` |
-| 更细的接管（换请求/响应对象、自己的收尾） | 继承 [`MyMiddlewareManager`](../reference/Ext-MyMiddlewareManager.md) 覆盖 `getRequest()`/`getResponse()`/`runSelfMiddleware()`/`onPostMiddleware()` |
-
-细节见参考手册 [DuckPhp\Ext\MyMiddlewareManager](../reference/Ext-MyMiddlewareManager.md)。
-
-### 6. 附：`Ext\HookChain`（命中即停的链）
-
-[`DuckPhp\Ext\HookChain`](../reference/Ext-HookChain.md) 是一个小工具类：把一串回调装成对象，`__invoke()` 时按顺序执行、**遇到返回真值的就断**，并实现 `ArrayAccess` 可直接当数组读写。
-
-```php
-use DuckPhp\Ext\HookChain;
-
-$chain = new HookChain();
-$chain->add($callback1, true, true);    // (回调, 追加?, 去重?)
-$chain[] = $callback2;                  // ArrayAccess 追加
-$chain();                               // 顺序执行，遇真值 break
-
-HookChain::Hook($target, $callback3);   // 便捷：把已有回调/null 与新回调并成一条链写回 $target
-```
-
-它**没有被框架内部使用**（框架自己的钩子走 `Route` 的三个链表），属于「你想在自己的代码里表达『一组钩子、命中即停』时」的可选工具，而且源码里已标 `@todo deprecate`（[第 4-11 章](deprecated-exts.md)）。参考页：[DuckPhp\Ext\HookChain](../reference/Ext-HookChain.md)。
+- **拦截请求**（鉴权不通过就返回/跳转）→ 用路由钩子，`prepend-outter` 里 `return true`（见本章 §1、§2）；
+- **请求前后做对称处理**（计时、日志、统一加响应头）→ 中间件；
+- 接线细节、洋葱顺序实测、可覆盖的 `getRequest()`/`getResponse()`/`runSelfMiddleware()` 见[第 4-14 章](ext-classes.md) §4。
 
 ## 常见写法
 
@@ -189,7 +135,7 @@ Route::_()->addRouteHook(function () {
 **③ 排查钩子顺序**：
 
 ```php
-echo RouteHookManager::_()->dump();   // 三个链表全打印
+echo Route::_()->dumpAllRouteHooksAsString();   // 三条链全打印
 ```
 
 ## 常见错误
@@ -197,11 +143,11 @@ echo RouteHookManager::_()->dump();   // 三个链表全打印
 | 现象 | 原因 | 改法 |
 |---|---|---|
 | 钩子里 `return;` 却发现控制器还是执行了 | pre 钩子必须返回**真值**才算命中 | 明确写 `return true;` |
-| 钩子被挂了两次、日志出现两遍 | 重复调用 `addRouteHook()` | 用第三个参数 `$once = true`（默认已开），或先 `RouteHookManager::_()->removeAll()` |
-| 中间件里 `return` 了响应，页面却是 404 或控制器照跑 | 短路对中间件无效（第 5 节的坑） | 拦截改用路由钩子并 `return true`；中间件只做前后置装饰 |
+| 钩子被挂了两次、日志出现两遍 | 重复调用 `addRouteHook()` | 用第三个参数 `$once = true`（默认已开），或先按名字摘掉（`Ext\RouteHookManager`，[第 4-14 章](ext-classes.md) §3） |
+| 中间件里 `return` 了响应，页面却是 404 或控制器照跑 | 短路对中间件无效（本章 §5 / [第 4-14 章](ext-classes.md) §4 的坑） | 拦截改用路由钩子并 `return true`；中间件只做前后置装饰 |
 | `Ext\` 下的钩子写了却完全没反应 | `Ext\` 组件不会自动装配 | 在应用 `ext` 里声明（如 `'ext' => [RouteHookFunctionRoute::class => true]`） |
 | post 钩子里的 404 视图被别人的 404 抢先输出 | 子应用先兜底了 | 子应用里 `App::_()->skip404Handler()`，交给父应用决定 |
-| 想知道「这条请求到底被谁处理了」 | 三个链表都是动态的 | 先 `RouteHookManager::_()->dump()`，再怀疑自己的回调 |
+| 想知道「这条请求到底被谁处理了」 | 三个链表都是动态的 | 先 `Route::_()->dumpAllRouteHooksAsString()`，再怀疑自己的回调 |
 | 钩子在 CLI 下也跑了 | 钩子挂在路由上，`execute()` 支线里也可能触发路由 | 用 `App::_()->isCli()` 区分（[第 2-16 章](cli.md)） |
 
 ## 下一步
@@ -210,4 +156,4 @@ echo RouteHookManager::_()->dump();   // 三个链表全打印
 - [第 2-3 章 路由进阶](routing.md)：`route_map`/`route_map_important` 与钩子的关系。
 - [第 2-13 章 事件系统](events.md)：广播式介入点，与钩子的分工。
 - [第 3-5 章 重写与覆盖](overriding.md)：不写钩子也能换掉某个控制器的实现。
-- 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)、[DuckPhp\Ext\RouteHookManager](../reference/Ext-RouteHookManager.md)、[DuckPhp\Ext\MyMiddlewareManager](../reference/Ext-MyMiddlewareManager.md)、[DuckPhp\Ext\HookChain](../reference/Ext-HookChain.md)。
+- 参考手册：[DuckPhp\Core\Route](../reference/Core-Route.md)；`Ext\` 那几个（`RouteHookManager`/`MyMiddlewareManager`/`HookChain`）见[第 4-14 章](ext-classes.md)。

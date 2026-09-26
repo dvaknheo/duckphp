@@ -96,7 +96,7 @@ if (Helper::Admin()->isSuper()) {
 
 ### 5. 后台菜单：`Ext\PermissionMenu`
 
-[`PermissionMenu`](../reference/Ext-PermissionMenu.md) 用 [`RouteLister`](../reference/Ext-RouteLister.md) 扫出**后台控制器**（实现 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 的类，继承 `AdminControllerBase` 就已经满足）的路由，生成菜单/权限树：
+[`PermissionMenu`](../reference/Ext-PermissionMenu.md)（`Ext\*` 扩展，要用得在 `ext` 里挂上）用 [`RouteLister`](../reference/Ext-RouteLister.md) 扫出**后台控制器**（实现 [`AdminControllerInterface`](../reference/GlobalAdmin-AdminControllerInterface.md) 的类，继承 `AdminControllerBase` 就已经满足）的路由，生成菜单/权限树：
 
 | 模式 | 做法 |
 |---|---|
@@ -111,9 +111,7 @@ PermissionMenu::_()->buildAndSaveToConfigJsonFile();
 $tree = PermissionMenu::_()->loadAdminPermissionMenu();
 ```
 
-- `loadAll()` 会把根应用与各子应用的菜单合并成一棵整树（跨相位安全）；
-- 菜单文件由隐藏选项 `permission_menu_tree_for_admin` 指定；
-- CLI 里可以用 `RouteLister::_()->command_routes()` 看路由表（[第 2-16 章](cli.md)）。
+菜单文件路径由隐藏选项 `permission_menu_tree_for_admin` 指定；`loadAll()` 会把根应用与各子应用的菜单合并成一棵整树（跨相位安全）。装配方式、元数据契约与「用 `RouteLister::_()->command_routes()` 排查」见[第 4-14 章](ext-classes.md) §6。
 
 ## 常见写法
 

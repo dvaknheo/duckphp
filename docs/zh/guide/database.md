@@ -181,18 +181,11 @@ $pager = Helper::PageHtml($total);                                              
 
 `Pager` 选项：`url`（分页链接基址，默认当前路径）、`current`（当前页，默认取自 `Helper::PageNo()`）、`page_size`（默认 30）、`page_key`（URL 参数名，默认 `page`）、`rewrite`（重写规则）。
 
-### 8. SQL 导出
+### 8. 表结构/数据导成 SQL
 
-需要把表结构/数据导出成 SQL（安装器、备份）时用 [`Ext\SqlDumper`](../reference/Ext-SqlDumper.md)，驱动细节由 [`SqlDumperSupporter*`](../reference/Ext-SqlDumperSupporter.md) 提供：
+需要把表结构/数据导出成 SQL（安装器、备份）时用 [`Ext\SqlDumper`](../reference/Ext-SqlDumper.md)，方言由 `SqlDumperSupporter*` 提供（`mysql`/`sqlite`/`pgsql` 三个都在默认映射里）。导出的 SQL 里用 `{prefix}` 表示表前缀，Web 安装流程（[第 3-6 章](installer.md)）执行时换成实际前缀。
 
-| 类 | 支持 |
-|---|---|
-| `Ext\SqlDumper` | 通用导出器（表前缀被写成 `{prefix}` 占位） |
-| [`Ext\SqlDumperSupporterByMysql`](../reference/Ext-SqlDumperSupporterByMysql.md) / [`BySqlite`](../reference/Ext-SqlDumperSupporterBySqlite.md) / [`ByPgsql`](../reference/Ext-SqlDumperSupporterByPgsql.md) | 各驱动方言；三个都**默认映射里就有**（`src/Ext/SqlDumperSupporter.php` 的 `database_driver_SqlDumperSupporter_map`：`mysql` / `sqlite` / `pgsql`，键就是 DSN 里 `:` 前面那段） |
-
-要支持别的驱动（或换掉某个方言实现），继承 `SqlDumperSupporter` 实现两个方法，再覆盖 `database_driver_SqlDumperSupporter_map` 即可。
-
-导出的 SQL 里用 `{prefix}` 表示表前缀，Web 安装流程（[第 3-6 章](installer.md)）执行时会换成实际前缀。
+它是 `Ext\*` 扩展（不会自动装配）：完整的类表、换方言实现的办法见[第 4-14 章](ext-classes.md) §7。
 
 ## 常见写法
 
@@ -241,4 +234,4 @@ $options = ['database_log_sql_query' => true, 'database_log_sql_level' => 'debug
 - [第 2-8 章 模型层](model.md)：把这一章的能力封装成模型，业务层只看模型。
 - [第 2-10 章 表单与数据验证](validator.md)：数据入库前的校验。
 - [第 3-6 章 安装器与 Web 安装流程](installer.md)：`SqlDumper` 与 `{prefix}` 的实际用法。
-- 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Component\PagerInterface](../reference/Component-PagerInterface.md)、[DuckPhp\Ext\SqlDumper](../reference/Ext-SqlDumper.md)、[DuckPhp\Ext\SqlDumperSupporter](../reference/Ext-SqlDumperSupporter.md)。
+- 参考手册：[DuckPhp\Db\Db](../reference/Db-Db.md)、[DuckPhp\Db\DbAdvanceTrait](../reference/Db-DbAdvanceTrait.md)、[DuckPhp\Component\DbManager](../reference/Component-DbManager.md)、[DuckPhp\Component\Pager](../reference/Component-Pager.md)、[DuckPhp\Component\PagerInterface](../reference/Component-PagerInterface.md)。SQL 导出用的 `Ext\SqlDumper*` 见[第 4-14 章](ext-classes.md) §7。

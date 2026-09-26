@@ -112,27 +112,15 @@ Helper::assignViewData('site_name', 'MyProj');     // ③ 预置（每次 Show �
 
 视图里**只能用全局函数**，不要查库、不要调 Business——那是[第 2-1 章](layers.md)的越界矩阵里明确禁止的。
 
-### 5. 不用 PHP 文件写视图：三种替换引擎
+### 5. 视图实现可以被替换（三种替代引擎都在 `Ext\`）
 
 框架的 `View` 是一个单例，可以被别的实现替换（扩展在自己的 `init()` 里做 `View::_(static::_())`，并各自留了 `*_skip_replace` 开关）：
 
-| 扩展 | 视图长什么样 | 关键选项 |
-|---|---|---|
-| [`Ext\CallableView`](../reference/Ext-CallableView.md) | **函数/方法**：`Views::main_view($data)` | `callable_view_class`、`callable_view_header/footer`、`callable_view_is_object_call`、`callable_view_prefix` |
-| [`Ext\EmptyView`](../reference/Ext-EmptyView.md) | 视图名即要输出的字符串（占位/降级） | `empty_view_key_view`、`empty_view_key_wellcome_class`、`empty_view_trim_view_wellcome` |
-| [`Ext\JsonView`](../reference/Ext-JsonView.md) | 把数据直接 JSON 输出 | `json_view_skip_vars` |
+- [`Ext\CallableView`](../reference/Ext-CallableView.md)：用**函数/方法**当视图——挂上它之后 `Helper::Show($data, 'main_view')` 调的就是 `MySpace\View\Views::main_view($data)`；
+- [`Ext\EmptyView`](../reference/Ext-EmptyView.md)：视图名即要输出的字符串（占位/降级）；
+- [`Ext\JsonView`](../reference/Ext-JsonView.md)：把数据直接 JSON 输出。
 
-`demo/public/demo.php` 用的是第一种：
-
-```php
-'ext' => [
-    CallableView::class => true,
-    // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
-],
-'callable_view_class' => Views::class,
-```
-
-于是 `Helper::Show($data, 'main_view')` 调的是 `MySpace\View\Views::main_view($data)`。
+三者的选项表、接线方式与完整示例见[第 4-14 章](ext-classes.md) §8——它们是 `Ext\*` 扩展，**不会自动装配**。
 
 ### 6. 视图也能被覆盖
 
@@ -190,4 +178,4 @@ Helper::assignViewData(['site_name' => 'MyProj', 'year' => date('Y')]);
 - [第 2-15 章 国际化与文案](i18n.md)：视图里的 `__l()` / `__hl()`。
 - [第 3-3 章 静态资源与文档根](static-resources.md)：`__res()` 与资源目录。
 - [第 3-5 章 重写与覆盖](overriding.md)：视图级覆盖的完整规则。
-- 参考手册：[DuckPhp\Core\View](../reference/Core-View.md)、[DuckPhp\Ext\CallableView](../reference/Ext-CallableView.md)、[DuckPhp\Ext\EmptyView](../reference/Ext-EmptyView.md)、[DuckPhp\Ext\JsonView](../reference/Ext-JsonView.md)。
+- 参考手册：[DuckPhp\Core\View](../reference/Core-View.md)；三种替换实现的参考页见[第 4-14 章](ext-classes.md) §8。

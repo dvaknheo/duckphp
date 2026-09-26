@@ -89,7 +89,7 @@ RunQuickly() → init() → 分流：
 | `fetch`   | 在命令行里抓一个 URL（`--uri=…`、`--post=…`）                  |
 | `call`    | 直接调方法：`namespace/class@method arg1 --k=v`           |
 | `debug`   | 开关调试模式（`debug off`）                                 |
-> **`routes` 命令不在上面这个类里**：它实现于 [`DuckPhp\Ext\RouteLister::command_routes()`](../reference/Ext-RouteLister.md)（源码 `src/Ext/RouteLister.php` 第 27 行），属于 `Ext\*` 扩展，**不会自动装配**（见[第 2-4 章 路由钩子](route-hooks.md)）。要用就把它登记进应用的 `cmd`：
+> **`routes` 命令不在上面这个类里**：它由 [`Ext\RouteLister`](../reference/Ext-RouteLister.md) 提供（`Ext\*` 扩展，**不会自动装配**）。要用就把它登记进应用的 `cmd`：
 
 ```php
 // src/System/App.php
@@ -100,8 +100,9 @@ public $options = [
 ];
 ```
 
-之后 `php cli.php routes --with_children=0 --only_admin=1` 就能用了（参数见参考页）；`cmd` 的值也可以写成前缀字符串（如 `'command_'`），写 `false` 或删掉就是关闭。
-**框架自带的 `bin/duckphp`** 是另一回事：它是**安装器 CLI**，只有 `new`/`help`/`show` 三个命令（`src/Ext/DuckPhpInstaller.php`），用来建新项目，不提供上面那套常用命令。
+之后 `php bin/cli.php routes --with_children=0 --only_admin=1` 就能用了（`cmd` 的值也可以写成前缀字符串如 `'command_'`，写 `false` 或删掉就是关闭）；参数说明与 `listAll()` 见[第 4-14 章](ext-classes.md) §5。
+
+**框架自带的 `bin/duckphp`** 是另一回事：它是**安装器 CLI**，只有 `new`/`help`/`show` 三个命令，用来建新项目（[第 1-2 章](install.md)），不提供上面那套常用命令。
 
 ### 3. 命令名、参数与相位前缀
 

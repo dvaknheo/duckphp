@@ -112,9 +112,7 @@ GlobalEvent::_()->fire(User::EVENT_SERVICE_USER_REGISTERED, $post);
 
 ### `Ext\EventManager`（**不推荐**）
 
-⚠️ **新代码别用它**。它的 API 与 `GlobalEvent` 类似（`OnEvent/FireEvent/AllEvents/RemoveEvent`），但**不带相位概念**——回调在哪个相位 `fire` 就在哪个相位执行，所以**跨相位事件（第三卷的多应用/子应用场景）处理不了**；框架内部也**没有任何引用**（`src/` 里搜不到）。
-
-要用事件就用 `GlobalEvent`（本章其余部分）。真需要「不带相位切换的纯进程内总线」，写一个几十行的类比引入它更可控。参考页保留：[DuckPhp\Ext\EventManager](../reference/Ext-EventManager.md)。
+⚠️ **新代码别用它**：API 与 `GlobalEvent` 类似，但**不带相位概念**（跨相位事件处理不了），框架内部也没有任何引用。要用事件就用 `GlobalEvent`（本章其余部分）——完整理由见[第 4-14 章](ext-classes.md) §11。
 
 ## 常见写法
 
