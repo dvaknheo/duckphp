@@ -100,23 +100,16 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
                 require $file;
             }
         });
-        $skeleton_classes = [
-            'NSX\\System\\NSXApp',
-            'NSX\\System\\ProjectException',
-            'NSX\\System\\BusinessException',
-            'NSX\\System\\ControllerException',
-            'NSX\\System\\ExceptionReporter',
-            'NSX\\Controller\\Helper',
-            'NSX\\Controller\\Base',
-            'NSX\\Controller\\AppAction',
-            'NSX\\Controller\\MainController',
-            'NSX\\Controller\\Session',
-            'NSX\\Business\\Helper',
-            'NSX\\Business\\Base',
-            'NSX\\Business\\DemoBusiness',
-            'NSX\\Model\\Base',
-            'NSX\\Model\\DemoModel',
-        ];
+        // 从**生成后的目录**推类名，而不是写死一张名单：名单会随骨架改名/挪目录而过期
+        // （`ExceptionReporter` 改名并挪到 `Controller\ExceptionAction` 之后就漏过一次，
+        // 直到下一次全量跑才暴露）。骨架里文件 basename 就是类名，子目录就是子命名空间；
+        // `App.php` 已被安装器改名为 `NSXApp.php`，所以推导规则对它同样成立。
+        $skeleton_classes = [];
+        foreach (glob($path_nsx . '/src/*/*.php') ?: [] as $file) {
+            $skeleton_classes[] = 'NSX\\' . basename(dirname($file)) . '\\' . basename($file, '.php');
+        }
+        sort($skeleton_classes);
+        $this->assertNotEmpty($skeleton_classes, '生成目录里应当有骨架类');
         $not_loaded = [];
         foreach ($skeleton_classes as $class) {
             if (!class_exists($class)) {
