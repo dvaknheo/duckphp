@@ -178,4 +178,4 @@ $options = ['database_class' => \MyProj\Db\MyDb::class];
 - [第 4-2 章 开发组件与扩展](custom-component.md)：写出自己的可替换实现。
 - [第 4-5 章 常驻进程与内嵌 HTTP](http-server.md)：系统包装在长跑进程里的意义。
 - [第 4-9 章 性能调优与排错手册](troubleshooting.md)：替换没生效时按"症状 → 排查路径"走一遍。
-- 参考手册：[DuckPhp\Core\SystemWrapper](../reference/Core-SystemWrapper.md)、[DuckPhp\Core\KernelTrait](../reference/Core-KernelTrait.md)、[DuckPhp\Core\SingletionExTrait](../reference/Core-SingletonExTrait.md)。
+- 参考手册：[DuckPhp\Core\SystemWrapper](../reference/Core-SystemWrapper.md)、[DuckPhp\Core\KernelTrait](../reference/Core-KernelTrait.md)、[DuckPhp\Core\SingletonExTrait](../reference/Core-SingletonExTrait.md)。
