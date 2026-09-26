@@ -20,7 +20,7 @@ return [
         //   层 Helper 类改名为 Foundation\<层>\<层>Helper（路径变长）→ 10567
         //   默认 Admin/User 类落地 + GlobalAdmin/GlobalUser 去掉自带常量/选项（选项表与文件清单都变）→ 10438
         //   demo 的 ExceptionReporter 随 skeleton 改名 ExceptionAction（选项表出现两次 + 文件路径一处，各短 2 字节）→ 10432
-        // 依据：测试失败时自己 dump 的 tests/data_for_tests/ZAllDemoTest-<len>.txt。详见 helper-merge-checklist.md
+        // 依据：测试失败时自己 dump 的 tests/data_for_tests/ZAllDemoTest-<len>.txt。
         'files'              => 10432,
         'demo.php'           => 406,
         'helloworld.php'     => 11,

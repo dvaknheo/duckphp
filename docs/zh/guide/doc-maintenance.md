@@ -1,9 +1,9 @@
 # 4-8 文档与参考手册维护
 
-> 解决什么问题：改了源码之后，怎么让 `docs/zh/reference/`（117+ 篇逐类文档）和 `docs/zh/guide/`（本指南）不变成谎话；以及本仓库把这件事做成了哪几道自动闸门。
+> 解决什么问题：改了源码之后，怎么让 `docs/zh/reference/`（110 篇逐类文档 + 4 个汇总页）和 `docs/zh/guide/`（本指南）不变成谎话；以及本仓库把这件事做成了哪几道自动闸门。
 > 前置：[第 4-7 章 测试基建与覆盖率流水线](coverage.md)。预计 20 分钟。
 > 两份权威手册（本章是它们的「导读」，细节以它们为准）：
-> [参考手册维护指南](../reference-maintenance-guide.md)、[用户指南维护指南](../guide-maintenance-guide.md)、[用户指南重写 Checklist](../guide-rewrite-checklist.md)。
+> [参考手册维护指南](../reference-maintenance-guide.md)、[用户指南维护指南](../guide-maintenance-guide.md)。
 
 ## 最小示例
 
@@ -27,15 +27,15 @@ python3 <tmp>/drift.py --all
 docs/zh/index.md            ← 指路页：只告诉你"去哪找"，不复制目录
 docs/zh/guide/              ← 用户指南：一页总目录 + 四卷 47 章 + 4 附录（"怎么做"）
 docs/zh/reference/          ← 参考手册：一类一页 + 汇总页（"有什么"）
-docs/zh/*maintenance-guide* ← 两份维护指南 + 进度 checklist（"怎么维护"）
+docs/zh/*maintenance-guide* ← 两份维护指南（"怎么维护"）
 ```
 
 | 内容 | 该写在哪 |
 |---|---|
 | 「这个方法签名是什么/选项默认值是多少」 | `reference/`（逐类页 + `options*.md` 汇总） |
 | 「我要做 X，该怎么写」 | `guide/`（章节；链接到参考页而不是复制签名表） |
-| 「这类改动要注意什么坑」 | 两份 `*-maintenance-guide.md` |
-| 「做到哪一步了」 | `guide-rewrite-checklist.md` |
+| 「这类改动要注意什么坑」「现在是什么状态」 | 两份 `*-maintenance-guide.md` |
+| 「这次改了什么、为什么」 | commit message（**别写进文档**） |
 
 **关键的「单一事实来源」原则**：选项表默认值、方法签名只在参考页维护；指南里只用它、不重述。否则源码一改就要改两处，必然漂移。
 
@@ -70,7 +70,7 @@ grep -rn "<旧名>" src tests docs | wc -l      # 先列全，改完再 grep = 0
 ```
 
 - 覆盖 `src/` + `tests/` + `docs/zh/reference/` + `docs/zh/guide/`；
-- **例外**：账本类文件（本文件、`guide-rewrite-checklist.md`、两份维护指南）里**故意**保留「由旧名 X 更名」的沿革记录，批量替换时先排除它们；逐类参考页与用户指南里不写这类历史，只写当前写法；
+- **例外**：`docs/old/`、`docs/en/`、`README*.md` 是归档/陈旧副本，默认不随中文文档同步；批量替换时先排除它们，也别去「顺手对齐」。
 - `src/` 里不许出现中文/全角字符——最常见的来源是从中文文档复制粘贴（全角箭头 `→`、全角括号）。改完跑 `docs/scripts/check-non-ascii.sh`，期望 `Total non-ASCII lines: 0`。
 
 **改章号/章序**（本指南重排第二卷时踩过）：交叉引用必须**单遍替换 + 回调映射**（Python `re.subn`），用 `sed` 顺序替换会链式误改（`14→8` 之后 `8→17` 又把它改走）。改完用「文件名 → 章号」表反查所有「第 N 章 + 链接」是否一致。
@@ -96,11 +96,10 @@ python3 docs/scripts/check-doc-links.py docs        # 全仓（docs/old、docs/e
 
 ### 6. 手册本身也要维护
 
-- `docs/zh/reference-maintenance-guide.md`：参考手册侧的「怎么做」+ 陷阱表 + 每轮记录；
-- `docs/zh/guide-maintenance-guide.md`：用户指南侧的模板、约束、校验命令、陷阱表；
-- `docs/zh/guide-rewrite-checklist.md`：**只记状态**（勾选 + 每章要点 + 待决策）。
+- `docs/zh/reference-maintenance-guide.md`：参考手册侧的「怎么做」+ 工具 + 陷阱表 + 当前状态；
+- `docs/zh/guide-maintenance-guide.md`：用户指南侧的模板、约束、校验命令、陷阱表、章序与改号姿势。
 
-纪律：**每轮结束时更新 checklist 与「当前状态」段**，并在维护指南里追加一条轮次记录——细节别堆在交接文档里（那里只留结论与指针）。
+纪律：**手册里只留「现在怎么做」与「当前状态」**——「现状」段一两句结论、待办列真没做完的；**改动的过程、逐文件清单、调试经过属于 commit message**（`git log` 就是历史），别往手册里堆流水账。有长期价值的教训写进陷阱表，规则写进硬约束。
 
 ## 常见写法
 
@@ -147,12 +146,12 @@ PY
 |---|---|---|
 | 参考页与源码不一致，但没人发现 | 只改了源码没改文档 | 跑漂移扫描（§2），把 `missing-*` 清零 |
 | 文档里留着**死选项** | 选项被改名/删除，文档没跟 | 漂移扫描的 `extra-option` 就是它；删掉或换成新键名 |
-| `sed` 批量改名改坏了别的句子 | 顺序替换 + 文档里有「由旧名更名」的历史说明 | 单遍替换 + 排除历史说明句；改完 grep 复核 |
+| `sed` 批量改名改坏了别的句子 | 顺序替换（`14→8` 之后 `8→17` 又把它改走） | 单遍替换 + 回调映射（`re.subn`）；改完 grep 复核 |
 | 链接校验报坏链 | 指向了还没写的章/页 | 未写的用「纯文本 + ⏳」；写完再换链接（§4） |
 | `src/` 里出现中文/全角字符 | 从中文文档粘贴 | `docs/scripts/check-non-ascii.sh` 兜底；改回 ASCII |
 | 提交里混进 `.obsidian/` 或测试产物 | `git add .` | 提交前 `git status --short` 复核（§5） |
-| 交接文档越来越长、读不动 | 把流水账写进了「现状」段 | 现状段只留结论；细节进 checklist 与轮次记录（§6） |
-| `gen-reference.php verify` 报「多了方法」就照删 | 该脚本对大文件漏列（已知缺陷） | 以漂移扫描为准 |
+| 维护指南越写越长、接手的人读不动 | 把「这次怎么改的」写成了正文 | 只留规则 + 陷阱 + 当前状态；过程写进 commit message |
+| `gen-reference.php verify` 报「多了方法」就照删 | 该脚本对大文件漏列方法，且只认反引号开头的方法条目（本仓用 4 空格缩进） | 以漂移扫描为准，`verify` 只当参考 |
 
 ## 下一步
 

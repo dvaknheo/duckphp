@@ -1,38 +1,36 @@
-# 用户指南重写 · 交接与维护指南
+# 用户指南维护指南
 
-> 目标读者：接手「`docs/zh/guide/` 用户指南重写」这件事的 AI/工程师。
-> 一句话任务：**把用户指南从「平铺清单」重写成「一页总目录 + 四卷 41 章 + 4 附录」**。
->
-> - **做到哪了 / 还差什么** → 看 [进度 Checklist](guide-rewrite-checklist.md)（那份只管状态与勾选）
-> - **怎么做** → 就是本文件（目标、约束、模板、校验命令、已知坑、起手动作）
-> - 姊妹文件：[参考手册维护指南](reference-maintenance-guide.md)（`docs/zh/reference/` 的维护；其校验思路本文件直接复用）
+> 目标读者：维护 `docs/zh/guide/`（用户指南）的 AI / 工程师。
+> 前提：**指南已交付**——一页总目录 + 四卷 47 章 + 4 附录，站内 0 死链、章号一致、示例全部指向现成资产。本文件讲**以后怎么改**，不重复交付过程。
+> 姊妹文件：[参考手册维护指南](reference-maintenance-guide.md)（`docs/zh/reference/` 侧）；两份共用一套校验命令与坑表。
+> **章号 → 文件、每章一句话的唯一事实来源是总目录** [`guide/index.md`](guide/index.md)；本文件只在第 7 节记号形式与改号姿势。
 
 ---
 
-## 1. 目标与设计
+## 1. 全书面貌（别改坏的结构）
 
 **梯度**：入门 → 单一应用 → 使用第三方应用 → 高级话题。
 
 | 卷 | 读者状态 | 读完能做什么 | 章数 |
 |---|---|---|---|
 | 一 入门 | 没装过 | 跑起一个页面并上线 | 7 |
-| 二 单一应用 | 会跑 | 独立写完一个业务应用（覆盖主流框架的全部常见主题） | 20（含 2-2/2-3 生命周期与路由钩子、2-19/2-20「使用用户/管理员系统」） |
+| 二 单一应用 | 会跑 | 独立写完一个业务应用（覆盖主流框架的全部常见主题） | 20（含 2-2 请求生命周期、2-3/2-4 路由进阶与钩子、2-19/2-20「使用用户/管理员系统」） |
 | 三 使用第三方应用 | 会写单应用 | 把外部应用挂进来、共享组件、覆盖它的内容 | 7 |
 | 四 高级话题 | 会集成 | 改框架行为、调优、排错、维护文档、自己实现用户/管理员体系 | 13（含 4-12/4-13「实现用户/管理员系统」） |
 
 **硬约束**（作者已裁定，别自行放宽）：
 
 1. **一页总目录** = `docs/zh/guide/index.md`；`docs/zh/index.md` 只做指路，不复制章表。
-2. **示例只用现有代码**：`demo/`（多入口示例应用）、`skeleton/`（脚手架骨架）、`tests/data_for_tests/ZThirdDemo`（第三卷示例工程），以及 `tests/data_for_tests/` 下的测试夹具；不新建示例工程（`ZThirdDemo` 是唯一获准新增的）。⚠️ 老文档里写的 `tests/data_for_tests/ZAllDemo` **从未存在过**（见 §24），别照着它写。
-3. **新写的章 ≤400 行**；改写章暂不限，但明显超长的要拆（见 Checklist 的 Q2）。
-4. **附录**：原先指南侧的 `appendix-global-functions.md` 与 `appendix-options.md` **已删除**——全局函数参考由 `docs/zh/reference/Core-Functions.md` 承接，应用选项参考由 `reference/options.md` / `options-by-class.md` / `options-index.md` 承接；指南里只留指向参考手册的链接。
+2. **示例只用现有代码**：`demo/`（多入口示例应用）、`skeleton/`（脚手架骨架）、`tests/data_for_tests/ZThirdDemo`（第三卷示例工程），以及 `tests/data_for_tests/` 下的测试夹具；**不新建示例工程**（`ZThirdDemo` 是唯一获准新增的）。⚠️ 老文档里写的 `tests/data_for_tests/ZAllDemo` **从未存在过**（是写章节时按测试名 `ZAllDemoTest` 拼出来的假路径）——**引用任何路径前先验证它存在**（`git ls-files`/`Test-Path`），死链检查只看 `.md` 之间的链接，查不出正文里的假路径。
+3. **章 ≤400 行**；明显超长的要拆。拆/并章要连带改总目录、全库章号引用、参考页里的「见第 N 章」。
+4. **附录**：指南侧不再有 `appendix-global-functions.md` / `appendix-options.md`——全局函数参考在 `reference/Core-Functions.md`，应用选项参考在 `reference/options.md` / `options-by-class.md` / `options-index.md`；指南里只留指向参考手册的链接。
 5. **不写**「升级与破坏性变更」章/附录。
-6. **章号一律用「卷-章」号**：`1-1`–`1-7`、`2-1`–`2-20`、`3-1`–`3-7`、`4-1`–`4-13`（附录仍是 A/B/C/D）。**不要再出现单数字章号**（例如写成「数字 + 章」的样子）。
-7. **类名第一次出现时，链接到参考手册对应页**（例如正文里写 `Route::_()` 时，首次出现处链成 `[Route](reference/Core-Route.md)`；`Base`/`Helper` 有多个同名页，必须用全限定名形式）。
-8. **不写旧文档的过时内容**：`architecture.md` / `components.md` / 两篇指南附录都已删除，指南里不要再出现「旧文档里是这么写的」「已废弃的 X」之类表述——只写当前事实，必要时直接给正确写法。
-9. `skeleton/` 的失真内容已在 Q3 轮修掉（`class_user`→`user_provider`、方法前缀默认值、`ProjectException extends \Exception` 等）；模板工程改动同样要跑测试（`tests/Foundation/ExceptionTraitTest.php` 有防回归断言）。
-10. **「怎么用」与「怎么实现」分章**（第 6 轮作者裁定）：卷二末尾的 2-18/2-19 只讲**调用方怎么用**（Helper 入口、未登录表现、视图开关）；「接入实现」（三个实现 + 选项 + `ext` 挂载）在第四卷的 4-12/4-13。以后写涉及用户/管理员的内容按这条分家，别把选项表塞回 2-18/2-19。
-11. **照抄 `skeleton/`、`demo/` 的代码前先真的跑一次**（M17）：把骨架片段写进指南时，先在 `php -r` 里把它调通。`is_callable()`、`class_exists()` 这类只校验「形状」的检查会骗人——选项写成裸类名时启动不报错、报告器类少个 `_()` 时启动也不报错，**都要等异常真抛出来才炸**。示例里的选项值一律写 `[类::class, '方法']`（或闭包），别写裸类名。
+6. **章号一律用「卷-章」号**：`1-1`–`1-7`、`2-1`–`2-20`、`3-1`–`3-7`、`4-1`–`4-13`（附录仍是 A/B/C/D）。**不要再出现单数字章号**。
+7. **类名第一次出现时，链接到参考手册对应页**（如首次写 `Route::_()` 处链成 `[Route](reference/Core-Route.md)`；`Base`/`Helper` 有多个同名页，必须用全限定名形式）。
+8. **不写旧文档的过时内容**：`architecture.md`/`components.md`/两篇旧附录都已删除，指南里不要再出现「旧文档里是这么写的」「已废弃的 X」之类表述——只写当前事实，必要时直接给正确写法。
+9. `skeleton/` 与 `demo/` 是**活着的模板工程**：改它们同样要跑测试（`tests/ZAllDemoTest.php` 覆盖 `demo/`；`tests/Foundation/ExceptionTraitTest.php` 对 `skeleton/` 的 `ProjectException` 有防回归断言），骨架里的失真内容（旧选项名、方法前缀默认值等）要顺手修。
+10. **「怎么用」与「怎么实现」分章**（作者裁定）：2-19/2-20 只讲**调用方怎么用**（Helper 入口、未登录表现、视图开关）；「接入实现」（三个实现 + 选项 + `ext` 挂载）在 4-12/4-13。别把选项表塞回 2-19/2-20。
+11. **照抄 `skeleton/`、`demo/` 的代码前先真的跑一次**：把骨架片段写进指南时，先在 `php -r` 里把它调通。`is_callable()`、`class_exists()` 这类只校验「形状」的检查会骗人——选项写成裸类名时启动不报错、报告器类少个 `_()` 时启动也不报错，**都要等异常真抛出来才炸**。示例里的选项值一律写 `[类::class, '方法']`（或闭包），别写裸类名。
 
 ## 2. 每章模板（全卷统一，照抄结构）
 
@@ -53,7 +51,7 @@
 - 示例里统一用 `::_()`、`Helper::`、`__h()`；配置示例统一用 `MyProj` 作命名空间。
 - 章内引用 reference 的链接必须**指向真实存在的文件**（用 §4 的脚本查）。
 - **代码块里不要插链接**（改号/加链脚本要跳过围栏代码块，否则示例没法直接复制）；类名链接放在正文或行内代码里。
-- 章号引用写法：`第 2-4 章`、范围写 `第 2-1–2-20 章`；链接文字带章号时目标必须与章号一致（§4 有反查脚本）。
+- 章号引用写法：`第 2-4 章`、范围写 `第 2-1–2-20 章`；链接文字带章号时目标必须与章号一致（§4 有反查办法）。
 
 参考样板：[第 3-1 章](guide/advanced-phase.md)（机制讲清 + 坑位标注）与 [第 3-5 章](guide/overriding.md)（含「谁赢」的排查思路）。
 
@@ -62,13 +60,14 @@
 | 资产 | 服务哪几卷 | 怎么跑 |
 |---|---|---|
 | `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php` | 第三卷 3-1–3-7 | `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` |
-| `demo/` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由/多入口） | `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZAllDemoTest.php"`；它「起内置服务器 + curl 各路由比字节长度」，改 `src/` 后长度会变（见 §5）。**注意**：老文档里写的 `tests/data_for_tests/ZAllDemo` 正文目录从未存在，被测宿主一直是 `demo/`（见 §24） |
+| `demo/` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由/多入口） | `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZAllDemoTest.php"`；它「起内置服务器 + curl 各路由比字节长度」，改 `src/` 或 `demo/` 后长度会变（见 §5）。被测宿主一直是 `demo/` |
 | `demo/`（`public/` 多入口 + `src/System/AppWithAllOptions.php`） | 第一卷、第二卷 | `php -S 127.0.0.1:8080 -t demo/public` 后访问各入口 |
-| `docs/scripts/`（8 个文档工具） | 全卷校验/生成 | `python3 docs/scripts/check-doc-links.py docs/zh`、`python3 docs/scripts/find-unmentioned-classes.py`、`bash docs/scripts/check-non-ascii.sh` 等；**脚本随文档一起提交**，都从仓库根目录跑 |
+| `skeleton/` | 第一卷（1-3 目录结构与四层架构）、新工程起步 | 读代码；改动后跑 `tests/Foundation/ExceptionTraitTest.php` 与 `tests/ZAllDemoTest.php` |
+| `docs/scripts/`（文档工具：链接检查、排版检查、非 ASCII、孤儿页反查、选项/参考页生成） | 全卷校验 | 见 §4；**脚本随文档一起提交**，都从仓库根目录跑 |
 
-**约定：新写的章里每一段示例代码，都要能在上述资产里指出出处，或已在对话中实跑过。** 第三卷的 7 章就是这么做的——每条章内结论都对应 `ZThirdDemoTest` 里的一条断言。
+**约定：章里每一段示例代码，都要能在上述资产里指出出处，或已实跑过。** 第三卷的 7 章就是这么做的——每条章内结论都对应 `ZThirdDemoTest` 里的一条断言。
 
-## 4. 校验命令（每写完一章/一卷就跑）
+## 4. 校验命令（每改完一章就跑）
 
 ```powershell
 $env:WSL_UTF8=1      # 一次即可，避免 wsl 输出乱码
@@ -86,11 +85,14 @@ for p in glob.glob('docs/zh/guide/*.md')+glob.glob('docs/zh/reference/*.md'):
 print('non-utf8:', bad or 'none')
 EOF"
 
-# ③ 新写的章 ≤400 行
+# ③ 章 ≤400 行
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && wc -l docs/zh/guide/*.md | sort -n | tail -20"
 
 # ③b 提交前：这次改动里有没有「只有排版」的文件（别人/别的编辑器改的噪声）
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-md-layout.py"
+
+# ③c 章号一致性：扫 `docs/zh/guide/*.md` 里「链接文字带章号」的引用，按「文件名 → 章号」表反查，期望 0 处不一致
+#     （没有现成脚本，让 AI 现写一个十几行的即可；判据见 §7）
 
 # ④ 改过 src/ 或 tests/ 时：跑相关单测；改过示例就重跑示例测试
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"
@@ -99,9 +101,9 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-cov
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage"
 ```
 
-当前基线：全量 `OK (92 tests, 556 assertions)`；`docs/zh` 相对链接 **0 坏链**；`docs/` 下只有归档目录 `docs/old/` 还有历史坏链（不属本轮范围）。校验结果请登记到 [Checklist](guide-rewrite-checklist.md) 的「每轮收尾自检」。
+**当前基线**：全量 `OK (96 tests, 823 assertions)`、覆盖率 `Lines 4895/4895 (100.00%)`（WSL + `XDEBUG_MODE=coverage` + `tests/support.php` → `test_reports/index.html`；这是**上一次全量记录**，重跑后请更新这两个数）；`docs/zh` 相对链接 **0 坏链**、`docs/` 下只有归档目录 `docs/old/` 与陈旧副本 `docs/en/` 还有历史坏链（不属本工作范围）；[`find-unmentioned-classes.py`](../scripts/find-unmentioned-classes.py) → 109 个类页全部被指南链到、孤儿 0。
 
-`docs/scripts/check-doc-links.py`（本轮新增；扫 `docs/**/*.md` 的相对链接，忽略外链与锚点，恒退出 0——读打印的 `broken: N`）：
+`docs/scripts/check-doc-links.py`（扫 `docs/**/*.md` 的相对链接，忽略外链与锚点，恒退出 0——读打印的 `broken: N`）：
 
 ```python
 import glob, io, os, re, sys
@@ -129,435 +131,48 @@ for p, t in bad:
 
 | 坑 | 说明 |
 |---|---|
-| **未写的章不要挂链接** | TOC 里未落稿的章用 `⏳ + 纯文本`，写完后替换成链接；否则链接校验一直红。（本轮这么做，`docs/zh` 才能保持 0 坏链） |
-| 旧章里的 API 可能早就不存在 | 实测：`advanced-phase.md` 有 3 处 `App::Root()->getOverridingClass()`（源码里没有）；`helper.md` 的 `assignRewrite('article/123', …)` 少了前导 `/` 因而永不命中；`Configer` 读 `config/<名>.php` 而不是 `<名>.config.php`。**改写前先核对源码。** |
+| **未写的章不要挂链接** | 还没落稿的章在总目录里用 `⏳ + 纯文本`，写完再换成链接；否则链接校验一直红。 |
+| 旧章里的 API 可能早就不存在 | 实测：`advanced-phase.md` 有 3 处 `App::Root()->getOverridingClass()`（源码里没有）；`helper.md` 的 `assignRewrite('article/123', …)` 少了前导 `/` 因而永不命中；`Configer` 读 `config/<名>.php` 而不是 `<名>.config.php`。**改之前先核对源码。** |
+| **正文里写的路径/类名可能是假的** | 死链检查查不出这一类。实测 `tests/data_for_tests/ZAllDemo` 被引用了 25 处而它**从未存在**；同类还有 `layers.md` 里假想出来的 `ZAllDemo/src/Controller/Helper.php`。**引用前先 `git ls-files` / `Test-Path`；示例里的类名先 `class_exists()`。** |
+| **示例「能跑」的标准是真调用一次** | 只做静态检查（类存在、`is_callable()` 为真）会放过两种必炸写法：选项写裸类名（`ExceptionAction::class` 不是 callable，启动即抛 `config error`）、报告器类少 `_()`（`ExceptionReporterTrait::OnException()` 内部是 `static::_()->…`，异常真抛出时 `Call to undefined method …::_()`）。见硬约束 11。 |
+| **批量替换 / 改章号** | 必须**单遍替换 + 回调映射**（`re.subn`）：顺序 `sed` 会链式误改（`14→8` 之后 `8→17` 又把它改走）。**多键对调**（如 2-3 ↔ 2-4）要各用**独立占位符**，或按链接目标反推——共用一个占位符会把刚插入的文字再匹配一次，30 处引用全被改回去。替换范围也要收窄：「表格行首列是数字」的规则全库套用会误伤 `reference/setting.md`、`i18n.md` 里「次序 1/2/3」的普通编号表（**表格行只对总目录生效、H1 只对 `docs/zh/guide/` 生效**）；加链接的脚本必须跳过围栏代码块（第一版把 76 处链接插进了 PHP 示例）；把整段行内代码换成链接会吞掉 `::方法名()`（要「整段当链接文字」或另找一处）。 |
 | 多应用的斜杠坑 | ① `RouteHookRewrite::assignRewrite()` 的**键要带前导 `/`**；② `controller_resource_prefix`：根应用 `'/res/'`、子应用 `'res/'`（前缀按 `'/'.controller_url_prefix.controller_resource_prefix` 拼，子应用的挂载前缀已带尾斜杠）；③ 相位名不是类名（子应用是 `:<name>`）。 |
-| `ZAllDemoTest` 的字节长度比对 | 它把 demo 各路由输出长度与 `tests/data_for_tests/ZAllDemoTest.config.php` 硬比，`files` 路由会 dump **选项表**（`合计 N个`）+ 方法表 + 包含文件 + 调用栈行号，**源码一动就变**（把选项在 `$options` 与 `$hidden_options` 之间搬家同样会变）。只有它红时：把期望值改成括号里的实际值（新 dump 会存成 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可 `diff` 新旧两份看差在哪）；先确认这轮没碰 `src/`，再用 `git stash push -- src` 验证是不是本来就红。**当前基线 10360**（第一卷收尾时对齐）。 |
+| `ZAllDemoTest` 的字节长度比对 | 它把 demo 各路由输出长度与 `tests/data_for_tests/ZAllDemoTest.config.php` 硬比，`files` 路由会 dump **选项表**（`合计 N个`）+ 方法表 + 包含文件 + 调用栈行号，**源码一动就变**（把选项在 `$options` 与 `$hidden_options` 之间搬家、类改名同样会变）。只有它红时：把期望值改成括号里的实际值（新 dump 存成 `tests/data_for_tests/ZAllDemoTest-<长度>.txt`，可 `diff` 新旧两份看差在哪），并在 config 的注释里记一句来历。**当前基线 10432**。 |
 | 测试一律走 WSL | Windows 侧 PHP 没有 redis 扩展会假失败；`docs/scripts/*.sh` 也要在 WSL 跑。 |
-| 别 `git add .` | 仓库有未跟踪的 `.obsidian/`（`docs/zh/guide/` 与 `docs/zh/reference/` 各一个）、测试产物 `*/log_*.log`、`ZAllDemoTest-*.txt` 等。提交前 `git status --short` 复核。 |
-| **Obsidian 保存时重排表格（或别的编辑器 / 并行的 AI 会话顺手格式化）** | 用 Obsidian（Advanced Tables 类插件）打开 `docs/zh/` 时，保存会重排表格：按显示宽度补齐列宽、把 `\|---\|` 写成 `\| --- \|`，**还会补出多余的空列/空行**。对指南（手写章）只是 diff 噪声，**不影响内容**；但 `reference/index.md` 的 `<!-- GEN:nav -->`、`reference/options.md` 的 `<!-- GEN:layers -->` 块内表格被重排会让 `gen-options-docs.php --check` 报 stale（现已改为忽略排版差异，`layout-only differences ignored`；多出来的空列属实质差异，要砍掉）。详见[参考手册维护指南](reference-maintenance-guide.md) 的陷阱表。**2026-09-25 实测**：`docs/zh/.obsidian/` 是当前唯一在用的库，里面**没装任何 community 插件**（无 `plugins/`、无 `community-plugins.json`）⇒ 插件 format-on-save 已不是元凶；三个 `*.obsidian/community-plugins.json` 已写成 `[]` 把插件关死。再遇到这类改动先跑 `python3 docs/scripts/check-md-layout.py`：报 `layout-only` 的直接 `git checkout -- <file>` 丢掉，报 `CONTENT` 才看 diff。 |
-| 中文文档不受 ASCII 限制 | `src/` 才必须纯 ASCII（改 `src/` 后跑 `docs/scripts/check-non-ascii.sh`）；`docs/` 是中文，正常写。 |
+| 别 `git add .` | 仓库有未跟踪的 `.obsidian/`（`docs/zh/`、`guide/`、`reference/` 各一个）、测试产物 `*/log_*.log`、`ZAllDemoTest-*.txt`、仓库根的 `CODING_MEMO.md` / `reasonix.toml` 等。提交前 `git status --short` 复核；要动那些与本工作无关的未跟踪文件，先问作者。 |
+| **Obsidian 保存时重排表格（或别的编辑器 / 并行的 AI 会话顺手格式化）** | 用 Obsidian 打开 `docs/zh/` 时保存会重排表格：按显示宽度补齐列宽、`\|---\|` 写成 `\| --- \|`，**还会补出多余的空列/空行**。对指南只是 diff 噪声，但 `reference/index.md` 的 `<!-- GEN:nav -->`、`reference/options.md` 的 `<!-- GEN:layers -->` 块内表格被重排会让 `gen-options-docs.php --check` 报 stale（生成器已忽略纯排版差异；空列属实质差异，要砍掉）。**当前 `docs/zh/.obsidian/` 里没装任何 community 插件**（三个库的 `community-plugins.json` 都是 `[]`），所以嫌疑在别的编辑器/并行会话。遇到这类改动先跑 `python3 docs/scripts/check-md-layout.py`：报 `layout-only` 的直接 `git checkout -- <file>` 丢掉，报 `CONTENT` 才看 diff。 |
+| 中文文档不受 ASCII 限制 | `src/` 才必须纯 ASCII（改 `src/` 后跑 `docs/scripts/check-non-ascii.sh`，期望 `Total non-ASCII lines: 0`）；`docs/` 是中文，正常写。 |
+| 子代理并行改章节的边界 | 适合「一章一文件、验收明确」的活；并行超过 3 个、或单个任务超过 4 章时失败率明显上升，**重试前先确认它对文件没有半途写入**。 |
 
-## 6. 下一轮的起手动作
-
-> 全书 47 章 + 4 附录已交付（重写收尾时是 41 章；之后 2-9 拆出用户/管理员两章、M8 加了 4-11、M12 加了 4-12/4-13、M13 又把原 2-10 拆成 2-2/2-3），所以这里的「下一轮」指的是**增量维护**（加新章、改现有章、跟源码同步）。
+## 6. 改一章时的标准动作
 
 ```powershell
 $env:WSL_UTF8=1
-# 1) 基线复核（改文档前后各跑一次）
+# 1) 基线复核（改前改后各跑一次）
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-doc-links.py docs/zh"   # 期望 broken: 0
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/find-unmentioned-classes.py"  # 期望「从没被链到: 0」
-python3 <tmp>/drift.py --all                                                                        # reference 与源码一致性
+python3 <tmp>/drift.py --all                     # reference 与源码一致性（脚本见参考手册维护指南 §5）
 
-# 2) 改哪一章就守 §2 的四条约定：
+# 2) 改哪一章就守 §2 的约定：
 #    · 章号用卷-章号（1-1 … 4-13），引用写「第 2-4 章」或范围「第 2-1–2-20 章」
 #    · 类名第一次出现链到 ../reference/ 对应页（Base/Helper 用全限定名）
 #    · 代码块里不插链接；示例仍只用 demo/、skeleton/、ZThirdDemo
 #    · 不写旧文档的过时内容（旧文已删，只写当前事实）
 
-# 3) 新增一章时的完整动作：
-#    a. 写 docs/zh/guide/<file>.md（H1 = 「# <卷-章号> <标题>」，模板见 §2）
-#    b. 在 docs/zh/guide/index.md 对应卷的表里加一行（章号 + 链接 + 一句话）
-#    c. 在 docs/zh/guide-rewrite-checklist.md 登记
-#    d. 跑 §4 的 ①②③；改过示例就补跑 ④
+# 3) 新增一章：a. 写 docs/zh/guide/<file>.md（H1 = 「# <卷-章号> <标题>」，模板见 §2）
+#              b. 在 docs/zh/guide/index.md 对应卷的表里加一行（章号 + 链接 + 一句话）
+#              c. 参考页里若有「见指南第 N 章」，按新号写
+#              d. 跑 §4 的 ①②③③c；改过示例就补跑 ④
 
-# 4) 改完收尾：勾 Checklist、把校验结果写进本节与 reference-maintenance-guide 的轮次记录
+# 4) 删/并/拆章：总目录、「下一步」段、全库 `第 X-Y 章` 引用、参考页交叉引用一起改，改完按 §7 反查 0 处不一致
+
+# 5) 收尾：只 add 相关路径（别 git add .）；**历史过程写在 commit message 里，不写进文档**
 ```
 
-## 7. 本轮（第三卷）交付记录
-
-- 示例工程：`tests/data_for_tests/ZThirdDemo`（主应用 `src/` + 被挂的 `third/` 第三方应用；四个覆盖点：视图 `view/shop/index.php`、配置 `config/shop/greet.php`、资源 `res/shop/third.css`、控制器 `src/Override/ShopControllerOverride.php`；另有事件总线与两种跨相位调用）。
-- 测试：`tests/ZThirdDemoTest.php`，**36 断言**；一次 `init` 多次 `serve()`，逐条断言「有覆盖」与「没覆盖时回落子应用自己那份」。
-- 指南：一页总目录 `docs/zh/guide/index.md`、附录 A `appendix-glossary.md`、改写 25、新写 26–31（行数 174/125/120/134/140/122/206，均 ≤400）。
-- 其他：`docs/zh/index.md` 瘦身成指路页；顺手修掉 `docs/zh/guide/routing.md`(3 处) 与 `external-auth.md`(4 处) 的相对路径坏链；新增 `docs/scripts/check-doc-links.py`。
-
-## 8. 本轮（第一卷）交付记录
-
-- 章节（总目录 `docs/zh/guide/index.md` 第 1–7 行）：`intro.md`(108)、`install.md`(161)、`project-structure.md`(136)、`quickstart.md`(226)、`configuration.md`(141)、`debugging.md`(122)、`deployment.md`(164) —— 新写 2 篇（intro / project-structure），改写 5 篇；行数全部 ≤400。
-- 示例：不新造工程，全部挂在现成的 `demo/` 上（`quickstart.md` 的便签列表走五层；`deployment.md` 的内置服务器写法实测过 `php -S 127.0.0.1:8080 -t demo/public demo/public/router.php` 一类的 router 要点）。顺手修掉 `demo/public/helloworld.php` 里 `catch (\Thowable $e)` 的旧文档错字（`catch` 不触发自动加载 ⇒ 该 catch 永不命中）。
-- 校验：`docs/zh` 站内链接 **1005 条 0 死链**；`docs/zh` 153 篇 md 逐字节 UTF-8；全量 `php vendor/bin/phpunit --no-coverage` → **`OK (92 tests, 556 assertions)`**（其中 `ZAllDemoTest` 的 `files` 期望长度 10429 → **10360**，是并行会话的选项表重构所致，已在交接指南第 7 节记录判断依据）。
-- 第四卷/附录与第二卷仍未开工；未决问题（Q1–Q4）见 `guide-rewrite-checklist.md` 末尾。
-
-## 9. 第二卷章序与章号重排（作者裁定）
-
-> **章号形式**：作者后来要求**不再用单一数字，统一改成「卷-章」号**（例：早先的单数字 11 → 现在的 **2-6**）。现在的对应关系：
-> 第一卷 `1-1`–`1-7`；第二卷 `2-1`–`2-20`（M13 把原 2-10 拆成 2-2 请求生命周期 + 路由钩子，并把它放在 2-4 路由进阶之后——作者指出「2-3 的前置是 2-4」，遂对调；其后各章顺次后移）；第三卷 `3-1`–`3-7`；第四卷 `4-1`–`4-13`（4-12/4-13 是第 6 轮新加的两章「实现用户/管理员系统」）；附录仍是 A/B/C/D。**单数字形式已全部废弃**，文档里不要再写成「数字 + 章」的样子（历史叙述里提旧编号时也只写数字）。
-
-> ⚠️ **读历史记录注意**：本文件 §10 及之前几轮的交付记录里，章号是**当时**的编号（第 5–6 轮的 `2-1`–`2-19` 与 M13 后的 `2-1`–`2-20` 不是一回事），看老记录时以本节的表为准回推。
-
-**第一次裁定（重排顺序）**：第二卷不再按「生命周期打头、四层架构靠后」，改成**先立规范 → 再走请求路径 → 再补横切能力 → 最后框架机制与进阶**。最终结果（下表用现在的卷-章号；「最初」列是被废除的单数字）：
-
-| 章（卷-章） | 标题 | 文件 | 最初编号 |
-|---|---|---|---|
-| 2-1 | 四层架构与调用规范（**M15 起内容并入 1-3，本页只作指路**） | `layers.md` | 14 |
-| 2-2 | 请求生命周期（M13 从原 2-10 拆出，并补「内置组件清单」） | `lifecycle.md` | — |
-| 2-3 | 路由进阶 | `routing.md` | 9 |
-| 2-4 | 路由钩子（M13 从原 2-10 拆出并改名；含洋葱中间件与钩子链两节。作者指出 2-3 的前置是 2-4，遂与路由进阶对调） | `route-hooks.md` | — |
-| 2-5 | 控制器 | `controllers.md` | 10 |
-| 2-6 | 视图与模板 | `views.md` | 11 |
-| 2-7 | 数据库 | `database.md` | 12 |
-| 2-8 | 模型层 | `model.md` | 13 |
-| 2-9 | Helper 与全局函数 | `helper.md` | 15 |
-| 2-10 | 表单与数据验证 | `validator.md` | 16 |
-| 2-11 | 会话 | `session.md` | 17 |
-| 2-12 | 异常与错误处理 | `exception.md` | 19 |
-| 2-13 | 事件系统 | `events.md` | 20 |
-| 2-14 | 缓存与 Redis | `cache.md` | 21 |
-| 2-15 | 国际化与文案 | `i18n.md` | 22 |
-| 2-16 | 命令行与定时任务 | `cli.md` | 23 |
-| 2-17 | 测试 | `testing.md` | 24 |
-| 2-18 | 安全与性能清单 | `security-performance.md` | 25 |
-| 2-19 | 使用用户系统（原 2-9 拆出，放在卷二末尾；M12 起只讲用法） | `user.md` | — |
-| 2-20 | 使用管理员系统（同上；实现见 4-13） | `admin.md` | — |
-
-**第二次裁定（撤销「中间件与钩子链」这一章）**：作者指出「中间件毕竟不是 DuckPHP 主推的东西，只是为了兼容而附带的扩展」，于是：
-- 它**不单独成章**，内容并入**当时**的 2-10 请求生命周期与钩子点（M13 后拆成 [2-2](guide/lifecycle.md)/[2-3](guide/route-hooks.md)）——路由钩子三位置/短路语义/内置钩子清单/`RouteHookManager`/`Ext\HookChain` 讲机制，`Ext\MyMiddlewareManager` 只作为「兼容性扩展」一节交代；
-- 中间件的**短路语义按现状写、不改源码**（作者裁定 B）：实测中间件里不调 `$next` 就 return 时，返回值被丢弃、`Route::run()` 还会再跑一次默认回调 ⇒ **控制器照样执行**；这一条作为坑写进 2-10，并给正解「要真拦截 → 用路由钩子并返回真值」；
-- 后面各章顺次前移，第三卷成为 `3-1`–`3-7`、第四卷 `4-1`–`4-10`，全书仍是 **41 章** + 4 附录。
-
-**第三次裁定（章号形式：单数字 → 卷-章）**：全库 `第 N 章` 交叉引用、各章 H1、总目录章号列、checklist 条目一次性换成卷-章号；单数字写法不再出现（历史叙述里提到旧编号时会明确标注「最初/当时」）。
-
-**落地用什么姿势**（三次改号共同的教训）：必须**单遍替换 + 回调映射**（Python `re.subn`），顺序 `sed` 会链式误改（`14→8` 之后 `8→17` 又把它改走）；而且**「章号表格」的规则不能全库乱套**——本仓库的 `docs/zh/reference/setting.md`、`i18n.md` 里都有「1/2/3 次序」的表格，第一次改号时被误改成 `1-1/1-2/1-3`，只能回滚重做：**表格行替换只对总目录（`guide/index.md`）与 checklist 生效，H1 只在 `docs/zh/guide/` 内生效**。
-
-**校验方式**（下次改章号照抄）：脚本扫 `docs/zh/guide/*.md` 里所有「章号 + 链接」形式的引用（链接文字里带 `第 X-Y 章`、目标指向某篇），用「文件名 → 章号」表反查 → **0 处不一致**；总目录解析出的每一行章号也与文件名对得上；另外 `python3 docs/scripts/check-doc-links.py docs/zh` 仍 0 死链。
-
-## 10. 本轮（第二卷）交付记录
-
-- 章节（19 篇，全部 ≤400 行，总目录 `docs/zh/guide/index.md` 第二卷表）：
-  `layers.md`(226)、`routing.md`(221)、`controllers.md`(204)、`views.md`(187)、`database.md`(242)、`model.md`(259)、`helper.md`(198，第 5 轮重写)、`validator.md`(180)、`session.md`(137)、`lifecycle.md`(293)、`exception.md`(207)、`events.md`(127)、`cache.md`(137)、`i18n.md`(123)、`cli.md`(217)、`testing.md`(151)、`security-performance.md`(181)、`user.md`(198)、`admin.md`(185)。
-  其中 2-9 原为「会话与用户/管理员体系」一篇（228 行），第 5 轮按作者裁定拆成三章：会话留在 2-9，用户体系与管理员体系放到卷二末尾（2-18/2-19）。
-  其中**新写 6 篇**（controllers / views / events / cache / i18n / security-performance），其余 11 篇为改写；`layers.md` 由 581 行拆成「四层规范」并把控制器/视图内容交给 10/11 两章。
-- 分工与执行：先由 5 个子代理并行改写（第 15/16/18/19/20/21 章共 6 篇由子代理完成），**其余 11 篇因子代理连续失败改由主代理亲自写**（`routing`/`controllers`/`views`/`database`/`model`/`helper`/`lifecycle` 及 `cli`/`testing`/`security-performance`/`layers`）。教训：子代理适合「一章一文件、明确验收」的活；并行超过 3 个或单个任务超过 4 章时失败率明显上升，**重试前先确认它对文件没有半途写入**。
-- 示例策略（守硬约束 2，不新建示例工程）：全部指向现成资产 —— `demo/public/demo.php`（单文件五层 + 路由 + 函数式视图）、`demo/public/dbtest.php`（模型/分页/CRUD 全链路）、`demo/src/*`、`skeleton/`、`tests/data_for_tests/ZThirdDemo`。
-- **本轮实测过的命令**（写进章首「怎么跑」）：
-  - `php demo/cli.php help|routes|version|DbTestApp:version` —— 用来确认内置七命令、命令组前缀与相位的关系；
-  - 临时脚本（跑完即删，未入库）验证 `regConsoleCommand()` + `command_xxx()` + `@command_desc` 能让命令出现在 help 里，以及 `--k=v` 解析成 `['k'=>'v']`、位置参数在 `['--']`；
-  - `tests/Ext/MyMiddlewareManagerTest.php` —— 验证洋葱顺序与「中间件短路无效」那条坑。
-- 校验：`docs/zh` 站内链接 **1281 条 0 死链**；全量 `php vendor/bin/phpunit --no-coverage` → `OK (92 tests, 556 assertions)`；17 章 H1 与总目录章号逐一对齐（脚本反查）。
-- 顺带发现、**未改源码**（留给作者裁定/后续轮次）：
-  1. `demo/src/Controller/Commands.php` 里的 `use DuckPhp\Foundation\CommonCommandTrait;` —— 该 trait 在当前 `src/` 中**不存在**（第 2-15 章已注明"别照抄这一行"）；
-  2. `demo/public/dbtest.php` 的 `cli_command_prefix` 与 `bin/duckphp` 的 `cli_command_classes` 在 `src/` 里**没有任何读取点**（死选项）；
-  3. `demo/src/Model/CrossModelEx.php` 只有 `foo()` 空壳，名字却暗示"跨库模型"（第 2-6 章已写明「不要从名字推断用法」）；
-  4. `demo/src/Business/CommonService.php`、`demo/src/Controller/CommonAction.php` 也都是空壳样板（第 2-1 章已按"占位样板"表述，没有把它们说成现成功能）。
-
-## 11. 本轮（第四卷 + 附录 B/C/D）交付记录
-
-- 章节（10 篇，全部 ≤400 行）：`container-phases.md`(126)、`custom-component.md`(161)、`replace-behavior.md`(181)、`embed.md`(153)、`http-server.md`(164)、`multi-entry.md`(152)、`coverage.md`(154)、`doc-maintenance.md`(158)、`troubleshooting.md`(206)、`design-notes.md`(80)。
-- 附录：`appendix-snippets.md`(288)、`appendix-migration.md`(123)、`appendix-faq.md`(117)。**全书 41 章 + 4 附录至此全部落稿**。
-- 内容来源与吸收：
-  - 第 32/33 章吸收 `architecture.md`（`PhaseContainer` 分桶/查找、组件初始化模板、`EXT_*` 语义）与 `components.md`（组件默认启用 vs 扩展默认关闭）；
-  - 第 2-10 章吸收 `architecture.md` 的时序；第 2-1 章吸收其四层部分 ⇒ `architecture.md` / `components.md` 已是"可删"状态（删除动作归 M5）；
-  - **纠错**：`architecture.md` 里写的公共桶名 `@public@` 是错的，源码是 `#public`（`KernelTrait`）；相位名也不是类名（是 `:<name>`）——第 4-1 章按源码写，M5 删旧文时不会被带偏。
-- 分工与执行：3 个子代理并行（32/33、35/37 各成一个；34/36 的那个跑了 25 分钟无产出，被**主动中断**后由主代理接手写），其余 7 篇（34/36/38/39/40/41 + 附录 B/C/D）由主代理完成。教训补充：子代理长时间零产出时，**先 interrupt 再自己写**，别让它和你抢同一个文件。
-- 校验：`docs/zh` 站内链接 **1613 条 0 死链**；10 章 H1 与总目录逐一对齐；全量 `php vendor/bin/phpunit --no-coverage` → `OK (92 tests, 556 assertions)`。
-- 本轮"如实标注"的三处（避免把示意当现成功能）：第 4-2 章的 `HelloBanner` 组件、附录 B 里标 ⚠️ 的 HTTPS/CSRF/上传片段、第 4-3 章"谁赢"优先级表（属经验总结而非源码常量）。
-- **M5 收尾见下一节。**
-
-## 12. M5 收尾记录（本轮完成：指南全书交付）
-
-- **全局函数参考不新建页**（作者裁定）：由现成的 `docs/zh/reference/Core-Functions.md`（208 行，含 17 个函数的全集签名表与分组讲解）承接。
-- **删除的被吸收文件**（都还在 git 历史里，需要时 `git show` / `git checkout` 取回）：
-  - `docs/zh/guide/architecture.md`（532 行）—— 内容分别进了第 4-1 章（容器/相位/组件初始化）、第 2-10 章（时序）、第 2-1 章（四层）；
-  - `docs/zh/guide/components.md` —— 进了第 4-2 章（组件与扩展）；
-  - `docs/zh/guide/appendix-global-functions.md`、`docs/zh/guide/appendix-options.md` —— 由参考手册的 `Core-Functions.md` 与 `options*.md` 承接。
-- **链接改向**（删文件前先改，保证校验始终 0 死链）：`helper.md`、`layers.md` 里的「全局函数参考」→ `../reference/Core-Functions.md`；`index.md` 底部那行改成三个精确链接（Core-Functions / options / options-by-class / options-index）。`configuration.md` 里本来没有附录链接，无需改。
-- **`docs/en/` 不受影响**：英文侧有自己同名的副本文件（`docs/en/guide/appendix-options.md` 等），本次只删了 `docs/zh` 侧的。
-- 校验：`docs/zh` 站内链接 **1622 条 0 死链**；`docs/zh` 全 UTF-8；`docs/zh/guide/` 现在正好是 `index.md` + 41 章 + 4 附录。
-- **仍然留着的两件事**（都不是文档问题，等作者定）：Checklist 的 **Q3**（`skeleton/` 里 `agent-zh.md`/`RULES.md` 的失真内容）与 **Q4**（`DuckPhp::_Show()` 里那个没赋值的死表达式）。
-
-## 13. 收尾：Q3 / Q4 修复记录
-
-**Q4——`_Show()` 的死表达式：源码其实已经修好，本轮只补了防回归测试。**
-- `DuckPhp::_Show()` 里那句没赋值的 `$view === '' ? Route::_()->getRouteCallingPath() : $view;` 已在提交 `9635a77b`（"文档推进"）中删除；现在 `App::_Show()` 写的是 `$view = ($view === '') ? Route::_()->getRouteCallingPath() : $view;`（正确赋值），`GlobalUser::_Show()`/`GlobalAdmin::_Show()` 同样都已赋值。
-- 在 `tests/DuckPhpTest.php` 的 `_Show()` 三分支测试后加了一条断言：把 `Route::_()->calling_path` 设为 `block`，再调 `DuckPhp::_()->_Show($data, '')`，必须渲染出 `view/block.php` 的内容。**把 bug 改回去跑一遍确认它会红**（报 `ValueError: Path cannot be empty`），再还原——这是本仓库对回归测试的硬要求。
-
-**Q3——`skeleton/`（模板工程）的失真内容：已修，并顺带修掉一个更严重的 bug。**
-- `skeleton/agent-zh.md`：`'class_user' => MyUserAction::class`（以及注释里的 `class_admin`）是**已不存在的旧选项**；改为真实写法——整体替换用 `user_provider`/`admin_provider`（框架会把实例包成相位代理装进 `GlobalUser::_()`/`GlobalAdmin::_()`），逐项接入用 `user_callback_for_*`，并补上真实接口名（`UserActionInterface`/`UserServiceInterface`/`UserSessionInterface`/`UserLoginActionInterface`/`UserLoginServiceInterface`）。
-- `skeleton/RULES.md`：方法前缀默认值从错的 `action_` 改成 **空串**（并写明 DuckPHP 1.3.6 起由 `action_` 改为空、本骨架的 `App.php` 里仍配着 `'action_'`）；`/Main/index` 那条示例改为「默认会被拒（E009），要允许得置 `controller_welcome_class_visible => true`」，关键约定表同步补一行。
-- `skeleton/src/System/App.php`：`cmd` 选项的注释示例 `[CommandAction::class]` → `[CommandAction::class => true]`（真实形态是「类名 => 方法前缀或 `true`」；`Console::getCommandCallback()` 是按 `$class => $method_prefix` 遍历的，列表形式会失效）。
-- **顺带查出并修掉的真 bug**：`skeleton/src/System/ProjectException.php` 与 `demo/src/System/ProjectException.php` 都只 `use ExceptionTrait`（该 trait 只带来 `ThrowOnTrait`），**没有 `extends \Exception`** ⇒ `Helper::BusinessThrowOn()` 抛它时会"无法抛出非 Throwable"致命错误。两处都改成 `class ProjectException extends \Exception`。
-- 回归测试：`tests/Foundation/ExceptionTraitTest.php` 新增 `testProjectExceptionClassesAreThrowable()`，直接加载这两个真实文件并断言 `is_subclass_of(..., \Throwable::class)` 且能真的 `throw`。**把 `extends \Exception` 去掉跑一遍，测试会红**（已实测），再还原。
-- 校验：`src/` 未被改动（`git diff -- src` 为空）；`bash docs/scripts/check-non-ascii.sh` → `Total non-ASCII lines: 0`；全量测试 **`OK (93 tests, 565 assertions)`**（比原基线 `92/556` 多 1 个测试方法 + 9 个断言，即这两条回归测试）。
-
-## 14. M6：章号形式 + 类名链接 + 清掉过时内容（作者裁定）
-
-作者三条要求 → 全库执行：
-
-1. **章号改成「卷-章」号**（单数字废弃）：`1-1`–`1-7`、`2-1`–`2-17`、`3-1`–`3-7`、`4-1`–`4-10`，附录仍是 A/B/C/D。落地范围：41 章 H1、总目录章号列（41 行）、41 条 checklist 条目、全库 `第 N 章` 交叉引用（含范围写法 `第 8–24 章` → `第 2-1–2-20 章`、「第X卷 A–B」→「第X卷 A'-B'」），共 **49 个文件、约 700 处**。
-   - **踩坑记录（值得记住）**：第一次整库替换时把「表格首列是数字」和「`# 数字`」的规则套到了所有文件上，结果把 `docs/zh/reference/setting.md`、`docs/zh/guide/i18n.md` 里「次序 1/2/3」的**普通编号表格**改成了 `1-1/1-2/1-3` ——**只能 `git checkout` 回滚重做**。正确做法：**表格行替换只对总目录 `guide/index.md` 与 checklist 生效，H1 只在 `docs/zh/guide/` 内生效**；另外总目录里有的表被 Obsidian 加了对齐空格，正则要写成 `^\|\s*(\d+)\s*\|`。
-2. **类名第一次出现链接参考手册**：脚本从 `docs/zh/reference/*.md` 的 H1（类全名）建表（113 个类页），在每个指南文件里给**每个类**找**第一次出现**并加链，共 **45 个文件、新增 359 处**（净增 347；现在每章/每附录都至少有一条指向参考手册的类链接）。
-   - 规则：`Base`/`Helper` 有多个同名页 ⇒ **只用全限定名形式**链接；短名支持 `Ext\Xxx` / `Core\Xxx` 这类部分命名空间写法；`Xxx.php` 文件名不链接；优先链**正文里的裸出现**，没有裸出现时才退回「链整段行内代码」（例如把 `` `DuckPhp\Foundation\Model\ModelHelperTrait` `` 整段链到 `reference/Foundation-Model-ModelHelperTrait.md`）；
-   - **踩坑记录（三个，都踩过）**：
-     a. 第一版脚本**没跳过围栏代码块**，把 76 处链接插进了 PHP 示例里（示例没法直接复制）⇒ 必须先把每个文件的行标记成「是否在 ``` 围栏内」；
-     b. 第二版在处理**行内代码**时，以为「反引号里就只有类名」，结果把 `` `View::getViewFile()` `` 整段替换成了 `` [`View`](…) `` ——**吞掉了 `::getViewFile()`**。正确做法是：反引号里如果还有别的内容，要么整段当链接文字、要么跳过该处另找；
-     c. 同一行/相邻行会被插成同页重复链接（如 `App` 与 `DuckPhp\Core\App` 同时出现）⇒ 收尾要跑一遍「同行或相邻行同页去重」。
-3. **不再写旧文档的过时内容**：清掉 5 处「旧文档里的 X 已失效/旧文档遗留/按旧文档找不到」的表述，改成直接给当前事实（`user_callback_for_*`、`docker/test-php84/` 才有脚本、`onBeforeRun/onAfterRun` 框架里不存在、`assignRewrite` 键要带 `/`）；`docs/zh/guide/intro.md` 里那处把「⏳ 撰写中」当章号用的过时说法，也改成了指向 4-9 的正式链接。
-   - 三条新规矩已写进 §1 硬约束（第 6/7/8 条）与 §2 模板约定（含「代码块里不插链接」）。
-
-**校验**：41 章 H1 / 总目录 / 交叉引用 / 无单数字章号 → **0 处不一致**（脚本反查，含「章号+链接」配对）；`docs/zh` 站内链接 **1973 条 0 死链**；围栏代码块内链接 **0 处**；行内代码段内容未被截断（抽查 `View::getViewFile()` 完好）；`docs/zh` 全 UTF-8；`docs/zh/guide/` 仍是 `index.md` + 41 章 + 4 附录（46 个文件）。
-
-## 15. M7 / 本轮（阶段五）：Helper 章重写 + 视图级开关机制改写
-
-**背景**：Helper 体系重构（层 Helper 改名 `Foundation\<层>\<层>Helper`、并集改 `__callStatic`、`ModelHelperTrait` 归位 `Foundation\Model`）之后，指南有 11 章带失效表述；另外作者在对话外把「登录后视图」的开关从选项 `use_user_view`/`use_admin_view` 改成**视图数据** `__logined_enable_view`（由 `UserControllerBase`/`AdminControllerBase` 自动 `assignViewData`）。
-
-**做了什么**
-
-- `helper.md` 整章重写（198 行）：四层四个类的对照表、两种工程写法（`extends` / `use … as Helper`）、并集 `__callStatic` 的顺序与代价、`Model\Base` 走 trait 的说明；常见错误表新增 4 行（并集未定义方法、胜出方不符预期、反射看不到、`__logined_enable_view`）。
-- `external-auth.md` 的「视图级开关」整节改成 `__logined_enable_view` 机制（含手动开关写法与「继承 `UserControllerBase` 即自动开」）；随后按作者裁定**把这一章拆成三章**：`session.md`（2-9 会话）、`user.md`（2-18 用户体系）、`admin.md`（2-19 管理员体系，含 PermissionMenu），并顺手核对了两处源码已改的事实（`user_provider`/`admin_provider` 选项已不存在、未登录异常类写死为 `UserException`/`AdminException`）；`overriding.md`（表格行 + 示例）、`embed.md`、`static-resources.md`、`appendix-glossary.md`、`layers.md`、`model.md`、`events.md`、`cache.md`、`lifecycle.md`、`security-performance.md`、`project-structure.md` 的旧名/旧选项一并改。
-- 顺手修掉 `layers.md` 里那个**不存在**的示例路径 `tests/data_for_tests/ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`。（M16 复查：`tests/data_for_tests/ZAllDemo` 这个目录**从来没进过 git、磁盘上也没有**，当年只改了这**一处**；其余二十来处留到 M16 才全部改指 `skeleton/` 与 `demo/`，见 §24。）
-
-**踩坑（重要，写脚本改文档的人都该知道）**：分两批替换时，第二批把「新文案」当成「旧文案」单独传了进去（少传了第三个参数），`String.Replace(old, $null)` **直接删掉了 5 行正文**（`cache.md`/`appendix-glossary.md`/`lifecycle.md`/`security-performance.md`/`embed.md`）。教训：批量改文档**每条都必须传「旧→新」两个字符串**，脚本要打印「命中/未命中」计数；`命中数 = 配对数` 是能立刻发现「误删」的唯一信号，改完还要 grep 复查一次目标串。
-
-- 另：**落实作者在指南里留的全部 `//TODO`**（exception.md 3 条 + deployment/events×2/layers×2/lifecycle/quickstart/views/cli 共 10 条；`design-notes.md` 里那两处是「介绍源码 TODO」的正文，保留）：exception.md 的 3 条——① 异常报告器的装配点已移到入口类（`DuckPhp::initComponentsOfInner()`，源码 `src/DuckPhp.php` 第 132–137 行），`ExceptionManager` 不再读这两个选项；② 条件抛不再推荐 `Ext\ThrowOnTrait`（框架一处不用），推荐 `Helper::ThrowOn()` 家族；③ `Ext\ExceptionWrapper` 标注为**不推荐**（改用 `Helper::XpCall()` 或直接 `try/catch`）。同时把「报告器分发」那节的旧三步（按命名空间 + `defaultException()`）改成现状（短类名拼 `on{类名}()`，兜底 `App::_()->_OnDefaultException()`）。
-
-**验收**：`docs/zh/guide` 里 `HelperTrait` / 旧类名 / `use_*_view` / `insteadof` **归零**（只剩 `Model\ModelHelperTrait` 与「旧选项已失效」的说明）；`check-doc-links.py docs/zh` → `broken: 0`；全量测试 `OK (95 tests, 658 assertions)`、LibCoverage `4876/4876 (100.00%)`；`helper.md` 198 行（≤400）。
-
-## 16. M8 / 本轮：新增第 4-11 章「过时与冷门的扩展类」+ 参考页孤儿清零
-
-**背景**：新增的 `docs/scripts/find-unmentioned-classes.py`（**纯链接反查**：扫 `docs/zh/guide/*.md` 里指向 `../reference/*.md` 的链接，按页名比对）首扫发现参考手册有 **19 个类页指南从没链到**，其中 7 个是 `src/Ext/` 里「框架内部不用、指南也没写」的扩展。作者两条裁定：① 这些 Ext 类在第四卷专门写一章介绍；② 那些接口页链到各自的**实现章**里说明。
-
-**做了什么**
-
-- 新增 `deprecated-exts.md`（4-11，122 行）。判据只有一个、可复现：源码里的 `@todo deprecate`（`grep -rn "@todo deprecate" src/` 命中 6 个类：`StaticReplacer`、`MyFacadesBase`、`MyFacadesAutoLoader`、`ExtendableStaticCallTrait`、`ExceptionWrapper`、`HookChain`）。逐个写清「它做什么 / 为什么过时 / 现在用什么」，并如实写出反例：`MiniRoute`、`Misc`、`ThrowOnTrait` **没有**废弃标记，但同样在推荐路径外（`grep -rn "MiniRoute" src/` 只命中它自己）；`Misc` 的五个能力逐一给替代（`RecordsetH` → `__h()`、`RecordsetUrl` → `__url()`/`Route::Url`、`Import` → Composer、`DI` → 相位容器），只有 `CallAPI()` **没有**替代品，明说「需要就照用」。
-- 顺手核实并写进正文的两个事实：`MiniRoute` 无法通过选项替换框架路由（`DuckPhp.php` 174 行直接取 `Route::_()`，且它不是 `Route` 子类）；`Core\ComponentBase` **没有**真的 `implements ComponentInterface`（`src/Core/ComponentBase.php` 12 行是注释掉的）——所以那是「鸭子类型」契约。
-- 总目录 `index.md`：加 4-11 行，章数 43 → 44（`index.md` 顶部那句是全库唯一的活章数声明）。
-- 接口/冷门页按「链到实现章」补链：`user.md`（`UserLoginActionInterface`、`UserLoginServiceInterface`）、`admin.md`（`AdminLoginActionInterface`、`AdminServiceInterface`、`AdminLoginServiceInterface`）、`database.md`（`PagerInterface`）、`http-server.md`（`HttpServerInterface`，换实现要满足的四个方法）、`custom-component.md`（`ComponentInterface`）、`layers.md`（`Business\Base`，顺带把四层基类补齐）、`installer.md`（`RouteHookWebInstallerView`：纯视图文件、改外观走 `web_installer_view`）、`exception.md`（`ExitException`：`use_exit_exception` 下 `SystemWrapper::exit()` 抛它、`ExceptionManager` 原样放行）。
-- 同时**纠正一处误导**：`database.md` 的 SQL 导出表原来把 `ByMysql`/`ByPgsql`/`BySqlite` 并列成一行，实际 `SqlDumperSupporter` 的默认映射只有 mysql 与 sqlite（`src/Ext/SqlDumperSupporter.php` 16-19 行），pgsql 要自己加 `database_driver_SqlDumperSupporter_map`。**（M14 已把 pgsql 补进默认映射，这条只作历史记录）**
-
-**验收**：`find-unmentioned-classes.py` → **109/109 个类页全被链到、孤儿 0**（补链前 19）；`check-doc-links.py docs/zh` → **2099 条链接 0 死链**；`deprecated-exts.md` **122 行**（≤400）；`src/` 未改动（`git diff -- src` 为空，无需跑测试）。新工具已登记进 `coverage.md`（§5 工具表）与两份维护指南。
-
-## 17. M9 / 本轮：`RouteHookApiServer` 选项改名为 `apiserver_*`（含 src）
-
-**背景**：作者裁定把 `RouteHookApiServer` 的选项前缀统一为 `apiserver_`（改名前的那套拼法见提交 `77da0c5f`）。**关键点：这不能只改文档**——参考手册的 `options-index.md` / `options-by-class.md` 是 `gen-options-docs.php` 从 `src/` 的 `$options` 生成的，`--check` 会对拍；只改 md 的话下次重新生成就会把旧拼法写回来。所以按「全仓一起改」执行。
-
-**做了什么**（前缀一律改为 `apiserver_`，共 49 处 / 8 个文件）
-
-- `src/Ext/RouteHookApiServer.php` 12 处：5 个生效键（`base_class` / `namespace` / `class_postfix` / `use_singletonex` / `404_as_exception`）+ 2 条注释键（`config_cache_file` / `on_missing`）+ 6 处读取点；
-- `tests/Ext/RouteHookApiServerTest.php` 14 处；`demo/src/System/AppWithAllOptions.php` 5 处；`demo/public/api.php` 3 处；
-- 文档：`reference/Ext-RouteHookApiServer.md` 9 处、`guide/multi-entry.md` 6 处；两个生成页重跑 `gen-options-docs.php` 重建（11 行），`--check` → up to date。
-
-**顺手修的 docs/代码不一致（改名时暴露出来的）**：`demo/public/api.php` 里配的那个键**源码从来没读过**——`git log -S`（键名见 `77da0c5f` 的 diff）显示它更早在 `487c9cbe` 就被 `base_class` 取代（那个提交的说明就是「改了路由扩展的一个选项，调了好多文档」），而 demo 自 `1b165a7e` 起一直没跟进 ⇒ demo 里的基类约束**从未生效**。本轮一并改成 `apiserver_base_class`（`~BaseApi`），并在 `multi-entry.md` 常见错误表补了一条「`apiserver_base_class` 写错/漏配 ⇒ 静默 404」。
-
-**踩坑（我自己犯的，记下来）**：前一轮修作者提交红灯时（`bef4d50e`），我在 `src/GlobalAdmin/GlobalAdmin.php`、`src/GlobalUser/GlobalUser.php` 里写了**中文注释**——违反「`src/` 纯 ASCII」这条硬约束，而且当轮没跑 `check-non-ascii.sh`（以为只改了 CSS/逻辑），直到本轮才被闸门抓出 5 行（另 1 行来自 `0f612538 修复多相位`）。教训：**改了 `src/` 就当场跑 `check-non-ascii.sh`，别攒到下一轮**；中文说明写在提交信息里、不写在源码注释里。本轮已把 5 行全改成英文注释。
-
-**验收**：`check-non-ascii.sh` → **Total non-ASCII lines: 0**；`gen-options-docs.php --check` → up to date；`check-doc-links.py docs/zh` → **2103 条链接 0 死链**；全量测试与覆盖率见下；作者裁定**不保留旧拼法的说明**（旧名不再出现在任何文档里，需要时从提交 `77da0c5f` 的 diff 取），`grep -rn` 旧拼法在全仓 md/php 里为 **0**。
-
-## 18. M10 / 本轮：落实 `helper.md` 的两条 `//TODO`（工程 Helper 的动态方法 + 静态覆盖）
-
-**背景**：作者在 `helper.md` §1「工程侧的 `Xxx\Helper` 有两种写法」之后留了两条 `//TODO`：① 说明工程侧 Helper 新增的方法都是「动态方法」，并讲清「你的工程除 `System/` 外不要引用 `DuckPhp` 的东西，应经工程侧 Helper 或 Base 引用」；② 说明工程侧的静态方法用于 override 父类实现。
-
-**做了什么**（`helper.md` 200 → 240 行，仍 ≤400）
-
-- 删掉两行 `//TODO`，在写法 A / 写法 B 的代码块之后补四段正文：
-  - **动态扩展点 = 动态方法 + 单例调用**：自己新增的工具方法写成**动态方法（实例方法）**（`public function money()`），调用走**单例** `Helper::_()->money(12.5)`；`_()` 来自 `SingletonExTrait` → `PhaseContainer::GetObject(static::class)`，拿到的是当前相位里你自己那个 Helper 实例（能带实例状态）；
-  - **⚠️ 动态方法只能经「你工程那个类」的 `_()` 调**：并集 `Foundation\Helper` 自己没有 `_()`，`DuckPhp\Foundation\Helper::_()` 会被 `__callStatic()` 按派发顺序派到第一站的 `SystemHelper`——**实测返回 `SystemHelper` 实例**（不是你的 Helper）；`DuckPhp\Foundation\Helper::money()` 报 `Call to undefined method`（96 条 `@method` 里没有你的方法）；
-  - **除 `System/` 外不要直接 `use` `DuckPhp\*`**：要框架能力经本层工程 Helper（框架方法照旧静态调、自己的工具方法做成动态方法）或本层 Base 的 `_()`；与 `layers.md` §1 的编码规则互链；
-  - **静态方法用于覆盖父类实现**（与动态方法分工明确）：给了 `Show()` 先补 `page_title` 再 `parent::Show()` 的示例，并写明两个前提——只对「**经你工程类名**」的调用生效（框架内部是硬编码框架类名调用：`UserControllerBase` / `AdminControllerBase` 的 `ControllerHelper::checkInstall()` / `assignViewData()` / `Show302()`，源码 20-37 行，改那类行为要用 `onLoginedException()` 这类钩子或第 4-3 章手段）；覆盖的**签名必须兼容**。
-- 「常见错误」表补两行：并集那条补「你工程 Helper 里新增的动态方法也不在其中」；新增一行「`Helper::money()` 报 `Non-static method ... cannot be called statically`」→ 改成 `Helper::_()->money(...)`。
-
-**四处断言全是实测的**（不是凭记忆写的，脚本 `php check_helper_pattern.php`，跑在仓库根目录）：① `MyH::_()` 返回 `MyH`；② `MyH::_()->money(12.5)` 正常返回；③ `Foundation\Helper::_()` 返回 `DuckPhp\Foundation\System\SystemHelper`；④ `MyH::money(1)` 抛 `Error: Non-static method MyH::money() cannot be called statically`。另外（静态覆盖那条）：静态方法不兼容覆盖是**编译期致命错误**（`php -l` 实测 `Declaration of B::f() must be compatible with A::f($x = 1)`），`parent::` 调静态方法可行（实测输出 `A1B`）。
-
-**修正记录**：本条第一版把 TODO ① 写成了「加**静态**方法、调用点始终 `Helper::`」——作者指出理解有误（是**加动态方法、单例调用**），随后按实测重写，并同步改了写法 A 的示例（`money()` 由 `static` 改为实例方法、示例里补 `Helper::_()->money(12.5)` 调用行）。教训：TODO 里的「动态方法」是 DuckPHP 的固定说法（相对「静态方法」），不要按「运行时可扩展」去自由发挥。
-
-**验收**：`docs/zh/guide` 里再无作者留的 `//TODO`（剩下 4 处命中都是「介绍源码 TODO」的正文，按约定保留）；`check-doc-links.py docs/zh` → **2105 条链接 0 死链**；`helper.md` **227 行**（≤400）。
-
-## 19. 本轮：`doced`→HEAD 代码变动波及指南 —— 只记 TODO，不改指南（作者裁定）
-
-**背景**：本轮任务是「全量覆盖测试 + 按 `doced` 以来的代码变化改参考手册」，作者明确指示：**指南（`docs/zh/guide/`）本轮不动**，凡是被代码改动弄失效的地方，就地留下 `//TODO` 标记，下次改指南时再处理。
-
-**为什么指南会失效**（一句话：`GlobalAdmin`/`GlobalUser` 被重写成「`Admin`/`User` + `globaladmin_*`/`globaluser_*` 选项族」，而指南第 2-18/2-19 章等是按旧 API 写的）：
-
-| 旧（指南里还在写） | 现（源码） |
-|---|---|
-| `user_callback_for_id/name/data/local_service/session/login_service/add_ext_view_data`、`user_url_*`、`user_enable`、`user_loginout_auto_redirect`、`user_view_file_*` | `globaluser_login_session` / `globaluser_local_service` / `globaluser_login_service` / `globaluser_ext_view_data_callback` / `globaluser_need_login_callback` / `globaluser_url_{home,register,login,logout}` / `globaluser_is_authed_redirect` / `globaluser_view_file_{header,footer}` / `globaluser_enable_callback_singleton`（admin 侧同构，前缀 `globaladmin_`） |
-| `GlobalUser::_()` / `GlobalAdmin::_()` | `User::_()` / `Admin::_()`（`GlobalUser`/`GlobalAdmin` 只是实现，注册在父类名这个键上） |
-| `UserException` / `AdminException` 两个类 | 类已删除；改用 `User::EXCEPTION_*` / `Admin::EXCEPTION_*` 常量；未登录由 `throwLoginOn()` 处理（自定义回调 / 302 / Ajax JSON + `exit()`） |
-| `onLoginedException(AdminException $ex)` / `onLoginedException(UserException $ex)` | `onNeedPermission()`（**无参**；Ajax 输出 `error_code: -1`(admin) / `-2`(user)、`error_message: 'NEED_PERMISSION'`） |
-| `__logined_enable_view` / `__logined_enable_header_footer` | `__use_logined_view_data` / `__use_logined_header_footer_file`；另有 `__logined_render_header_footer`（缺省真）控制是否渲染头尾文件 |
-| `GlobalAdmin::_Show()` / `GlobalUser::_Show()`、`go_url()`、`addExtViewData()`、`getLoginBusiness()` | 全部删除；接管渲染的是 `DuckPhp::_Show()` → `Admin::_()`/`User::_()` 的 `mergeViewData()` |
-| 层 Helper 上的 `public static $EVENT_REGISTERING` 等属性 | 改成常量：定义在 `User`/`Admin` 上，层 Helper 里只留**同名别名常量**（值形如 `'ACTION_USER_LOGINED'`，不再是 `'registering'`） |
-
-**本轮做了什么**（只动 11 个 guide 文件：其中 **7 个加了 `//TODO` 标记**、另 4 个只是零散旧名/行号就地改正；**没有**重写任何一章）
-
-- 顶部整块 TODO（篇幅最大、要整章重写）：`user.md`（49 处旧 API）、`admin.md`（30 处）；
-- 就地 TODO / 顺手改掉旧名（带 `//TODO`）：`events.md`（事件常量表整张过期）、`overriding.md`（视图级开关表 + 第 105-106 行示例，两处标记）、`appendix-snippets.md`（登录片段）、`exception.md`（两个已删异常类）、`embed.md`；
-- 零散旧名**就地改正**（不留标记）：`static-resources.md`、`troubleshooting.md`、`appendix-faq.md`、`helper.md`（`onLoginedException()` → `onNeedPermission()` 与源码行号）；`user.md` / `admin.md` 里的死链与「未登录抛异常」两处也在标记之外顺手改了；
-- 6 处指向**已删除参考页**的链接（`GlobalUser-UserException.md` / `GlobalAdmin-AdminException.md`）已就地改成文字，保证 `check-doc-links.py` 仍为 0 死链（`user.md` 2 处、`admin.md` 2 处、`exception.md` 2 处）；
-- 参考页里的同名死链由本轮参考手册同步一并清掉（`Core-DuckPhpSystemException.md`）。
-
-**验收**：`check-doc-links.py docs/zh` → **2104 条链接 0 死链**；`docs/zh/guide/` 里新增 `//TODO` 标记 **7 个文件**（下次改指南的入口：`grep -rn '//TODO（参考手册同步轮' docs/zh/guide`）。
-
-**下次改指南的建议顺序**：先 `user.md` / `admin.md`（旧 API 最集中，且两章互相引用），再 `events.md`（事件常量表），然后零散旧键名（`appendix-snippets.md` / `troubleshooting.md` / `appendix-faq.md` / `static-resources.md` / `embed.md` / `overriding.md` / `helper.md` / `exception.md`）；改完按 §4 跑链接检查与行数检查，并把对应 `//TODO` 删掉。
-
-## 20. M11 / 本轮：照 §19 的清单把指南同步完（`//TODO` 清零）
-
-**背景**：作者看完 §19 的清单后说「现在开始改 guide 文件」——本轮就是按那个顺序把 13 个文件改完，`//TODO` 清零。
-
-**做了什么**
-
-- **`user.md`（2-18）与 `admin.md`（2-19）重写**（205/193 → **231/178 行**）：选项对照表整张换成 `globaluser_*` / `globaladmin_*`；调用侧改成 `User::_()` / `Admin::_()`；「未登录怎么办」改成 `throwLoginOn()` 三分支表（自定义回调 / 302 带 `?b=` / Ajax JSON，最后都 `exit()`）；新增「登录后视图：三份视图数据」小节（`__use_logined_view_data` / `__use_logined_header_footer_file` / `__logined_render_header_footer`，并写明判定与渲染都在 `DuckPhp::_Show()` 里）；admin 侧补 `onNeedPermission()` 钩子与 `isSuper()`；两章的示例都换成**实测过**的写法（应用级选项 + `ext` 三种写法，见下）。
-- **`events.md`（2-12）**：事件常量表从「层 Helper 上的 `public static $EVENT_*` 属性」改成「`User`/`Admin` 上的常量 + 两张分工表」——`EVENT_ACTION_*` 由框架派发（`GlobalUser`/`GlobalAdmin` 的登录注册登出），`EVENT_SERVICE_*` **框架不派发**、是留给服务层自己 `fire()` 的名字；补了两段监听/派发示例。
-- **`overriding.md`（3-5）**：视图级开关表与示例改成新键名，并写清「命中接口 → `Admin::_()`/`User::_()` 的 `mergeViewData()` → `View::setViewHeadFoot()`」这条链路；表里「本卷示例位置」由第 2-9 章改指第 2-18 章。
-- **`appendix-snippets.md`**：登录片段换成三个必需回调 + 「想自己接管跳转就传 `check_login=false`」；
-- **`exception.md`（2-11）**：删掉「框架自带 `UserException`/`AdminException` 继承 `\Exception`」那句，改成当前事实（登录/权限不用异常类，错误码在常量上，未登录/无权限由 `throwLoginOn()` / `onNeedPermission()` 处理）；
-- **`doc-maintenance.md`**：把「批量改名时的例外」那条的例子（旧键名链）改成「账本类文件才保留沿革」的通用说法；
-- 零散旧名/死链：`static-resources.md` / `troubleshooting.md` / `appendix-faq.md` / `helper.md` / `embed.md`（`onLoginedException()` → `onNeedPermission()`、源码行号、`__use_logined_view_data`、`globaluser_login_session`）。
-
-**示例全部实测**（不是照抄旧文）：本轮写了个临时脚本（跑完即删，仓库根 `tmp_verify_user.php`）在 WSL 里跑通 **19 条断言 / 0 失败**，覆盖两章正文里的每个断言性说法：
-① 应用级 `globaluser_*` 选项在 `'ext' => [MyUser::class => true]` 下确实落到组件；② `User::_()` 是工程子类的 `PhaseProxy`；③ `id()/name()` 读会话、`canAccess()` 走 Service、`service()->batchGetUsernames()` 经代理；④ `login()` 调登录服务 + 写会话 + 302 到 `globaluser_url_home`；⑤ 未登录 `id(true)` 302 到 `globaluser_url_login`、`id(false)` 返回 0；⑥ `__use_logined_view_data` + `__use_logined_header_footer_file` 把头尾套上（输出 3 个 `Block`）且视图数据里有 `__logined_id`；⑦ Admin 侧同样吃应用级 `globaladmin_*` 选项、`isSuper()` 走 Service；⑧ `Helper::OnGlobalEvent('ACTION_USER_LOGINED')` 能被 `login()` 触发，而 `EVENT_SERVICE_*` 监听不到（框架不派发）。
-
-**顺手学到的两条事实**（已写进两章）：
-- `globaluser_view_file_header/footer` 这类值是**按 `getOverrideableFile('view', …)` 解析**的，相对路径落在 **`<应用 path>/view/`** 下，**不是** `path_view` —— 一开始就是踩了这个才渲染失败（报 `include(.../view/block.php): Failed to open stream`）；
-- `App::_()` 之所以能拿到「当前应用」，是因为 `KernelTrait` 在初始化时 `(self::class)::_($this)` 把自己注册进容器；**换过相位容器后（`PhaseContainer::RestAllContainerForTesting()`）必须重新 init**，否则 `User::_()` / `App::_()` 会新建一个「默认的」实例，症状是莫名的 Internal Error。
-
-**验收**：`check-doc-links.py docs/zh` → **2109 条 0 死链**；`docs/zh/guide` 里同步轮的 `//TODO` **归零**；改动的 12 个文件 117–294 行（≤400）；「链接文字章号 vs 目标页 H1」**0 处不一致**；`find-unmentioned-classes.py` → **109/109 类页全被链到**；全量测试 `OK (96 tests, 823 assertions)`（本轮**未改 `src/` 与 `tests/`**，两条基线沿用上一轮的实测值）。
-
-## 21. M12 / 本轮：2-18/2-19 改成「使用」章，实现另立 4-12/4-13（作者裁定）
-
-**背景**：M11 把两章同步到新 API 后，作者反馈「**user.md 这章写得不好，应该是怎么用先**，也就是 `(Controller)Helper::User/UserId/UserName/UserService` 和 `(Business)Helper::UserService` 的使用；后面才讲实现，**甚至可能实现要放到高级内容**」。追问后的裁定是：**2-18 = 使用用户系统、2-19 = 使用管理员系统；高级卷分为 4-12 实现用户系统、4-13 实现管理员系统**。
-
-**怎么分的家**
-
-| | 卷二（怎么用） | 卷四（怎么实现） |
-|---|---|---|
-| 读者 | 在控制器/业务里调 API 的人 | 项目搭建者、要换会话/服务实现的人 |
-| 内容 | `Helper::User()/UserId()/UserName()/UserService()`（控制器）与 `Helper::UserService()`（业务）的入口表、`Helper::User()` 方法一览、未登录的三条路与 `check_login=false`、登录/注册/登出三个动作、两个视图开关、常见写法与错误 | 三件实现（会话/登录服务/本地服务）的骨架、`ext` 三种写法、`User` 是键 `GlobalUser` 是实现、全部选项表、`UserSessionTrait`、服务的每个方法被谁调用、`need_login_callback`、`ext_view_data_callback`、头尾文件解析规则、自检四条 |
-| 行数 | `user.md` 231、`admin.md` 178（M11 时） → **本轮重写后 214 / 198** | 新写 `impl-user.md` 214、`impl-admin.md` 173 |
-
-**两章使用章的结构**（照 §2 模板，但把「机制说明」写成了调用方视角）：
-
-1. 最小示例：控制器里 `Helper::UserId()/UserName()`，业务里 `Helper::UserService()->batchGetUsernames()`；
-2. 入口表：**控制器拿「人」、业务拿「服务」**——并写清为什么业务层没有 `User()/UserId()`（「现在是谁」是请求上下文，业务方法要用户信息就显式传参，这样 CLI/队列也能复用）；
-3. 未登录三选一表 + `check_login=false`；
-4. `Helper::UserService()`（控制器与业务都能用，`$user_id` 显式传参）；
-5. 登录/注册/登出三个动作（自动 302 由 `globaluser_is_authed_redirect` 控制）；
-6. 两个视图开关 + 继承 `UserControllerBase` 时已自动置真。
-
-**顺带查清的两件事**
-
-- **两个入口的实现其实一样**：`ControllerHelper::UserService()` 与 `BusinessHelper::UserService()` 都是 `User::_()->service()`（`src/Foundation/Controller/ControllerHelper.php` 265-268、`src/Foundation/Business/BusinessHelper.php` 101-104），但**只有控制器层**有 `User()/UserId()/UserName()`。业务层要「谁」只能由控制器传参——这条以前没人写清，现在写在 2-18 第 1 节。
-- **组件不判断「登录成功没有」**：`GlobalUser::login()` 把登录服务的返回值**原样** `setCurrentUser()` 写进会话，再发完成事件、再 302；所以「密码不对」的表现由登录服务决定（返回空数组最省事）。这条写在 4-12 第 5 节。
-
-**示例实测**：临时脚本（跑完即删 `tmp_verify_usage.php`）**13 条断言 / 0 失败**，逐条对着使用章的正文：`Helper::User() === User::_()`、`UserId()/UserName()/data()` 读会话、`Helper::User()->canAccess()`（无参＝当前路由）与 `log()` 走 Service、`Helper::UserService()` 与 `BusinessHelper::UserService()` 都能批量取名字、未登录时 `UserId(false)` 返回 0 而 `UserId()` 302 到登录页、`login()` 写会话并 302 到 `globaluser_url_home`、控制器置真两个视图键后头/正文/尾都渲染。
-
-**连带改动**（新增两章要动的账）：`guide/index.md` 的第四卷表加 4-12/4-13 行、章数 44 → **46**、「第 1-1–4-11」→「第 1-1–4-13」、2-18/2-19 两行标题改成「使用…」；`guide-maintenance-guide.md` §1 卷表章数、硬约束 6 的章号范围、新增硬约束 10（用/实现分家）、§9 章序表 2-18/2-19 行；`guide-rewrite-checklist.md` 第四卷表 + M12 行；全库 5 处「第 2-18 章 用户体系 / 第 2-19 章 管理员体系」的链接文字（`controllers`/`helper`/`session`/`static-resources`/`validator`）批量改名；`session.md`、`appendix-snippets.md`、`appendix-migration.md`、`troubleshooting.md`、`layers.md` 的指向改成「用/实现」两处；`controllers.md` 里那段 `UserAction::_()->login($name, $password)` + `Session::_()->setUserId()`（两个都不存在的 API）换成 `NoteAction` 的真实写法。
-
-**校验**：见下一轮收尾（链接/章号/行数/orphan 四项一起跑）。
-
-## 22. M13 / 本轮：拆开「请求生命周期与钩子点」，两章提到 2-2/2-3（作者裁定）
-
-**背景**：作者一句「拆分 请求生命周期与钩子点；请求生命周期要讲到有哪些内置组件；钩子点改名路由钩子」，以及追问编号时的回答「**放在第 2，第 3 章位置**」——即这两章不再是卷二末尾的 2-10，而是紧跟 2-1 四层规范之后，卷二其余各章顺次后移。**随后作者又发现**：拆出来的「路由钩子」把自己的前置写成 2-4 路由进阶，而它自己排 2-3 ⇒ 两章顺序反了；于是**对调**：`2-3 = 路由进阶`、`2-4 = 路由钩子`（对调用一次「第 2-3 章 ↔ 第 2-4 章」单遍占位替换，H1 与总目录行另行处理）。
-
-**结果**：卷二从「2-1–2-19」变成「**2-1–2-20**」，全书 46 → **47 章**；两章的落点：
-
-| 新号 | 章 | 文件 | 拿到了什么 |
-|---|---|---|---|
-| 2-2 | 请求生命周期 | `lifecycle.md`（192 行） | `init()` 八步 + **框架默认装了哪些内置组件**（新写的第 2 节）+ `serve()` 时序 + `onBeforeOutput()` + CLI 分流 |
-| 2-4 | 路由钩子 | `route-hooks.md`（新文件，213 行；作者指出它与 2-3 路由进阶的前置关系反了，遂对调） | 六个位置与短路语义 + `RouteHookManager` 增删改查 + 内置钩子位置表 + 选型表 + 洋葱中间件 + `HookChain` |
-
-**2-2 新写的「内置组件清单」**（作者点名要的内容，来源：`KernelTrait::initComponents()` + `App::initComponentsOfRoot/OfInner` + `DuckPhp::initComponentsOfRoot` + `$common_options['ext']`）：
-
-- **root 层**（只根应用装配，且登记为「公共类」⇒ 各相位共用同一实例）：`Console`（跟随应用选项）、`SystemWrapper`/`Logger`/`CoreHelper`（`EXT_SKIP_INIT` 只建实例不 init）、`DbManager`/`RedisManager`/`Admin`/`User`/`GlobalEvent`（`EXT_ROOT_HOLD_POSISION_ONLY` 只占位；前两个还要有 `database`/`redis` 配置才 init）、`ExtOptionsLoader`（仅 `data_file_enable` 为真）；
-- **inner 层**（每个相位一套）：`Route`、`View`、`Configer`；
-- **ext 层**（应用 `ext` 里声明；框架默认打开）：`Lang` + `RouteHookRewrite`/`RouteHookRouteMap`/`RouteHookResource`/`RouteHookPathInfoCompat`；
-- 另外两样不是组件但会就位：`ExceptionManager`（`initException()`，早于组件）、`Runtime`（按需创建，`use_output_buffer` 用它）；
-- 读表要点写成三条规矩：root vs inner = 「跨相位共享与否」、「只占位」= 登记类名但不在 init 阶段创建、「只建实例」= 纯工具组件。
-
-**重排怎么做的（下次改号照抄）**：脚本**单遍正则 + 回调映射**（`第 2-(\d+) 章` / `^# 2-(\d+) ` / `^\| 2-(\d+) \|` 三条，映射表 `{2:4,3:5,…,9:11,11:12,…,19:20}`），**排除**已经按新号写好的两个文件，避免二次偏移；老 2-10 的 44 处引用逐条判读后分派——**钩子语义/中间件/短路**那批（`appendix-faq`/`appendix-migration`/`appendix-snippets`/`custom-component`/`deprecated-exts`/`design-notes`/`events`/`routing`/`security-performance` 部分行/`troubleshooting` 部分行/`index`）→ 2-3 且链接目标改成 `route-hooks.md`，**时序/初始化/输出**那批（`advanced-phase`/`cli`/`controllers`/`exception`/`http-server`/`multi-entry`/`quickstart`/`session`/`security-performance` 部分行/`troubleshooting` 部分行）→ 2-2。第一遍有 15 处没匹配上（链接写成 `../guide/lifecycle.md`、标题写成「生命周期」而非「请求生命周期与钩子点」、或者干脆是裸号/代码块里的裸号），第二遍按「精确子串」逐条补掉。
-**踩坑**：① TOC（`guide/index.md`）的行号不会因为重排而移动——只改数字会得到「号码对但顺序乱」的表，必须**整块重写并按新序排**；同理 `layers.md` 的「本卷地图」表里是更早的单数字（8/9–13/14–16/17–19/20–24），要手工重画。② **两两对调必须用两个不同的占位符**：为修「路由钩子 vs 路由进阶」的顺序，本轮写了 `replace('第 2-3 章', PLACE+'第 2-4 章')` 再 `replace('第 2-4 章', PLACE+'第 2-3 章')`——第二轮把**刚插入的新文本**又匹配了一遍，30 处引用全被换回 `2-3`。正确写法是先 `2-3 → @@A@@`、`2-4 → @@B@@`，再把 `@@A@@ → 2-4`、`@@B@@ → 2-3`；补救则按**链接目标**回填（指向 `route-hooks.md` 的写 2-4、指向 `routing.md` 的写 2-3），靠章号一致性脚本兜底。
-
-**顺带修**：`layers.md` 的「本卷地图」表重画成新分组（规范 / 时序与请求路径 2-2–2-8 / 横切能力 / 框架机制 / 进阶 / 用户与管理员体系）；`doc-maintenance.md` 的「四卷 44 章」→ 47；`intro.md` 两处「2-1–2-17」→「2-1–2-20」；`guide-maintenance-guide.md` §1 卷表章数、硬约束 6 的章号范围、§6 的章数说明、§9 的章号表（含「读历史记录注意」提示）、§9 里那个旧编号例子（单数字 11 → 现在是 2-6，不是 2-4）。
-
-**验收**：`check-doc-links.py docs/zh` → **2237 条 0 死链**；章号一致性脚本 → **0 处不符**、`index.md` 之外无缺章号 H1；`grep -h '^# 2-' docs/zh/guide/*.md` 恰好是 `2-1`…`2-20` 二十行；新写的 `route-hooks.md` 213 行、改写的 `lifecycle.md` 192 行（全书最大章 294 行，均 ≤400）；`src/`、`tests/` 未改动。
-
-## 23. M15 / 本轮：把 1-3 与 2-1 合并，2-1 留成指路页（作者裁定）
-
-**背景**：作者指出「目录结构与编码规则（`project-structure.md`）与四层架构与调用规范（`layers.md`）这两章**合并**，放在 **1-3**；**2-1 改为「参见 1-3」**（为了避免频繁调章节编号）」。
-
-**怎么做**（合并 + 留桩，一章不动号）
-
-- **`project-structure.md`（1-3）**：137 + 232 = 369 行的两章合成 **330 行**（去掉重复的引言/下一步，并把两处重叠内容并掉）：
-  - 标题 `# 1-3 目录结构与编码规则` → **`# 1-3 目录结构与四层架构`**；
-  - 结构：最小示例（原 2-1 的五个片段 + 调用链）→ 机制说明 8 节（① 标准结构 ② 命名规范 ③ 五层职责与边界 ④ 层级调用铁律 + 违规示例 ⑤ 越界矩阵 ⑥ 为什么 Business 必须无状态 ⑦ Helper 分层 + 全局函数表 ⑧ 框架其实不强制这套约定）→ 常见写法（原 2-1 的 ①–⑤）→ 常见错误（两表合并去重成 12 行）→ 下一步；
-  - **两处重叠这样并**：原 1-3 的「层级调用铁律」表与原 2-1 的「越界矩阵」是同一件事的两种粒度 ⇒ 保留 ASCII 铁律图 + 三个 ❌ 违规示例（原 1-3 有、矩阵没有）+ 越界矩阵（原 2-1 有、铁律表没有），删掉原 1-3 那张「可以调用/禁止调用」表。
-- **`layers.md`（2-1）**：正文清空，换成 **38 行的指路页**——开头一句「本章内容已并入第 1-3 章，这里是指路页（卷二章号因此不必重排）」，中间留**五层速查表**（一句话职责 + 别做）与「越界矩阵的结论一句话」，末尾保留**本卷地图**（原 2-1 的那张卷二路线表，把「规范」一行的 2-1 改成 1-3）+ 下一步链接。
-  - 为什么把本卷地图留在 2-1：它是**卷二**的路线图，放在卷二开头最顺；1-3 是卷一的内容页，不该背卷二的目录。
-
-**为什么这样做**（作者的原话就是理由）：合并会让「1-3 之后的章号」和「2-1 之后的章号」都要重排，而 2026 这一轮已经重排过两次（M13 把卷二从 2-1–2-19 重排成 2-1–2-20）；**留一个指路页挂住 2-1 这个号**，全书 47 章与 33 处「第 2-1 章」引用都原地不动。
-
-**连带改动**：`guide/index.md` 两行（1-3 标题与一句话、2-1 标注「指路页」）；`install.md`、`quickstart.md` 里「第 1-3 章 目录结构与编码规则」的链接文字（新标题）；`guide-maintenance-guide.md` §9 章号表 2-1 行；`guide-rewrite-checklist.md` 卷一 1-3 条目与卷二 2-1 条目。**「第 2-1 章」的 33 处引用一律不动**——它们现在落到指路页，再一跳进 1-3。
-
-**验收**：`check-doc-links.py docs/zh` → **2247 条 0 死链**；章号一致性 **0 处不符**；`find-unmentioned-classes.py` → **109/109 类页全被链到、孤儿 0**；`project-structure.md` **330 行**、`layers.md` **38 行**（全书最大章 294 行以外还有本章 330 行，仍 ≤400）；章数不变（47）；`src/`、`tests/` 未改动。
-
-## 24. M16 / 本轮：清掉「`tests/data_for_tests/ZAllDemo`」这个**从来不存在**的示例路径（作者发现）
-
-**背景**：作者问「`tests/data_for_tests/ZAllDemo` 找不到，没在 git 里，需要重建？」——查证结论是**不需要重建，因为它从来就不存在**：
-
-- `git log --all -- tests/data_for_tests/ZAllDemo*` 里只有 `ZAllDemoTest.config.php` 与几份 `ZAllDemoTest-<长度>.txt` 产物，**没有任何 `ZAllDemo/` 目录**；
-- 磁盘上也没有（`tests/data_for_tests/` 下是 `Component/ Core/ Db/ DuckPhp/ Ext/ Foundation/ Helper/ HttpServer/ ZThirdDemo/` + `setting.php`）；
-- 它也不被 `.gitignore` 忽略——就是**文档里编出来的路径**：指南的 AI 作者拿测试名 `ZAllDemoTest` 拼了一个「第二卷示例工程」出来；
-- 当年有一轮**已经**发现过其中一处是假的（`ZAllDemo/src/Controller/Helper.php` → `demo/src/Controller/Helper.php`），但只改了那一处，其余二十来处留到今天。
-
-**真实资产是谁**（本轮逐条改指）：
-
-| 老文档写的 | 真实在哪 |
-|---|---|
-| `tests/data_for_tests/ZAllDemo/src/Controller/MainController.php`、`src/Business/DemoBusiness.php`、`src/Model/DemoModel.php`、`view/main.php`、`public/index.php` | **`skeleton/`** —— 五层骨架的片段就是照它抄的（`YourProjectName` 命名空间、`DemoBusiness::_()->foo()`、`Helper::Show(get_defined_vars(), 'main')`、`DATE(DATE_ATOM)` 全部逐字对得上） |
-| 泛指的「第二卷示例应用」 | **`demo/`** —— 多入口示例应用，`tests/ZAllDemoTest.php` 起内置服务器 + curl 各路由比字节长度（它读 `tests/data_for_tests/ZAllDemoTest.config.php`，其中 `path_app` 指向 `demo/`） |
-| 「首页视图把 options / 单例 dump 出来」 | **`demo/view/files.php`**（`/files` 路由）——里面有「执行时间 / 全部单例 / 已加载文件 / 调用栈」几个 fieldset |
-
-**改动清单**（25 处，只动 `docs/`）：
-
-- 指南 11 个文件：`controllers.md`(4)、`views.md`(3)、`install.md`(2)、`project-structure.md`(2)、`quickstart.md`、`model.md`、`configuration.md`、`debugging.md`、`appendix-glossary.md`、`appendix-snippets.md`、`index.md`；
-- 账本 4 个文件：`guide-maintenance-guide.md`（硬约束 2、资产表、模板里的「标明来源」、§6 起手动作、§10 记录）、`guide-rewrite-checklist.md`(2)、`reference-maintenance-guide.md`（§7 陷阱表那条「指南里的示例没实跑过」+ 历史记录加更正注）、`helper-merge-checklist.md`（历史记录加注）；
-- **`ZAllDemoTest` / `ZAllDemoTest.config.php` 一律没动**——它们是真文件（脚本按 `ZAllDemo/` 带斜杠与整句精确匹配，跑完 grep 复核过）。
-
-**教训**（写进参考手册维护指南第 18 条）：**引用一个路径之前先验证它存在**（`Test-Path` / `git ls-files`）。指南的示例路径最容易出这种错：写章节的 AI 会按「测试名 + 惯性目录名」编出看起来很像的路径，而**死链检查只查 `.md` 之间的链接，查不出「正文里的文件路径写错」**——它不报错，只是一直骗读者。
-
-**验收**：`docs/zh` 里除本轮更正说明与两处历史记录外，`ZAllDemo` 只剩 `ZAllDemoTest*` 这些真文件；`check-doc-links.py docs/zh` → **0 死链**；章号一致性、孤儿页、生成页、ASCII、UTF-8、排版六项全绿；`src/`、`tests/` 未改动。
-
-**紧跟着的骨架调整（作者提交 `a3208ddb`）**：作者把 `skeleton/src/System/ExceptionReporter.php` 移到 `skeleton/src/Controller/ExceptionAction.php` 并把类名改成 `ExceptionAction`（对齐「控制器层复用类叫 `{名字}Action`」的约定，也与 `demo/src/Controller/ExceptionReporter.php` 的位置一致）。**但文件里的 `namespace YourProjectName\System;` 没跟着改**，于是 `App.php` 新写的 `use YourProjectName\Controller\ExceptionAction;` 取不到类：实测 `class_exists('YourProjectName\Controller\ExceptionAction')` = **MISSING**（PSR-4 把 `\Controller\ExceptionAction` 映到 `src/Controller/ExceptionAction.php`，文件被 include 后却只定义了 `\System\ExceptionAction` 这个副作用；因为是注释掉的选项，平时不报错，一取消注释才炸）。已修并复核：namespace 改 `YourProjectName\Controller`（修后 `class_exists` = true），文件内 docblock 的 `ExceptionReporter::class` → `ExceptionAction::class`，`skeleton/RULES.md` 的目录树（该文件从 `System/` 挪到 `Controller/` 组）与「默认未启用」清单、`skeleton/agent-zh.md` 的示例类名与选项行同步改名（顺手把它示例里 `namespace YourProject\…` 少写 `Name` 的笔误改成 `YourProjectName`）。**教训：移动类文件时 namespace 必须一起改**——这正是 1-3 那条「类文件必须落在与命名空间一致的目录里」要防的事。
-
-## 25. M17 / 本轮：`demo` 的异常报告器跟着 `skeleton` 改名并**真的跑通**（作者裁定「统一」）
-
-**背景**：作者对「小分叉」那边的回复是**统一**——`skeleton` 已经把它那份报告器改名成 `ExceptionAction`（上一节），`demo` 还叫 `ExceptionReporter`，两边分叉。本轮把 `demo` 对齐，并顺手把「统一」过程中撞出来的两个**真 bug**修掉。
-
-**改动 1：改名（`demo` → `skeleton`）**
-
-- `git mv demo/src/Controller/ExceptionReporter.php demo/src/Controller/ExceptionAction.php`，类名 `ExceptionReporter` → `ExceptionAction`；
-- 三处 `use ProjectNameTemplate\Controller\ExceptionReporter;` → `…\ExceptionAction;`（`demo/src/System/{App,AppWithAllOptions,PureApp}.php`）、`App.php` 的 `'exception_reporter' => [ExceptionAction::class,'OnException']`；
-- `demo/src/Controller/ExceptionAction.php` 里那段注释掉的 `defaultException()` 死代码删掉（写它的时候 Trait 还有这个方法，现在没有了——**统一就该把这种「只在一边留着的过时注释」一起清掉**）；
-- `docs/zh/guide/exception.md` 5 处（示例路径、小节标题、代码块路径、`class ExceptionAction`、选项行）跟着改；
-- 参考手册里**保持泛指**的两处不改：`Core-ExceptionManager.md` 的 `\App\ExceptionReporter`（那是示例类名，不是本仓的类）、`Foundation\Controller\ExceptionReporterTrait` 页（框架 Trait 本身没改名）。
-
-**改动 2：`exception_reporter` 的示例写法是错的（裸类名不是 callable）**
-
-`src/DuckPhp.php` 第 140–146 行 `initComponentsOfInner()` 里先 `is_callable($this->options['exception_reporter'])`，不过就抛 `DuckPhpSystemException("'exception_reporter' config error!:…")`。而实测 `is_callable('YourProjectName\Controller\ExceptionAction')` = **false**（哪怕类里有静态 `OnException()`；PHP 的类名字符串要可调用得有 `__invoke()`），`is_callable([…::class,'OnException'])` 才是 **true**。于是这些「照抄就炸」的示例全部改掉：
-
-| 文件 | 原写法 | 现写法 |
-|---|---|---|
-| `skeleton/src/Controller/ExceptionAction.php`（docblock） | `ExceptionAction::class` | `[ExceptionAction::class, 'OnException']` |
-| `skeleton/src/System/App.php`（注释行） | 同上 | 同上（并注明 must be callable） |
-| `skeleton/agent-zh.md` | 同上 | 同上（另删掉过时的 `defaultException()` 示例方法） |
-| `demo/src/System/AppWithAllOptions.php` | 同上 | 同上（`App.php` 早就是数组写法） |
-| `docs/zh/guide/exception.md`（常见写法 §1、常见错误表） | 同上 | 同上；错误表那行原来还写着「类名（有静态 `OnException()`）」也算可调用——**这句是错的**，已改 |
-| `docs/zh/reference/Core-ExceptionManager.md`、`Foundation-Controller-ExceptionReporterTrait.md` | 同上 | 同上（类名保持泛指的 `\App\ExceptionReporter`） |
-
-**改动 3：报告器类少了 `_()`，异常真抛出来时必炸**
-
-`ExceptionReporterTrait::OnException()` 的实现是 `static::_()->_OnException($ex)`。`git log` 显示 Trait 在 `f0f52283` 创建时**自带** `use SingletonExTrait;`，`33e8fcf5`（「100% 测试通过」）把它删了、同时把 demo 的选项改成 `[ExceptionReporter::class,'OnException']`——但**没给这两个报告器类补上 `_()`**，于是从那时起 `demo`/`skeleton` 的报告器一直是坏的：`is_callable()` 校验能过（`OnException` 确实存在），真调用时 `static::_()` 找不到方法。实测：
-
-```text
-php -r '…\ProjectNameTemplate\Controller\ExceptionAction::OnException(new ProjectException("boom"));'
-→ Error: Call to undefined method ProjectNameTemplate\Controller\ExceptionAction::_()
-```
-
-修法是照框架自己的测试夹具（`tests/Foundation/Controller/ExceptionReporterTraitTest.php` 的 `MyExceptionReporter`）的样子，给两个报告器类补 `use DuckPhp\Foundation\SingletonTrait;`（`Controller\Base` 给的也是这个）——**不动 `src/`**，不去替作者恢复 Trait 里那行（那是他刻意删的）。修完实测：`ExceptionAction::OnException(new BusinessException('boom'))` → `string(67) "ProjectNameTemplate\Controller\ExceptionAction::onBusinessException"`（分派真的走到了）；`ProjectException` 这种没有对应方法的 → 落 `App::_()->_OnDefaultException()` 出错误页，与文档一致。
-
-**改动 4：`Foundation-Controller-ExceptionReporterTrait.md` 整页重写**
-
-这页的正文还停在**旧 Trait**：说「按命名空间判断是不是项目异常」「兜底走 `defaultException()` → `defaultSystemException()`」，方法列表里也留着这两个**源码里已经不存在**的方法（`a04ab534` 那轮只改了 7 行，正文没跟上；`gen-reference.php verify` 的 `extra-method` 正是漏了它们——因为该页方法列表是 4 空格缩进而不是反引号开头，扫描器根本没读到）。重写后与源码一致：分派只按**短类名**、静态方法也能命中、方法名撞上 `OnException`/`_OnException` 时走递归保护、兜底固定 `App::_()->_OnDefaultException()`；「类信息」写明本 Trait **不 use 任何 Trait**、组合方必须自带 `_()`。
-
-**顺带**：`tests/data_for_tests/ZAllDemoTest.config.php` 的 `files` 期望长度 10438 → **10432**。类名短 2 字节 × 3 处（选项表出现两次 + 包含文件清单一次）= 6；两份 dump 逐行 diff 只有这 3 处加一行时间戳（`执行耗时`），没有别的漂移。注释行里补了这次的来历。
-
-**验收**：`tests/ZAllDemoTest.php` 绿；六道闸门绿（`docs/zh` 0 死链 2381 条、章号一致性 0 处不符、孤儿页 0、`gen-options-docs --check` up to date、`src/` 非 ASCII 0 行、排版检查只有本轮这 3 个文件是 `CONTENT`）；报告器的两条运行实测见「改动 3」。**没有跑全量测试**（本轮只改 `demo/`、`skeleton/` 与 `docs/`，`src/` 与 `tests/` 未动）。
+## 7. 章序与章号
+
+- **形式**：卷-章号，单数字形式已全部废弃。范围：第一卷 `1-1`–`1-7`；第二卷 `2-1`–`2-20`；第三卷 `3-1`–`3-7`；第四卷 `4-1`–`4-13`；附录 `A`–`D`（术语表 / 片段 / 迁移 / FAQ）。
+- **卷二的两个特殊点**：`2-1`（`layers.md`）是**指路页**，四层规范正文在 `1-3`（`project-structure.md`）——全库 33 处「第 2-1 章」引用都指向它，**别再改号**，改内容改 1-3；`2-3` 路由进阶与 `2-4` 路由钩子是一对（钩子排在进阶之后——作者指出「2-3 的前置是 2-4」），涉及路由的两章别对调回来。
+- **唯一事实来源是总目录** [`guide/index.md`](guide/index.md)：章号、文件名、一句话都在那里。本文件只记「形式」与下面这些改号姿势。
+- **改号的落地姿势**：单遍替换 + 回调映射（见 §5）；替换范围只对总目录的表格行与各章 H1 生效，别全库套用。
+- **改完的判据**：① 扫 `docs/zh/guide/*.md` 里所有「链接文字带 `第 X-Y 章`」的引用，用「文件名 → 章号」表反查 → **0 处不一致**；② 总目录每行的章号与目标文件的 H1 对得上；③ `python3 docs/scripts/check-doc-links.py docs/zh` 仍 0 死链；④ 各章 H1 恰好是 `1-1`…`4-13`，无重号、无缺号。

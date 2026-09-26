@@ -103,4 +103,4 @@
 
 ---
 
-> 维护/接手本指南（进度 checklist、写作模板、校验命令、已知坑）：[用户指南重写 · 交接与维护指南](../guide-maintenance-guide.md)
+> 维护/接手本指南（写作模板、硬约束、校验命令、已知坑、章序与改号）：[用户指南维护指南](../guide-maintenance-guide.md)
