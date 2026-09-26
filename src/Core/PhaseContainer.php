@@ -13,7 +13,7 @@ class PhaseContainer
     public $containers = [];
     public $current = '';
     public $default = '';
-    public $publics = [];
+    public $shared_classes = [];
 
     public static function GetObject(string $class, ?object $object = null)
     {
@@ -47,7 +47,7 @@ class PhaseContainer
         }
 
         $container_name = $this->current;
-        if (isset($this->publics[$class])) {
+        if (isset($this->shared_classes[$class])) {
             $container_name = $this->default;
             $ret = $this->getObjectInContainer($container_name, $class, $object);
             if ($ret) {
@@ -81,18 +81,18 @@ class PhaseContainer
     {
         $this->default = $class;
     }
-    public function addPublicClasses($classes)
+    public function addSharedClasses($classes)
     {
         $classes = array_filter($classes);
         //$classes = $classes ?? [];
         foreach ($classes as $class => $v) {
-            $this->publics[$class] = $v;
+            $this->shared_classes[$class] = $v;
         }
     }
-    public function removePublicClasses($classes)
+    public function removeSharedClasses($classes)
     {
         foreach ($classes as $class) {
-            unset($this->publics[$class]);
+            unset($this->shared_classes[$class]);
         }
     }
     public function setCurrentContainer($container)
@@ -126,8 +126,8 @@ class PhaseContainer
         echo "-- begin dump---<pre> \n";
         echo "current:{$this->current};\n";
         echo "default:{$this->default};\n";
-        echo "publics:\n";
-        foreach ($this->publics as $k => $null) {
+        echo "shared:\n";
+        foreach ($this->shared_classes as $k => $null) {
             echo "    $k;\n";
         }
         echo "contains:\n";
@@ -135,7 +135,7 @@ class PhaseContainer
             echo "    $name: \n";
             foreach ($container as $k => $v) {
                 echo "        ";
-                if (isset($this->publics[$k])) {
+                if (isset($this->shared_classes[$k])) {
                     echo "*";
                 } else {
                     echo " ";
@@ -149,7 +149,7 @@ class PhaseContainer
                 echo " ;\n";
             }
         }
-        echo "\n        * is public";
+        echo "\n        * is shared";
         echo "\n--end--- </pre> \n";
     }
 }

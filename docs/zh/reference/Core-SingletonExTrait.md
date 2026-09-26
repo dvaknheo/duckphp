@@ -39,7 +39,7 @@ MyService::_($existing);        // 返回（并把 $existing 登记为当前 Pha
 
 ## 注意事项
 
-- 这是静态入口所在；如需“可变单例/与 container 解耦”，本 Trait 只是壳，真正语义由 `PhaseContainer` 决定（查找顺序：当前 Phase → 公共/父容器 → 自动创建）。
+- 这是静态入口所在；如需“可变单例/与 container 解耦”，本 Trait 只是壳，真正语义由 `PhaseContainer` 决定（查找顺序：当前 Phase → 共享/父容器 → 自动创建）。
 - `$object` 非空时会把传入对象登记后返回同一对象，从而“覆盖”此前实例而不会新建。
 - 与 PHP 内置关键字/其它 singleton 无冲突；可被多个类重复 use。
 

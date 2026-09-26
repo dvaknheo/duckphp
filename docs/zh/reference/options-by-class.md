@@ -24,7 +24,7 @@ DuckPhp\Core\App 的子类，本身不定义复杂的业务，而是
 | `cli_command_with_common` | `true` | 是否把内置默认 CLI 命令集（`DuckPhp\Component\Command`）登记进当前应用的命令列表。 |
 | `lang_default` | `null` | 多语言默认语言（与 Lang 组件共享；不做进一步检测的兜底）。 |
 | `lang_final` | `null` | 最终语言；设置后不再自动检测、直接以它为准。 |
-| `local_database` | `false` | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不计入公共容器共享，互不干扰）。 |
+| `local_database` | `false` | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不进共享桶 `#shared`，互不干扰）。 |
 | `local_redis` | `false` | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
 | `exception_reporter` | `null` | （该类文档未写说明） |
 | `exception_for_project` | `null` | （该类文档未写说明） |

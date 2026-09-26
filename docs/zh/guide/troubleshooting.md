@@ -80,7 +80,7 @@ init()（onPrepare → onInit → onInited） → serve()（onRequest → Route:
 |---|---|---|
 | 覆盖类没生效 | `PhaseContainer::Dump()` | 调用处用了 `new` 而不是 `::_()`；覆盖机制依赖容器（[第 3-5 章](overriding.md)） |
 | 覆盖视图没生效 | 视图查找顺序 | 覆盖是**按相位回退**；确认父应用目录名与子应用相位名一致（[第 3-5 章](overriding.md)） |
-| 子应用拿到了父应用的实例 | `dumpAllObject()` 的 `#public` 桶 | 该组件是共享的（Root 初始化时标 public）；要独立用 `createLocalObject()` 或 `local_database`/`local_redis`（[第 3-4 章](component-sharing.md)） |
+| 子应用拿到了父应用的实例 | `dumpAllObject()` 的 `#shared` 桶 | 该组件是共享的（Root 初始化时被标为共享）；要独立用 `createLocalObject()` 或 `local_database`/`local_redis`（[第 3-4 章](component-sharing.md)） |
 | 改了共享组件，另一个应用也变了 | 同上 | 预期行为；要么接受，要么各自本地化 |
 | `ext` 里加了扩展但没反应 | `EXT_*` 取值 | `EXT_DISABLE` 就是关着；`EXT_RENEW` 每次请求重建（[第 4-1 章](container-phases.md)） |
 | 子应用输出 404 而不是交给父应用 | `skip_404` | 子应用里调 `App::_()->skip404Handler()`（[第 2-2 章](lifecycle.md)） |

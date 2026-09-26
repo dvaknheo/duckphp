@@ -67,7 +67,7 @@ trait KernelTrait
         //*/
     ];
     protected static $ROOT_PHASE = '';
-    protected static $ROOT_PHASE_OF_SHARED = '#public';
+    protected static $ROOT_PHASE_OF_SHARED = '#shared';
 
     private static $EXT_SKIP_INIT = -1;
     private static $EXT_DISABLE = 0;
@@ -131,7 +131,7 @@ trait KernelTrait
     public static function SwitchRootPhase($phase)
     {
         self::$ROOT_PHASE = $phase;
-        self::$ROOT_PHASE_OF_SHARED = $phase.'#public';
+        self::$ROOT_PHASE_OF_SHARED = $phase.'#shared';
 
         // TODO be a function
         PhaseContainer::_()->current = self::$ROOT_PHASE;
@@ -341,7 +341,7 @@ trait KernelTrait
     }
     protected function initComponentsOfRoot($classes, $default): void
     {
-        PhaseContainer::_()->addPublicClasses(array_fill_keys(array_keys($classes), true));
+        PhaseContainer::_()->addSharedClasses(array_fill_keys(array_keys($classes), true));
 
         $this->initComponentsByClasseOptions($classes, $default);
     }

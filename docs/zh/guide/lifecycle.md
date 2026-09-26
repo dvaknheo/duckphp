@@ -68,7 +68,7 @@ class App extends DuckPhp
 
 第 5 步 `initComponents()` 分三层装配，**装配范围（哪些相位共用一套）是理解后续一切行为的前提**：
 
-**① root 层**——只有根应用装配这一批，而且它们的类名会被登记成「公共类」，**各相位 `::_()` 拿到的都是根应用里那一个实例**：
+**① root 层**——只有根应用装配这一批，而且它们的类名会被登记成「共享类」，**各相位 `::_()` 拿到的都是根应用里那一个实例**：
 
 | 组件                                                                                                            | 装配方式                                                                               | 作用                                                                      |
 | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -106,7 +106,7 @@ class App extends DuckPhp
 **读表要点**（这几条决定了「为什么我的替换在子应用里不生效」）：
 
 - **root 与 inner 的区别就是「跨相位共享」**：`DbManager`、`Admin`/`User`、`GlobalEvent` 是 root 级的，所以在子应用里调 `Admin::_()` 拿到的仍是根应用那一份；而 `Route::_()`、`View::_()` 在子应用里是**另一个实例**。
-- **「只占位」= 登记类名但不在这里创建**：框架用的装配值 `EXT_ROOT_HOLD_POSISION_ONLY`（值就是 `EXT_DISABLE`）只完成「登记成公共类」这一步，真正的创建留给第一次 `::_()`，所以没配数据库也不会白建一个 `DbManager`。
+- **「只占位」= 登记类名但不在这里创建**：框架用的装配值 `EXT_ROOT_HOLD_POSISION_ONLY`（值就是 `EXT_DISABLE`）只完成「登记成共享类」这一步，真正的创建留给第一次 `::_()`，所以没配数据库也不会白建一个 `DbManager`。
 - **「只建实例、不 `init()`」= `EXT_SKIP_INIT`**：`SystemWrapper`/`CoreHelper` 是纯工具，没有选项要读。`Logger` **不在**这一列——它要读 `path_log`/`log_file_template`/`log_prefix`，所以根 init 时用 `EXT_DEFAULT` 正常初始化（曾经误用 `EXT_SKIP_INIT`，结果应用选项里的日志设置全被忽略）。
 - 被 `ext` 关掉的组件（例如默认不在表里的 `GlobalEvent`）**只是不装配**；`GlobalEvent::_()` 仍可用，只是它不会被框架预先 init（[第 2-13 章](events.md)）。
 
@@ -176,7 +176,7 @@ public function onBeforeOutput()          // 注意：它是 public，覆盖时�
 | 覆盖 `onBeforeRun()`/`onAfterRun()` 完全不生效 | 这两个方法**不存在**（框架里没有这两个钩子） | 实际可用的是 `onAfterCreatePhases()`、`onPrepare()`、`onInit()`、`onInited()`、`onRequest()`（都是 `protected`）与 `onBeforeOutput()`（**`public`**）；覆盖时可见性只能放宽、不能收窄 |
 | `onPrepare()` 里读组件报错/读不到 | 组件此时还没装配完 | 改选项放 `onPrepare()`，读组件放 `onInit()`/`onInited()` |
 | `onBeforeOutput()` 里的逻辑跑了两次 | 错误视图路径也会调用它 | 用标志位判断，或把「只跑一次」的逻辑放到 `onRequest()` |
-| 子应用里 `Admin::_()`/`DbManager::_()` 拿到的和根应用是同一份，改了互相影响 | 这几个是 **root 级公共类**（跨相位共享） | 要每相位独立就用 inner 级组件，或自己 `new`（[第 4-1 章](container-phases.md)） |
+| 子应用里 `Admin::_()`/`DbManager::_()` 拿到的和根应用是同一份，改了互相影响 | 这几个是 **root 级共享类**（跨相位共享） | 要每相位独立就用 inner 级组件，或自己 `new`（[第 4-1 章](container-phases.md)） |
 | 以为 `GlobalEvent::_()`/`Admin::_()` 已经初始化好了 | 它们在 root 表里只是**占位** | 用之前显式装配（`ext` 里声明）或别依赖它们已被 init |
 | 没配数据库，却想知道 `DbManager` 在哪 | 没配就不 init（只登记类名） | `::_()` 仍可用；要连接就配 `database`/`database_list` |
 | 用 `PHP_SAPI === 'cli'` 判断形态，子应用里判断错了 | 形态应由应用统一判断 | 用 `App::_()->isCli()` |

@@ -26,13 +26,13 @@ App::Phase('');                                // 切回根相位
 整个进程里 `PhaseContainer` 是全局唯一的（`PhaseContainer::$instance`）。它内部有三样东西（`src/Core/PhaseContainer.php` 13-16 行）：
 
 ```php
-public $containers = [];   // 所有桶：containers[相位名][类名] = 实例
-public $current = '';      // 当前相位（桶名）
-public $default = '';      // 「公共桶」名，根应用初始化后是 '#public'
-public $publics = [];      // 标记为 public 的类名表
+public $containers = [];     // 所有桶：containers[相位名][类名] = 实例
+public $current = '';        // 当前相位（桶名）
+public $default = '';        // 「共享桶」名，根应用初始化后是 '#shared'
+public $shared_classes = []; // 标记为共享的类名表
 ```
 
-「相位」就是 `$containers` 的一个键。根相位是空串 `''`；子应用是 `:shop` 这类名字（第 3-1 章）。`#public` 也是一个桶名——**共享实例并不放在某个相位里，而是放在这个专门的公共桶里**。
+「相位」就是 `$containers` 的一个键。根相位是空串 `''`；子应用是 `:shop` 这类名字（第 3-1 章）。`#shared` 也是一个桶名——**共享实例并不放在某个相位里，而是放在这个专门的共享桶里**。
 
 ### 实例怎么被存和取：`_GetObject()` 三步
 
@@ -40,20 +40,20 @@ public $publics = [];      // 标记为 public 的类名表
 
 ```
 1. 在当前相位桶里找 $class → 命中就返回（传了 $object 则先替换再返回）
-2. 该类标记为 public（isset($this->publics[$class])）→ 去公共桶（$this->default，即 '#public'）找
-3. 都没有 → new $class()，存进「第 2 步选定的桶」（public 类进 '#public'，其余进当前相位桶），返回
+2. 该类被标为共享（isset($this->shared_classes[$class])）→ 去共享桶（$this->default，即 '#shared'）找
+3. 都没有 → new $class()，存进「第 2 步选定的桶」（共享类进 '#shared'，其余进当前相位桶），返回
 ```
 
-所以一条规则覆盖全部情况：**非 public 类按当前相位各存一份；public 类全进程只有一份，存在 `#public` 桶里**。`Lang` 属于前者，`Logger`/[`Console`](../reference/Core-Console.md)/[`DbManager`](../reference/Component-DbManager.md) 属于后者——共享与否不取决于类写在哪，而取决于它有没有被 `addPublicClasses()` 标记（见下）。
+所以一条规则覆盖全部情况：**非共享类按当前相位各存一份；共享类全进程只有一份，存在 `#shared` 桶里**。`Lang` 属于前者，`Logger`/[`Console`](../reference/Core-Console.md)/[`DbManager`](../reference/Component-DbManager.md) 属于后者——共享与否不取决于类写在哪，而取决于它有没有被 `addSharedClasses()` 标记（见下）。
 
-### 谁被标成 public：装配时决定
+### 谁被标成共享：装配时决定
 
 标记发生在应用初始化时（`src/Core/KernelTrait.php` 325-346 行、`src/DuckPhp.php` 109-127 行）：
 
-- 根应用的 `initComponents()` 把 `Console` 以 `EXT_FOLLOW_APP` 交给 `initComponentsOfRoot()`，后者先 `addPublicClasses()` 再初始化——**凡走 `initComponentsOfRoot()` 的类都被标为 public**。
-- [`DuckPhp::initComponentsOfRoot()`](../reference/DuckPhp.md) 在此基础上又并入 `DbManager`/[`RedisManager`](../reference/Component-RedisManager.md)（`EXT_DEFAULT`）与 [`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)/[`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalEvent`](../reference/Component-GlobalEvent.md)（默认 `EXT_DISABLE`，打开后也是 public）。
-- 每个应用自己的 [`Route`](../reference/Core-Route.md) 走 `initComponentsOfInner()`，**不标 public**——所以每个相位有自己的路由表。
-- `options['ext']` 里的扩展走 `initComponentsOfExt()`，同样不标 public——默认各相位一份。
+- 根应用的 `initComponents()` 把 `Console` 以 `EXT_FOLLOW_APP` 交给 `initComponentsOfRoot()`，后者先 `addSharedClasses()` 再初始化——**凡走 `initComponentsOfRoot()` 的类都被标为共享**。
+- [`DuckPhp::initComponentsOfRoot()`](../reference/DuckPhp.md) 在此基础上又并入 `DbManager`/[`RedisManager`](../reference/Component-RedisManager.md)（`EXT_DEFAULT`）与 [`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)/[`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalEvent`](../reference/Component-GlobalEvent.md)（默认 `EXT_DISABLE`，打开后也是共享）。
+- 每个应用自己的 [`Route`](../reference/Core-Route.md) 走 `initComponentsOfInner()`，**不标共享**——所以每个相位有自己的路由表。
+- `options['ext']` 里的扩展走 `initComponentsOfExt()`，同样不标共享——默认各相位一份。
 
 ### 可变单例：`::_()` 与 `::_($new)`
 
@@ -76,7 +76,7 @@ public static function _($object = null)
 | 规则 | 说明 |
 |---|---|
 | 根相位 | 空串 `''`（[`KernelTrait::$ROOT_PHASE`](../reference/Core-KernelTrait.md)，`src/Core/KernelTrait.php` 69 行） |
-| 公共桶名 | `'#public'`（`$ROOT_PHASE_OF_SHARED`，70 行）；`SwitchRootPhase($p)` 会把它改成 `$p.'#public'`（131-139 行） |
+| 共享桶名 | `'#shared'`（`$ROOT_PHASE_OF_SHARED`，70 行）；`SwitchRootPhase($p)` 会把它改成 `$p.'#shared'`（131-139 行） |
 | 子相位名 | `<父相位>:<name>`，`name` 取子应用选项 `name`，未写时取 `namespace`，写 `'@'` 时取类名 basename（`initContainer()`，`src/Core/KernelTrait.php` 243-249 行） |
 | 同名相位冲突 | 子应用相位名已被占用时抛 [`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md)，提示改 `name` 选项（251-256 行） |
 
@@ -92,8 +92,8 @@ public static function _($object = null)
 // 1) 看容器里现在有什么（排错第一招）：直接打印全部桶
 PhaseContainer::Dump();        // 静态便捷方法，等价于 PhaseContainer::_()->dumpAllObject()
 
-// 2) 判断某类是不是 public（决定它会不会跨相位共享）
-$is_public = isset(PhaseContainer::_()->publics[Logger::class]);
+// 2) 判断某类是不是共享类（决定它会不会跨相位共享）
+$is_shared = isset(PhaseContainer::_()->shared_classes[Logger::class]);
 
 // 3) 子应用误拿了根应用的实例？给它建一个本相位的局部实例
 $this->createLocalObject(DbManager::class);   // 框架对 local_database 就是这么做的
@@ -106,13 +106,13 @@ View::_(new MyView())->init(App::_()->options, App::_());
 PhaseContainer::RestAllContainerForTesting();
 ```
 
-`dumpAllObject()` 的输出格式（`src/Core/PhaseContainer.php` 124-154 行）：先打印 `current`/`default`，再列出 publics 表，然后**逐桶**列出每个实例——public 的类名前带 `*`，类名与实际对象类不一致时括号标出真实类（例如 [`DuckPhp\Core\View (DuckPhp\Ext\CallableView)`](../reference/Ext-CallableView.md)，说明 [View](../reference/Core-View.md) 单例被替换过了）。`tests/data_for_tests/ZAllDemoTest-10360.txt` 就是一份真实 dump，可直接对照。
+`dumpAllObject()` 的输出格式（`src/Core/PhaseContainer.php` 124-154 行）：先打印 `current`/`default`，再列出 shared_classes 表，然后**逐桶**列出每个实例——共享的类名前带 `*`，类名与实际对象类不一致时括号标出真实类（例如 [`DuckPhp\Core\View (DuckPhp\Ext\CallableView)`](../reference/Ext-CallableView.md)，说明 [View](../reference/Core-View.md) 单例被替换过了）。`tests/data_for_tests/ZAllDemoTest-10431.txt` 就是一份真实 dump，可直接对照。
 
 ## 常见错误
 
 | 现象 | 原因 | 改法 |
 |---|---|---|
-| 子应用里 `Xxx::_()` 拿到的是主应用的实例 | 该类被标为 public，实例放在 `#public` 桶 | 这是设计；要隔离就用 `createLocalObject()`（或 `local_database`/`local_redis` 开关） |
+| 子应用里 `Xxx::_()` 拿到的是主应用的实例 | 该类被标为共享，实例放在 `#shared` 桶 | 这是设计；要隔离就用 `createLocalObject()`（或 `local_database`/`local_redis` 开关） |
 | 两个应用「共享」的组件状态互相覆盖 | 共享实例是**同一个对象**，选项也是一份 | 改选项前先想清楚是不是该 `createLocalObject()` 各用各的 |
 | 切了相位后面代码全跑错应用 | `App::Phase($new)` 后没切回来 | `$old = App::Phase($new); ... App::Phase($old);` |
 | dump 里某实例的类名带括号 `(OtherClass)` | 该单例被 `::_(新对象)` 替换过 | 正常（如 [JsonView](../reference/Ext-JsonView.md) 替换 View）；排查替换来源（第 4-3 章） |

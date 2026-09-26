@@ -8,7 +8,7 @@
 
 | 归宿 | 谁属于它 | 表现 |
 |---|---|---|
-| **共享**（public） | 根应用在**根相位**初始化的公共组件：`Logger`、[`SystemWrapper`](../reference/Core-SystemWrapper.md)、[`CoreHelper`](../reference/Core-CoreHelper.md)、[`Console`](../reference/Core-Console.md)、[`DbManager`](../reference/Component-DbManager.md)、[`RedisManager`](../reference/Component-RedisManager.md)（打开时还有 [`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)/[`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalEvent`](../reference/Component-GlobalEvent.md)） | 在**任何**相位里 `::_()` 都拿到同一个实例 |
+| **共享**（shared） | 根应用在**根相位**初始化的共享组件：`Logger`、[`SystemWrapper`](../reference/Core-SystemWrapper.md)、[`CoreHelper`](../reference/Core-CoreHelper.md)、[`Console`](../reference/Core-Console.md)、[`DbManager`](../reference/Component-DbManager.md)、[`RedisManager`](../reference/Component-RedisManager.md)（打开时还有 [`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)/[`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalEvent`](../reference/Component-GlobalEvent.md)） | 在**任何**相位里 `::_()` 都拿到同一个实例 |
 | **每应用一份** | 各应用自己 `init` 的组件与扩展：[`Route`](../reference/Core-Route.md)、[`View`](../reference/Core-View.md)、[`Lang`](../reference/Component-Lang.md)、[`Configer`](../reference/Component-Configer.md)、自定义扩展… | 每个相位里各有一个实例（选项也可以不同） |
 
 实测（`ZThirdDemoTest.php`）：

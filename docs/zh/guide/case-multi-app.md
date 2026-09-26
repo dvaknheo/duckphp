@@ -104,7 +104,7 @@ class MainApp extends DuckPhp
 |---|---|---|---|---|
 | 代码（框架与公共库） | 共享 | 共享 | 共享 | 同一个 vendor |
 | 数据库连接 | 共享一份 | 独立一份 | 共享一份 | 后台加 `local_database => true` |
-| Redis | 共享 | 共享 | 共享 | 什么都不用做（[`RedisManager`](../reference/Component-RedisManager.md) 是公共组件） |
+| Redis | 共享 | 共享 | 共享 | 什么都不用做（[`RedisManager`](../reference/Component-RedisManager.md) 是共享组件） |
 | 日志 | 共享 | 共享 | 共享 | 默认共享；要分开就各自 `path_log` |
 | 语言/文案 | 各自一份 | 各自一份 | 各自一份 | 默认就是各自一份（第 3-4 章实测） |
 | 路由/视图/配置 | 各自一份 | 各自一份 | 各自一份 | 默认行为 |

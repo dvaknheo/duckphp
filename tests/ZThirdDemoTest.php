@@ -75,7 +75,7 @@ class ZThirdDemoTest extends \PHPUnit\Framework\TestCase
         $root_logger = spl_object_id(Logger::_());
         $root_lang = spl_object_id(Lang::_());
         App::_()->toThisChild(ThirdApp::class);
-        $this->assertSame($root_logger, spl_object_id(Logger::_()), 'Logger is public, so it is ONE shared instance');
+        $this->assertSame($root_logger, spl_object_id(Logger::_()), 'Logger is a shared class, so it is ONE instance');
         $this->assertNotSame($root_lang, spl_object_id(Lang::_()), 'Lang belongs to each app');
         App::Phase('');
 

@@ -159,7 +159,7 @@ Phase 静态口：不传返回当前 Phase 名；传串则切换（返回旧值�
 若处于某个“父的 app 子应用”Phase，切回父实例并返回；否则返回 null
 
     public static function SwitchRootPhase($phase)
-重设根 Phase 与共享容器名（`$phase.'#public'`）；并同步 PhaseContainer 的 current/default
+重设根 Phase 与共享容器名（`$phase.'#shared'`）；并同步 PhaseContainer 的 current/default
 
     public function _Phase(?string $new = null): string
 Phase 实例实现；有参时切走并记录 last_phase，返回切换前

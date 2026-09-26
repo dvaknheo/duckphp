@@ -15,8 +15,8 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::_(new MyPhaseContainer());
        
         PhaseContainer::_()->setDefaultContainer('DEFAULT');
-        PhaseContainer::_()->addPublicClasses([]);
-        PhaseContainer::_()->removePublicClasses([]);
+        PhaseContainer::_()->addSharedClasses([]);
+        PhaseContainer::_()->removeSharedClasses([]);
         PhaseContainer::_()->setCurrentContainer('CURRENT');
         PhaseContainer::_()->getCurrentContainer();
                 PhaseContainer::RestAllContainerForTesting();
@@ -25,7 +25,7 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         
         PhaseContainer::_()->setCurrentContainer('NEW');
 
-        PhaseContainer::_()->addPublicClasses([MyObject::class =>true]);
+        PhaseContainer::_()->addSharedClasses([MyObject::class =>true]);
         MyObject::_()->foo();
         MyObject::_(new MyObject2())->foo();
         MyObject2::_();
@@ -34,7 +34,7 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         
         PhaseContainer::_()->dumpAllObject();
         PhaseContainer::GetObject(MyObject::class);
-        PhaseContainer::_()->removePublicClasses([MyObject::class]);
+        PhaseContainer::_()->removeSharedClasses([MyObject::class]);
         
         PhaseContainer::_()->issetContainer("JustPhase");
         PhaseContainer::_()->getClassOfContainer(MyObject::class);

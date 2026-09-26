@@ -63,7 +63,7 @@
 | 问题 | 答案 | 去哪看 |
 |---|---|---|
 | 一个进程跑多个应用怎么做到的？ | 相位（相位名 + 容器分桶），子应用挂在 `app` 选项里 | [第 3-1 章](../guide/advanced-phase.md) |
-| 组件在应用之间共享吗？ | 根应用初始化的部分组件是共享的（`#public` 桶）；要独立就 `local_*` 或 `createLocalObject()` | [第 3-4 章](../guide/component-sharing.md) |
+| 组件在应用之间共享吗？ | 根应用初始化的部分组件是共享的（`#shared` 桶）；要独立就 `local_*` 或 `createLocalObject()` | [第 3-4 章](../guide/component-sharing.md) |
 | 怎么替换框架某个行为？ | 覆盖类/文件/单例/系统包装，看「想改什么 → 动哪里」的决策表 | [第 4-3 章](../guide/replace-behavior.md) |
 | 生产环境怎么部署？ | 文档根指向 `public/`，rewrite 到入口；关 `is_debug`；`runtime/` 可写 | [第 1-7 章](../guide/deployment.md)、[第 2-18 章](../guide/security-performance.md) |
 | 内置 HTTP 服务器能上生产吗？ | 不能，只适合开发/内网 | [第 4-5 章](../guide/http-server.md) |
@@ -90,7 +90,7 @@
 | 白屏 | [第 4-9 章](../guide/troubleshooting.md) §B | 视图找不到 / 路由没命中 / include 失败 |
 | 视图里变量是 `null` | [第 2-6 章](../guide/views.md) | 没传进 `Show()`；`view_skip_notice_error` 掩盖了 notice |
 | 覆盖没生效 | [第 3-5 章](../guide/overriding.md) | 用了 `new`；相位名不匹配 |
-| 拿到别的应用的单例 | [第 3-4 章](../guide/component-sharing.md) | 组件是共享的（`#public`） |
+| 拿到别的应用的单例 | [第 3-4 章](../guide/component-sharing.md) | 组件是共享的（`#shared`） |
 | 选项传了没反应 | [第 1-5 章](../guide/configuration.md) | 白名单没声明 / 拼错键 / `data_file_enable` 覆盖 |
 | 一直跳安装页 | [第 3-6 章](../guide/installer.md) | `installed` 为 `false` |
 | 生产看到堆栈 | [第 2-18 章](../guide/security-performance.md) | `is_debug`（含子应用）或 `duckphp_is_debug` |

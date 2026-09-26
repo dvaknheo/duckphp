@@ -13,8 +13,8 @@
 | **子应用**        | Child App / `app` 选项                                                                              | 通过 `'app' => [子应用类 => [...]]` 挂在父应用下的应用；有独立的相位与容器，可带自己的路由前缀、视图、配置。（第 3-1 章）                          |
 | **相位**         | Phase / `App::Phase()`                                                                            | 「实例空间」：同一进程里按相位分桶存放单例，所以同名类在不同相位下是不同实例。`::_()` 永远返回**当前相位**里的那个。根相位是 `''`，子相位命名形如 `父:子`。（第 8、26 章）   |
 | **相位切换**       | `App::Phase($name)` / `toThisChild()` / `FromCurrentParent()` / `SwitchRootPhase()`               | 进入某个应用/回到父/回到根的操作。它们**改变当前相位**，不带参数时 `Phase()` 只读取。（第 3-1 章）                                         |
-| **实例容器**       | [PhaseContainer](../reference/Core-PhaseContainer.md)                                             | 保存所有单例的容器：按相位分桶，另有 `#public` 共享桶。（第 4-1 章）                                                           |
-| **共享容器 / 公共类** | publics / `#public` 桶 / `EXT_FOLLOW_APP`                                                          | 标记为 public 的实例在所有相位下**共用一个**（如根应用、[Console](../reference/Core-Console.md)、路由），是「组件共享」的实现基础。（第 3-4 章） |
+| **实例容器**       | [PhaseContainer](../reference/Core-PhaseContainer.md)                                             | 保存所有单例的容器：按相位分桶，另有 `#shared` 共享桶。（第 4-1 章）                                                           |
+| **共享容器 / 共享类** | `shared_classes` / `#shared` 桶 / `EXT_FOLLOW_APP`                                                          | 被标记为共享的实例在所有相位下**共用一个**（如根应用、[Console](../reference/Core-Console.md)、路由），是「组件共享」的实现基础。（第 3-4 章） |
 | **局部对象**       | `createLocalObject()`                                                                             | 强制在当前相位新建一份实例（不共享），用于想让子应用各用一套组件的场景。（第 3-4 章）                                                        |
 
 ## URL 与资源

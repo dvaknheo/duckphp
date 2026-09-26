@@ -87,7 +87,7 @@ if ($context !== null) { $this->initContext($context); }
 | `'@方法名'`                 | —                | 调用本应用的该方法取返回值，再按返回值递归处理                  | 选项要运行期决定（`overriding.md` 的 `RouteHookRewrite::class => '@myRewriteOptions'`）                                                    |
 | 选项键名字符串                  | —                | 取 `$this->options[该键]` 的值再递归处理           | 用某个开关选项控制扩展开/关                                                                                                                  |
 | `App::EXT_FOLLOW_APP`(2) | —                | `init($this->options, $this)`：拿应用全部选项初始化 | `true` 的显式写法；框架内部对 [`Console`](../reference/Core-Console.md)/[`Route`](../reference/Core-Route.md) 也是这么传的（`src/Core/KernelTrait.php` 329、335 行） |
-| `App::EXT_ROOT_HOLD_POSISION_ONLY`(0) | —    | 值就是 `EXT_DISABLE`：**只登记成公共类、不 init**，第一次 `::_()` 才创建 | 框架的根组件阶段（`DbManager`/`RedisManager`/`Admin`/`User`/`GlobalEvent`，见[第 2-2 章](lifecycle.md)） |
+| `App::EXT_ROOT_HOLD_POSISION_ONLY`(0) | —    | 值就是 `EXT_DISABLE`：**只登记成共享类、不 init**，第一次 `::_()` 才创建 | 框架的根组件阶段（`DbManager`/`RedisManager`/`Admin`/`User`/`GlobalEvent`，见[第 2-2 章](lifecycle.md)） |
 | `App::EXT_SKIP_INIT`(-1) | —                | 只 `::_()` 取实例，**不 init**                 | 想延迟初始化、或只要单例占位                                                                                                                  |
 | `App::EXT_RENEW`(3)      | —                | 取旧实例的选项，**换新对象**重新 init                  | 每次请求重建（`prepareServe()` 以 `$default=EXT_RENEW` 走动态扩展，`src/Core/KernelTrait.php` 501-506 行）                                      |
 

@@ -191,7 +191,7 @@
 | `lang_simple_mode_only_sentences` | `[]` | [DuckPhp\Component\Lang](Component-Lang.md) | 简单模式句子集：语言=>[key=>sentence]。非空则不读任何文件（frag 也不读）直接用它。 |
 | `lang_url_param` | `'lang'` | [DuckPhp\Component\Lang](Component-Lang.md) | url 探测参数名（例如 `?lang=zh_CN`）。 |
 | `lang_warn_on_missing` | `false` | [DuckPhp\Component\Lang](Component-Lang.md) | 缺句时是否 `Logger::_()->warning("No Language sentence Dectected {key}")`；默认关。 |
-| `local_database` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不计入公共容器共享，互不干扰）。 |
+| `local_database` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不进共享桶 `#shared`，互不干扰）。 |
 | `local_redis` | `false` | [DuckPhp\DuckPhp](DuckPhp.md) | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
 | `log_file_template` | `'log_%Y-%m-%d_%H_%i.log'` | [DuckPhp\Core\Logger](Core-Logger.md) | 日志文件名模板；`%X` 由 `date(X)` 展开。 |
 | `log_prefix` | `'DuckPhpLog'` | [DuckPhp\Core\Logger](Core-Logger.md) | 写到行的前缀标识。 |

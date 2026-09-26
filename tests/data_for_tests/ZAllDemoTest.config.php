@@ -22,8 +22,10 @@ return [
         //   demo 的 ExceptionReporter 随 skeleton 改名 ExceptionAction（选项表出现两次 + 文件路径一处，各短 2 字节）→ 10432
         //   Logger 改成 EXT_DEFAULT 装配（修「Logger 选项不生效」）→ 长度不变（选项表只数根应用自己声明的键，
         //   Logger 只出现在「全部单例」与「包含文件」清单里，两处都没变）
+        //   PhaseContainer 的 public 术语改名 shared（dump 里 `publics:` → `shared:` 少 1 字节；
+        //   `#public` → `#shared`、`* is public` → `* is shared` 等长）→ 10431
         // 依据：测试失败时自己 dump 的 tests/data_for_tests/ZAllDemoTest-<len>.txt。
-        'files'              => 10432,
+        'files'              => 10431,
         'demo.php'           => 406,
         'helloworld.php'     => 11,
         'just-route.php'     => 109,
