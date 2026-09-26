@@ -1,306 +1,174 @@
-# Exception Handling
+# 2-12 Exceptions and Error Handling
 
-DuckPHP provides a complete exception handling mechanism, including exception hierarchy, conditional throwing, exception reporting, and custom exception handling.
+> What this solves: how to layer exceptions, how to write conditional throws, how to configure error pages, and how to hook up an exception reporter.
+> Prerequisites: [Chapter 2-5 Controllers](controllers.md), [Chapter 2-10 Forms and Validation](validator.md). About 20 minutes.
+> Examples: `demo/src/Controller/ExceptionAction.php` (the reporter skeleton), `demo/view/_sys/error_404.php` / `error_500.php` / `error_maintain.php` (error views).
 
-## Exception Hierarchy
-
-DuckPHP recommends organizing exceptions in the following hierarchy:
-
-```
-\Exception                              # PHP built-in exception
-  └─ {project}\System\ProjectException     # Project exception base class
-       ├─ {project}\System\BusinessException    # Business layer exception
-       └─ {project}\System\ControllerException  # Controller layer exception
-```
-
-### Creating Exception Classes
-
-Define project exceptions in the `src/System/` directory:
+## Minimal example
 
 ```php
-<?php
-// src/System/ProjectException.php
-namespace MyProject\System;
+<?php declare(strict_types=1);
+namespace MyProj\System;
 
-use DuckPhp\Foundation\ExceptionTrait;
+use Exception;
 
-class ProjectException
+class ProjectException extends Exception {}
+class BusinessException extends ProjectException {}
+class ControllerException extends ProjectException {}
+```
+
+```php
+// Business layer
+Helper::BusinessThrowOn($balance < $amount, '余额不足', 2001);
+// equivalent to: BusinessException::ThrowOn(...) (for adding a static guard on a custom exception class see Chapter 4-13 §16)
+```
+
+The exception takes a tour through the framework's exception manager ([DuckPhp\Core\ExceptionManager](../reference/Core-ExceptionManager.md)): a registered handler matches → it runs; otherwise it goes to the default exit `_OnDefaultException()` for a 500 page or debug details.
+
+## How it works
+
+### Exception layering: one iron rule
+
+> ⚠️ **[`DuckPhpSystemException`](../reference/Core-DuckPhpSystemException.md) means only "the framework itself has a problem"** (duplicate phase names, directly init'ing a base class, missing provider, etc.); a project's business/permission/login exceptions should **directly `extends \Exception`**. You don't need to inherit it for guard-style throwing either — use `Helper::ThrowOn($flag, 'msg', $code, MyException::class)` (`use Ext\ThrowOnTrait` on the exception class is the old style; see [Chapter 4-13](ext-classes.md) §16). Details in Core-DuckPhpSystemException.
+
+```
+\Exception                              ← PHP 内置
+  ├─ DuckPhp\Core\DuckPhpSystemException   ← 框架内部专用（工程不要继承）
+  │     └─ DuckPhp\Core\ExitException      ← exit 语义（__EXIT_EXCEPTION）
+  └─ MyProj\System\ProjectException        ← 工程异常基类（直接继承 \Exception）
+        ├─ MyProj\System\BusinessException
+        └─ MyProj\System\ControllerException
+```
+
+The framework's own **login and permission** scenarios don't use exception classes: error codes/messages are constants on [`User`](../reference/GlobalUser-User.md) / [`Admin`](../reference/GlobalAdmin-Admin.md) (`User::EXCEPTION_CODE_USER_NEED_LOGIN`, `Admin::EXCEPTION_MESSAGE_ADMIN_NEED_PERMISSION`, etc.), and the handling is "not logged in → `throwLoginOn()`" / "no permission → the controller's `onNeedPermission()`", both of which pick one of **custom callback / 302 to the login page / JSON for Ajax** and then `exit()` (details in [Chapter 2-19](../guide/user.md) section 5 and [Chapter 2-20](../guide/admin.md) sections 3–4). So the project side doesn't need to, and shouldn't, create exception classes for login/permission.
+
+The [`ExitException`](../reference/Core-ExitException.md) on that tree is **internal to the framework**: with the `use_exit_exception` option on, [`SystemWrapper::exit()`](../reference/Core-SystemWrapper.md) throws it (`src/Core/SystemWrapper.php` lines 167-168), and [`ExceptionManager`](../reference/Core-ExceptionManager.md) lets it through unchanged (`src/Core/ExceptionManager.php` line 90) — business code must not throw it.
+
+### Conditional throw: the ThrowOn family
+
+**Prefer the Helper-side conditional throw** ([CoreHelper](../reference/Core-CoreHelper.md)) — it throws when `$flag` is true, and the exception class is decided centrally by application options:
+
+| Form | Who decides the thrown exception class |
+| --- | --- |
+| `Helper::ThrowOn($flag, 'msg', $code)` | Depends on which layer's Helper: System layer = Project version; Business / Controller layers each use their own layer's option |
+| `Helper::ProjectThrowOn($flag, 'msg', $code)` | The option `exception_for_project` (defaults to `\Exception`) |
+| `Helper::BusinessThrowOn($flag, 'msg', $code)` | The option `exception_for_business` (defaults to `\Exception`) |
+| `Helper::ControllerThrowOn($flag, 'msg', $code)` | The option `exception_for_controller` (defaults to `\Exception`) |
+| `Helper::ThrowOn($flag, 'msg', $code, MyException::class)` | The 4th parameter names the exception class directly |
+
+> ⚠️ The pattern of "`use DuckPhp\Ext\ThrowOnTrait` on an exception class, then `MyException::ThrowOn(...)`" is **no longer recommended** ([Chapter 4-13](ext-classes.md) §16 explains why): conditional throws always go through Helper — the exception class is decided centrally by options, and tests can swap the whole family.
+
+`demo/src/Controller/ExceptionAction.php` is the skeleton:
+
+```php
+namespace ProjectNameTemplate\Controller;
+
+use DuckPhp\Foundation\Controller\ExceptionReporterTrait;
+use DuckPhp\Foundation\SingletonTrait;
+
+class ExceptionAction
 {
-    use ExceptionTrait;  // Provides ThrowOn() method
-}
-```
-
-```php
-<?php
-// src/System/BusinessException.php
-namespace MyProject\System;
-
-class BusinessException extends ProjectException
-{
-}
-```
-
-```php
-<?php
-// src/System/ControllerException.php
-namespace MyProject\System;
-
-class ControllerException extends ProjectException
-{
-}
-```
-
-### Configuring Exception Classes
-
-Configure exception classes for each layer in `App`:
-
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'exception_for_project'    => ProjectException::class,
-        'exception_for_business'   => BusinessException::class,
-        'exception_for_controller' => ControllerException::class,
-        'exception_reporter'       => ExceptionReporter::class,
-    ];
-}
-```
-
-| Option | Default Value | Description |
-|---|---|---|
-| `exception_for_project` | `\Exception::class` | Project exception base class |
-| `exception_for_business` | `null` (inherits from `exception_for_project`) | Business layer exception |
-| `exception_for_controller` | `null` (inherits from `exception_for_project`) | Controller layer exception |
-| `exception_reporter` | `null` | Exception reporter class name |
-
-## Conditional Throwing
-
-### In Controller Layer
-
-```php
-use DuckPhp\Foundation\Controller\Helper;
-
-class UserController
-{
-    public function action_profile()
-    {
-        $user = UserAction::_()->getCurrentUser();
-        
-        // Conditionally throw exception: throw ControllerException when not logged in
-        Helper::ControllerThrowOn(!$user, 'Please log in first', 403);
-        
-        Helper::Show(get_defined_vars(), 'user/profile');
-    }
-}
-```
-
-### In Business Layer
-
-```php
-use DuckPhp\Foundation\Business\Helper;
-
-class UserBusiness
-{
-    public function login($username, $password)
-    {
-        $user = UserModel::_()->findByUsername($username);
-        
-        // Conditionally throw exception: throw BusinessException when user does not exist or password is wrong
-        Helper::BusinessThrowOn(!$user, 'User does not exist', 1001);
-        Helper::BusinessThrowOn(!password_verify($password, $user['password']), 'Incorrect password', 1002);
-        
-        return $user;
-    }
-}
-```
-
-### Directly Throwing on Exception Class
-
-```php
-// Using ThrowOn method (requires ExceptionTrait)
-BusinessException::ThrowOn($balance < $amount, 'Insufficient balance', 2001);
-```
-
-## Exception Reporter
-
-The exception reporter is responsible for capturing and handling thrown exceptions, and can dispatch to different handling methods based on exception type.
-
-### Creating an Exception Reporter
-
-```php
-<?php
-// src/Controller/ExceptionReporter.php
-namespace MyProject\Controller;
-
-use DuckPhp\Foundation\ExceptionReporterTrait;
-
-class ExceptionReporter
-{
+    use SingletonTrait;            // provides _(): OnException() relies on it to get the instance
     use ExceptionReporterTrait;
-    
-    // Handle BusinessException
+
     public function onBusinessException($ex)
     {
-        // Log, send notifications, etc.
-        Logger::_()->warning('Business error: ' . $ex->getMessage());
-        
-        // Return error response
-        Helper::ShowJson(['error' => $ex->getMessage(), 'code' => $ex->getCode()]);
+        // log / output JSON / 302 …
     }
-    
-    // Handle ControllerException
-    public function onControllerException($ex)
+    public static function onControllerException($ex)
     {
-        // Permission errors, etc.
-        Helper::Show302('login');
-    }
-    
-    // Handle other project exceptions (fallback)
-    public function defaultException($ex)
-    {
-        // Call framework default handling
-        App::Current()->_OnDefaultException($ex);
+        // static methods work too
     }
 }
 ```
 
-### How Exception Reporter Works
+Both traits are required: `ExceptionReporterTrait::OnException()` is written as `static::_()->_OnException($ex)`, so the reporter class must bring its own `_()` — use [`DuckPhp\Foundation\SingletonTrait`](../reference/Foundation-SingletonTrait.md) (the skeleton's `Controller\Base` is provided the same way), or make the reporter extend your `Base`. **With only `use ExceptionReporterTrait`, you get `Call to undefined method …::_()` at the moment an exception actually fires** — invisible at startup, because then only `is_callable()` is checked.
 
-The `OnException` method of `ExceptionReporterTrait` dispatches according to the following logic:
+The mapping: `BusinessException` → `onBusinessException()`, `ControllerException` → `onControllerException()`, `ProjectException` → `onProjectException()`; no matching method (or the exception happens to be one of the two reporter method names) → `App::_()->_OnDefaultException()`.
 
-1. Get the exception class name (e.g., `MyProject\System\BusinessException`)
-2. Check if the exception belongs to the current project namespace
-3. If not a project exception, call `defaultException()`
-4. If it is a project exception, extract the class name (e.g., `BusinessException`)
-5. Find the corresponding handling method (e.g., `onBusinessException()`)
-6. If found, call it; otherwise, call `defaultException()`
+### Exception-safe wrapper: `Ext\ExceptionWrapper` (**not recommended**)
 
-### Method Naming Rules
+⚠️ The framework has no internal users of it left; don't use it in new code:
 
-| Exception Class Name | Handling Method |
-|---------|---------|
-| `BusinessException` | `onBusinessException($ex)` |
-| `ControllerException` | `onControllerException($ex)` |
-| `ProjectException` | `onProjectException($ex)` |
-| Others (non-project exceptions) | `defaultException($ex)` |
+- "This one call shouldn't blow up the whole flow" → use `Helper::XpCall($cb, ...$args)` (the exception comes back as a return value);
+- "You really need to handle exceptions" → plain `try/catch`; don't mix exceptions into normal return values.
 
-## Framework Default Exception Handling
+Old code already using it may keep using it — its mechanism (catches only `\Exception`, not `\Error`) and examples are in [Chapter 4-13](ext-classes.md) §12.
 
-When `exception_reporter` is not configured or the exception is not handled by the reporter, the framework uses default handling:
+## Common patterns
 
-### Debug Mode (`is_debug = true`)
-
-- Display detailed error information (exception class, message, stack trace)
-- Facilitates development and debugging
-
-### Production Mode (`is_debug = false`)
-
-- Display the view configured by `error_500` (e.g., `_sys/error_500`)
-- Log error (if `default_exception_do_log` is enabled)
-- Do not expose sensitive information
-
-## Custom Exception Handling
-
-### Overriding Default Exception Handling
-
-Override the `_OnDefaultException` method in `App`:
+### 1. Configure the exception system
 
 ```php
-class App extends DuckPhp
+// MyProj\System\App
+public $options = [
+    'exception_for_project'    => ProjectException::class,
+    'exception_for_business'   => BusinessException::class,
+    'exception_for_controller' => ControllerException::class,
+    'exception_reporter'       => [ExceptionAction::class, 'OnException'],
+
+    'error_404'      => '_sys/error_404',
+    'error_500'      => '_sys/error_500',
+    'error_debug'    => '_sys/error-debug',
+    'error_maintain' => '_sys/error_maintain',
+];
+```
+
+### 2. Conditional throw per layer
+
+```php
+// Controller
+Helper::ControllerThrowOn(!$user, '请先登录', 403);
+// Business
+Helper::BusinessThrowOn(!password_verify($password, $user['password']), '密码错误', 1002);
+```
+
+### 3. Override the default exit in App
+
+```php
+public function _OnDefaultException($ex): void
 {
-    public function _OnDefaultException($ex): void
-    {
-        // Custom error handling logic
-        
-        // Log
-        Logger::_()->error($ex->getMessage());
-        
-        // Send error notification (e.g., email, DingTalk)
-        // NotifyService::_()->sendErrorAlert($ex);
-        
-        // Call parent default handling
-        parent::_OnDefaultException($ex);
-    }
+    Logger::_()->error($ex->getMessage());
+    // send notifications, record metrics …
+    parent::_OnDefaultException($ex);
 }
 ```
 
-### Registering Custom Handlers with ExceptionManager
+### 4. Register handlers with ExceptionManager
 
 ```php
 use DuckPhp\Core\ExceptionManager;
 
-// Register handler for a specific exception type
-ExceptionManager::_()->assignExceptionHandler(
-    ValidationException::class,
-    function ($ex) {
-        // Return validation error response
-        Helper::ShowJson(['errors' => $ex->errors]);
-    }
-);
-
-// Register unified handler for multiple exception types
+ExceptionManager::_()->assignExceptionHandler(ValidationException::class, function ($ex) {
+    Helper::ShowJson(['errors' => $ex->errors]);
+});
 ExceptionManager::_()->setMultiExceptionHandler(
     [BusinessException::class, ControllerException::class],
-    function ($ex) {
-        // Unified handling
-    }
+    function ($ex) { /* 统一处理 */ }
 );
-
-// Set default exception handler
-ExceptionManager::_()->setDefaultExceptionHandler(
-    function ($ex) {
-        // Handle all uncaught exceptions
-    }
-);
+ExceptionManager::_()->setDefaultExceptionHandler(function ($ex) { /* 兜底 */ });
 ```
 
-## Development Error Handling
+### 5. Take over PHP errors (development)
 
-The framework automatically captures PHP errors (Notice, Warning, etc.) and converts them to exceptions:
+`ExceptionManager` options (all on by default): `handle_all_dev_error` (Notice/Deprecated go through `_OnDevErrorHandler()`, other levels become `\ErrorException`), `handle_all_exception` (uncaught exceptions enter `_CallException()`). Production usually keeps the defaults; if you only want to turn off error takeover, set `handle_all_dev_error` to `false`.
 
-```php
-// Trigger a Notice
-$undefined = $nonexistent_var;  // Converted to ErrorException
-```
+## Common errors
 
-### Configuring Development Error Handling
+| Symptom | Cause | Fix |
+| --- | --- | --- |
+| A business exception extends `DuckPhpSystemException` | Mixing "the framework is broken" with "the business went wrong" | Change to `extends \Exception`; switch conditional throws to `Helper::ThrowOn()` (`use ThrowOnTrait` is no longer recommended) |
+| Configured `exception_reporter` but startup throws `config error` | The value is not **callable**: a bare class name (even with a static `OnException()`) is not a callable in PHP (the entry class checks `is_callable()`, source `src/DuckPhp.php` lines 140–146) | Write `[ReporterClass::class, 'OnException']` (the static entry the trait gives), or use a closure / callable object |
+| The reporter method isn't hit | The method name is not `on{exception class short name}` | Check the spelling rule of [`ExceptionReporterTrait::OnException()`](../reference/Foundation-Controller-ExceptionReporterTrait.md) |
+| The 404 page doesn't appear, only placeholder text | `error_404` isn't configured, or the app 404s before init finishes | Set `'error_404' => '_sys/error_404'`; errors before init completes only produce placeholders |
+| Exception details leaked in production | `is_debug` is true, or the view doesn't guard with `__is_debug()` | Set it to `false` when going live; wrap debug blocks with `__is_debug()` in error views |
+| `IsDebug()` is inexplicably true | `duckphp_is_debug` is true in the root app or in Setting | Use `IsHiddenDebug()` or check root/settings |
+| The maintenance page doesn't take effect | Only `error_maintain` was set, not `is_maintain` | Also set `'is_maintain' => true` or the Setting `duckphp_is_maintain` |
+| [`ExceptionWrapper`](../reference/Ext-ExceptionWrapper.md) (not recommended) didn't catch an `\Error` | It only catches `\Exception` | An `\Error` is a programming error and should be thrown out and fixed; see above for why it isn't recommended |
 
-```php
-$options = [
-    'handle_all_dev_error' => true,   // Whether to handle PHP errors
-    'handle_all_exception' => true,   // Whether to handle uncaught exceptions
-];
-```
+## Next steps
 
-## Exception Handling Flowchart
-
-```
-Throw exception
-  │
-  ▼
-ExceptionManager._CallException()
-  │
-  ├─ Match registered handler in exceptionHandlers
-  │     └─ Match found → Execute custom handler
-  │
-  └─ No match → Execute default_exception_handler
-        │
-        ├─ exception_reporter configured
-        │     └─ ExceptionReporter::OnException()
-        │           ├─ Match on{ExceptionClass}() → Execute
-        │           └─ No match → defaultException()
-        │
-        └─ exception_reporter not configured
-              └─ App::_OnDefaultException()
-                    ├─ Debug mode → Display detailed error
-                    └─ Production mode → Display error_500 view
-```
-
-## Best Practices
-
-1. **Use corresponding exceptions by layer**: Use `ControllerException` in Controller layer, `BusinessException` in Business layer
-2. **Use conditional throwing**: Use `Helper::ControllerThrowOn()` / `Helper::BusinessThrowOn()` instead of `if + throw`
-3. **User-friendly exception messages**: Exception messages will eventually be shown to users, so use understandable language
-4. **Meaningful exception codes**: Use meaningful error codes to facilitate frontend handling based on code
-5. **Exception reporter for logging**: Log exception logs in `ExceptionReporter` for troubleshooting
-6. **Do not expose details in production**: Ensure sensitive information is not leaked when `is_debug = false`
+- [Chapter 2-13 The Event System](events.md): events can be attached before/after login/logout and exceptions.
+- [Chapter 2-2 The Request Lifecycle](lifecycle.md): where in the request timeline an exception occurs.
+- [Chapter 1-6 Debugging, Logging and a First Taste of the CLI](debugging.md): an introduction to `is_debug` and log levels.
+- The reference manual: [Core-ExceptionManager](../reference/Core-ExceptionManager.md), [Core-App](../reference/Core-App.md), [Core-ExitException](../reference/Core-ExitException.md), [Foundation-ExceptionReporterTrait](../reference/Foundation-Controller-ExceptionReporterTrait.md); `Ext\ExceptionWrapper` / `Ext\ThrowOnTrait` see [Chapter 4-13](ext-classes.md)

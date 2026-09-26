@@ -101,7 +101,7 @@ var_dump(\DuckPhp\Core\App::_()->options);
 var_dump(\DuckPhp\Core\App::_Setting());
 ```
 
-配合 `php bin/cli.php routes` 与日志，绝大多数「页面 404 / 500 / 行为不对」都能在几分钟内定位。
+配合内置的 `php bin/cli.php debug` 与日志，绝大多数「页面 404 / 500 / 行为不对」都能在几分钟内定位（想列路由表要先用 `Ext\RouteLister` 登记 `routes` 命令，见[第 4-13 章](ext-classes.md) §5）。
 
 ## 常见错误
 
@@ -111,7 +111,7 @@ var_dump(\DuckPhp\Core\App::_Setting());
 | 页面报错但看不到堆栈                | `is_debug` 没开，走的是 `error_500`  | 临时 `is_debug=true`；或改 `error_500` 视图                   |
 | 自定义错误页不生效                 | 选项里写的是**文件路径**而不是视图名           | 写相对 `view/` 的视图名，如 `'_sys/error_404'`                  |
 | `php bin/cli.php run` 打不开 | 端口被占 / 文档根不对                   | 换端口 `--port=9000`；文档根由 `path_document` 决定（默认 `public`） |
-| CLI 里命令找不到                | 命令属于某个子应用                      | 加相位前缀（`shop-help`），见第 23/26 章                          |
+| CLI 里命令找不到                | 命令属于某个子应用                      | 加相位前缀（`shop-help`），见[第 2-16 章](cli.md)与[第 3-1 章](advanced-phase.md)                          |
 | 调试页显示的信息太多，想给用户看简洁版       | 生产应关 `is_debug` 并配 `error_500` | 见第 1-7 章上线清单                                           |
 
 ## 下一步

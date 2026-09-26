@@ -34,7 +34,7 @@ php vendor/bin/duckphp new --verbose          # 打印每个落地的文件
 php vendor/bin/duckphp new --force            # 目标目录已有同名文件时覆盖（默认会停下来提示）
 ```
 
-## 路线 B：手写最小工程（3 个文件）
+## 路线 B：手写最小工程（3 个文件 + 1 个可选视图）
 
 不想用脚手架就自己建这三个文件：
 

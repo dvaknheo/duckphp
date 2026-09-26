@@ -37,8 +37,8 @@ use DuckPhp\Component\Pager;
 Pager::_()->init([
     'page_size' => 12,
     'url' => '/list?cat=1&{page}',
-])-> render? //可用：
-echo Pager::_()->render(230);   // 230 条记录 → 总页 20 的自盒
+]);
+echo Pager::_()->render(230);   // 230 条记录、每页 12 条 → 20 页
 
 Pager::PageNo(3);                       // 静态设/取 current
 Pager::PageWindow(20);                  // 设 page_size

@@ -11,7 +11,7 @@
 | **入口类**        | Entry / [`DuckPhp`](../reference/DuckPhp.md)、[`DuckPhpAllInOne`](../reference/DuckPhpAllInOne.md) | 工程里实际被 `RunQuickly()` 的那个应用类，通常放在 `src/System/App.php`。（第 1-2 章）                                     |
 | **根应用**        | Root App / `App::Root()`                                                                          | 应用树最上层的那一个，相位名为空字符串 `''`。`App::Root(true)` 可「取根实例并把当前相位切回根」。                                         |
 | **子应用**        | Child App / `app` 选项                                                                              | 通过 `'app' => [子应用类 => [...]]` 挂在父应用下的应用；有独立的相位与容器，可带自己的路由前缀、视图、配置。（第 3-1 章）                          |
-| **相位**         | Phase / `App::Phase()`                                                                            | 「实例空间」：同一进程里按相位分桶存放单例，所以同名类在不同相位下是不同实例。`::_()` 永远返回**当前相位**里的那个。根相位是 `''`，子相位命名形如 `父:子`。（第 8、26 章）   |
+| **相位**         | Phase / `App::Phase()`                                                                            | 「实例空间」：同一进程里按相位分桶存放单例，所以同名类在不同相位下是不同实例。`::_()` 永远返回**当前相位**里的那个。根相位是 `''`，子相位命名形如 `父:子`。（第 3-1、4-1 章）   |
 | **相位切换**       | `App::Phase($name)` / `toThisChild()` / `FromCurrentParent()` / `SwitchRootPhase()`               | 进入某个应用/回到父/回到根的操作。它们**改变当前相位**，不带参数时 `Phase()` 只读取。（第 3-1 章）                                         |
 | **实例容器**       | [PhaseContainer](../reference/Core-PhaseContainer.md)                                             | 保存所有单例的容器：按相位分桶，另有 `#shared` 共享桶。（第 4-1 章）                                                           |
 | **共享容器 / 共享类** | `shared_classes` / `#shared` 桶 / `EXT_FOLLOW_APP`                                                          | 被标记为共享的实例在所有相位下**共用一个**（如根应用、[Console](../reference/Core-Console.md)、路由），是「组件共享」的实现基础。（第 3-4 章） |
@@ -38,7 +38,7 @@
 | **服务类**    | Service                                                           | 业务层里可复用的类，供多个 Business 共享。（第 2-1 章）                  |
 | **Helper** | `DuckPhp\Foundation\<层>\<层>Helper` / 工程的 `Helper`                 | 分层助手：`Helper::Show()` 等便捷入口，替代到处 `use` 框架类。（第 2-9 章） |
 
-| **控制器后缀 / 方法前缀** | `controller_class_postfix` / `controller_method_prefix` | 决定 URL 与类名、方法名之间的换算；方法前缀默认为空。（第 9、10 章） |
+| **控制器后缀 / 方法前缀** | `controller_class_postfix` / `controller_method_prefix` | 决定 URL 与类名、方法名之间的换算；方法前缀默认为空。（第 2-3、2-5 章） |
 | **欢迎页** | `controller_welcome_class` / `_method` | 默认 `Main::index`：根路径与单段路径都先落到它。（第 2-3 章） |
 
 ## 组件与扩展
@@ -47,9 +47,9 @@
 | -------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **组件**   | Component / `DuckPhp\Component\*`                  | 框架自带的能力单元（[DbManager](../reference/Component-DbManager.md)、[Cache](../reference/Component-Cache.md)、[Lang](../reference/Component-Lang.md)……），由应用初始化时装载。（第 4-2 章） |
 | **扩展**   | Ext / `DuckPhp\Ext\*`                              | 按需挂上的可选能力（JsonRpc、中间件、权限菜单……），通过 `ext` 选项声明。（第 4-2 章）                                                                                                             |
-| **装载模式** | `EXT_*` 常量                                         | `EXT_DEFAULT`/`EXT_FOLLOW_APP`/`EXT_SKIP_INIT`/`EXT_RENEW`/`EXT_DISABLE`，决定扩展怎么被初始化与是否共享。（第 29、34 章）                                                              |
+| **装载模式** | `EXT_*` 常量                                         | `EXT_DEFAULT`/`EXT_FOLLOW_APP`/`EXT_SKIP_INIT`/`EXT_RENEW`/`EXT_DISABLE`，决定扩展怎么被初始化与是否共享。（第 4-2、2-2 章）                                                              |
 | **覆盖**   | Override                                           | 用文件、类、路由、视图、组件五个层次改写已有行为的总称。（第 3-5 章）                                                                                                                             |
-| **覆盖类**  | `override_class` / `override_from`                 | 让另一个类接管当前应用的初始化，常用于「不改第三方代码而换掉它的 App 类」。（第 30、35 章）                                                                                                               |
+| **覆盖类**  | `override_class` / `override_from`                 | 让另一个类接管当前应用的初始化，常用于「不改第三方代码而换掉它的 App 类」。（第 3-5、4-3 章）                                                                                                               |
 | **相位代理** | [PhaseProxy](../reference/Component-PhaseProxy.md) | 用一个代理对象把调用固定到某个相位上执行，实现「跨应用调用」。（第 3-4 章）                                                                                                                          |
 
 ## 配置与数据

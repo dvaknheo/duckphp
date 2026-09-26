@@ -24,7 +24,7 @@ $sum = $client->add(1, 2);
 ## 注意事项
 
 - `__call`：`$method`/`$arguments` 交给 `JsonRpcExt::callRpc($base_class, $method, $arguments)`；`$base_class` 未显式设置时由 `JsonRpcExt::getRealClass($this)` 推断（去掉 `JsonRpc\` 前缀）。
-- `init()/isInited()` 被覆盖：设置了 `_base_class` 时，这两个调用也会先经 RPC 通知服务端（`callRPC`）再走父类逻辑——即客户端对象本身的生命周期也会镜像到远端。
+- `init()/isInited()` 被覆盖：设置了 `_base_class` 时，这两个调用也会先经 RPC 通知服务端（`callRpc`）再走父类逻辑——即客户端对象本身的生命周期也会镜像到远端。
 
 ## 方法列表
 

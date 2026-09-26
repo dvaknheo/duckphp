@@ -1,157 +1,142 @@
-# Application Options and Settings
+# 1-5 Options and Settings
 
-## Application Settings
+> What this solves: separating "application options" from "application settings" — what goes in `App.php`, what goes in `config/`, and who is affected when you change a key.
+> Prerequisites: [Chapter 1-2](install.md). About 15 minutes.
 
-When you create a project using the scaffold, you will see `config/DuckPhpSettings.config.php`.
-This file is used to save sensitive information, storing runtime configurations (database, Redis, etc.).
+## The one-sentence difference
 
-The term `app settings` refers to these options. They are global.
-A typical settings file looks like this:
+|     | Application options                                                | Application settings                                                                                       |
+| --- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Where written | The application class's `public $options` (can be further overridden by arguments to `init()`/`RunQuickly()`)    | `config/DuckPhpSettings.config.php`, `.env`, or an array given in the `setting` option                                      |
+| What it holds | **Behavior switches** of the framework and components (paths, error pages, routing rules, extension list…)                           | **Sensitive / environment-specific** key-values (database, Redis passwords…)                                                                       |
+| Who reads it | Each component picks from its own whitelist in its own `init()`                                  | The root app's `_Setting()`; components read it **explicitly** (e.g. [`DbManager`](../reference/Component-DbManager.md) reads `database_list`) |
+| Scope | One set per app (a child app can inject different values via the `app` option)                               | Loaded **only by the root app**, and what is read is the root app's (`static::Root()->setting`)                                                     |
+| How to inspect | [`App::_()->options`](../reference/Core-App.md) (can dump the whole thing) | `App::_Setting()` (no argument returns the whole array), `Setting('key', $default)`                                              |
+
+## Application options
+
+```php
+class App extends DuckPhp
+{
+    public $options = [
+        'path' => __DIR__ . '/../../',            // project root: view/ config/ runtime/ are all relative to it
+        'namespace' => 'MyProj',                  // common prefix of Controller/Business/Model below
+        'error_404' => '_sys/error_404',          // view name (relative to view/)
+        'error_500' => '_sys/error_500',
+        'is_debug' => true,                       // switch to false for production
+        'controller_method_prefix' => '',         // empty by default: the method name is the URL segment
+    ];
+}
+```
+
+**Merge order** (later overrides earlier, happens in `App::__construct()`):
+
+```
+KernelTrait::$kernel_options → App::$core_options → 入口类的 $common_options → 你子类的 $options
+                                                                                     ↓
+                                               init($options) / RunQuickly($options) 传入的再覆盖一层
+```
+
+So "temporarily change one option" doesn't require editing the class file:
+
+```php
+\MyProj\System\App::RunQuickly(['is_debug' => true, 'path_info_compact_enable' => true]);
+```
+
+> ⚠️ **App-level options are not whitelist-filtered** — a mistyped key name gives no warning; but **component-level options are whitelisted** (`array_intersect_key` in [`ComponentBase::init()`](../reference/Core-ComponentBase.md)), so handing a component a key it never declared gets **silently dropped**. This is the most common cause of "I changed it and nothing happened".
+>
+> Example: [`GlobalUser`](../reference/GlobalUser-GlobalUser.md) declares `user_default_exception_class`; setting `admin_default_exception_class` has no effect (that is [`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)'s key).
+
+Three ways to inspect options:
+
+```php
+var_dump(App::_()->options);                       // all options currently in effect
+var_dump(App::_()->options['error_404']);          // one key
+// the demo app's /files page (demo/view/files.php) dumps the options / singleton container exactly like this
+```
+
+## Application settings
 
 ```php
 <?php
+// config/DuckPhpSettings.config.php — for sensitive and environment-specific things
 return [
-    'duckphp_is_debug' => true,         // Debug mode
-    //'duckphp_platform' => 'default',  // Platform identifier
-    //'duckphp_is_maintain' => false,   // Maintenance mode
+    'duckphp_is_debug' => true,        // equivalent to the is_debug option (see below)
+    //'duckphp_platform' => 'web-01',  // identifies the current machine in multi-machine deployments
+    //'duckphp_is_maintain' => false,  // maintenance mode (serves the error_maintain page)
+
     'database_list' => [
-        [
-            'dsn' => 'mysql:host=127.0.0.1;dbname=test;charset=utf8mb4;',
-            'username' => 'root',
-            'password' => 'password',
-        ],
+        ['dsn' => 'mysql:host=127.0.0.1;dbname=demo;charset=utf8mb4;', 'username' => 'root', 'password' => 'secret'],
+    ],
+    'redis_list' => [
+        ['host' => '127.0.0.1', 'port' => 6379, 'auth' => 'secret', 'select' => 0],
     ],
 ];
 ```
-> - Debug mode: Enable debug mode during local development. Very useful.
-> - Platform mode: Used to identify which machine you are on in multi-machine deployments.
-> - Maintenance mode: When enabled, enters the page configured by the `error_maintain` application option.
 
-## Application Options
+The options that control it:
 
-What are `application options`? A typical DuckPHP application entry class looks like this:
+| Option                           | Default                                    | Description                                    |
+| ---------------------------- | ------------------------------------- | ------------------------------------- |
+| `setting_file`               | `'config/DuckPhpSettings.config.php'` | Settings file path (relative to `path`)                     |
+| `setting_file_enable`        | `true`                                | Turn off to skip loading the settings file                            |
+| `setting_file_ignore_exists` | `true`                                | No error when the file doesn't exist                             |
+| `use_env_file`               | `false`                               | When true, loads `.env` from the project root (in `parse_ini_file` format) |
+| `setting`                    | `[]`                                  | Give a settings array directly in the options (lowest priority)                  |
+|                              |                                       |                                       |
+
+Load timing: the **root app**'s `onPrepare()` phase (`loadSetting()`), in the order `options['setting']` → `.env` (if enabled) → the settings file.
+
+Three keys starting with `duckphp_` are recognized by the framework itself:
+
+| Setting key                   | Read by               | Effect                                   |
+| --------------------- | ----------------- | ------------------------------------ |
+| `duckphp_is_debug`    | `App::IsDebug()`  | **OR**ed with the root app's `is_debug` option: either being true means debug mode |
+| `duckphp_is_maintain` | `prepareServe()`  | When true, enters the maintenance page (the `error_maintain` option)        |
+| `duckphp_platform`    | `App::Platform()` | Multi-machine deployment identifier                               |
+
+**Key insight**: settings do **not** automatically become "every component's options". Only places that **explicitly read settings** are affected by them; the ones with built-in support so far:
+
+- `DbManager`: `database_list_reload_by_setting` (default true) → the `database_list` in settings takes effect;
+- [`RedisManager`](../reference/Component-RedisManager.md): same idea for `redis_list`;
+- `App` itself: the three `duckphp_*` above;
+- Your own components/business code: read actively with `Setting('key', $default)`.
+
+Any other key placed in the settings file has **no** effect (for example, writing `error_404` into the settings file is useless — that is an option).
+
+## Per-environment setup (local / production)
 
 ```php
 class App extends DuckPhp
 {
     public $options = [
         'path' => __DIR__ . '/../../',
-        //'path_info_compact_enable' => false,
-        
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-		
-        'exception_for_project'  => ProjectException::class,
-        'exception_for_business'  => BusinessException::class,
-        'exception_for_controller'  => ControllerException::class,
-        'exception_reporter' =>  ExceptionReporter::class,
-        //...
+        'is_debug' => false,          // safe by default; override to true locally via env var / entry file
     ];
 }
 ```
-
-This `options` property is the `app options`.
-These application options have a bunch of default values, which you can dump out.
-By modifying these application options, you can get different application behaviors.
-
-Can the default location of the settings file `config/DuckPhpSettings.config.php` be moved? Yes. The default values in the application options are:
-```
-    'setting_file' => 'config/DuckPhpSettings.config.php',
-    'setting_file_enable' => true,
-```
-For example, with the application option `'use_env_file' => true`, the framework will automatically load `.env` from the project root as settings.
-
-But this is not all of the application options. The framework's default loaded components also have their own options, which you can override in `App::$options`.
-
-### Default Loaded Components
-
-The framework automatically initializes the following components on startup, each with its own default options:
-
-**Core Components**
-- `Logger` — Logging
-- `SuperGlobal` — Superglobal variable management
-- `View` — View rendering
-- `Route` — Routing system
-- `ExceptionManager` — Exception handling
-
-**Data Components**
-- `DbManager` — Database manager (auto-loaded for root app)
-- `RedisManager` — Redis manager (auto-loaded for root app)
-
-**Extension Components** (enabled via `ext` option)
-- `Lang` — Internationalization
-- `RouteHookCheckStatus` — Maintenance mode check
-- `RouteHookRewrite` — URL rewriting
-- `RouteHookRouteMap` — Route mapping
-- `RouteHookResource` — Static resource handling
-
-### Overriding Component Default Options
-
-When you set an option in `App::$options` with the same name as a component's option, you override that component's default value. For example:
 
 ```php
-class App extends DuckPhp
-{
-    public $options = [
-        // Change the route method prefix, default is 'action_'
-        'controller_method_prefix' => 'call_',
-    ];
-}
+// local development entry (or .env / a per-machine settings file)
+\MyProj\System\App::RunQuickly(['is_debug' => true]);
 ```
 
-After the change, the home page entry method changes from `MainController::action_index()` to `MainController::call_index()`.
+Production checklist (Chapter 1-7 has the full version): `is_debug=false`, error pages in place, sensitive information only in the settings file / `.env`, `runtime/` writable.
 
-Another example modifying log configuration:
+## Common errors
 
-```php
-class App extends DuckPhp
-{
-    public $options = [
-        'log_prefix' => 'MyApp',              // Log prefix
-        'log_file_template' => 'app_%Y%m%d.log', // Log filename format
-    ];
-}
-```
+| Symptom         | Cause                                                               | Fix                                                                |
+| ---------- | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Changed an option, "no effect"  | The key doesn't belong to the component you changed it for (component options are whitelisted)                                           | Check [the reference manual](../reference/index.md) for which component owns the key; use `App::_()->options` to see the value actually in effect |
+| A key in the settings file does nothing | Settings ≠ options; only code that explicitly reads settings honors it                                               | Behavior switches go in options; only things like `database_list`/`redis_list`/`duckphp_*` go in settings        |
+| A child app can't read settings   | Settings are loaded only by the **root app**, and what is read is the root's copy                                           | Use `App::_Setting()`; to give a child app different config, use the child app's options (injected via `app`)                  |
+| `.env` didn't take effect | Forgot `'use_env_file' => true`, or the format isn't `parse_ini_file`'s `key=value` | Enable the option; check the file is in the project root                                                     |
+| A missing settings file raises an error | `setting_file_ignore_exists` was turned off                                 | Keep the default `true`, or use an empty array as a placeholder                                               |
 
-For a complete list of options for each component, see [Appendix: Application Options Reference](appendix-options.md).
+## Next steps
 
-## Quick Reference for Application Options
-
-### Path Related
-
-| Option | Default Value | Description |
-|---|---|---|
-| `path` | Auto-detect | Absolute path to the project root |
-| `namespace` | Auto-detect | Project namespace |
-| `path_view` | `'view'` | View template directory (relative to project root) |
-| `path_config` | `'config'` | Configuration directory |
-| `path_runtime` | `'runtime'` | Runtime directory (logs, etc.) |
-
-### Debug and Error
-
-| Option | Default Value | Description |
-|---|---|---|
-| `is_debug` | `false` | Whether to enable debug mode |
-| `error_404` | `null` | 404 error view, `'_sys/error_404'`, etc. |
-| `error_500` | `null` | 500 error view |
-| `exception_for_project` | `\Exception::class` | Project exception base class |
-| `exception_for_business` | `null` (inherits from `exception_for_project`) | Business layer exception class |
-| `exception_for_controller` | `null` (inherits from `exception_for_project`) | Controller layer exception class |
-| `exception_reporter` | `null` | Exception reporter class name |
-
-### Routing Related
-
-| Option | Default Value | Description |
-|---|---|---|
-| `namespace_controller` | `'Controller'` | Controller namespace segment |
-| `controller_class_postfix` | `'Controller'` | Controller class suffix |
-| `controller_method_prefix` | `'action_'` | Controller method prefix |
-| `controller_welcome_class` | `'Main'` | Welcome page controller class name |
-| `controller_welcome_method` | `'index'` | Default action method |
-| `controller_url_prefix` | `''` | URL prefix |
-| `controller_resource_prefix` | `''` | Static resource URL prefix |
-| `controller_class_map` | `[]` | Controller class replacement mapping |
-| `rewrite_map` | `[]` | URL rewrite mapping |
-| `route_map` | `[]` | Route mapping |
-| `route_map_important` | `[]` | Priority route mapping |
-| `skip_404` | `false` | Skip 404 handling |
+- [Chapter 1-6 Debugging, Logging, and a First Taste of the CLI](debugging.md): what you can see once `is_debug` is on.
+- [Chapter 1-7 Minimal Go-Live Checklist](deployment.md): how to configure production.
+- The reference manual: [DuckPhp\Core\App](../reference/Core-App.md) (all core options), [options cheat sheet](../reference/options.md)

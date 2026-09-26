@@ -1,27 +1,20 @@
-# DuckPHP Framework Documentation
+# DuckPHP documentation
 
-Welcome to the DuckPHP framework documentation.
+Welcome to the DuckPHP documentation.
 
 English | [中文](../zh/index.md)
 
-## Table of Contents
+## Start here
 
-- [Installation and Quick Start](guide/install.md)
-- [Project Structure and Coding Rules](guide/project-structure.md)
-- [Helper Classes](guide/helper.md)
-- [Application Configuration](guide/configuration.md)
-- [Routing System](guide/routing.md)
-- [Four-Layer Architecture (Controller/Business/Model/View)](guide/layers.md)
-- [Database](guide/database.md)
-- [Exception Handling](guide/exception.md)
-- [Lifecycle and Events](guide/lifecycle.md)
-- [Components and Extensions](guide/components.md)
-- [Command Line Tools](guide/cli.md)
-- [Deployment](guide/deployment.md)
-- [Appendix: Global Functions Reference](guide/appendix-global-functions.md)
-- [Appendix: Application Options Reference](guide/appendix-options.md)
-- [Advanced Topics: Phase and Sub-Applications](guide/advanced-phase.md)
+| Entry | When to read it |
+|---|---|
+| [**User guide**](guide/index.md) | You want to learn to use the framework. Four volumes, progressive: getting started → a single app → using third-party apps → advanced topics |
+| [**Reference manual**](reference/index.md) | You want to look up "what methods does this class have" or "what does this option do"; global functions and app options live here too |
+| [**Reference manual maintenance guide**](../zh/reference-maintenance-guide.md) | For whoever maintains the docs (Chinese only): format baseline, drift scan, verification flow |
+| [**User guide maintenance guide**](../zh/guide-maintenance-guide.md) | For whoever maintains `guide/` (Chinese only): writing template, hard rules, verification commands, known traps, chapter order and renumbering |
 
-## Reference Manual
+- First contact: [User guide · Volume 1, Getting started](guide/index.md)
+- Mounting an existing third-party application into your project: [User guide · Volume 3, Using third-party applications](guide/index.md)
+- Coming from Laravel / Yii2 / CodeIgniter / ThinkPHP: [User guide · Appendix C, migration cheat sheet](guide/appendix-migration.md)
 
-- [English Reference Manual](reference/index.md)
+> This page only points the way; the chapter list is not duplicated here — see the [user guide home](guide/index.md).

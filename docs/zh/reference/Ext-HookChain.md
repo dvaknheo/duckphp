@@ -72,4 +72,4 @@ HookChain::Hook($target, function () { /* … */ });
 
 ## 相关链接
 
-- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) — 本类继承的基类
+- [第 4-13 章 `Ext\*` 扩展类](../guide/ext-classes.md) §15 — 本类的定位，以及为什么它在推荐路径外

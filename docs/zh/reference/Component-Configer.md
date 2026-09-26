@@ -8,9 +8,9 @@
 
 - `_Config($file_basename,$key,$default)`：读整个或单键；
 - 单文件缺失返回 `[]` / default，不抛错；
-- 文件后缀 `.php` 由内部补；目标相对 `path_config`（相对项目根），存储 `extendFullFile`（因此会参与 Phase 子应用覆盖）。
+- 文件后缀 `.php` 由内部补；目标相对 `path_config`（相对项目根），定位走 `App::getOverrideableFile()`，所以子应用的 Phase 覆盖能命中。
 
-业务层一般不直接 Command，而用随各层 Helper（如 Business/Controller 的 `Config`）最终经它；但 Doc 面向其方法本身。
+业务层一般不直接用 `Configer`，而是经各层 Helper（如 Business/Controller 的 `Config`）转而调用它；本文档面向的是 `Configer` 自己的方法。
 
 ## 类信息
 
@@ -43,7 +43,7 @@ config/app.php 例如 `return [ 'debug'=>true, 'db'=>... ];`。
 
 - 缓存基于 basename：同 basename 第二次不会重复 require。
 - 目录完全缺文件 → 空数组；没有异常。
-- 子应用用相同文件可覆盖：`App->getOverrideFile`查找能命中（phase 优先）。
+- 子应用用相同文件可覆盖：`App->getOverrideableFile`查找能命中（phase 优先）。
 
 ## 全部选项
 
@@ -64,7 +64,7 @@ config/app.php 例如 `return [ 'debug'=>true, 'db'=>... ];`。
 ### 受保护方法
 
     protected function _LoadConfig(string $file_basename): array
-已缓存则直接；否则补 `.php`、经 `App->getOverrideFile(path_config, file)` 定位并 require，成功即写 all_config 缓存。缺失存 [] 并返回 []。
+已缓存则直接；否则补 `.php`、经 `App->getOverrideableFile(path_config, file)` 定位并 require，成功即写 all_config 缓存。缺失存 [] 并返回 []。
 
     protected function loadFile(string $file): array
 `return require $file;`，实际读文件为数组。

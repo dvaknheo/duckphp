@@ -13,7 +13,7 @@ GET /Note/show?id=1 →  单条便签
 
 ## 步骤 1：建库建表
 
-SQLite 最省事（换 MySQL 只是改 DSN）：[[]]
+SQLite 最省事（换 MySQL 只是改 DSN）：
 
 ```sql
 CREATE TABLE note (

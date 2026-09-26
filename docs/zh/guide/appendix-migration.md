@@ -24,7 +24,7 @@
 | 依赖注入/容器 | `Yii::$container` | Services | Service Container | `think\Container`（`app()->bind()`，支持构造注入/门面） | **单例容器**：`Xxx::_()` / `Xxx::_($new)`（无自动注入）（[第 4-1 章](../guide/container-phases.md)） |
 | 会话/用户 | `Yii::$app->user` | `session()` + 自定义 | `Auth` | `Session::set()` / 助手函数 `session()`（`think\facade\Session`） | [`SessionTrait`](../reference/Foundation-Controller-SessionTrait.md) + [`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)（回调配置）（[第 2-11 章](../guide/session.md)、[第 2-19 章](../guide/user.md)、[第 2-20 章](../guide/admin.md)） |
 | 验证 | `Model::rules()` | Validation | FormRequest / `validate()` | 验证器类 `app\validate\*` + `$this->validate($data, 'User')` | [`Validator`](../reference/Component-Validator.md) 组件三种口径（[第 2-10 章](../guide/validator.md)） |
-| 缓存 | `Yii::$app->cache` | `cache()` | [`Cache::`](../reference/Component-Cache.md) | `Cache::get()/set()` / 助手函数 `cache()` | `Helper::Cache()`（默认空实现，装 [`RedisCache`](../reference/Component-RedisCache.md) 才生效）（[第 2-14 章](../guide/cache.md)） |
+| 缓存 | `Yii::$app->cache` | `cache()` | `Cache::` | `Cache::get()/set()` / 助手函数 `cache()` | `Helper::Cache()`（默认空实现，装 [`RedisCache`](../reference/Component-RedisCache.md) 才生效）（[第 2-14 章](../guide/cache.md)） |
 | 国际化 | `Yii::t()` | `lang()` | `__()` | 助手函数 `lang()`（`lang/zh-cn.php`） | `__l()` / `__hl()`（五级语言检测）（[第 2-15 章](../guide/i18n.md)） |
 | 命令行 | `yii` 命令 | `spark` | `artisan` | `php think`（`app\command\*`，在 `config/console.php` 注册） | 自己的 `cli.php` + `command_xxx()`（[第 2-16 章](../guide/cli.md)） |
 | 测试 | Codeception/PHPUnit | PHPUnit | PHPUnit + Pest | PHPUnit（官方测试扩展已停更，多自己配） | PHPUnit（`tests/` + `data_for_tests/`）（[第 2-17 章](../guide/testing.md)） |

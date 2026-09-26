@@ -43,7 +43,7 @@
 对每个 {key=>value} 调 set（均 false）；兑现空实现语义返回 true 以保证外层逻辑继续。
 
     public function deleteMultiple($keys)
-简单返回 `delete(key)`? 实现即把整个 $keys 传给 delete 单键实现（空实现返回 false 亦一致）。实际注意该基实现将 $keys 当单键传 delete ... 若需要多删实现由子类覆盖。
+基类实现就是 `return $this->delete($keys);`——它把整个键数组当作**一个键**交给 `delete()`（这个桩实现本来什么都不删，所以看不出差别）。要真正批量删除，覆盖本方法。
 
 > 语义：此基类只是契约空壳；加缓存的目标请覆盖这些方法，或改用其他实现。
 
