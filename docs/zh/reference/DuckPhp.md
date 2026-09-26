@@ -45,7 +45,7 @@ class MyApp extends \DuckPhp\DuckPhp { /* 覆盖/合并 $options */ }
 | `lang_default` | `null` | 多语言默认语言（与 Lang 组件共享；不做进一步检测的兜底）。 |
 | `lang_final` | `null` | 最终语言；设置后不再自动检测、直接以它为准。 |
 | `local_database` | `false` | 为 `true` 时，本 App（含其子 app Phase）新建一份独立的 `DbManager`（不进共享桶 `#shared`，互不干扰）。 |
-| `local_redis` | `false` | 同 semantics 的 Redis：true 时独立 `RedisManager`。 |
+| `local_redis` | `false` | Redis 同理：为 `true` 时新建一份独立的 `RedisManager`。 |
 
 另外，本类还有一批隐藏选项（`$hidden_options`），框架会读取但不在 `$options` 中合并默认值，仅供工具/文档展示：
 

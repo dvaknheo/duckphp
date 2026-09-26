@@ -50,7 +50,7 @@ php -r 'require "vendor/autoload.php"; \DuckPhp\HttpServer\HttpServer::RunQuickl
 - `run()`：先输出欢迎语；`--help` 时打印帮助；否则进入 `runHttpServer()`。
 - `runHttpServer()`：拼出并执行命令；`--dry` 只打印命令不执行；`--background`/`-b` 时后台运行并把 PID 存入 `$pid`（随后可用 `getPid()`/`close()`）。
 - `close()` 使用 `posix_kill($pid, 9)`（仅类 Unix；Windows 环境按需调整）。
-- 源码中 `isInited()` 读取 `$is_inited`，但 `init()` 并未把该属性置真——实际初始化状态以 `init()` 已执行为准。
+- `isInited()` 读取 `$is_inited`，该属性由 `init()` 置真（见源码 `HttpServer.php` 第 120 行），所以「init 过了」与 `isInited() === true` 一致。
 - `docroot` 的 CLI 覆盖键是 `docroot`（对应 `$cli_options` 里的 `docroot`），而选项表里对应默认目录用的是 `path`+`path_document` 组合。
 
 ## 方法列表

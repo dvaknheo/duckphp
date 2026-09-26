@@ -12,7 +12,7 @@
 
 适用对象：想用“一个文件解释整个 demo 应用”时的教程/乐园写法（见 README 的 sample1），或特小型原型。较大项目更倾向于继承 `DuckPhp`、配合 `Foundation/*` 分层。
 
-行为速览：类被解析为自控制器；URL 根路径渲染 `action_index`，调 `view_index` 显示 → 依据 `instanceof`？——不会。它把解析出欢迎动作即自身；显示经 `view_index()`/`view_header()`/`view_footer()` 拼装。
+行为速览：本类自己就是欢迎类（`controller_welcome_class` 指向它）；根路径 URL 调 `action_index`，它再渲染 `index` 视图；页眉/正文/页脚分别由 `view_header()`/`view_index()`/`view_footer()` 拼装。
 
 ## 类信息
 
@@ -91,7 +91,6 @@ class Tiny extends \DuckPhp\DuckPhpAllInOne {
     public $options = [
         'namespace'  => 'Tiny',
         'path'       => __DIR__.'/..',
-        'use_user_view' => true,
     ];
     // 可选 action 与 view_* …
 }
@@ -145,10 +144,10 @@ Tiny::RunQuickly([]);
 ### 受保护方法
 
     protected function embedMe(): void
-构造即注入 ext_options（namespace_controller\\后 namespace/name @/welcome=本 class/clear postfix/method action_/cli/path compact/wrap），然后 merg 进 options
+构造即注入 ext_options（namespace_controller\\后 namespace/name @/welcome=本 class/clear postfix/method action_/cli/path compact/wrap），然后合并进 options
 
     protected function onPrepare(): void
-父 prepare 之后，把 static::class（与按 cli 可开）与 Command 登记进 options[cmd]
+父 prepare 之后，把 `static::class`（以及按 `cli_command_with_common` 决定的 `Command`）登记进 `options['cmd']`
 
     protected function viewToCallback(?string $func): ?\Closure
 把视图名（可含 `/`→`_`）变成 [$this,'view_'+…]，检 is_callable，可则封装为 Closure

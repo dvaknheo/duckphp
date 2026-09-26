@@ -15,7 +15,7 @@
 - 顺序固定：rewrite_map → route_map_important → 控制器方法 → route_map；
 - 控制器 URL 由「查配置文件目录下所有控制器类 + 反射公共方法」反推（见 `pathInfoFromClassAndMethod`）；
 - 分别带 admin/user 标记；可用 `only_controller/only_admin/only_user` 过滤；
-- `with_children` 开时递归第子应用（children）各行，phase 也各自正确浮现。
+- `with_children` 打开时递归附加子应用（children）的各行，phase 也各自正确浮现。
 
 ## 类信息
 
@@ -29,9 +29,9 @@
 
 | 选项 | 默认 | 说明 |
 |---|---|---|
-| `classes_to_get_controller_path` | `[]` | 额外“待尝试的类/控制器文件”候选：仅用于**寻找控制器目录**（同 welcome。config path；缺文件会继续下一个），被找到后再递归枚举其下 .php 判定 Controller）。 |
+| `classes_to_get_controller_path` | `[]` | 额外「待尝试的类/控制器文件」候选：仅用于**定位控制器目录**（与欢迎类、`path_config` 同属候选；候选文件不存在就试下一个），定位到目录后再递归枚举其下的 `.php` 判定哪些是 Controller。 |
 
-补充：它不承担“哪些方法被路由”（判断基于 controller_class_postfix/method_prefix, controller_class_base 检查依 Route），它只是索引其 path；欢迎/Helper/Base也被试优先定位目录。
+补充：它不承担「哪些方法会被路由」的判断（那由 `controller_class_postfix`、`controller_method_prefix` 与 `controller_class_base` 依 `Route` 的配置决定），只负责为控制器反推出 URL 路径；欢迎类 / `Helper` / `Base` 也会作为候选优先用于定位目录。
 
 ## 使用方式
 
@@ -44,13 +44,13 @@ $rows_admin = RouteLister::_()->listAll(true, true, true, false);  // 仅 admin 
 
 ## 生成 URL 的方式
 
-控制器的“一行 url”由 `pathInfoFromClassAndMethod(全名, 动作名)` 反推：类 postfix、方法 prefix 处理后，首部分=`namespace_controller…/…`，method 尾段 URL 前缀并补 method/欢迎，返回 url 字符串（含 ext & url_prefix）。（方法内部还支持 route `controller_class_adjust` 的逆向还原。）
+控制器的「一行 URL」由 `pathInfoFromClassAndMethod(全名, 动作名)` 反推：处理类 postfix 与方法 prefix 后，首段来自 `namespace_controller` 指定的路径，末段是动作名（欢迎类/欢迎方法有特殊处理），最后拼出 URL 字符串（带 `controller_path_ext` 与 `controller_url_prefix`）。（方法内部还支持 `controller_class_adjust` 的逆向还原。）
 
 ## 注意事项
 
 - 需要控制器目录能反射到文件名（真实类已 autoload）走反射；失败返回 null 的行会跳过。
 - 过滤 only_admin/only_user 不能同时 true（抛 `InvalidArgumentException`）。
-- list 结果中 controller rows 总是存在（忽略 only_controller 只给 rows），而 route 三块（map/…）会被 only_controller 隐跳过。
+- list 结果中控制器 rows 总是存在（`only_controller` 的含义是「只输出 rows」），而 route 三块（rewrite / important map / 普通 map）会被 `only_controller` 跳过。
 
 ## 方法列表
 
@@ -60,7 +60,7 @@ $rows_admin = RouteLister::_()->listAll(true, true, true, false);  // 仅 admin 
 把 `listAll()` 的结果按 URL/controller/route-map/admin-user/phase 分块、带颜色打印到命令行（`Command` 的 `command_routes` 命令转调它）。
 
     public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
-根据 控制器全名+方法 → 该路由可写 URL（或欢迎/欢迎方法特殊短文/空 return prefix）。实现去反向 controller_class_adjust。
+根据控制器全名 + 方法反推出该路由可写的 URL（欢迎类/欢迎方法有特殊处理；无法反推时返回 null）。内部会做 `controller_class_adjust` 的逆向还原。
 
     public function listAll(bool $with_children = true,
                    bool $only_controller = false,
