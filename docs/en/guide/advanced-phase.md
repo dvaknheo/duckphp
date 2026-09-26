@@ -15,7 +15,7 @@ MainApp                    phase ''          <- the root app (Root)
 
 ```
 MainApp's phase        child app's phase ':shop'
-App::_()      ->MainApp      App::_()      ->ThirdApp
+App::_()      →MainApp      App::_()      →ThirdApp
 Route::_()    ->the main app's route     Route::_()    ->the child app's route
 ShopBusiness::_() ->the main app's copy  ShopBusiness::_() ->the child app's copy
 ```
