@@ -387,9 +387,9 @@ php docs/scripts/gen-options-docs.php --lang=en --check
 ```bash
 python3 docs/scripts/check-en-docs.py --all       # 全量，期望 0 error
 python3 docs/scripts/check-en-docs.py --missing   # 中文有、英文没有的页，期望只剩 2 篇维护指南
-python3 docs/scripts/check-en-docs.py --cjk       # 列出围栏内仍有中文的位置
+python3 docs/scripts/check-en-docs.py --cjk docs/en/guide/*.md   # 只做中文检查（围栏内的中文按 warn 列出）
 python3 docs/scripts/check-en-docs.py docs/en/guide/routing.md
 ```
 
-- 允许保留中文的文件在脚本的 `ALLOW_CJK_FILES` 里（英文首页、术语表与迁移附录）。
+- 允许保留中文的文件在脚本的 `ALLOW_CJK_FILES` 里（英文首页、术语表与迁移附录）；`--cjk` 需要显式给路径。
 - 译文里若发现**中文页本身有错**：不要在英文侧单方面改好——报给作者，中文定稿后两边一起改；本次翻译就是这样处理了 30 多处（详见各次提交信息）。

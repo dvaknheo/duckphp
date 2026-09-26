@@ -221,5 +221,5 @@ python3 docs/scripts/check-en-docs.py docs/en/guide/routing.md
 php docs/scripts/gen-options-docs.php --lang=en --check
 ```
 
-- `--cjk` 列出「围栏内仍有中文」的位置；`docs/en/TRANSLATION.md` §5 说明了哪些文件允许保留中文（`ALLOW_CJK_FILES`：英文首页、术语表、迁移附录，以及不翻译的生成页）。
+- `python3 docs/scripts/check-en-docs.py --cjk <路径…>` 只做「中文检查」（围栏内的中文按 warn 列出，例：`--cjk docs/en/guide/*.md`）；`docs/en/TRANSLATION.md` §5 说明了哪些文件允许保留中文（`ALLOW_CJK_FILES`：英文首页、术语表、迁移附录）。
 - 英文树目前**没有**自己的目录页之外的手写导航：`docs/en/index.md` 是首页，章节表与中文一致但链接指向 `docs/en/`。
