@@ -57,6 +57,8 @@ Logger::_()->error('db failed: {err}', ['err' => $e]);
 
 产生类似 `runtime/log_2025-06-11_15_10.log` 的日志。
 
+这三行可以直接写在应用选项里：根 `init()` 时 `App` 会用**本级应用选项**初始化 `Logger`（`initComponentsOfRoot()` 里配的是 `Logger::class => EXT_DEFAULT` → 落到「跟随本级应用」）。键不必写进 `App::$core_options`（那里三行注释只是提示），`Logger` 按自己的选项表 `array_intersect_key` 取用。**只有首次 init 生效**（`init_once=true`），之后再传无效。
+
 ## 注意事项
 
 - 不做异步/轮转；同步追加。

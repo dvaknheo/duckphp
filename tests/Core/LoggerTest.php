@@ -21,10 +21,18 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         
         $dn_options=[
             'path' => $path_log,
+            'path_log' => $path_log,
+            'log_prefix' => 'AppOptionsPrefix',
+            'log_file_template' => 'appprobe_%Y.log',
         ];
         DuckPhp::_()->init($dn_options);
         
-
+        // App 选项要真的传进 Logger：曾用 EXT_SKIP_INIT 装配（只 ::_() 取实例、不 init），
+        // 于是应用选项里的 path_log/log_prefix/log_file_template 全被忽略
+        $this->assertSame('AppOptionsPrefix', Logger::_()->options['log_prefix']);
+        $this->assertSame('appprobe_%Y.log', Logger::_()->options['log_file_template']);
+        $this->assertSame($path_log, Logger::_()->options['path_log']);
+        
         Logger::_()->init($options,DuckPhp::_());
         
         Logger::_()->emergency($message,  $context);

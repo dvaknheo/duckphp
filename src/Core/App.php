@@ -114,8 +114,8 @@ class App extends ComponentBase
     {
         $my_components = [
             SystemWrapper::class => self::EXT_SKIP_INIT,
-            Logger::class => self::EXT_SKIP_INIT,
             CoreHelper::class => self::EXT_SKIP_INIT,
+            Logger::class => self::EXT_DEFAULT,
         ];
         $components = array_merge($components, $my_components);
 

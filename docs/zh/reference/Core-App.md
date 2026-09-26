@@ -228,7 +228,7 @@ Phase 感知文件查找：从当前 phase 起逐层回退找 `path_sub/子目�
 根应用时在 Kernel 的 onPrepare 阶段调用 loadSetting() 加载设置
 
     protected function initComponentsOfRoot($components, $default): void
-根组件补 SystemWrapper/Logger/CoreHelper(EXT_SKIP_INIT) 后走 Kernel_initComponentsOfRoot
+根组件补 SystemWrapper/CoreHelper(EXT_SKIP_INIT) 与 Logger(EXT_DEFAULT) 后走 Kernel_initComponentsOfRoot；Logger 走 EXT_DEFAULT 才会被 `init(本级应用选项)` 初始化，它的 `path_log`/`log_file_template`/`log_prefix` 才吃得到应用选项
 
     protected function initComponentsOfInner($classes, $default): void
 内层并入 View(FOLLOW_APP) 后走 Kernel…Inner

@@ -107,7 +107,7 @@ class App extends DuckPhp
 
 - **root 与 inner 的区别就是「跨相位共享」**：`DbManager`、`Admin`/`User`、`GlobalEvent` 是 root 级的，所以在子应用里调 `Admin::_()` 拿到的仍是根应用那一份；而 `Route::_()`、`View::_()` 在子应用里是**另一个实例**。
 - **「只占位」= 登记类名但不在这里创建**：框架用的装配值 `EXT_ROOT_HOLD_POSISION_ONLY`（值就是 `EXT_DISABLE`）只完成「登记成公共类」这一步，真正的创建留给第一次 `::_()`，所以没配数据库也不会白建一个 `DbManager`。
-- **「只建实例、不 `init()`」= `EXT_SKIP_INIT`**：`SystemWrapper`/`Logger`/`CoreHelper` 是纯工具，没有选项要读。
+- **「只建实例、不 `init()`」= `EXT_SKIP_INIT`**：`SystemWrapper`/`CoreHelper` 是纯工具，没有选项要读。`Logger` **不在**这一列——它要读 `path_log`/`log_file_template`/`log_prefix`，所以根 init 时用 `EXT_DEFAULT` 正常初始化（曾经误用 `EXT_SKIP_INIT`，结果应用选项里的日志设置全被忽略）。
 - 被 `ext` 关掉的组件（例如默认不在表里的 `GlobalEvent`）**只是不装配**；`GlobalEvent::_()` 仍可用，只是它不会被框架预先 init（[第 2-13 章](events.md)）。
 
 ### 3. 请求：`serve()` 的完整时序
