@@ -4,3 +4,13 @@
 *.cache
 /vendor
 /backup
+
+# 编辑器 / AI 助手留下的本地状态（不该进仓库；2026-09-26 加）
+.obsidian/
+.kimi/
+.reasonix/
+.vscode/
+reasonix.toml
+
+# 库项目不锁依赖：docker 测试每次都 rm -f composer.lock 后按当前 PHP 版本重算
+composer.lock

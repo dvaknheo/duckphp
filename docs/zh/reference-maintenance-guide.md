@@ -239,7 +239,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
    git add docs/zh/reference
    git commit -m "docs: sync reference with src (<tag>..HEAD)"
    ```
-   ⚠️ 仓库根有一批与本工作无关的未跟踪目录（`.obsidian/`、`vendor-bak/`、`bin/*.php`、`reasonix.toml` 等），**不要 `git add .`**。还有更隐蔽的一处：`docs/zh/reference/` 和 `docs/zh/guide/` **各自下面都有一个未跟踪的 `.obsidian/`**（Obsidian 配置），`git add docs/zh/reference` 会把它们一并带走。提交前务必复核：
+   ⚠️ 仓库根有一批与本工作无关的未跟踪项（`CODING_MEMO.md`、测试产物等），**不要 `git add .`**。`docs/zh/reference/` 和 `docs/zh/guide/` 下面各有一个 `.obsidian/`（Obsidian 配置）——**2026-09-26 起 `.gitignore` 已忽略 `.obsidian/` 以及 `.kimi/`/`.reasonix/`/`.vscode/`/`reasonix.toml`/`composer.lock`**，`git add docs/zh/reference` 不会再带走它们；但提交前仍要复核：
    ```powershell
    git add docs/zh/reference docs/zh/reference-maintenance-guide.md
    git status --short                 # 确认没有 .obsidian/ 等无关项
@@ -268,7 +268,7 @@ wsl bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 /mnt/c/Users/<你>/AppData
 | 源码文件里接口名与文件名不一致 | 如 `CommandMetaInterface.php` 里曾声明成 `interface CommandDescInterface`。按**文件名 + 实际用法**（方法名 `__commandMeta()`、调用处）判断哪个是笔误，改源码统一，再同步文档 H1／交叉引用／`index.md`；**不要在文档里长期挂一条“命名不一致”的告警**当挡箭牌。 |
 | 给不可达代码加 `@codeCoverageIgnore` | php-code-coverage 只认**整条注释恰好等于** `// @codeCoverageIgnore`，而且**忽略的是注释所在行**——所以要贴在 `catch (...)` 行与 `return` 行**各自的行尾**（本仓库 `Core/Logger.php`、`Core/App.php` 就是这么写的），写成「注释单独占上一行」无效；要忽略一段区间才用 `// @codeCoverageIgnoreStart` / `End`。 |
 | 回归测试没验证过“抓得住 bug” | 写完断言后，**把 bug 临时改回去跑一遍**，确认断言真的失败（顺手把失败输出贴进记录），再还原源码。没做这步的回归测试等于没写——`GlobalUserTest` 那次就是这么证明的。 |
-| `git add docs/zh/reference` 带入 `.obsidian/` | 该目录下有未跟踪的 Obsidian 配置（`app.json`/`appearance.json`/`core-plugins.json`/`workspace.json`），会被一并提交。提交前 `git status --short` 复核，误入则 `git rm -r --cached` + `git commit --amend --no-edit`（`--cached` 不会删磁盘文件）。 |
+| `git add docs/zh/reference` 带入 `.obsidian/` | 该目录下有未跟踪的 Obsidian 配置（`app.json`/`appearance.json`/`core-plugins.json`/`workspace.json`）。**2026-09-26 起 `.gitignore` 已忽略 `.obsidian/`，正常不会再发生这件事**；万一别的工具状态被带入（或新机器上还没这份 ignore），提交前 `git status --short` 复核，误入则 `git rm -r --cached` + `git commit --amend --no-edit`（`--cached` 不删磁盘文件）。 |
 | **Obsidian 保存时重排表格 / 别的编辑器或 AI 会话顺手格式化** | 表现：表格被按显示宽度补齐、`\|---\|` 变成 `\| --- \|`、**多出空列或纯空表格行**（实测 `options-index.md` 一个 4 列表被扩成 7 列；2026-09-25 又实测 `docs/zh/guide/{index,controllers,views,user,security-performance}.md` 被这样改过）。后果：整页生成的 `options-index.md` / `options-by-class.md` 被 `gen-options-docs.php --check` 判成 stale，生成器一跑又把排版冲掉，来回打架；手写章则把纯排版噪声混进提交。**先查是谁在改**：`docs/zh/.obsidian/` 是当前唯一在用的库（`workspace.json` 有当天 mtime），它**没装任何 community 插件**（无 `plugins/` 目录、无 `community-plugins.json`），所以「Advanced Tables 的 format-on-save」在这台机器上**已经不是**元凶；三个 `*.obsidian/` 里的 `community-plugins.json` 已显式写成 `[]` 把插件关死。**再定性**：跑 `python3 docs/scripts/check-md-layout.py`，报 `layout-only` 的直接 `git checkout -- <file>` 丢掉（或对生成页别放进 Obsidian）；报 `CONTENT` 才需要看 diff。生成页的对拍/写入另有 `normalize_layout()` 兜底（忽略纯对齐差异，输出里提示 `layout-only differences ignored (N)`）——但**空列/空行属实质差异**，按 HEAD 的列数砍掉即可，不必整页重生。 |
 | `$env:TEMP` 与 `%TEMP%` 不是同一个目录 | DSH 沙箱把 `$env:TEMP` 指到私有临时目录，`write` 工具写的 `%TEMP%\drift.py` 在那里找不到；用绝对路径调用。 |
 | 把“代码残留”当成“源码怪癖”写进文档 | 例：`Command::getCommandListInfo()` 里 `$phase` 读了不用（重构遗留）。**先判断是不是能清理的残留**：能清就清源码 + 不改文档；确实是刻意为之的行为（如 `Root($switch_phase)` 内部硬编码 `App::Phase`）才写进「注意事项」，并注明“以源码为准”。 |
