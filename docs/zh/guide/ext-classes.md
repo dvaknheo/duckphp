@@ -29,7 +29,7 @@ php bin/cli.php routes        # 装好之后就能列路由表了（第 2-16 章
 ### 1. 「不会自动装配」是什么意思
 
 - **AutoLoader 只负责按需把类文件载进来**，这一点对所有类都一样；
-- 但**装配进当前相位**（把实例放进容器、注册钩子/命令/事件）要靠 `ext` 声明——`ext` 的三种写法（`true`、`[类名 => 选项数组]`、`[类名 => 前缀]`）见[第 4-2 章](custom-component.md)；
+- 但**装配进当前相位**（把实例放进容器、注册钩子/命令/事件）要靠 `ext` 声明——`ext` 的取值（`true` = **跟随本级应用的选项**、选项数组、`'选项键名'`、`'@方法名'`，以及 `EXT_*` 那几种）见[第 4-2 章](custom-component.md)；
 - 框架**默认已装**的扩展都是 `Component\*`（`src/DuckPhp.php` 的 `common_options['ext']`：`Lang`、`RouteHookRewrite`、`RouteHookRouteMap`、`RouteHookResource`、`RouteHookPathInfoCompat`），**`Ext\` 下一个都不在里面**。
 
 所以「写了却没反应」几乎总是这一条：类在、文件也加载了，但没写进 `ext`（[第 2-4 章](route-hooks.md)的常见错误里也有这条）。
@@ -307,7 +307,7 @@ $ok = \DuckPhp\Ext\MiniRoute::_()->run();      // 解析并调用控制器
 
 ## 下一步
 
-- [第 4-2 章 开发组件与扩展](custom-component.md)：`ext` 的三种写法、自己写扩展。
+- [第 4-2 章 开发组件与扩展](custom-component.md)：`ext` 的取值与 `EXT_*` 模式、自己写扩展。
 - [第 2-4 章 路由钩子](route-hooks.md)：钩子机制本体（本章只讲 `Ext\RouteHookManager` 这一层）。
 - [第 2-9 章 Helper 与全局函数](helper.md)：`@method` 与 `__callStatic` 的推荐做法。
 - [第 4-10 章 设计取舍与已知坑](design-notes.md)：哪些「看起来该改」的地方是刻意的。

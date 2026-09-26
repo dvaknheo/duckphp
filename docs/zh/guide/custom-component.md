@@ -75,22 +75,25 @@ if ($context !== null) { $this->initContext($context); }
 
 子类挂钩点只有两个：`initOptions(array $options)` 处理选项（如 `RouteHookRewrite` 合并 `rewrite_map`，`src/Component/RouteHookRewrite.php` 28-31 行）；`initContext(object $context)` 做初始化副作用（如挂路由钩子）。**不要重写 `init()` 本身**——`RouteHookWebInstaller` 重写了 `init()` 但第一件事就是 `parent::init()`（`src/Ext/RouteHookWebInstaller.php` 84-93 行），只为在初始化后补一句 [`Lang::_()->importDefaultSentences()`](../reference/Component-Lang.md)。
 
-### `ext` 选项的取值与 `EXT_*` 五种模式
+### `ext` 选项的取值（含 `EXT_*` 模式）
 
 `ext` 是 `[类名 => 取值]` 表。取值决定装载方式（判定逻辑在 `src/Core/KernelTrait.php` 375-421 行）：
 
 | 取值                       | 常量（值）            | 行为                                       | 什么时候用                                                                                                                           |
 | ------------------------ | ---------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `false` / `null`         | `EXT_DISABLE`(0) | 不装载                                      | 关掉框架默认开的扩展（如 [`GlobalEvent`](../reference/Component-GlobalEvent.md) 默认就是 `EXT_DISABLE`）                                         |
-| `true`                   | `EXT_DEFAULT`(1) | 用传入的 `$default` 模式装载                     | 最常见的「打开」                                                                                                                        |
+| `false` / `null` / `0`   | `EXT_DISABLE`(0) | 不装载（这类假值在 `array_filter()` 里就先被滤掉）        | 关掉框架默认开的扩展（如 [`GlobalEvent`](../reference/Component-GlobalEvent.md) 默认就是关的）                                               |
+| `true`                   | `EXT_DEFAULT`(1) | **等价于下面的 `EXT_FOLLOW_APP`：拿「本级应用」的全部选项 `init($this->options, $this)`** | 最常见的「打开」——扩展与应用**共用同一份应用选项**，扩展要什么键就写在应用的 `$options` 里                                                                    |
 | 数组                       | —                | `init(数组, $this)`                        | 只给这个扩展传它自己的选项                                                                                                                   |
 | `'@方法名'`                 | —                | 调用本应用的该方法取返回值，再按返回值递归处理                  | 选项要运行期决定（`overriding.md` 的 `RouteHookRewrite::class => '@myRewriteOptions'`）                                                    |
 | 选项键名字符串                  | —                | 取 `$this->options[该键]` 的值再递归处理           | 用某个开关选项控制扩展开/关                                                                                                                  |
-| `App::EXT_FOLLOW_APP`(2) | —                | `init($this->options, $this)`：拿应用全部选项初始化 | 框架内部对 [`Console`](../reference/Core-Console.md)/[`Route`](../reference/Core-Route.md) 的用法（`src/Core/KernelTrait.php` 329、335 行） |
+| `App::EXT_FOLLOW_APP`(2) | —                | `init($this->options, $this)`：拿应用全部选项初始化 | `true` 的显式写法；框架内部对 [`Console`](../reference/Core-Console.md)/[`Route`](../reference/Core-Route.md) 也是这么传的（`src/Core/KernelTrait.php` 329、335 行） |
+| `App::EXT_ROOT_HOLD_POSISION_ONLY`(0) | —    | 值就是 `EXT_DISABLE`：**只登记成公共类、不 init**，第一次 `::_()` 才创建 | 框架的根组件阶段（`DbManager`/`RedisManager`/`Admin`/`User`/`GlobalEvent`，见[第 2-2 章](lifecycle.md)） |
 | `App::EXT_SKIP_INIT`(-1) | —                | 只 `::_()` 取实例，**不 init**                 | 想延迟初始化、或只要单例占位                                                                                                                  |
 | `App::EXT_RENEW`(3)      | —                | 取旧实例的选项，**换新对象**重新 init                  | 每次请求重建（`prepareServe()` 以 `$default=EXT_RENEW` 走动态扩展，`src/Core/KernelTrait.php` 501-506 行）                                      |
 
-框架内置的实际用法（照抄即可）：[`DuckPhp`](../reference/DuckPhp.md) 默认 `ext` 表（`src/DuckPhp.php` 35-41 行）里 `Lang`/`RouteHookRewrite`/[`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md)/[`RouteHookResource`](../reference/Component-RouteHookResource.md) 是 `true`，[`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) 是选项键名 `'path_info_compact_enable'`；`initComponentsOfRoot()` 里 `DbManager`/[`RedisManager`](../reference/Component-RedisManager.md) 用 `EXT_DEFAULT`、[`GlobalAdmin`](../reference/GlobalAdmin-GlobalAdmin.md)/[`GlobalUser`](../reference/GlobalUser-GlobalUser.md)/`GlobalEvent` 用 `EXT_DISABLE`（`src/DuckPhp.php` 111-117 行）。
+> **`true` 到底等于什么？** 判定只有一句：`true` 与 `EXT_DEFAULT` 都是「用调用方传进来的 `$default`」。而 `initComponents()` 给**应用的 `ext` 表**传的 `$default` 就是 `EXT_FOLLOW_APP`（`src/Core/KernelTrait.php` 339-340 行），所以在应用自己的 `ext` 里写 `true` = **跟随本级应用的选项**（`init($this->options, $this)`），**不是**「用扩展自己的默认选项」。只想给扩展它自己的选项就写数组；写 `'选项键名'` 则取应用里那个键的值再递归判定（框架默认表里的 `RouteHookPathInfoCompat => 'path_info_compact_enable'` 就是这一种）。
+
+框架内置的实际用法（照抄即可）：[`DuckPhp`](../reference/DuckPhp.md) 默认 `ext` 表（`src/DuckPhp.php` 38-43 行）里 `Lang`/`RouteHookRewrite`/[`RouteHookRouteMap`](../reference/Component-RouteHookRouteMap.md)/[`RouteHookResource`](../reference/Component-RouteHookResource.md) 是 `true`（= 跟随应用选项），[`RouteHookPathInfoCompat`](../reference/Component-RouteHookPathInfoCompat.md) 是选项键名 `'path_info_compact_enable'`；根组件阶段 `DbManager`/[`RedisManager`](../reference/Component-RedisManager.md)/[`Admin`](../reference/GlobalAdmin-Admin.md)/[`User`](../reference/GlobalUser-User.md)/`GlobalEvent` 用的是 **`EXT_ROOT_HOLD_POSISION_ONLY`（只占位，见[第 2-2 章](lifecycle.md)）**（`src/DuckPhp.php` 106-112 行）。
 
 ### 扩展的生命周期挂钩点：`initContext()`
 
