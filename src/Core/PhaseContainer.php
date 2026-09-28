@@ -32,7 +32,10 @@ class PhaseContainer
     }
     public static function RestAllContainerForTesting()
     {
-        static::_(new static());
+        $object = new static();
+        $class = self::class;
+        static::_($object);
+        $class::_($object);
     }
     public static function Dump()
     {
