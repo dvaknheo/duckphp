@@ -18,27 +18,23 @@ namespace {
 ////////////////////////////////////////
 
 namespace Api {
-// 后面是业务代码
-// 这里自己加 api
+// the business code goes below
+// add your own api here
 
     interface BaseApi
     {
     }
     class test implements BaseApi
     {
-        // 访问方式 http://duckphp.demo.local/api.php/test.foo2?a=1&b=2
-        // 访问方式 http://duckphp.demo.local/api.php/test.foo
+        // how to call it: http://duckphp.demo.local/api.php/test.foo2?a=1&b=2
+        // how to call it: http://duckphp.demo.local/api.php/test.foo
 
         public function index()
         {
             $domain = \DuckPhp\DuckPhpAllInOne::Domain(true);
             $url = $domain . __url('test.foo');
             $url2 = $domain .__url('test.foo2?a=1&b=2');
-            $message = <<<EOT
-    不带参数访问： {$url}
-    带参数访问：{$url2} 将会反射到 相应参数
-    如果需要修改 uid ，则继承本扩展 RouteHookApiServer 覆盖 getObjectAndMethod() 和 getInputs()
-EOT;
+            $message = __l('api.usage', ['url' => $url, 'url2' => $url2]);
             
             $ret['message'] = $message;
             $ret['date'] = DATE(DATE_ATOM);
@@ -60,6 +56,9 @@ namespace {
     $options = [
         'namespace' => '',
         'setting_file_enable' => false,
+        // find `demo/config/lang-*.php` (this entry point is its own app)
+        'path' => __DIR__ . '/../',
+        'lang_default' => 'en',
         'ext' => [
             'DuckPhp\\Ext\\RouteHookApiServer' => [
                 'apiserver_namespace' => '\\Api',

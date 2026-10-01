@@ -72,4 +72,6 @@ return [
     'traditional.done'          => '已经完成',
     'traditional.back_home'     => '返回主页',
     'traditional.verify_failed' => '验证失败',
+
+    'api.usage'                 => "    不带参数访问： {url}\n    带参数访问：{url2} 将会反射到相应参数\n    如果需要修改 uid，则继承本扩展 RouteHookApiServer 覆盖 getObjectAndMethod() 和 getInputs()",
 ];

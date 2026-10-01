@@ -73,4 +73,6 @@ return [
     'traditional.done'          => 'Done',
     'traditional.back_home'     => 'Back to the home page',
     'traditional.verify_failed' => 'Verification failed',
+
+    'api.usage'                 => "    No parameters: {url}\n    With parameters: {url2} (passed on to the reflected parameters)\n    To change `uid`, extend RouteHookApiServer and override getObjectAndMethod() and getInputs()",
 ];
