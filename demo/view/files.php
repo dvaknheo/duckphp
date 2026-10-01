@@ -2,15 +2,15 @@
 // view/files.php?>
 <!doctype html><html><body>
 <fieldset>
-<legend>执行时间</legend>
+<legend><?=__l('files.elapsed_time')?></legend>
 <div>
-    执行耗时：<strong><?php echo number_format(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 6, '.', ''); ?></strong> 秒
+    <?=__l('files.elapsed')?><strong><?php echo number_format(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 6, '.', ''); ?></strong> <?=__l('files.seconds')?>
     &nbsp;|&nbsp;
-    内存消耗：<strong><?php echo number_format(memory_get_peak_usage()); ?></strong> 字节
+    <?=__l('files.memory')?><strong><?php echo number_format(memory_get_peak_usage()); ?></strong> <?=__l('files.bytes')?>
 </div>
 </fieldset>
 <fieldset>
-<legend>全部单例</legend>
+<legend><?=__l('files.singletons')?></legend>
 <pre>
 <?php 
 \Duckphp\Core\PhaseContainer::Dump();
@@ -20,20 +20,20 @@
 
 
 <fieldset>
-<legend>应用的选项</legend>
+<legend><?=__l('files.app_options')?></legend>
 <pre>
 <?php var_export(@array_diff_assoc(\DuckPhp\Core\App::_()->options,(new \DuckPhp\DuckPhp())->options));?>
 </pre>
 </fieldset>
 <fieldset>
-<legend>全部选项</legend>
+<legend><?=__l('files.all_options')?></legend>
 <pre>
 <?php var_export(\DuckPhp\Core\App::_()->options);?>
 </pre>
-合计 <?=count(\DuckPhp\Core\App::_()->options);?>个
+<?=__l('files.total')?> <?=count(\DuckPhp\Core\App::_()->options);?><?=__l('files.total_unit')?>
 </fieldset>
 <fieldset>
-    <legend>到 View 层级的调用堆栈</legend>
+    <legend><?=__l('files.stack')?></legend>
     <pre>
 <?php 
 ob_start();
@@ -47,7 +47,7 @@ echo $data;
     </pre>
 </fieldset>
 <fieldset>
-<legend>到 View 层级的包含文件</legend>
+<legend><?=__l('files.included')?></legend>
 <pre>
 <?php
 $t=get_included_files();sort($t); 
@@ -59,11 +59,11 @@ $data = preg_replace('#\/vendor.*?\.php#','vendor', $data);
 $data = preg_replace('/^  \d\d => \'vendor.*\r?\n/m','', $data);
 echo $data;
 ?>
-* 已经忽略 vendor 目录
+* <?=__l('files.vendor_ignored')?>
 </pre>
 </fieldset>
 <fieldset>
-<legend>DuckPhp 类的公开方法列表</legend>
+<legend><?=__l('files.public_methods')?></legend>
 <pre>
 <?php 
 $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
@@ -80,7 +80,7 @@ var_export($t);?>
 </pre>
 </fieldset>
 <fieldset>
-<legend>DuckPhp 类全部方法列表</legend>
+<legend><?=__l('files.all_methods')?></legend>
 <pre>
 <?php 
 $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);

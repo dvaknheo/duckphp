@@ -29,8 +29,9 @@ return [
         //   `#public` → `#shared`、`* is public` → `* is shared` 等长）→ 10431
         //   demo 多语言化（App 多一个选项 `lang_default` 的行、被加载的
         //   demo/config/lang-en.php 进「包含文件」清单）→ 10481
+        //   files 页文案改英文 + 走 __l()（图例/合计等，图例文本也计入长度）→ 10533
         // 依据：测试失败时自己 dump 的 tests/data_for_tests/ZAllDemoTest-<len>.txt。
-        'files?lang=en'              => 10481,
+        'files?lang=en'              => 10533,
         'demo.php?lang=en'           => 406,
         'helloworld.php?lang=en'     => 11,
         'just-route.php?lang=en'     => 109,
