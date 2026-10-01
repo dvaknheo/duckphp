@@ -51,4 +51,13 @@ return [
     'files.vendor_ignored'      => 'the vendor directory is ignored',
     'files.public_methods'      => 'Public methods of the DuckPhp class',
     'files.all_methods'         => 'All methods of the DuckPhp class',
+
+    'dbtest.records'            => 'Records',
+    'dbtest.content'            => 'Content',
+    'dbtest.edit'               => 'Edit',
+    'dbtest.delete'             => 'Delete',
+    'dbtest.add'                => 'Add',
+    'dbtest.view_edit'          => 'View / edit',
+    'dbtest.original'           => 'Original content',
+    'dbtest.back_home'          => 'Back to the list',
 ];

@@ -17,32 +17,42 @@ if (is_file($autoload_file)) {
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\CallableView;
-use DuckPhp\Foundation\SingletonTrait; // 可变单例模式
-use DuckPhp\Foundation\Model\ModelTrait; // 可变单例模式
+use DuckPhp\Foundation\SingletonTrait; // the replaceable singleton
+use DuckPhp\Foundation\Model\ModelTrait; // the replaceable singleton
 
 use DuckPhp\Foundation\Helper; // Helper
 
 class DbTestApp extends DuckPhp
 {
     public $options = [
-        'is_debug' => true, // 开启调试模式
-        'namespace_controller' => "\\", // 设置控制器的命名空间为根 使得 Main 类为入口
-        'cli_command_prefix'=> 'dbtest', // 因为我们没命名空间，命令行要设置一下命名空间。
-        
+        'is_debug' => true, // turn on debug mode
+        'namespace_controller' => "\\", // controllers live in the root namespace, so Main is the entry class
+        'cli_command_prefix'=> 'dbtest', // no namespace here, so give the CLI commands a prefix.
+
+        // this file is also mounted as a child app (`db_test/`), and it is run
+        // standalone (`/dbtest.php`) as well: `path` + `lang_default` make both
+        // modes find `demo/config/lang-*.php` and the rest of demo's config.
+        'path' => __DIR__ . '/../',
+        'lang_default' => 'en',
+        // the URLs of this app do not carry the `action_` prefix (the root app
+        // sets that prefix for its own $options only), so declare it here too;
+        // otherwise the welcome route `/db_test/` cannot find `action_index()`.
+        'controller_method_prefix' => 'action_',
+
         'ext' => [
-            CallableView::class => true, // 我们用自带扩展 CallableView 代替系统的 View
+            CallableView::class => true, // the built-in CallableView extension replaces the system View
         ],
         'callable_view_class' => View::class,
         'callable_view_is_object_call' => true,
         
-        'local_database' => true,  // 单独数据库
+        'local_database' => true,  // a database of its own
         'database' => [
             'dsn' => 'sqlite:runtime/dbtest.sqlite',
             'username' => null,
             'password' => null,
             'driver_options' => [],
         ],
-        'error_404'=>[MainController::class,'On404'], // 404 重新定向
+        'error_404'=>[MainController::class,'On404'], // redirect on 404
         
     ];
     public function __construct()
@@ -87,7 +97,7 @@ class MyBusiness
     }
 }
 
-// 模型类
+// the model class
 class TestModel
 {
     use ModelTrait;
@@ -160,7 +170,8 @@ class MainController
         if (Helper::POST()) {
             MyBusiness::_()->updateData(Helper::POST('id', 0), Helper::POST());
         }
-        $data = MyBusiness::_()->getData(Helper::REQUEST('id', 0));
+        // a hand-typed id that does not exist must not blow up the view
+        $data = MyBusiness::_()->getData(Helper::REQUEST('id', 0)) ?: ['id' => 0, 'content' => ''];
         
         Helper::Show(get_defined_vars(), 'show');
     }
@@ -171,7 +182,7 @@ class MainController
     }
 }
 ///////////////
-    // 数据库表结构
+    // the database table structure
 class View
 {
     use SingletonTrait;
@@ -189,23 +200,23 @@ class View
     {
         extract($data);
         ?>
-        <h1>数据</h1>
+        <h1><?=__l('dbtest.records')?></h1>
         <table>
-            <tr><th>ID</th><th>内容</th></tr>
+            <tr><th>ID</th><th><?=__l('dbtest.content')?></th></tr>
 <?php
         foreach ($list as $v) {
             ?>
             <tr>
                 <td><?=$v['id']?></td>
                 <td><?=__h($v['content'])?></td>
-                <td><a href="<?=__url('show?id='.$v['id'])?>">编辑</a></td>
-                <td><a href="<?=__url('delete?id='.$v['id'])?>">删除</a></td>
+                <td><a href="<?=__url('show?id='.$v['id'])?>"><?=__l('dbtest.edit')?></a></td>
+                <td><a href="<?=__url('delete?id='.$v['id'])?>"><?=__l('dbtest.delete')?></a></td>
             </tr>
 <?php
         } ?>
         </table>
         <?=$pager?>
-        <h1>新增</h1>
+        <h1><?=__l('dbtest.add')?></h1>
         <form method="post" action="<?=__url('')?>">
             <input type="text" name="content">
             <input type="submit">
@@ -216,15 +227,15 @@ class View
     {
         extract($data);
         ?>
-        <h1>查看/编辑</h1>
-        原内容
+        <h1><?=__l('dbtest.view_edit')?></h1>
+        <?=__l('dbtest.original')?>
         <p><?=__h($data['content'])?></p>
         <form method="post">
             <input type="hidden" name="id" value="<?=$data['id']?>">
             <input type="text" name="content" value="<?=__h($data['content'])?>">
-            <input type="submit" value="编辑">
+            <input type="submit" value="<?=__l('dbtest.edit')?>">
         </form>
-        <a href="<?=__url('')?>">回首页</a>
+        <a href="<?=__url('')?>"><?=__l('dbtest.back_home')?></a>
 
 <?php
     }
@@ -238,7 +249,12 @@ class View
     }
 }
 
-if(get_class(\DuckPhp\Core\App::Root())  === \DuckPhp\Core\App::class){
+// standalone mode: run only when no app has been initialised yet; when this file
+// is `require_once`d by demo/src/System/App.php (as a child app) `App::Root()` is
+// the demo app, so the guard is false and this entry does not run.
+// (`App::Root()` is null before any app is initialised - PHP 8 turns
+//  `get_class(null)` into a TypeError, hence the is_object() check.)
+$root_app = \DuckPhp\Core\App::Root();
+if (!is_object($root_app) || get_class($root_app) === \DuckPhp\Core\App::class){
     DbTestApp::RunQuickly([]);
 }
-

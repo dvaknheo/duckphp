@@ -50,4 +50,13 @@ return [
     'files.vendor_ignored'      => '已经忽略 vendor 目录',
     'files.public_methods'      => 'DuckPhp 类的公开方法列表',
     'files.all_methods'         => 'DuckPhp 类全部方法列表',
+
+    'dbtest.records'            => '数据',
+    'dbtest.content'            => '内容',
+    'dbtest.edit'               => '编辑',
+    'dbtest.delete'             => '删除',
+    'dbtest.add'                => '新增',
+    'dbtest.view_edit'          => '查看/编辑',
+    'dbtest.original'           => '原内容',
+    'dbtest.back_home'          => '回首页',
 ];
