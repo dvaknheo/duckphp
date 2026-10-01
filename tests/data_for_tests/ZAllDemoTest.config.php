@@ -36,7 +36,7 @@ return [
         'helloworld.php?lang=en'     => 11,
         'just-route.php?lang=en'     => 109,
         'api.php/test.index?lang=en' => 347,
-        'traditional.php?lang=en'    => 397,
+        'traditional.php?lang=en'    => 386,
         'rpc.php?lang=en'            => 129,
     ],
 ];

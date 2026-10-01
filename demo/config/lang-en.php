@@ -60,4 +60,17 @@ return [
     'dbtest.view_edit'          => 'View / edit',
     'dbtest.original'           => 'Original content',
     'dbtest.back_home'          => 'Back to the list',
+
+    'traditional.page_title'    => 'DuckPhp single-page demo',
+    'traditional.home'          => 'Home',
+    'traditional.empty'         => 'No content yet,',
+    'traditional.add_content'   => 'Add content',
+    'traditional.has_content'   => 'Content entered:',
+    'traditional.edit_content'  => 'Edit content',
+    'traditional.delete_content'=> 'Delete content (GET-safe)',
+    'traditional.add'           => 'Add',
+    'traditional.edit'          => 'Edit',
+    'traditional.done'          => 'Done',
+    'traditional.back_home'     => 'Back to the home page',
+    'traditional.verify_failed' => 'Verification failed',
 ];

@@ -59,4 +59,17 @@ return [
     'dbtest.view_edit'          => '查看/编辑',
     'dbtest.original'           => '原内容',
     'dbtest.back_home'          => '回首页',
+
+    'traditional.page_title'    => 'DuckPhp 单一页面演示',
+    'traditional.home'          => '首页',
+    'traditional.empty'         => '还没有内容，',
+    'traditional.add_content'   => '添加内容',
+    'traditional.has_content'   => '已经输入，内容为',
+    'traditional.edit_content'  => '编辑内容',
+    'traditional.delete_content'=> '删除内容（已做 GET 安全处理）',
+    'traditional.add'           => '添加',
+    'traditional.edit'          => '编辑',
+    'traditional.done'          => '已经完成',
+    'traditional.back_home'     => '返回主页',
+    'traditional.verify_failed' => '验证失败',
 ];

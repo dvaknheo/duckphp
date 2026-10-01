@@ -20,18 +20,23 @@ use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 
 
 
-//// 这个例子极端点，没用任何类，全函数模式。
+//// This example goes to extremes: no classes at all, pure functions.
 ////[[[[
-//// 这部分是核心程序员写的。
+//// This part is written by the core engineer.
 function RunByDuckPhp()
 {
     $options = [];
     $options['is_debug'] = true;
-    $options['namespace'] = '\\';               // 不要替换成同级别的控制器类
-    $options['path_info_compact_enable'] = true;    // 不用配置路由
+    $options['namespace'] = '\\';               // do not rewrite it into a controller class of the same level
+    $options['path_info_compact_enable'] = true;    // no routing configuration needed
+
+    // `path` + `lang_default`: find `demo/config/lang-*.php` (and the rest of
+    // demo's config) instead of resolving them against the current directory.
+    $options['path'] = __DIR__ . '/../';
+    $options['lang_default'] = 'en';
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for GetRunResult();
-    $options['ext'][\DuckPhp\Ext\RouteHookFunctionRoute::class] = true; // 我们用这个扩展
+    $options['ext'][\DuckPhp\Ext\RouteHookFunctionRoute::class] = true; // this is the extension we use
     $flag = DuckPhp::RunQuickly($options);
     
     return $flag;
@@ -110,7 +115,7 @@ function action_del()
         unset($_SESSION['content']);
     }
     unset($_SESSION['token']);
-    $data['msg'] = $flag?'':'验证失败';
+    $data['msg'] = $flag?'':__l('traditional.verify_failed');
     $data['url_back'] = __url('');
     
     __show($data, 'dialog');
@@ -133,7 +138,7 @@ function action_do_add()
 session_start();
 $flag = RunByDuckPhp();
 if (!$flag) {
-    // 我们 404 了
+    // we ended up in a 404
 }
 $xxx = GetRunResult();
 extract($xxx);
@@ -145,38 +150,38 @@ if (isset($view_header)) {
 <!doctype html>
 <html>
  <meta charset="UTF-8">
-<head><title>DuckPhp 单一页面演示</title></head>
+<head><title><?=__l('traditional.page_title')?></title></head>
 <body>
 <?php
     echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 ?>
 <fieldset>
-	<legend>DuckPhp 单一页面演示</legend>
+	<legend><?=__l('traditional.page_title')?></legend>
 	<div style="border:1px red solid;">
 <?php
 }
 if ($view === 'index') {
     ?>
-	<h1>首页</h1>
+	<h1><?=__l('traditional.home')?></h1>
 <?php
     if ($content === '') {
         ?>
-	还没有内容，
-	<a href="<?=$url_add?>">添加内容</a>
+	<?=__l('traditional.empty')?>
+	<a href="<?=$url_add?>"><?=__l('traditional.add_content')?></a>
 <?php
     } else {
         ?>
-	已经输入，内容为
+	<?=__l('traditional.has_content')?>
 	<div style="border:1px gray solid;" ><?=$content?></div>
-	<a href="<?=$url_edit?>">编辑内容</a>
-	<a href="<?=$url_del?>">删除内容（已做GET安全处理）</a>
+	<a href="<?=$url_edit?>"><?=__l('traditional.edit_content')?></a>
+	<a href="<?=$url_del?>"><?=__l('traditional.delete_content')?></a>
 <?php
     } ?>
 <?php
 }
 if ($view === 'add') {
     ?>
-	<h1>添加</h1>
+	<h1><?=__l('traditional.add')?></h1>
 	<form method="post" >
 		<div><textarea name="content"></textarea></div>
 		<input type="submit" />
@@ -185,7 +190,7 @@ if ($view === 'add') {
 }
 if ($view === 'edit') {
     ?>
-	编辑
+	<?=__l('traditional.edit')?>
 	<form method="post">
 		<div><textarea name="content"><?=$content?></textarea></div>
 		<input type="submit" />
@@ -193,9 +198,9 @@ if ($view === 'edit') {
 <?php
 }
 if ($view === 'dialog') { ?>
-	<?php if (!($msg ?? false)) {?>已经完成<?php } else {
+	<?php if (!($msg ?? false)) {?><?=__l('traditional.done')?><?php } else {
     echo $msg;
-} ?> <a href="<?=$url_back?>">返回主页</a>
+} ?> <a href="<?=$url_back?>"><?=__l('traditional.back_home')?></a>
 <?php
 }
 
