@@ -14,8 +14,20 @@ class MainController extends Base
     public function action_index()
     {
         //change it if  you can
+        $this->rememberLanguage();
         $var = __h(DemoBusiness::_()->foo());
         Helper::Show(get_defined_vars(), 'main');
+    }
+    /**
+     * Remember an explicitly requested language in a cookie, so `?lang=zh_CN`
+     * sticks for the following requests (the `cookie` step of lang_detect_mode).
+     */
+    protected function rememberLanguage(): void
+    {
+        $lang = (string) Helper::GET('lang');
+        if (in_array($lang, ['en', 'zh_CN'], true)) {
+            Helper::setcookie('lang', $lang, time() + 2592000);
+        }
     }
     public function action_files()
     {

@@ -25,6 +25,10 @@ class App extends DuckPhp
         
         'controller_method_prefix' => 'action_',
         'app' => [],
+
+        // i18n: English by default; `zh_CN` is detected from ?lang=, the `lang`
+        // cookie or Accept-Language (see demo/config/lang-en.php / lang-zh_CN.php)
+        'lang_default' => 'en',
         //...
     ];
     //@override

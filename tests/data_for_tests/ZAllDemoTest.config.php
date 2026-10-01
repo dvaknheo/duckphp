@@ -11,9 +11,12 @@ return [
         'workers' => 4,
     ],
     'tests' => [
-        'test/done'          => 95,
-        'doc.php'            => 1329,
-        ''                   => 1363,
+        // 注意：URL 一律带 ?lang=en。demo 现在是多语言的（默认 en，zh_CN 由 ?lang=/
+        // cookie/Accept-Language 检测），把语言钉死在 URL 上，期望长度才不会随
+        // 跑测机器的 LANG / Accept-Language 抖动。
+        'test/done?lang=en'          => 95,
+        'doc.php?lang=en'            => 1329,
+        '?lang=en'                   => 1444,
         // files 页含「已加载文件清单 + 调用栈」，长度随类文件路径变化，每次动类文件/目录都要重算：
         //   master 的类移动（SessionTrait/ModelTrait/ExceptionReporterTrait 分目录）→ 10532
         //   Helper trait 并进 Foundation\Controller\Helper → 10531（作者后调为 10537）
@@ -24,13 +27,15 @@ return [
         //   Logger 只出现在「全部单例」与「包含文件」清单里，两处都没变）
         //   PhaseContainer 的 public 术语改名 shared（dump 里 `publics:` → `shared:` 少 1 字节；
         //   `#public` → `#shared`、`* is public` → `* is shared` 等长）→ 10431
+        //   demo 多语言化（App 多一个选项 `lang_default` 的行、被加载的
+        //   demo/config/lang-en.php 进「包含文件」清单）→ 10481
         // 依据：测试失败时自己 dump 的 tests/data_for_tests/ZAllDemoTest-<len>.txt。
-        'files'              => 10431,
-        'demo.php'           => 406,
-        'helloworld.php'     => 11,
-        'just-route.php'     => 109,
-        'api.php/test.index' => 347,
-        'traditional.php'    => 397,
-        'rpc.php'            => 129,
+        'files?lang=en'              => 10481,
+        'demo.php?lang=en'           => 406,
+        'helloworld.php?lang=en'     => 11,
+        'just-route.php?lang=en'     => 109,
+        'api.php/test.index?lang=en' => 347,
+        'traditional.php?lang=en'    => 397,
+        'rpc.php?lang=en'            => 129,
     ],
 ];
