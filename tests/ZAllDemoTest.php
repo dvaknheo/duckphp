@@ -24,7 +24,7 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
         foreach($tests as $k => $len){
             $data = $this->curl_file_get_contents($host.$k);
             $data =str_replace(realpath(__DIR__.'/../'),'',$data);
-            if($k === 'files'){
+            if(0 === strpos($k, 'files')){
                 // 裁剪动态内容（执行时间/内存、调用堆栈、包含文件），使 php74/php84 输出一致
                 //$data = $this->normalizeFilesContent($data);
                 $t = strlen($data);
@@ -59,7 +59,8 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
         return $data !== false?$data:'';
     }
     /**
-     * 裁剪 files 页面中随运行/版本变化的 fieldset 块（执行时间/内存、全部单例、调用堆栈、包含文件）。
+     * 裁剪 files 页面中随运行/版本变化的 fieldset 块（页面上现在的图例是 elapsed time/memory、
+     * all singletons、call stack、included files；本来就没调用它，留作需要时的手工裁剪工具）。
      * @param string $data
      * @return string
      */

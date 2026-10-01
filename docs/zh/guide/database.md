@@ -7,7 +7,7 @@
 ```bash
 php -S 127.0.0.1:8080 -t demo/public
 # 直接访问 http://127.0.0.1:8080/dbtest.php （文件末尾那句「没被挂载就自己跑」会启动独立入口）
-# 它同时也被挂成 demo 的子应用：http://127.0.0.1:8080/demo.php?_r=db_test/
+# 它同时也被挂成 demo 的子应用：http://127.0.0.1:8080/db_test/ （子应用自己声明了 controller_method_prefix，所以 /db_test/ 直接命中欢迎动作）
 ```
 
 ## 最小示例

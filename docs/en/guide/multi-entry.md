@@ -57,6 +57,12 @@ An entry-point file itself does only three things: find the autoloader, pass a f
 
 - `demo/src/System/App.php`: the standard entry class; its `options` set exception layering and `controller_method_prefix => 'action_'`; `onPrepare()` mounts `dbtest.php` as a child app (`'controller_url_prefix' => 'db_test/'`).
 
+- i18n: the entries under `public/` **share** `demo/config/lang-en.php` and `demo/config/lang-zh_CN.php`;
+  each sets `lang_default => 'en'` in its `$options` and relies on `?lang=` / the `lang` cookie /
+  `Accept-Language` for detection (see [Chapter 2-15](i18n.md)). Entries that are not DuckPhp
+  applications at all (`just-route.php`, the tooling pages inside `doc.php` and `cover_test.php`)
+  have no app context and keep their English wording.
+
 Adding an entry point = adding a php file under `public/` that `require`s the same autoloader and calls `XxxApp::RunQuickly($options)`. `$options` can override the in-class defaults (that is what the comment "you can also adjust options here" at the end of `demo.php` means).
 
 ### Multiple domains / multiple sites

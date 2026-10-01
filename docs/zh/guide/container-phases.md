@@ -106,7 +106,7 @@ View::_(new MyView())->init(App::_()->options, App::_());
 PhaseContainer::RestAllContainerForTesting();
 ```
 
-`dumpAllObject()` 的输出格式（`src/Core/PhaseContainer.php` 124-154 行）：先打印 `current`/`default`，再列出 shared_classes 表，然后**逐桶**列出每个实例——共享的类名前带 `*`，类名与实际对象类不一致时括号标出真实类（例如 [`DuckPhp\Core\View (DuckPhp\Ext\CallableView)`](../reference/Ext-CallableView.md)，说明 [View](../reference/Core-View.md) 单例被替换过了）。`tests/data_for_tests/ZAllDemoTest-10431.txt` 就是一份真实 dump，可直接对照。
+`dumpAllObject()` 的输出格式（`src/Core/PhaseContainer.php` 124-154 行）：先打印 `current`/`default`，再列出 shared_classes 表，然后**逐桶**列出每个实例——共享的类名前带 `*`，类名与实际对象类不一致时括号标出真实类（例如 [`DuckPhp\Core\View (DuckPhp\Ext\CallableView)`](../reference/Ext-CallableView.md)，说明 [View](../reference/Core-View.md) 单例被替换过了）。`tests/data_for_tests/ZAllDemoTest-10533.txt` 就是一份真实 dump，可直接对照。
 
 ## 常见错误
 

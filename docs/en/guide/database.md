@@ -7,7 +7,7 @@
 ```bash
 php -S 127.0.0.1:8080 -t demo/public
 # visit http://127.0.0.1:8080/dbtest.php directly (the "run standalone if not mounted" line at the end of the file starts its own entry point)
-# it is also mounted as a child application of demo: http://127.0.0.1:8080/demo.php?_r=db_test/
+# it is also mounted as a child application of demo: http://127.0.0.1:8080/db_test/ (the child app declares controller_method_prefix itself, so /db_test/ hits its welcome action)
 ```
 
 ## Minimal example

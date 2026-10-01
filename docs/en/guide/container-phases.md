@@ -106,7 +106,7 @@ View::_(new MyView())->init(App::_()->options, App::_());
 PhaseContainer::RestAllContainerForTesting();
 ```
 
-The output format of `dumpAllObject()` (`src/Core/PhaseContainer.php` lines 124-154): it prints `current`/`default`, then lists the shared_classes table, then lists every instance **bucket by bucket** — shared class names carry a `*`, and when the class name differs from the actual object's class the real class is shown in parentheses (for example [`DuckPhp\Core\View (DuckPhp\Ext\CallableView)`](../reference/Ext-CallableView.md), which tells you the [View](../reference/Core-View.md) singleton was replaced). `tests/data_for_tests/ZAllDemoTest-10431.txt` is a real dump you can compare against.
+The output format of `dumpAllObject()` (`src/Core/PhaseContainer.php` lines 124-154): it prints `current`/`default`, then lists the shared_classes table, then lists every instance **bucket by bucket** — shared class names carry a `*`, and when the class name differs from the actual object's class the real class is shown in parentheses (for example [`DuckPhp\Core\View (DuckPhp\Ext\CallableView)`](../reference/Ext-CallableView.md), which tells you the [View](../reference/Core-View.md) singleton was replaced). `tests/data_for_tests/ZAllDemoTest-10533.txt` is a real dump you can compare against.
 
 ## Common errors
 

@@ -57,6 +57,11 @@ execute() // 第 534–545 行：Console::_()->run()
 
 - `demo/src/System/App.php`：标准入口类，`options` 里配异常分层、`controller_method_prefix => 'action_'`，`onPrepare()` 里把 `dbtest.php` 挂为子应用（`'controller_url_prefix' => 'db_test/'`）。
 
+- 多语言：`public/` 下各入口**共用** `demo/config/lang-en.php` 与 `demo/config/lang-zh_CN.php`，
+  各自在 `$options` 里写 `lang_default => 'en'`、再靠 `?lang=` / `lang` cookie / `Accept-Language`
+  检测（详见 [第 2-15 章](i18n.md)）；本身不是 DuckPhp 应用的入口（`just-route.php`、`doc.php`、
+  `cover_test.php` 里的工具页）没有 App 上下文，文案保持英文。
+
 新增一个入口 = 在 `public/` 下加一个 php 文件，`require` 同一个 autoload，`XxxApp::RunQuickly($options)`。`$options` 里可以覆盖类内默认（`demo.php` 末尾的注释「你也可以在这里调整选项」就是这个意思）。
 
 ### 多域名 / 多站点
