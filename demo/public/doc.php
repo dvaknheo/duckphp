@@ -42,7 +42,7 @@ function ControllerHelper_ShowData($file,$str)
         echo $str;
     } elseif (substr($file, -3) === '.md') {
         header('content-type:application/json');
-        echo json_encode(['s' => $str], JSON_UNESCAPED_UNICODE); // 纯文本太折腾，用json
+        echo json_encode(['s' => $str], JSON_UNESCAPED_UNICODE); // plain text is fiddly; use JSON
     }
     exit();
 }
@@ -63,7 +63,7 @@ action_index();
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>文档</title>
+  <title>Documentation</title>
   <script src="//cdn.jsdelivr.net/npm/marked/lib/marked.min.js"></script>
   <link rel="stylesheet" media="all" href="doc.css" /><!-- Highlighter.css -->
   <style>
@@ -72,13 +72,13 @@ action_index();
 </head>
 <body>
 <div>
-一个简单的 md 文件读取器，够本文档用就行了。 <br />
-<a href="#">返回文档主页</a>
-<a href="/">返回主页</a>
+A tiny markdown reader - enough for these docs. <br />
+<a href="#">Back to the doc home</a>
+<a href="/">Back to the home page</a>
 </div>
 <div>
   <div id="wrapper" style="border:1px solid gray;padding:0.5em;">
-  正在打开文档。请保证 cdn.jsdelivr.net ，外接 js 能访问
+  Opening the document. Make sure cdn.jsdelivr.net (the external JS) is reachable.
   </div>
 </div>
 <script>
@@ -86,7 +86,7 @@ action_index();
 function fetchMarkdown(url){
     url=url?url:'##/index.md';
     url=url.substring(2);
-    //baseUrl:"/" marked 的这项好像无效。
+    //baseUrl:"/" - that marked option seems to have no effect.
     var a =location.hash.substring(2).split('/');
     a.pop();
     baseUrl=a.join('/')+'/';

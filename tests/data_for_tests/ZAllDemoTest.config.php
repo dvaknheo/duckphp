@@ -15,7 +15,7 @@ return [
         // cookie/Accept-Language 检测），把语言钉死在 URL 上，期望长度才不会随
         // 跑测机器的 LANG / Accept-Language 抖动。
         'test/done?lang=en'          => 95,
-        'doc.php?lang=en'            => 1329,
+        'doc.php?lang=en'            => 1354,
         '?lang=en'                   => 1444,
         // files 页含「已加载文件清单 + 调用栈」，长度随类文件路径变化，每次动类文件/目录都要重算：
         //   master 的类移动（SessionTrait/ModelTrait/ExceptionReporterTrait 分目录）→ 10532
@@ -34,7 +34,7 @@ return [
         'files?lang=en'              => 10533,
         'demo.php?lang=en'           => 406,
         'helloworld.php?lang=en'     => 11,
-        'just-route.php?lang=en'     => 109,
+        'just-route.php?lang=en'     => 117,
         'api.php/test.index?lang=en' => 335,
         'traditional.php?lang=en'    => 386,
         'rpc.php?lang=en'            => 122,

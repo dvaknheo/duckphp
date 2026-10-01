@@ -21,7 +21,9 @@ class MainController
 {
     public function index()
     {
-        echo("这演示只用路由类，其他类都不要的情况<br>\n");
+        // This entry point boots the Route class only - there is no App instance here,
+        // so it cannot use __l() (that needs an initialised app); its text is English only.
+        echo("This demo uses the Route class only, none of the other classes<br>\n");
         echo ("Just route test done<br>\n");
         echo (DATE(DATE_ATOM));
     }
@@ -31,7 +33,7 @@ class MainController
     }
 }
 $options = [
-    'namespace_controller' => '\\', // 默认的是 Controller。 我们不需要这一层
+    'namespace_controller' => '\\', // the default is Controller; we do not need that level
 ];
 $flag = Route::RunQuickly($options);
 if (!$flag) {

@@ -20,7 +20,8 @@ if (!class_exists(\SebastianBergmann\CodeCoverage\CodeCoverage::class)) {
     exit;
 }
 
-// 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载
+// point the project namespace at its directory; using composer's autoload instead
+// is strongly recommended
 if (!class_exists(\ProjectNameTemplate\System\App::class)) {
     \DuckPhp\Core\AutoLoader::RunQuickly([]);
     \DuckPhp\Core\AutoLoader::addPsr4("ProjectNameTemplate\\", 'src');
@@ -48,7 +49,8 @@ class MainController
     public function action_index()
     {
         echo '<meta http-equiv="refresh" content="5;cover_report/index.html" />';
-        echo "用于计算执行行数 ，请确保 cover_report 可写。5秒后跳转到结果页面";
+        // coverage tooling page: kept English-only (it is not part of the demo tour)
+        echo "Counting executed lines; make sure cover_report/ is writable. Redirecting to the report in 5 seconds.";
         var_dump(DATE(DATE_ATOM));
     }
 }
@@ -59,6 +61,9 @@ class DemoApp extends \DuckPhp\DuckPhp
         'is_debug' => true,
         'path' => __DIR__.'/',
         'namespace_controller' => '\\',
+        // the controller below is `action_index()`, so the welcome route has to
+        // look for the `action_` prefixed method (without this the page 404s)
+        'controller_method_prefix' => 'action_',
     ];
 }
 
