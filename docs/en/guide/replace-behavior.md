@@ -2,7 +2,7 @@
 
 > What this solves: **when you want to change some framework behaviour, what do you touch** — swapping a class, a file, a singleton, a system call or a component: the boundaries and precedence of five levels, and how to investigate "I changed it and nothing happened".
 > Prerequisites: [Chapter 3-5 Overriding and replacement](overriding.md) (file/class overrides), [Chapter 4-1 Containers and phases, inside out](container-phases.md). About 20 minutes.
-> Examples: [`Ext\CallableView`](../reference/Ext-CallableView.md)/[`Ext\JsonView`](../reference/Ext-JsonView.md) (replacing the [View](../reference/Core-View.md) implementation), [`Ext\RedisCache`](../reference/Component-RedisCache.md) (replacing the [Cache](../reference/Component-Cache.md) implementation), `AppWithAllOptions.php` (the full option table).
+> Examples: [`Ext\CallableView`](../reference/Ext-CallableView.md)/[`Ext\JsonView`](../reference/Ext-JsonView.md) (replacing the [View](../reference/Core-View.md) implementation), [`Ext\RedisCache`](../reference/Component-RedisCache.md) (replacing the [Cache](../reference/Component-Cache.md) implementation).
 
 ## Minimal example
 

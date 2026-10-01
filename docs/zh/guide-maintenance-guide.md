@@ -61,7 +61,7 @@
 |---|---|---|
 | `tests/data_for_tests/ZThirdDemo` + `tests/ZThirdDemoTest.php` | 第三卷 3-1–3-7 | `wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage tests/ZThirdDemoTest.php"` |
 | `demo/` + `tests/ZAllDemoTest.php` | 第二卷（四层/视图/路由/多入口） | `wsl -e bash -lc "php vendor/bin/phpunit --no-coverage tests/ZAllDemoTest.php"`；它「起内置服务器 + curl 各路由比字节长度」，改 `src/` 或 `demo/` 后长度会变（见 §5）。被测宿主一直是 `demo/` |
-| `demo/`（`public/` 多入口 + `src/System/AppWithAllOptions.php`） | 第一卷、第二卷 | `php -S 127.0.0.1:8080 -t demo/public` 后访问各入口 |
+| `demo/`（`public/` 多入口） | 第一卷、第二卷 | `php -S 127.0.0.1:8080 -t demo/public` 后访问各入口 |
 | `skeleton/` | 第一卷（1-3 目录结构与四层架构）、新工程起步 | 读代码；改动后跑 `tests/Foundation/ExceptionTraitTest.php`、`tests/ZAllDemoTest.php`、`python3 docs/scripts/check-skeleton-tree.py` |
 | `docs/scripts/`（文档工具：链接检查、排版检查、非 ASCII、孤儿页反查、骨架目录树、选项/参考页生成） | 全卷校验 | 见 §4；**脚本随文档一起提交**，都从仓库根目录跑 |
 

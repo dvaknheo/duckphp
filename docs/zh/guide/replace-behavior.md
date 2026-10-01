@@ -2,7 +2,7 @@
 
 > 解决什么问题：**想改框架的某个行为，该动哪里**——换类、换文件、换单例、换系统调用、换组件，五种层次的边界与优先级，以及"改完没生效"怎么查。
 > 前置：[第 3-5 章 重写与覆盖](overriding.md)（文件/类覆盖）、[第 4-1 章 容器与相位内部机制](container-phases.md)。预计 20 分钟。
-> 示例：[`Ext\CallableView`](../reference/Ext-CallableView.md)/[`Ext\JsonView`](../reference/Ext-JsonView.md)（换 [View](../reference/Core-View.md) 实现）、[`Ext\RedisCache`](../reference/Component-RedisCache.md)（换 [Cache](../reference/Component-Cache.md) 实现）、`AppWithAllOptions.php`（选项全表）。
+> 示例：[`Ext\CallableView`](../reference/Ext-CallableView.md)/[`Ext\JsonView`](../reference/Ext-JsonView.md)（换 [View](../reference/Core-View.md) 实现）、[`Ext\RedisCache`](../reference/Component-RedisCache.md)（换 [Cache](../reference/Component-Cache.md) 实现）。
 
 ## 最小示例
 

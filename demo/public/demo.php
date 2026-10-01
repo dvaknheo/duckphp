@@ -18,7 +18,7 @@ namespace {
 }
 ////////////////////////////////////////
 
-// 以下部分是核心工程师写。
+// This part is written by the core engineer.
 namespace MySpace\System
 {    
     use DuckPhp\DuckPhp;
@@ -27,32 +27,34 @@ namespace MySpace\System
 
     class App extends DuckPhp
     {
-        // @override 重写
+        // @override
         public $options = [
             'is_debug' => true,
-                // 开启调试模式
+                // turn on debug mode
             'path_info_compact_enable' => true,
-                // 开启单一文件模式，服务器不配置也能运行
+                // single-file mode: it runs even without server configuration
             'ext' => [
                 CallableView::class => true,
-                // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
+                // the default View cannot call functions, so we turn on the built-in
+                // CallableView extension to replace the system View
             ],
             'callable_view_class' => Views::class,
-                // 替换的 View 类。
+                // the replacement View class.
         ];
-        // @override 重写
+        // @override
         protected function onInited(): void
         {
-            //初始化之后在这里运行。
-            //var_dump($this->options);//查看总共多少选项
+            //runs after initialisation.
+            //var_dump($this->options);//show how many options there are in total
         }
     }
 
 } // end namespace
-// 助手类
+// helper classes
 
 //------------------------------
-// 以下部分由应用工程师编写， 和 DuckPhp 的类较弱。如果你有洁癖，还能再缩减。
+// The part below is written by the application engineer; it depends only loosely on
+// DuckPhp's own classes. If you are a purist, it can be trimmed further.
 
 namespace MySpace\Controller
 {
@@ -65,24 +67,24 @@ namespace MySpace\Controller
         use SingletonTrait;
         public function __construct()
         {
-            // 在构造函数设置页眉页脚。
+            // set the header/footer in the constructor.
             Helper::setViewHeaderFooter('header', 'footer');
         }
         public function index()
         {
-            //获取数据
-            $output = "Hello, now time is " . __h(MyBusiness::_()->getTimeDesc()); // html编码
-            $url_about = __url('about/me'); // url 编码
-            Helper::Show(get_defined_vars(), 'main_view'); //显示数据
+            //fetch the data
+            $output = "Hello, now time is " . __h(MyBusiness::_()->getTimeDesc()); // html encode
+            $url_about = __url('about/me'); // url encode
+            Helper::Show(get_defined_vars(), 'main_view'); //show the data
         }
     }
     class aboutController
     {
         public function me()
         {
-            $url_main = __url(''); //默认URL
+            $url_main = __url(''); //default URL
             Helper::setViewHeaderFooter('header', 'footer');
-            Helper::Show(get_defined_vars()); // 默认视图 about/me ，可省略
+            Helper::Show(get_defined_vars()); // default view about/me, may be omitted
         }
     }
 } // end namespace
@@ -91,7 +93,7 @@ namespace MySpace\Business
 {
     use MySpace\Model\MyModel;
     use DuckPhp\Foundation\Business\BusinessHelper as Helper;
-    use DuckPhp\Foundation\SingletonTrait; //为了 Business::_() 可变单例。
+    use DuckPhp\Foundation\SingletonTrait; //so that Business::_() is a replaceable singleton.
 
     class MyBusiness
     {
@@ -120,7 +122,7 @@ namespace MySpace\Model
         }
     }
 }
-// 把 PHP 代码去掉看，这是可预览的 HTML 结构
+// strip the PHP code away and this is the previewable HTML structure
 
 namespace MySpace\View {
     class Views
@@ -162,13 +164,13 @@ namespace MySpace\View {
 } // end namespace
 
 //------------------------------
-// 入口，放最后面避免自动加载问题
+// The entry point goes last, to avoid autoloading problems
 
 namespace
 {
     $options = [
         // 'override_class' => 'MySpace\System\App',
-        // 你也可以在这里调整选项。覆盖类内选项
+        // you may also adjust options here; they override the class options
     ];
     \MySpace\System\App::RunQuickly($options);
 }

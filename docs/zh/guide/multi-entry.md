@@ -56,7 +56,6 @@ execute() // 第 534–545 行：Console::_()->run()
 入口文件本身只做三件事：找 autoload、给 `RunQuickly()` 传少量选项、跑。业务代码全部在 `demo/src/`：
 
 - `demo/src/System/App.php`：标准入口类，`options` 里配异常分层、`controller_method_prefix => 'action_'`，`onPrepare()` 里把 `dbtest.php` 挂为子应用（`'controller_url_prefix' => 'db_test/'`）。
-- `demo/src/System/AppWithAllOptions.php`：把**全部可用选项**以注释形式列出的样板（由 `tests/genoptions.php` 生成），当选项字典查。
 
 新增一个入口 = 在 `public/` 下加一个 php 文件，`require` 同一个 autoload，`XxxApp::RunQuickly($options)`。`$options` 里可以覆盖类内默认（`demo.php` 末尾的注释「你也可以在这里调整选项」就是这个意思）。
 

@@ -23,8 +23,8 @@ class MainController
 }
 $options = [
     'is_debug'=>true,
-    'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根，而不是默认的 Controller
-    // 还有百来个选项以上可用，详细请查看参考文档
+    'namespace_controller' => "\\",   // this example is special: controllers live in the root namespace, not the default Controller
+    // a hundred or so more options are available; see the reference manual
 ];
 try{
 \DuckPhp\DuckPhp::RunQuickly($options);

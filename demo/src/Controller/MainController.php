@@ -49,7 +49,7 @@ class MainController extends Base
             echo $str;
         } elseif (substr($file, -3) === '.md') {
             Helper::header('content-type:application/json');
-            echo json_encode(['s' => $str], JSON_UNESCAPED_UNICODE); // 纯文本太折腾，用json
+            echo json_encode(['s' => $str], JSON_UNESCAPED_UNICODE); // plain text is fiddly; use JSON
         }
         Helper::exit();
     }
