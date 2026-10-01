@@ -40,12 +40,8 @@ class MainController
         
         $t3 = \JsonRpc\CalcService::_()->add(5, 6);
         $date = DATE(DATE_ATOM);
-        echo <<<EOT
-本地调用 1 + 2 = $t1 <br />
-远程调用 3 + 4 = $t2 <br />
-远程调用 5 + 6 = $t3 <br />
-调用时间 $date
-EOT;
+        // {name} placeholders are filled in by Lang::format()
+        echo __l('rpc.result', ['local' => $t1, 'remote1' => $t2, 'remote2' => $t3, 'date' => $date]);
     }
     public function action_json_rpc()
     {
@@ -58,9 +54,12 @@ $options = [
     'is_debug' => true,
     'namespace_controller' => '\\',
     'controller_method_prefix' => 'action_',
+    // find `demo/config/lang-*.php` (this entry point is its own app)
+    'path' => __DIR__ . '/../',
+    'lang_default' => 'en',
     'ext' => [
         JsonRpcExt::class => [
-            'jsonrpc_namespace' => 'JsonRpc',  //对应  \JsonRpc\ 这个命名空间
+            'jsonrpc_namespace' => 'JsonRpc',  // corresponds to the \JsonRpc\ namespace
             'jsonrpc_is_debug' => true,
             //'jsonrpc_backend'=>'';
         ],

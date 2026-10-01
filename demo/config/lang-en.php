@@ -75,4 +75,6 @@ return [
     'traditional.verify_failed' => 'Verification failed',
 
     'api.usage'                 => "    No parameters: {url}\n    With parameters: {url2} (passed on to the reflected parameters)\n    To change `uid`, extend RouteHookApiServer and override getObjectAndMethod() and getInputs()",
+
+    'rpc.result'                => "local call 1 + 2 = {local} <br />\nremote call 3 + 4 = {remote1} <br />\nremote call 5 + 6 = {remote2} <br />\ncall time {date}",
 ];

@@ -74,4 +74,6 @@ return [
     'traditional.verify_failed' => '验证失败',
 
     'api.usage'                 => "    不带参数访问： {url}\n    带参数访问：{url2} 将会反射到相应参数\n    如果需要修改 uid，则继承本扩展 RouteHookApiServer 覆盖 getObjectAndMethod() 和 getInputs()",
+
+    'rpc.result'                => "本地调用 1 + 2 = {local} <br />\n远程调用 3 + 4 = {remote1} <br />\n远程调用 5 + 6 = {remote2} <br />\n调用时间 {date}",
 ];

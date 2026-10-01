@@ -37,6 +37,6 @@ return [
         'just-route.php?lang=en'     => 109,
         'api.php/test.index?lang=en' => 335,
         'traditional.php?lang=en'    => 386,
-        'rpc.php?lang=en'            => 129,
+        'rpc.php?lang=en'            => 122,
     ],
 ];
