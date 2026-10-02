@@ -109,11 +109,11 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && python3 docs/scripts/check-en-d
 wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-coverage"
 ```
 
-**当前基线**（2026-09-26 全量实测）：
+**当前基线**（2026-10-02 WSL 全量实测）：
 
-- 全量 `php vendor/bin/phpunit --no-coverage` → **`OK (95 tests, 875 assertions)`**（约 6 分钟）；
-- 覆盖率 **`4735/4735 (100.00%)`**：`XDEBUG_MODE=coverage php vendor/bin/phpunit`（跑全量、顺便写 `test_coveragedumps/`）→ 再 `XDEBUG_MODE=coverage php vendor/bin/phpunit tests/support.php` 生成 `test_reports/index.html`；判「有没有漏测」用 `php docs/scripts/covagg.php`（按源文件合并全部 dump，输出 `TOTAL … lines x/y` 与有缺口的文件）。⚠️ **中途 Fatal 的测试不会写自己的 dump**，覆盖率会假降（实测见过 `4774/4898 (97.47%)`）——先确认全量没有红，再信覆盖率；⚠️ 删过类/改过测试文件后，`test_coveragedumps/` 里的旧 dump 会让 covagg 的总数虚高，**先 `rm -rf test_coveragedumps` 再跑全量**；
-- `docs/zh` 相对链接 **0 坏链**、`docs/` 下只有归档目录 `docs/old/` 与陈旧副本 `docs/en/` 还有历史坏链（不属本工作范围）；[`find-unmentioned-classes.py`](../scripts/find-unmentioned-classes.py) → 107 个类页全部被指南链到、孤儿 0。
+- 全量 `XDEBUG_MODE=coverage php vendor/bin/phpunit` → **`OK (95 tests, 889 assertions)`**（约 6 分钟；比上一版多 14 条，来自 `Route::defaultUrlHandler()` 双斜杠修复新增的 `doUrlJoining()` 断言）；
+- 覆盖率 **`4737/4737 (100.00%)`**（80 files, 86 dumps）：`XDEBUG_MODE=coverage php vendor/bin/phpunit`（跑全量、顺便写 `test_coveragedumps/`）→ 再 `XDEBUG_MODE=coverage php vendor/bin/phpunit tests/support.php` 生成 `test_reports/index.html`；判「有没有漏测」用 `php docs/scripts/covagg.php`（按源文件合并全部 dump，输出 `TOTAL … lines x/y` 与有缺口的文件）。⚠️ **中途 Fatal 的测试不会写自己的 dump**，覆盖率会假降（实测见过 `4774/4898 (97.47%)`）——先确认全量没有红，再信覆盖率；⚠️ 删过类/改过测试文件后，`test_coveragedumps/` 里的旧 dump 会让 covagg 的总数虚高，**先 `rm -rf test_coveragedumps` 再跑全量**；
+- `docs/zh` 相对链接 **0 坏链**、`docs/en` 经 `check-en-docs.py --all` 也是 0 error（两棵树都有门禁；`docs/old/` 是归档目录，不在门禁范围）；[`find-unmentioned-classes.py`](../scripts/find-unmentioned-classes.py) → 107 个类页全部被指南链到、孤儿 0。
 
 `docs/scripts/check-doc-links.py`（扫 `docs/**/*.md` 的相对链接，忽略外链与锚点，恒退出 0——读打印的 `broken: N`）：
 

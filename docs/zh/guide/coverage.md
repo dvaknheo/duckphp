@@ -84,7 +84,7 @@ XDEBUG_MODE=coverage php vendor/bin/phpunit tests/Ext/PermissionMenuTest.php
 
 8.4 那份与 7.4 只有一处写法不同：最后一步是 `vendor/bin/phpunit`，不是 `composer exec phpunit`——php84 镜像装的 Composer 2.8 **已移除 `exec` 子命令**（php74 镜像里的 Composer 2.2 还有）。
 
-容器化的意义：**redis 扩展**、不同 PHP 版本的语法差异（本框架支持 `>=7.4`）都要在真实环境里验一遍。Windows 侧跑会在 redis 相关用例上假失败（详见[第 2-17 章](testing.md)）。两个容器当前都能跑完全量：**`OK (95 tests, 875 assertions)`、覆盖率 `4735/4735 (100.00%)`**，与 WSL 基线一致。
+容器化的意义：**redis 扩展**、不同 PHP 版本的语法差异（本框架支持 `>=7.4`）都要在真实环境里验一遍。Windows 侧跑会在 redis 相关用例上假失败（详见[第 2-17 章](testing.md)）。两个容器上一次实测都能跑完全量，结果与 WSL 一致——**具体数字不再抄一份，以[参考手册维护指南](../reference-maintenance-guide.md)第 8 节的基线为准**（本项目每加几条断言就会变）。⚠️ 2026-10-02 复跑时两个坑：① 重建镜像会失败（Dockerfile 里的 `apt-get install redis-server` 命中 404——Debian bullseye-security 仓库已过期），本地现存的 `test-php74_fulltest` / `test-php84_fulltest84` 镜像仍可用；② 容器内 `composer update` 可能卡在 GitHub 克隆上超时（`COMPOSER_PROCESS_TIMEOUT`），WSL 侧则没有这个问题。
 
 ### 5. 生成器与闸门脚本
 
