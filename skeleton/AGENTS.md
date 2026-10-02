@@ -1,9 +1,8 @@
-# AGENTS.md — DuckPHP project conventions
+# AGENTS.md — DuckPHP **project** conventions (an app that uses DuckPHP)
 
-> Audience: humans and AI coding agents working in **this project** (a DuckPHP application).
-> Project-local conventions live here. The framework docs ship inside the package, both Chinese:
-> `vendor/dvaknheo/duckphp/docs/zh/guide/` (how-to, 47 chapters) and
-> `vendor/dvaknheo/duckphp/docs/zh/reference/` (per-class API and option defaults).
+> Audience: humans and AI coding agents working in **this project** — an application that **uses** DuckPHP.
+> This file is about *your app*; it is **not** about the framework. If you are changing the framework itself (its `src/`, its docs, its tests), the file you want is the **framework repository's own `AGENTS.md`** — ignore this one.
+> The framework docs ship inside the package: `vendor/dvaknheo/duckphp/docs/zh/` (Chinese, the source of truth — how-to guide, 52 chapters, plus the per-class API and option defaults) and `vendor/dvaknheo/duckphp/docs/en/` (the same tree in English).
 > **Never copy signatures or option tables into this file** — they drift. Keep it under ~200 lines.
 
 ## 1. Layout
