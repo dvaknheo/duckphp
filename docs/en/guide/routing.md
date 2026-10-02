@@ -87,7 +87,7 @@ To fake a request path under CLI or in tests: `Route::_()->PathInfo('about/me')`
 | --- | --- |
 | `'/other/app.php'` (starting with `/`) | **returned as is** (use this for cross-application/absolute paths) |
 | `''` | the current basepath (under a subdirectory deployment, that subdirectory) |
-| `'?page=2'` / `'#top'` | the current path plus that suffix |
+| `'?page=2'` / `'#top'` | the current path plus that suffix (the join keeps a single slash: `/?page=2`, never `//?page=2`) |
 | `'about/me'` | basepath + `/about/me` |
 
 So an "other page inside the site" is written `__url('about/me')`; to emit an absolute path as is, write `__url('/res/logo.png')`, or more explicitly `__res('logo.png')` ([Chapter 3-3](static-resources.md)).

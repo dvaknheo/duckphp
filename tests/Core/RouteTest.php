@@ -461,6 +461,60 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         echo PHP_EOL;
         echo Route::URL("#22");
         echo PHP_EOL;
+        $this->doUrlJoining();
+    }
+    /**
+     * `?`/`#` 后缀是「当前路径 + 后缀」：basepath 与 path_info 都以 `/` 开头/结尾，
+     * 拼接时只能有一个斜杠（这里曾是 `//abc?11` 这类双斜杠 bug 的回归点）。
+     */
+    protected function doUrlJoining()
+    {
+        // basepath 一律由「脚本在文档根」推出（'/'）；子目录用 controller_url_prefix 模拟。
+        // SCRIPT_NAME/REQUEST_URI 一并给足：PATH_INFO 为空时
+        // controller_fix_mistake_path_info 会回头去 REQUEST_URI 里补，别让它搅局。
+        $scope = function (string $request_uri, string $path_info) {
+            $_SERVER['DOCUMENT_ROOT'] = __DIR__;
+            $_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/index.php';
+            $_SERVER['SCRIPT_NAME'] = '/index.php';
+            $_SERVER['REQUEST_URI'] = $request_uri;
+            $_SERVER['PATH_INFO'] = $path_info;
+        };
+
+        // basepath = '/'，path_info 带前导斜杠
+        $scope('/abc', '/abc');
+        Route::_(new Route())->init(['controller_url_prefix' => '']);
+        $this->assertSame('/abc?11', Route::_()->_Url('?11'));
+        $this->assertSame('/abc#22', Route::_()->_Url('#22'));
+
+        // basepath = '/sub/'，path_info 带/不带前导斜杠都要拼成单斜杠
+        Route::_(new Route())->init(['controller_url_prefix' => 'sub/']);
+        $this->assertSame('/sub/abc?11', Route::_()->_Url('?11'));
+        $this->assertSame('/sub/abc#22', Route::_()->_Url('#22'));
+        $scope('/abc', 'abc');
+        $this->assertSame('/sub/abc?11', Route::_()->_Url('?11'));
+
+        // path_info 为空（欢迎页）时保持 basepath 原样（尾斜杠不丢）
+        $scope('/index.php', '');
+        $this->assertSame('/sub/?11', Route::_()->_Url('?11'));
+        $this->assertSame('/sub/#22', Route::_()->_Url('#22'));
+        Route::_(new Route())->init(['controller_url_prefix' => '']);
+        $this->assertSame('/?11', Route::_()->_Url('?11'));
+        $this->assertSame('/#22', Route::_()->_Url('#22'));
+
+        // path_info 为 '/'（php -S 下根请求的实际取值）不能变成 '//'
+        $scope('/', '/');
+        Route::_(new Route())->init(['controller_url_prefix' => '']);
+        $this->assertSame('/?11', Route::_()->_Url('?11'));
+        $this->assertSame('/#22', Route::_()->_Url('#22'));
+
+        // 其余分支不受影响：空串给 basepath、绝对路径原样、相对路径拼一份
+        $this->assertSame('/', Route::_()->_Url(''));
+        $this->assertSame('/abs/x?y=1', Route::_()->_Url('/abs/x?y=1'));
+        $this->assertSame('/rel/x', Route::_()->_Url('rel/x'));
+
+        // 收尾：恢复 PATH_INFO 与默认实例，免得影响后面的用例
+        $scope('/', '');
+        Route::_(new Route());
     }
     protected function doGetterSetter()
     {

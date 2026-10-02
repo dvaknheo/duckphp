@@ -510,11 +510,12 @@ trait Route_UrlManager
         if ('' === $url) {
             return $basepath;
         }
-        if (isset($url) && '?' === substr($url, 0, 1)) {
-            return $basepath.$path_info.$url;
-        }
-        if (isset($url) && '#' === substr($url, 0, 1)) {
-            return $basepath.$path_info.$url;
+        if (isset($url) && ('?' === substr($url, 0, 1) || '#' === substr($url, 0, 1))) {
+            // the current path + that suffix; $basepath and $path_info both start
+            // with a slash, so join them with exactly one (an empty $path_info keeps
+            // the basepath's trailing slash: '/' and '/sub/' stay as they are).
+            $current = ($path_info === '') ? $basepath : rtrim($basepath, '/').'/'.ltrim($path_info, '/');
+            return $current.$url;
         }
 
         return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');

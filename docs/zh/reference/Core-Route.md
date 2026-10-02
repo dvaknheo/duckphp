@@ -244,7 +244,7 @@ finally 收尾钩子逐个执行；任一返回真即停
 静态壳：转发实例 `_Url`。
 
     public function _Url($url = null)
-生成应用内 URL：若设 `url_handler` 则委托之，否则走 `defaultUrlHandler`（绝对 `/` 保留、`?`/`#` 追加、相对拼基路径）。
+生成应用内 URL：若设 `url_handler` 则委托之，否则走 `defaultUrlHandler`（绝对 `/` 保留、`?`/`#` 追加到**当前路径**、相对拼基路径）。追加时分隔斜杠只保留一个：基路径（`/`、部署子目录下的 `/sub/`）与 `PATH_INFO`（`/`、`/abc` 或不带前导斜杠的 `abc`）怎么组合都只会得到单斜杠，`?lang=zh_CN` 在根路径下是 `/?lang=zh_CN` 而不是 `//?lang=zh_CN`。
 
     public static function Res($url = null)
 静态壳：转发实例 `_Res`。

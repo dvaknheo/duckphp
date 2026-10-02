@@ -19,8 +19,8 @@ Now is [<?=$var?>]
 <hr />
 <div>
 <?=__l('main.switch_language')?>:
-<a href="<?=__url('')?>?lang=en"><?=__l('main.language_en')?></a> |
-<a href="<?=__url('')?>?lang=zh_CN"><?=__l('main.language_zh')?></a>
+<a href="<?=__url('?lang=en')?>"><?=__l('main.language_en')?></a> |
+<a href="<?=__url('?lang=zh_CN')?>"><?=__l('main.language_zh')?></a>
 </div>
 <hr />
 <a href="<?=__url('doc')?>"> <?=__l('main.doc_in_app')?></a> <a href="/doc.php"> <?=__l('main.doc_standalone')?></a> 

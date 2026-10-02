@@ -244,7 +244,7 @@ With a value, setPathInfo (writes PATH_INFO); without, returns the current getPa
 Static shell: forwards to the instance `_Url`.
 
     public function _Url($url = null)
-Generates an in-app URL: delegates to `url_handler` if set, otherwise `defaultUrlHandler` (absolute `/` kept, `?`/`#` appended, relative joined to the base path).
+Generates an in-app URL: delegates to `url_handler` if set, otherwise `defaultUrlHandler` (absolute `/` kept, `?`/`#` appended to the **current path**, relative joined to the base path). Appending keeps exactly one separator slash: whichever way the base path (`/`, or `/sub/` under a subdirectory deployment) and `PATH_INFO` (`/`, `/abc`, or `abc` without the leading slash) combine, the result carries a single slash — `?lang=zh_CN` at the root is `/?lang=zh_CN`, never `//?lang=zh_CN`.
 
     public static function Res($url = null)
 Static shell: forwards to the instance `_Res`.
