@@ -139,6 +139,7 @@ The numbers move as cases are added — **§8 of `docs/zh/reference-maintenance-
 | Which classes and options exist | [`docs/zh/reference/index.md`](docs/zh/reference/index.md) (a generated page) |
 | How to use the framework | [`docs/zh/guide/index.md`](docs/zh/guide/index.md) |
 | Project introduction and contact details | [`README.zh_CN.md`](README.zh_CN.md) (Chinese) / [`README.md`](README.md) (English) |
+| What changed in each release | [`CHANGELOG.md`](CHANGELOG.md) |
 | The conventions for user projects | [`skeleton/AGENTS.md`](skeleton/AGENTS.md) |
 
 ## 9. Containers (only needed when changing PHP versions)
