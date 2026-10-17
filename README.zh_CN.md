@@ -225,7 +225,7 @@ ParentApp::RunQuickly([]);
 3. 用户系统就是典型应用通讯
 4. 覆盖子应用的视图；  以及把以上作为子应用，覆盖视图。
 
-你可以 `composer require dvaknheo/duckadmin` 把 DuckAdmin 接入进来作为你的管理系统，用户系统使用
+你可以 `composer require dvaknheo/duckadmin` 接入 DuckAdmin。把 DuckAdmin 作为你的管理系统和用户系统
 
 ### 示例 3：替换组件
 

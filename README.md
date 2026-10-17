@@ -225,7 +225,7 @@ For example
 3. The user system is typical inter-app communication.
 4. Overriding a child application's views; and using all of the above as child applications and overriding views.
 
-You can `composer require dvaknheo/duckadmin` to bring DuckAdmin in as your admin panel, and use its user system.
+You can `composer require dvaknheo/duckadmin` to bring DuckAdmin in. Use DuckAdmin as your admin panel and user system.
 
 ### Example 3: Replace Components
 
