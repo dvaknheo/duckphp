@@ -1,6 +1,6 @@
 # DuckPhp
 
-[English](README.md) | [中文](README-zh.md)
+[English](README.md) | [中文](README.zh_CN.md)
 
 - Version: v1.3.4 / preparing for v1.3.5
 - Author QQ: 85811616

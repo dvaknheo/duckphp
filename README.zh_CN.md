@@ -1,13 +1,13 @@
 # DuckPhp
 
-[English](README.md) | [中文](README-zh.md)
+[English](README.md) | [中文](README.zh_CN.md)
 
 - 版本：v1.3.4 / 为 v1.3.5 准备
 - 作者 QQ：85811616
 - 官方 QQ 群：714610448
 
-Gitee 仓库地址：https://gitee.com/dvaknheo/duckphp
-Github 仓库地址：https://github.com/dvaknheo/duckphp
+Gitee 仓库地址：<https://gitee.com/dvaknheo/duckphp>
+Github 仓库地址：<https://github.com/dvaknheo/duckphp>
 
 ## 一、DuckPhp 是什么
 
@@ -21,7 +21,7 @@ DuckPhp 的名字来源：
 
 ### 使用 Composer 安装
 
-```
+```bash
 composer require dvaknheo/duckphp # 使用 require
 ./vendor/bin/duckphp new
 ```
@@ -49,14 +49,6 @@ composer require dvaknheo/duckphp # 使用 require
 ```php
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
-
-use DuckPhp\DuckPhpAllInOne;
-use DuckPhp\Foundation\Controller\Helper;
-
-use MyApp as MyWelcomeController;
-use MyApp as MyBusiness;
-use MyApp as MyModel;
-use MyApp as MyView;
 
 use DuckPhp\DuckPhpAllInOne;
 use DuckPhp\Foundation\Controller\Helper;
@@ -116,7 +108,7 @@ php -S 127.0.0.1:9628 -t .
 
 访问 `http://127.0.0.1:9628/sample1.php`，结果如下：
 
-```
+```text
 You are visit: /sample1.php; Hello, now is <2026-07-11T07:08:05+00:00>
 ```
 
@@ -233,9 +225,6 @@ ParentApp::RunQuickly([]);
 3 用户系统就是典型应用通讯
 4 覆盖子应用的视图；  以及把以上作为子应用，覆盖视图。
 
-
-
-
 ### 示例 3：替换组件
 
 ```php
@@ -307,7 +296,7 @@ ExtApp::RunQuickly($options);
 
 当你使用 `./vendor/bin/duckphp new` 创建项目时，会得到一套骨架工程（`skeleton/` 的拷贝）：
 
-```
+```text
 project/
 ├── public/index.php     # Web 入口
 ├── bin/cli.php          # CLI 入口
@@ -377,7 +366,7 @@ DuckPhp 框架的设计原则：这个东西必须框架自带吗？不自带可
 
 DuckPhp 每次发布都通过全代码覆盖的测试，因此具有很强的健壮性。
 
-DuckPhp 没有 ORM，也不屏蔽 SQL，根据日志查 SQL 方便多了。它自己简单封装了 PDO。你也可以使用自己的 DB 类，或用第三方 ORM（教程里有使用 ThinkPHP-DB 的例子。
+DuckPhp 没有 ORM，也不屏蔽 SQL，根据日志查 SQL 方便多了。它自己简单封装了 PDO。你也可以使用自己的 DB 类，或用第三方 ORM（教程里有使用 ThinkPHP-DB 的例子）。
 
 DuckPhp 不带模板引擎，PHP 本身就是模板引擎。
 
@@ -387,10 +376,10 @@ DuckPhp 不写 Widget，因为这和 MVC 分离原则相违背。
 
 起初，这是想搞个简单的 PHP Web 框架。现在使用方式简单，但内部设计并不简单。
 
-+ 1.0.* 系列版本是前身 DNMVCS 单文件模式的版本
-+ 1.1.* 系列版本是前身 DNMVCS 拆分成多文件的版本
-+ 1.2.* 系列版本是改名 DuckPhp 后的版本，随着思想的变化，或许会有大的变更
-+ 1.3.* 系列版本是计划开始有人大规模使用后的稳定版本，将会对历史负责
+- 1.0.* 系列版本是前身 DNMVCS 单文件模式的版本
+- 1.1.* 系列版本是前身 DNMVCS 拆分成多文件的版本
+- 1.2.* 系列版本是改名 DuckPhp 后的版本，随着思想的变化，或许会有大的变更
+- 1.3.* 系列版本是计划开始有人大规模使用后的稳定版本，将会对历史负责
 
 1.3 版本最大的变化是增加了相位概念，使得各应用之间相互插入也无影响。
 

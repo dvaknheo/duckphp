@@ -137,7 +137,7 @@ The numbers move as cases are added — **§8 of `docs/zh/reference-maintenance-
 | The Chinese→English conventions (glossary, layout, files allowed to keep Chinese) | [`docs/en/TRANSLATION.md`](docs/en/TRANSLATION.md) |
 | Which classes and options exist | [`docs/zh/reference/index.md`](docs/zh/reference/index.md) (a generated page) |
 | How to use the framework | [`docs/zh/guide/index.md`](docs/zh/guide/index.md) |
-| Project introduction and contact details | [`README-zh.md`](README-zh.md) / [`README.md`](README.md) |
+| Project introduction and contact details | [`README.zh_CN.md`](README.zh_CN.md) (Chinese) / [`README.md`](README.md) (English) |
 | The conventions for user projects | [`skeleton/AGENTS.md`](skeleton/AGENTS.md) |
 
 ## 9. Containers (only needed when changing PHP versions)
