@@ -75,6 +75,7 @@
 
 - `composer.json` 的 `post-install-cmd` 原来写在顶层（非法 schema，Packagist 拒收），已移入 `scripts`
 - `docker/test-php74` 的 `apt-get install` 曾因 Debian bullseye-security 撤源而 404，Dockerfile 已改指 `archive.debian.org` 并关掉 `Valid-Until` 校验；两份 compose 给 Composer 子进程放宽了超时（`COMPOSER_PROCESS_TIMEOUT`）
+- 去掉 `composer.json` 里与 tag 重复的 `version` 字段（版本由 git tag 决定），并把 2018 年的占位描述换成一句真实描述（`composer validate` 现在零警告）
 
 ## Changelog (English)
 
@@ -152,3 +153,5 @@ This file records **user-visible** changes: breaking changes, additions, improve
 - `docker/test-php74`'s `apt-get install` started failing with 404s because Debian retired bullseye-security;
   the Dockerfile now points at `archive.debian.org` and disables the `Valid-Until` check, and both compose files
   give Composer sub-processes a longer timeout (`COMPOSER_PROCESS_TIMEOUT`).
+- Removed the `version` field from `composer.json` (the git tag is authoritative) and replaced the 2018 placeholder
+  description with a real one — `composer validate` is now warning-free.

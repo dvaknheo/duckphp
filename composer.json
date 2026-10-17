@@ -1,6 +1,6 @@
 {
     "name": "dvaknheo/duckphp",
-    "description": "A Framework in 2018",
+    "description": "A library-style PHP framework: zero dependencies, replaceable components, flexible deployment.",
     "type": "library",
     "keywords": [
         "framework",
@@ -14,7 +14,6 @@
             "email": "dvaknheo@qq.com"
         }
     ],
-	"version": "1.4.1",
     "autoload": {
         "psr-4": {
             "DuckPhp\\": "src"
