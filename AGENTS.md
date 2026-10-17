@@ -105,6 +105,7 @@ The numbers move as cases are added — **§8 of `docs/zh/reference-maintenance-
   | `python3 docs/scripts/find-unmentioned-classes.py` | `从没被链到: 0` ("never linked: 0") |
   | `python3 docs/scripts/check-md-layout.py` | entries reported as `layout-only` can be dropped with `git checkout --`; only `CONTENT` needs a diff review |
   | `bash docs/scripts/check-non-ascii.sh` | `Total non-ASCII lines: 0` (after touching `src/`) |
+  | `npx --yes markdownlint-cli2 README.md README.zh_CN.md` | `0 issues`; `MD013` (line length) is off in `.markdownlint.json` because this repo keeps one paragraph per line, which CJK text needs |
 
 - ⚠️ **Do not use `php docs/scripts/gen-reference.php verify --all` as a consistency verdict**: it expects method entries to start with a backtick, while this repository consistently uses four-space indentation, so it reports `method missing in md` for nearly every page (thousands of false positives) and also misses genuinely stale entries (see §10 of the maintenance guide).
 

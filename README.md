@@ -6,8 +6,8 @@
 - Author QQ: 85811616
 - QQ Group: 714610448
 
-Gitee repository: https://gitee.com/dvaknheo/duckphp
-Github repository: https://github.com/dvaknheo/duckphp
+Gitee repository: <https://gitee.com/dvaknheo/duckphp>
+Github repository: <https://github.com/dvaknheo/duckphp>
 
 ## 1. What is DuckPhp
 
@@ -21,7 +21,7 @@ The name comes from **duck typing**:
 
 ### Install with Composer
 
-```
+```bash
 composer require dvaknheo/duckphp # use require
 ./vendor/bin/duckphp new
 ```
@@ -49,14 +49,6 @@ Create a file `sample1.php` in the project directory:
 ```php
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
-
-use DuckPhp\DuckPhpAllInOne;
-use DuckPhp\Foundation\Controller\Helper;
-
-use MyApp as MyWelcomeController;
-use MyApp as MyBusiness;
-use MyApp as MyModel;
-use MyApp as MyView;
 
 use DuckPhp\DuckPhpAllInOne;
 use DuckPhp\Foundation\Controller\Helper;
@@ -116,7 +108,7 @@ php -S 127.0.0.1:9628 -t .
 
 Visit `http://127.0.0.1:9628/sample1.php`. The result is:
 
-```
+```text
 You are visit: /sample1.php; Hello, now is <2026-07-11T07:08:05+00:00>
 ```
 
@@ -144,37 +136,37 @@ Details:
 
 From this example, we can see DuckPhp's features:
 
-**DuckPhp supports both web mode and command line mode**
+#### DuckPhp supports both web mode and command line mode
 
 *We do not recommend using PHP's built-in command-line web server. Set nginx or Apache `document_root` to the `public` directory and deploy in the usual way.*
 
-**DuckPhp does not limit your directory and supports full-site routing, partial-path routing, and no-PATH_INFO routing**
+#### DuckPhp does not limit your directory and supports full-site routing, partial-path routing, and no-PATH_INFO routing
 
 > Many PHP frameworks today only allow one application per domain. DuckPhp returns to the fast PHP development style.
 > DuckPhp can be used without changing server settings, and you can also put it in a subdirectory. The `DuckPhpAllInOne` class enables no-PATH_INFO routing by default, unlike the `DuckPhp` class.
 
 DuckPhp supports Workerman through the Composer package `dvaknheo/workermanhttpd`. You can run it without changing project code. More platforms will be supported in the future.
 
-**DuckPhp does not limit your project namespace**
+#### DuckPhp does not limit your project namespace
 
 > The sample code uses `MyApp` as its namespace.
 
-**DuckPhp does not need a lot of config files**
+#### DuckPhp does not need a lot of config files
 
 > Most of its settings use default values. You can get different behavior by changing options.
 > `$options` here are the application options. You can turn on debug mode. There are many application options available. See the docs for details.
 
-**DuckPhp does not need manual routing**
+#### DuckPhp does not need manual routing
 
 Auto-routing is enough for most cases. If not, you can also write your own routes.
 
-**DuckPhp is non-invasive and avoids global function conflicts**
+#### DuckPhp is non-invasive and avoids global function conflicts
 
 > There are only a few global functions starting with `__`. You can also override them.
 
 ### Example 2: Embed Another Project
 
-**A DuckPhp application can embed other DuckPhp applications as child applications**
+#### A DuckPhp application can embed other DuckPhp applications as child applications
 
 This is an important feature of DuckPhp. You do not need to do secondary development on the existing DuckPhp application. You can use it directly as a plugin.
 
@@ -225,6 +217,15 @@ Here, `ParentApp` and `ChildApp` are both independent DuckPhp applications. `Par
 If you do not want to write a user system for an API, you can embed the user system from the Composer package `dvaknheo/duckadmin`. Then get the user ID with `Helper::UserId()` and the admin ID with `Helper::AdminId()`.
 
 This is just a simple embedding demo. Child applications involve complex issues such as static resources, inter-app communication, and component sharing. See the docs for details.
+
+For example
+
+1. Moving resource files — that is, static assets.
+2. The logging system, for example, is typical component sharing.
+3. The user system is typical inter-app communication.
+4. Overriding a child application's views; and using all of the above as child applications and overriding views.
+
+You can `composer require dvaknheo/duckadmin` to bring DuckAdmin in as your admin panel, and use its user system.
 
 ### Example 3: Replace Components
 
@@ -297,7 +298,7 @@ This example replaces the implementation of `__h()` and shows DuckPhp's flexibil
 
 When you create a project with `./vendor/bin/duckphp new`, you get a skeleton application (a copy of `skeleton/`):
 
-```
+```text
 project/
 ├── public/index.php     # web entry
 ├── bin/cli.php          # CLI entry
@@ -321,11 +322,7 @@ DuckPhp users are divided into two roles: `business developers` and `core develo
 
 > After reading the helper class tutorial, a `business developer` can start writing business code. Ask a `core developer` when you do not understand something.
 
-## 4. Simple Tutorial
-
-// To be added: a CRUD example
-
-## 5. Other Features
+## 4. Other Features
 
 DuckPhp supports Composer, but it can also run without Composer. DuckPhp is a Composer library, so it does not need a separate scaffolding project.
 
@@ -367,25 +364,30 @@ DuckPhp design principle: does this thing really need to be built into the frame
 
 Every DuckPhp release passes full-code-coverage tests, so it is very robust.
 
-DuckPhp has no ORM and does not hide SQL, so checking SQL through logs is easy. It wraps PDO in a simple way. You can also use your own DB class or a third-party ORM (the tutorial has an example using ThinkPHP-DB.
+DuckPhp has no ORM and does not hide SQL, so checking SQL through logs is easy. It wraps PDO in a simple way. You can also use your own DB class or a third-party ORM (the tutorial has an example using ThinkPHP-DB).
 
 DuckPhp does not include a template engine, because PHP itself is a template engine.
 
 DuckPhp does not write widgets, because that goes against MVC separation.
 
-## 6. Version History
+## 5. Version History
 
 At first, this was meant to be a simple PHP web framework. Now it is simple to use, but the inside is not simple.
 
-+ 1.0.* is the DNMVCS single-file version.
-+ 1.1.* is the DNMVCS multi-file version.
-+ 1.2.* is the renamed DuckPhp version. As ideas change, there may be big changes.
-+ 1.3.* is the stable version planned for large-scale use. It will be responsible for history.
+- 1.0.* is the DNMVCS single-file version.
+- 1.1.* is the DNMVCS multi-file version.
+- 1.2.* is the renamed DuckPhp version. As ideas change, there may be big changes.
+- 1.3.* is the stable version planned for large-scale use. It will be responsible for history.
+- 1.4.* is the version that perfected the architecture and completed a large amount of documentation.
 
 The biggest change in version 1.3 is the phase concept, which makes different applications insert into each other without problems.
 
 Version 1.3.4 added Docker support, fixed multi-language support, and prepares for 1.3.5.
 
-## 7. What DuckPhp Will Do Next
+Version 1.4.1 did a lot of work and is close to perfect. There will basically be no major adjustments after it.
+
+## 6. Logo
 
 ![logo](duckphp.svg)
+
+2026-10-17 20:10:43

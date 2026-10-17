@@ -136,37 +136,37 @@ You are visit: /sample1.php; Hello, now is <2026-07-11T07:08:05+00:00>
 
 从这个例子中，我们可以看到 DuckPhp 的特点：
 
-**DuckPhp 同时支持 Web 模式和命令行模式**
+#### DuckPhp 同时支持 Web 模式和命令行模式
 
 *不建议使用 PHP 内置命令行 Web 服务器；推荐把 nginx 或 Apache 的 `document_root` 指向 `public` 目录，按常规方式部署。*
 
-**DuckPhp 不限制你的目录，支持全站路由、局部路径路由和无 PATH_INFO 路由**
+#### DuckPhp 不限制你的目录，支持全站路由、局部路径路由和无 PATH_INFO 路由
 
 > 现在许多 PHP 框架一个域名只能放一个应用。DuckPhp 回归 PHP 快速开发的本源。
 > DuckPhp 不需要修改服务器配置也能使用，也支持放在子目录里。`DuckPhpAllInOne` 类相比 `DuckPhp` 类默认启用了无 PATH_INFO 路由。
 
 DuckPhp 通过 Composer 包 `dvaknheo/workermanhttpd` 扩展支持 Workerman，不需要修改项目代码即可运行，未来还会支持更多平台。
 
-**DuckPhp 不限制你的项目的命名空间**
+#### DuckPhp 不限制你的项目的命名空间
 
 > 示例代码使用 `MyApp` 作为命名空间。
 
-**DuckPhp 不需要大量配置文件**
+#### DuckPhp 不需要大量配置文件
 
 > 它的配置大多使用默认值，通过调整选项可以得到不同行为。
 > 这里的 `$options` 就是应用选项，你可以打开调试模式。有很多应用选项可用，具体请查看文档。
 
-**DuckPhp 不需要手动路由**
+#### DuckPhp 不需要手动路由
 
 自动路由在大多数情况下已经足够。如果不够，你也可以编写自己的路由。
 
-**DuckPhp 非侵入式，避免全局函数冲突**
+#### DuckPhp 非侵入式，避免全局函数冲突
 
 > 只有少数以 `__` 开头的全局函数。你也可以重写它们。
 
 ### 示例 2：嵌入另一个项目
 
-**DuckPhp 应用可以将其他 DuckPhp 应用作为子应用嵌入**
+#### DuckPhp 应用可以将其他 DuckPhp 应用作为子应用嵌入
 
 这是 DuckPhp 的一个重要特点。你无需对现有的 DuckPhp 应用进行二次开发。你可以直接将其作为插件使用。
 
