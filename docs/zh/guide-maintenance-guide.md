@@ -112,7 +112,7 @@ wsl -e bash -lc "cd /mnt/e/ProjectGoat/DNMVCS && php vendor/bin/phpunit --no-cov
 
 **当前基线**（2026-10-02 WSL 全量实测）：
 
-- 全量 `XDEBUG_MODE=coverage php vendor/bin/phpunit` → **`OK (95 tests, 889 assertions)`**（约 6 分钟；比上一版多 14 条，来自 `Route::defaultUrlHandler()` 双斜杠修复新增的 `doUrlJoining()` 断言）；
+- 全量 `XDEBUG_MODE=coverage php vendor/bin/phpunit` → **`OK (95 tests, 892 assertions)`**（约 6 分钟；比 1.3.5 时代的 875 条多 17 条：`Route::defaultUrlHandler()` 双斜杠修复新增的 `doUrlJoining()` 贡献 14 条，`Pager::getDefaultPageNo()` 返回类型修复贡献 3 条）；
 - 覆盖率 **`4737/4737 (100.00%)`**（80 files, 86 dumps）：`XDEBUG_MODE=coverage php vendor/bin/phpunit`（跑全量、顺便写 `test_coveragedumps/`）→ 再 `XDEBUG_MODE=coverage php vendor/bin/phpunit tests/support.php` 生成 `test_reports/index.html`；判「有没有漏测」用 `php docs/scripts/covagg.php`（按源文件合并全部 dump，输出 `TOTAL … lines x/y` 与有缺口的文件）。⚠️ **中途 Fatal 的测试不会写自己的 dump**，覆盖率会假降（实测见过 `4774/4898 (97.47%)`）——先确认全量没有红，再信覆盖率；⚠️ 删过类/改过测试文件后，`test_coveragedumps/` 里的旧 dump 会让 covagg 的总数虚高，**先 `rm -rf test_coveragedumps` 再跑全量**；
 - `docs/zh` 相对链接 **0 坏链**、`docs/en` 经 `check-en-docs.py --all` 也是 0 error（两棵树都有门禁；`docs/old/` 是归档目录，不在门禁范围）；[`find-unmentioned-classes.py`](../scripts/find-unmentioned-classes.py) → 107 个类页全部被指南链到、孤儿 0。
 

@@ -7,7 +7,6 @@
 namespace DuckPhp\Foundation\Controller;
 
 use DuckPhp\GlobalUser\UserControllerInterface;
-use DuckPhp\GlobalUser\UserException;
 
 class UserControllerBase implements UserControllerInterface
 {

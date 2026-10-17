@@ -77,7 +77,7 @@ bin/duckphp    the installer CLI (`./vendor/bin/duckphp new`)
 | Aggregate coverage verdict | `php docs/scripts/covagg.php` → `TOTAL 80 files, 86 dumps, lines …` and `0 files with gaps` |
 | HTML report | `XDEBUG_MODE=coverage php vendor/bin/phpunit tests/support.php` → `test_reports/index.html` |
 
-**Current baseline (measured in WSL on 2026-10-02)**: `OK (95 tests, 889 assertions)`; coverage `80 files, 86 dumps, 4737/4737 (100.00%)`.
+**Current baseline (measured in WSL on 2026-10-02)**: `OK (95 tests, 892 assertions)`; coverage `80 files, 86 dumps, 4737/4737 (100.00%)`.
 The numbers move as cases are added — **§8 of `docs/zh/reference-maintenance-guide.md` is the authoritative baseline**, and it also records the environment prerequisites for a full run.
 
 **`ZAllDemoTest` compares byte lengths**: it starts the built-in server and `curl`s every route, comparing the **output length** of each one. Changing visible wording in `demo/`, or changing wording/class names/paths that the `src/` dumps contain, turns it red. When it does:

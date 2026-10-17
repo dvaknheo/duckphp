@@ -2,7 +2,7 @@
 
 [English](README.md) | [中文](README.zh_CN.md)
 
-- Version: v1.3.4 / preparing for v1.3.5
+- Version: v1.4.1
 - Author QQ: 85811616
 - QQ Group: 714610448
 

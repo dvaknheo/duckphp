@@ -1,9 +1,7 @@
 <?php 
 namespace tests\DuckPhp\Core;
 use DuckPhp\Core\Console;
-use DuckPhp\Component\DefaultCommand;
 use DuckPhp\HttpServer\HttpServer;
-use DuckPhp\Component\Installer;
 use DuckPhp\DuckPhp as DuckPhp;
 use DuckPhp\Core\ComponentBase;
 

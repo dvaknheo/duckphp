@@ -1,6 +1,5 @@
 <?php 
 namespace tests\DuckPhp\Core;
-use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\ExitException;
 

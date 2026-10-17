@@ -40,11 +40,12 @@ class Pager extends ComponentBase implements PagerInterface
     protected function getDefaultPageNo(): int
     {
         $my_get = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
-        // page 可能是空串或非数字:用户手输 ?page=abc,或者 rewrite 规则把没匹配到的分组
-        // 拼成了 page=(例如 SimpleBlog 的 'article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2')。
-        // 这里有 int 返回类型,直接返回原始字符串会抛
-        // TypeError: Return value must be of type int, string returned,整页 500。
-        // 归一化成 int 即可(current() 还会把 0 修正成 1)。
+        // page may be an empty string or non-numeric: the user types ?page=abc by hand, or a
+        // rewrite rule splices unmatched groups into page= (e.g. SimpleBlog's
+        // 'article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2').
+        // This method is declared to return int, so returning the raw string would throw
+        // TypeError: Return value must be of type int, string returned, and the whole page 500s.
+        // Normalizing to int is enough (current() also turns 0 into 1).
         return intval($my_get[$this->options['page_key']] ?? 1);
     }
     ////////////////////////

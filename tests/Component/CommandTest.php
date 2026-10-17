@@ -20,7 +20,6 @@ use DuckPhp\Ext\RouteLister;
 
 use DuckPhp\Core\Console;
 use DuckPhp\Core\Route;
-use DuckPhp\Ext\AutoReadLineConsole;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\SuperGlobal;
 

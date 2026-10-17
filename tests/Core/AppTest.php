@@ -13,7 +13,6 @@ use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
 use DuckPhp\Component\Pager;
-use DuckPhp\Ext\SuperGlobalContext;
 
 class AppRoute extends Route
 {

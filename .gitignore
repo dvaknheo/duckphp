@@ -14,3 +14,12 @@ reasonix.toml
 
 # 库项目不锁依赖：docker 测试每次都 rm -f composer.lock 后按当前 PHP 版本重算
 composer.lock
+
+# ZAllDemoTest 失败时写出的实际输出（留着 diff，不进仓库）与 redis 快照
+tests/data_for_tests/ZAllDemoTest-*.txt
+/dump.rdb
+
+# 运行期产物（跑测试/跑 demo 生成，不入库）
+/demo/runtime/
+/tests/data_for_tests/**/runtime/
+*.bak

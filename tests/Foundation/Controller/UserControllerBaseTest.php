@@ -9,7 +9,6 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\UserControllerBase;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalUser\GlobalUser;
-use DuckPhp\GlobalUser\UserException;
 use DuckPhp\GlobalUser\UserServiceInterface;
 use DuckPhp\GlobalUser\UserSessionInterface;
 

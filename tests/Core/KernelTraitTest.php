@@ -13,7 +13,6 @@ use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonExTrait as SingletonExTrait;
-use DuckPhp\Ext\Pager;
 use DuckPhp\Core\PhaseContainer;
 
 class KernelTraitTest extends \PHPUnit\Framework\TestCase

@@ -8,7 +8,6 @@ use DuckPhp\Core\View;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\AdminControllerBase;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\GlobalAdmin\AdminException;
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
 use DuckPhp\GlobalAdmin\AdminSessionInterface;
 use DuckPhp\GlobalAdmin\GlobalAdmin;

@@ -5,7 +5,6 @@ namespace tests\DuckPhp\Ext
 use DuckPhp\Ext\RouteHookFunctionRoute;
 use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\Route;
-use DuckPhp\Ext\SuperGlobalContext;
 
 class RouteHookFunctionRouteTest extends \PHPUnit\Framework\TestCase
 {
