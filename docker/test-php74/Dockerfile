@@ -1,6 +1,10 @@
 FROM php:7.4-cli
 
-RUN apt-get update && apt-get install -y git unzip redis-server \
+# Debian bullseye 已 EOL：bullseye-security 的包已从 deb.debian.org 撤下（apt 404）。
+# 把 security 源指到 archive.debian.org，并关掉 Valid-Until 校验（archive 里的 Release 已过期）。
+RUN sed -i "s#deb.debian.org/debian-security#archive.debian.org/debian-security#" /etc/apt/sources.list \
+    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99archive-no-valid-until \
+    && apt-get update && apt-get install -y git unzip redis-server \
     && curl -fsSL https://github.com/phpredis/phpredis/archive/5.3.7.tar.gz | tar xz -C /tmp \
     && cd /tmp/phpredis-5.3.7 && phpize && ./configure && make && make install \
     && docker-php-ext-enable redis \
